@@ -127,4 +127,30 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
 
     expect(panelBox.y + panelBox.height).toBeLessThanOrEqual(graphBox.y + graphBox.height + 1);
   });
+
+  test("Mission Control toggle keeps UI Inspector state in sync", async ({ page }) => {
+    await page.goto("/");
+    await openQaPanel(page);
+    await openDebugTab(page);
+
+    const debugToggleState = page.getByTestId("theme-inspector-toggle-state");
+    const controlButton = page.getByTestId("theme-inspector-toggle-button");
+    const hudIndicator = page.getByTestId(OVERLAY_TOGGLE);
+
+    await expect(debugToggleState).toContainText("OFF");
+    await expect(hudIndicator).toContainText("OFF");
+
+    await controlButton.click();
+    await expect(debugToggleState).toContainText("ON");
+    await expect(hudIndicator).toContainText("ON");
+
+    const missionControlPanel = page.locator('[data-lw-theme-target="mission-control.panel"]').first();
+    await missionControlPanel.hover();
+    await expect(page.getByTestId("theme-target-inspector-panel")).toBeVisible();
+
+    await controlButton.click();
+    await expect(debugToggleState).toContainText("OFF");
+    await expect(page.getByTestId("theme-target-inspector-panel")).toHaveCount(0);
+    await expect(hudIndicator).toContainText("OFF");
+  });
 });

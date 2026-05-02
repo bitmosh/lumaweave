@@ -11,8 +11,8 @@ const ACTIVE_CHECKLIST_STORAGE_KEY = "lumaweave-qa-active-checklist";
 const BACKLOG_STORAGE_KEY = "lumaweave-advisory-backlog-order";
 const QUESTION_ANSWER_STORAGE_KEY = "lumaweave-advisory-question-answers";
 const PROPOSAL_DECISIONS_STORAGE_KEY = "lumaweave-advisory-proposal-decisions";
-const DEFAULT_QA_KEY = "v22";
-const DEFAULT_FEATURE_ID = "theme-token-governance-v22";
+const DEFAULT_QA_KEY = "v24";
+const DEFAULT_FEATURE_ID = "theme-inspector-toggle-v24";
 const PROPOSAL_DECISION_OPTIONS: readonly BanditProposalDecision[] = [
   "unreviewed",
   "accept-for-future",
@@ -61,9 +61,17 @@ interface QaPanelProps {
   themeAccent?: string;
   themeTextMuted?: string;
   themePanelBorder?: string;
+  themeInspectorEnabled?: boolean;
+  onThemeInspectorToggle?: () => void;
 }
 
-export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", themePanelBorder = "rgba(148, 163, 184, 0.2)" }: QaPanelProps) {
+export function QaPanel({
+  themeAccent = "#a855f7",
+  themeTextMuted = "#94a3b8",
+  themePanelBorder = "rgba(148, 163, 184, 0.2)",
+  themeInspectorEnabled = false,
+  onThemeInspectorToggle = () => {},
+}: QaPanelProps) {
   // Use canonical qaKey as primary selector
   const [activeQaKey, setActiveQaKey] = useState<string>(() => {
     const persisted = localStorage.getItem(ACTIVE_CHECKLIST_STORAGE_KEY);
@@ -1027,6 +1035,40 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
             <div className="mb-3">
               <div className="text-xs text-slate-500 mb-1">QA Version</div>
               <div className="text-sm text-slate-300">v{activeQaVersion}</div>
+            </div>
+
+            <div className="mb-4">
+              <div className="text-xs text-slate-500 mb-1">UI Inspector Toggle</div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span
+                  data-testid="theme-inspector-toggle-state"
+                  className="px-2 py-0.5 rounded-full text-[11px] font-semibold"
+                  style={{
+                    backgroundColor: themeInspectorEnabled ? "rgba(34, 197, 94, 0.15)" : "rgba(51, 65, 85, 0.8)",
+                    color: themeInspectorEnabled ? "#4ade80" : themeTextMuted,
+                    border: `1px solid ${themeInspectorEnabled ? "rgba(34, 197, 94, 0.5)" : themePanelBorder}`,
+                  } as React.CSSProperties}
+                >
+                  UI Inspector {themeInspectorEnabled ? "ON" : "OFF"}
+                </span>
+                <button
+                  type="button"
+                  data-testid="theme-inspector-toggle-button"
+                  onClick={onThemeInspectorToggle}
+                  className="text-xs font-semibold px-3 py-1 rounded"
+                  style={{
+                    backgroundColor: themeInspectorEnabled ? "rgba(248, 113, 113, 0.15)" : `${themeAccent}20`,
+                    color: themeInspectorEnabled ? "#f87171" : themeAccent,
+                    border: `1px solid ${themeInspectorEnabled ? "rgba(248, 113, 113, 0.4)" : `${themeAccent}40`}`,
+                  } as React.CSSProperties}
+                >
+                  {themeInspectorEnabled ? "Turn OFF" : "Turn ON"}
+                </button>
+              </div>
+              <p className="mt-1 text-[11px] text-slate-500">
+                Hotkey {""}
+                <span className="font-semibold text-slate-300">Alt+Shift+I</span> remains available.
+              </p>
             </div>
             
             <div className="mb-3">

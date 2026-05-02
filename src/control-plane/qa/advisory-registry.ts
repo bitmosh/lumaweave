@@ -272,6 +272,110 @@ export const defaultAdvisoryV13: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV24: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "mission-control-toggle-accessibility",
+      prompt: "Did we capture QA evidence showing the Mission Control UI Inspector toggle can be used without keyboard shortcuts?",
+      context: "v24 ships the first visible toggle. Manual QA must prove it works for non-keyboard testers before shipping further inspector features.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "inspector-toggle-hotkey-parity",
+      prompt: "Do the Mission Control button and Alt+Shift+I hotkey stay synchronized in state + logging?",
+      context: "Future passes depend on one source of truth. Any desync would make overlay hardening noisy.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "inspector-toggle-readonly-proof",
+      prompt: "Does enabling the toggle keep the UI Inspector read-only with pointer-events:none HUD?",
+      context: "Toggle must not regress the read-only contract while ghost overlay / editing work remain pending.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "ui-part-role-model-doc",
+      prompt: "Was the UI Part / Component Role Registration Model documented before starting ghost overlay work?",
+      context: "v24a requires a precision plan so future overlays highlight the correct DOM surfaces without sprinkling ad-hoc markers.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "ghost-overlay-next-step",
+      title: "Plan ghost overlay registered surface layer",
+      summary: "Scope v25 ghost overlay implementation, including registered/unregistered outlines and QA evidence.",
+      rationale: "Toggle unlocks manual QA; the next pass should visualize registered surfaces before editing flows arrive.",
+      risk: "medium",
+      recommendedNextAction: "Design lightweight outline rendering tied to themeTargetId metadata and document QA evidence hooks.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+    {
+      id: "registered-heuristic-plan",
+      title: "Document registered/unregistered heuristic",
+      summary: "Before v26, define how UI Inspector identifies unregistered nodes + badges without mislabeling planned targets.",
+      rationale: "Ghost overlay + heuristic work must agree on contract before enabling warnings.",
+      risk: "medium",
+      recommendedNextAction: "Draft heuristic doc covering DOM markers, registry lookups, and QA instrumentation.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "Inspector overlay hardening",
+      whyItMatters:
+        "Overlay infrastructure must be stable before Theme Mapping Panel work can begin. v24a mandates the UI Part / Component Role Registration Model before ghost overlays, registered/unregistered warnings, or lock/pin behavior proceed.",
+      suggestedFutureBite:
+        "Child tasks:\n- Mission Control UI Inspector toggle (completed v24)\n- UI Part / Component Role Registration Model (in progress v24a)\n- Ghost overlay registered-surface layer\n- Registered/unregistered heuristic\n- Lock/pin selected target behavior",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "Theme Mapping Panel v0",
+      whyItMatters: "Needs stable inspector + governance before exposing editing controls.",
+      suggestedFutureBite:
+        "Dependencies: Inspector overlay hardening + accepted token governance. Includes governance polish: publish token path governance report in QA Debug or CI logs.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "Theme override storage + save preset",
+      whyItMatters: "Editing flows require durable storage before UI is exposed to operators.",
+      suggestedFutureBite: "Dependency: Theme Mapping Panel semantics.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 4,
+      title: "Graph physics Playwright coverage",
+      whyItMatters: "Physics sliders remain lightly tested; coverage is required before exposing more graph controls.",
+      suggestedFutureBite: "Add focused Playwright coverage for physics controls once selectors stabilize.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 5,
+      title: "Visual handles cite token paths",
+      whyItMatters: "Visual handle documentation must list canonical token paths once governance is enforced.",
+      suggestedFutureBite: "Future candidate dependent on accepted token governance; document handle -> token bindings in visual handle library.",
+      risk: "medium",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV22: BanditAdvisorySection = {
   questions: [
     {
@@ -1254,6 +1358,9 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number): B
 
 // Advisory lookup function keyed by canonical qaKey
 export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
+  if (qaKey === "v24") {
+    return advisoryV24;
+  }
   if (qaKey === "v22") {
     return advisoryV22;
   }

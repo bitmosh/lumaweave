@@ -35,8 +35,12 @@ const isEditableElement = (element: Element | null): boolean => {
   return false;
 };
 
-export function ThemeTargetInspectorOverlay() {
-  const [enabled, setEnabled] = useState(false);
+interface ThemeTargetInspectorOverlayProps {
+  enabled: boolean;
+  onEnabledChange: (nextEnabled: boolean) => void;
+}
+
+export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeTargetInspectorOverlayProps) {
   const [hoverState, setHoverState] = useState<HoverState | null>(null);
   const [graphViewportOffsets, setGraphViewportOffsets] = useState<GraphViewportOffsets | null>(null);
 
@@ -60,13 +64,13 @@ export function ThemeTargetInspectorOverlay() {
       }
 
       event.preventDefault();
-      setEnabled((prev) => !prev);
+      onEnabledChange(!enabled);
       setHoverState(null);
     };
 
     window.addEventListener("keydown", handleKeydown);
     return () => window.removeEventListener("keydown", handleKeydown);
-  }, [enabled]);
+  }, [enabled, onEnabledChange]);
 
   useEffect(() => {
     const updateOffsets = () => {

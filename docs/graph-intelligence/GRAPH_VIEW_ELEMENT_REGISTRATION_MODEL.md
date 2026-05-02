@@ -35,6 +35,12 @@ Define how graph-facing elements (Sigma-rendered primitives, Graph HUD, and supp
 | **Selection highlights** | Outline/glow overlays | Sigma + DOM overlay (future) | Planned | Keep Sigma draw logic separate from any DOM overlay (ghost layer lives in overlay hardening backlog).
 | **Relationship / edge hover states** | Endpoint emphasis, hover label popups | Sigma | Planned | Cannot attach DOM markers; rely on policy state machine.
 
+### v24a Precision Prep
+- Manual QA showed that DOM UI Inspector still reports parent surfaces for nested controls, which is acceptable because graph HUD + Sigma overlays remain separate systems.
+- Before v25 ghost overlays, we will finalize the **UI Part / Component Role Registration Model** (see UI Surface inventory) so DOM HUD components map cleanly to graph policies without tagging Sigma primitives.
+- Ghost overlays must highlight registered DOM surfaces only; Sigma visual states will continue to be proven through the Graph View Element Registry + Graph Visual Policy tests.
+- Registered/unregistered warnings should reference this registry boundary so a missing DOM marker does not imply an unregistered Sigma element.
+
 ## Registration Requirements
 1. **Graph View Element Registry** (future) will sit beside ThemeTargetRegistry but focus solely on Sigma-facing identifiers (e.g., `graph.node.default`, `graph.edge.hover`).
 2. **DOM wrappers stay separate** — `graph.frame`, HUD panels, inspector surfaces remain in the UI Surface inventory.

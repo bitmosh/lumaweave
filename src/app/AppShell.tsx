@@ -34,6 +34,7 @@ export function AppShell() {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
   const [inspectorExpanded, setInspectorExpanded] = useState(false);
+  const [themeInspectorEnabled, setThemeInspectorEnabled] = useState(false);
 
   const selectedNode = selectedNodeId
     ? summary.normalizedNodes?.find((node) => node.id === selectedNodeId) || null
@@ -335,7 +336,13 @@ export function AppShell() {
                 QA
               </h3>
               <div className="min-h-0">
-                <QaPanel themeAccent={themeTokens.app.accent} themeTextMuted={themeTokens.app.textMuted} themePanelBorder={themeTokens.app.panelBorder} />
+                <QaPanel
+                  themeAccent={themeTokens.app.accent}
+                  themeTextMuted={themeTokens.app.textMuted}
+                  themePanelBorder={themeTokens.app.panelBorder}
+                  themeInspectorEnabled={themeInspectorEnabled}
+                  onThemeInspectorToggle={() => setThemeInspectorEnabled((prev) => !prev)}
+                />
               </div>
             </div>
           </aside>
@@ -501,7 +508,10 @@ export function AppShell() {
           renderer {settings.graphView.defaultRenderer}
         </footer>
       </div>
-      <ThemeTargetInspectorOverlay />
+      <ThemeTargetInspectorOverlay
+        enabled={themeInspectorEnabled}
+        onEnabledChange={setThemeInspectorEnabled}
+      />
     </main>
   );
 }

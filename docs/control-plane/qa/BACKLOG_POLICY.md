@@ -12,3 +12,4 @@ A backlog item can be promoted during the pass that implements it, but after acc
 - Add new backlog items only when they are newly discovered, actionable, not already represented, and annotated with risk/dependency context.
 - If a new task is a subtask of an existing backlog item, nest it under that parent instead of promoting it to a top-level item.
 - Governance follow-ups (e.g., publishing the token path governance report) should be tracked as polish subtasks under the relevant parent instead of reusing completed top-level entries.
+- Manual QA findings (like v24a's "UI Inspector reports parent surfaces") must be captured as child subtasks under the affected backlog item, with clear sequencing before downstream work (e.g., ghost overlay) begins.

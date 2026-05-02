@@ -57,6 +57,7 @@ These bindings drive the new `data-lw-theme-target` markers but do not alter run
 
 ## Read-Only UI Inspector Behavior
 - Toggled via `Alt+Shift+I` (Ubuntu-safe debug hotkey).
+- Mission Control / QA Debug exposes a visible toggle button (`data-testid="theme-inspector-toggle-button"`, state chip `theme-inspector-toggle-state`) that mirrors the Alt+Shift+I hotkey for non-keyboard QA.
 - Disabled by default; the UI Inspector merely displays metadata for hovered `data-lw-theme-target` elements.
 - Hovering a registered target opens a fixed, bottom-right metadata panel (read-only) that lists label, ID, surface, status, visual handle, editable properties, and token bindings.
 - UI Inspector never enables editing, never modifies layout, uses `pointer-events: none` for the HUD + panel so normal UI interactions continue, and anchors its metadata panel to the graph viewport’s lower-right corner so it does not cover Mission Control or the Control Plane.

@@ -17,7 +17,7 @@ Establish a single additive reference for every front-facing UI surface that may
 | **Topbar** | `topbar.root` | (custom flex layout today) | Required | Interactive (global menus) | Houses theme selector + mission controls.
 | **Panel** | `mission-control.panel`, `settings.panel` | `.lw-panel` | Required; `data-testid="qa-panel"` etc. | Interactive (tabs, forms) | Mission Control + Settings use same visual handle.
 | **Card** | `mission-control.question-card`, `mission-control.proposal-card`, `mission-control.backlog-card` | `.lw-card` | Required; `data-testid` per card | Interactive (expand/collapse, reorder) | Cards inherit panel tokens; future per-card tokens planned.
-| **Button** | (No themeTargetId yet) | `.lw-button` | Optional; uses `data-testid` for QA actions | Interactive | Handle exists; registration planned when Theme Mapping Panel exposes toggles.
+| **Button** | Mission Control UI Inspector toggle (QA Debug) | `.lw-button` | `data-testid="theme-inspector-toggle-button"` + state chip | Interactive | Shares state with Alt+Shift+I hotkey; still outside ThemeTargetRegistry until controls become theme-editable.
 | **Slider / Control** | Settings sliders, Mission Control toggles | `.lw-control-grid` (layout), future handle IDs | Use `data-testid` (e.g., `hover-node-color-slider`) | Interactive, writes settings state | Remain outside ThemeTargetRegistry until override storage exists.
 | **Dropdown** | Theme selector, QA key selector | Native `<select>` + `data-testid` | `data-lw-theme-target` inherited from parent panel | Interactive | Documented as control surfaces, not independent theme targets yet.
 | **Badge** | Status badges in QA panel | `.lw-badge` | `data-testid` on containing card | Visual-only | Colors derive from accent token fallbacks.
@@ -28,8 +28,30 @@ Establish a single additive reference for every front-facing UI surface that may
 
 ## Current Known Elements
 - **Active theme targets** with DOM markers: `app.shell`, `topbar.root`, `mission-control.panel`, `mission-control.question-card`, `mission-control.proposal-card`, `mission-control.backlog-card`, `settings.panel`, `graph.frame`.
-- **Visual handles in use**: `.lw-panel`, `.lw-card`, `.lw-badge`. `.lw-button`, `.lw-control-grid`, `.lw-node-glow`, `.lw-edge-glow` exist but are not fully registered.
+- **Visual handles in use**: `.lw-panel`, `.lw-card`, `.lw-badge`, `.lw-button` (Mission Control toggle). `.lw-control-grid`, `.lw-node-glow`, `.lw-edge-glow` exist but are not fully registered.
 - **QA witnesses**: `tests/e2e/theme-target-inspector.spec.ts` asserts shell/topbar/panel/card/settings/graph markers; `tests/e2e/contract-registry.spec.ts` asserts QA panel/advisory surfaces.
+
+### v24a UI Inspector Granularity Finding
+- Manual QA confirmed the Mission Control toggle + graph-viewport placement work, but hovering nested controls (buttons, tabs, sliders, dropdowns, labels, status chips, debug rows) still reports their parent surface (e.g., `mission-control.panel`).
+- This is **expected** under the current registry because only major surfaces are registered; we must not sprinkle `data-lw-theme-target` on every nested element to paper over the gap.
+- Before v25 ghost overlays or registered/unregistered warnings, we need a formal **UI Part / Component Role Registration Model** that spells out which layer owns identifiers, tokens, QA evidence, and handles text roles vs. reusable controls.
+
+## UI Part / Component Role Registration Model (v24a)
+
+| Precision Layer | Examples | Identifiers / Fields | Notes |
+| --- | --- | --- | --- |
+| **Major surfacing target** | `app.shell`, `mission-control.panel`, `settings.panel`, `graph.frame` | `themeTargetId`, `data-lw-theme-target`, `visualHandle`, canonical `tokenBindings` | Already covered by ThemeTargetRegistry; continue to prove via UI Inspector.
+| **UI component role** | `button.primary`, `tab.active`, `badge.success`, `slider.thumb`, `dropdown.root`, `panel.heading` | `visualHandle`, planned `componentRoleId`, shared `tokenBindings` template | Represents reusable building blocks, not unique DOM nodes. Lives in docs until Theme Mapping unlocks them.
+| **Specific control instance** | `qa.debug.ui-inspector-toggle`, `settings.physics.node-size-slider`, `qa.tabs.debug` | `handleId`, `settingsKey`, `data-testid` | Only documented as part of QA/UX state; should not automatically gain a `themeTargetId`.
+| **Text role** | `text.primary`, `text.muted`, `label.text`, `value.text`, `heading.text` | Token references (e.g., `text.primary`) | Static strings should inherit these roles; no per-string IDs.
+| **Graph HUD panel** | Graph Inspector tabs, future zoom HUD | `themeTargetId` (if DOM), QA doc references | DOM HUD surfaces stay in this inventory; still separate from Sigma.
+| **Sigma element** | `graph.node.default`, `graph.edge.selected`, `graph.node.label` | Graph View Element Registry, Graph Visual Policy tokens | Never receives `data-lw-theme-target`. Registered via graph-centric docs/policies.
+
+### Handling Nested Controls Until Theme Mapping
+- Buttons, tabs, dropdowns, etc. remain discoverable at the **component role** layer, not by attaching unique `data-lw-*` markers per instance.
+- When Theme Mapping Panel work begins, these roles will inform generated controls and token bindings; for now, document them with `visualHandle` + `data-testid` references so QA can trace behavior without runtime churn.
+- Static text/labels should map back to **text roles** rather than spawning new surfaces.
+- Graph HUD vs. Sigma distinction must stay explicit so DOM overlays (ghost outline, inspector panel) never mutate renderer primitives.
 
 ## Planned / Future Elements
 - **Theme Mapping Panel (`theme-mapping.panel`)** — planned Mission Control surface that will host editable controls.
