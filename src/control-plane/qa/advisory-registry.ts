@@ -272,6 +272,100 @@ export const defaultAdvisoryV13: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV21a: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "fixed-panel-viewport-proof",
+      prompt: "Has the fixed metadata panel been manually verified on Ubuntu/resizable windows so it never clips near bottom/right edges?",
+      context: "v21a replaced the cursor-following tooltip with a fixed panel. Manual QA must prove it stays visible on common viewport sizes before shipping beyond devs.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "fixed-panel-pointer-policy",
+      prompt: "Does the fixed panel keep pointer-events:none so it cannot block Mission Control controls?",
+      context: "The panel must remain read-only and non-intercepting even as we add richer overlay hints.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "fixed-panel-next-priority",
+      prompt: "Should the next overlay bite prioritize ghost outlines for registered/unregistered surfaces or the Mission Control toggle?",
+      context: "Option B roadmap offers both. Pick which unlocks the most QA signal immediately after v21a.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "mission-control-overlay-toggle",
+      title: "Add Mission Control inspector toggle",
+      summary: "Expose a visible toggle button in Mission Control Debug for the inspector overlay while keeping Alt+Shift+I hotkey.",
+      rationale: "Gives non-keyboard QA a way to verify overlay behavior without memorizing shortcuts.",
+      risk: "low",
+      recommendedNextAction: "Add read-only toggle button with data-testid=theme-inspector-toggle-button tied to existing state.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+    {
+      id: "ghost-overlay-option-b",
+      title: "Ghost overlay registered-surface layer",
+      summary: "Render lightweight outlines for registered targets plus warning state for unregistered elements when inspector is enabled.",
+      rationale: "Completes Option B by making registered/unregistered state visible without enabling editing.",
+      risk: "medium",
+      recommendedNextAction: "Plan ghost layer rendering contract and QA evidence surfaces before enabling.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "Inspector overlay hardening",
+      whyItMatters: "Need lock mode, registered/unregistered indicators, and QA evidence before exposing overlay broadly.",
+      suggestedFutureBite:
+        "Mini backlog: (1) Reposition fixed metadata panel away from Mission Control while staying lower + viewport-safe, (2) add Mission Control Debug toggle for inspector activation, (3) add ghost overlay registered-surface layer, (4) define registered/unregistered indicator heuristic, (5) add lock/pin selected target behavior later",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "Token path governance check",
+      whyItMatters: "Linting canonical paths prevents drift as Theme Target Registry grows.",
+      suggestedFutureBite: "Ship npm run qa:no-skips + governance script",
+      risk: "low",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "Theme Mapping Panel v0",
+      whyItMatters: "Actual Ableton-style controls require generating UI from Theme Target Registry entries.",
+      suggestedFutureBite: "Generate read-write controls for mission-control.panel targets",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 4,
+      title: "Theme override storage + save preset",
+      whyItMatters: "Inspector adjustments need durable storage before they can ship to users.",
+      suggestedFutureBite: "Design override schema mapping themeTargetId + tokenPath -> value",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 5,
+      title: "Graph physics Playwright coverage",
+      whyItMatters: "Physics sliders remain the largest chunk of missing UI coverage.",
+      suggestedFutureBite: "Add e2e coverage once stable selectors exist for sliders",
+      risk: "medium",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV20: BanditAdvisorySection = {
   questions: [
     {
@@ -1063,31 +1157,19 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number): B
 
 // Advisory lookup function keyed by canonical qaKey
 export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
-  // v18 has its own advisory set
-  if (qaKey === "v18") {
-    return advisoryV18;
+  if (qaKey === "v21a") {
+    return advisoryV21a;
   }
-
-  if (qaKey === "v19") {
-    return advisoryV19;
-  }
-
   if (qaKey === "v20") {
     return advisoryV20;
   }
-  
-  // v17a has its own advisory set
-  if (qaKey === "v17a") {
-    return advisoryV17a;
+  if (qaKey === "v19") {
+    return advisoryV19;
   }
-  
-  // v17 has its own advisory set
-  if (qaKey === "v17") {
-    return advisoryV16e;
+  if (qaKey === "v18") {
+    return advisoryV18;
   }
-  
-  // v16 (v16d) has its own advisory set
-  if (qaKey === "v16") {
+  if (qaKey === "v16d") {
     return advisoryV16d;
   }
   

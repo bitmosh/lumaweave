@@ -11,8 +11,8 @@ const ACTIVE_CHECKLIST_STORAGE_KEY = "lumaweave-qa-active-checklist";
 const BACKLOG_STORAGE_KEY = "lumaweave-advisory-backlog-order";
 const QUESTION_ANSWER_STORAGE_KEY = "lumaweave-advisory-question-answers";
 const PROPOSAL_DECISIONS_STORAGE_KEY = "lumaweave-advisory-proposal-decisions";
-const DEFAULT_QA_KEY = "v20";
-const DEFAULT_FEATURE_ID = "theme-target-registry-v20";
+const DEFAULT_QA_KEY = "v21a";
+const DEFAULT_FEATURE_ID = "theme-target-inspector-v21a";
 const PROPOSAL_DECISION_OPTIONS: readonly BanditProposalDecision[] = [
   "unreviewed",
   "accept-for-future",
@@ -23,6 +23,14 @@ const PROPOSAL_DECISION_OPTIONS: readonly BanditProposalDecision[] = [
 
 const isProposalDecision = (value: unknown): value is BanditProposalDecision =>
   typeof value === "string" && PROPOSAL_DECISION_OPTIONS.includes(value as BanditProposalDecision);
+
+const extractQaVersion = (qaKey: string): number | undefined => {
+  const match = qaKey.match(/^v(\d+)/i);
+  if (match) {
+    return parseInt(match[1], 10);
+  }
+  return undefined;
+};
 
 const parseJson = <T,>(value: string | null): T | null => {
   if (!value) {
@@ -81,14 +89,7 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
     return DEFAULT_FEATURE_ID; // Default feature
   });
 
-  const [activeQaVersion, setActiveQaVersion] = useState<number>(() => {
-    // Derive qaVersion from qaKey (e.g., v17 -> 17)
-    const versionMatch = activeQaKey.match(/^v(\d+)$/);
-    if (versionMatch) {
-      return parseInt(versionMatch[1], 10);
-    }
-    return 18; // Default version
-  });
+  const [activeQaVersion, setActiveQaVersion] = useState<number>(() => extractQaVersion(activeQaKey) ?? 18);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [submitMessage, setSubmitMessage] = useState<string>("");
   const [localNotes, setLocalNotes] = useState<string>("");
@@ -593,8 +594,7 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
   };
 
   const handleChecklistChange = (qaKey: string) => {
-    const versionMatch = qaKey.match(/^v(\d+)$/);
-    const qaVersion = versionMatch ? parseInt(versionMatch[1], 10) : undefined;
+    const qaVersion = extractQaVersion(qaKey);
     const matchingChecklist = qaCheckDefinitions.find(
       (check) => (check.qaKey ?? `v${check.qaVersion}`) === qaKey && check.active !== false
     );

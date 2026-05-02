@@ -3,13 +3,10 @@ import { getThemeTargetById, type ThemeTargetContract } from "./themeTargetRegis
 
 interface HoverState {
   themeTargetId: string;
-  clientX: number;
-  clientY: number;
-  rect: DOMRect;
   metadata?: ThemeTargetContract;
 }
 
-const HOTKEY_LABEL = "Ctrl+Alt+T";
+const HOTKEY_LABEL = "Alt+Shift+I";
 
 const isEditableElement = (element: Element | null): boolean => {
   if (!element) {
@@ -42,13 +39,15 @@ export function ThemeTargetInspectorOverlay() {
 
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
-      if (event.key.toLowerCase() !== "t" || !event.ctrlKey || !event.altKey) {
+      if (event.key.toLowerCase() !== "i" || !event.altKey || !event.shiftKey) {
         return;
       }
 
       const targetElement = (event.target as HTMLElement | null) ?? null;
       const activeElement = (document.activeElement as HTMLElement | null) ?? null;
-      if (isEditableElement(targetElement) || isEditableElement(activeElement)) {
+      const focusIsEditable = isEditableElement(targetElement) || isEditableElement(activeElement);
+
+      if (!enabled && focusIsEditable) {
         return;
       }
 
@@ -59,7 +58,7 @@ export function ThemeTargetInspectorOverlay() {
 
     window.addEventListener("keydown", handleKeydown);
     return () => window.removeEventListener("keydown", handleKeydown);
-  }, []);
+  }, [enabled]);
 
   useEffect(() => {
     if (!enabled) {
@@ -81,12 +80,8 @@ export function ThemeTargetInspectorOverlay() {
       }
 
       const metadata = getThemeTargetById(themeTargetId) ?? undefined;
-      const rect = targetElement.getBoundingClientRect();
       setHoverState({
         themeTargetId,
-        clientX: event.clientX,
-        clientY: event.clientY,
-        rect,
         metadata,
       });
     };
@@ -120,69 +115,76 @@ export function ThemeTargetInspectorOverlay() {
       <div data-testid="theme-target-inspector-overlay" style={{ pointerEvents: "none" }}>
         {enabled && hoverState && (
           <div
-            data-testid="theme-target-inspector-tooltip"
+            data-testid="theme-target-inspector-panel"
             style={{
               position: "fixed",
-              top: hoverState.clientY + 16,
-              left: hoverState.clientX + 16,
+              bottom: "4.5rem",
+              right: "1rem",
               zIndex: 6000,
-              backgroundColor: "rgba(2, 6, 23, 0.9)",
-              color: "#e2e8f0",
-              border: "1px solid rgba(14, 165, 233, 0.4)",
-              borderRadius: "0.5rem",
-              padding: "0.75rem",
-              width: "18rem",
-              maxWidth: "calc(100vw - 2rem)",
-              backdropFilter: "blur(6px)",
-              boxShadow: "0 10px 30px rgba(8, 47, 73, 0.45)",
+              maxWidth: "min(24rem, calc(100vw - 2rem))",
+              width: "22rem",
+              pointerEvents: "none",
             }}
           >
-            <div style={{ fontSize: "0.8rem", fontWeight: 600 }}>
-              {hoverState.metadata?.label ?? hoverState.themeTargetId}
+            <div
+              data-testid="theme-target-inspector-tooltip"
+              style={{
+                backgroundColor: "rgba(2, 6, 23, 0.92)",
+                color: "#e2e8f0",
+                border: "1px solid rgba(14, 165, 233, 0.4)",
+                borderRadius: "0.65rem",
+                padding: "0.85rem 1rem",
+                backdropFilter: "blur(6px)",
+                boxShadow: "0 18px 36px rgba(2, 6, 23, 0.55)",
+              }}
+            >
+              <div style={{ fontSize: "0.85rem", fontWeight: 600 }}>
+                {hoverState.metadata?.label ?? hoverState.themeTargetId}
+              </div>
+              <div style={{ fontSize: "0.75rem", color: "#94a3b8", marginBottom: "0.65rem" }}>
+                {hoverState.themeTargetId} · surface {hoverState.metadata?.surface ?? "unknown"}
+              </div>
+
+              <dl style={{ fontSize: "0.75rem", lineHeight: 1.5 }}>
+                {hoverState.metadata?.status && (
+                  <div>
+                    <dt style={{ color: "#94a3b8" }}>Status</dt>
+                    <dd>{hoverState.metadata.status}</dd>
+                  </div>
+                )}
+
+                {hoverState.metadata?.visualHandle && (
+                  <div style={{ marginTop: "0.35rem" }}>
+                    <dt style={{ color: "#94a3b8" }}>Visual Handle</dt>
+                    <dd>{hoverState.metadata.visualHandle}</dd>
+                  </div>
+                )}
+
+                {hoverState.metadata?.editableProperties.length ? (
+                  <div style={{ marginTop: "0.35rem" }}>
+                    <dt style={{ color: "#94a3b8" }}>Editable Props</dt>
+                    <dd>{hoverState.metadata.editableProperties.join(", ")}</dd>
+                  </div>
+                ) : null}
+
+                {hasTokenBindings ? (
+                  <div style={{ marginTop: "0.35rem" }}>
+                    <dt style={{ color: "#94a3b8" }}>Token Bindings</dt>
+                    <dd>
+                      <ul style={{ paddingLeft: "1rem", margin: 0 }}>
+                        {tokenBindingEntries.map(([property, path]) => (
+                          <li key={property}>
+                            {property}: {path}
+                          </li>
+                        ))}
+                      </ul>
+                    </dd>
+                  </div>
+                ) : (
+                  <div style={{ marginTop: "0.35rem", color: "#fbbf24" }}>No token bindings recorded</div>
+                )}
+              </dl>
             </div>
-            <div style={{ fontSize: "0.7rem", color: "#94a3b8", marginBottom: "0.5rem" }}>
-              {hoverState.themeTargetId} · surface {hoverState.metadata?.surface ?? "unknown"}
-            </div>
-
-            <dl style={{ fontSize: "0.7rem", lineHeight: 1.4 }}>
-              {hoverState.metadata?.status && (
-                <div>
-                  <dt style={{ color: "#94a3b8" }}>Status</dt>
-                  <dd>{hoverState.metadata.status}</dd>
-                </div>
-              )}
-
-              {hoverState.metadata?.visualHandle && (
-                <div style={{ marginTop: "0.35rem" }}>
-                  <dt style={{ color: "#94a3b8" }}>Visual Handle</dt>
-                  <dd>{hoverState.metadata.visualHandle}</dd>
-                </div>
-              )}
-
-              {hoverState.metadata?.editableProperties.length ? (
-                <div style={{ marginTop: "0.35rem" }}>
-                  <dt style={{ color: "#94a3b8" }}>Editable Props</dt>
-                  <dd>{hoverState.metadata.editableProperties.join(", ")}</dd>
-                </div>
-              ) : null}
-
-              {hasTokenBindings ? (
-                <div style={{ marginTop: "0.35rem" }}>
-                  <dt style={{ color: "#94a3b8" }}>Token Bindings</dt>
-                  <dd>
-                    <ul style={{ paddingLeft: "1rem", margin: 0 }}>
-                      {tokenBindingEntries.map(([property, path]) => (
-                        <li key={property}>
-                          {property}: {path}
-                        </li>
-                      ))}
-                    </ul>
-                  </dd>
-                </div>
-              ) : (
-                <div style={{ marginTop: "0.35rem", color: "#fbbf24" }}>No token bindings recorded</div>
-              )}
-            </dl>
           </div>
         )}
       </div>

@@ -31,20 +31,67 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
     const toggleIndicator = page.getByTestId(OVERLAY_TOGGLE);
     await expect(toggleIndicator).toContainText("OFF");
 
-    await page.keyboard.press("Control+Alt+T");
+    await page.keyboard.press("Alt+Shift+I");
     await expect(toggleIndicator).toContainText("ON");
 
     const missionControlPanel = page.locator('[data-lw-theme-target="mission-control.panel"]').first();
     await missionControlPanel.hover();
 
+    const panel = page.getByTestId("theme-target-inspector-panel");
+    await expect(panel).toBeVisible();
+    await expect(panel).toContainText("mission-control.panel");
+    await expect(panel).toContainText("Token Bindings");
+
     const tooltip = page.getByTestId("theme-target-inspector-tooltip");
     await expect(tooltip).toBeVisible();
     await expect(tooltip).toContainText("mission-control.panel");
-    await expect(tooltip).toContainText("Token Bindings");
 
     // Toggle off to ensure overlay hides cleanly
-    await page.keyboard.press("Control+Alt+T");
+    await page.keyboard.press("Alt+Shift+I");
     await expect(toggleIndicator).toContainText("OFF");
+    await expect(page.getByTestId("theme-target-inspector-panel")).toHaveCount(0);
+    await expect(page.getByTestId("theme-target-inspector-tooltip")).toHaveCount(0);
+  });
+
+  test("overlay can toggle off even if focus is inside Mission Control note", async ({ page }) => {
+    await page.goto("/");
+    const toggleIndicator = page.getByTestId(OVERLAY_TOGGLE);
+    await expect(toggleIndicator).toContainText("OFF");
+    await page.keyboard.press("Alt+Shift+I");
+    await expect(toggleIndicator).toContainText("ON");
+
+    const missionControlPanel = page.locator('[data-lw-theme-target="mission-control.panel"]').first();
+    await missionControlPanel.hover();
+    await expect(page.getByTestId("theme-target-inspector-panel")).toBeVisible();
+
+    const qaNoteInput = page.locator('[data-testid="qa-note-input"]');
+    if (await qaNoteInput.count()) {
+      await qaNoteInput.first().click();
+      await qaNoteInput.first().fill("focus test");
+    }
+
+    await page.keyboard.press("Alt+Shift+I");
+    await expect(toggleIndicator).toContainText("OFF");
+    await expect(page.getByTestId("theme-target-inspector-panel")).toHaveCount(0);
+    await expect(page.getByTestId("theme-target-inspector-tooltip")).toHaveCount(0);
+  });
+
+  test("fixed metadata panel collapses when cursor leaves registered targets", async ({ page }) => {
+    await page.goto("/");
+    const toggleIndicator = page.getByTestId(OVERLAY_TOGGLE);
+    await expect(toggleIndicator).toContainText("OFF");
+    await page.keyboard.press("Alt+Shift+I");
+    await expect(toggleIndicator).toContainText("ON");
+
+    const missionControlPanel = page.locator('[data-lw-theme-target="mission-control.panel"]').first();
+    await missionControlPanel.hover();
+    await expect(page.getByTestId("theme-target-inspector-panel")).toBeVisible();
+
+    await page.locator("body").hover();
+    await page.evaluate(() => {
+      document.body.dispatchEvent(new MouseEvent("mousemove", { bubbles: true }));
+    });
+    await expect(page.getByTestId("theme-target-inspector-panel")).toHaveCount(0);
     await expect(page.getByTestId("theme-target-inspector-tooltip")).toHaveCount(0);
   });
 });

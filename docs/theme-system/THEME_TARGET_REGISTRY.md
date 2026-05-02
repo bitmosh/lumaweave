@@ -56,10 +56,10 @@ These bindings drive the new `data-lw-theme-target` markers but do not alter run
 | `theme-mapping.control` | Placeholder for generated inspector controls. |
 
 ## Read-Only Inspector Overlay Behavior
-- Toggled via `Ctrl+Alt+T` (debug-only hotkey).
+- Toggled via `Alt+Shift+I` (Ubuntu-safe debug hotkey).
 - Disabled by default; overlay merely displays metadata for hovered `data-lw-theme-target` elements.
-- Tooltip includes target label, ID, surface, status, visual handle, editable properties, and token bindings.
-- Overlay never enables editing, never modifies layout, and uses `pointer-events: none` for the HUD.
+- Hovering a registered target opens a fixed, bottom-right metadata panel (read-only) that lists label, ID, surface, status, visual handle, editable properties, and token bindings.
+- Overlay never enables editing, never modifies layout, and uses `pointer-events: none` for the HUD + panel so normal UI interactions continue.
 
 ## Non-Goals
 - No Theme Mapping Panel UI.
