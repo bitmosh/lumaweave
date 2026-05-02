@@ -1,0 +1,202 @@
+/**
+ * LumaWeave Visual Handle Library v0
+ * 
+ * Reusable CSS primitives for LumaWeave visual language.
+ * These are visual scaffolding handles, not active controls.
+ * 
+ * Categories:
+ * - Shell / Atmosphere
+ * - Containers
+ * - Controls
+ * - Metadata / Status
+ * - Graph Effects
+ */
+
+/* ========================================
+   Theme Variable Bridge
+   ======================================== */
+
+:root {
+  /* Fallback visual accent colors */
+  --lw-visual-accent: rgba(34, 211, 238, 0.9);
+  --lw-visual-accent-soft: rgba(34, 211, 238, 0.22);
+  --lw-visual-accent-hover: rgba(34, 211, 238, 1);
+  
+  /* Panel backgrounds */
+  --lw-visual-panel-bg: rgba(15, 23, 42, 0.72);
+  --lw-visual-panel-border: rgba(148, 163, 184, 0.24);
+  
+  /* Card backgrounds */
+  --lw-visual-card-bg: rgba(15, 23, 42, 0.48);
+  --lw-visual-card-border: rgba(148, 163, 184, 0.18);
+  
+  /* Badge colors */
+  --lw-visual-badge-bg: rgba(34, 211, 238, 0.15);
+  --lw-visual-badge-text: rgba(34, 211, 238, 0.95);
+  
+  /* Divider colors */
+  --lw-visual-divider-color: rgba(148, 163, 184, 0.16);
+  
+  /* Button colors */
+  --lw-visual-button-bg: rgba(34, 211, 238, 0.12);
+  --lw-visual-button-border: rgba(34, 211, 238, 0.3);
+  --lw-visual-button-text: rgba(241, 245, 249, 0.95);
+  --lw-visual-button-hover-bg: rgba(34, 211, 238, 0.2);
+  --lw-visual-button-active-bg: rgba(34, 211, 238, 0.28);
+  
+  /* Graph frame colors */
+  --lw-visual-graph-frame-bg: rgba(2, 6, 23, 0.5);
+  --lw-visual-graph-frame-border: rgba(34, 211, 238, 0.15);
+  
+  /* Glow effects */
+  --lw-visual-glow-color: rgba(34, 211, 238, 0.4);
+  --lw-visual-glow-spread: 8px;
+}
+
+/* ========================================
+   Shell / Atmosphere
+   ======================================== */
+
+.lw-ambient-shell {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background: var(--lw-visual-panel-bg);
+  /* Scaffold: Ambient shell effects are parked */
+}
+
+.lw-panel-aurora {
+  position: relative;
+  border-radius: 1rem;
+  background: var(--lw-visual-panel-bg);
+  /* Scaffold: Aurora effects are parked */
+}
+
+.lw-graph-frame {
+  position: relative;
+  border-radius: 0.75rem;
+  background: var(--lw-visual-graph-frame-bg);
+  border: 1px solid var(--lw-visual-graph-frame-border);
+  overflow: hidden;
+}
+
+/* ========================================
+   Containers
+   ======================================== */
+
+.lw-panel {
+  position: relative;
+  border-radius: 1rem;
+  border: 1px solid var(--lw-panel-border, var(--lw-visual-panel-border));
+  background: var(--lw-panel-bg, var(--lw-visual-panel-bg));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.lw-card {
+  position: relative;
+  border-radius: 0.875rem;
+  border: 1px solid var(--lw-card-border, var(--lw-visual-card-border));
+  background: var(--lw-card-bg, var(--lw-visual-card-bg));
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* ========================================
+   Controls
+   ======================================== */
+
+.lw-button {
+  position: relative;
+  border-radius: 0.5rem;
+  border: 1px solid var(--lw-visual-button-border);
+  background: var(--lw-visual-button-bg);
+  color: var(--lw-visual-button-text);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  outline: none;
+}
+
+.lw-button:hover {
+  background: var(--lw-visual-button-hover-bg);
+  border-color: var(--lw-visual-accent);
+}
+
+.lw-button:active {
+  background: var(--lw-visual-button-active-bg);
+}
+
+.lw-button-active {
+  background: var(--lw-visual-button-active-bg);
+  border-color: var(--lw-visual-accent);
+}
+
+.lw-control-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.25rem;
+}
+
+/* ========================================
+   Metadata / Status
+   ======================================== */
+
+.lw-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--lw-visual-badge-bg);
+  color: var(--lw-visual-badge-text);
+  border: 1px solid rgba(34, 211, 238, 0.2);
+}
+
+.lw-divider {
+  position: relative;
+  height: 1px;
+  background: var(--lw-visual-divider-color);
+  border: none;
+  margin: 0.75rem 0;
+}
+
+/* ========================================
+   Graph Effects
+   ======================================== */
+
+.lw-node-glow {
+  position: absolute;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: 0 0 var(--lw-visual-glow-spread) var(--lw-visual-glow-color);
+  /* Scaffold: Not wired to Sigma renderer yet */
+}
+
+.lw-edge-glow {
+  position: absolute;
+  pointer-events: none;
+  box-shadow: 0 0 var(--lw-visual-glow-spread) var(--lw-visual-glow-color);
+  /* Scaffold: Not wired to Sigma renderer yet */
+}
+
+/* ========================================
+   Reduced Motion Support
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .lw-button {
+    transition: none;
+  }
+  
+  .lw-node-glow,
+  .lw-edge-glow {
+    animation: none;
+    transition: none;
+  }
+}
