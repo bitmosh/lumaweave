@@ -1,0 +1,531 @@
+/**
+ * LumaWeave Sigma 2D Graph View
+ * Renders normalized graph using Graphology + Sigma
+ *
+ * This component applies graph visual policies to determine label visibility and styling.
+ */
+
+import { useEffect, useRef, useState } from "react";
+import Sigma from "sigma";
+import type {
+  LumaWeaveNodeDraft,
+  LumaWeaveEdgeDraft,
+} from "../../schema/graph.types";
+import {
+  buildGraphologyGraph,
+  LayoutSettings,
+} from "./buildGraphologyGraph";
+import {
+  getRelationshipNeighborhood,
+  getNodeNeighborhood,
+} from "./selectionNeighborhood";
+import { CollapsiblePanel } from "../../../control-plane/panels/CollapsiblePanel";
+import { graphVisualTokens } from "../../visual/graphVisualTokens";
+import { applyGraphStylePolicy } from "../../visual/graphStylePolicy";
+import {
+  type GraphInteractionState,
+  type StylePolicyOptions,
+} from "../../visual/graphVisualTypes";
+import {
+  applyNodeLabelPolicy,
+  applyEdgeLabelPolicy,
+  type SelectionContext,
+  type LegacyLabelPolicyOptions,
+  type NodeLabelMode,
+  type EdgeLabelMode,
+} from "../../visual/applyGraphLabelPolicyToGraphology";
+
+interface SigmaGraphViewProps {
+  nodes: LumaWeaveNodeDraft[];
+  edges: LumaWeaveEdgeDraft[];
+  nodeSize: number;
+  linkDistance: number;
+  repelForce: number;
+
+  selectedNodeId: string | null;
+  selectedEdgeId?: string | null;
+  nodeSelectionStage?: 1 | 2 | 3;
+
+  nodeLabelMode?: NodeLabelMode;
+  edgeLabelMode?: EdgeLabelMode;
+  maxEdgeLabelLength?: number;
+  showLabelsOnHover?: boolean;
+  zoomLabelThreshold?: number;
+  edgeLabelFontSize?: number;
+  nodeLabelFontSize?: number;
+  hoverNodeColor?: string;
+
+  resolvedTokens?: {
+    nodeColor: {
+      default: string;
+      selected: string;
+      hover: string;
+      relationshipEndpoint: string;
+      secondary: string;
+      tertiary: string;
+    };
+    edgeColor: {
+      default: string;
+      selected: string;
+      hovered: string;
+      secondary: string;
+      tertiary: string;
+    };
+    nodeLabelColor: {
+      default: string;
+      hover: string;
+      selected: string;
+    };
+    edgeLabelColor: {
+      default: string;
+      selected: string;
+    };
+    labelFontSize: {
+      node: number;
+      edge: number;
+    };
+    nodeSizeMultiplier: {
+      default: number;
+      selected: number;
+      relationshipEndpoint: number;
+      secondary: number;
+      tertiary: number;
+    };
+    edgeSize: {
+      default: number;
+      selected: number;
+      hovered: number;
+      secondary: number;
+      tertiary: number;
+    };
+    labelTruncation: {
+      maxEdgeLabelLength: number;
+      allMediumMultiplier: number;
+    };
+    sigmaConfig: {
+      labelRenderedSizeThreshold: number;
+      labelFont: string;
+      edgeLabelFont: string;
+    };
+  };
+
+  onSelectNode: (nodeId: string) => void;
+  onSelectEdge?: (edgeId: string) => void;
+  onClearSelection: () => void;
+}
+
+export function SigmaGraphView({
+  nodes,
+  edges,
+  nodeSize,
+  linkDistance,
+  repelForce,
+  selectedNodeId,
+  selectedEdgeId = null,
+  nodeSelectionStage = 1,
+  nodeLabelMode = "selected-neighborhood",
+  edgeLabelMode = "selected-neighborhood",
+  maxEdgeLabelLength = 48,
+  showLabelsOnHover = true,
+  zoomLabelThreshold = 1.15,
+  edgeLabelFontSize = 13,
+  nodeLabelFontSize = 13,
+  hoverNodeColor = "#ffffff",
+  resolvedTokens = graphVisualTokens,
+  onSelectNode,
+  onSelectEdge,
+  onClearSelection,
+}: SigmaGraphViewProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const sigmaRef = useRef<Sigma | null>(null);
+  const onSelectNodeRef = useRef(onSelectNode);
+  const onSelectEdgeRef = useRef(onSelectEdge);
+  const onClearSelectionRef = useRef(onClearSelection);
+  const hasInitialCameraResetRef = useRef(false);
+
+  const [debugInfo, setDebugInfo] = useState<Record<string, string | number>>(
+    {},
+  );
+  const [neighborhoodInfo, setNeighborhoodInfo] = useState<{
+    sourceId: string | null;
+    targetId: string | null;
+    secondaryEdgeCount: number;
+    secondaryNodeCount: number;
+  }>({
+    sourceId: null,
+    targetId: null,
+    secondaryEdgeCount: 0,
+    secondaryNodeCount: 0,
+  });
+
+  const [nodeNeighborhoodInfo, setNodeNeighborhoodInfo] = useState<{
+    directEdgeCount: number;
+    directNeighborCount: number;
+  }>({
+    directEdgeCount: 0,
+    directNeighborCount: 0,
+  });
+
+  const settings: LayoutSettings = { nodeSize, linkDistance, repelForce };
+
+  const [activeSelectionMode, setActiveSelectionMode] = useState<
+    "none" | "node-stage-1" | "node-stage-2" | "node-stage-3" | "edge-relationship"
+  >("none");
+  const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
+  const [hoveredEdgeId, setHoveredEdgeId] = useState<string | null>(null);
+
+  useEffect(() => {
+    onSelectNodeRef.current = onSelectNode;
+    onSelectEdgeRef.current = onSelectEdge;
+    onClearSelectionRef.current = onClearSelection;
+  }, [onSelectNode, onSelectEdge, onClearSelection]);
+
+  console.log("SigmaGraphView input", {
+    nodes: nodes.length,
+    edges: edges.length,
+    nodeSize,
+    linkDistance,
+    repelForce,
+  });
+
+  useEffect(() => {
+    if (!containerRef.current || nodes.length === 0) return;
+
+    const { graph, diagnostics } = buildGraphologyGraph(nodes, edges, settings);
+
+    setDebugInfo({
+      sigmaInputNodes: nodes.length,
+      sigmaInputEdges: edges.length,
+      graphologyOrder: diagnostics.order,
+      graphologySize: diagnostics.size,
+      uniqueX: diagnostics.uniqueX,
+      uniqueY: diagnostics.uniqueY,
+      minX: diagnostics.minX,
+      maxX: diagnostics.maxX,
+      minY: diagnostics.minY,
+      maxY: diagnostics.maxY,
+      currentNodeSize: nodeSize,
+      currentLinkDistance: linkDistance,
+      currentRepelForce: repelForce,
+    });
+
+    const sigma = new Sigma(graph, containerRef.current, {
+      renderLabels: true,
+      labelFont: resolvedTokens.sigmaConfig.labelFont,
+      labelSize: nodeLabelFontSize,
+      labelColor: { attribute: "labelColor", color: resolvedTokens.nodeLabelColor.default },
+      labelRenderedSizeThreshold: resolvedTokens.sigmaConfig.labelRenderedSizeThreshold,
+      renderEdgeLabels: true,
+
+      defaultNodeColor: resolvedTokens.nodeColor.default,
+      defaultEdgeColor: resolvedTokens.edgeColor.default,
+      defaultEdgeType: "line",
+
+      enableEdgeEvents: true,
+
+      edgeLabelFont: resolvedTokens.sigmaConfig.edgeLabelFont,
+      edgeLabelSize: edgeLabelFontSize,
+      edgeLabelColor: { color: resolvedTokens.edgeLabelColor.default },
+    });
+
+    console.log("[SIGMA CONFIG] labelColor: attribute-based with fallback", resolvedTokens.nodeLabelColor.default, ", edgeLabelSize:", edgeLabelFontSize);
+
+  sigmaRef.current = sigma;
+
+  // Camera preservation rule: Only reset camera once after initial graph load.
+  // Browser resize should resize canvas but preserve camera position/ratio.
+  // This ref tracks whether the initial reset has happened.
+  if (!hasInitialCameraResetRef.current) {
+    sigma.getCamera().animatedReset({ duration: 0 });
+    hasInitialCameraResetRef.current = true;
+  }
+
+  sigma.on("clickNode", ({ node }) => {
+    onSelectNodeRef.current(node);
+  });
+
+  sigma.on("clickEdge", ({ edge }) => {
+    if (onSelectEdgeRef.current) {
+      onSelectEdgeRef.current(edge);
+    }
+  });
+
+  sigma.on("clickStage", () => {
+    onClearSelectionRef.current();
+  });
+
+  sigma.on("enterNode", ({ node }) => {
+    console.log("[HOVER] enterNode:", node);
+    setHoveredNodeId(node);
+  });
+
+  sigma.on("leaveNode", () => {
+    console.log("[HOVER] leaveNode: clearing hoveredNodeId");
+    setHoveredNodeId(null);
+  });
+
+  sigma.on("enterEdge", ({ edge }) => {
+    console.log("[HOVER] enterEdge:", edge);
+    setHoveredEdgeId(edge);
+  });
+
+  sigma.on("leaveEdge", () => {
+    console.log("[HOVER] leaveEdge: clearing hoveredEdgeId");
+    setHoveredEdgeId(null);
+  });
+
+  return () => {
+    sigma.kill();
+    sigmaRef.current = null;
+    hasInitialCameraResetRef.current = false;
+  };
+}, [nodes, edges, nodeSize, linkDistance, repelForce, resolvedTokens]);
+
+  // ResizeObserver to handle container size changes
+  useEffect(() => {
+    if (!containerRef.current) return;
+    
+    const resizeObserver = new ResizeObserver(() => {
+      if (sigmaRef.current) {
+        sigmaRef.current.resize();
+        sigmaRef.current.refresh(); // Ensure graph renders after container resize
+      }
+    });
+    resizeObserver.observe(containerRef.current);
+
+    return () => {
+      resizeObserver.disconnect();
+      if (sigmaRef.current) {
+        sigmaRef.current.kill();
+        sigmaRef.current = null;
+        hasInitialCameraResetRef.current = false;
+      }
+    };
+  }, []);
+
+  // Single selection styling effect - uses graph visual policy system
+  useEffect(() => {
+    const sigma = sigmaRef.current;
+    if (!sigma) return;
+
+    const graph = sigma.getGraph();
+
+    console.log("[STYLING] Running policy-based styling", {
+      selectedNodeId,
+      selectedEdgeId,
+      nodeSelectionStage,
+      hoveredNodeId,
+      hoveredEdgeId,
+      hoverNodeColor,
+    });
+
+    // Build interaction state for policy
+    const interactionState: GraphInteractionState = {
+      selectedNodeId,
+      selectedEdgeId,
+      hoveredNodeId,
+      hoveredEdgeId,
+      neighborhoodDepth: nodeSelectionStage,
+    };
+
+    // Build style options for policy
+    const styleOptions: StylePolicyOptions = {
+      hoverNodeColor,
+      edgeLabelFontSize,
+    };
+
+    // Apply complete styling policy (reset + selection + hover)
+    applyGraphStylePolicy(graph, interactionState, styleOptions, resolvedTokens);
+
+    // Update neighborhood info for debug panel (policy doesn't handle this)
+    if (selectedEdgeId) {
+      const neighborhood = getRelationshipNeighborhood(graph, selectedEdgeId);
+      setNeighborhoodInfo({
+        sourceId: neighborhood.sourceId,
+        targetId: neighborhood.targetId,
+        secondaryEdgeCount: neighborhood.secondaryEdgeIds.length,
+        secondaryNodeCount: neighborhood.secondaryNodeIds.length,
+      });
+      setNodeNeighborhoodInfo({
+        directEdgeCount: 0,
+        directNeighborCount: 0,
+      });
+    } else if (selectedNodeId) {
+      const neighborhood = getNodeNeighborhood(graph, selectedNodeId);
+      setNeighborhoodInfo({
+        sourceId: null,
+        targetId: null,
+        secondaryEdgeCount: 0,
+        secondaryNodeCount: 0,
+      });
+      setNodeNeighborhoodInfo({
+        directEdgeCount: neighborhood.directEdgeIds.length,
+        directNeighborCount: neighborhood.directNeighborNodeIds.length,
+      });
+    } else {
+      setNeighborhoodInfo({
+        sourceId: null,
+        targetId: null,
+        secondaryEdgeCount: 0,
+        secondaryNodeCount: 0,
+      });
+      setNodeNeighborhoodInfo({
+        directEdgeCount: 0,
+        directNeighborCount: 0,
+      });
+    }
+
+    // Update active selection mode for debug panel
+    if (selectedEdgeId) {
+      setActiveSelectionMode("edge-relationship");
+      console.log("[STYLING] Applied selected edge styling:", selectedEdgeId);
+    } else if (selectedNodeId) {
+      const modeMap: Record<1 | 2 | 3, "node-stage-1" | "node-stage-2" | "node-stage-3"> = {
+        1: "node-stage-1",
+        2: "node-stage-2",
+        3: "node-stage-3",
+      };
+      setActiveSelectionMode(modeMap[nodeSelectionStage]);
+      console.log("[STYLING] Applied selected node styling:", selectedNodeId, "stage", nodeSelectionStage);
+    } else {
+      setActiveSelectionMode("none");
+      console.log("[STYLING] No selection");
+    }
+
+    sigma.refresh();
+    console.log("[STYLING] Refreshed Sigma");
+  }, [selectedNodeId, selectedEdgeId, nodeSelectionStage, hoveredNodeId, hoveredEdgeId, hoverNodeColor, edgeLabelFontSize]);
+
+  // Edge label font size live update effect
+  useEffect(() => {
+    const sigma = sigmaRef.current;
+    if (!sigma) return;
+
+    console.log("[EDGE LABEL SIZE] Updating to:", edgeLabelFontSize);
+    sigma.setSetting("edgeLabelSize", edgeLabelFontSize);
+    sigma.refresh();
+    console.log("[EDGE LABEL SIZE] Updated and refreshed");
+  }, [edgeLabelFontSize]);
+
+  // Node label font size live update effect
+  useEffect(() => {
+    const sigma = sigmaRef.current;
+    if (!sigma) return;
+
+    console.log("[NODE LABEL SIZE] Updating to:", nodeLabelFontSize);
+    sigma.setSetting("labelSize", nodeLabelFontSize);
+    sigma.refresh();
+    console.log("[NODE LABEL SIZE] Updated and refreshed");
+  }, [nodeLabelFontSize]);
+
+  // Label policy effect - applies label visibility based on mode and selection
+  useEffect(() => {
+    const sigma = sigmaRef.current;
+    if (!sigma) return;
+
+    const graph = sigma.getGraph();
+
+    const selectionContext: SelectionContext = {
+      selectedNodeId,
+      selectedEdgeId,
+      nodeSelectionStage,
+      hoveredNodeId,
+      hoveredEdgeId,
+    };
+
+    const labelOptions: LegacyLabelPolicyOptions = {
+      maxEdgeLabelLength,
+      showLabelsOnHover,
+      hoverLabelColor: "#0f172a", // Not used in v0, kept for API compatibility
+    };
+
+    console.log("[LABEL POLICY] Applying with", {
+      nodeLabelMode,
+      edgeLabelMode,
+      selectedNodeId,
+      selectedEdgeId,
+      nodeSelectionStage,
+      hoveredNodeId,
+      hoveredEdgeId,
+    });
+
+    applyNodeLabelPolicy(graph, selectionContext, labelOptions, nodeLabelMode);
+    applyEdgeLabelPolicy(graph, selectionContext, labelOptions, edgeLabelMode);
+
+    sigma.refresh();
+    console.log("[LABEL POLICY] Applied and refreshed");
+  }, [selectedNodeId, selectedEdgeId, nodeSelectionStage, nodeLabelMode, edgeLabelMode, maxEdgeLabelLength, showLabelsOnHover, hoveredNodeId, hoveredEdgeId]);
+
+  return (
+    <div className="relative h-full w-full" data-testid="renderer-debug-panel">
+      <div ref={containerRef} className="absolute inset-0" />
+
+      <CollapsiblePanel
+        title="Renderer Debug"
+        collapsedLabel="Debug"
+        defaultExpanded={false}
+        className="absolute left-4 bottom-4 w-80 text-xs shadow-2xl shadow-cyan-950/40"
+      >
+        <div className="space-y-1 text-xs">
+          <DebugRow label="Sigma Input Nodes" value={debugInfo.sigmaInputNodes} />
+          <DebugRow label="Sigma Input Edges" value={debugInfo.sigmaInputEdges} />
+          <DebugRow label="Graphology Order" value={debugInfo.graphologyOrder} />
+          <DebugRow label="Graphology Size" value={debugInfo.graphologySize} />
+          <DebugRow label="Unique X" value={debugInfo.uniqueX} />
+          <DebugRow label="Unique Y" value={debugInfo.uniqueY} />
+          <DebugRow label="Min X" value={debugInfo.minX} />
+          <DebugRow label="Max X" value={debugInfo.maxX} />
+          <DebugRow label="Min Y" value={debugInfo.minY} />
+          <DebugRow label="Max Y" value={debugInfo.maxY} />
+          <DebugRow label="Node Size" value={debugInfo.currentNodeSize} />
+          <DebugRow label="Link Distance" value={debugInfo.currentLinkDistance} />
+          <DebugRow label="Repel Force" value={debugInfo.currentRepelForce} />
+          <DebugRow label="Selected Node" value={selectedNodeId ?? "none"} data-testid="selected-node-debug-row" />
+          <DebugRow label="Selected Edge" value={selectedEdgeId ?? "none"} data-testid="selected-edge-debug-row" />
+          <DebugRow label="Node Selection Stage" value={nodeSelectionStage} />
+          <DebugRow label="Active Selection Mode" value={activeSelectionMode} />
+          <DebugRow label="Node Label Mode" value={nodeLabelMode} data-testid="node-label-mode-debug-row" />
+          <DebugRow label="Edge Label Mode" value={edgeLabelMode} data-testid="edge-label-mode-debug-row" />
+          <DebugRow label="Max Edge Label Length" value={maxEdgeLabelLength} />
+          <DebugRow label="Edge Label Font Size" value={edgeLabelFontSize} data-testid="edge-label-font-size-debug-row" />
+          <DebugRow label="Node Label Font Size" value={nodeLabelFontSize} data-testid="node-label-font-size-debug-row" />
+          <DebugRow label="Hovered Node" value={hoveredNodeId ?? "none"} data-testid="hovered-node-debug-row" />
+          <DebugRow label="Hovered Edge" value={hoveredEdgeId ?? "none"} data-testid="hovered-edge-debug-row" />
+          <DebugRow label="Show Labels On Hover" value={showLabelsOnHover ? "true" : "false"} />
+          <DebugRow label="Zoom Label Threshold" value={zoomLabelThreshold} />
+          {selectedEdgeId && (
+            <>
+              <DebugRow label="Edge Source" value={neighborhoodInfo.sourceId ?? "none"} />
+              <DebugRow label="Edge Target" value={neighborhoodInfo.targetId ?? "none"} />
+              <DebugRow label="Secondary Edges" value={neighborhoodInfo.secondaryEdgeCount} />
+              <DebugRow label="Secondary Nodes" value={neighborhoodInfo.secondaryNodeCount} />
+            </>
+          )}
+          {selectedNodeId && (
+            <>
+              <DebugRow label="Direct Edges" value={nodeNeighborhoodInfo.directEdgeCount} />
+              <DebugRow label="Direct Neighbors" value={nodeNeighborhoodInfo.directNeighborCount} />
+            </>
+          )}
+        </div>
+      </CollapsiblePanel>
+    </div>
+  );
+}
+
+function DebugRow({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | number | undefined | null;
+}) {
+  return (
+    <div className="flex justify-between gap-4">
+      <span className="text-slate-500">{label}:</span>
+      <span className="max-w-48 truncate text-right text-slate-200">
+        {value ?? "-"}
+      </span>
+    </div>
+  );
+}
