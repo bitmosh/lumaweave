@@ -55,11 +55,11 @@ These bindings drive the new `data-lw-theme-target` markers but do not alter run
 | `theme-mapping.panel` | Placeholder for Theme Mapping Panel container once UI exists. |
 | `theme-mapping.control` | Placeholder for generated inspector controls. |
 
-## Read-Only Inspector Overlay Behavior
+## Read-Only UI Inspector Behavior
 - Toggled via `Alt+Shift+I` (Ubuntu-safe debug hotkey).
-- Disabled by default; overlay merely displays metadata for hovered `data-lw-theme-target` elements.
+- Disabled by default; the UI Inspector merely displays metadata for hovered `data-lw-theme-target` elements.
 - Hovering a registered target opens a fixed, bottom-right metadata panel (read-only) that lists label, ID, surface, status, visual handle, editable properties, and token bindings.
-- Overlay never enables editing, never modifies layout, and uses `pointer-events: none` for the HUD + panel so normal UI interactions continue.
+- UI Inspector never enables editing, never modifies layout, uses `pointer-events: none` for the HUD + panel so normal UI interactions continue, and anchors its metadata panel to the graph viewport’s lower-right corner so it does not cover Mission Control or the Control Plane.
 
 ## Non-Goals
 - No Theme Mapping Panel UI.
@@ -73,5 +73,5 @@ These bindings drive the new `data-lw-theme-target` markers but do not alter run
 - Typecheck + Playwright remain green with zero skipped tests.
 - QA Debug tab shows Theme Target Registry summary counts and surface breakdown.
 - `data-lw-theme-target` attributes exist only on safe containers (shell, top bar, mission control cards, settings panel, graph frame).
-- Inspector overlay defaults OFF, toggles via hotkey, and remains read-only.
+- UI Inspector defaults OFF, toggles via hotkey, and remains read-only.
 - Graph frame and mission control visuals remain unchanged outside of diagnostic markers.

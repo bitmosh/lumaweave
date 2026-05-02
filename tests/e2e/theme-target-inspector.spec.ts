@@ -94,4 +94,37 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
     await expect(page.getByTestId("theme-target-inspector-panel")).toHaveCount(0);
     await expect(page.getByTestId("theme-target-inspector-tooltip")).toHaveCount(0);
   });
+
+  test("UI Inspector panel stays inside graph viewport lower-right", async ({ page }) => {
+    await page.goto("/");
+
+    const toggleIndicator = page.getByTestId(OVERLAY_TOGGLE);
+    await expect(toggleIndicator).toContainText("OFF");
+    await page.keyboard.press("Alt+Shift+I");
+    await expect(toggleIndicator).toContainText("ON");
+
+    const missionControlPanel = page.locator('[data-lw-theme-target="mission-control.panel"]').first();
+    await missionControlPanel.hover();
+    const panel = page.getByTestId("theme-target-inspector-panel");
+    await expect(panel).toBeVisible();
+
+    const panelBox = await panel.boundingBox();
+    const graphBox = await page.getByTestId("graph-viewport").boundingBox();
+
+    expect(panelBox).not.toBeNull();
+    expect(graphBox).not.toBeNull();
+
+    if (!panelBox || !graphBox) {
+      throw new Error("Failed to measure UI Inspector panel or graph viewport");
+    }
+
+    expect(panelBox.x).toBeGreaterThanOrEqual(graphBox.x - 1);
+    expect(panelBox.x + panelBox.width).toBeLessThanOrEqual(graphBox.x + graphBox.width + 1);
+
+    const rightGap = graphBox.x + graphBox.width - (panelBox.x + panelBox.width);
+    expect(rightGap).toBeGreaterThanOrEqual(0);
+    expect(rightGap).toBeLessThanOrEqual(48);
+
+    expect(panelBox.y + panelBox.height).toBeLessThanOrEqual(graphBox.y + graphBox.height + 1);
+  });
 });

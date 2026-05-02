@@ -6,7 +6,14 @@ interface HoverState {
   metadata?: ThemeTargetContract;
 }
 
+interface GraphViewportOffsets {
+  right: number;
+  bottom: number;
+}
+
 const HOTKEY_LABEL = "Alt+Shift+I";
+const GRAPH_VIEWPORT_SELECTOR = "[data-testid='graph-viewport']";
+const PANEL_MARGIN_PX = 24;
 
 const isEditableElement = (element: Element | null): boolean => {
   if (!element) {
@@ -31,6 +38,7 @@ const isEditableElement = (element: Element | null): boolean => {
 export function ThemeTargetInspectorOverlay() {
   const [enabled, setEnabled] = useState(false);
   const [hoverState, setHoverState] = useState<HoverState | null>(null);
+  const [graphViewportOffsets, setGraphViewportOffsets] = useState<GraphViewportOffsets | null>(null);
 
   const tokenBindingEntries = hoverState?.metadata
     ? Object.entries(hoverState.metadata.tokenBindings)
@@ -59,6 +67,43 @@ export function ThemeTargetInspectorOverlay() {
     window.addEventListener("keydown", handleKeydown);
     return () => window.removeEventListener("keydown", handleKeydown);
   }, [enabled]);
+
+  useEffect(() => {
+    const updateOffsets = () => {
+      const graphViewportElement = document.querySelector<HTMLElement>(GRAPH_VIEWPORT_SELECTOR);
+      if (!graphViewportElement) {
+        setGraphViewportOffsets(null);
+        return;
+      }
+
+      const rect = graphViewportElement.getBoundingClientRect();
+      setGraphViewportOffsets({
+        right: Math.max(window.innerWidth - rect.right + PANEL_MARGIN_PX, PANEL_MARGIN_PX),
+        bottom: Math.max(window.innerHeight - rect.bottom + PANEL_MARGIN_PX, PANEL_MARGIN_PX),
+      });
+    };
+
+    updateOffsets();
+    window.addEventListener("resize", updateOffsets);
+    window.addEventListener("scroll", updateOffsets, true);
+
+    const graphViewportElement = document.querySelector<HTMLElement>(GRAPH_VIEWPORT_SELECTOR);
+    const resizeObserver = typeof ResizeObserver !== "undefined" && graphViewportElement
+      ? new ResizeObserver(updateOffsets)
+      : null;
+    if (resizeObserver && graphViewportElement) {
+      resizeObserver.observe(graphViewportElement);
+    }
+
+    return () => {
+      window.removeEventListener("resize", updateOffsets);
+      window.removeEventListener("scroll", updateOffsets, true);
+      if (resizeObserver && graphViewportElement) {
+        resizeObserver.unobserve(graphViewportElement);
+        resizeObserver.disconnect();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!enabled) {
@@ -109,7 +154,7 @@ export function ThemeTargetInspectorOverlay() {
           pointerEvents: "none",
         }}
       >
-        Inspector: {enabled ? "ON" : "OFF"} ({HOTKEY_LABEL})
+        UI Inspector: {enabled ? "ON" : "OFF"} ({HOTKEY_LABEL})
       </div>
 
       <div data-testid="theme-target-inspector-overlay" style={{ pointerEvents: "none" }}>
@@ -118,8 +163,8 @@ export function ThemeTargetInspectorOverlay() {
             data-testid="theme-target-inspector-panel"
             style={{
               position: "fixed",
-              bottom: "4.5rem",
-              right: "1rem",
+              bottom: graphViewportOffsets?.bottom ?? "4.5rem",
+              right: graphViewportOffsets?.right ?? "1rem",
               zIndex: 6000,
               maxWidth: "min(24rem, calc(100vw - 2rem))",
               width: "22rem",

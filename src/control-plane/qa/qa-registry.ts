@@ -20,7 +20,7 @@ export const qaCheckDefinitions: QaCheckDefinition[] = [
   {
     id: "v21a-no-ghost-overlay",
     featureId: "theme-target-inspector-v21a",
-    featureName: "Theme Target Inspector Overlay v21a",
+    featureName: "UI Inspector (Theme Target Inspector Overlay) v21a",
     qaKey: "v21a",
     title: "No ghost overlay layer implemented",
     expected: "Inspector still operates without registered/unregistered ghost outlines; only fixed metadata panel ships in this pass",
@@ -35,7 +35,7 @@ export const qaCheckDefinitions: QaCheckDefinition[] = [
   {
     id: "v21a-no-mapping-panel",
     featureId: "theme-target-inspector-v21a",
-    featureName: "Theme Target Inspector Overlay v21a",
+    featureName: "UI Inspector (Theme Target Inspector Overlay) v21a",
     qaKey: "v21a",
     title: "No Theme Mapping Panel implemented",
     expected: "UI exposes inspection only, no editing toggles",
@@ -49,7 +49,7 @@ export const qaCheckDefinitions: QaCheckDefinition[] = [
   {
     id: "v21a-no-override-storage",
     featureId: "theme-target-inspector-v21a",
-    featureName: "Theme Target Inspector Overlay v21a",
+    featureName: "UI Inspector (Theme Target Inspector Overlay) v21a",
     qaKey: "v21a",
     title: "No theme override storage added",
     expected: "Settings store / presets remain unchanged",
@@ -64,7 +64,7 @@ export const qaCheckDefinitions: QaCheckDefinition[] = [
   {
     id: "v21a-no-graph-renderer-change",
     featureId: "theme-target-inspector-v21a",
-    featureName: "Theme Target Inspector Overlay v21a",
+    featureName: "UI Inspector (Theme Target Inspector Overlay) v21a",
     qaKey: "v21a",
     title: "No graph renderer behavior changed",
     expected: "Sigma/Graphology files untouched and renderer behaves identically",
@@ -5687,7 +5687,7 @@ export const qaCheckDefinitions: QaCheckDefinition[] = [
   {
     id: "v21a-default-active-checklist",
     featureId: "theme-target-inspector-v21a",
-    featureName: "Theme Target Inspector Overlay v21a",
+    featureName: "UI Inspector (Theme Target Inspector Overlay) v21a",
     qaKey: "v21a",
     title: "v21a is default active checklist",
     expected: "QA panel badge + dropdown default to v21a; Debug diagnostics and report key show v21a",
@@ -5825,10 +5825,10 @@ export const qaCheckDefinitions: QaCheckDefinition[] = [
   {
     id: "v21a-fixed-panel-hover",
     featureId: "theme-target-inspector-v21a",
-    featureName: "Theme Target Inspector Overlay v21a",
+    featureName: "UI Inspector (Theme Target Inspector Overlay) v21a",
     qaKey: "v21a",
     title: "Fixed metadata panel appears on hover",
-    expected: "Hovering registered target shows fixed bottom-right panel with ID, label, surface, status, visual handle, editable props, token bindings",
+    expected: "Hovering registered target shows fixed graph-viewport lower-right panel with ID, label, surface, status, visual handle, editable props, token bindings",
     qaVersion: 21,
     active: true,
     steps: [
@@ -5841,7 +5841,7 @@ export const qaCheckDefinitions: QaCheckDefinition[] = [
   {
     id: "v21a-panel-collapse",
     featureId: "theme-target-inspector-v21a",
-    featureName: "Theme Target Inspector Overlay v21a",
+    featureName: "UI Inspector (Theme Target Inspector Overlay) v21a",
     qaKey: "v21a",
     title: "Panel collapses when no registered target hovered",
     expected: "Moving cursor off registered targets collapses panel without leaving stale tooltip",
@@ -5857,7 +5857,7 @@ export const qaCheckDefinitions: QaCheckDefinition[] = [
   {
     id: "v21a-panel-clears-on-toggle",
     featureId: "theme-target-inspector-v21a",
-    featureName: "Theme Target Inspector Overlay v21a",
+    featureName: "UI Inspector (Theme Target Inspector Overlay) v21a",
     qaKey: "v21a",
     title: "Panel clears when overlay toggled off",
     expected: "Alt+Shift+I toggling OFF hides panel/tooltip",
@@ -5873,7 +5873,7 @@ export const qaCheckDefinitions: QaCheckDefinition[] = [
   {
     id: "v21a-panel-read-only",
     featureId: "theme-target-inspector-v21a",
-    featureName: "Theme Target Inspector Overlay v21a",
+    featureName: "UI Inspector (Theme Target Inspector Overlay) v21a",
     qaKey: "v21a",
     title: "Panel remains read-only",
     expected: "Panel uses pointer-events none and exposes no editing controls",
@@ -5979,7 +5979,7 @@ export const qaCheckDefinitions: QaCheckDefinition[] = [
   {
     id: "v21a-typecheck-passes",
     featureId: "theme-target-inspector-v21a",
-    featureName: "Theme Target Inspector Overlay v21a",
+    featureName: "UI Inspector (Theme Target Inspector Overlay) v21a",
     qaKey: "v21a",
     title: "Typecheck passes",
     expected: "TypeScript typecheck passes without errors",
@@ -5994,7 +5994,7 @@ export const qaCheckDefinitions: QaCheckDefinition[] = [
   {
     id: "v21a-playwright-passes",
     featureId: "theme-target-inspector-v21a",
-    featureName: "Theme Target Inspector Overlay v21a",
+    featureName: "UI Inspector (Theme Target Inspector Overlay) v21a",
     qaKey: "v21a",
     title: "Playwright passes with 0 skipped",
     expected: "All Playwright specs pass and skip count is zero",

@@ -142,7 +142,7 @@ export function InspectorPanel({
   return (
     <section className="rounded-xl border border-cyan-400/20 bg-slate-950/70 p-4">
       <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-cyan-300">
-        Inspector
+        Graph Inspector
       </h3>
 
       <div className="space-y-2">

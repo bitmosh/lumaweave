@@ -404,11 +404,11 @@ export function AppShell() {
                         }}
                       />
 
-                      {/* Floating Inspector Panel */}
+                      {/* Floating Graph Inspector Panel */}
                       <div className="absolute left-4 top-4 w-80">
                         <CollapsiblePanel
-                          title="Inspector"
-                          collapsedLabel="Inspector"
+                          title="Graph Inspector"
+                          collapsedLabel="Graph Inspector"
                           expanded={inspectorExpanded}
                           onExpandedChange={setInspectorExpanded}
                           className="shadow-2xl shadow-cyan-950/40"
