@@ -272,6 +272,95 @@ export const defaultAdvisoryV13: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV25: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "ghost-layer-visual-proof",
+      prompt: "Did we capture evidence that ghost outlines appear only when the UI Inspector is ON?",
+      context: "v25 introduces the registered-surface ghost layer; QA must show it remains gated by the inspector toggle/hotkey.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "nested-control-outline-guard",
+      prompt: "Do nested controls (buttons/tabs/sliders/dropdowns/text) remain outline-free despite the ghost layer?",
+      context: "Ghost overlays must respect the UI Part / Component Role model and avoid ad-hoc nested registrations.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "ghost-layer-pointer-events-none-proof",
+      prompt: "Is the ghost overlay verified as pointer-events:none so Mission Control remains fully interactive?",
+      context: "Outlines must remain read-only diagnostics; they cannot interfere with QA or settings interactions.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "ghost-layer-graph-separation",
+      prompt: "Do QA artifacts prove Sigma-rendered graph primitives remain untouched by the ghost overlay?",
+      context: "DOM overlays must never be misinterpreted as Sigma registration; Graph View registry remains separate.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "registered-unregistered-heuristic-plan",
+      title: "Plan registered/unregistered heuristic",
+      summary: "Define the heuristic + evidence path for warning users about unregistered surfaces without flagging component roles.",
+      rationale: "Ghost overlay unlocked the visualization layer; the next pass must decide how to highlight missing registrations responsibly.",
+      risk: "medium",
+      recommendedNextAction: "Outline heuristic inputs (ThemeTargetRegistry, UI Part model, QA signals) and add QA coverage expectations.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+    {
+      id: "inspector-lock-mode-plan",
+      title: "Scope lock/pin selected target behavior",
+      summary: "After heuristics, define how operators can pin one inspected surface without disrupting Mission Control tasks.",
+      rationale: "Pinning requires stable overlay + heuristics to avoid confusing multi-surface outlines.",
+      risk: "medium",
+      recommendedNextAction: "Document UX + QA contract for lock mode, including escape behaviors and keyboard requirements.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "Inspector overlay hardening",
+      whyItMatters:
+        "Ghost overlay is now in place; we must immediately sequence heuristics before exposing editing controls.",
+      suggestedFutureBite:
+        "Child tasks:\n- Mission Control UI Inspector toggle (completed v24)\n- UI Part / Component Role Registration Model (completed v24b)\n- Ghost overlay registered-surface layer (completed v25)\n- Registered/unregistered heuristic (next)\n- Lock/pin selected target behavior",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "Registered/unregistered heuristic",
+      whyItMatters: "Operators need clear signals about missing registrations before Theme Mapping unlocks editing.",
+      suggestedFutureBite:
+        "Design heuristic + QA validation referencing ThemeTargetRegistry + UI Part model; do not ship warnings until heuristic proven.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "Theme Mapping Panel v0",
+      whyItMatters: "Editing controls depend on ghost overlay + heuristics to be reliable.",
+      suggestedFutureBite:
+        "Dependencies: Inspector overlay hardening + heuristics + governance. Includes governance polish to surface signals in QA Debug.",
+      risk: "medium",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV24: BanditAdvisorySection = {
   questions: [
     {
@@ -334,9 +423,9 @@ export const advisoryV24: BanditAdvisorySection = {
       rank: 1,
       title: "Inspector overlay hardening",
       whyItMatters:
-        "Overlay infrastructure must be stable before Theme Mapping Panel work can begin. v24a mandates the UI Part / Component Role Registration Model before ghost overlays, registered/unregistered warnings, or lock/pin behavior proceed.",
+        "Overlay infrastructure must be stable before Theme Mapping Panel work can begin. v24a/v24b delivered the UI Part / Component Role Registration Model so ghost overlays can proceed without ad-hoc registrations.",
       suggestedFutureBite:
-        "Child tasks:\n- Mission Control UI Inspector toggle (completed v24)\n- UI Part / Component Role Registration Model (in progress v24a)\n- Ghost overlay registered-surface layer\n- Registered/unregistered heuristic\n- Lock/pin selected target behavior",
+        "Child tasks:\n- Mission Control UI Inspector toggle (completed v24)\n- UI Part / Component Role Registration Model (completed v24b)\n- Ghost overlay registered-surface layer (planned v25)\n- Registered/unregistered heuristic\n- Lock/pin selected target behavior",
       risk: "medium",
       status: "candidate",
     },
@@ -1358,6 +1447,9 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number): B
 
 // Advisory lookup function keyed by canonical qaKey
 export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
+  if (qaKey === "v25") {
+    return advisoryV25;
+  }
   if (qaKey === "v24") {
     return advisoryV24;
   }

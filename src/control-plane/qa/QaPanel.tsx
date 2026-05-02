@@ -11,8 +11,8 @@ const ACTIVE_CHECKLIST_STORAGE_KEY = "lumaweave-qa-active-checklist";
 const BACKLOG_STORAGE_KEY = "lumaweave-advisory-backlog-order";
 const QUESTION_ANSWER_STORAGE_KEY = "lumaweave-advisory-question-answers";
 const PROPOSAL_DECISIONS_STORAGE_KEY = "lumaweave-advisory-proposal-decisions";
-const DEFAULT_QA_KEY = "v24";
-const DEFAULT_FEATURE_ID = "theme-inspector-toggle-v24";
+const DEFAULT_QA_KEY = "v25";
+const DEFAULT_FEATURE_ID = "ghost-overlay-registered-surfaces-v25";
 const PROPOSAL_DECISION_OPTIONS: readonly BanditProposalDecision[] = [
   "unreviewed",
   "accept-for-future",

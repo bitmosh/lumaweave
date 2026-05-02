@@ -8,9 +8,9 @@ import {
   openAdvisoryTab,
 } from "./helpers/qa";
 
-const CURRENT_QA_KEY = "v24";
-const PRIMARY_PROPOSAL_ID = "ghost-overlay-next-step";
-const SECONDARY_PROPOSAL_ID = "registered-heuristic-plan";
+const CURRENT_QA_KEY = "v25";
+const PRIMARY_PROPOSAL_ID = "registered-unregistered-heuristic-plan";
+const SECONDARY_PROPOSAL_ID = "inspector-lock-mode-plan";
 
 test("Mission Control tabs are visible", async ({ page }) => {
   await page.goto("/");
@@ -242,13 +242,13 @@ test("Bandit Backlog Top 10 renders", async ({ page }) => {
   await expect(backlogItem.getByTestId("bandit-backlog-title")).not.toHaveText("");
 });
 
-test("v24 is default active checklist", async ({ page }) => {
+test("v25 is default active checklist", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await expectCurrentQaKey(page, CURRENT_QA_KEY);
 });
 
-test("v24 identity diagnostics visible in Debug tab", async ({ page }) => {
+test("v25 identity diagnostics visible in Debug tab", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
 
@@ -314,7 +314,7 @@ test("advisory backlog reorder persists through tab switching", async ({ page })
   await expect(page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title")).toHaveText(reorderedFirstTitle || "");
 });
 
-test("v24 advisory questions are specific to current pass", async ({ page }) => {
+test("v25 advisory questions are specific to current pass", async ({ page }) => {
   await page.goto("/");
 
   // QA panel is in the left dock - use nth(1) to get the main panel
@@ -325,11 +325,12 @@ test("v24 advisory questions are specific to current pass", async ({ page }) => 
   const advisoryTab = page.getByTestId("qa-tab-advisory");
   await advisoryTab.click();
 
-  // Verify v24-specific questions are visible
+  // Verify v25-specific questions are visible
   const pageContent = await page.content();
-  expect(pageContent).toContain("mission-control-toggle-accessibility");
-  expect(pageContent).toContain("inspector-toggle-hotkey-parity");
-  expect(pageContent).toContain("ui-part-role-model-doc");
+  expect(pageContent).toContain("ghost-layer-visual-proof");
+  expect(pageContent).toContain("nested-control-outline-guard");
+  expect(pageContent).toContain("ghost-layer-pointer-events-none-proof");
+  expect(pageContent).toContain("ghost-layer-graph-separation");
 
   // Verify old v15/v13/v16d/v17 questions are NOT visible (stale questions should not appear)
   expect(pageContent).not.toContain("Mission Control Advisory cleanup");
@@ -338,7 +339,7 @@ test("v24 advisory questions are specific to current pass", async ({ page }) => 
   expect(pageContent).not.toContain("visual-handle-token-declaration");
 });
 
-test("v24 report includes Advisory Set Key", async ({ page }) => {
+test("v25 report includes Advisory Set Key", async ({ page }) => {
   await page.goto("/");
 
   // Complete checklist and submit report using helper
@@ -347,22 +348,22 @@ test("v24 report includes Advisory Set Key", async ({ page }) => {
   // Get last report text
   const reportText = await getLastReportText(page);
 
-  // Verify report includes Advisory Set Key: v20
+  // Verify report includes Advisory Set Key: v25
   expect(reportText).toContain("Advisory Set Key:");
   expect(reportText).toContain(CURRENT_QA_KEY);
 });
 
-test("v24 checklist includes toggle checks", async ({ page }) => {
+test("v25 checklist includes ghost overlay checks", async ({ page }) => {
   await page.goto("/");
   await expectChecklistContainsChecks(page, [
-    "UI Inspector toggle appears in QA Debug",
-    "Toggle enables UI Inspector",
-    "Alt+Shift+I still toggles overlay",
-    "Playwright passes with 0 skipped",
+    "Ghost overlay renders only when UI Inspector is ON",
+    "Registered surfaces receive outlines",
+    "Ghost layer remains pointer-events none",
+    "No registered/unregistered warnings yet",
   ]);
 });
 
-test("v24 proposal decisions and backlog order persist after submit", async ({ page }) => {
+test("v25 proposal decisions and backlog order persist after submit", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);

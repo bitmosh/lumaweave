@@ -11,9 +11,22 @@ interface GraphViewportOffsets {
   bottom: number;
 }
 
+interface GhostOutline {
+  themeTargetId: string;
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+}
+
 const HOTKEY_LABEL = "Alt+Shift+I";
 const GRAPH_VIEWPORT_SELECTOR = "[data-testid='graph-viewport']";
+const REGISTERED_TARGET_SELECTOR = "[data-lw-theme-target]";
+const OVERLAY_ROOT_SELECTOR = "[data-testid='theme-target-inspector-overlay']";
 const PANEL_MARGIN_PX = 24;
+
+const isWithinOverlay = (node: Node | null): boolean =>
+  node instanceof HTMLElement && Boolean(node.closest(OVERLAY_ROOT_SELECTOR));
 
 const isEditableElement = (element: Element | null): boolean => {
   if (!element) {
@@ -43,10 +56,9 @@ interface ThemeTargetInspectorOverlayProps {
 export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeTargetInspectorOverlayProps) {
   const [hoverState, setHoverState] = useState<HoverState | null>(null);
   const [graphViewportOffsets, setGraphViewportOffsets] = useState<GraphViewportOffsets | null>(null);
+  const [ghostOutlines, setGhostOutlines] = useState<GhostOutline[]>([]);
 
-  const tokenBindingEntries = hoverState?.metadata
-    ? Object.entries(hoverState.metadata.tokenBindings)
-    : [];
+  const tokenBindingEntries = hoverState?.metadata ? Object.entries(hoverState.metadata.tokenBindings) : [];
   const hasTokenBindings = tokenBindingEntries.length > 0;
 
   useEffect(() => {
@@ -112,11 +124,12 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
   useEffect(() => {
     if (!enabled) {
       setHoverState(null);
+      setGhostOutlines([]);
       return;
     }
 
     const handleMouseMove = (event: MouseEvent) => {
-      const targetElement = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-lw-theme-target]");
+      const targetElement = (event.target as HTMLElement | null)?.closest<HTMLElement>(REGISTERED_TARGET_SELECTOR);
       if (!targetElement) {
         setHoverState(null);
         return;
@@ -135,8 +148,93 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
       });
     };
 
+    const scheduleGhostOutlineUpdate = (() => {
+      let raf: number | null = null;
+      const measure = () => {
+        const nodes = Array.from(document.querySelectorAll<HTMLElement>(REGISTERED_TARGET_SELECTOR));
+        const outlines = nodes
+          .map((node) => {
+            const rect = node.getBoundingClientRect();
+            if (!rect.width || !rect.height) {
+              return null;
+            }
+            const themeTargetId = node.getAttribute("data-lw-theme-target");
+            if (!themeTargetId) {
+              return null;
+            }
+            return {
+              themeTargetId,
+              top: rect.top,
+              left: rect.left,
+              width: rect.width,
+              height: rect.height,
+            } satisfies GhostOutline;
+          })
+          .filter((outline): outline is GhostOutline => Boolean(outline));
+        setGhostOutlines(outlines);
+      };
+
+      return () => {
+        if (raf) {
+          cancelAnimationFrame(raf);
+        }
+        raf = requestAnimationFrame(measure);
+      };
+    })();
+
+    const handleResizeOrScroll = () => {
+      scheduleGhostOutlineUpdate();
+    };
+
+    scheduleGhostOutlineUpdate();
     window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    window.addEventListener("resize", handleResizeOrScroll);
+    window.addEventListener("scroll", handleResizeOrScroll, true);
+
+    const mutationObserver = typeof MutationObserver !== "undefined"
+      ? new MutationObserver((mutations) => {
+          if (!mutations.length) {
+            return;
+          }
+          const shouldUpdate = mutations.some((mutation) => {
+            if (isWithinOverlay(mutation.target)) {
+              return false;
+            }
+            if (mutation.type === "childList") {
+              return true;
+            }
+            if (mutation.type === "attributes") {
+              return (
+                mutation.attributeName === "data-lw-theme-target" ||
+                mutation.attributeName === "class" ||
+                mutation.attributeName === "style"
+              );
+            }
+            return false;
+          });
+          if (shouldUpdate) {
+            scheduleGhostOutlineUpdate();
+          }
+        })
+      : null;
+
+    if (mutationObserver) {
+      mutationObserver.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ["data-lw-theme-target", "class", "style"],
+      });
+    }
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("resize", handleResizeOrScroll);
+      window.removeEventListener("scroll", handleResizeOrScroll, true);
+      if (mutationObserver) {
+        mutationObserver.disconnect();
+      }
+    };
   }, [enabled]);
 
   return (
@@ -162,6 +260,56 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
       </div>
 
       <div data-testid="theme-target-inspector-overlay" style={{ pointerEvents: "none" }}>
+        {enabled && ghostOutlines.length > 0 && (
+          <div
+            data-testid="theme-target-ghost-layer"
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 4500,
+              pointerEvents: "none",
+            }}
+          >
+            {ghostOutlines.map((outline, index) => (
+              <div
+                key={`${outline.themeTargetId}-${index}`}
+                data-testid="theme-target-ghost-outline"
+                style={{
+                  position: "absolute",
+                  top: `${outline.top}px`,
+                  left: `${outline.left}px`,
+                  width: `${outline.width}px`,
+                  height: `${outline.height}px`,
+                  border: "1.5px dashed rgba(14, 165, 233, 0.85)",
+                  boxShadow: "0 0 18px rgba(14, 165, 233, 0.35)",
+                  borderRadius: "12px",
+                  background: "rgba(14, 165, 233, 0.07)",
+                }}
+              >
+                <span
+                  style={{
+                    position: "absolute",
+                    top: "-1.5rem",
+                    left: 0,
+                    padding: "0.2rem 0.5rem",
+                    borderRadius: "9999px",
+                    fontSize: "0.65rem",
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                    backgroundColor: "rgba(15, 23, 42, 0.85)",
+                    color: "rgba(226, 232, 240, 0.9)",
+                    border: "1px solid rgba(14, 165, 233, 0.4)",
+                    pointerEvents: "none",
+                  }}
+                >
+                  {outline.themeTargetId}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+
         {enabled && hoverState && (
           <div
             data-testid="theme-target-inspector-panel"
@@ -222,9 +370,7 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
                     <dd>
                       <ul style={{ paddingLeft: "1rem", margin: 0 }}>
                         {tokenBindingEntries.map(([property, path]) => (
-                          <li key={property}>
-                            {property}: {path}
-                          </li>
+                          <li key={property}>{`${property}: ${path}`}</li>
                         ))}
                       </ul>
                     </dd>

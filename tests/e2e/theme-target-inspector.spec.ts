@@ -153,4 +153,54 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
     await expect(page.getByTestId("theme-target-inspector-panel")).toHaveCount(0);
     await expect(hudIndicator).toContainText("OFF");
   });
+
+  test("ghost overlay appears only when inspector is enabled", async ({ page }) => {
+    await page.goto("/");
+
+    await expect(page.getByTestId("theme-target-ghost-layer")).toHaveCount(0);
+
+    await page.keyboard.press("Alt+Shift+I");
+    const ghostLayer = page.getByTestId("theme-target-ghost-layer");
+    await expect(ghostLayer).toBeVisible();
+    const outlineCount = await page.getByTestId("theme-target-ghost-outline").count();
+    expect(outlineCount).toBeGreaterThan(0);
+
+    const outlineLabels = await page
+      .locator('[data-testid="theme-target-ghost-outline"] span')
+      .allTextContents();
+    expect(outlineLabels).toContain("mission-control.panel");
+
+    await page.keyboard.press("Alt+Shift+I");
+    await expect(page.getByTestId("theme-target-ghost-layer")).toHaveCount(0);
+  });
+
+  test("ghost overlay keeps Mission Control interactive", async ({ page }) => {
+    await page.goto("/");
+    await openQaPanel(page);
+    await openDebugTab(page);
+
+    const controlButton = page.getByTestId("theme-inspector-toggle-button");
+    await controlButton.click();
+    const ghostLayer = page.getByTestId("theme-target-ghost-layer");
+    await expect(ghostLayer).toBeVisible();
+    const pointerEvents = await ghostLayer.evaluate((element) => window.getComputedStyle(element).pointerEvents);
+    expect(pointerEvents).toBe("none");
+
+    await page.getByTestId("qa-tab-checklist").click();
+    await expect(page.getByTestId("qa-question-counter")).toBeVisible();
+
+    await openDebugTab(page);
+    await controlButton.click();
+    await expect(page.getByTestId("theme-target-ghost-layer")).toHaveCount(0);
+  });
+
+  test("ghost overlay toggles via hotkey", async ({ page }) => {
+    await page.goto("/");
+
+    await page.keyboard.press("Alt+Shift+I");
+    await expect(page.getByTestId("theme-target-ghost-layer")).toBeVisible();
+
+    await page.keyboard.press("Alt+Shift+I");
+    await expect(page.getByTestId("theme-target-ghost-layer")).toHaveCount(0);
+  });
 });
