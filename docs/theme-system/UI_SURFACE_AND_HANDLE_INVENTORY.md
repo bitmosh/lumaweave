@@ -35,6 +35,7 @@ Establish a single additive reference for every front-facing UI surface that may
 - Manual QA confirmed the Mission Control toggle + graph-viewport placement work, but hovering nested controls (buttons, tabs, sliders, dropdowns, labels, status chips, debug rows) still reports their parent surface (e.g., `mission-control.panel`).
 - This is **expected** under the current registry because only major surfaces are registered; we must not sprinkle `data-lw-theme-target` on every nested element to paper over the gap.
 - Before v25 ghost overlays or registered/unregistered warnings, we need a formal **UI Part / Component Role Registration Model** that spells out which layer owns identifiers, tokens, QA evidence, and handles text roles vs. reusable controls.
+- v25 introduces the first ghost overlay pass: registered surfaces now receive a pointer-events:none outline whenever the UI Inspector is ON. This layer must consume the table below so only major surfaces (and future HUD containers) are highlighted.
 
 ## UI Part / Component Role Registration Model (v24a)
 
