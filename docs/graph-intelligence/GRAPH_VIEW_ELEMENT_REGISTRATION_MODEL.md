@@ -40,6 +40,8 @@ Define how graph-facing elements (Sigma-rendered primitives, Graph HUD, and supp
 - Before v25 ghost overlays, we will finalize the **UI Part / Component Role Registration Model** (see UI Surface inventory) so DOM HUD components map cleanly to graph policies without tagging Sigma primitives.
 - Ghost overlays must highlight registered DOM surfaces only; Sigma visual states will continue to be proven through the Graph View Element Registry + Graph Visual Policy tests.
 - Registered/unregistered warnings should reference this registry boundary so a missing DOM marker does not imply an unregistered Sigma element.
+- v24b hardening extends this rule set: outline only DOM surfaces such as `graph.frame`, future graph HUD panels, and Graph Inspector cards. Never outline Sigma primitives, and never warn on nested DOM nodes that intentionally rely on component roles.
+- Any future Graph HUD or Graph Inspector panels must first land in the UI Surface inventory (major surface tier) before ghost overlays include them. Sigma entries (`graph.node.*`, `graph.edge.*`) stay policy-driven.
 
 ## Registration Requirements
 1. **Graph View Element Registry** (future) will sit beside ThemeTargetRegistry but focus solely on Sigma-facing identifiers (e.g., `graph.node.default`, `graph.edge.hover`).

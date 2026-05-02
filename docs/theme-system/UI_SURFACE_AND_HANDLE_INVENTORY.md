@@ -47,6 +47,36 @@ Establish a single additive reference for every front-facing UI surface that may
 | **Graph HUD panel** | Graph Inspector tabs, future zoom HUD | `themeTargetId` (if DOM), QA doc references | DOM HUD surfaces stay in this inventory; still separate from Sigma.
 | **Sigma element** | `graph.node.default`, `graph.edge.selected`, `graph.node.label` | Graph View Element Registry, Graph Visual Policy tokens | Never receives `data-lw-theme-target`. Registered via graph-centric docs/policies.
 
+### Registration Decision Matrix (v24b hardening)
+
+| Element Example | Classification | themeTargetId | componentRoleId / visualHandle | `data-lw-theme-target` | `data-testid` | handleId / settingsKey | Token Binding Source | QA Evidence Hook | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `mission-control.panel` (panel container) | Major surface target | ✅ (`mission-control.panel`) | `.lw-panel` | ✅ | Optional | n/a | ThemeTargetRegistry tokenBindings | UI Inspector + Playwright panel presence | Primary inspectable surface; safe to outline in v25.
+| Primary button (e.g., QA action button) | UI component role | ❌ | `button.primary` role + `.lw-button` | ❌ | Optional | n/a | Component role maps to `accent.primary`, `text.primary` tokens | Style guide + future Theme Mapping, not UI Inspector | Shared role; multiple instances reuse same role ID.
+| Mission Control Debug UI Inspector toggle | Specific control instance + component role | ❌ | `button.primary` role + `.lw-button` | ❌ | `theme-inspector-toggle-button` | `qa.debug.ui-inspector-toggle` handleId | Inherits component role tokens; no custom binding | QA Debug tab & Playwright toggle tests | Concrete control tracked by handleId + data-testid only.
+| QA tab button (`qa.tabs.debug`) | Specific control instance (tab role) | ❌ | `tab.active` / `tab.inactive` roles | ❌ | `qa-tab-debug` | `qa.tabs.debug` | Text role + component role tokens | Playwright tab switching | Instances stay bound to roles; no new ThemeTarget entries.
+| Badge/status chip (e.g., checklist decision badge) | UI component role | ❌ | `badge.success` / `.lw-badge` | ❌ | Optional | n/a | Token role referencing `text.success`, `border.success` | Visual regression + QA acceptance text | Remains role-based until Theme Mapping Panel.
+| Slider control (settings.physics.node-size-slider) | Specific control instance + component role | ❌ | `slider.track` / `slider.thumb` roles | ❌ | `settings-node-size-slider` | `settings.physics.node-size-slider` | Component role tied to `control.track`, `control.thumb` tokens | Settings Playwright coverage (future) | Only documented via handleId + role mapping.
+| Dropdown (settings.labels.node-label-mode-dropdown) | Specific control instance | ❌ | `dropdown.root` role | ❌ | `settings-label-mode-dropdown` | `settings.labels.node-label-mode-dropdown` | Role references `panel.background`, `text.primary` tokens | Settings Playwright + QA evidence | Instances reuse same role template.
+| Tab heading / panel heading text | Text role | ❌ | `panel.heading` text role | ❌ | Optional | n/a | `heading.text` token | Documentation + Storybook (future) | Static text inherits tokens, never new IDs.
+| Static label or value text | Text role | ❌ | `label.text` / `value.text` | ❌ | Optional | n/a | `text.muted`, `text.primary` tokens | QA screenshots/logs | No per-string registrations.
+| Settings value row (label + control) | Major surface + component role mix | Maybe (panel container) | `form.row` role for nested layout | Major row inherits parent panel target | Test IDs for controls | `settings.*` handleIds as needed | Panel tokens + component-role tokens | Settings QA evidence | Outline only the parent panel; rows stay role-based.
+| Graph Inspector panel (Mission Control cards showing graph data) | Major surface target | ✅ (`mission-control.panel` variants) | `.lw-card` | ✅ (card-level) | `graph-inspector-card-*` optional | n/a | Panel/card token bindings | UI Inspector + Playwright graph tests | Treated as DOM surface, separate from Sigma.
+| UI Inspector panel / HUD | Inspector overlay surface (meta) | ❌ (overlay meta) | Custom overlay styling (pointer-events none) | ❌ (HUD uses `data-testid` only) | `theme-target-inspector-panel` & tooltip TIDs | `ui.inspector.panel` handle (doc only) | Hard-coded overlay theme tokens | Overlay Playwright spec | Remains meta HUD; ghost overlay uses this as anchor.
+| Graph HUD / debug panel (future) | DOM HUD surface | ✅ once HUD exists | `.lw-graph-hud` planned | ✅ (HUD container) | HUD-specific `data-testid` | `graph.hud.*` handles | HUD tokens referencing graph palette | HUD Playwright tests | Still DOM; never touches Sigma primitives.
+| Graph Sigma element (`graph.node.selected`) | Sigma element | ❌ | Graph View registry entry | ❌ | n/a | Policy identifiers | `graph.node.*` tokens via policies | Graph Visual Policy fixtures | Lives entirely in Graph View Element Registry.
+
+### Explicit Rules (v24b)
+1. **Major surfaces get `themeTargetId`** — only DOM containers listed in ThemeTargetRegistry should expose `data-lw-theme-target` and appear in UI Inspector.
+2. **Component styles get `componentRoleId` / visual handles** — buttons, tabs, badges, sliders, dropdowns, panel headings, status chips, and debug rows share role IDs and `.lw-*` handles instead of new ThemeTargetIds.
+3. **Specific controls use handleId / settingsKey / `data-testid`** — concrete toggles, sliders, dropdowns, QA tabs, and mission-control actions reference handle IDs for QA + settings persistence but remain role-based for styling.
+4. **Static text sticks to text roles** — headings, labels, value text, descriptions, and status copy must map to canonical token paths (e.g., `text.primary`, `text.muted`). No per-string registrations.
+5. **`data-lw-theme-target` is reserved for inspectable surfaces** — never apply it to nested buttons, spans, or rows just to satisfy UI Inspector. Instead, register the parent surface and document the component roles.
+6. **Nested controls must not be registered ad hoc** — future ghost overlays should outline registered surfaces only, not every nested element lacking a theme target.
+7. **Graph/Sigma elements stay in their own registry** — Sigma primitives continue to use the Graph View Element Registration Model + Graph Visual Policy tokens, never DOM markers.
+8. **Ghost overlay + registered/unregistered warnings must consult this model** — only major surfaces (and any future HUD containers) should be outlined; warnings must ignore expected unregistered nested elements.
+9. **Theme Mapping Panel will rely on componentRoleId + handleId** — when editable controls arrive, generated UI should reference these roles instead of inventing new theme targets per control.
+
 ### Handling Nested Controls Until Theme Mapping
 - Buttons, tabs, dropdowns, etc. remain discoverable at the **component role** layer, not by attaching unique `data-lw-*` markers per instance.
 - When Theme Mapping Panel work begins, these roles will inform generated controls and token bindings; for now, document them with `visualHandle` + `data-testid` references so QA can trace behavior without runtime churn.
