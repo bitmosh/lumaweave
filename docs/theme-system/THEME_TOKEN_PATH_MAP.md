@@ -73,6 +73,7 @@ The Theme Token Path Map defines the canonical vocabulary that bridges current t
 ## Validation / QA Expectations
 - `npm run typecheck` and `npm run qa:e2e` must pass with zero skipped tests.
 - `validateThemeTokenPaths()` logs any canonical-path drift when themes load (dev-only warning).
+- `npm run qa:e2e -- tests/e2e/theme-token-governance.spec.ts` proves active bindings stay canonical, planned tokens remain placeholders, and presets resolve every canonical path.
 - QA v19 checklist confirms: token path doc exists, canonical list resolves, theme switching + graph rendering still function, visual handle CSS loads, Theme Mapping UI remains unimplemented, and evidence for typecheck/Playwright results is captured.
 - No `test.skip` entries are allowed.
 

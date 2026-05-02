@@ -211,7 +211,7 @@ test("Proposal decision can be changed", async ({ page }) => {
   await openQaPanel(page);
   await openAdvisoryTab(page);
 
-  const decisionDropdown = page.getByTestId("bandit-proposal-decision-mission-control-overlay-toggle");
+  const decisionDropdown = page.getByTestId("bandit-proposal-decision-token-path-governance-reporting");
   await expect(decisionDropdown).toBeVisible();
   await decisionDropdown.selectOption("accept-for-future");
   await expect(decisionDropdown).toHaveValue("accept-for-future");
@@ -222,7 +222,7 @@ test("Proposal notes field accepts input", async ({ page }) => {
   await openQaPanel(page);
   await openAdvisoryTab(page);
 
-  const notesTextarea = page.getByTestId("bandit-proposal-notes-mission-control-overlay-toggle");
+  const notesTextarea = page.getByTestId("bandit-proposal-notes-token-path-governance-reporting");
   await expect(notesTextarea).toBeVisible();
   await notesTextarea.fill("Test notes for proposal");
   await expect(notesTextarea).toHaveValue("Test notes for proposal");
@@ -238,13 +238,13 @@ test("Bandit Backlog Top 10 renders", async ({ page }) => {
   await expect(backlogItem.getByTestId("bandit-backlog-title")).not.toHaveText("");
 });
 
-test("v21a is default active checklist", async ({ page }) => {
+test("v22 is default active checklist", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
-  await expectCurrentQaKey(page, "v21a");
+  await expectCurrentQaKey(page, "v22");
 });
 
-test("v21a identity diagnostics visible in Debug tab", async ({ page }) => {
+test("v22 identity diagnostics visible in Debug tab", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
 
@@ -257,7 +257,7 @@ test("v21a identity diagnostics visible in Debug tab", async ({ page }) => {
   expect(pageContent).toContain("Dropdown Selection");
   expect(pageContent).toContain("Report Key");
   expect(pageContent).toContain("Advisory Set Key");
-  expect(pageContent).toContain("v21a");
+  expect(pageContent).toContain("v22");
   expect(pageContent).toContain("Identity Valid");
 });
 
@@ -310,7 +310,7 @@ test("advisory backlog reorder persists through tab switching", async ({ page })
   await expect(page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title")).toHaveText(reorderedFirstTitle || "");
 });
 
-test("v21a advisory questions are specific to current pass", async ({ page }) => {
+test("v22 advisory questions are specific to current pass", async ({ page }) => {
   await page.goto("/");
 
   // QA panel is in the left dock - use nth(1) to get the main panel
@@ -323,8 +323,8 @@ test("v21a advisory questions are specific to current pass", async ({ page }) =>
 
   // Verify v18-specific questions are visible
   const pageContent = await page.content();
-  expect(pageContent).toContain("fixed-panel-viewport-proof");
-  expect(pageContent).toContain("fixed-panel-pointer-policy");
+  expect(pageContent).toContain("canonical-token-vocab-proof");
+  expect(pageContent).toContain("planned-token-usage-check");
 
   // Verify old v15/v13/v16d/v17 questions are NOT visible (stale questions should not appear)
   expect(pageContent).not.toContain("Mission Control Advisory cleanup");
@@ -333,7 +333,7 @@ test("v21a advisory questions are specific to current pass", async ({ page }) =>
   expect(pageContent).not.toContain("visual-handle-token-declaration");
 });
 
-test("v21a report includes Advisory Set Key", async ({ page }) => {
+test("v22 report includes Advisory Set Key", async ({ page }) => {
   await page.goto("/");
 
   // Complete checklist and submit report using helper
@@ -344,20 +344,25 @@ test("v21a report includes Advisory Set Key", async ({ page }) => {
 
   // Verify report includes Advisory Set Key: v20
   expect(reportText).toContain("Advisory Set Key:");
-  expect(reportText).toContain("v21a");
+  expect(reportText).toContain("v22");
 });
 
-test("v21a includes Typecheck and Playwright checks", async ({ page }) => {
+test("v22 checklist includes governance checks", async ({ page }) => {
   await page.goto("/");
-  await expectChecklistContainsChecks(page, ["Typecheck passes", "Playwright passes with 0 skipped"]);
+  await expectChecklistContainsChecks(page, [
+    "Active bindings use canonical tokens",
+    "No planned-only tokens in active bindings",
+    "Typecheck passes",
+    "Playwright passes with 0 skipped",
+  ]);
 });
 
-test("v21a proposal decisions and backlog order persist after submit", async ({ page }) => {
+test("v22 proposal decisions and backlog order persist after submit", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);
 
-  const decisionDropdown = page.getByTestId("bandit-proposal-decision-mission-control-overlay-toggle");
+  const decisionDropdown = page.getByTestId("bandit-proposal-decision-token-path-governance-reporting");
   await decisionDropdown.selectOption("accept-for-future");
   await expect(decisionDropdown).toHaveValue("accept-for-future");
 
@@ -369,6 +374,6 @@ test("v21a proposal decisions and backlog order persist after submit", async ({ 
   await completeChecklistAndSubmitReport(page);
   await openAdvisoryTab(page);
 
-  await expect(page.getByTestId("bandit-proposal-decision-mission-control-overlay-toggle")).toHaveValue("accept-for-future");
+  await expect(page.getByTestId("bandit-proposal-decision-token-path-governance-reporting")).toHaveValue("accept-for-future");
   await expect(page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title")).toHaveText(reorderedFirstTitle || "");
 });
