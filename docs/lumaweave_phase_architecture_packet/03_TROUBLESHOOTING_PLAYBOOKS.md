@@ -36,3 +36,33 @@ Manual QA wins.
 ## Setting Exists But Does Not Work
 
 Every setting must be active+wired, planned/disabled, or hidden. No dead active controls.
+
+# Troubleshooting Classification Playbook
+
+Before patching, classify the failure.
+
+## 1. Environment Prerequisite Failure
+
+Signals:
+- browser executable missing
+- dependency not installed
+- command not found
+- port/dev server unavailable
+- permission/system package issue
+
+Examples:
+- `browserType.launch: Executable doesn't exist`
+- `please run npx playwright install`
+- dev server not running
+- missing npm package
+
+Action:
+- Do not call app unstable.
+- Repair safe local prerequisite if allowed.
+- Rerun validation once.
+- Ask before sudo/system-level changes.
+
+Safe examples:
+```bash
+npx playwright install chromium
+npm install

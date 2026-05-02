@@ -40,6 +40,8 @@ The theme system allows users to customize the visual appearance of LumaWeave th
 - Pop-out color picker
 - Full app theme editor (panel colors, background/starfield, UI component colors)
 - Theme Mapping Mode backlog captured in `docs/theme-system/THEME_MAPPING_SYSTEM_BACKLOG.md` (v18a)
+- Canonical Theme Token Path Map defined in `docs/theme-system/THEME_TOKEN_PATH_MAP.md` (v19)
+- Theme Target Registry + Inspector Overlay reference in `docs/theme-system/THEME_TARGET_REGISTRY.md` (v20)
 
 ## Architecture
 

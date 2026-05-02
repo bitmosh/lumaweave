@@ -15,6 +15,8 @@ Theme Mapping Mode is the future fusion point between Control Contract OS, Visua
 - **Control Contract OS**: Supplies canonical `handleId` + `settingsKey` metadata for any future control automatically emitted by the Theme Mapping Panel.
 - **Visual Handle Library**: Defines reusable CSS primitives (`visualHandle`) that Theme Mapping targets attach to.
 - **Theme Token Path Map**: Provides authoritative `themeTokenPath` references per property; must land in v19 before editable mappings go live.
+- **Theme Token Path Map Doc**: `docs/theme-system/THEME_TOKEN_PATH_MAP.md` records the canonical token vocabulary and resolver proof used by all downstream systems.
+- **Theme Target Registry Doc**: `docs/theme-system/THEME_TARGET_REGISTRY.md` is the source of truth for inspectable surfaces that Theme Mapping Mode will bind to.
 - **Mission Control**: Hosts QA + Theme Mapping workflows; persists chosen presets via existing settings store.
 - **Future Debug UI Inspector Overlay**: Shares the same inspection substrate as Theme Mapping Mode for hover ID readouts.
 - **Theme Mapping Panel**: Future UI module that instantiates active controls generated from the contracts described here.

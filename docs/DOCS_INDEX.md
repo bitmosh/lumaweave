@@ -214,6 +214,16 @@
   - Purpose: Captures Theme Mapping Mode architecture and dependencies
   - When to read: Planning v18a/v19 theme pipeline
 
+- **docs/theme-system/THEME_TOKEN_PATH_MAP.md** - Theme Token Path Map (v19)
+  - Status: source-of-truth
+  - Purpose: Canonical token path vocabulary + resolver references
+  - When to read: Implementing v19 Theme Token Path Map or future Theme Mapping work
+
+- **docs/theme-system/THEME_TARGET_REGISTRY.md** - Theme Target Registry (v20)
+  - Status: source-of-truth
+  - Purpose: Canonical themeTargetId registry + inspector overlay contract
+  - When to read: Implementing v20 registry/overlay or Theme Mapping prerequisites
+
 ## Graph Docs
 
 ### Graph Reference

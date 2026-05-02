@@ -457,3 +457,5 @@ For policy violations or emergencies:
 - Notify user immediately
 - Suggest safe alternative
 - Review policy after incident
+
+Before patching a failure, classify it using `docs/lumaweave_phase_architecture_packet/03_TROUBLESHOOTING_PLAYBOOKS.md`.
