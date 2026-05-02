@@ -272,6 +272,103 @@ export const defaultAdvisoryV13: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV22: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "canonical-token-vocab-proof",
+      prompt: "Was a governance report captured proving active tokenBindings only use canonical ThemeTokenPath values?",
+      context: "Theme Target Registry must stay aligned with the canonical vocabulary. Capture evidence this pass enforces it.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "planned-token-usage-check",
+      prompt: "Did any planned-only ThemeTokenPath names accidentally land in active bindings?",
+      context: "Planned vocabulary must remain dormant until explicitly promoted. Record the governance finding.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "preset-coverage-proof",
+      prompt: "Do all built-in presets resolve every canonical token path with no missing values?",
+      context: "Token path governance requires presets to stay in lockstep with canonical paths.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "token-path-governance-reporting",
+      title: "Publish token path governance report",
+      summary: "Capture governance check output in QA Debug or CI logs so future passes can trace vocabulary drift quickly.",
+      rationale: "Governance only helps when its signal is visible in QA evidence.",
+      risk: "low",
+      recommendedNextAction: "Add QA Debug tab entry summarizing governance result or attach logs to QA report.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+    {
+      id: "planned-token-promotion-policy",
+      title: "Document promotion policy for planned tokens",
+      summary: "Before any planned token becomes canonical, define the minimal checklist (docs, presets, QA) required to promote it.",
+      rationale: "Prevents ad-hoc vocabulary expansion.",
+      risk: "medium",
+      recommendedNextAction: "Add policy note to THEME_TOKEN_PATH_MAP.md describing promotion steps.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "Inspector overlay hardening",
+      whyItMatters:
+        "Overlay remains read-only but needs additional safety and visibility work before future editing modes.",
+      suggestedFutureBite:
+        "Child tasks:\n- Mission Control UI Inspector toggle\n- Ghost overlay registered-surface layer\n- Registered/unregistered heuristic\n- Lock/pin selected target behavior",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "Theme Mapping Panel v0",
+      whyItMatters:
+        "Need a minimal read-only mapping UI that consumes canonical tokens once overlay hardening + governance are in place.",
+      suggestedFutureBite:
+        "Dependencies: Inspector overlay hardening + accepted token governance. Includes governance polish: publish token path governance report in QA Debug or CI logs.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "Theme override storage + save preset",
+      whyItMatters: "Inspector adjustments require durable storage before exposing editing flows.",
+      suggestedFutureBite: "Dependency: Theme Mapping Panel semantics.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 4,
+      title: "Graph physics Playwright coverage",
+      whyItMatters: "Physics sliders remain a large untested area and need a dedicated graph-safety pass.",
+      suggestedFutureBite: "Add focused Playwright coverage for physics controls once selectors stabilize.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 5,
+      title: "Visual handles cite token paths",
+      whyItMatters: "Visual handle metadata should reference canonical tokens once governance is in place to avoid drift.",
+      suggestedFutureBite: "Future candidate dependent on accepted token governance; document handle -> token bindings in visual handle library.",
+      risk: "medium",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV21a: BanditAdvisorySection = {
   questions: [
     {
@@ -1157,6 +1254,9 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number): B
 
 // Advisory lookup function keyed by canonical qaKey
 export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
+  if (qaKey === "v22") {
+    return advisoryV22;
+  }
   if (qaKey === "v21a") {
     return advisoryV21a;
   }
