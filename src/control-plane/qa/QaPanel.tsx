@@ -1,15 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { qaCheckDefinitions } from "./qa-registry";
 import { useQaStore } from "./qa.store";
 import type { BanditProposalDecision, BanditQuestionStatus, QaCheckResult, QaStatus } from "./qa.types";
 import { generateContractSummary } from "../contracts";
 import { getAdvisoryForQaKey } from "./advisory-registry";
+import { getThemeTargetSummary, getThemeTargetsBySurface } from "../../themes";
+import type { ThemeTargetContract, ThemeTargetSurface } from "../../themes";
 
 const ACTIVE_CHECKLIST_STORAGE_KEY = "lumaweave-qa-active-checklist";
 const BACKLOG_STORAGE_KEY = "lumaweave-advisory-backlog-order";
 const QUESTION_ANSWER_STORAGE_KEY = "lumaweave-advisory-question-answers";
 const PROPOSAL_DECISIONS_STORAGE_KEY = "lumaweave-advisory-proposal-decisions";
-const DEFAULT_QA_KEY = "v17a";
+const DEFAULT_QA_KEY = "v20";
+const DEFAULT_FEATURE_ID = "theme-target-registry-v20";
 const PROPOSAL_DECISION_OPTIONS: readonly BanditProposalDecision[] = [
   "unreviewed",
   "accept-for-future",
@@ -75,7 +78,7 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
         return featureIdMatch[1];
       }
     }
-    return "checklist-identity-validation"; // Default feature
+    return DEFAULT_FEATURE_ID; // Default feature
   });
 
   const [activeQaVersion, setActiveQaVersion] = useState<number>(() => {
@@ -84,13 +87,42 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
     if (versionMatch) {
       return parseInt(versionMatch[1], 10);
     }
-    return 17; // Default version
+    return 18; // Default version
   });
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [submitMessage, setSubmitMessage] = useState<string>("");
   const [localNotes, setLocalNotes] = useState<string>("");
   const [panelView, setPanelView] = useState<PanelView>("checklist");
   const [identityError, setIdentityError] = useState<string>("");
+
+  const contractSummary = useMemo(() => generateContractSummary(), []);
+  const themeTargetSummary = useMemo(() => getThemeTargetSummary(), []);
+  const THEME_SURFACES: ThemeTargetSurface[] = [
+    "shell",
+    "topbar",
+    "panel",
+    "mission-control",
+    "control",
+    "settings",
+    "graph",
+  ];
+  const themeTargetsBySurface = useMemo(() => {
+    const initial: Record<ThemeTargetSurface, ThemeTargetContract[]> = {
+      shell: [],
+      topbar: [],
+      panel: [],
+      "mission-control": [],
+      control: [],
+      settings: [],
+      graph: [],
+    };
+
+    THEME_SURFACES.forEach((surface) => {
+      initial[surface] = getThemeTargetsBySurface(surface);
+    });
+
+    return initial;
+  }, []);
 
   const resultsByChecklist = useQaStore((state) => state.resultsByChecklist);
   const setCheckResult = useQaStore((state) => state.setCheckResult);
@@ -561,16 +593,21 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
   };
 
   const handleChecklistChange = (qaKey: string) => {
-    // Extract qaKey from the selected value
     const versionMatch = qaKey.match(/^v(\d+)$/);
-    if (versionMatch) {
-      const qaVersion = parseInt(versionMatch[1], 10);
-      setActiveQaKey(qaKey);
+    const qaVersion = versionMatch ? parseInt(versionMatch[1], 10) : undefined;
+    const matchingChecklist = qaCheckDefinitions.find(
+      (check) => (check.qaKey ?? `v${check.qaVersion}`) === qaKey && check.active !== false
+    );
+
+    setActiveQaKey(qaKey);
+    if (qaVersion) {
       setActiveQaVersion(qaVersion);
-      setCurrentIndex(0);
-      // Persist the selected qaKey to localStorage
-      localStorage.setItem(ACTIVE_CHECKLIST_STORAGE_KEY, qaKey);
     }
+    if (matchingChecklist?.featureId) {
+      setActiveFeatureId(matchingChecklist.featureId);
+    }
+    setCurrentIndex(0);
+    localStorage.setItem(ACTIVE_CHECKLIST_STORAGE_KEY, qaKey);
   };
 
   const moveBacklogItemUp = (index: number) => {
@@ -612,7 +649,11 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
   const currentResult = currentStoredResult;
 
   return (
-    <div className="lw-panel flex flex-col h-full text-sm" data-testid="qa-panel">
+    <div
+      className="lw-panel flex flex-col h-full text-sm"
+      data-testid="qa-panel"
+      data-lw-theme-target="mission-control.panel"
+    >
       {/* Header */}
       <div className="flex-shrink-0 p-3" style={{ borderBottom: `1px solid ${themePanelBorder}` } as React.CSSProperties}>
         <div className="flex items-center justify-between mb-2">
@@ -1063,108 +1104,139 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
               </div>
             </div>
 
+            <div className="text-xs font-semibold text-slate-400 mb-3 mt-6" data-testid="theme-target-summary">
+              Theme Target Registry Summary
+            </div>
+            <div className="grid grid-cols-2 gap-3 text-xs text-slate-300">
+              <div data-testid="theme-target-summary-total">
+                <div className="text-slate-500 mb-1">Total Targets</div>
+                <div>{themeTargetSummary.totalTargets}</div>
+              </div>
+              <div data-testid="theme-target-summary-active">
+                <div className="text-slate-500 mb-1">Active Targets</div>
+                <div className="text-green-400">{themeTargetSummary.activeTargets}</div>
+              </div>
+              <div data-testid="theme-target-summary-planned">
+                <div className="text-slate-500 mb-1">Planned Targets</div>
+                <div>{themeTargetSummary.plannedTargets}</div>
+              </div>
+              <div data-testid="theme-target-summary-token-bindings">
+                <div className="text-slate-500 mb-1">With Token Bindings</div>
+                <div>{themeTargetSummary.targetsWithTokenBindings}</div>
+              </div>
+              <div data-testid="theme-target-summary-missing-token-bindings">
+                <div className="text-slate-500 mb-1">Active Missing Bindings</div>
+                <div className={themeTargetSummary.targetsMissingTokenBindings ? "text-yellow-400" : "text-slate-300"}>
+                  {themeTargetSummary.targetsMissingTokenBindings}
+                </div>
+              </div>
+              <div data-testid="theme-target-summary-visual-handles">
+                <div className="text-slate-500 mb-1">With Visual Handle</div>
+                <div>{themeTargetSummary.targetsWithVisualHandles}</div>
+              </div>
+            </div>
+
+            <div className="text-xs font-semibold text-slate-400 mb-2 mt-4">Targets by Surface</div>
+            <div className="space-y-2 text-xs text-slate-300" data-testid="theme-target-surface-list">
+              {THEME_SURFACES.map((surface) => (
+                <div key={surface} className="bg-slate-900/40 rounded border border-slate-800 p-2">
+                  <div className="text-slate-500 mb-1 capitalize">{surface}</div>
+                  {themeTargetsBySurface[surface].length ? (
+                    <ul className="list-disc list-inside space-y-1">
+                      {themeTargetsBySurface[surface].map((target: ThemeTargetContract) => (
+                        <li key={target.themeTargetId}>{target.themeTargetId} ({target.status})</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="text-slate-600">No targets registered</div>
+                  )}
+                </div>
+              ))}
+            </div>
+
             <div className="text-xs font-semibold text-slate-400 mb-3 mt-6" data-testid="contract-summary-section">Control Surface Contract Summary</div>
 
-            <div className="mb-3" data-testid="contract-total-active">
-              <div className="text-xs text-slate-500 mb-1">Total Active Controls</div>
-              <div className="text-sm text-slate-300">{(() => {
-                const summary = generateContractSummary();
-                return summary.totalActive;
-              })()}</div>
-            </div>
-
-            <div className="mb-3" data-testid="contract-with-qa">
-              <div className="text-xs text-slate-500 mb-1">With QA Coverage</div>
-              <div className="text-sm text-green-400">{(() => {
-                const summary = generateContractSummary();
-                return summary.withQaCoverage;
-              })()}</div>
-            </div>
-
-            <div className="mb-3" data-testid="contract-with-playwright">
-              <div className="text-xs text-slate-500 mb-1">With Playwright Coverage</div>
-              <div className="text-sm text-green-400">{(() => {
-                const summary = generateContractSummary();
-                return summary.withPlaywrightCoverage;
-              })()}</div>
-            </div>
-
-            <div className="mb-3">
-              <div className="text-xs text-slate-500 mb-1">Missing Docs</div>
-              <div className={`text-sm ${(() => {
-                const summary = generateContractSummary();
-                return summary.missingDocs > 0 ? "text-yellow-400" : "text-green-400";
-              })()}`}>{(() => {
-                const summary = generateContractSummary();
-                return summary.missingDocs;
-              })()}</div>
-            </div>
-
-            <div className="mb-3">
-              <div className="text-xs text-slate-500 mb-1">Missing QA</div>
-              <div className={`text-sm ${(() => {
-                const summary = generateContractSummary();
-                return summary.missingQa > 0 ? "text-yellow-400" : "text-green-400";
-              })()}`}>{(() => {
-                const summary = generateContractSummary();
-                return summary.missingQa;
-              })()}</div>
-            </div>
-
-            <div className="mb-3">
-              <div className="text-xs text-slate-500 mb-1">Missing Playwright</div>
-              <div className={`text-sm ${(() => {
-                const summary = generateContractSummary();
-                return summary.missingPlaywright > 0 ? "text-yellow-400" : "text-green-400";
-              })()}`}>{(() => {
-                const summary = generateContractSummary();
-                return summary.missingPlaywright;
-              })()}</div>
-            </div>
-
-            <div className="mb-3">
-              <div className="text-xs text-slate-500 mb-1">High Risk</div>
-              <div className={`text-sm ${(() => {
-                const summary = generateContractSummary();
-                return summary.highRisk > 0 ? "text-red-400" : "text-green-400";
-              })()}`}>{(() => {
-                const summary = generateContractSummary();
-                return summary.highRisk;
-              })()}</div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="mb-3" data-testid="contract-total-active">
+                <div className="text-xs text-slate-500 mb-1">Total Active Controls</div>
+                <div className="text-sm text-slate-300">{contractSummary.totalActive}</div>
+              </div>
+              <div className="mb-3" data-testid="contract-with-qa">
+                <div className="text-xs text-slate-500 mb-1">With QA Coverage</div>
+                <div className="text-sm text-green-400">{contractSummary.withQaCoverage}</div>
+              </div>
+              <div className="mb-3">
+                <div className="text-xs text-slate-500 mb-1">Handle IDs</div>
+                <div className="text-sm text-slate-300">{contractSummary.withHandleId} ok / {contractSummary.missingHandleId} missing</div>
+              </div>
+              <div className="mb-3">
+                <div className="text-xs text-slate-500 mb-1">Runtime Binding</div>
+                <div className="text-sm text-slate-300">{contractSummary.withRuntimeBinding} ok / {contractSummary.missingRuntimeBinding} missing</div>
+              </div>
+              <div className="mb-3" data-testid="contract-with-playwright">
+                <div className="text-xs text-slate-500 mb-1">With Playwright Coverage</div>
+                <div className="text-sm text-green-400">{contractSummary.withPlaywrightCoverage}</div>
+              </div>
+              <div className="mb-3">
+                <div className="text-xs text-slate-500 mb-1">Missing Playwright</div>
+                <div className={`text-sm ${contractSummary.missingPlaywright > 0 ? "text-yellow-400" : "text-green-400"}`}>{contractSummary.missingPlaywright}</div>
+              </div>
+              <div className="mb-3">
+                <div className="text-xs text-slate-500 mb-1">Settings Keys</div>
+                <div className="text-sm text-slate-300">{contractSummary.withSettingsKey} keyed / {contractSummary.settingsKeyNull} stateless / {contractSummary.missingSettingsKey} missing</div>
+              </div>
+              <div className="mb-3">
+                <div className="text-xs text-slate-500 mb-1">Missing Docs</div>
+                <div className={`text-sm ${contractSummary.missingDocs > 0 ? "text-yellow-400" : "text-green-400"}`}>{contractSummary.missingDocs}</div>
+              </div>
+              <div className="mb-3">
+                <div className="text-xs text-slate-500 mb-1">Missing QA</div>
+                <div className={`text-sm ${contractSummary.missingQa > 0 ? "text-yellow-400" : "text-green-400"}`}>{contractSummary.missingQa}</div>
+              </div>
+              <div className="mb-3">
+                <div className="text-xs text-slate-500 mb-1">High Risk</div>
+                <div className={`text-sm ${contractSummary.highRisk > 0 ? "text-red-400" : "text-green-400"}`}>{contractSummary.highRisk}</div>
+              </div>
             </div>
 
             <div className="text-xs font-semibold text-slate-400 mb-3 mt-6">By Surface</div>
 
             <div className="mb-3" data-testid="contract-surface-grouping">
               <div className="text-xs text-slate-500 mb-1">Top Bar</div>
-              <div className="text-sm text-slate-300">{(() => {
-                const summary = generateContractSummary();
-                return summary.bySurface.topbar;
-              })()}</div>
+              <div className="text-sm text-slate-300">{contractSummary.bySurface.topbar}</div>
             </div>
 
             <div className="mb-3">
               <div className="text-xs text-slate-500 mb-1">Graph</div>
-              <div className="text-sm text-slate-300">{(() => {
-                const summary = generateContractSummary();
-                return summary.bySurface.graph;
-              })()}</div>
+              <div className="text-sm text-slate-300">{contractSummary.bySurface.graph}</div>
             </div>
 
             <div className="mb-3">
               <div className="text-xs text-slate-500 mb-1">Mission Control</div>
-              <div className="text-sm text-slate-300">{(() => {
-                const summary = generateContractSummary();
-                return summary.bySurface.missionControl;
-              })()}</div>
+              <div className="text-sm text-slate-300">{contractSummary.bySurface.missionControl}</div>
             </div>
 
             <div className="mb-3">
-              <div className="text-xs text-slate-500 mb-1">Settings</div>
-              <div className="text-sm text-slate-300">{(() => {
-                const summary = generateContractSummary();
-                return summary.bySurface.settings;
-              })()}</div>
+              <div className="text-xs text-slate-500 mb-1">Settings Panel</div>
+              <div className="text-sm text-slate-300">{contractSummary.bySurface.settings}</div>
+            </div>
+
+            <div className="text-xs font-semibold text-slate-400 mb-3 mt-6">Missing Playwright Coverage</div>
+            <div className="space-y-2">
+              {Object.entries(contractSummary.missingPlaywrightBySurface).map(([surface, contracts]) => (
+                <div key={surface} className="bg-slate-900/40 rounded border border-slate-800 p-2" data-testid={`missing-playwright-${surface}`}>
+                  <div className="text-xs text-slate-500 mb-1 capitalize">{surface}</div>
+                  {contracts.length === 0 ? (
+                    <div className="text-xs text-green-400">Fully covered</div>
+                  ) : (
+                    <ul className="list-disc list-inside text-xs text-yellow-300 space-y-1">
+                      {contracts.map((contract) => (
+                        <li key={contract.id}>{contract.label}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
             </div>
 
             <div className="lw-divider text-xs text-slate-600 mt-4 pt-3 border-t border-slate-700">
@@ -1184,7 +1256,12 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
             {advisoryContent.questions.length > 0 ? (
               <div className="space-y-3 mb-6">
                 {advisoryContent.questions.map((question) => (
-                  <div key={question.id} data-testid={`bandit-question-card-${question.id}`} className="lw-card bg-slate-800/50 rounded p-2 border border-slate-700">
+                  <div
+                    key={question.id}
+                    data-testid={`bandit-question-card-${question.id}`}
+                    className="lw-card bg-slate-800/50 rounded p-2 border border-slate-700"
+                    data-lw-theme-target="mission-control.question-card"
+                  >
                     <div className="text-xs font-medium text-slate-300 mb-1">{question.prompt}</div>
                     {question.context && (
                       <div className="text-xs text-slate-500 mb-2">{question.context}</div>
@@ -1248,7 +1325,12 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
             {advisoryContent.proposals.length > 0 ? (
               <div className="space-y-3 mb-6">
                 {advisoryContent.proposals.map((proposal) => (
-                  <div key={proposal.id} data-testid={`bandit-proposal-card-${proposal.id}`} className="lw-card bg-slate-800/50 rounded p-2 border border-slate-700">
+                  <div
+                    key={proposal.id}
+                    data-testid={`bandit-proposal-card-${proposal.id}`}
+                    className="lw-card bg-slate-800/50 rounded p-2 border border-slate-700"
+                    data-lw-theme-target="mission-control.proposal-card"
+                  >
                     <div className="text-xs font-medium text-slate-300 mb-1">{proposal.title}</div>
                     <div className="text-xs text-slate-400 mb-1">{proposal.summary}</div>
                     {proposal.rationale && (
@@ -1308,6 +1390,7 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
                     key={item.rank}
                     className="lw-card flex items-start gap-2 bg-slate-800/50 rounded p-2 border border-slate-700"
                     data-testid={`bandit-backlog-item-${item.rank}`}
+                    data-lw-theme-target="mission-control.backlog-card"
                   >
                     <div className="text-xs font-mono text-slate-500 mt-0.5">#{item.rank}</div>
                     <div className="flex-1">

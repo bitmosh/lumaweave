@@ -20,7 +20,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       label: "Theme Selector",
       surface: "topbar",
       owner: "settings.store.ts",
-      statePath: "appearance.theme",
+      settingsKey: "appearance.theme",
       runtimeBinding: {
         sourceFile: "src/app/AppShell.tsx",
         targetComponent: "Top bar theme selector",
@@ -48,7 +48,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       label: "Glitter Toggle",
       surface: "topbar",
       owner: "settings.store.ts",
-      statePath: "appearance.glitterEnabled",
+      settingsKey: "appearance.glitterEnabled",
       runtimeBinding: {
         sourceFile: "src/app/AppShell.tsx",
         targetComponent: "Top bar glitter checkbox",
@@ -76,7 +76,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       label: "Reduce Motion Toggle",
       surface: "topbar",
       owner: "settings.store.ts",
-      statePath: "appearance.reduceMotion",
+      settingsKey: "appearance.reduceMotion",
       runtimeBinding: {
         sourceFile: "src/app/AppShell.tsx",
         targetComponent: "Top bar reduce motion checkbox",
@@ -106,7 +106,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       label: "Node Label Mode",
       surface: "graph",
       owner: "settings.store.ts",
-      statePath: "labels.nodeLabelMode",
+      settingsKey: "labels.nodeLabelMode",
       runtimeBinding: {
         sourceFile: "src/graph/visual/graphLabelPolicy.ts",
         targetComponent: "applyNodeLabelPolicy",
@@ -134,7 +134,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       label: "Edge Label Mode",
       surface: "graph",
       owner: "settings.store.ts",
-      statePath: "labels.edgeLabelMode",
+      settingsKey: "labels.edgeLabelMode",
       runtimeBinding: {
         sourceFile: "src/graph/visual/graphLabelPolicy.ts",
         targetComponent: "applyEdgeLabelPolicy",
@@ -162,7 +162,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       label: "Show Labels On Hover",
       surface: "graph",
       owner: "settings.store.ts",
-      statePath: "labels.showLabelsOnHover",
+      settingsKey: "labels.showLabelsOnHover",
       runtimeBinding: {
         sourceFile: "src/graph/visual/graphLabelPolicy.ts",
         targetComponent: "applyNodeLabelPolicy / applyEdgeLabelPolicy",
@@ -190,7 +190,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       label: "Node Label Font Size",
       surface: "graph",
       owner: "settings.store.ts",
-      statePath: "labels.nodeLabelFontSize",
+      settingsKey: "labels.nodeLabelFontSize",
       runtimeBinding: {
         sourceFile: "src/graph/renderers/sigma2d/SigmaGraphView.tsx",
         targetComponent: "sigma.setSetting('labelSize')",
@@ -218,7 +218,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       label: "Edge Label Font Size",
       surface: "graph",
       owner: "settings.store.ts",
-      statePath: "labels.edgeLabelFontSize",
+      settingsKey: "labels.edgeLabelFontSize",
       runtimeBinding: {
         sourceFile: "src/graph/renderers/sigma2d/SigmaGraphView.tsx",
         targetComponent: "sigma.setSetting('edgeLabelSize')",
@@ -246,7 +246,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       label: "Max Edge Label Length",
       surface: "graph",
       owner: "settings.store.ts",
-      statePath: "labels.maxEdgeLabelLength",
+      settingsKey: "labels.maxEdgeLabelLength",
       runtimeBinding: {
         sourceFile: "src/graph/visual/graphLabelPolicy.ts",
         targetComponent: "applyEdgeLabelPolicy truncation",
@@ -273,7 +273,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       label: "Neighborhood Depth",
       surface: "graph",
       owner: "settings.store.ts",
-      statePath: "graphView.nodeSelectionStage",
+      settingsKey: "graphView.nodeSelectionStage",
       runtimeBinding: {
         sourceFile: "src/graph/visual/graphLabelPolicy.ts",
         targetComponent: "applyNodeLabelPolicy / applyEdgeLabelPolicy depth logic",
@@ -300,7 +300,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       label: "Hover Node Color",
       surface: "graph",
       owner: "settings.store.ts",
-      statePath: "graphView.hoverNodeColor",
+      settingsKey: "graphView.hoverNodeColor",
       runtimeBinding: {
         sourceFile: "src/graph/visual/graphStylePolicy.ts",
         targetComponent: "applyHoverStyles",
@@ -328,7 +328,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       label: "Node Size",
       surface: "graph",
       owner: "settings.store.ts",
-      statePath: "physics.nodeSize",
+      settingsKey: "physics.nodeSize",
       runtimeBinding: {
         sourceFile: "src/graph/renderers/sigma2d/buildGraphologyGraph.ts",
         targetComponent: "force layout node size multiplier",
@@ -355,7 +355,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       label: "Link Distance",
       surface: "graph",
       owner: "settings.store.ts",
-      statePath: "physics.linkDistance",
+      settingsKey: "physics.linkDistance",
       runtimeBinding: {
         sourceFile: "src/graph/renderers/sigma2d/buildGraphologyGraph.ts",
         targetComponent: "force layout link distance",
@@ -382,7 +382,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       label: "Repel Force",
       surface: "graph",
       owner: "settings.store.ts",
-      statePath: "physics.repelForce",
+      settingsKey: "physics.repelForce",
       runtimeBinding: {
         sourceFile: "src/graph/renderers/sigma2d/buildGraphologyGraph.ts",
         targetComponent: "force layout repulsion",
@@ -411,7 +411,8 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       label: "Mission Control Tabs",
       surface: "missionControl",
       owner: "qa.store.ts",
-      statePath: "panelView",
+      settingsKey: null,
+      noStorageReason: "Mission Control tab selection is local QA state",
       runtimeBinding: {
         sourceFile: "src/control-plane/qa/QaPanel.tsx",
         targetComponent: "Tab switching (Checklist/Last Report/History/Debug)",
@@ -438,7 +439,8 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       label: "QA Checklist Navigation",
       surface: "missionControl",
       owner: "qa.store.ts",
-      statePath: "currentIndex",
+      settingsKey: null,
+      noStorageReason: "Checklist navigation index lives in QA panel state",
       runtimeBinding: {
         sourceFile: "src/control-plane/qa/QaPanel.tsx",
         targetComponent: "Next/Previous buttons",
@@ -466,7 +468,8 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       label: "QA Status Selectors",
       surface: "missionControl",
       owner: "qa.store.ts",
-      statePath: "check results",
+      settingsKey: null,
+      noStorageReason: "Per-check status values live in QA panel state",
       runtimeBinding: {
         sourceFile: "src/control-plane/qa/QaPanel.tsx",
         targetComponent: "Pass/Fail/Not Applicable radio buttons",
@@ -492,7 +495,8 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       label: "QA Notes Field",
       surface: "missionControl",
       owner: "qa.store.ts",
-      statePath: "check results (notes)",
+      settingsKey: null,
+      noStorageReason: "Notes fields persist via QA panel local storage only",
       runtimeBinding: {
         sourceFile: "src/control-plane/qa/QaPanel.tsx",
         targetComponent: "Notes textarea",
@@ -520,7 +524,8 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       label: "QA Submit Report",
       surface: "missionControl",
       owner: "qa.store.ts",
-      statePath: "feature submissions",
+      settingsKey: null,
+      noStorageReason: "Submit button operates on QA history, no settings key",
       runtimeBinding: {
         sourceFile: "src/control-plane/qa/QaPanel.tsx",
         targetComponent: "Submit button",
@@ -548,7 +553,8 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       label: "Copy Last Submission",
       surface: "missionControl",
       owner: "qa.store.ts",
-      statePath: "last submission",
+      settingsKey: null,
+      noStorageReason: "Copy action reads last submission only",
       runtimeBinding: {
         sourceFile: "src/control-plane/qa/QaPanel.tsx",
         targetComponent: "Copy Last Submission button",
@@ -574,7 +580,8 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       label: "Mission Control Decision Badge",
       surface: "missionControl",
       owner: "qa.store.ts",
-      statePath: "last submission decision",
+      settingsKey: null,
+      noStorageReason: "Decision badge reflects submission history, no setting",
       runtimeBinding: {
         sourceFile: "src/control-plane/qa/QaPanel.tsx",
         targetComponent: "Decision badge in header",
@@ -602,7 +609,8 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       label: "Mission Control History",
       surface: "missionControl",
       owner: "qa.store.ts",
-      statePath: "feature submissions",
+      settingsKey: null,
+      noStorageReason: "History tab reads QA submissions, no settings key",
       runtimeBinding: {
         sourceFile: "src/control-plane/qa/QaPanel.tsx",
         targetComponent: "History tab",

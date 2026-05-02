@@ -7,5 +7,7 @@
 export * from "./theme.types";
 export * from "./themePresets";
 export * from "./themeTokens";
+export * from "./themeTokenPaths";
+export * from "./themeTargetRegistry";
 export * from "./applyTheme";
 export { resolveGraphVisualTokens } from "./themeTokens";

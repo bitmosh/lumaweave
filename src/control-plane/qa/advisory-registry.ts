@@ -272,6 +272,342 @@ export const defaultAdvisoryV13: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV20: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "theme-target-registry-source-of-truth",
+      prompt: "Should Theme Target Registry become the source of truth for future inspectable UI surfaces?",
+      context: "Registry now exists; decide if all future Theme Mapping work must register targets here first.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "require-data-lw-theme-target",
+      prompt: "Should data-lw-theme-target be required for every theme-editable DOM node?",
+      context: "Inspector overlay depends on stable markers. Decide whether future editable surfaces must declare them before shipping.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "inspector-overlay-scope",
+      prompt: "Should the inspector overlay stay dev/debug-only until Theme Mapping Panel exists?",
+      context: "Overlay v0 is read-only. Determine whether it should remain hidden from operators until editing features land.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "graph-targets-planned",
+      prompt: "Should graph node/edge theme targets stay planned until Graph Visual Policy refresh?",
+      context: "Registry includes planned graph entries without bindings; confirm if that remains acceptable until policy is updated.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v21-focus-choice",
+      prompt: "Should v21 focus on inspector overlay hardening, Theme Mapping Panel v0, or Theme Override Storage?",
+      context: "Next pass needs a clear priority now that registry + overlay exist.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "unregistered-target-handling",
+      prompt: "Should unregistered UI elements be ignored in inspector mode or show as unregistered for debugging?",
+      context: "Decide how the overlay should treat DOM nodes lacking themeTargetId markers in future iterations.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "visual-handles-token-binding",
+      title: "Require visual handles to cite token paths",
+      summary: "Add metadata to the Visual Handle Library so each handle lists canonical token paths once Theme Target Registry bindings go live.",
+      rationale: "Prevents drift between CSS primitives and canonical vocabulary before Theme Mapping Panel ships.",
+      risk: "medium",
+      recommendedNextAction: "Extend docs/handleset/09_VISUAL_HANDLE_LIBRARY.md with tokenPath annotations and plan runtime bindings.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+    {
+      id: "token-path-governance",
+      title: "Add token path governance check",
+      summary: "Introduce a lint/validation command that flags unknown themeTokenPath usage across the repo.",
+      rationale: "Keeps the vocabulary compact and prevents speculative tokens from entering runtime code.",
+      risk: "low",
+      recommendedNextAction: "Prototype npm run qa:contracts (or similar) scan that compares token strings against registry",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "Inspector overlay hardening",
+      whyItMatters: "Need lock mode, registered/unregistered indicators, and QA evidence before exposing to more users.",
+      suggestedFutureBite: "Add lock mode + unregistered target warnings",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "Theme Mapping Panel v0",
+      whyItMatters: "Actual Ableton-style controls require generating UI from Theme Target Registry entries.",
+      suggestedFutureBite: "Generate read-write controls for mission-control.panel targets",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "Theme override storage + save preset",
+      whyItMatters: "Inspector adjustments need durable storage before they can ship to users.",
+      suggestedFutureBite: "Design override schema mapping themeTargetId + tokenPath -> value",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 4,
+      title: "Graph physics Playwright coverage",
+      whyItMatters: "Physics sliders remain the largest chunk of missing UI coverage.",
+      suggestedFutureBite: "Add e2e coverage once stable selectors exist for sliders",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 5,
+      title: "Token path governance check",
+      whyItMatters: "Linting canonical paths prevents drift as Theme Target Registry grows.",
+      suggestedFutureBite: "Ship npm run qa:no-skips + governance script",
+      risk: "low",
+      status: "candidate",
+    },
+  ],
+};
+
+export const advisoryV19: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "token-path-required-vocab",
+      prompt: "Should canonical Theme Token Paths become the required vocabulary for Theme Mapping Mode?",
+      context: "v19 introduces Theme Token Path Map + resolver. Decide if all future Theme Mapping prompts must reference these canonical strings instead of ad-hoc labels.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "visual-handle-token-declaration",
+      prompt: "Should every future visual handle declare which token paths it consumes?",
+      context: "Visual handles currently rely on fallback CSS variables. Should new handles explicitly bind to canonical token paths before shipping?",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "graph-token-mapping-boundary",
+      prompt: "Should graph visual tokens stay separate but mapped to canonical token paths?",
+      context: "Graph runtime already has its own token object. Decide whether to keep it standalone with mapping, or collapse it directly into the canonical list.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "planned-token-path-doc-priority",
+      prompt: "Should planned/future token paths be documented before implementation begins?",
+      context: "v19 documents control/motion/visualHandle tokens as planned. Determine if documentation must precede any runtime work for those paths.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "css-overrides-vs-token-paths",
+      prompt: "Should arbitrary CSS overrides be forbidden in favor of token-path overrides?",
+      context: "Theme Mapping Mode will rely on canonical token paths. Decide whether ad-hoc CSS changes should be blocked in future phases.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v20-focus-decision",
+      prompt: "Should v20 prioritize Theme Target Registry or Debug UI Inspector Overlay?",
+      context: "Token path map is done; next steps could be registry wiring or overlay instrumentation. Pick the higher leverage follow-up.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "visual-handles-token-binding",
+      title: "Require visual handles to cite token paths",
+      summary: "Add metadata to the Visual Handle Library so each handle lists the canonical token paths it uses once Theme Target Registry exists.",
+      rationale: "Prevents drift between CSS primitives and canonical vocabulary before Theme Mapping Panel ships.",
+      risk: "medium",
+      recommendedNextAction: "Extend docs/handleset/09_VISUAL_HANDLE_LIBRARY.md with tokenPath annotations and plan runtime bindings for v20.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+    {
+      id: "token-path-governance",
+      title: "Add token path governance check",
+      summary: "Add a lint/validation step ensuring any new theme affordance references a canonical path or adds to the planned list with rationale.",
+      rationale: "Keeps the vocabulary compact and prevents speculative tokens from slipping into runtime.",
+      risk: "low",
+      recommendedNextAction: "Design small tooling hook (lint or script) that scans for tokenPath strings and compares against canonical lists.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "Theme Target Registry",
+      whyItMatters: "Canonical theme targets must exist before Theme Mapping Mode can emit editable controls.",
+      suggestedFutureBite: "Author registry schema + seed entries for Mission Control panels and graph surfaces.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "Debug UI Inspector Overlay",
+      whyItMatters: "Read-only overlay is needed to expose themeTargetId + visualHandle bindings for QA evidence.",
+      suggestedFutureBite: "Ship hover highlight + info panel driven by Theme Target Registry entries.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "Graph physics Playwright coverage",
+      whyItMatters: "Physics sliders remain untested and are highlighted as missing coverage in Debug.",
+      suggestedFutureBite: "Add e2e coverage once stable data-testid hooks exist for link distance / repel / node size.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 4,
+      title: "Token path governance check",
+      whyItMatters: "Any new theme affordance must cite canonical paths to prevent vocabulary drift after v19.",
+      suggestedFutureBite: "Add lint/validation command (npm run qa:contracts?) that flags unknown tokenPath strings.",
+      risk: "low",
+      status: "candidate",
+    },
+    {
+      rank: 5,
+      title: "Mission Control coverage instrumentation",
+      whyItMatters: "Persisting coverage totals in QA reports gives auditors durable evidence for zero-missing state.",
+      suggestedFutureBite: "Include coverage snapshot + counts in QA report markdown and Debug tab.",
+      risk: "low",
+      status: "candidate",
+    },
+  ],
+};
+
+// Advisory content for v18 - Control Handle / Settings Key Alignment
+export const advisoryV18: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "handle-settings-separation",
+      prompt: "Should handleId stay separate from settingsKey even when they map 1:1?",
+      context: "v18 aligned contract metadata so every handle records a settings key or no-storage rationale. Do we keep both fields for traceability?",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "playwright-coverage-threshold",
+      prompt: "Should missing Playwright coverage block acceptance or remain advisory?",
+      context: "Eight controls still lack browser tests. Should acceptance require zero missing coverage, or is surfacing the gaps enough?",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "no-storage-rationale",
+      prompt: "Should every stateless control include an explicit noStorageReason?",
+      context: "Mission Control buttons now set settingsKey: null with rationale. Should this be mandatory before new controls ship?",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "debug-summary-permanence",
+      prompt: "Should the Missing Playwright Coverage list stay visible in Debug after v18?",
+      context: "The new grouped summary helps QA spot debt quickly. Should we keep it permanently even after coverage hits zero?",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "contract-registry-gate",
+      prompt: "Should future control launches be blocked unless they have a contract entry first?",
+      context: "v18 requires every active control to appear in controlSurfaceContract.registry. Should this become a hard release gate?",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v19-priority",
+      prompt: "What should v19 focus on: Theme Token Path Map or Graph Visual State Policy refresh?",
+      context: "Next pass options include extending theme token coverage or tightening graph visual policy. Which gives more leverage immediately after v18?",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "graph-physics-playwright",
+      title: "Add Playwright coverage for graph physics sliders",
+      summary: "Author a Playwright spec that exercises node size, link distance, and repel force to prove runtime wiring.",
+      rationale: "Physics controls remain untested and are the largest chunk of missing coverage surfaced in v18.",
+      risk: "medium",
+      recommendedNextAction: "Design data-testid hooks for sliders, add tests under tests/e2e/graph-physics-controls.spec.ts",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+    {
+      id: "mission-control-debug-coverage",
+      title: "Mission Control coverage snapshot",
+      summary: "Persist snapshot of coverage counts into session log whenever QA report is generated.",
+      rationale: "Keeps evidence that zero-missing counts were verified at submit time.",
+      risk: "low",
+      recommendedNextAction: "Extend report markdown with coverage totals from contract summary",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "Graph physics Playwright coverage",
+      whyItMatters: "Physics sliders remain untested and are highlighted as missing in Debug.",
+      suggestedFutureBite: "Add e2e coverage once data-testid hooks exist",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "Mission Control coverage instrumentation",
+      whyItMatters: "Persisting coverage totals in reports would give auditors durable evidence",
+      suggestedFutureBite: "Include coverage snapshot in QA report markdown",
+      risk: "low",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "Theme token path map",
+      whyItMatters: "Future theme editor work depends on a canonical mapping between handles and token paths",
+      suggestedFutureBite: "Document token path map for top bar + mission control controls",
+      risk: "medium",
+      status: "promoted",
+    },
+  ],
+};
+
 // Advisory content for v15 - Mission Control Advisory Channel
 export const advisoryV15: BanditAdvisorySection = {
   questions: [
@@ -688,7 +1024,19 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number): B
   if (checklistKey === "graph-state-preservation-and-advisory-rotation-v16c:v18") {
     return advisoryV16c;
   }
-  
+
+  if (featureId === "control-handle-settings-alignment-v18" && qaVersion === 18) {
+    return advisoryV18;
+  }
+
+  if (featureId === "theme-token-path-map-v19" && qaVersion === 19) {
+    return advisoryV19;
+  }
+
+  if (featureId === "theme-target-registry-v20" && qaVersion === 20) {
+    return advisoryV20;
+  }
+
   // v16d has its own advisory set
   if (checklistKey === "qa-advisory-protocol-and-binding-v16d:v16") {
     return advisoryV16d;
@@ -715,6 +1063,19 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number): B
 
 // Advisory lookup function keyed by canonical qaKey
 export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
+  // v18 has its own advisory set
+  if (qaKey === "v18") {
+    return advisoryV18;
+  }
+
+  if (qaKey === "v19") {
+    return advisoryV19;
+  }
+
+  if (qaKey === "v20") {
+    return advisoryV20;
+  }
+  
   // v17a has its own advisory set
   if (qaKey === "v17a") {
     return advisoryV17a;
@@ -723,11 +1084,6 @@ export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
   // v17 has its own advisory set
   if (qaKey === "v17") {
     return advisoryV16e;
-  }
-  
-  // v18 (v16c) has its own advisory set
-  if (qaKey === "v18") {
-    return advisoryV16c;
   }
   
   // v16 (v16d) has its own advisory set

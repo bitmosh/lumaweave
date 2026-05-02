@@ -58,20 +58,80 @@ export function findContractsMissingPlaywright() {
  */
 export function generateContractSummary(): ContractSummary {
   const activeContracts = getActiveControlContracts();
-  
-  return {
+
+  const initialSummary: ContractSummary = {
     totalActive: activeContracts.length,
-    withQaCoverage: activeContracts.filter((c) => c.qa.hasQaCoverage).length,
-    withPlaywrightCoverage: activeContracts.filter((c) => c.playwright.hasCoverage).length,
-    missingDocs: activeContracts.filter((c) => !c.docs.hasDocs).length,
-    missingQa: activeContracts.filter((c) => !c.qa.hasQaCoverage).length,
-    missingPlaywright: activeContracts.filter((c) => !c.playwright.hasCoverage).length,
-    highRisk: activeContracts.filter((c) => c.risk === "high").length,
+    withHandleId: 0,
+    missingHandleId: 0,
+    withSettingsKey: 0,
+    settingsKeyNull: 0,
+    missingSettingsKey: 0,
+    withRuntimeBinding: 0,
+    missingRuntimeBinding: 0,
+    withQaCoverage: 0,
+    withPlaywrightCoverage: 0,
+    missingDocs: 0,
+    missingQa: 0,
+    missingPlaywright: 0,
+    missingPlaywrightBySurface: {
+      topbar: [],
+      graph: [],
+      missionControl: [],
+      settings: [],
+    },
+    highRisk: 0,
     bySurface: {
-      topbar: getContractsBySurface("topbar").length,
-      graph: getContractsBySurface("graph").length,
-      missionControl: getContractsBySurface("missionControl").length,
-      settings: getContractsBySurface("settings").length,
+      topbar: 0,
+      graph: 0,
+      missionControl: 0,
+      settings: 0,
     },
   };
+
+  return activeContracts.reduce<ContractSummary>((acc, contract) => {
+    acc.bySurface[contract.surface] += 1;
+
+    if (contract.id) {
+      acc.withHandleId += 1;
+    } else {
+      acc.missingHandleId += 1;
+    }
+
+    if (contract.settingsKey === null) {
+      acc.settingsKeyNull += 1;
+    } else if (typeof contract.settingsKey === "string" && contract.settingsKey.trim().length > 0) {
+      acc.withSettingsKey += 1;
+    } else {
+      acc.missingSettingsKey += 1;
+    }
+
+    if (contract.runtimeBinding?.sourceFile && contract.runtimeBinding?.targetComponent) {
+      acc.withRuntimeBinding += 1;
+    } else {
+      acc.missingRuntimeBinding += 1;
+    }
+
+    if (contract.qa.hasQaCoverage) {
+      acc.withQaCoverage += 1;
+    } else {
+      acc.missingQa += 1;
+    }
+
+    if (contract.playwright.hasCoverage) {
+      acc.withPlaywrightCoverage += 1;
+    } else {
+      acc.missingPlaywright += 1;
+      acc.missingPlaywrightBySurface[contract.surface].push(contract);
+    }
+
+    if (!contract.docs.hasDocs) {
+      acc.missingDocs += 1;
+    }
+
+    if (contract.risk === "high") {
+      acc.highRisk += 1;
+    }
+
+    return acc;
+  }, initialSummary);
 }

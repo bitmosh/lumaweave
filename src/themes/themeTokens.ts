@@ -6,6 +6,7 @@
 
 import type { ThemeId } from "../control-plane/settings/settings.schema";
 import type { ThemeRuntimeTokens } from "./theme.types";
+import { validateThemeTokenPaths } from "./themeTokenPaths";
 
 /**
  * Solar Plasma theme tokens
@@ -203,6 +204,13 @@ export function validateThemeTokens(): void {
       if (!(key in tokens.effects)) {
         console.warn(`[THEME VALIDATION] Theme "${themeId}" missing effects token: ${key}`);
       }
+    }
+
+    const missingTokenPaths = validateThemeTokenPaths(tokens);
+    if (missingTokenPaths.length > 0) {
+      console.warn(
+        `[THEME VALIDATION] Theme "${themeId}" missing canonical token paths: ${missingTokenPaths.join(", ")}`,
+      );
     }
   }
 }

@@ -13,6 +13,7 @@ import {
   buildGraphologyGraph,
 } from "../graph/renderers/sigma2d/buildGraphologyGraph";
 import { getThemeRuntimeTokens, resolveGraphVisualTokens } from "../themes";
+import { ThemeTargetInspectorOverlay } from "../themes/ThemeTargetInspectorOverlay";
 
 export function AppShell() {
   const settings = useSettingsStore((state) => state.settings);
@@ -89,6 +90,7 @@ export function AppShell() {
         "--lw-glow": themeTokens.app.glow,
         backgroundColor: themeTokens.app.background,
       } as React.CSSProperties}
+      data-lw-theme-target="app.shell"
     >
       <div className="grid h-screen grid-rows-[auto_1fr_auto]">
         <header 
@@ -97,6 +99,7 @@ export function AppShell() {
             borderBottom: `1px solid ${themeTokens.app.panelBorder}`,
             backgroundColor: `${themeTokens.app.background}dd`,
           } as React.CSSProperties}
+          data-lw-theme-target="topbar.root"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -343,6 +346,7 @@ export function AppShell() {
             style={{
               background: `radial-gradient(circle at center, ${themeTokens.app.accent}16, transparent 35%), radial-gradient(circle at bottom right, ${themeTokens.app.glow}12, transparent 30%)`,
             } as React.CSSProperties}
+            data-lw-theme-target="graph.frame"
           >
             <div 
               className="absolute inset-0"
@@ -469,6 +473,7 @@ export function AppShell() {
               borderLeft: `1px solid ${themeTokens.app.panelBorder}`,
               backgroundColor: themeTokens.app.panelBackground,
             } as React.CSSProperties}
+            data-lw-theme-target="settings.panel"
           >
             <h2 
               className="mb-3 text-sm font-semibold uppercase tracking-wider"
@@ -496,6 +501,7 @@ export function AppShell() {
           renderer {settings.graphView.defaultRenderer}
         </footer>
       </div>
+      <ThemeTargetInspectorOverlay />
     </main>
   );
 }
