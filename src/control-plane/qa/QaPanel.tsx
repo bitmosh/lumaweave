@@ -1,9 +1,48 @@
 import { useState, useEffect } from "react";
 import { qaCheckDefinitions } from "./qa-registry";
 import { useQaStore } from "./qa.store";
-import type { QaCheckResult, QaStatus } from "./qa.types";
+import type { BanditProposalDecision, BanditQuestionStatus, QaCheckResult, QaStatus } from "./qa.types";
 import { generateContractSummary } from "../contracts";
-import { defaultAdvisoryV13 } from "./advisory-registry";
+import { getAdvisoryForQaKey } from "./advisory-registry";
+
+const ACTIVE_CHECKLIST_STORAGE_KEY = "lumaweave-qa-active-checklist";
+const BACKLOG_STORAGE_KEY = "lumaweave-advisory-backlog-order";
+const QUESTION_ANSWER_STORAGE_KEY = "lumaweave-advisory-question-answers";
+const PROPOSAL_DECISIONS_STORAGE_KEY = "lumaweave-advisory-proposal-decisions";
+const DEFAULT_QA_KEY = "v17a";
+const PROPOSAL_DECISION_OPTIONS: readonly BanditProposalDecision[] = [
+  "unreviewed",
+  "accept-for-future",
+  "defer",
+  "reject",
+  "needs-more-detail",
+] as const;
+
+const isProposalDecision = (value: unknown): value is BanditProposalDecision =>
+  typeof value === "string" && PROPOSAL_DECISION_OPTIONS.includes(value as BanditProposalDecision);
+
+const parseJson = <T,>(value: string | null): T | null => {
+  if (!value) {
+    return null;
+  }
+  try {
+    return JSON.parse(value) as T;
+  } catch (error) {
+    console.error("Failed to parse persisted QA state", error);
+    return null;
+  }
+};
+
+const loadPersistedProposalDecisions = (): Record<string, BanditProposalDecision> =>
+  parseJson<Record<string, BanditProposalDecision>>(localStorage.getItem(PROPOSAL_DECISIONS_STORAGE_KEY)) ?? {};
+
+const persistProposalDecisions = (proposals: { id: string; userDecision: BanditProposalDecision }[]) => {
+  const decisionsMap = proposals.reduce<Record<string, BanditProposalDecision>>((acc, proposal) => {
+    acc[proposal.id] = proposal.userDecision;
+    return acc;
+  }, {});
+  localStorage.setItem(PROPOSAL_DECISIONS_STORAGE_KEY, JSON.stringify(decisionsMap));
+};
 
 type PanelView = "checklist" | "last-submission" | "history" | "debug" | "advisory";
 
@@ -14,36 +53,44 @@ interface QaPanelProps {
 }
 
 export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", themePanelBorder = "rgba(148, 163, 184, 0.2)" }: QaPanelProps) {
-  const [activeFeatureId, setActiveFeatureId] = useState<string>(() => {
-    // Load persisted checklist selection, but clear v11/v13 selections
-    const persisted = localStorage.getItem("lumaweave-qa-active-checklist");
-    if (persisted && (persisted.includes("v11") || persisted.includes("v13"))) {
-      localStorage.removeItem("lumaweave-qa-active-checklist");
-      return "mission-control-advisory-channel";
-    }
+  // Use canonical qaKey as primary selector
+  const [activeQaKey, setActiveQaKey] = useState<string>(() => {
+    const persisted = localStorage.getItem(ACTIVE_CHECKLIST_STORAGE_KEY);
     if (persisted) {
-      const [featureId] = persisted.split(":v");
-      return featureId || "mission-control-advisory-channel";
+      const qaKeyMatch = persisted.match(/^v\d+[a-z]?$/);
+      if (qaKeyMatch) return qaKeyMatch[0];
+      const versionMatch = persisted.match(/:v(\d+)$/);
+      if (versionMatch) return `v${versionMatch[1]}`;
+      localStorage.removeItem(ACTIVE_CHECKLIST_STORAGE_KEY);
     }
-    return "mission-control-advisory-channel";
+    return DEFAULT_QA_KEY;
   });
-  const [activeQaVersion, setActiveQaVersion] = useState<number>(() => {
-    // Load persisted version, but clear v11/v13/v14 selections
-    const persisted = localStorage.getItem("lumaweave-qa-active-checklist");
-    if (persisted && (persisted.includes("v11") || persisted.includes("v13") || persisted.includes("v14"))) {
-      return 15;
-    }
+
+  const [activeFeatureId, setActiveFeatureId] = useState<string>(() => {
+    // Load persisted featureId, default to checklist-identity-validation
+    const persisted = localStorage.getItem(ACTIVE_CHECKLIST_STORAGE_KEY);
     if (persisted) {
-      const [, versionStr] = persisted.split(":v");
-      const version = parseInt(versionStr, 10);
-      return isNaN(version) ? 15 : version;
+      const featureIdMatch = persisted.match(/^([^:]+):/);
+      if (featureIdMatch) {
+        return featureIdMatch[1];
+      }
     }
-    return 15;
+    return "checklist-identity-validation"; // Default feature
+  });
+
+  const [activeQaVersion, setActiveQaVersion] = useState<number>(() => {
+    // Derive qaVersion from qaKey (e.g., v17 -> 17)
+    const versionMatch = activeQaKey.match(/^v(\d+)$/);
+    if (versionMatch) {
+      return parseInt(versionMatch[1], 10);
+    }
+    return 17; // Default version
   });
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [submitMessage, setSubmitMessage] = useState<string>("");
   const [localNotes, setLocalNotes] = useState<string>("");
   const [panelView, setPanelView] = useState<PanelView>("checklist");
+  const [identityError, setIdentityError] = useState<string>("");
 
   const resultsByChecklist = useQaStore((state) => state.resultsByChecklist);
   const setCheckResult = useQaStore((state) => state.setCheckResult);
@@ -55,49 +102,44 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
   const lastSubmission = getLastSubmission();
   const submissionHistory = getSubmissionsByFeatureId(activeFeatureId);
 
-  // Advisory state - use default advisory for v13, empty for others
+  // Advisory state - load appropriate advisory based on active qaKey
   const [advisoryContent, setAdvisoryContent] = useState(() => {
-    // Load persisted backlog order from localStorage
-    const persistedBacklog = localStorage.getItem("lumaweave-advisory-backlog-order");
-    // Load persisted question answers from localStorage
-    const persistedQuestionAnswers = localStorage.getItem("lumaweave-advisory-question-answers");
-    const defaultAdvisory = defaultAdvisoryV13;
+    // Get the appropriate advisory for the current qaKey
+    const defaultAdvisory = getAdvisoryForQaKey(activeQaKey);
+    
+    // Load persisted backlog order, answers, and proposal decisions from localStorage
+    const persistedBacklog = parseJson(defaultAdvisory.backlog.length ? localStorage.getItem(BACKLOG_STORAGE_KEY) : null);
+    const persistedQuestionAnswers = parseJson<Record<string, string>>(localStorage.getItem(QUESTION_ANSWER_STORAGE_KEY));
+    const persistedProposalDecisions = loadPersistedProposalDecisions();
     
     let mergedAdvisory = { ...defaultAdvisory };
     
-    // Apply persisted backlog order
-    if (persistedBacklog) {
-      try {
-        const parsedBacklog = JSON.parse(persistedBacklog);
-        // Validate and apply persisted order
-        if (Array.isArray(parsedBacklog) && parsedBacklog.length === defaultAdvisory.backlog.length) {
-          mergedAdvisory.backlog = parsedBacklog.map((item, index) => ({
-            ...item,
-            rank: index + 1
-          }));
-        }
-      } catch (e) {
-        console.error("Failed to parse persisted backlog order:", e);
-      }
+    if (Array.isArray(persistedBacklog) && persistedBacklog.length === defaultAdvisory.backlog.length) {
+      mergedAdvisory.backlog = persistedBacklog.map((item, index) => ({
+        ...item,
+        rank: index + 1,
+      }));
     }
     
-    // Apply persisted question answers with defensive merge
     if (persistedQuestionAnswers) {
-      try {
-        const parsedAnswers = JSON.parse(persistedQuestionAnswers);
-        // Merge answers into questions by ID, preserving all other question fields
-        mergedAdvisory.questions = defaultAdvisory.questions.map((question) => {
-          const persistedAnswer = parsedAnswers[question.id];
-          if (persistedAnswer && typeof persistedAnswer === 'string') {
-            return { ...question, userResponse: persistedAnswer };
-          }
-          return question;
-        });
-      } catch (e) {
-        console.error("Failed to parse persisted question answers:", e);
-      }
+      mergedAdvisory.questions = defaultAdvisory.questions.map((question) => {
+        const persistedAnswer = persistedQuestionAnswers[question.id];
+        if (persistedAnswer && typeof persistedAnswer === "string") {
+          return { ...question, userResponse: persistedAnswer };
+        }
+        return question;
+      });
     }
+
+    mergedAdvisory.proposals = defaultAdvisory.proposals.map((proposal) => {
+      const persistedDecision = persistedProposalDecisions[proposal.id];
+      if (isProposalDecision(persistedDecision)) {
+        return { ...proposal, userDecision: persistedDecision };
+      }
+      return proposal;
+    });
     
+    persistProposalDecisions(mergedAdvisory.proposals);
     return mergedAdvisory;
   });
 
@@ -119,8 +161,39 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
     }
   };
 
-  // Derive checklist key from featureId and qaVersion
-  const activeChecklistKey = `${activeFeatureId}:v${activeQaVersion}`;
+  // Derive checklist key from qaKey (canonical format: v17)
+  const activeChecklistKey = activeQaKey;
+
+  // Identity validation function
+  const validateChecklistIdentity = (): { valid: boolean; error?: string } => {
+    // All identity surfaces should agree on the canonical identity: qaKey
+    const canonicalIdentity = activeQaKey;
+
+    // Get dropdown value (should match qaKey)
+    const dropdownValue = activeQaKey;
+
+    // Get header badge version (should match qaKey)
+    const headerBadgeVersion = activeQaKey;
+
+    // Validate dropdown matches canonical identity
+    if (dropdownValue !== canonicalIdentity) {
+      return {
+        valid: false,
+        error: `Checklist identity mismatch: dropdown (${dropdownValue}) does not match active qaKey (${canonicalIdentity})`,
+      };
+    }
+
+    // Validate header badge matches canonical identity
+    if (headerBadgeVersion !== canonicalIdentity) {
+      return {
+        valid: false,
+        error: `Checklist identity mismatch: header badge (${headerBadgeVersion}) does not match active qaKey (${canonicalIdentity})`,
+      };
+    }
+
+    // All identities agree
+    return { valid: true };
+  };
 
   const activeChecks = qaCheckDefinitions.filter(
     (check) => check.featureId === activeFeatureId && check.qaVersion === activeQaVersion && check.active !== false
@@ -129,17 +202,19 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
   // Fallback: if current checklist has no active checks, auto-select newest active checklist
   useEffect(() => {
     if (activeChecks.length === 0) {
-      // Find all active checklists
+      // Find all active checklists using qaKey
       const allActiveChecklists = Array.from(
         new Set(
           qaCheckDefinitions
             .filter((check) => check.active !== false)
-            .map((check) => `${check.featureId}:v${check.qaVersion}`)
+            .map((check) => check.qaKey ?? `v${check.qaVersion}`)
         )
-      ).map((checklistKey) => {
-        const [featureId, versionStr] = checklistKey.split(":v");
-        const qaVersion = parseInt(versionStr, 10);
-        return { featureId, qaVersion, checklistKey };
+      ).map((qaKey) => {
+        const qaVersion = parseInt(qaKey.replace(/^v/, ''), 10);
+        const check = qaCheckDefinitions.find(
+          (c) => (c.qaKey ?? `v${c.qaVersion}`) === qaKey
+        );
+        return { qaKey, qaVersion, featureId: check?.featureId || "unknown" };
       });
 
       // Sort by version descending to get newest
@@ -147,12 +222,13 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
 
       if (allActiveChecklists.length > 0) {
         const newest = allActiveChecklists[0];
-        setActiveFeatureId(newest.featureId);
+        setActiveQaKey(newest.qaKey);
         setActiveQaVersion(newest.qaVersion);
+        setActiveFeatureId(newest.featureId);
         setCurrentIndex(0);
       }
     }
-  }, [activeFeatureId, activeQaVersion]);
+  }, [activeFeatureId, activeQaVersion, activeQaKey]);
 
   const activeFeatureName = activeChecks[0]?.featureName || "Unknown Feature";
   const currentCheck = activeChecks[currentIndex];
@@ -162,19 +238,19 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
     new Set(
       qaCheckDefinitions
         .filter((check) => check.active !== false)
-        .map((check) => `${check.featureId}:${check.qaVersion}`)
+        .map((check) => check.qaKey ?? `v${check.qaVersion}`)
     )
-  ).map((checklistKey) => {
-    const [featureId, versionStr] = checklistKey.split(":v");
-    const qaVersion = parseInt(versionStr, 10);
+  ).map((qaKey) => {
+    // Find a check with this qaKey to get feature info
     const check = qaCheckDefinitions.find(
-      (c) => c.featureId === featureId && c.qaVersion === qaVersion
+      (c) => (c.qaKey ?? `v${c.qaVersion}`) === qaKey
     );
+    const qaVersion = parseInt(qaKey.replace(/^v/, ''), 10);
     return {
-      checklistKey,
-      featureId,
+      checklistKey: qaKey, // Use qaKey as the value
+      featureId: check?.featureId || "unknown",
       qaVersion,
-      featureName: check?.featureName || featureId,
+      featureName: check?.featureName || qaKey,
     };
   });
 
@@ -291,6 +367,21 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
   };
 
   const submitQaReport = () => {
+    // Validate checklist identity before submit
+    const identityValidation = validateChecklistIdentity();
+    if (!identityValidation.valid) {
+      setIdentityError(identityValidation.error || "Checklist identity mismatch detected. Submission blocked.");
+      setSubmitMessage("Submission blocked: identity mismatch");
+      setTimeout(() => {
+        setIdentityError("");
+        setSubmitMessage("");
+      }, 5000);
+      return; // Block submission
+    }
+
+    // Clear any previous identity error
+    setIdentityError("");
+
     // Sync current localNotes to store before generating report
     if (currentCheck && localNotes !== (currentChecklistResults[currentCheck.id]?.notes ?? "")) {
       setCheckResult(activeChecklistKey, currentCheck.id, {
@@ -324,6 +415,41 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
     setCurrentIndex(0);
     setLocalNotes("");
     
+    // Reset per-run advisory fields (question answers, proposal notes)
+    // Preserve backlog order and proposal decisions
+    // 
+    // Reset after submit:
+    // - checklist statuses (via resetChecklistResults above)
+    // - checklist notes (via setLocalNotes above)
+    // - Bandit Question answer notes (userResponse)
+    // - question status (status)
+    // - proposal notes (userNotes) if report-specific
+    //
+    // Preserve after submit:
+    // - backlog order (not reset)
+    // - proposal decisions (userDecision)
+    // - proposal statuses
+    setAdvisoryContent((prev) => {
+      const resetQuestions = prev.questions.map((q) => ({
+        ...q,
+        userResponse: "",
+        status: "unanswered" as BanditQuestionStatus,
+      }));
+      const resetProposals = prev.proposals.map((p) => ({
+        ...p,
+        userNotes: "",
+      }));
+      persistProposalDecisions(resetProposals);
+      return {
+        ...prev,
+        questions: resetQuestions,
+        proposals: resetProposals,
+      };
+    });
+    
+    // Clear persisted question answers from localStorage
+    localStorage.removeItem(QUESTION_ANSWER_STORAGE_KEY);
+    
     setTimeout(() => setSubmitMessage(""), 3000);
   };
 
@@ -338,6 +464,7 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
   ): string => {
     let report = `# QA Report — ${featureName}\n\n`;
     report += `**Checklist Key:** ${checklistKey}\n`;
+    report += `**Advisory Set Key:** ${checklistKey}\n`;
     report += `**Submitted At:** ${new Date().toISOString()}\n\n`;
     report += `## Acceptance Decision\n\n**${decision}**\n\n`;
     report += `## Summary\n\n`;
@@ -433,14 +560,17 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
     }
   };
 
-  const handleChecklistChange = (checklistKey: string) => {
-    const [featureId, versionStr] = checklistKey.split(":v");
-    const qaVersion = parseInt(versionStr, 10);
-    setActiveFeatureId(featureId);
-    setActiveQaVersion(qaVersion);
-    setCurrentIndex(0);
-    // Persist the selected checklist to localStorage
-    localStorage.setItem("lumaweave-qa-active-checklist", checklistKey);
+  const handleChecklistChange = (qaKey: string) => {
+    // Extract qaKey from the selected value
+    const versionMatch = qaKey.match(/^v(\d+)$/);
+    if (versionMatch) {
+      const qaVersion = parseInt(versionMatch[1], 10);
+      setActiveQaKey(qaKey);
+      setActiveQaVersion(qaVersion);
+      setCurrentIndex(0);
+      // Persist the selected qaKey to localStorage
+      localStorage.setItem(ACTIVE_CHECKLIST_STORAGE_KEY, qaKey);
+    }
   };
 
   const moveBacklogItemUp = (index: number) => {
@@ -449,7 +579,7 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
     [newBacklog[index - 1], newBacklog[index]] = [newBacklog[index], newBacklog[index - 1]];
     const updatedBacklog = newBacklog.map((item, idx) => ({ ...item, rank: idx + 1 }));
     setAdvisoryContent({ ...advisoryContent, backlog: updatedBacklog });
-    localStorage.setItem("lumaweave-advisory-backlog-order", JSON.stringify(updatedBacklog));
+    localStorage.setItem(BACKLOG_STORAGE_KEY, JSON.stringify(updatedBacklog));
   };
 
   const moveBacklogItemDown = (index: number) => {
@@ -458,7 +588,17 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
     [newBacklog[index], newBacklog[index + 1]] = [newBacklog[index + 1], newBacklog[index]];
     const updatedBacklog = newBacklog.map((item, idx) => ({ ...item, rank: idx + 1 }));
     setAdvisoryContent({ ...advisoryContent, backlog: updatedBacklog });
-    localStorage.setItem("lumaweave-advisory-backlog-order", JSON.stringify(updatedBacklog));
+    localStorage.setItem(BACKLOG_STORAGE_KEY, JSON.stringify(updatedBacklog));
+  };
+
+  const handleProposalDecisionUpdate = (proposalId: string, decision: BanditProposalDecision) => {
+    setAdvisoryContent((prev) => {
+      const updatedProposals = prev.proposals.map((p) =>
+        p.id === proposalId ? { ...p, userDecision: decision } : p
+      );
+      persistProposalDecisions(updatedProposals);
+      return { ...prev, proposals: updatedProposals };
+    });
   };
 
   if (!currentCheck) {
@@ -472,25 +612,25 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
   const currentResult = currentStoredResult;
 
   return (
-    <div className="flex flex-col h-full text-sm" data-testid="qa-panel">
+    <div className="lw-panel flex flex-col h-full text-sm" data-testid="qa-panel">
       {/* Header */}
       <div className="flex-shrink-0 p-3" style={{ borderBottom: `1px solid ${themePanelBorder}` } as React.CSSProperties}>
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-xs font-semibold uppercase tracking-wide" style={{ color: themeTextMuted } as React.CSSProperties}>QA Panel</h2>
           <div className="flex items-center gap-2">
-            <span 
-              className="text-xs px-2 py-0.5 rounded"
-              style={{ 
+            <span
+              className="lw-badge text-xs"
+              style={{
                 backgroundColor: `${themeAccent}20`,
-                color: themeAccent 
+                color: themeAccent
               } as React.CSSProperties}
             >
-              v{activeQaVersion}
+              {activeQaKey}
             </span>
-            <span 
-              className="text-xs px-2 py-0.5 rounded font-semibold"
+            <span
+              className="lw-badge text-xs font-semibold"
               style={{
-                backgroundColor: 
+                backgroundColor:
                   acceptanceDecision === "ACCEPT" ? "rgba(74, 222, 128, 0.2)" :
                   acceptanceDecision === "DO NOT ACCEPT" ? "rgba(248, 113, 113, 0.2)" :
                   acceptanceDecision === "BLOCKED" ? "rgba(250, 204, 21, 0.2)" :
@@ -514,6 +654,7 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
               value={activeChecklistKey}
               onChange={(e) => handleChecklistChange(e.target.value)}
               className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-300 text-xs"
+              data-testid="qa-checklist-selector"
             >
               {uniqueChecklists.map((checklist) => (
                 <option key={checklist.checklistKey} value={checklist.checklistKey}>
@@ -530,7 +671,7 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
       </div>
 
       {/* Panel View Tabs */}
-      <div className="flex-shrink-0 p-2 grid grid-cols-2 gap-1" style={{ borderBottom: `1px solid ${themePanelBorder}` } as React.CSSProperties}>
+      <div className="lw-control-grid flex-shrink-0 p-2" style={{ borderBottom: `1px solid ${themePanelBorder}` } as React.CSSProperties}>
         <button
           onClick={() => setPanelView("checklist")}
           className={`px-2 py-1 text-xs rounded`}
@@ -655,8 +796,18 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
         </div>
       )}
 
+      {/* Identity error */}
+      {identityError && (
+        <div className="flex-shrink-0 p-2 bg-red-900/30 text-xs text-center text-red-300 border-b border-red-700">
+          {identityError}
+        </div>
+      )}
+
       {/* Question counter */}
-      <div className="flex-shrink-0 p-2 border-b border-slate-700 text-center text-xs text-slate-400">
+      <div
+        className="flex-shrink-0 p-2 border-b border-slate-700 text-center text-xs text-slate-400"
+        data-testid="qa-question-counter"
+      >
         Question {currentIndex + 1} / {activeChecks.length}
       </div>
 
@@ -666,6 +817,7 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
           onClick={goToPrevious}
           disabled={currentIndex === 0}
           className="flex-1 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-slate-300 rounded px-2 py-1 text-xs"
+          data-testid="qa-check-previous"
         >
           Previous
         </button>
@@ -673,6 +825,7 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
           onClick={goToNext}
           disabled={currentIndex === activeChecks.length - 1}
           className="flex-1 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-slate-300 rounded px-2 py-1 text-xs"
+          data-testid="qa-check-next"
         >
           Next
         </button>
@@ -701,7 +854,7 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
               <option value="unverified">Unverified</option>
             </select>
             <div className="flex-1 min-w-0">
-              <div className="font-medium text-slate-300 text-sm">{currentCheck.title}</div>
+              <div className="font-medium text-slate-300 text-sm" data-testid="qa-check-title">{currentCheck.title}</div>
             </div>
           </div>
           
@@ -881,6 +1034,35 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
               </div>
             )}
 
+            <div className="text-xs font-semibold text-slate-400 mb-3 mt-6">Checklist Identity Diagnostics</div>
+
+            <div className="mb-3">
+              <div className="text-xs text-slate-500 mb-1">Active Checklist</div>
+              <div className="text-sm text-slate-300">{activeChecklistKey}</div>
+            </div>
+
+            <div className="mb-3">
+              <div className="text-xs text-slate-500 mb-1">Dropdown Selection</div>
+              <div className="text-sm text-slate-300">{activeChecklistKey}</div>
+            </div>
+
+            <div className="mb-3">
+              <div className="text-xs text-slate-500 mb-1">Report Key</div>
+              <div className="text-sm text-slate-300">{activeChecklistKey}</div>
+            </div>
+
+            <div className="mb-3">
+              <div className="text-xs text-slate-500 mb-1">Advisory Set Key</div>
+              <div className="text-sm text-slate-300">{activeChecklistKey}</div>
+            </div>
+
+            <div className="mb-3">
+              <div className="text-xs text-slate-500 mb-1">Identity Valid</div>
+              <div className={`text-sm font-semibold ${validateChecklistIdentity().valid ? "text-green-400" : "text-red-400"}`}>
+                {validateChecklistIdentity().valid ? "yes" : "no"}
+              </div>
+            </div>
+
             <div className="text-xs font-semibold text-slate-400 mb-3 mt-6" data-testid="contract-summary-section">Control Surface Contract Summary</div>
 
             <div className="mb-3" data-testid="contract-total-active">
@@ -985,7 +1167,7 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
               })()}</div>
             </div>
 
-            <div className="text-xs text-slate-600 mt-4 pt-3 border-t border-slate-700">
+            <div className="lw-divider text-xs text-slate-600 mt-4 pt-3 border-t border-slate-700">
               <em>Contract registry v0.1.0 • Source: src/control-plane/contracts/controlSurfaceContract.registry.ts</em>
             </div>
           </div>
@@ -1002,7 +1184,7 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
             {advisoryContent.questions.length > 0 ? (
               <div className="space-y-3 mb-6">
                 {advisoryContent.questions.map((question) => (
-                  <div key={question.id} data-testid={`bandit-question-card-${question.id}`} className="bg-slate-800/50 rounded p-2 border border-slate-700">
+                  <div key={question.id} data-testid={`bandit-question-card-${question.id}`} className="lw-card bg-slate-800/50 rounded p-2 border border-slate-700">
                     <div className="text-xs font-medium text-slate-300 mb-1">{question.prompt}</div>
                     {question.context && (
                       <div className="text-xs text-slate-500 mb-2">{question.context}</div>
@@ -1046,7 +1228,7 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
                             answersMap[q.id] = q.userResponse;
                           }
                         });
-                        localStorage.setItem("lumaweave-advisory-question-answers", JSON.stringify(answersMap));
+                        localStorage.setItem(QUESTION_ANSWER_STORAGE_KEY, JSON.stringify(answersMap));
                       }}
                       placeholder="Enter your answer or notes..."
                       className="w-full text-xs bg-slate-900 border border-slate-700 rounded p-2 text-slate-300 resize-y min-h-[60px]"
@@ -1066,7 +1248,7 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
             {advisoryContent.proposals.length > 0 ? (
               <div className="space-y-3 mb-6">
                 {advisoryContent.proposals.map((proposal) => (
-                  <div key={proposal.id} data-testid={`bandit-proposal-card-${proposal.id}`} className="bg-slate-800/50 rounded p-2 border border-slate-700">
+                  <div key={proposal.id} data-testid={`bandit-proposal-card-${proposal.id}`} className="lw-card bg-slate-800/50 rounded p-2 border border-slate-700">
                     <div className="text-xs font-medium text-slate-300 mb-1">{proposal.title}</div>
                     <div className="text-xs text-slate-400 mb-1">{proposal.summary}</div>
                     {proposal.rationale && (
@@ -1085,12 +1267,7 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
                       <select
                         value={proposal.userDecision}
                         data-testid={`bandit-proposal-decision-${proposal.id}`}
-                        onChange={(e) => {
-                          const updatedProposals = advisoryContent.proposals.map((p) =>
-                            p.id === proposal.id ? { ...p, userDecision: e.target.value as any } : p
-                          );
-                          setAdvisoryContent({ ...advisoryContent, proposals: updatedProposals });
-                        }}
+                        onChange={(e) => handleProposalDecisionUpdate(proposal.id, e.target.value as BanditProposalDecision)}
                         className="text-xs bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-300"
                       >
                         <option value="unreviewed">Unreviewed</option>
@@ -1127,10 +1304,14 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
             {advisoryContent.backlog.length > 0 ? (
               <div className="space-y-2">
                 {advisoryContent.backlog.map((item, index) => (
-                  <div key={item.rank} className="flex items-start gap-2 bg-slate-800/50 rounded p-2 border border-slate-700">
+                  <div
+                    key={item.rank}
+                    className="lw-card flex items-start gap-2 bg-slate-800/50 rounded p-2 border border-slate-700"
+                    data-testid={`bandit-backlog-item-${item.rank}`}
+                  >
                     <div className="text-xs font-mono text-slate-500 mt-0.5">#{item.rank}</div>
                     <div className="flex-1">
-                      <div className="text-xs font-medium text-slate-300">{item.title}</div>
+                      <div className="text-xs font-medium text-slate-300" data-testid="bandit-backlog-title">{item.title}</div>
                       <div className="text-xs text-slate-500">{item.whyItMatters}</div>
                       {item.risk && (
                         <div className="text-xs text-slate-500 mt-1">
@@ -1155,6 +1336,7 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
                         onClick={() => moveBacklogItemUp(index)}
                         disabled={index === 0}
                         className="text-xs bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed text-slate-300 rounded px-2 py-0.5"
+                        data-testid={`bandit-backlog-move-up-${item.rank}`}
                         title="Move up in priority"
                       >
                         ↑
@@ -1163,6 +1345,7 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
                         onClick={() => moveBacklogItemDown(index)}
                         disabled={index === advisoryContent.backlog.length - 1}
                         className="text-xs bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed text-slate-300 rounded px-2 py-0.5"
+                        data-testid={`bandit-backlog-move-down-${item.rank}`}
                         title="Move down in priority"
                       >
                         ↓
@@ -1175,7 +1358,7 @@ export function QaPanel({ themeAccent = "#a855f7", themeTextMuted = "#94a3b8", t
               <div className="text-xs text-slate-600 italic">No backlog items loaded.</div>
             )}
 
-            <div className="text-xs text-slate-600 mt-4 pt-3 border-t border-slate-700">
+            <div className="lw-divider text-xs text-slate-600 mt-4 pt-3 border-t border-slate-700">
               <em>Advisory channel v0 • Proposals are advisory only and do not trigger implementation</em>
             </div>
           </div>

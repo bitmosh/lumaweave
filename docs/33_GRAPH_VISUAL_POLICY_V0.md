@@ -4,6 +4,33 @@
 
 This document describes the Graph Visual Policy v0 system for LumaWeave, which standardizes label visibility and styling logic for graph rendering.
 
+## Graph State Preservation
+
+**Goal:** Settings changes should not reset graph visual/interaction state.
+
+When users change settings (node size, link distance, repel force), the graph should preserve:
+- Selected node/edge styling (color, size)
+- Selected neighborhood visual state
+- Camera position and zoom
+- Label mode settings
+- Theme styling
+
+**Implementation:**
+- Theme colors and label policy are applied before Sigma initialization (in main rebuild effect)
+- Selection styling policy is also applied before Sigma initialization (v16c fix)
+- This eliminates timing gaps where graph renders without proper styling
+- Camera is preserved via `hasInitialCameraResetRef` (only reset once on initial load)
+
+**Root Cause (Fixed in v16c):**
+- Sigma instance recreation on slider changes caused visual state reset
+- Selection styling was applied in separate useEffect after Sigma render
+- This created a timing gap where graph rendered without selection styling
+
+**Fix:**
+- Apply `applyGraphStylePolicy()` immediately after `buildGraphologyGraph()` but before Sigma initialization
+- This ensures selection styling is present when Sigma first renders the graph
+- Visual state now persists during slider changes without requiring hover to restore
+
 ## Core Contract
 
 **Tokens define values.**

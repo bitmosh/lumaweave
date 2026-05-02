@@ -209,6 +209,52 @@ export function SigmaGraphView({
       currentRepelForce: repelForce,
     });
 
+    // Apply theme colors to graphology graph before Sigma renders
+    // This prevents one-frame default state when sliders change
+    graph.forEachNode((node) => {
+      graph.setNodeAttribute(node, "color", resolvedTokens.nodeColor.default);
+    });
+
+    graph.forEachEdge((edge) => {
+      graph.setEdgeAttribute(edge, "color", resolvedTokens.edgeColor.default);
+    });
+
+    // Apply label policy to graphology graph before Sigma renders
+    // This prevents one-frame all-labels fallback when sliders change
+    const selectionContext: SelectionContext = {
+      selectedNodeId,
+      selectedEdgeId,
+      nodeSelectionStage: nodeSelectionStage || 1,
+      hoveredNodeId: null, // No hover during initial render
+      hoveredEdgeId: null, // No hover during initial render
+    };
+
+    const labelOptions: LegacyLabelPolicyOptions = {
+      maxEdgeLabelLength: maxEdgeLabelLength || 20,
+      showLabelsOnHover: showLabelsOnHover || false,
+      hoverLabelColor: "#0f172a", // Not used in v0, kept for API compatibility
+    };
+
+    applyNodeLabelPolicy(graph, selectionContext, labelOptions, nodeLabelMode || "off");
+    applyEdgeLabelPolicy(graph, selectionContext, labelOptions, edgeLabelMode || "off");
+
+    // Apply selection styling policy before Sigma renders
+    // This preserves visual state during Sigma recreation on slider changes
+    const interactionState: GraphInteractionState = {
+      selectedNodeId,
+      selectedEdgeId,
+      hoveredNodeId: null, // No hover during initial render
+      hoveredEdgeId: null, // No hover during initial render
+      neighborhoodDepth: nodeSelectionStage,
+    };
+
+    const styleOptions: StylePolicyOptions = {
+      hoverNodeColor,
+      edgeLabelFontSize,
+    };
+
+    applyGraphStylePolicy(graph, interactionState, styleOptions, resolvedTokens);
+
     const sigma = new Sigma(graph, containerRef.current, {
       renderLabels: true,
       labelFont: resolvedTokens.sigmaConfig.labelFont,

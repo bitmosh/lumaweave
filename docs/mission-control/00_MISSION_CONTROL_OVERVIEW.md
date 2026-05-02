@@ -14,6 +14,44 @@ The current QA panel provides:
 - Copy report to clipboard
 - Checklist version awareness (qaVersion in registry)
 - Results persistence (via qa.store.ts)
+- Advisory Questions tab with Bandit Questions, Proposals, and Backlog
+
+## Advisory Questions System
+
+### Overview
+Advisory Questions are per-checklist questions that provide context-specific guidance for each QA pass. They are not static across all checklists.
+
+### Per-Checklist Model (v16c)
+- Each QA checklist may define its own advisory question set via `advisory-registry.ts`
+- The `getAdvisoryForChecklist(featureId, qaVersion)` function returns the appropriate advisory for the current checklist
+- If a checklist has no specific advisory questions, it falls back to a default set (currently v13)
+- Questions from older checklists do not automatically appear in newer checklists unless intentionally reused
+
+### Advisory Content Structure
+Advisory sections include:
+- **Questions:** Bandit Questions with prompts, context, and response fields
+- **Proposals:** Proposed next actions with risk assessment and user decision tracking
+- **Backlog:** Prioritized future work items with reorder capability
+
+### Reset vs Persistent State
+**Reset after submit:**
+- Checklist statuses (via resetChecklistResults)
+- Checklist notes
+- Bandit Question answer notes (userResponse)
+- Question status (status)
+- Proposal notes (userNotes) if report-specific
+- localStorage question answers cleared
+
+**Preserve after submit:**
+- Backlog order (not reset)
+- Proposal decisions (userDecision)
+- Proposal statuses
+
+### Implementation
+- Advisory registry: `src/control-plane/qa/advisory-registry.ts`
+- Lookup function: `getAdvisoryForChecklist(featureId, qaVersion)`
+- QaPanel loads appropriate advisory based on active checklist on mount
+- Advisory answers persist in localStorage until submit
 
 ## Mission Control Role (Future)
 

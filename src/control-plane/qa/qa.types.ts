@@ -5,6 +5,7 @@ export interface QaCheckDefinition {
   featureId: string;
   featureName: string;
   qaVersion: number;
+  qaKey?: string; // Canonical QA key tag (e.g., "v17", "v18")
   title: string;
   expected: string;
   steps: string[];
@@ -12,6 +13,20 @@ export interface QaCheckDefinition {
   fallbackAllowed?: boolean;
   active?: boolean;
   archived?: boolean;
+}
+
+// Adapter function to derive canonical qaKey from checklist definition
+export function getChecklistIdentity(checklist: QaCheckDefinition): {
+  qaKey: string;
+  featureId: string;
+  qaVersion: number;
+} {
+  const qaKey = checklist.qaKey ?? `v${checklist.qaVersion}`;
+  return {
+    qaKey,
+    featureId: checklist.featureId,
+    qaVersion: checklist.qaVersion,
+  };
 }
 
 export interface QaCheckResult {
