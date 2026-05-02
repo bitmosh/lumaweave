@@ -39,6 +39,7 @@ The theme system allows users to customize the visual appearance of LumaWeave th
 - Import/export JSON
 - Pop-out color picker
 - Full app theme editor (panel colors, background/starfield, UI component colors)
+- Theme Mapping Mode backlog captured in `docs/theme-system/THEME_MAPPING_SYSTEM_BACKLOG.md` (v18a)
 
 ## Architecture
 

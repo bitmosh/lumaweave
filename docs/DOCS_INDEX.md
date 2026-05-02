@@ -115,6 +115,16 @@
 ## Operating Policies
 
 ### Policy Docs
+- **docs/lumaweave_phase_architecture_packet/00_BANDIT_DEVELOPMENT_PROTOCOL.md** (and sibling packet files)
+  - Status: policy
+  - Purpose: Phase architecture packet; required pre-read before starting new phase work
+  - When to read: Beginning of each major pass or when context feels stale
+
+- **docs/tooling/lumaweave_coding_survival_manual/README.md**
+  - Status: policy
+  - Purpose: Survival manual summarizing troubleshooting, tool triggers, and stop conditions
+  - When to read: Before recovery passes, debugging loops, or when onboarding new contributors
+
 - **docs/30_QA_CHECKLIST_GENERATION_POLICY.md** - QA checklist generation policy
   - Status: policy
   - Purpose: Defines baseline vs follow-up checklist generation
@@ -198,6 +208,11 @@
   - Status: needs-review
   - Purpose: Theme-specific handles
   - When to read: Understanding theme handles
+
+- **docs/theme-system/THEME_MAPPING_SYSTEM_BACKLOG.md** - Theme Mapping backlog (v18a)
+  - Status: backlog
+  - Purpose: Captures Theme Mapping Mode architecture and dependencies
+  - When to read: Planning v18a/v19 theme pipeline
 
 ## Graph Docs
 
