@@ -1,5 +1,9 @@
 # Bandit Level 23.5 - Graph Theme Application Warden
 
+## Status
+
+Current title - Detailed lessons extracted into `21_BANDIT_EXPERIENCE_LEDGER.md`
+
 ## Level Awarded
 
 **Date**: 2026-05-03  

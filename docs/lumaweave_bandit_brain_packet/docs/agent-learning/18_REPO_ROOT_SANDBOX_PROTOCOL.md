@@ -116,6 +116,49 @@ If the second verification still fails, stop and report.
 
 Do not continue.
 
+## Required Command Wrapper
+
+**Raw project commands are forbidden.**
+
+All git/npm/grep/find/Playwright/file inspection commands must use the wrapper script:
+
+```bash
+/home/boop/Projects/lumaweave/scripts/lw-repo-run.sh <command>
+```
+
+The wrapper performs mandatory root verification before executing the requested command:
+- Changes to `/home/boop/Projects/lumaweave`
+- Verifies `pwd` is exactly `/home/boop/Projects/lumaweave`
+- Verifies `git rev-parse --show-toplevel` is exactly `/home/boop/Projects/lumaweave`
+- Executes the requested command
+- Fails loudly if root verification fails
+
+**Examples:**
+
+```bash
+# Valid - using wrapper
+/home/boop/Projects/lumaweave/scripts/lw-repo-run.sh git status --short
+/home/boop/Projects/lumaweave/scripts/lw-repo-run.sh npm run typecheck
+/home/boop/Projects/lumaweave/scripts/lw-repo-run.sh grep -R "test.skip" tests/
+
+# Invalid - raw commands
+git status --short
+npm run typecheck
+grep -R "test.skip" tests/
+```
+
+**Wrapper Usage Rule:**
+
+Do not run:
+- Raw git commands
+- Raw npm commands
+- Raw grep/find commands
+- Raw Playwright commands
+- Any project-relative command without the wrapper
+
+Always use:
+- `/home/boop/Projects/lumaweave/scripts/lw-repo-run.sh <command>`
+
 ## Command Confinement Rule
 
 All project-relative commands must be run from:

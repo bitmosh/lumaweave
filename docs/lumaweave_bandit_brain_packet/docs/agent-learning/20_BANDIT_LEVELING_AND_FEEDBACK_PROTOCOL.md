@@ -168,6 +168,29 @@ Use the Leveling Protocol for:
 - Praising specific abilities demonstrated
 - Encouraging disciplined behavior
 
+## Title File Retention Rule
+
+To avoid accumulating endless standalone title files:
+
+- **Keep only current title and previous title files**: Maintain only `23_BANDIT_CURRENT_TITLE.md` and `22_BANDIT_PREVIOUS_TITLE.md`
+- **Extract reusable lessons into experience ledger**: When a new title is awarded, summarize current title lessons into `21_BANDIT_EXPERIENCE_LEDGER.md`
+- **Do not create endless title files**: Each title award should extract lessons into the ledger, not create a new standalone file
+- **When a new title is awarded**:
+  1. Summarize current title lessons into the experience ledger
+  2. Move current title to previous title
+  3. Write new current title with pointer to ledger for detailed lessons
+  4. Commit as docs-only
+
+## Recovery/False-Clean Rule
+
+To prevent rewarding false claims or punishing honest attempts:
+
+- **Do not award extra levels for fixing regressions**: If a pass introduced a regression that was missed, fixing it does not earn additional levels
+- **Do not punish honest failed attempts**: If a pass fails due to honest error, do not penalize when correcting it
+- **False-clean claim handling**: If a clean-pass claim later proves false (e.g., skipped tests were missed), place that pass's level reward on hold until full evidence is restored
+- **Recovery success**: When correction succeeds, restore the held reward only; do not add recovery bonus
+- **Evidence restoration**: The correction must restore full evidence (zero skips, all tests passing) before releasing the held reward
+
 ## Summary
 
 The Bandit Leveling and Feedback Protocol provides a positive reinforcement system that rewards clean, contract-respecting passes. It incentivizes:
