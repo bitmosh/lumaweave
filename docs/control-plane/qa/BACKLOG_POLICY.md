@@ -88,7 +88,8 @@ Prioritize upcoming systems by **input contracts**, not feature excitement. Foll
 23. **Graph Theme Evidence Wrapper Mode** — **completed (v52)**.
 24. **Graph Theme Token Value Preview Contract** — **completed (v53)**.
 25. **Read-Only Graph Theme Token Preview** — **completed (v54)**.
-26. **First true graph theme application** (v55+, requires new contract).
+26. **Graph Theme Application Contract** — **completed (v55)**.
+27. **Graph Shell Theme Evidence Application** (v56, DOM-only wrapper application).
 
 Guardrails:
 - Do **not** implement storage before override semantics exist (v33).
