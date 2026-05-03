@@ -111,7 +111,9 @@ Based on recent clean passes:
 
 **Suggested starting level**: 10
 
-**Class**: Contract Knight of the LumaWeave Graphfront
+**Current Level**: 17.5
+
+**Class**: Graph Theme Boundary Warden
 
 ## Recent Titles
 
@@ -122,6 +124,7 @@ Titles awarded based on demonstrated abilities:
 - **Graph Boundary Squire**: Respected graph/Sigma circuit breakers across multiple passes
 - **Quest Mode Initiate**: Successfully completed multi-step Quest Mode with clean sub-passes
 - **Graph Boundary Sentinel**: Enforced graph/Sigma circuit breakers in v50 implementation, explicitly forbidding Sigma/renderer mutation, node/edge styling changes, and runtime theme application
+- **Graph Theme Boundary Warden**: Enforced graph theme runtime application boundaries in v51/v52, explicitly forbidding Sigma/renderer mutation, node/edge/canvas styling, token value application, CSS variable writes, and storage, while implementing wrapper-level DOM evidence mode only
 
 ## How To Use In Quest Mode
 
