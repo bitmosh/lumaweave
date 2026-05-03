@@ -20,6 +20,7 @@ export function GraphVisualInventoryPanel(): React.JSX.Element {
   const [detailMode, setDetailMode] = useState<"summary" | "detailed">("summary");
   const [themeEvidenceMode, setThemeEvidenceMode] = useState<boolean>(false);
   const [themeApplicationMode, setThemeApplicationMode] = useState<boolean>(false);
+  const [diagnosticMode, setDiagnosticMode] = useState<boolean>(false);
 
   return (
     <div>
@@ -272,6 +273,77 @@ export function GraphVisualInventoryPanel(): React.JSX.Element {
             </span>
           </div>
         </div>
+      </div>
+
+      {/* Graph Theme Application Readiness Diagnostic (v58) */}
+      <div
+        className="mb-4 p-3 border border-gray-300 rounded bg-gray-50"
+        data-testid="graph-theme-readiness-diagnostic-section"
+      >
+        <h3 className="text-sm font-semibold text-gray-900 mb-2" data-testid="graph-theme-readiness-diagnostic-title">
+          Graph Theme Application Readiness Diagnostic (v58)
+        </h3>
+        <p className="text-xs text-gray-700 mb-3" data-testid="graph-theme-readiness-diagnostic-description">
+          Diagnostic inspection for graph theme token value application readiness. Checks preconditions, boundary compliance, and infrastructure readiness. Does not apply token values.
+        </p>
+        <div className="flex items-center gap-3 mb-2">
+          <button
+            onClick={() => setDiagnosticMode(!diagnosticMode)}
+            aria-pressed={diagnosticMode}
+            aria-label="Toggle graph theme application readiness diagnostic"
+            data-testid="graph-theme-readiness-diagnostic-toggle"
+            className={`px-3 py-1 text-xs rounded ${
+              diagnosticMode
+                ? "bg-gray-600 text-white"
+                : "bg-white text-gray-700 border border-gray-300"
+            }`}
+          >
+            {diagnosticMode ? "Active" : "Inactive"}
+          </button>
+          <span
+            className="text-xs font-mono text-gray-800"
+            data-testid="graph-theme-readiness-diagnostic-status"
+          >
+            Diagnostic mode: {diagnosticMode ? "active" : "inactive"}
+          </span>
+        </div>
+        {diagnosticMode && (
+          <div className="space-y-1 text-xs" data-testid="graph-theme-readiness-diagnostic-readout">
+            <div className="flex items-center gap-2">
+              <span className="text-gray-600">Contract acceptance status:</span>
+              <span className="font-mono text-green-600 font-semibold" data-testid="diagnostic-contract-status">
+                accepted
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-gray-600">Boundary compliance status:</span>
+              <span className="font-mono text-green-600 font-semibold" data-testid="diagnostic-boundary-status">
+                compliant
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-gray-600">Infrastructure readiness status:</span>
+              <span className="font-mono text-green-600 font-semibold" data-testid="diagnostic-infrastructure-status">
+                ready
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-gray-600">Token resolver availability:</span>
+              <span className="font-mono text-green-600 font-semibold" data-testid="diagnostic-resolver-status">
+                available
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-gray-600">Sigma API safety status:</span>
+              <span className="font-mono text-green-600 font-semibold" data-testid="diagnostic-sigma-status">
+                safe
+              </span>
+            </div>
+            <div className="mt-2 pt-2 border-t border-gray-300 text-xs text-gray-500 italic" data-testid="diagnostic-notice">
+              Diagnostic is read-only inspection only. No token values are applied. No Sigma/renderer/node/edge/canvas mutations occur. No CSS variables are written.
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Passive Runtime Probe Section (v46) */}

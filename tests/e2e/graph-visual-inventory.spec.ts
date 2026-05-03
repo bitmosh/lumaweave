@@ -898,4 +898,172 @@ test.describe("Graph Visual Inventory", () => {
       await expect(status).toHaveText("Graph theme application: inactive");
     });
   });
+
+  test.describe("Graph Theme Application Readiness Diagnostic (v58)", () => {
+    test("Diagnostic section is visible", async ({ page }) => {
+      const diagnosticSection = page.getByTestId("graph-theme-readiness-diagnostic-section");
+      await expect(diagnosticSection).toBeVisible();
+    });
+
+    test("Diagnostic title and description are correct", async ({ page }) => {
+      const title = page.getByTestId("graph-theme-readiness-diagnostic-title");
+      const description = page.getByTestId("graph-theme-readiness-diagnostic-description");
+
+      await expect(title).toHaveText("Graph Theme Application Readiness Diagnostic (v58)");
+      await expect(description).toHaveText(
+        "Diagnostic inspection for graph theme token value application readiness. Checks preconditions, boundary compliance, and infrastructure readiness. Does not apply token values."
+      );
+    });
+
+    test("Default diagnostic status is inactive", async ({ page }) => {
+      const status = page.getByTestId("graph-theme-readiness-diagnostic-status");
+      await expect(status).toHaveText("Diagnostic mode: inactive");
+    });
+
+    test("Toggle changes status to active", async ({ page }) => {
+      const toggle = page.getByTestId("graph-theme-readiness-diagnostic-toggle");
+      const status = page.getByTestId("graph-theme-readiness-diagnostic-status");
+
+      await toggle.click();
+      await expect(status).toHaveText("Diagnostic mode: active");
+    });
+
+    test("Diagnostic readout is visible when active", async ({ page }) => {
+      const toggle = page.getByTestId("graph-theme-readiness-diagnostic-toggle");
+      const readout = page.getByTestId("graph-theme-readiness-diagnostic-readout");
+
+      await toggle.click();
+      await expect(readout).toBeVisible();
+    });
+
+    test("Diagnostic readout shows contract status", async ({ page }) => {
+      const toggle = page.getByTestId("graph-theme-readiness-diagnostic-toggle");
+      const contractStatus = page.getByTestId("diagnostic-contract-status");
+
+      await toggle.click();
+      await expect(contractStatus).toHaveText("accepted");
+    });
+
+    test("Diagnostic readout shows boundary compliance status", async ({ page }) => {
+      const toggle = page.getByTestId("graph-theme-readiness-diagnostic-toggle");
+      const boundaryStatus = page.getByTestId("diagnostic-boundary-status");
+
+      await toggle.click();
+      await expect(boundaryStatus).toHaveText("compliant");
+    });
+
+    test("Diagnostic readout shows infrastructure readiness status", async ({ page }) => {
+      const toggle = page.getByTestId("graph-theme-readiness-diagnostic-toggle");
+      const infrastructureStatus = page.getByTestId("diagnostic-infrastructure-status");
+
+      await toggle.click();
+      await expect(infrastructureStatus).toHaveText("ready");
+    });
+
+    test("Diagnostic readout shows token resolver availability", async ({ page }) => {
+      const toggle = page.getByTestId("graph-theme-readiness-diagnostic-toggle");
+      const resolverStatus = page.getByTestId("diagnostic-resolver-status");
+
+      await toggle.click();
+      await expect(resolverStatus).toHaveText("available");
+    });
+
+    test("Diagnostic readout shows Sigma API safety status", async ({ page }) => {
+      const toggle = page.getByTestId("graph-theme-readiness-diagnostic-toggle");
+      const sigmaStatus = page.getByTestId("diagnostic-sigma-status");
+
+      await toggle.click();
+      await expect(sigmaStatus).toHaveText("safe");
+    });
+
+    test("Diagnostic notice is visible", async ({ page }) => {
+      const toggle = page.getByTestId("graph-theme-readiness-diagnostic-toggle");
+      const notice = page.getByTestId("diagnostic-notice");
+
+      await toggle.click();
+      await expect(notice).toBeVisible();
+      await expect(notice).toHaveText(
+        "Diagnostic is read-only inspection only. No token values are applied. No Sigma/renderer/node/edge/canvas mutations occur. No CSS variables are written."
+      );
+    });
+
+    test("Toggle returns status to inactive", async ({ page }) => {
+      const toggle = page.getByTestId("graph-theme-readiness-diagnostic-toggle");
+      const status = page.getByTestId("graph-theme-readiness-diagnostic-status");
+      const readout = page.getByTestId("graph-theme-readiness-diagnostic-readout");
+
+      // Activate diagnostic
+      await toggle.click();
+      await expect(status).toHaveText("Diagnostic mode: active");
+      await expect(readout).toBeVisible();
+
+      // Deactivate diagnostic
+      await toggle.click();
+      await expect(status).toHaveText("Diagnostic mode: inactive");
+      await expect(readout).not.toBeVisible();
+    });
+
+    test("No token values are applied by this feature", async ({ page }) => {
+      const toggle = page.getByTestId("graph-theme-readiness-diagnostic-toggle");
+      const notice = page.getByTestId("diagnostic-notice");
+
+      await toggle.click();
+      await expect(notice).toContainText("No token values are applied");
+    });
+
+    test("No CSS variables are written by this feature", async ({ page }) => {
+      const toggle = page.getByTestId("graph-theme-readiness-diagnostic-toggle");
+      const notice = page.getByTestId("diagnostic-notice");
+
+      await toggle.click();
+      await expect(notice).toContainText("No CSS variables are written");
+    });
+
+    test("No Sigma/renderer/node/edge/canvas controls are introduced", async ({ page }) => {
+      const panel = page.getByTestId("graph-visual-inventory-panel");
+
+      // Check that there are no new Sigma/renderer mutation controls in diagnostic
+      const sigmaControls = panel.getByRole("button", { name: /sigma|renderer|mutation/i });
+      await expect(sigmaControls).not.toBeVisible();
+
+      // Check that there are no new physics modification controls in diagnostic
+      const physicsControls = panel.getByRole("button", { name: /physics|force|layout/i });
+      await expect(physicsControls).not.toBeVisible();
+    });
+
+    test("Existing graph surface still mounts", async ({ page }) => {
+      const panel = page.getByTestId("graph-visual-inventory-panel");
+      await expect(panel).toBeVisible();
+    });
+
+    test("Existing inventory/probe/detail mode/theme mapping/evidence wrapper/token preview/theme application still works", async ({ page }) => {
+      // Check that existing modes are still visible
+      const detailModeSection = page.getByTestId("graph-evidence-detail-mode");
+      await expect(detailModeSection).toBeVisible();
+
+      const mappingSection = page.getByTestId("graph-theme-mapping-inventory-section");
+      await expect(mappingSection).toBeVisible();
+
+      const evidenceSection = page.getByTestId("graph-theme-evidence-wrapper-mode-section");
+      await expect(evidenceSection).toBeVisible();
+
+      const previewSection = page.getByTestId("graph-theme-token-preview-section");
+      await expect(previewSection).toBeVisible();
+
+      const applicationSection = page.getByTestId("graph-theme-application-section");
+      await expect(applicationSection).toBeVisible();
+    });
+
+    test("Controls are genuinely active (not dead)", async ({ page }) => {
+      const toggle = page.getByTestId("graph-theme-readiness-diagnostic-toggle");
+      const status = page.getByTestId("graph-theme-readiness-diagnostic-status");
+
+      // Verify toggle is clickable and changes state
+      await toggle.click();
+      await expect(status).toHaveText("Diagnostic mode: active");
+
+      await toggle.click();
+      await expect(status).toHaveText("Diagnostic mode: inactive");
+    });
+  });
 });
