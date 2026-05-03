@@ -338,3 +338,37 @@ Open
 
 **Follow-Up Owner:**
 Bandit
+
+### 2026-05-03 — BACKLOG_POLICY scaffolding alignment check during quest classification
+
+**Pass / Context:**
+v35 Command Deck / Hotkey Registry Quest Mode
+
+**Symptom:**
+Initial quest split allowed possible v35b read-only shell and v35c hotkey inventory, but BACKLOG_POLICY.md showed v35 should remain docs-only governance before new hotkeys/panels.
+
+**What Went Roughly:**
+The proposed split was safe in general Quest Mode terms but did not fully align with the project-specific scaffolding sequence until BACKLOG_POLICY.md was inspected.
+
+**Likely Root Cause:**
+Quest Mode classification did not explicitly require checking BACKLOG_POLICY.md before proposing implementation sub-passes.
+
+**Impact / Risk:**
+Low
+
+**Repeated Pattern?**
+Unknown
+
+**Suggested Improvement:**
+Update SELF_SPLITTING_QUEST_PROTOCOL.md or Quest Mode prompt templates to require reading BACKLOG_POLICY.md during quest classification so proposed sub-passes align with the accepted scaffold sequence.
+
+**Suggested Target:**
+- brain doc
+- prompt template
+- stop condition
+
+**Status:**
+Open
+
+**Follow-Up Owner:**
+Bandit
