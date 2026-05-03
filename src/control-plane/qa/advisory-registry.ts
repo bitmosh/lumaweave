@@ -626,6 +626,81 @@ export const advisoryV38: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV41: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v41-registry-file-exists",
+      prompt: "Does the Graph View Element Registry file exist?",
+      context: "src/graph/graphViewElementRegistry.ts should exist with typed registry.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v41-registry-entries-defined",
+      prompt: "Are registry entries defined with required metadata?",
+      context: "Registry should include graph.frame, graph.surface, graph.nodes, graph.edges, graph.labels, graph.overlay, graph.hud, graph.controls, graph.physics with metadata.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v41-registry-is-read-only",
+      prompt: "Is the registry read-only and passive?",
+      context: "Registry should not control Sigma or graph rendering, should not mutate graph behavior.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v41-no-sigma-mutation",
+      prompt: "Does the registry mutate Sigma renderer?",
+      context: "Registry should not control Sigma internals or rendering.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v41-no-graph-physics-changes",
+      prompt: "Does the registry change graph physics behavior?",
+      context: "Registry should not change physics settings or behavior.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "v42-graph-visual-inventory",
+      title: "v42 Passive Graph Visual Inventory",
+      summary: "Expose the Graph View Element Registry through a passive/read-only UI surface",
+      rationale: "After v41 registry is accepted, v42 can expose the registry through a passive UI for evidence and inspection.",
+      risk: "medium",
+      recommendedNextAction: "Implement in v42 after v41 is accepted",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "v42 Passive Graph Visual Inventory",
+      whyItMatters: "Expose the Graph View Element Registry through a passive/read-only UI surface for evidence and inspection.",
+      suggestedFutureBite: "Add passive UI surface to display registry entries",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "v43 Graph Registry Enforcement",
+      whyItMatters: "Implement runtime enforcement of graph visual policy after registry is in place.",
+      suggestedFutureBite: "Add runtime enforcement of graph visual policy",
+      risk: "high",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV40: BanditAdvisorySection = {
   questions: [
     {
@@ -3154,6 +3229,9 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number, ch
 
 // Advisory lookup function keyed by canonical qaKey
 export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
+  if (qaKey === "v41") {
+    return advisoryV41;
+  }
   if (qaKey === "v40") {
     return advisoryV40;
   }

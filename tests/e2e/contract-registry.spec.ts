@@ -13,9 +13,9 @@ import {
 } from "./helpers/qa";
 import type { ThemeTargetProbeResult } from "../../src/themes/themeTargetHeuristics";
 
-const CURRENT_QA_KEY = "v40";
-const PRIMARY_PROPOSAL_ID = "v41-graph-visual-registry-v0";
-const SECONDARY_PROPOSAL_ID = "v41-graph-visual-registry-v0";
+const CURRENT_QA_KEY = "v41";
+const PRIMARY_PROPOSAL_ID = "v42-graph-visual-inventory";
+const SECONDARY_PROPOSAL_ID = "v42-graph-visual-inventory";
 
 type ProbeWindow = Window & {
   __lwRunThemeTargetProbe?: (options?: { minSignals?: number }) => ThemeTargetProbeResult | null;
@@ -259,13 +259,13 @@ test("Bandit Backlog Top 10 renders", async ({ page }) => {
   await expect(backlogItem.getByTestId("bandit-backlog-title")).not.toHaveText("");
 });
 
-test("v40 is default active checklist", async ({ page }) => {
+test("v41 is default active checklist", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await expectCurrentQaKey(page, CURRENT_QA_KEY);
 });
 
-test("v40 identity diagnostics visible in Debug tab", async ({ page }) => {
+test("v41 identity diagnostics visible in Debug tab", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
 
@@ -275,7 +275,7 @@ test("v40 identity diagnostics visible in Debug tab", async ({ page }) => {
   const identitySection = page.getByText("QA Identity Diagnostics");
   await expect(identitySection).toBeVisible();
 
-  const currentQaKey = page.getByText(`Current QA Key: v40`);
+  const currentQaKey = page.getByText(`Current QA Key: v41`);
   await expect(currentQaKey).toBeVisible();
 });
 
@@ -343,21 +343,21 @@ test("advisory backlog reorder persists through tab switching", async ({ page })
   await expect(page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title")).toHaveText(reorderedFirstTitle || "");
 });
 
-test("v40 advisory tab renders graph registry questions", async ({ page }) => {
+test("v41 advisory tab renders registry questions", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);
 
-  // Verify v40 advisory section is visible
+  // Verify v41 advisory section is visible
   const advisorySection = page.getByTestId("qa-advisory-section");
   await expect(advisorySection).toBeVisible();
 
-  // Verify graph registry questions are rendered
-  const registryQuestion = page.getByText("Does the Graph View Element Registry contract exist?");
+  // Verify registry questions are rendered
+  const registryQuestion = page.getByText("Does the Graph View Element Registry file exist?");
   await expect(registryQuestion).toBeVisible();
 });
 
-test("v40 report includes Advisory Set Key", async ({ page }) => {
+test("v41 report includes Advisory Set Key", async ({ page }) => {
   await page.goto("/");
 
   // Complete checklist and submit report using helper
@@ -366,12 +366,12 @@ test("v40 report includes Advisory Set Key", async ({ page }) => {
   // Get last report text
   const reportText = await getLastReportText(page);
 
-  // Verify report includes Advisory Set Key: v40
+  // Verify report includes Advisory Set Key: v41
   expect(reportText).toContain("Advisory Set Key:");
   expect(reportText).toContain(CURRENT_QA_KEY);
 });
 
-test("v40 report stays blocked when control checks are unverified", async ({ page }) => {
+test("v41 report stays blocked when control checks are unverified", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openChecklistTab(page);
@@ -385,7 +385,7 @@ test("v40 report stays blocked when control checks are unverified", async ({ pag
   expect(reportText).not.toContain("**ACCEPT**");
 });
 
-test("v40 acceptance decision requires zero blocked or unverified", async ({ page }) => {
+test("v41 acceptance decision requires zero blocked or unverified", async ({ page }) => {
   await page.goto("/");
   await completeChecklistAndSubmitReport(page);
 
@@ -396,18 +396,19 @@ test("v40 acceptance decision requires zero blocked or unverified", async ({ pag
   expect(reportText).toContain("- Unverified: 0");
 });
 
-test("v40 checklist includes graph registry policy checks", async ({ page }) => {
+test("v41 checklist includes registry checks", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openChecklistTab(page);
 
   await expectChecklistContainsChecks(page, [
-    "v40 is default active checklist",
-    "Graph View Element Registry contract exists",
-    "Graph Visual Policy contract exists",
-    "No runtime implementation",
-    "No graph/Sigma mutation",
-    "No graph visual changes",
+    "v41 is default active checklist",
+    "Graph View Element Registry file exists",
+    "Registry entries are defined",
+    "Registry is read-only and passive",
+    "No Sigma renderer mutation",
+    "No graph physics changes",
+    "Typecheck passes",
     "No skipped tests",
   ]);
 });
@@ -466,7 +467,7 @@ test("v34b narrow theme mapping control behavior preserved", async ({ page }) =>
   expect(afterReset).toBe(false);
 });
 
-test("v40 proposal decisions and backlog order persist after submit", async ({ page }) => {
+test("v41 proposal decisions and backlog order persist after submit", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);
