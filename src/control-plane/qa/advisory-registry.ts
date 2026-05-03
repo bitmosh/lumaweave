@@ -626,6 +626,65 @@ export const advisoryV38: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV42: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v42-inventory-panel-exists",
+      prompt: "Does the Graph Visual Inventory panel exist?",
+      context: "src/control-plane/graph/GraphVisualInventoryPanel.tsx should exist and be integrated.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v42-inventory-is-passive",
+      prompt: "Is the inventory panel passive/read-only?",
+      context: "Panel should display registry metadata without active controls or graph mutation.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v42-playwright-tests-pass",
+      prompt: "Do Playwright tests pass?",
+      context: "tests/e2e/graph-visual-inventory.spec.ts should pass.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "v43-graph-visual-mapping",
+      title: "v43 Graph Visual Mapping",
+      summary: "Implement theme mapping for graph visual elements",
+      rationale: "After v42 inventory is accepted, v43 can implement theme mapping for graph visual elements.",
+      risk: "high",
+      recommendedNextAction: "Implement in v43 after v42 is accepted",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "v43 Graph Visual Mapping",
+      whyItMatters: "Implement theme mapping for graph visual elements after inventory is in place.",
+      suggestedFutureBite: "Add theme mapping for graph visual elements",
+      risk: "high",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "v44 Graph Registry Enforcement",
+      whyItMatters: "Implement runtime enforcement of graph visual policy after inventory is in place.",
+      suggestedFutureBite: "Add runtime enforcement of graph visual policy",
+      risk: "high",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV41: BanditAdvisorySection = {
   questions: [
     {
@@ -3229,6 +3288,9 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number, ch
 
 // Advisory lookup function keyed by canonical qaKey
 export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
+  if (qaKey === "v42") {
+    return advisoryV42;
+  }
   if (qaKey === "v41") {
     return advisoryV41;
   }

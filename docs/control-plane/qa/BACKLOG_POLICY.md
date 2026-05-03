@@ -74,8 +74,9 @@ Prioritize upcoming systems by **input contracts**, not feature excitement. Foll
 9. **Perspective System v0** (read-only perspective registry and panel) — **completed (v38)**.
 10. **Graph physics Playwright coverage** (stabilize physics sliders/toggles before more graph controls) — **completed (v39)**.
 11. **Graph View Element Registry / Graph Visual Policy refresh** — **completed (v40)**.
-12. **Graph View Element Registry v0** — **current pass (v41)**.
-13. **Graph visual/theme mapping** (after registry/policy refresh).
+12. **Graph View Element Registry v0** — **completed (v41)**.
+13. **Graph Visual Inventory** — **current pass (v42)**.
+14. **Graph visual/theme mapping** (after registry/policy refresh).
 
 Guardrails:
 - Do **not** implement storage before override semantics exist (v33).

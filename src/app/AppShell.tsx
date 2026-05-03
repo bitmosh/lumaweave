@@ -4,6 +4,7 @@ import { QaPanel } from "../control-plane/qa/QaPanel";
 import { InspectorPanel } from "../control-plane/panels/InspectorPanel";
 import { CollapsiblePanel } from "../control-plane/panels/CollapsiblePanel";
 import { CommandDeckPanel } from "../control-plane/command-deck/CommandDeckPanel";
+import { GraphVisualInventoryPanel } from "../control-plane/graph/GraphVisualInventoryPanel";
 import { useSettingsStore } from "../control-plane/settings/settings.store";
 import { useGraphSourceSummary } from "../graph/ingest/useGraphSourceSummary";
 import { SigmaGraphView } from "../graph/renderers/sigma2d/SigmaGraphView";
@@ -364,6 +365,22 @@ export function AppShell() {
                   themeTextMuted={themeTokens.app.textMuted}
                   themePanelBorder={themeTokens.app.panelBorder}
                 />
+              </div>
+            </div>
+
+            <div
+              className="mt-4 rounded-xl p-4"
+              data-testid="graph-visual-inventory-panel"
+              style={{
+                border: `1px solid ${themeTokens.app.panelBorder}`,
+                backgroundColor: `${themeTokens.app.background}70`,
+              }}
+            >
+              <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
+                Graph Visual Inventory
+              </h3>
+              <div className="min-h-0">
+                <GraphVisualInventoryPanel />
               </div>
             </div>
           </aside>
