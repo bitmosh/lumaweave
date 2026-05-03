@@ -42,6 +42,11 @@ const GRAPH_VIEWPORT_SELECTOR = "[data-testid='graph-viewport']";
 const REGISTERED_TARGET_SELECTOR = "[data-lw-theme-target]";
 const OVERLAY_ROOT_SELECTOR = "[data-testid='theme-target-inspector-overlay']";
 const PANEL_MARGIN_PX = 24;
+const WARNING_LAYER_PADDING_PX = 12;
+const BADGE_HORIZONTAL_OFFSET_PX = 20;
+const BADGE_VERTICAL_OFFSET_PX = 18;
+const BADGE_APPROX_WIDTH_PX = 180;
+const BADGE_APPROX_HEIGHT_PX = 56;
 
 const isWithinOverlay = (node: Node | null): boolean =>
   node instanceof HTMLElement && Boolean(node.closest(OVERLAY_ROOT_SELECTOR));
@@ -391,9 +396,28 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
           >
             {warningBadges.map((badge) => {
               const viewportWidth = typeof window !== "undefined" ? window.innerWidth : undefined;
-              const badgeTop = Math.max(badge.top - 18, 8);
-              const desiredLeft = badge.left + badge.width - 20;
-              const safeLeft = viewportWidth ? Math.min(desiredLeft, viewportWidth - 140) : desiredLeft;
+              const viewportHeight = typeof window !== "undefined" ? window.innerHeight : undefined;
+
+              const desiredTop = badge.top - BADGE_VERTICAL_OFFSET_PX;
+              const minTop = WARNING_LAYER_PADDING_PX;
+              const maxTop = viewportHeight
+                ? Math.max(viewportHeight - BADGE_APPROX_HEIGHT_PX - WARNING_LAYER_PADDING_PX, WARNING_LAYER_PADDING_PX)
+                : undefined;
+              const clampedTop =
+                typeof maxTop === "number"
+                  ? Math.min(Math.max(desiredTop, minTop), maxTop)
+                  : Math.max(desiredTop, minTop);
+
+              const desiredLeft = badge.left + badge.width - BADGE_HORIZONTAL_OFFSET_PX;
+              const minLeft = WARNING_LAYER_PADDING_PX;
+              const maxLeft = viewportWidth
+                ? Math.max(viewportWidth - BADGE_APPROX_WIDTH_PX - WARNING_LAYER_PADDING_PX, WARNING_LAYER_PADDING_PX)
+                : undefined;
+              const clampedLeft =
+                typeof maxLeft === "number"
+                  ? Math.min(Math.max(desiredLeft, minLeft), maxLeft)
+                  : Math.max(desiredLeft, minLeft);
+
               return (
                 <div
                   key={badge.descriptor}
@@ -401,8 +425,8 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
                   title="Potential missing theme target"
                   style={{
                     position: "absolute",
-                    top: `${badgeTop}px`,
-                    left: `${Math.max(safeLeft, 8)}px`,
+                    top: `${clampedTop}px`,
+                    left: `${clampedLeft}px`,
                     minWidth: "120px",
                     padding: "0.3rem 0.65rem",
                     borderRadius: "9999px",

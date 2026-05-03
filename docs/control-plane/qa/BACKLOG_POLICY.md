@@ -27,7 +27,8 @@ The "Inspector overlay hardening" backlog item tracks the following sequence:
 3. Ghost overlay registered-surface layer — **completed (v25)**
 4. Registered/unregistered heuristic planning — **completed (v26)**
 5. Runtime probe instrumentation — **accepted (v27a)**
-6. Visible conservative warning badges — **current pass (v27b)**
-7. Lock/pin selected target behavior — **future candidate**
+6. Visible conservative warning badges — **completed (v27b)**
+7. Warning badge viewport-safe placement — **current pass (v27b follow-up)**
+8. Lock/pin selected target behavior — **future candidate**
 
 Each milestone must produce Playwright/QA Debug evidence before advancing to the next stage.

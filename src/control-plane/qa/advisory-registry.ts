@@ -344,7 +344,7 @@ export const advisoryV27b: BanditAdvisorySection = {
       whyItMatters:
         "Badge work completes the diagnostic stack so future lock/pin + Theme Mapping features inherit a stable overlay.",
       suggestedFutureBite:
-        "Child tasks:\n- Mission Control UI Inspector toggle (completed v24)\n- UI Part / Component Role Registration Model (completed v24a/v24b)\n- Ghost overlay registered-surface layer (completed v25)\n- Registered/unregistered heuristic planning (completed v26)\n- Registered/unregistered heuristic runtime probe (accepted v27a)\n- Visible warning badges (accepted v27b)\n- Lock/pin selected target behavior (next candidate)",
+        "Child tasks:\n- Mission Control UI Inspector toggle (completed v24)\n- UI Part / Component Role Registration Model (completed v24a/v24b)\n- Ghost overlay registered-surface layer (completed v25)\n- Registered/unregistered heuristic planning (completed v26)\n- Registered/unregistered heuristic runtime probe (accepted v27a)\n- Visible conservative warning badges (accepted v27b)\n- Warning badge viewport-safe placement (current pass)\n- Lock/pin selected target behavior (future candidate)",
       risk: "medium",
       status: "candidate",
     },
@@ -363,6 +363,24 @@ export const advisoryV27b: BanditAdvisorySection = {
       whyItMatters: "Once Theme Mapping exists, designers need persistent overrides/presets.",
       suggestedFutureBite: "Dependency: Theme Mapping Panel semantics + governance policy.",
       risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 4,
+      title: "Graph physics Playwright coverage",
+      whyItMatters: "Graph physics controls need deterministic evidence before expanding inspector-driven affordances.",
+      suggestedFutureBite:
+        "Add Playwright coverage for physics sliders/toggles so inspector + Theme Mapping work inherit stable graph evidence.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 5,
+      title: "Visual handles cite token paths",
+      whyItMatters: "Visual handle docs must cite canonical ThemeTokenPath mappings so inspector + Theme Mapping stay aligned.",
+      suggestedFutureBite:
+        "Publish handle → ThemeTokenPath mapping in docs + QA Debug so downstream systems inherit the proven vocabulary.",
+      risk: "low",
       status: "candidate",
     },
   ],

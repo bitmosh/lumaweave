@@ -222,7 +222,8 @@ export const qaCheckDefinitions: QaCheckDefinition[] = [
     featureName: "Registered/Unregistered Warning Badges v27b",
     qaKey: "v27b",
     title: "Alt+Shift+I behavior unchanged",
-    expected: "Hotkey remains Alt+Shift+I, no Ctrl+Alt+T or Alt+F8 reintroduction",
+    expected:
+      "Banned hotkey check: no banned hotkeys appear in runtime/source/tests/current QA. Historical policy/fault docs may mention Ctrl+Alt+T as archived context only.",
     qaVersion: 27,
     active: true,
     steps: [

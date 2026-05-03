@@ -23,8 +23,20 @@ const disableInspector = async (page: Page): Promise<void> => {
   await page.keyboard.press("Alt+Shift+I");
 };
 
-const createSyntheticCandidate = async (page: Page, elementId = "probe-warning-candidate"): Promise<void> => {
-  await page.evaluate((id) => {
+type SyntheticCandidateOptions = {
+  elementId?: string;
+  top?: number;
+  left?: number;
+};
+
+const createSyntheticCandidate = async (
+  page: Page,
+  elementOrOptions?: string | SyntheticCandidateOptions,
+): Promise<void> => {
+  const options = typeof elementOrOptions === "string" ? { elementId: elementOrOptions } : elementOrOptions ?? {};
+  const { elementId = "probe-warning-candidate", top = 160, left = 160 } = options;
+
+  await page.evaluate(({ id, topPosition, leftPosition }) => {
     const existing = document.getElementById(id);
     existing?.remove();
 
@@ -36,8 +48,8 @@ const createSyntheticCandidate = async (page: Page, elementId = "probe-warning-c
       width: "360px",
       height: "200px",
       position: "absolute",
-      top: "160px",
-      left: "160px",
+      top: `${topPosition}px`,
+      left: `${leftPosition}px`,
       zIndex: 1,
     });
     const firstButton = document.createElement("button");
@@ -47,7 +59,7 @@ const createSyntheticCandidate = async (page: Page, elementId = "probe-warning-c
     container.appendChild(firstButton);
     container.appendChild(secondButton);
     document.body.appendChild(container);
-  }, elementId);
+  }, { id: elementId, topPosition: top, leftPosition: left });
 };
 
 const removeElementById = async (page: Page, elementId: string): Promise<void> => {
@@ -521,6 +533,30 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
     await disableInspector(page);
     await removeElementById(page, "v27b-never-warn-button");
     await removeElementById(page, "v27b-never-warn-label");
+  });
+
+  test("warning badges clamp within viewport padding", async ({ page }) => {
+    await page.goto("/");
+    await createSyntheticCandidate(page, { elementId: "top-left-candidate", top: 4, left: 4 });
+
+    await enableInspector(page);
+    await waitForWarningLayerToSettle(page);
+
+    const badges = page.getByTestId("theme-target-warning-badge");
+    const badgeCount = await badges.count();
+    expect(badgeCount).toBeGreaterThan(0);
+
+    for (let index = 0; index < badgeCount; index += 1) {
+      const box = await badges.nth(index).boundingBox();
+      expect(box).not.toBeNull();
+      if (box) {
+        expect(box.x).toBeGreaterThanOrEqual(8);
+        expect(box.y).toBeGreaterThanOrEqual(8);
+      }
+    }
+
+    await disableInspector(page);
+    await removeElementById(page, "top-left-candidate");
   });
 
   test("warning layer remains pointer-events none", async ({ page }) => {
