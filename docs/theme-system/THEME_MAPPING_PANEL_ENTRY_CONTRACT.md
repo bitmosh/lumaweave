@@ -1,4 +1,4 @@
-# Theme Mapping Panel Entry Contract (v28 Planning, updated v31 token path citations)
+# Theme Mapping Panel Entry Contract (v28 Planning, updated v31 token path citations, updated v32 generated read-only controls)
 
 ## Purpose
 Theme Mapping Panel v0 will eventually expose editable theme controls for qualified UI surfaces. This document captures the contract that gates each surface before any runtime editing UI or storage work begins. It stitches together the accepted inspector stack (UI Inspector toggle, metadata panel, ghost overlay, ThemeTargetRegistry, runtime probe, warning badges, token governance, visual handles, and canonical `ThemeTokenPath` vocabulary) so future editing passes do not re-litigate requirements.
@@ -7,6 +7,9 @@ This contract is planning-only. No runtime Theme Mapping Panel exists yet. All r
 
 ## v31 Note
 As of v31, visual handles in 09_VISUAL_HANDLE_LIBRARY.md cite canonical token paths from THEME_TOKEN_PATH_MAP.md. This prevents drift between visual handles, Theme Target Registry token bindings, and canonical tokens before generated Theme Mapping controls are implemented.
+
+## v32 Note
+As of v32, the Theme Mapping Panel generates read-only/disabled control rows for registered pinned targets, displaying canonical token paths and visual handle relationships. This makes the panel feel like it is showing the future editing surface, but nothing is editable yet. Storage and editing remain locked until v33–v34.
 
 ## 1. Entry Requirements for Editable Surfaces
 A DOM surface may enter the future Theme Mapping Panel only if **all** of the following are true:

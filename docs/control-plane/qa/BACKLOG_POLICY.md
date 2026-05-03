@@ -3,6 +3,9 @@
 ## v31 Note
 As of v31, visual handles in 09_VISUAL_HANDLE_LIBRARY.md cite canonical token paths from THEME_TOKEN_PATH_MAP.md. This prevents drift between visual handles, Theme Target Registry token bindings, and canonical tokens before generated Theme Mapping controls are implemented. This is a docs/contract/QA pass with no runtime changes.
 
+## v32 Note
+As of v32, the Theme Mapping Panel generates read-only/disabled control rows for registered pinned targets, displaying canonical token paths and visual handle relationships. This makes the panel feel like it is showing the future editing surface, but nothing is editable yet. Storage and editing remain locked until v33–v34.
+
 ## Backlog Auto-Management Rule
 
 A backlog item can be promoted during the pass that implements it, but after acceptance it must be marked completed, removed from active candidates, or converted into explicit follow-up subtasks.

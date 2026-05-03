@@ -99,22 +99,25 @@ export function ThemeMappingPanel({ pinnedEntity }: ThemeMappingPanelProps) {
           </div>
 
           <div>
-            <div className="text-xs font-semibold text-slate-400 tracking-wide uppercase mb-1">Future Controls (Disabled)</div>
+            <div className="text-xs font-semibold text-slate-400 tracking-wide uppercase mb-1">Generated Read-Only Controls</div>
             {metadata.editableProperties.length ? (
               <div className="space-y-2">
                 {metadata.editableProperties.map((property) => (
                   <div
                     key={property}
                     data-testid="theme-mapping-disabled-control"
-                    className="flex items-center justify-between rounded border border-slate-800 bg-slate-950/40 px-2 py-1 text-xs text-slate-300"
+                    className="rounded border border-slate-800 bg-slate-950/40 px-3 py-2 text-xs text-slate-300"
                   >
-                    <div>
+                    <div className="flex items-center justify-between mb-1">
                       <div className="font-semibold text-slate-200">{property}</div>
-                      <div className="text-slate-400">Token: {metadata.tokenBindings[property] ?? "Not bound"}</div>
+                      <div className="text-[10px] uppercase tracking-wide text-slate-500">
+                        {CONTROL_HINTS[property]} (disabled)
+                      </div>
                     </div>
-                    <div className="text-[10px] uppercase tracking-wide text-slate-500">
-                      {CONTROL_HINTS[property]} (disabled)
-                    </div>
+                    <div className="text-slate-400">Canonical Token: {metadata.tokenBindings[property] ?? "Not bound"}</div>
+                    {metadata.visualHandle && (
+                      <div className="text-slate-400">Visual Handle: {metadata.visualHandle}</div>
+                    )}
                   </div>
                 ))}
               </div>

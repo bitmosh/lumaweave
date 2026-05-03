@@ -399,6 +399,89 @@ export const advisoryV30b: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV32: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v32-registered-shows-generated-rows",
+      prompt: "Do registered pinned targets show generated read-only control rows?",
+      context: "When a registered Theme Target is pinned, the Theme Mapping Panel should display disabled control rows for each editable property derived from the target's metadata.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v32-rows-show-canonical-token",
+      prompt: "Do generated rows display canonical token paths?",
+      context: "Each control row should show the canonical token path from THEME_TOKEN_PATH_MAP.md (e.g., 'Canonical Token: panel.background').",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v32-rows-show-visual-handle",
+      prompt: "Do generated rows show visual handle relationship?",
+      context: "Control rows should display the visual handle when known (e.g., 'Visual Handle: lw-panel').",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v32-rows-are-disabled",
+      prompt: "Are generated rows rendered as disabled/read-only?",
+      context: "Control rows should be rendered as disabled div elements with no input behavior, not as editable form controls.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v32-candidate-no-controls",
+      prompt: "Do candidate targets not show generated controls?",
+      context: "Pinned candidate targets should show diagnostic metadata only, not generated control rows.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v32-no-editing",
+      prompt: "Is this pass read-only with no editing/storage changes?",
+      context: "Panel remains read-only; no schema/storage mutations. Only generated disabled control rows are added.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "theme-override-storage",
+      title: "Theme Override Storage",
+      summary: "Implement override storage and preset saving for Theme Mapping Panel",
+      rationale: "The Theme Mapping Panel currently shows generated read-only controls. To enable actual editing, we need storage for theme overrides and preset saving.",
+      risk: "medium",
+      recommendedNextAction: "Defer to v33–v34 after v32 acceptance",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "Design theme override storage schema",
+      whyItMatters: "Storage schema is foundational for v33–v34 storage work.",
+      suggestedFutureBite: "Draft storage schema proposal in docs",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "Enable Theme Mapping Panel controls",
+      whyItMatters: "This is the final step in the Theme Mapping Panel arc.",
+      suggestedFutureBite: "Implement after v33–v34 storage work",
+      risk: "medium",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV31: BanditAdvisorySection = {
   questions: [
     {
@@ -2237,7 +2320,10 @@ export const advisoryV17a: BanditAdvisorySection = {
 
 // Advisory lookup function - returns appropriate advisory based on qaKey
 export function getAdvisoryForChecklist(featureId: string, qaVersion: number, checklistKey: string): BanditAdvisorySection {
-  if (featureId === "visual-handles-cite-token-paths-v31" && (qaVersion === 31 || checklistKey === "v31")) {
+  if (featureId === "generated-readonly-theme-mapping-controls-v32" || qaVersion === 32 || checklistKey === "v32") {
+    return advisoryV32;
+  }
+  if (featureId === "visual-handles-cite-token-paths-v31" || qaVersion === 31 || checklistKey === "v31") {
     return advisoryV31;
   }
   if (featureId === "theme-mapping-panel-shell-v30b" && (qaVersion === 30 || checklistKey === "v30b")) {
@@ -2294,6 +2380,9 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number, ch
 
 // Advisory lookup function keyed by canonical qaKey
 export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
+  if (qaKey === "v32") {
+    return advisoryV32;
+  }
   if (qaKey === "v31") {
     return advisoryV31;
   }
