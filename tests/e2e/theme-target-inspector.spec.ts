@@ -1,7 +1,18 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, Page } from "@playwright/test";
 import { openQaPanel, openDebugTab } from "./helpers/qa";
+import type { ThemeTargetProbeResult } from "../../src/themes/themeTargetHeuristics";
 
 const OVERLAY_TOGGLE = "theme-target-inspector-toggle-state";
+
+type ProbeWindow = Window & {
+  __lwRunThemeTargetProbe?: (options?: { minSignals?: number }) => ThemeTargetProbeResult | null;
+};
+
+const runRuntimeProbe = async (
+  page: Page,
+  options?: { minSignals?: number },
+): Promise<ThemeTargetProbeResult | null> =>
+  page.evaluate((opts) => (window as ProbeWindow).__lwRunThemeTargetProbe?.(opts) ?? null, options);
 
 test.describe("Theme Target Registry + Inspector Overlay", () => {
   test("debug tab shows Theme Target registry summary", async ({ page }) => {
@@ -202,5 +213,231 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
 
     await page.keyboard.press("Alt+Shift+I");
     await expect(page.getByTestId("theme-target-ghost-layer")).toHaveCount(0);
+  });
+
+  test("runtime probe helper is registered globally", async ({ page }) => {
+    await page.goto("/");
+    const result = await runRuntimeProbe(page);
+    expect(result).not.toBeNull();
+    expect(result?.totalElementsAnalyzed).toBeGreaterThan(0);
+  });
+
+  test("registered surfaces are not reported as missing", async ({ page }) => {
+    await page.goto("/");
+    const result = await runRuntimeProbe(page);
+    expect(result).not.toBeNull();
+    const descriptors = [
+      ...(result?.candidates ?? []),
+      ...(result?.unknown ?? []),
+    ].map((candidate) => candidate.descriptor).join(" ");
+    expect(descriptors).not.toContain("qa-panel");
+    expect(descriptors).not.toContain("settings-panel");
+    expect(descriptors).not.toContain("graph.frame");
+  });
+
+  test("never-warn categories remain excluded from runtime probe", async ({ page }) => {
+    await page.goto("/");
+    await page.evaluate(() => {
+      const ids = [
+        "probe-never-warn-button",
+        "probe-never-warn-label",
+        "probe-layout-shim",
+        "probe-handle-control",
+      ];
+      ids.forEach((id) => document.getElementById(id)?.remove());
+
+      const button = document.createElement("button");
+      button.id = "probe-never-warn-button";
+      button.setAttribute("data-testid", "probe-never-warn-button");
+      button.textContent = "Should stay excluded";
+
+      const label = document.createElement("label");
+      label.id = "probe-never-warn-label";
+      label.htmlFor = button.id;
+      label.textContent = "Never-warn label";
+
+      const layoutShim = document.createElement("div");
+      layoutShim.id = "probe-layout-shim";
+      layoutShim.className = "lw-control-grid";
+      layoutShim.setAttribute("data-testid", "probe-layout-shim");
+
+      const handleControl = document.createElement("div");
+      handleControl.id = "probe-handle-control";
+      handleControl.setAttribute("data-handle-id", "probe-handle");
+      handleControl.textContent = "Handle control";
+
+      document.body.appendChild(button);
+      document.body.appendChild(label);
+      document.body.appendChild(layoutShim);
+      document.body.appendChild(handleControl);
+    });
+
+    const result = await runRuntimeProbe(page);
+    expect(result).not.toBeNull();
+    const entries = [
+      ...(result?.candidates ?? []),
+      ...(result?.unknown ?? []),
+    ];
+    const descriptors = entries.map((entry) => entry.descriptor).join(" ");
+    const dataTestIds = entries.map((entry) => entry.dataTestId ?? "").join(" ");
+
+    expect(dataTestIds).not.toContain("theme-inspector-toggle-button");
+    expect(dataTestIds).not.toContain("qa-tab-checklist");
+    expect(dataTestIds).not.toContain("qa-tab-advisory");
+    expect(dataTestIds).not.toContain("probe-never-warn-button");
+    expect(descriptors).not.toContain("button#probe-never-warn-button");
+    expect(descriptors).not.toContain("label#probe-never-warn-label");
+    expect(descriptors).not.toContain("#probe-handle-control");
+    expect(descriptors).not.toContain("#probe-layout-shim");
+    expect(descriptors).not.toContain("lw-control-grid");
+
+    await page.evaluate(() => {
+      [
+        "probe-never-warn-button",
+        "probe-never-warn-label",
+        "probe-layout-shim",
+        "probe-handle-control",
+      ].forEach((id) => document.getElementById(id)?.remove());
+    });
+  });
+
+  test("ghost overlay DOM remains excluded even when inspector is on", async ({ page }) => {
+    await page.goto("/");
+    await page.click("body");
+    await page.keyboard.press("Alt+Shift+I");
+    const ghostLayer = page.getByTestId("theme-target-ghost-layer");
+    await expect(ghostLayer).toBeVisible();
+    const ghostOutlines = page.getByTestId("theme-target-ghost-outline");
+    expect(await ghostOutlines.count()).toBeGreaterThan(0);
+    const missionControlPanel = page.locator('[data-lw-theme-target="mission-control.panel"]').first();
+    await missionControlPanel.hover();
+    await expect(page.getByTestId("theme-target-inspector-panel")).toBeVisible();
+    const result = await runRuntimeProbe(page);
+    expect(result).not.toBeNull();
+    const allDescriptors = [
+      ...(result?.candidates ?? []),
+      ...(result?.unknown ?? []),
+    ].map((candidate) => candidate.descriptor).join(" ");
+    expect(allDescriptors).not.toContain("theme-target-ghost-layer");
+    expect(allDescriptors).not.toContain("theme-target-ghost-outline");
+    expect(allDescriptors).not.toContain("theme-target-inspector-panel");
+  });
+
+  test("graph viewport primitives remain excluded", async ({ page }) => {
+    await page.goto("/");
+    const result = await runRuntimeProbe(page);
+    const entries = [
+      ...(result?.candidates ?? []),
+      ...(result?.unknown ?? []),
+    ];
+    const descriptors = entries.map((candidate) => candidate.descriptor).join(" ");
+    const dataTestIds = entries.map((candidate) => candidate.dataTestId ?? "").join(" ");
+    expect(descriptors).not.toContain("graph-viewport");
+    expect(descriptors).not.toContain("canvas");
+    expect(descriptors).not.toContain("graph.node");
+    expect(descriptors).not.toContain("graph.edge");
+    expect(dataTestIds).not.toContain("graph-viewport");
+  });
+
+  test("synthetic container requires >=3 signals to become candidate", async ({ page }) => {
+    await page.goto("/");
+    await page.evaluate(() => {
+      const existing = document.getElementById("probe-test-container");
+      if (existing) {
+        existing.remove();
+      }
+      const container = document.createElement("div");
+      container.id = "probe-test-container";
+      container.className = "lw-panel probe-test";
+      container.setAttribute("data-testid", "mission-control-probe-candidate");
+      Object.assign(container.style, {
+        width: "420px",
+        height: "220px",
+        position: "absolute",
+        top: "120px",
+        left: "120px",
+        zIndex: 1,
+      });
+      const buttonA = document.createElement("button");
+      buttonA.textContent = "Action A";
+      const buttonB = document.createElement("button");
+      buttonB.textContent = "Action B";
+      container.appendChild(buttonA);
+      container.appendChild(buttonB);
+      document.body.appendChild(container);
+    });
+
+    const result = await runRuntimeProbe(page);
+    expect(result).not.toBeNull();
+    const candidate = result?.candidates.find((entry) => entry.descriptor.includes("probe-test-container"));
+    expect(candidate).toBeDefined();
+    expect(candidate?.signals.length ?? 0).toBeGreaterThanOrEqual(3);
+
+    await page.evaluate(() => {
+      document.getElementById("probe-test-container")?.remove();
+    });
+  });
+
+  test("insufficient signals return unknown/no warning", async ({ page }) => {
+    await page.goto("/");
+    await page.evaluate(() => {
+      const targetId = "probe-unknown-container";
+      document.getElementById(targetId)?.remove();
+      const element = document.createElement("div");
+      element.id = targetId;
+      element.setAttribute("data-testid", "mission-control-unknown-surface");
+      element.style.width = "200px";
+      element.style.height = "80px";
+      document.body.appendChild(element);
+    });
+
+    const result = await runRuntimeProbe(page);
+    const unknownEntry = result?.unknown.find((entry) => entry.descriptor.includes("probe-unknown-container"));
+    expect(unknownEntry).toBeDefined();
+    expect(unknownEntry?.status).toBe("unknown");
+
+    await page.evaluate(() => {
+      document.getElementById("probe-unknown-container")?.remove();
+    });
+  });
+
+  test("runtime probe does not render warning badges", async ({ page }) => {
+    await page.goto("/");
+    await page.evaluate(() => {
+      const existing = document.getElementById("probe-warning-candidate");
+      existing?.remove();
+      const container = document.createElement("div");
+      container.id = "probe-warning-candidate";
+      container.className = "lw-panel probe-warning";
+      container.setAttribute("data-testid", "mission-control-probe-warning");
+      Object.assign(container.style, {
+        width: "360px",
+        height: "200px",
+        position: "absolute",
+        top: "160px",
+        left: "160px",
+      });
+      const firstButton = document.createElement("button");
+      firstButton.textContent = "Primary";
+      const secondButton = document.createElement("button");
+      secondButton.textContent = "Secondary";
+      container.appendChild(firstButton);
+      container.appendChild(secondButton);
+      document.body.appendChild(container);
+    });
+
+    const result = await runRuntimeProbe(page);
+    expect(result).not.toBeNull();
+    expect(result?.candidates.length ?? 0).toBeGreaterThan(0);
+
+    await page.keyboard.press("Alt+Shift+I");
+    await expect(page.getByTestId("theme-target-warning-badge")).toHaveCount(0);
+    await expect(page.locator('[data-testid="theme-target-warning-indicator"]')).toHaveCount(0);
+    await page.keyboard.press("Alt+Shift+I");
+    await expect(page.getByTestId("theme-target-warning-badge")).toHaveCount(0);
+
+    await page.evaluate(() => {
+      document.getElementById("probe-warning-candidate")?.remove();
+    });
   });
 });
