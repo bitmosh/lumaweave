@@ -103,6 +103,69 @@ export function CommandDeckShell({
           </div>
         </div>
 
+        <div>
+          <h4
+            className="text-xs font-semibold uppercase tracking-wider"
+            style={{ color: themeAccent }}
+          >
+            Command Registry
+          </h4>
+          <div className="mt-2 space-y-2">
+            <div
+              className="rounded px-2 py-2 text-xs"
+              style={{
+                border: `1px solid ${themeAccent}40`,
+                backgroundColor: `${themeAccent}15`,
+              }}
+            >
+              <p
+                className="font-semibold"
+                style={{ color: themeAccent }}
+              >
+                Export Theme Override Bundle
+              </p>
+              <p className="mt-1" style={{ color: "var(--lw-text-primary)" }}>
+                Export current theme overrides to a JSON bundle file
+              </p>
+              <p
+                className="mt-1 text-xs italic"
+                style={{ color: themeTextMuted }}
+              >
+                Category: Theme | Status: Eligible
+              </p>
+            </div>
+            <div
+              className="rounded px-2 py-2 text-xs"
+              style={{
+                border: `1px solid ${themeAccent}40`,
+                backgroundColor: `${themeAccent}15`,
+              }}
+            >
+              <p
+                className="font-semibold"
+                style={{ color: themeAccent }}
+              >
+                Toggle Theme Target Inspector
+              </p>
+              <p className="mt-1" style={{ color: "var(--lw-text-primary)" }}>
+                Enable or disable the theme target inspector overlay
+              </p>
+              <p
+                className="mt-1 text-xs italic"
+                style={{ color: themeTextMuted }}
+              >
+                Category: View | Status: Eligible | Shortcut: Alt+Shift+I
+              </p>
+            </div>
+            <p
+              className="mt-1 text-xs italic"
+              style={{ color: themeTextMuted }}
+            >
+              Command registry is read-only. No commands can be executed.
+            </p>
+          </div>
+        </div>
+
         <div
           className="rounded px-2 py-1 text-xs"
           style={{
@@ -111,8 +174,8 @@ export function CommandDeckShell({
             color: themeAccent,
           }}
         >
-          <span className="font-semibold">v36b:</span> Read-Only Hotkey
-          Registry Inventory
+          <span className="font-semibold">v36c:</span> Command Registry
+          Metadata
         </div>
       </div>
     </div>

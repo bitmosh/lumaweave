@@ -64,3 +64,28 @@ test("hotkey registry shows governance policy", async ({ page }) => {
   const shellContent = await commandDeckShell.textContent();
   expect(shellContent).toContain("No new hotkeys may be added without registry approval");
 });
+
+test("command registry displays command metadata", async ({ page }) => {
+  await page.goto("/");
+
+  const commandDeckShell = page.getByTestId("command-deck-shell");
+  await expect(commandDeckShell).toBeVisible();
+
+  const shellContent = await commandDeckShell.textContent();
+  expect(shellContent).toContain("Command Registry");
+  expect(shellContent).toContain("Export Theme Override Bundle");
+  expect(shellContent).toContain("Toggle Theme Target Inspector");
+  expect(shellContent).toContain("Category");
+  expect(shellContent).toContain("Status");
+});
+
+test("command registry shows read-only notice", async ({ page }) => {
+  await page.goto("/");
+
+  const commandDeckShell = page.getByTestId("command-deck-shell");
+  await expect(commandDeckShell).toBeVisible();
+
+  const shellContent = await commandDeckShell.textContent();
+  expect(shellContent).toContain("Command registry is read-only");
+  expect(shellContent).toContain("No commands can be executed");
+});

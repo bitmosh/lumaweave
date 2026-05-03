@@ -482,6 +482,57 @@ export const advisoryV34b: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV36c: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v36c-command-registry-visible",
+      prompt: "Is the Command Registry visible in the Command Deck?",
+      context: "Command Deck shell should display a Command Registry section showing command metadata.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v36c-command-metadata-displayed",
+      prompt: "Is command metadata displayed correctly?",
+      context: "Commands should show title, description, category, and status.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v36c-read-only-notice-displayed",
+      prompt: "Is the read-only notice displayed?",
+      context: "Shell should show 'Command registry is read-only. No commands can be executed.'",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "v36d-command-execution",
+      title: "v36d Command Execution",
+      summary: "Add command execution capability to Command Deck",
+      rationale: "After command metadata is displayed, users may want to execute commands from the Command Deck.",
+      risk: "high",
+      recommendedNextAction: "Implement in v36d or later after v36c is accepted and contract is updated",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "v36d Command Execution",
+      whyItMatters: "Users may want to execute commands from the Command Deck.",
+      suggestedFutureBite: "Add command execution with proper governance and testing",
+      risk: "high",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV36b: BanditAdvisorySection = {
   questions: [
     {
