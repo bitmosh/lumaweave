@@ -45,6 +45,7 @@ Modernization means preserving accepted contracts while wrapping them in clearer
 | `15_PLAYWRIGHT_WORKING_PATTERN_DIFF_AUDIT.md` | Defines how Bandit should compare failing tests against working Playwright patterns and the last accepted green commit before repairing cascades. |
 | `16_SELF_IMPROVEMENT_SUGGESTION_BOX.md` | Tracks recurring Bandit friction, weaknesses, near-misses, and proposed operating improvements. |
 | `17_PASS_FRICTION_REPORT_TEMPLATE.md` | Template for after-action friction reports after failed, risky, recovery, Playwright-heavy, or Quest Mode passes. |
+| `20_BANDIT_LEVELING_AND_FEEDBACK_PROTOCOL.md` | Defines Bandit's positive reinforcement, level-up rules, clean-pass criteria, and success-reporting format. |
 | `graphs/identity_system_graph.md` | Relationship graph for IDs, contracts, runtime, DOM, and tests. |
 | `graphs/theme_contract_pipeline.md` | Theme Token Path → Theme Target Registry → DOM marker → overlay → QA pipeline. |
 | `graphs/qa_contract_pipeline.md` | QA/advisory/test evidence pipeline. |
