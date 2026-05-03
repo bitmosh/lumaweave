@@ -372,4 +372,203 @@ test.describe("Graph Visual Inventory", () => {
       await expect(modeReadout).toHaveText("Mode: summary");
     });
   });
+
+  test.describe("Graph Theme Mapping Inventory (v50)", () => {
+    test("Graph Theme Mapping Inventory section is visible", async ({ page }) => {
+      const mappingSection = page.getByTestId("graph-theme-mapping-inventory-section");
+      await expect(mappingSection).toBeVisible();
+    });
+
+    test("Graph Theme Mapping Inventory title is visible", async ({ page }) => {
+      const mappingTitle = page.getByTestId("graph-theme-mapping-inventory-title");
+      await expect(mappingTitle).toBeVisible();
+      await expect(mappingTitle).toHaveText("Graph Theme Mapping Inventory (v50)");
+    });
+
+    test("Graph Theme Mapping Inventory description indicates passive inventory", async ({ page }) => {
+      const mappingDescription = page.getByTestId("graph-theme-mapping-inventory-description");
+      await expect(mappingDescription).toBeVisible();
+      await expect(mappingDescription).toHaveText("Passive inventory of graph visual element to canonical theme token relationships. No runtime application.");
+    });
+
+    test("Graph Theme Mapping Inventory reports mapping entries count", async ({ page }) => {
+      const mappingCount = page.getByTestId("graph-theme-mapping-count");
+      await expect(mappingCount).toBeVisible();
+      const count = await mappingCount.textContent();
+      expect(count).not.toBe("");
+      expect(parseInt(count || "0")).toBeGreaterThan(0);
+    });
+
+    test("Graph Theme Mapping Inventory reports runtime application status as forbidden", async ({ page }) => {
+      const applicationStatus = page.getByTestId("graph-theme-mapping-application-status");
+      await expect(applicationStatus).toBeVisible();
+      await expect(applicationStatus).toHaveText("forbidden in v50");
+    });
+
+    test("Graph Theme Mapping Inventory reports Sigma mutation status as forbidden", async ({ page }) => {
+      const sigmaStatus = page.getByTestId("graph-theme-mapping-sigma-status");
+      await expect(sigmaStatus).toBeVisible();
+      await expect(sigmaStatus).toHaveText("forbidden in v50");
+    });
+
+    test("Graph Theme Mapping Inventory reports node/edge styling status as forbidden", async ({ page }) => {
+      const stylingStatus = page.getByTestId("graph-theme-mapping-styling-status");
+      await expect(stylingStatus).toBeVisible();
+      await expect(stylingStatus).toHaveText("forbidden in v50");
+    });
+
+    test("Graph Theme Mapping Inventory list is visible", async ({ page }) => {
+      const mappingList = page.getByTestId("graph-theme-mapping-list");
+      await expect(mappingList).toBeVisible();
+    });
+
+    test("Graph Theme Mapping rows are listed", async ({ page }) => {
+      const mappingList = page.getByTestId("graph-theme-mapping-list");
+
+      // Check for known mapping entries (graph.frame → panel.border)
+      const graphFrameMappingRow = page.getByTestId("graph-theme-mapping-row-graph-frame-panel-border");
+      await expect(graphFrameMappingRow).toBeVisible();
+
+      // Check for graph.surface → app.background mapping
+      const graphSurfaceMappingRow = page.getByTestId("graph-theme-mapping-row-graph-surface-app-background");
+      await expect(graphSurfaceMappingRow).toBeVisible();
+    });
+
+    test("Graph Theme Mapping rows show graph element ID", async ({ page }) => {
+      const graphFrameElement = page.getByTestId("graph-theme-mapping-row-element-graph-frame-panel-border");
+      await expect(graphFrameElement).toBeVisible();
+      await expect(graphFrameElement).toHaveText("graph.frame");
+    });
+
+    test("Graph Theme Mapping rows show visual role", async ({ page }) => {
+      const graphFrameRole = page.getByTestId("graph-theme-mapping-row-role-graph-frame-panel-border");
+      await expect(graphFrameRole).toBeVisible();
+      const roleText = await graphFrameRole.textContent();
+      expect(roleText).not.toBe("");
+    });
+
+    test("Graph Theme Mapping rows show canonical token path", async ({ page }) => {
+      const graphFrameToken = page.getByTestId("graph-theme-mapping-row-token-graph-frame-panel-border");
+      await expect(graphFrameToken).toBeVisible();
+      const tokenText = await graphFrameToken.textContent();
+      expect(tokenText).toContain("Token:");
+      expect(tokenText).toContain("panel.border");
+    });
+
+    test("Graph Theme Mapping rows show token source", async ({ page }) => {
+      const graphFrameSource = page.getByTestId("graph-theme-mapping-row-source-graph-frame-panel-border");
+      await expect(graphFrameSource).toBeVisible();
+      const sourceText = await graphFrameSource.textContent();
+      expect(sourceText).toContain("Source:");
+      expect(sourceText).toContain("THEME_TOKEN_PATH_MAP.md");
+    });
+
+    test("Graph Theme Mapping rows show boundary notes", async ({ page }) => {
+      const graphFrameBoundary = page.getByTestId("graph-theme-mapping-row-boundary-graph-frame-panel-border");
+      await expect(graphFrameBoundary).toBeVisible();
+      const boundaryText = await graphFrameBoundary.textContent();
+      expect(boundaryText).toContain("Governance mapping only");
+    });
+
+    test("Graph Theme Mapping rows show status", async ({ page }) => {
+      const graphFrameStatus = page.getByTestId("graph-theme-mapping-row-status-graph-frame-panel-border");
+      await expect(graphFrameStatus).toBeVisible();
+      await expect(graphFrameStatus).toHaveText("active");
+    });
+
+    test("Graph Theme Mapping Inventory has no enabled apply/edit/save controls", async ({ page }) => {
+      const mappingSection = page.getByTestId("graph-theme-mapping-inventory-section");
+
+      // Check that there are no apply buttons
+      const applyButtons = mappingSection.getByRole("button", { name: /apply/i });
+      await expect(applyButtons).not.toBeVisible();
+
+      // Check that there are no edit buttons
+      const editButtons = mappingSection.getByRole("button", { name: /edit/i });
+      await expect(editButtons).not.toBeVisible();
+
+      // Check that there are no save buttons
+      const saveButtons = mappingSection.getByRole("button", { name: /save/i });
+      await expect(saveButtons).not.toBeVisible();
+    });
+
+    test("Graph Theme Mapping Inventory is read-only (no input fields)", async ({ page }) => {
+      const mappingSection = page.getByTestId("graph-theme-mapping-inventory-section");
+
+      // Check that there are no text input fields
+      const textInputs = mappingSection.getByRole("textbox");
+      await expect(textInputs).not.toBeVisible();
+
+      // Check that there are no dropdowns
+      const dropdowns = mappingSection.getByRole("combobox");
+      await expect(dropdowns).not.toBeVisible();
+    });
+
+    test("Graph surface still mounts with theme mapping inventory present", async ({ page }) => {
+      const canvas = page.locator("canvas").first();
+      await expect(canvas).toBeVisible();
+    });
+
+    test("Existing graph inventory still works with theme mapping inventory", async ({ page }) => {
+      const inventoryList = page.getByTestId("graph-visual-inventory-list");
+      await expect(inventoryList).toBeVisible();
+
+      const graphFrameRow = page.getByTestId("graph-visual-inventory-row-graph.frame");
+      await expect(graphFrameRow).toBeVisible();
+    });
+
+    test("Runtime probe still works with theme mapping inventory", async ({ page }) => {
+      const probeSection = page.getByTestId("graph-runtime-probe-section");
+      await expect(probeSection).toBeVisible();
+
+      const mutationStatus = page.getByTestId("graph-runtime-probe-mutation-status");
+      await expect(mutationStatus).toBeVisible();
+      await expect(mutationStatus).toHaveText("locked/deferred");
+    });
+
+    test("Graph Evidence Detail Mode still works with theme mapping inventory", async ({ page }) => {
+      const detailModeSection = page.getByTestId("graph-evidence-detail-mode");
+      await expect(detailModeSection).toBeVisible();
+
+      const summaryButton = page.getByTestId("graph-evidence-mode-summary");
+      const detailedButton = page.getByTestId("graph-evidence-mode-detailed");
+      const modeReadout = page.getByTestId("graph-evidence-detail-readout");
+
+      await detailedButton.click();
+      await expect(modeReadout).toHaveText("Mode: detailed");
+
+      await summaryButton.click();
+      await expect(modeReadout).toHaveText("Mode: summary");
+    });
+
+    test("No graph/Sigma styling mutation controls are introduced", async ({ page }) => {
+      const panel = page.getByTestId("graph-visual-inventory-panel");
+
+      // Check that there are no new Sigma/renderer mutation controls
+      const sigmaControls = panel.getByRole("button", { name: /sigma|renderer|mutation/i });
+      await expect(sigmaControls).not.toBeVisible();
+
+      // Check that there are no new physics modification controls
+      const physicsControls = panel.getByRole("button", { name: /physics|force|layout/i });
+      await expect(physicsControls).not.toBeVisible();
+
+      // Check that there are no new node/edge styling controls
+      const stylingControls = panel.getByRole("button", { name: /node|edge|style|color/i });
+      await expect(stylingControls).not.toBeVisible();
+    });
+
+    test("All theme mapping rows have stable testid attributes", async ({ page }) => {
+      const mappingList = page.getByTestId("graph-theme-mapping-list");
+      await expect(mappingList).toBeVisible();
+
+      // Verify all rows have testid attributes
+      const rows = page.locator('[data-testid^="graph-theme-mapping-row-"]');
+      const count = await rows.count();
+
+      for (let i = 0; i < count; i++) {
+        const row = rows.nth(i);
+        await expect(row).toHaveAttribute('data-testid');
+      }
+    });
+  });
 });

@@ -12,9 +12,11 @@
 
 import React, { useState } from "react";
 import { getAllGraphViewElements, type GraphViewElement } from "../../graph/graphViewElementRegistry";
+import { getAllGraphVisualThemeMappings, type GraphVisualThemeMapping } from "../../graph/graphVisualThemeMappingRegistry";
 
 export function GraphVisualInventoryPanel(): React.JSX.Element {
   const elements = getAllGraphViewElements();
+  const themeMappings = getAllGraphVisualThemeMappings();
   const [detailMode, setDetailMode] = useState<"summary" | "detailed">("summary");
 
   return (
@@ -73,6 +75,45 @@ export function GraphVisualInventoryPanel(): React.JSX.Element {
         </div>
       </div>
 
+      {/* Graph Theme Mapping Inventory (v50) */}
+      <div
+        className="mb-4 p-3 border border-green-200 rounded bg-green-50"
+        data-testid="graph-theme-mapping-inventory-section"
+      >
+        <h3 className="text-sm font-semibold text-green-900 mb-2" data-testid="graph-theme-mapping-inventory-title">
+          Graph Theme Mapping Inventory (v50)
+        </h3>
+        <p className="text-xs text-green-700 mb-3" data-testid="graph-theme-mapping-inventory-description">
+          Passive inventory of graph visual element to canonical theme token relationships. No runtime application.
+        </p>
+        <div className="space-y-1 text-xs">
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Mapping entries:</span>
+            <span className="font-mono text-green-800" data-testid="graph-theme-mapping-count">
+              {themeMappings.length}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Runtime application status:</span>
+            <span className="font-mono text-red-600 font-semibold" data-testid="graph-theme-mapping-application-status">
+              forbidden in v50
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Sigma mutation status:</span>
+            <span className="font-mono text-red-600 font-semibold" data-testid="graph-theme-mapping-sigma-status">
+              forbidden in v50
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Node/edge styling status:</span>
+            <span className="font-mono text-red-600 font-semibold" data-testid="graph-theme-mapping-styling-status">
+              forbidden in v50
+            </span>
+          </div>
+        </div>
+      </div>
+
       {/* Passive Runtime Probe Section (v46) */}
       <div
         className="mb-4 p-3 border border-blue-200 rounded bg-blue-50"
@@ -115,6 +156,13 @@ export function GraphVisualInventoryPanel(): React.JSX.Element {
       <div className="space-y-2" data-testid="graph-visual-inventory-list">
         {elements.map((element) => (
           <GraphVisualInventoryRow key={element.id} element={element} detailMode={detailMode} />
+        ))}
+      </div>
+
+      {/* Graph Theme Mapping Rows (v50) */}
+      <div className="mt-4 space-y-2" data-testid="graph-theme-mapping-list">
+        {themeMappings.map((mapping, index) => (
+          <GraphThemeMappingRow key={`${mapping.graphElementId}-${mapping.canonicalTokenPath}-${index}`} mapping={mapping} />
         ))}
       </div>
     </div>
@@ -186,4 +234,54 @@ function getStatusColor(status: string): string {
     default:
       return "bg-gray-100 text-gray-800";
   }
+}
+
+interface GraphThemeMappingRowProps {
+  mapping: GraphVisualThemeMapping;
+}
+
+function GraphThemeMappingRow({ mapping }: GraphThemeMappingRowProps): React.JSX.Element {
+  const statusColor = mapping.status === "active" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800";
+  const elementId = mapping.graphElementId.replace(/\./g, "-");
+  const tokenId = mapping.canonicalTokenPath.replace(/\./g, "-");
+  const rowId = `${elementId}-${tokenId}`;
+
+  return (
+    <div
+      className="border border-gray-200 rounded p-3 bg-gray-50"
+      data-testid={`graph-theme-mapping-row-${rowId}`}
+    >
+      <div className="flex items-center justify-between mb-1">
+        <h3 className="font-medium text-sm" data-testid={`graph-theme-mapping-row-element-${rowId}`}>
+          {mapping.graphElementId}
+        </h3>
+        <span
+          className={`text-xs px-2 py-1 rounded ${statusColor}`}
+          data-testid={`graph-theme-mapping-row-status-${rowId}`}
+        >
+          {mapping.status}
+        </span>
+      </div>
+
+      <p className="text-xs text-gray-600 mb-2" data-testid={`graph-theme-mapping-row-role-${rowId}`}>
+        {mapping.visualRole}
+      </p>
+
+      <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
+        <span data-testid={`graph-theme-mapping-row-token-${rowId}`}>
+          Token: {mapping.canonicalTokenPath}
+        </span>
+      </div>
+
+      <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
+        <span data-testid={`graph-theme-mapping-row-source-${rowId}`}>
+          Source: {mapping.tokenSource}
+        </span>
+      </div>
+
+      <div className="mt-2 text-xs text-gray-500 italic" data-testid={`graph-theme-mapping-row-boundary-${rowId}`}>
+        {mapping.boundaryNote}
+      </div>
+    </div>
+  );
 }
