@@ -11,11 +11,13 @@ import { THEME_TARGET_PIN_EVENT, type ThemeTargetInspectorEntity } from "../../t
 import { ThemeMappingPanel } from "../panels/ThemeMappingPanel";
 
 const ACTIVE_CHECKLIST_STORAGE_KEY = "lumaweave-qa-active-checklist";
-const BACKLOG_STORAGE_KEY = "lumaweave-advisory-backlog-order";
-const QUESTION_ANSWER_STORAGE_KEY = "lumaweave-advisory-question-answers";
-const PROPOSAL_DECISIONS_STORAGE_KEY = "lumaweave-advisory-proposal-decisions";
-const DEFAULT_QA_KEY = "v61";
-const DEFAULT_FEATURE_ID = "audio-reactivity-contract-v61";
+
+// Scoped storage keys for advisory persistence per QA key
+const getBacklogStorageKey = (qaKey: string) => `lumaweave-advisory-backlog-order:${qaKey}`;
+const getQuestionAnswerStorageKey = (qaKey: string) => `lumaweave-advisory-question-answers:${qaKey}`;
+const getProposalDecisionsStorageKey = (qaKey: string) => `lumaweave-advisory-proposal-decisions:${qaKey}`;
+const DEFAULT_QA_KEY = "v62";
+const DEFAULT_FEATURE_ID = "synthetic-audio-signal-preview-v62";
 const PROPOSAL_DECISION_OPTIONS: readonly BanditProposalDecision[] = [
   "unreviewed",
   "accept-for-future",
@@ -47,15 +49,12 @@ const parseJson = <T,>(value: string | null): T | null => {
   }
 };
 
-const loadPersistedProposalDecisions = (): Record<string, BanditProposalDecision> =>
-  parseJson<Record<string, BanditProposalDecision>>(localStorage.getItem(PROPOSAL_DECISIONS_STORAGE_KEY)) ?? {};
-
-const persistProposalDecisions = (proposals: { id: string; userDecision: BanditProposalDecision }[]) => {
+const persistProposalDecisions = (proposals: { id: string; userDecision: BanditProposalDecision }[], qaKey: string) => {
   const decisionsMap = proposals.reduce<Record<string, BanditProposalDecision>>((acc, proposal) => {
     acc[proposal.id] = proposal.userDecision;
     return acc;
   }, {});
-  localStorage.setItem(PROPOSAL_DECISIONS_STORAGE_KEY, JSON.stringify(decisionsMap));
+  localStorage.setItem(getProposalDecisionsStorageKey(qaKey), JSON.stringify(decisionsMap));
 };
 
 type PanelView = "checklist" | "last-submission" | "history" | "mapping" | "debug" | "advisory";
@@ -179,24 +178,26 @@ export function QaPanel({
   // Advisory state - load appropriate advisory based on active qaKey
   const [advisoryContent, setAdvisoryContent] = useState(() => {
     // Get the appropriate advisory for the current qaKey
-    const defaultAdvisory = getAdvisoryForQaKey(activeQaKey);
+    const baseAdvisory = getAdvisoryForQaKey(activeQaKey);
     
-    // Load persisted backlog order, answers, and proposal decisions from localStorage
-    const persistedBacklog = parseJson(defaultAdvisory.backlog.length ? localStorage.getItem(BACKLOG_STORAGE_KEY) : null);
-    const persistedQuestionAnswers = parseJson<Record<string, string>>(localStorage.getItem(QUESTION_ANSWER_STORAGE_KEY));
-    const persistedProposalDecisions = loadPersistedProposalDecisions();
+    // Load persisted backlog order, answers, and proposal decisions from scoped localStorage
+    const persistedBacklog = parseJson(baseAdvisory.backlog.length ? localStorage.getItem(getBacklogStorageKey(activeQaKey)) : null);
+    const persistedQuestionAnswers = parseJson<Record<string, string>>(localStorage.getItem(getQuestionAnswerStorageKey(activeQaKey)));
+    const persistedProposalDecisions = parseJson<Record<string, BanditProposalDecision>>(localStorage.getItem(getProposalDecisionsStorageKey(activeQaKey))) ?? {};
     
-    let mergedAdvisory = { ...defaultAdvisory };
+    let mergedAdvisory = { ...baseAdvisory };
     
-    if (Array.isArray(persistedBacklog) && persistedBacklog.length === defaultAdvisory.backlog.length) {
+    // Merge persisted backlog ordering only if lengths match (same advisory structure)
+    if (Array.isArray(persistedBacklog) && persistedBacklog.length === baseAdvisory.backlog.length) {
       mergedAdvisory.backlog = persistedBacklog.map((item, index) => ({
         ...item,
         rank: index + 1,
       }));
     }
     
+    // Merge persisted question user responses only, preserve registry prompts and context
     if (persistedQuestionAnswers) {
-      mergedAdvisory.questions = defaultAdvisory.questions.map((question) => {
+      mergedAdvisory.questions = baseAdvisory.questions.map((question) => {
         const persistedAnswer = persistedQuestionAnswers[question.id];
         if (persistedAnswer && typeof persistedAnswer === "string") {
           return { ...question, userResponse: persistedAnswer };
@@ -205,7 +206,8 @@ export function QaPanel({
       });
     }
 
-    mergedAdvisory.proposals = defaultAdvisory.proposals.map((proposal) => {
+    // Merge persisted proposal decisions only, preserve registry titles/summaries/rationale
+    mergedAdvisory.proposals = baseAdvisory.proposals.map((proposal) => {
       const persistedDecision = persistedProposalDecisions[proposal.id];
       if (isProposalDecision(persistedDecision)) {
         return { ...proposal, userDecision: persistedDecision };
@@ -213,9 +215,50 @@ export function QaPanel({
       return proposal;
     });
     
-    persistProposalDecisions(mergedAdvisory.proposals);
     return mergedAdvisory;
   });
+
+  // Refresh advisory content when activeQaKey changes
+  useEffect(() => {
+    const baseAdvisory = getAdvisoryForQaKey(activeQaKey);
+    
+    // Load persisted backlog order, answers, and proposal decisions from scoped localStorage
+    const persistedBacklog = parseJson(baseAdvisory.backlog.length ? localStorage.getItem(getBacklogStorageKey(activeQaKey)) : null);
+    const persistedQuestionAnswers = parseJson<Record<string, string>>(localStorage.getItem(getQuestionAnswerStorageKey(activeQaKey)));
+    const persistedProposalDecisions = parseJson<Record<string, BanditProposalDecision>>(localStorage.getItem(getProposalDecisionsStorageKey(activeQaKey))) ?? {};
+    
+    let mergedAdvisory = { ...baseAdvisory };
+    
+    // Merge persisted backlog ordering only if lengths match (same advisory structure)
+    if (Array.isArray(persistedBacklog) && persistedBacklog.length === baseAdvisory.backlog.length) {
+      mergedAdvisory.backlog = persistedBacklog.map((item, index) => ({
+        ...item,
+        rank: index + 1,
+      }));
+    }
+    
+    // Merge persisted question user responses only, preserve registry prompts and context
+    if (persistedQuestionAnswers) {
+      mergedAdvisory.questions = baseAdvisory.questions.map((question) => {
+        const persistedAnswer = persistedQuestionAnswers[question.id];
+        if (persistedAnswer && typeof persistedAnswer === "string") {
+          return { ...question, userResponse: persistedAnswer };
+        }
+        return question;
+      });
+    }
+
+    // Merge persisted proposal decisions only, preserve registry titles/summaries/rationale
+    mergedAdvisory.proposals = baseAdvisory.proposals.map((proposal) => {
+      const persistedDecision = persistedProposalDecisions[proposal.id];
+      if (isProposalDecision(persistedDecision)) {
+        return { ...proposal, userDecision: persistedDecision };
+      }
+      return proposal;
+    });
+    
+    setAdvisoryContent(mergedAdvisory);
+  }, [activeQaKey]);
 
   const copyLastSubmission = () => {
     if (lastSubmission) {
@@ -513,7 +556,7 @@ export function QaPanel({
         ...p,
         userNotes: "",
       }));
-      persistProposalDecisions(resetProposals);
+      persistProposalDecisions(resetProposals, activeQaKey);
       return {
         ...prev,
         questions: resetQuestions,
@@ -521,8 +564,8 @@ export function QaPanel({
       };
     });
     
-    // Clear persisted question answers from localStorage
-    localStorage.removeItem(QUESTION_ANSWER_STORAGE_KEY);
+    // Clear persisted question answers from scoped localStorage
+    localStorage.removeItem(getQuestionAnswerStorageKey(activeQaKey));
     
     setTimeout(() => setSubmitMessage(""), 3000);
   };
@@ -654,10 +697,10 @@ export function QaPanel({
   const moveBacklogItemUp = (index: number) => {
     if (index === 0) return;
     const newBacklog = [...advisoryContent.backlog];
-    [newBacklog[index - 1], newBacklog[index]] = [newBacklog[index], newBacklog[index - 1]];
+    [newBacklog[index], newBacklog[index - 1]] = [newBacklog[index - 1], newBacklog[index]];
     const updatedBacklog = newBacklog.map((item, idx) => ({ ...item, rank: idx + 1 }));
     setAdvisoryContent({ ...advisoryContent, backlog: updatedBacklog });
-    localStorage.setItem(BACKLOG_STORAGE_KEY, JSON.stringify(updatedBacklog));
+    localStorage.setItem(getBacklogStorageKey(activeQaKey), JSON.stringify(updatedBacklog));
   };
 
   const moveBacklogItemDown = (index: number) => {
@@ -666,7 +709,7 @@ export function QaPanel({
     [newBacklog[index], newBacklog[index + 1]] = [newBacklog[index + 1], newBacklog[index]];
     const updatedBacklog = newBacklog.map((item, idx) => ({ ...item, rank: idx + 1 }));
     setAdvisoryContent({ ...advisoryContent, backlog: updatedBacklog });
-    localStorage.setItem(BACKLOG_STORAGE_KEY, JSON.stringify(updatedBacklog));
+    localStorage.setItem(getBacklogStorageKey(activeQaKey), JSON.stringify(updatedBacklog));
   };
 
   const handleProposalDecisionUpdate = (proposalId: string, decision: BanditProposalDecision) => {
@@ -674,7 +717,7 @@ export function QaPanel({
       const updatedProposals = prev.proposals.map((p) =>
         p.id === proposalId ? { ...p, userDecision: decision } : p
       );
-      persistProposalDecisions(updatedProposals);
+      persistProposalDecisions(updatedProposals, activeQaKey);
       return { ...prev, proposals: updatedProposals };
     });
   };
@@ -1415,7 +1458,7 @@ export function QaPanel({
                             answersMap[q.id] = q.userResponse;
                           }
                         });
-                        localStorage.setItem(QUESTION_ANSWER_STORAGE_KEY, JSON.stringify(answersMap));
+                        localStorage.setItem(getQuestionAnswerStorageKey(activeQaKey), JSON.stringify(answersMap));
                       }}
                       placeholder="Enter your answer or notes..."
                       className="w-full text-xs bg-slate-900 border border-slate-700 rounded p-2 text-slate-300 resize-y min-h-[60px]"

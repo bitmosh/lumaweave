@@ -94,7 +94,8 @@ Prioritize upcoming systems by **input contracts**, not feature excitement. Foll
 29. **Graph Theme Application Readiness Diagnostic** — **completed (v58)**.
 30. **Motion Safety / Epilepsy Guard Contract** — **completed (v59)**.
 31. **Reduced Motion Guard Registry** — **completed (v60)**.
-32. **Audio Reactivity Contract** — **current pass (v61)**.
+32. **Audio Reactivity Contract** — **completed (v61)**.
+33. **Synthetic Audio Signal Preview** — **current pass (v62)**.
 
 Guardrails:
 - Do **not** implement storage before override semantics exist (v33).

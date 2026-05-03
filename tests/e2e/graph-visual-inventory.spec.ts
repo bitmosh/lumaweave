@@ -1164,4 +1164,175 @@ test.describe("Graph Visual Inventory", () => {
       await expect(graphControls).not.toBeVisible();
     });
   });
+
+  test("Graph Visual Inventory › Audio Reactivity / Synthetic Signal Preview (v62) › Section is visible", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const section = panel.getByTestId("audio-reactivity-preview-section");
+    await expect(section).toBeVisible();
+  });
+
+  test("Graph Visual Inventory › Audio Reactivity / Synthetic Signal Preview (v62) › Title is visible", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const title = panel.getByTestId("audio-reactivity-preview-title");
+    await expect(title).toBeVisible();
+    await expect(title).toHaveText("Audio Reactivity / Synthetic Signal Preview (v62)");
+  });
+
+  test("Graph Visual Inventory › Audio Reactivity / Synthetic Signal Preview (v62) › Description is visible", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const description = panel.getByTestId("audio-reactivity-preview-description");
+    await expect(description).toBeVisible();
+    await expect(description).toHaveText(/Deterministic synthetic audio signal preview/);
+  });
+
+  test("Graph Visual Inventory › Audio Reactivity / Synthetic Signal Preview (v62) › Source is synthetic", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const source = panel.getByTestId("audio-signal-source");
+    await expect(source).toBeVisible();
+    await expect(source).toHaveText("synthetic");
+  });
+
+  test("Graph Visual Inventory › Audio Reactivity / Synthetic Signal Preview (v62) › Deterministic is true", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const deterministic = panel.getByTestId("audio-signal-deterministic");
+    await expect(deterministic).toBeVisible();
+    await expect(deterministic).toHaveText("true");
+  });
+
+  test("Graph Visual Inventory › Audio Reactivity / Synthetic Signal Preview (v62) › Visual output is deferred", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const visualOutput = panel.getByTestId("audio-visual-output-status");
+    await expect(visualOutput).toBeVisible();
+    await expect(visualOutput).toHaveText("deferred");
+  });
+
+  test("Graph Visual Inventory › Audio Reactivity / Synthetic Signal Preview (v62) › Motion Safety is required", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const motionSafety = panel.getByTestId("audio-motion-safety-status");
+    await expect(motionSafety).toBeVisible();
+    await expect(motionSafety).toHaveText(/required before visual output/);
+  });
+
+  test("Graph Visual Inventory › Audio Reactivity / Synthetic Signal Preview (v62) › Synthetic presets are visible", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const presetRows = panel.getByTestId("audio-signal-preset-row");
+    await expect(presetRows).toHaveCount(4); // silence, lantern-pulse-demo, plasma-loom-demo, constellation-demo
+  });
+
+  test("Graph Visual Inventory › Audio Reactivity / Synthetic Signal Preview (v62) › Silence preset has correct values", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const title = panel.getByTestId("audio-signal-title-silence");
+    await expect(title).toBeVisible();
+    await expect(title).toHaveText("Silence");
+
+    const rms = panel.getByTestId("audio-signal-rms-silence");
+    await expect(rms).toBeVisible();
+    await expect(rms).toHaveText("0");
+
+    const bass = panel.getByTestId("audio-signal-bass-silence");
+    await expect(bass).toBeVisible();
+    await expect(bass).toHaveText("0");
+
+    const tempo = panel.getByTestId("audio-signal-tempo-silence");
+    await expect(tempo).toBeVisible();
+    await expect(tempo).toHaveText("60");
+  });
+
+  test("Graph Visual Inventory › Audio Reactivity / Synthetic Signal Preview (v62) › Constellation demo has correct values", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const title = panel.getByTestId("audio-signal-title-constellation-demo");
+    await expect(title).toBeVisible();
+    await expect(title).toHaveText("Constellation Demo");
+
+    const rms = panel.getByTestId("audio-signal-rms-constellation-demo");
+    await expect(rms).toBeVisible();
+    await expect(rms).toHaveText("0.75");
+
+    const bass = panel.getByTestId("audio-signal-bass-constellation-demo");
+    await expect(bass).toBeVisible();
+    await expect(bass).toHaveText("0.8");
+
+    const tempo = panel.getByTestId("audio-signal-tempo-constellation-demo");
+    await expect(tempo).toBeVisible();
+    await expect(tempo).toHaveText("160");
+  });
+
+  test("Graph Visual Inventory › Audio Reactivity / Synthetic Signal Preview (v62) › Notice confirms passive nature", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const notice = panel.getByTestId("audio-reactivity-preview-notice");
+    await expect(notice).toBeVisible();
+    await expect(notice).toHaveText(/static\/read-only evidence only/);
+    await expect(notice).toHaveText(/No animation, no audio input, no music reactivity, no graph\/Sigma mutation, no active controls/);
+  });
+
+  test("Graph Visual Inventory › Audio Reactivity / Synthetic Signal Preview (v62) › No microphone controls exist", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    // Check that there are no microphone or audio input controls
+    const microphoneControls = panel.getByRole("button", { name: /microphone|audio input|record/i });
+    await expect(microphoneControls).not.toBeVisible();
+  });
+
+  test("Graph Visual Inventory › Audio Reactivity / Synthetic Signal Preview (v62) › No playback controls exist", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    // Check that there are no audio playback controls
+    const playbackControls = panel.getByRole("button", { name: /play|pause|stop|audio/i });
+    await expect(playbackControls).not.toBeVisible();
+  });
+
+  test("Graph Visual Inventory › Audio Reactivity / Synthetic Signal Preview (v62) › No animation controls exist", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    // Check that there are no animation controls
+    const animationControls = panel.getByRole("button", { name: /animate|pulse|flash/i });
+    await expect(animationControls).not.toBeVisible();
+  });
+
+  test("Graph Visual Inventory › Audio Reactivity / Synthetic Signal Preview (v62) › Existing Motion Safety registry still works", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    // Verify that the Motion Safety Guard Registry section is still visible
+    const motionSafetySection = panel.getByTestId("motion-safety-guard-registry-section");
+    await expect(motionSafetySection).toBeVisible();
+
+    const motionSafetyTitle = panel.getByTestId("motion-safety-guard-registry-title");
+    await expect(motionSafetyTitle).toBeVisible();
+    await expect(motionSafetyTitle).toHaveText("Motion Safety Guard Registry (v60)");
+  });
+
+  test("Graph Visual Inventory › Audio Reactivity / Synthetic Signal Preview (v62) › No audio mutation controls exist", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    // Check that there are no audio/graph mutation controls
+    const audioMutationControls = panel.getByRole("button", { name: /audio.*mutation|graph.*audio/i });
+    await expect(audioMutationControls).not.toBeVisible();
+  });
 });

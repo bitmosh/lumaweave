@@ -14,11 +14,13 @@ import React, { useState } from "react";
 import { getAllGraphViewElements, type GraphViewElement } from "../../graph/graphViewElementRegistry";
 import { getAllGraphVisualThemeMappings, type GraphVisualThemeMapping } from "../../graph/graphVisualThemeMappingRegistry";
 import { getAllMotionSafetyEntries } from "../../accessibility/motionSafetyRegistry";
+import { getAllSyntheticSignals } from "../../audio/syntheticAudioSignal";
 
 export function GraphVisualInventoryPanel(): React.JSX.Element {
   const elements = getAllGraphViewElements();
   const themeMappings = getAllGraphVisualThemeMappings();
   const motionSafetyEntries = getAllMotionSafetyEntries();
+  const syntheticSignals = getAllSyntheticSignals();
   const [detailMode, setDetailMode] = useState<"summary" | "detailed">("summary");
   const [themeEvidenceMode, setThemeEvidenceMode] = useState<boolean>(false);
   const [themeApplicationMode, setThemeApplicationMode] = useState<boolean>(false);
@@ -399,6 +401,109 @@ export function GraphVisualInventoryPanel(): React.JSX.Element {
         </div>
         <div className="mt-2 pt-2 border-t border-rose-300 text-xs text-gray-500 italic" data-testid="motion-safety-registry-notice">
           Registry is static/read-only classification only. No animation, no audio input, no music reactivity, no graph/Sigma mutation, no active controls.
+        </div>
+      </div>
+
+      {/* Audio Reactivity / Synthetic Signal Preview (v62) */}
+      <div
+        className="mb-4 p-3 border border-amber-200 rounded bg-amber-50"
+        data-testid="audio-reactivity-preview-section"
+      >
+        <h3 className="text-sm font-semibold text-amber-900 mb-2" data-testid="audio-reactivity-preview-title">
+          Audio Reactivity / Synthetic Signal Preview (v62)
+        </h3>
+        <p className="text-xs text-amber-700 mb-3" data-testid="audio-reactivity-preview-description">
+          Deterministic synthetic audio signal preview. No real audio, no microphone, no Web Audio API, no playback.
+        </p>
+        <div className="space-y-2 text-xs mb-3">
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Source:</span>
+            <span className="font-mono text-amber-800 font-semibold" data-testid="audio-signal-source">
+              synthetic
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Deterministic:</span>
+            <span className="font-mono text-amber-800 font-semibold" data-testid="audio-signal-deterministic">
+              true
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Visual output status:</span>
+            <span className="font-mono text-red-600 font-semibold" data-testid="audio-visual-output-status">
+              deferred
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Motion Safety status:</span>
+            <span className="font-mono text-amber-800 font-semibold" data-testid="audio-motion-safety-status">
+              required before visual output
+            </span>
+          </div>
+        </div>
+        <div className="space-y-2">
+          <div className="text-xs font-semibold text-amber-900 mb-1">Synthetic Signal Presets:</div>
+          {syntheticSignals.map((signal) => (
+            <div
+              key={signal.id}
+              className="p-2 border border-amber-200 rounded bg-white"
+              data-testid="audio-signal-preset-row"
+            >
+              <div className="font-semibold text-gray-800 mb-1" data-testid={`audio-signal-title-${signal.id}`}>
+                {signal.title}
+              </div>
+              <div className="text-gray-600 mb-2" data-testid={`audio-signal-description-${signal.id}`}>
+                {signal.description}
+              </div>
+              <div className="grid grid-cols-4 gap-2 text-xs">
+                <div>
+                  <span className="text-gray-500">rms:</span>
+                  <span className="font-mono text-amber-800 ml-1" data-testid={`audio-signal-rms-${signal.id}`}>
+                    {signal.channels.rms}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-500">bass:</span>
+                  <span className="font-mono text-amber-800 ml-1" data-testid={`audio-signal-bass-${signal.id}`}>
+                    {signal.channels.bass}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-500">mid:</span>
+                  <span className="font-mono text-amber-800 ml-1" data-testid={`audio-signal-mid-${signal.id}`}>
+                    {signal.channels.mid}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-500">treble:</span>
+                  <span className="font-mono text-amber-800 ml-1" data-testid={`audio-signal-treble-${signal.id}`}>
+                    {signal.channels.treble}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-500">beat:</span>
+                  <span className="font-mono text-amber-800 ml-1" data-testid={`audio-signal-beat-${signal.id}`}>
+                    {signal.channels.beat}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-500">silence:</span>
+                  <span className="font-mono text-amber-800 ml-1" data-testid={`audio-signal-silence-${signal.id}`}>
+                    {signal.channels.silence}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-500">tempo:</span>
+                  <span className="font-mono text-amber-800 ml-1" data-testid={`audio-signal-tempo-${signal.id}`}>
+                    {signal.channels.tempo}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-2 pt-2 border-t border-amber-300 text-xs text-gray-500 italic" data-testid="audio-reactivity-preview-notice">
+          Preview is static/read-only evidence only. No animation, no audio input, no music reactivity, no graph/Sigma mutation, no active controls.
         </div>
       </div>
 

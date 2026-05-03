@@ -125,6 +125,20 @@ export async function expectCurrentQaKey(page: Page, expectedQaKey: string): Pro
 }
 
 /**
+ * Switch the QA key using the checklist selector dropdown
+ * @param page - Playwright page
+ * @param qaKey - QA key to switch to (e.g., "v48")
+ */
+export async function switchQaKey(page: Page, qaKey: string): Promise<void> {
+  const qaPanel = page.getByTestId("qa-panel").first();
+  await expect(qaPanel).toBeVisible();
+
+  const dropdown = qaPanel.getByTestId("qa-checklist-selector");
+  await dropdown.selectOption(qaKey);
+  await expect(dropdown).toHaveValue(qaKey);
+}
+
+/**
  * Expect the report to include the Advisory Set Key
  * @param page - Playwright page
  * @param expectedQaKey - Expected QA key (e.g., "v17")

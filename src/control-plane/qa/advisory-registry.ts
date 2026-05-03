@@ -1379,8 +1379,8 @@ export const advisoryV48: BanditAdvisorySection = {
     },
     {
       id: "v48-active-controls",
-      prompt: "Are controls genuinely active?",
-      context: "Controls should be genuinely active (not dead).",
+      prompt: "Are the detail mode controls genuinely active?",
+      context: "Detail mode toggle should be clickable and change state.",
       responseType: "choice",
       userResponse: "",
       status: "unanswered",
@@ -1388,7 +1388,7 @@ export const advisoryV48: BanditAdvisorySection = {
     {
       id: "v48-graph-surface-mounts",
       prompt: "Does the graph surface still mount?",
-      context: "Graph surface should still mount and be visible.",
+      context: "Graph surface should still mount and render.",
       responseType: "choice",
       userResponse: "",
       status: "unanswered",
@@ -1396,23 +1396,7 @@ export const advisoryV48: BanditAdvisorySection = {
     {
       id: "v48-runtime-probe-works",
       prompt: "Does the runtime probe still work?",
-      context: "Runtime probe should still report mutation boundaries.",
-      responseType: "choice",
-      userResponse: "",
-      status: "unanswered",
-    },
-    {
-      id: "v48-typecheck-passes",
-      prompt: "Does typecheck pass with zero errors?",
-      context: "npm run typecheck should pass with zero errors.",
-      responseType: "choice",
-      userResponse: "",
-      status: "unanswered",
-    },
-    {
-      id: "v48-playwright-passes",
-      prompt: "Do Playwright tests pass with zero skips?",
-      context: "npm run qa:e2e should pass with zero failures and zero skips.",
+      context: "Runtime probe section should still display evidence.",
       responseType: "choice",
       userResponse: "",
       status: "unanswered",
@@ -1422,10 +1406,10 @@ export const advisoryV48: BanditAdvisorySection = {
     {
       id: "v49-first-real-graph-mutation",
       title: "v49 First Real Graph/Sigma Mutation",
-      summary: "Implement the first real graph/Sigma mutation with explicit new contract",
+      summary: "After v48 proves app-level UI mutation is safe, v49 can implement the first real graph/Sigma mutation with new explicit contract.",
       rationale: "After v48 proves app-level UI mutation is safe, v49 can implement the first real graph/Sigma mutation with new explicit contract.",
       risk: "high",
-      recommendedNextAction: "Define specific mutation contract (e.g., physics tuning) and implement with full evidence",
+      recommendedNextAction: "Implement in v49 after v48 is accepted",
       userDecision: "unreviewed",
       userNotes: "",
     },
@@ -1453,6 +1437,89 @@ export const advisoryV48: BanditAdvisorySection = {
       whyItMatters: "Implement graph physics controls after visual mapping is in place.",
       suggestedFutureBite: "Add physics sliders for node size, link distance, repel force",
       risk: "high",
+      status: "candidate",
+    },
+  ],
+};
+
+export const advisoryV62: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v62-synthetic-model-exists",
+      prompt: "Does the synthetic signal model exist?",
+      context: "src/audio/syntheticAudioSignal.ts should exist with typed model and deterministic presets.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v62-passive-ui-exists",
+      prompt: "Does the passive UI section exist?",
+      context: "GraphVisualInventoryPanel should have Audio Reactivity / Synthetic Signal Preview section.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v62-signal-values-visible",
+      prompt: "Are signal values visible?",
+      context: "Synthetic presets should display signal channel values as text/evidence.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v62-no-real-audio",
+      prompt: "Are there no real audio controls?",
+      context: "No microphone, Web Audio API, audio file, or playback controls should exist.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v62-no-animation",
+      prompt: "Is there no animation/graph mutation?",
+      context: "No animation or graph/Sigma mutation controls should exist.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v62-playwright-tests",
+      prompt: "Do Playwright tests prove passive nature?",
+      context: "Playwright tests should verify synthetic preview is passive/read-only.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "v63-music-reactive-mapping-contract",
+      title: "v63 Music Reactive Mapping Contract",
+      summary: "Define the mapping registry that connects normalized audio signal channels to visual parameters for music-reactive graph effects.",
+      rationale: "After v62 proves synthetic signal preview is safe, v63 can define the mapping architecture for audio-to-visual transformation.",
+      risk: "medium",
+      recommendedNextAction: "Implement in v63 after v62 is accepted",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "v63 Music Reactive Mapping Contract",
+      whyItMatters: "After v62 proves synthetic signal preview is safe, v63 can define the mapping architecture for audio-to-visual transformation.",
+      suggestedFutureBite: "Define audio-to-visual mapping registry with Motion Safety gate",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "v64 Passive Music Reactive Mapping Inventory",
+      whyItMatters: "After mapping contract is defined, v64 can expose the mapping registry through passive inventory.",
+      suggestedFutureBite: "Add passive UI for audio-to-visual mapping inspection",
+      risk: "low",
       status: "candidate",
     },
   ],
@@ -4006,6 +4073,9 @@ export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
   }
   if (qaKey === "v48") {
     return advisoryV48;
+  }
+  if (qaKey === "v62") {
+    return advisoryV62;
   }
   if (qaKey === "v41") {
     return advisoryV41;

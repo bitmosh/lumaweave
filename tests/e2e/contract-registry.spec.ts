@@ -10,12 +10,13 @@ import {
   openAdvisoryTab,
   openDebugTab,
   submitQaReport,
+  switchQaKey,
 } from "./helpers/qa";
 import type { ThemeTargetProbeResult } from "../../src/themes/themeTargetHeuristics";
 
-const CURRENT_QA_KEY = "v61";
-const PRIMARY_PROPOSAL_ID = "v62-synthetic-audio-signal-preview";
-const SECONDARY_PROPOSAL_ID = "v62-synthetic-audio-signal-preview";
+const CURRENT_QA_KEY = "v62";
+const PRIMARY_PROPOSAL_ID = "v63-music-reactive-mapping-contract";
+const SECONDARY_PROPOSAL_ID = "v63-music-reactive-mapping-contract";
 
 type ProbeWindow = Window & {
   __lwRunThemeTargetProbe?: (options?: { minSignals?: number }) => ThemeTargetProbeResult | null;
@@ -259,7 +260,7 @@ test("Bandit Backlog Top 10 renders", async ({ page }) => {
   await expect(backlogItem.getByTestId("bandit-backlog-title")).not.toHaveText("");
 });
 
-test("v48 is default active checklist", async ({ page }) => {
+test("v62 is default active checklist", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await expectCurrentQaKey(page, CURRENT_QA_KEY);
@@ -268,6 +269,8 @@ test("v48 is default active checklist", async ({ page }) => {
 test("v48 identity diagnostics visible in Debug tab", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
+  // Switch to v48 to verify historical v48 content
+  await switchQaKey(page, "v48");
 
   const debugTab = page.getByTestId("qa-tab-debug");
   await debugTab.click();
@@ -346,15 +349,22 @@ test("advisory backlog reorder persists through tab switching", async ({ page })
 test("v48 advisory tab renders detail mode questions", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
+  // Switch to v48 to verify historical v48 advisory content
+  await switchQaKey(page, "v48");
   await openAdvisoryTab(page);
 
   // Verify v48 advisory section is visible
   const advisorySection = page.getByTestId("qa-advisory-section");
   await expect(advisorySection).toBeVisible();
 
-  // Verify detail mode questions are rendered
+  // Verify v48 Graph Evidence Detail Mode advisory question is rendered
+  // Use the exact prompt text from advisoryV48
   const detailModeQuestion = page.getByText("Is the Graph Evidence Detail Mode section visible?");
   await expect(detailModeQuestion).toBeVisible();
+
+  // Also verify other v48 detail mode questions to prove v48 advisory content is loaded
+  const summaryModeQuestion = page.getByText("Is Summary mode the default?");
+  await expect(summaryModeQuestion).toBeVisible();
 });
 
 test("v48 report includes Advisory Set Key", async ({ page }) => {
@@ -398,6 +408,8 @@ test("v48 acceptance decision requires zero blocked or unverified", async ({ pag
 test("v48 checklist includes detail mode checks", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
+  // Switch to v48 to verify historical v48 checklist content
+  await switchQaKey(page, "v48");
   await openChecklistTab(page);
 
   await expectChecklistContainsChecks(page, [
