@@ -571,4 +571,122 @@ test.describe("Graph Visual Inventory", () => {
       }
     });
   });
+
+  test.describe("Graph Theme Evidence Wrapper Mode (v52)", () => {
+    test("Graph Theme Evidence Wrapper Mode section is visible", async ({ page }) => {
+      const wrapperModeSection = page.getByTestId("graph-theme-evidence-wrapper-mode-section");
+      await expect(wrapperModeSection).toBeVisible();
+    });
+
+    test("Graph Theme Evidence Wrapper Mode title is visible", async ({ page }) => {
+      const wrapperModeTitle = page.getByTestId("graph-theme-evidence-wrapper-mode-title");
+      await expect(wrapperModeTitle).toBeVisible();
+      await expect(wrapperModeTitle).toHaveText("Graph Theme Evidence Wrapper Mode (v52)");
+    });
+
+    test("Graph Theme Evidence Wrapper Mode description indicates wrapper-level state", async ({ page }) => {
+      const wrapperModeDescription = page.getByTestId("graph-theme-evidence-wrapper-mode-description");
+      await expect(wrapperModeDescription).toBeVisible();
+      await expect(wrapperModeDescription).toHaveText("Wrapper-level theme evidence state toggle. Does not apply token values to Sigma or graph.");
+    });
+
+    test("Theme evidence toggle is visible", async ({ page }) => {
+      const toggle = page.getByTestId("graph-theme-evidence-toggle");
+      await expect(toggle).toBeVisible();
+    });
+
+    test("Default theme evidence status is inactive", async ({ page }) => {
+      const status = page.getByTestId("graph-theme-evidence-status");
+      await expect(status).toBeVisible();
+      await expect(status).toHaveText("Theme evidence: inactive");
+    });
+
+    test("Toggle button shows Inactive by default", async ({ page }) => {
+      const toggle = page.getByTestId("graph-theme-evidence-toggle");
+      await expect(toggle).toBeVisible();
+      await expect(toggle).toHaveText("Inactive");
+      await expect(toggle).toHaveAttribute("aria-pressed", "false");
+    });
+
+    test("Clicking toggle changes status to active", async ({ page }) => {
+      const toggle = page.getByTestId("graph-theme-evidence-toggle");
+      const status = page.getByTestId("graph-theme-evidence-status");
+
+      await toggle.click();
+      await expect(status).toHaveText("Theme evidence: active");
+      await expect(toggle).toHaveText("Active");
+      await expect(toggle).toHaveAttribute("aria-pressed", "true");
+    });
+
+    test("Clicking toggle again returns status to inactive", async ({ page }) => {
+      const toggle = page.getByTestId("graph-theme-evidence-toggle");
+      const status = page.getByTestId("graph-theme-evidence-status");
+
+      await toggle.click();
+      await expect(status).toHaveText("Theme evidence: active");
+
+      await toggle.click();
+      await expect(status).toHaveText("Theme evidence: inactive");
+      await expect(toggle).toHaveAttribute("aria-pressed", "false");
+    });
+
+    test("Canonical token paths metadata is visible", async ({ page }) => {
+      const tokenPaths = page.getByTestId("graph-theme-evidence-token-paths");
+      await expect(tokenPaths).toBeVisible();
+      const tokenText = await tokenPaths.textContent();
+      expect(tokenText).toContain("panel.border");
+      expect(tokenText).toContain("app.background");
+    });
+
+    test("Token value application status is forbidden", async ({ page }) => {
+      const tokenValueStatus = page.getByTestId("graph-theme-evidence-token-value-status");
+      await expect(tokenValueStatus).toBeVisible();
+      await expect(tokenValueStatus).toHaveText("forbidden in v52");
+    });
+
+    test("Sigma mutation status is forbidden", async ({ page }) => {
+      const sigmaStatus = page.getByTestId("graph-theme-evidence-sigma-status");
+      await expect(sigmaStatus).toBeVisible();
+      await expect(sigmaStatus).toHaveText("forbidden in v52");
+    });
+
+    test("Graph surface still mounts with wrapper mode present", async ({ page }) => {
+      const canvas = page.locator("canvas").first();
+      await expect(canvas).toBeVisible();
+    });
+
+    test("Existing graph inventory still works with wrapper mode", async ({ page }) => {
+      const inventoryList = page.getByTestId("graph-visual-inventory-list");
+      await expect(inventoryList).toBeVisible();
+    });
+
+    test("Existing graph theme mapping inventory still works with wrapper mode", async ({ page }) => {
+      const mappingSection = page.getByTestId("graph-theme-mapping-inventory-section");
+      await expect(mappingSection).toBeVisible();
+    });
+
+    test("No new Sigma/renderer/node/edge/canvas controls are introduced", async ({ page }) => {
+      const panel = page.getByTestId("graph-visual-inventory-panel");
+
+      // Check that there are no new Sigma/renderer mutation controls
+      const sigmaControls = panel.getByRole("button", { name: /sigma|renderer|mutation/i });
+      await expect(sigmaControls).not.toBeVisible();
+
+      // Check that there are no new physics modification controls
+      const physicsControls = panel.getByRole("button", { name: /physics|force|layout/i });
+      await expect(physicsControls).not.toBeVisible();
+    });
+
+    test("Controls are genuinely active (not dead)", async ({ page }) => {
+      const toggle = page.getByTestId("graph-theme-evidence-toggle");
+      const status = page.getByTestId("graph-theme-evidence-status");
+
+      // Verify toggle is clickable and changes state
+      await toggle.click();
+      await expect(status).toHaveText("Theme evidence: active");
+
+      await toggle.click();
+      await expect(status).toHaveText("Theme evidence: inactive");
+    });
+  });
 });

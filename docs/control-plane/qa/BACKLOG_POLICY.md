@@ -84,8 +84,8 @@ Prioritize upcoming systems by **input contracts**, not feature excitement. Foll
 19. **First Safe Graph Runtime Mutation** — **completed (v48)**.
 20. **Graph Visual / Theme Mapping Contract** — **completed (v49)**.
 21. **Passive Graph Theme Mapping Inventory** — **completed (v50)**.
-22. **Graph Theme Runtime Application Contract** — **current pass (v51)**.
-23. **Graph Theme Evidence Wrapper Mode** (after contract is accepted).
+22. **Graph Theme Runtime Application Contract** — **completed (v51)**.
+23. **Graph Theme Evidence Wrapper Mode** — **current pass (v52)**.
 24. **First true graph theme application** (v53+, requires new contract).
 
 Guardrails:

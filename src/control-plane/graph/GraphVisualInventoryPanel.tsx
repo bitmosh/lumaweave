@@ -18,6 +18,7 @@ export function GraphVisualInventoryPanel(): React.JSX.Element {
   const elements = getAllGraphViewElements();
   const themeMappings = getAllGraphVisualThemeMappings();
   const [detailMode, setDetailMode] = useState<"summary" | "detailed">("summary");
+  const [themeEvidenceMode, setThemeEvidenceMode] = useState<boolean>(false);
 
   return (
     <div>
@@ -109,6 +110,59 @@ export function GraphVisualInventoryPanel(): React.JSX.Element {
             <span className="text-gray-600">Node/edge styling status:</span>
             <span className="font-mono text-red-600 font-semibold" data-testid="graph-theme-mapping-styling-status">
               forbidden in v50
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Graph Theme Evidence Wrapper Mode (v52) */}
+      <div
+        className="mb-4 p-3 border border-orange-200 rounded bg-orange-50"
+        data-testid="graph-theme-evidence-wrapper-mode-section"
+      >
+        <h3 className="text-sm font-semibold text-orange-900 mb-2" data-testid="graph-theme-evidence-wrapper-mode-title">
+          Graph Theme Evidence Wrapper Mode (v52)
+        </h3>
+        <p className="text-xs text-orange-700 mb-3" data-testid="graph-theme-evidence-wrapper-mode-description">
+          Wrapper-level theme evidence state toggle. Does not apply token values to Sigma or graph.
+        </p>
+        <div className="flex items-center gap-3 mb-2">
+          <button
+            onClick={() => setThemeEvidenceMode(!themeEvidenceMode)}
+            aria-pressed={themeEvidenceMode}
+            data-testid="graph-theme-evidence-toggle"
+            className={`px-3 py-1 text-xs rounded ${
+              themeEvidenceMode
+                ? "bg-orange-600 text-white"
+                : "bg-white text-orange-700 border border-orange-300"
+            }`}
+          >
+            {themeEvidenceMode ? "Active" : "Inactive"}
+          </button>
+          <span
+            className="text-xs font-mono text-orange-800"
+            data-testid="graph-theme-evidence-status"
+          >
+            Theme evidence: {themeEvidenceMode ? "active" : "inactive"}
+          </span>
+        </div>
+        <div className="space-y-1 text-xs">
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Canonical token paths (metadata only):</span>
+            <span className="font-mono text-orange-800" data-testid="graph-theme-evidence-token-paths">
+              {themeMappings.map((m) => m.canonicalTokenPath).join(", ")}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Token value application:</span>
+            <span className="font-mono text-red-600 font-semibold" data-testid="graph-theme-evidence-token-value-status">
+              forbidden in v52
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Sigma mutation:</span>
+            <span className="font-mono text-red-600 font-semibold" data-testid="graph-theme-evidence-sigma-status">
+              forbidden in v52
             </span>
           </div>
         </div>
