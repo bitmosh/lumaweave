@@ -551,6 +551,81 @@ export const advisoryV36c: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV38: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v38-perspective-registry-exists",
+      prompt: "Does the perspective registry exist with typed metadata?",
+      context: "src/control-plane/perspectives/perspectiveRegistry.ts should exist with Perspective interface and perspectiveRegistry export.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v38-perspective-panel-visible",
+      prompt: "Is the Perspective System section visible in Command Deck Shell?",
+      context: "Command Deck shell should display a Perspective System section showing built-in perspectives.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v38-built-in-perspectives-listed",
+      prompt: "Are the built-in perspectives listed correctly?",
+      context: "Default Architecture, Theme Mapping, Command Deck, QA Evidence should be displayed with title, description, category, status.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v38-future-perspectives-labeled",
+      prompt: "Are future perspectives labeled as locked?",
+      context: "Graph Physics and Source Adapter perspectives should show 'Locked in v38 - requires explicit contract' label.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v38-read-only-passive",
+      prompt: "Is the perspective registry read-only?",
+      context: "Panel should show 'Perspective registry is read-only. No perspective switching.'",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "v39-graph-physics-playwright",
+      title: "v39 Graph Physics Playwright Coverage Expansion",
+      summary: "Expand Playwright coverage for graph physics sliders/toggles",
+      rationale: "Before adding perspective-based graph physics, we need stable test coverage for existing physics controls.",
+      risk: "medium",
+      recommendedNextAction: "Implement in v39 after v38 is accepted",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "v39 Graph Physics Playwright Coverage",
+      whyItMatters: "Stabilize physics sliders/toggles before adding perspective-based graph physics.",
+      suggestedFutureBite: "Add Playwright tests for graph physics behavior",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "v40 Graph View Element Registry",
+      whyItMatters: "Refresh Graph View Element Registry and Graph Visual Policy before adding perspective-based graph filtering.",
+      suggestedFutureBite: "Update registry and policy for graph visual behavior",
+      risk: "high",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV36b: BanditAdvisorySection = {
   questions: [
     {
@@ -2934,6 +3009,9 @@ export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
   }
   if (qaKey === "v36c") {
     return advisoryV36c;
+  }
+  if (qaKey === "v38") {
+    return advisoryV38;
   }
   if (qaKey === "v36b") {
     return advisoryV36b;

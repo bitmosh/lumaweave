@@ -3,6 +3,8 @@ interface CommandDeckShellProps {
   themeTextMuted: string;
 }
 
+import { perspectiveRegistry } from "../perspectives/perspectiveRegistry";
+
 export function CommandDeckShell({
   themeAccent,
   themeTextMuted,
@@ -166,6 +168,58 @@ export function CommandDeckShell({
           </div>
         </div>
 
+        <div>
+          <h4
+            className="text-xs font-semibold uppercase tracking-wider"
+            style={{ color: themeAccent }}
+          >
+            Perspective System
+          </h4>
+          <div className="mt-2 space-y-2">
+            {perspectiveRegistry.perspectives.map((perspective) => (
+              <div
+                key={perspective.id}
+                className="rounded px-2 py-2 text-xs"
+                data-testid={`perspective-row-${perspective.id}`}
+                style={{
+                  border: `1px solid ${themeAccent}40`,
+                  backgroundColor: `${themeAccent}15`,
+                }}
+              >
+                <p
+                  className="font-semibold"
+                  style={{ color: themeAccent }}
+                >
+                  {perspective.title}
+                </p>
+                <p className="mt-1" style={{ color: "var(--lw-text-primary)" }}>
+                  {perspective.description}
+                </p>
+                <p
+                  className="mt-1 text-xs italic"
+                  style={{ color: themeTextMuted }}
+                >
+                  Category: {perspective.category} | Status: {perspective.status}
+                </p>
+                {perspective.status === "future" && (
+                  <p
+                    className="mt-1 text-xs italic"
+                    style={{ color: themeAccent }}
+                  >
+                    Locked in v38 - requires explicit contract
+                  </p>
+                )}
+              </div>
+            ))}
+            <p
+              className="mt-1 text-xs italic"
+              style={{ color: themeTextMuted }}
+            >
+              Perspective registry is read-only. No perspective switching.
+            </p>
+          </div>
+        </div>
+
         <div
           className="rounded px-2 py-1 text-xs"
           style={{
@@ -176,6 +230,16 @@ export function CommandDeckShell({
         >
           <span className="font-semibold">v36c:</span> Command Registry
           Metadata
+        </div>
+        <div
+          className="rounded px-2 py-1 text-xs"
+          style={{
+            border: `1px solid ${themeAccent}40`,
+            backgroundColor: `${themeAccent}15`,
+            color: themeAccent,
+          }}
+        >
+          <span className="font-semibold">v38:</span> Perspective System v0
         </div>
       </div>
     </div>
