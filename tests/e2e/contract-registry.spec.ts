@@ -13,9 +13,9 @@ import {
 } from "./helpers/qa";
 import type { ThemeTargetProbeResult } from "../../src/themes/themeTargetHeuristics";
 
-const CURRENT_QA_KEY = "v48";
-const PRIMARY_PROPOSAL_ID = "v49-first-real-graph-mutation";
-const SECONDARY_PROPOSAL_ID = "v49-first-real-graph-mutation";
+const CURRENT_QA_KEY = "v61";
+const PRIMARY_PROPOSAL_ID = "v62-synthetic-audio-signal-preview";
+const SECONDARY_PROPOSAL_ID = "v62-synthetic-audio-signal-preview";
 
 type ProbeWindow = Window & {
   __lwRunThemeTargetProbe?: (options?: { minSignals?: number }) => ThemeTargetProbeResult | null;
