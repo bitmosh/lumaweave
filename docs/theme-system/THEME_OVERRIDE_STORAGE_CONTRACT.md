@@ -4,10 +4,14 @@
 - **v33 contract only**. This document defines semantics and preconditions for future theme override storage implementation.
 - v34a has implemented global-only theme override storage foundation.
 - v34b has enabled one narrow theme mapping edit control (panel.background on mission-control.panel).
+- v34c1 has implemented export-only override bundle capability for validated global theme overrides.
 - No runtime override storage existed before v34a.
 - No generated controls were editable before v34b.
-- v34c may implement preset save/export after v34b is accepted.
+- No export capability existed before v34c1.
+- v34c2 may implement preset import/apply after v34c1 is accepted.
 - v32 generated read-only controls remain disabled and read-only during v33.
+- v34b enabled only one narrow control; all other controls remain disabled.
+- v34c1 is export-only; import/apply is deferred to v34c2.
 
 ## Purpose
 Define the formal contract for how future theme overrides will work before implementing storage in v34. This contract answers:
@@ -198,6 +202,55 @@ If multiple scopes are implemented in future passes:
 - Reset overrides button reverts to base preset.
 - Reset per-scope overrides (e.g., reset target overrides only).
 - Clear all overrides resets entire application to base preset.
+
+## Export Capability (v34c1)
+
+### Export-Only Behavior
+v34c1 implements export-only capability for validated global theme overrides. This is the smallest safe bridge from override storage toward future preset save/export.
+
+### Export Function
+- `exportGlobalThemeOverrideBundle()` exports current validated global overrides in a structured bundle format.
+- Export is read-only; it does not mutate storage or base presets.
+- Export filters to only canonical ThemeTokenPath entries.
+- Invalid/noncanonical/planned tokens are filtered out during export.
+
+### Export Bundle Format
+```typescript
+{
+  version: 1,
+  kind: "lumaweave.themeOverrideBundle",
+  scope: "global",
+  overrides: [
+    {
+      tokenPath: ThemeTokenPath,
+      value: ThemeTokenValue
+    }
+  ]
+}
+```
+
+### Export Rules
+- Export empty override set safely (returns valid bundle with empty overrides array).
+- Export must not include noncanonical token paths.
+- Export must not include planned tokens.
+- Export must not mutate storage.
+- Export must not mutate base presets.
+- If localStorage contains invalid manual junk, export sanitizes/rejects/ignores according to v33/v34a validation rules.
+
+### Export vs Import
+- v34c1 is export-only.
+- Import/apply capability is deferred to v34c2.
+- Export bundle format is designed to be compatible with future import capability.
+
+### Validation
+Export should be validated by Playwright tests proving:
+- Valid global override exports correctly.
+- Empty export works.
+- Invalid/noncanonical stored data cannot appear in exported bundle.
+- Base presets are not mutated.
+- Existing v34b enabled control still works.
+- Other controls remain disabled.
+- Candidates remain diagnostic-only.
 
 ## Validation / Evidence Requirements
 

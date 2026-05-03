@@ -13,9 +13,9 @@ import {
 } from "./helpers/qa";
 import type { ThemeTargetProbeResult } from "../../src/themes/themeTargetHeuristics";
 
-const CURRENT_QA_KEY = "v34b";
-const PRIMARY_PROPOSAL_ID = "v34c-preset-export";
-const SECONDARY_PROPOSAL_ID = "v34c-preset-export";
+const CURRENT_QA_KEY = "v34c1";
+const PRIMARY_PROPOSAL_ID = "v34c2-preset-import";
+const SECONDARY_PROPOSAL_ID = "v34c2-preset-import";
 
 type ProbeWindow = Window & {
   __lwRunThemeTargetProbe?: (options?: { minSignals?: number }) => ThemeTargetProbeResult | null;

@@ -180,3 +180,44 @@ export function hasOverrides(): boolean {
   const storage = loadOverrides();
   return storage.overrides.length > 0;
 }
+
+/**
+ * Export global theme override bundle (v34c1)
+ * 
+ * Exports current validated global overrides in a structured bundle format.
+ * Only canonical ThemeTokenPath entries are included.
+ * Invalid/noncanonical/planned tokens are filtered out.
+ * Does not mutate storage or base presets.
+ */
+export interface ThemeOverrideBundle {
+  version: number;
+  kind: "lumaweave.themeOverrideBundle";
+  scope: "global";
+  overrides: Array<{
+    tokenPath: ThemeTokenPath;
+    value: ThemeTokenValue;
+  }>;
+}
+
+export function exportGlobalThemeOverrideBundle(): ThemeOverrideBundle {
+  const storage = loadOverrides();
+  
+  // Filter to only canonical, validated overrides
+  const validOverrides = storage.overrides
+    .filter((override) => {
+      const pathValidation = validateTokenPath(override.tokenPath);
+      const valueValidation = validateTokenValue(override.value);
+      return pathValidation.isValid && valueValidation.isValid;
+    })
+    .map((override) => ({
+      tokenPath: override.tokenPath,
+      value: override.value,
+    }));
+  
+  return {
+    version: 1,
+    kind: "lumaweave.themeOverrideBundle",
+    scope: "global",
+    overrides: validOverrides,
+  };
+}
