@@ -11,7 +11,7 @@
 
 export type ElementCategory = "frame" | "layer" | "overlay" | "control";
 
-export type ElementStatus = "active" | "passive" | "future" | "locked";
+export type ElementStatus = "active" | "future" | "locked";
 
 export type EvidenceKind = "dom-wrapper" | "policy-only" | "future";
 

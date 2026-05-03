@@ -760,6 +760,89 @@ export const advisoryV41: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV43: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v43-registry-contract-aligned",
+      prompt: "Does the Graph View Element Registry align with the contract?",
+      context: "Registry ElementStatus should match contract (active, future, locked only). Unused 'passive' status removed.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v43-invariant-helpers-exist",
+      prompt: "Do registry invariant helpers exist?",
+      context: "Helper functions like getGraphViewElement, getAllGraphViewElements should exist.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v43-no-sigma-mutation",
+      prompt: "Did registry alignment mutate Sigma renderer?",
+      context: "Registry alignment should not control Sigma internals or rendering.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v43-no-physics-changes",
+      prompt: "Did registry alignment change graph physics behavior?",
+      context: "Registry alignment should not change physics settings or behavior.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v43-typecheck-passes",
+      prompt: "Does typecheck pass with zero errors?",
+      context: "npm run typecheck should pass with zero errors.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v43-playwright-passes",
+      prompt: "Do Playwright tests pass with zero skips?",
+      context: "npm run qa:e2e should pass with zero failures and zero skips.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "v44-graph-evidence-hardening",
+      title: "v44 Graph Evidence Hardening",
+      summary: "Harden Playwright evidence for passive graph inventory and existing graph surface",
+      rationale: "After v43 registry alignment is accepted, v44 can expand Playwright tests for passive inventory without changing graph behavior.",
+      risk: "low",
+      recommendedNextAction: "Implement in v44 after v43 is accepted",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "v44 Graph Evidence Hardening",
+      whyItMatters: "Expand Playwright tests for passive graph inventory and existing graph surface without changing graph behavior.",
+      suggestedFutureBite: "Add registry/inventory match tests, read-only proof tests",
+      risk: "low",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "v45 Graph Visual Mapping",
+      whyItMatters: "Implement theme mapping for graph visual elements after registry/policy are hardened.",
+      suggestedFutureBite: "Add theme mapping for graph colors, background, borders",
+      risk: "medium",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV40: BanditAdvisorySection = {
   questions: [
     {
@@ -3290,6 +3373,9 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number, ch
 export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
   if (qaKey === "v42") {
     return advisoryV42;
+  }
+  if (qaKey === "v43") {
+    return advisoryV43;
   }
   if (qaKey === "v41") {
     return advisoryV41;
