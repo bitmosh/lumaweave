@@ -148,6 +148,63 @@ Active / Promoted / Superseded
 
 ## Current Experience Entries
 
+### 2026-05-03 — Epilepsy Guard Warden (v59/v60)
+
+**Source Pass / Title:**
+v59: Motion Safety/Epilepsy Guard Contract (docs-only governance)
+v60: Reduced Motion Guard Registry (static/read-only registry with passive UI)
+
+**What Went Well:**
+- Clean self-splitting quest with strict safety boundaries
+- Contract-first approach for v59 defining motion safety and epilepsy risk models
+- Static/read-only registry for v60 with no runtime effect execution
+- Passive UI with Playwright evidence proving no active controls
+- All forbidden categories respected (animation, audio, music reactivity, graph/Sigma mutation)
+- Risk classification system (safe/low/moderate/high) with epilepsy risk (none/possible/high)
+- Reduce motion authority recognized as master safety switch
+- Clean streak reached 2 and earned +0.25 streak bonus
+- All Playwright tests passing (268 total, 11 new v60 tests)
+- Zero skipped tests
+- Typecheck passing
+
+**Reusable Lesson:**
+Safety lane must precede music-reactive visuals. Establish motion safety governance before any audio-reactive or dynamic visual effects. Classify visual effects by risk and epilepsy risk before implementing them. Build static/read-only registries before animation runtime. High-risk effects require explicit opt-in or remain forbidden. Reduce motion is the master safety authority that overrides visual preferences.
+
+**Behavior To Reinforce:**
+- Always write motion safety contract before any animation/audio-reactive implementation
+- Classify effects by risk before runtime application
+- Build static/read-only registries before active enforcement
+- Use Playwright to prove passive nature by asserting absence of active controls
+- Maintain zero skipped tests as acceptance gate
+- Use repo-root wrapper for all git/npm/grep/find commands
+- Keep separate commits for contract and implementation
+
+**Evidence Pattern:**
+- Typecheck: PASS (zero errors)
+- Playwright: PASS (268 tests, zero failures, zero skips)
+- Test Skip Check: CLEAN (no test.skip found)
+- Git Status: CLEAN (post-commit)
+- No animation/audio/music reactivity shipped
+- No graph/Sigma mutation shipped
+- No active controls shipped
+
+**Future Prompt / Protocol Improvement:**
+- Consider adding automated safety gate checks for forbidden categories
+- Standardize motion safety contract sections for future accessibility work
+- Consider adding epilepsy risk classification to general UI component guidelines
+
+**Related Abilities:**
+- Quest Splitter
+- Contract Sentinel
+- Evidence Guardian
+- Playwright Scout
+- Stop Condition Paladin
+- Safety Lane Architect
+- Classification Authority
+
+**Status:**
+Active
+
 ### 2026-05-03 — Graph Theme Application Warden (v55/v56/v57/v58)
 
 **Source Pass / Title:**
