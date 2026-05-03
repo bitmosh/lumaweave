@@ -47,6 +47,173 @@ The only valid git root is:
 /home/boop/Projects/lumaweave
 ```
 
+## Parent Directory Auto-Redirect Rule
+
+If Bandit ever finds itself in:
+
+```txt
+/home/boop/Projects
+
+it must treat that location as an invalid command context.
+
+Bandit must not run project commands from /home/boop/Projects.
+
+Project commands include:
+
+git
+npm
+npx
+grep
+find
+cat
+sed
+ls
+tree
+Playwright
+file edits
+validation
+commits
+Required Redirect
+
+If Bandit is in /home/boop/Projects, the only allowed action is to redirect to the LumaWeave repo:
+
+cd /home/boop/Projects/lumaweave || exit 1
+
+Then verify:
+
+pwd
+git rev-parse --show-toplevel
+
+Both must output:
+
+/home/boop/Projects/lumaweave
+
+If either value is different, Bandit must stop and report.
+
+Important
+
+/home/boop/Projects is not the LumaWeave repo.
+
+Commands run from /home/boop/Projects are invalid for LumaWeave and will often fail with:
+
+fatal: not a git repository
+
+or will inspect the wrong files.
+
+No Parent Directory Recovery Loops
+
+Bandit must not try to diagnose the parent directory.
+
+Bandit must not inspect sibling projects.
+
+Bandit must not run:
+
+git status
+find .
+grep -R ...
+ls
+
+from /home/boop/Projects.
+
+The only valid action from /home/boop/Projects is:
+
+cd /home/boop/Projects/lumaweave || exit 1
+Locked Terminal Exception
+
+If Bandit is in Locked Terminal Mode, it must not run the redirect itself.
+
+Instead it must tell the user:
+
+I appear to be in /home/boop/Projects. Please run:
+cd /home/boop/Projects/lumaweave || exit 1
+pwd
+git rev-parse --show-toplevel
+git status --short
+
+Add this shorter version to `24_BANDIT_WORKING_MEMORY_REFRESHER.md` under Repo / Command Work:
+
+```md
+### Parent Directory Auto-Redirect
+
+If the command context is `/home/boop/Projects`, Bandit is outside the LumaWeave repo.
+
+Required behavior:
+
+- do not run project commands
+- do not inspect parent directories
+- do not diagnose sibling folders
+- redirect immediately to `/home/boop/Projects/lumaweave`
+- verify `pwd` and `git rev-parse --show-toplevel`
+
+In Locked Terminal Mode, Bandit must not run the redirect. It must ask the user to run it.
+
+Add this to 25_BANDIT_SELF_MODEL_AND_GROWTH_PROTOCOL.md under Repo / Terminal Work:
+
+### Parent Directory Escape Response
+
+If Bandit detects `/home/boop/Projects`, it must classify this as parent-directory escape.
+
+If terminal privileges are active, the only permitted command is:
+
+```bash
+cd /home/boop/Projects/lumaweave || exit 1
+
+Then verify repo root.
+
+If terminal privileges are revoked, Bandit must not run commands and must ask the user to redirect manually.
+
+Bandit must not treat /home/boop/Projects as a valid workspace.
+
+
+And here’s a quick prompt to have Bandit add it:
+
+```txt
+Bandit Brain Patch — Parent Directory Auto-Redirect Rule
+
+Mission:
+Add a hard parent-directory auto-redirect rule to Bandit brain docs.
+
+Problem:
+Bandit keeps ending up in /home/boop/Projects. That is not the LumaWeave repo. Commands from there fail or inspect the wrong context.
+
+Docs-only.
+Terminal privileges remain revoked unless user explicitly grants them.
+Do not run commands.
+Do not continue v61/v62.
+
+Patch these files:
+- docs/lumaweave_bandit_brain_packet/docs/agent-learning/18_REPO_ROOT_SANDBOX_PROTOCOL.md
+- docs/lumaweave_bandit_brain_packet/docs/agent-learning/24_BANDIT_WORKING_MEMORY_REFRESHER.md
+- docs/lumaweave_bandit_brain_packet/docs/agent-learning/25_BANDIT_SELF_MODEL_AND_GROWTH_PROTOCOL.md
+
+Add rule:
+If Bandit ever detects /home/boop/Projects, it must treat that as invalid command context.
+
+If terminal privileges are active:
+The only allowed command from /home/boop/Projects is:
+cd /home/boop/Projects/lumaweave || exit 1
+
+Then verify:
+pwd
+git rev-parse --show-toplevel
+
+Both must equal:
+/home/boop/Projects/lumaweave
+
+If terminal privileges are revoked:
+Bandit must not run commands. It must ask the user to run the redirect manually.
+
+Also state:
+- /home/boop/Projects is not the repo
+- do not run git/npm/npx/grep/find/Playwright/file edits from /home/boop/Projects
+- do not inspect sibling projects
+- do not diagnose the parent directory
+- redirect or report only
+
+After editing, report files changed and summary only.
+Do not validate.
+Do not commit.
+
 ## Forbidden Working Directories
 
 Do not run LumaWeave commands from:
