@@ -64,6 +64,45 @@ export function CommandDeckShell({
           </p>
         </div>
 
+        <div>
+          <h4
+            className="text-xs font-semibold uppercase tracking-wider"
+            style={{ color: themeAccent }}
+          >
+            Hotkey Registry
+          </h4>
+          <div className="mt-2 space-y-2">
+            <div
+              className="rounded px-2 py-1 text-xs"
+              style={{
+                border: `1px solid ${themeAccent}40`,
+                backgroundColor: `${themeAccent}15`,
+                color: themeAccent,
+              }}
+            >
+              <span className="font-semibold">Alt+Shift+I</span>: Inspector
+              Toggle
+            </div>
+            <div
+              className="rounded px-2 py-1 text-xs"
+              style={{
+                border: `1px solid ${themeAccent}40`,
+                backgroundColor: `${themeAccent}15`,
+                color: themeAccent,
+              }}
+            >
+              <span className="font-semibold">Alt+Shift+P</span>: Pin/Unpin
+              Target
+            </div>
+            <p
+              className="mt-1 text-xs italic"
+              style={{ color: themeTextMuted }}
+            >
+              No new hotkeys may be added without registry approval.
+            </p>
+          </div>
+        </div>
+
         <div
           className="rounded px-2 py-1 text-xs"
           style={{
@@ -72,8 +111,8 @@ export function CommandDeckShell({
             color: themeAccent,
           }}
         >
-          <span className="font-semibold">v36a:</span> Read-Only Command
-          Deck Shell
+          <span className="font-semibold">v36b:</span> Read-Only Hotkey
+          Registry Inventory
         </div>
       </div>
     </div>

@@ -40,3 +40,27 @@ test("existing hotkeys still work after command deck addition", async ({ page })
   const graphViewport = page.getByTestId("graph-viewport");
   await expect(graphViewport).toBeVisible();
 });
+
+test("hotkey registry displays accepted hotkeys", async ({ page }) => {
+  await page.goto("/");
+
+  const commandDeckShell = page.getByTestId("command-deck-shell");
+  await expect(commandDeckShell).toBeVisible();
+
+  const shellContent = await commandDeckShell.textContent();
+  expect(shellContent).toContain("Hotkey Registry");
+  expect(shellContent).toContain("Alt+Shift+I");
+  expect(shellContent).toContain("Inspector Toggle");
+  expect(shellContent).toContain("Alt+Shift+P");
+  expect(shellContent).toContain("Pin/Unpin Target");
+});
+
+test("hotkey registry shows governance policy", async ({ page }) => {
+  await page.goto("/");
+
+  const commandDeckShell = page.getByTestId("command-deck-shell");
+  await expect(commandDeckShell).toBeVisible();
+
+  const shellContent = await commandDeckShell.textContent();
+  expect(shellContent).toContain("No new hotkeys may be added without registry approval");
+});

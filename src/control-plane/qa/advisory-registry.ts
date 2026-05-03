@@ -482,6 +482,57 @@ export const advisoryV34b: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV36b: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v36b-hotkey-registry-visible",
+      prompt: "Is the Hotkey Registry visible in the Command Deck?",
+      context: "Command Deck shell should display a Hotkey Registry section showing accepted hotkeys.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v36b-accepted-hotkeys-displayed",
+      prompt: "Are the accepted hotkeys displayed correctly?",
+      context: "Alt+Shift+I (Inspector Toggle) and Alt+Shift+P (Pin/Unpin) should be shown with descriptions.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v36b-governance-policy-displayed",
+      prompt: "Is the governance policy displayed?",
+      context: "Shell should show 'No new hotkeys may be added without registry approval'.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "v36c-command-metadata",
+      title: "v36c Command Registry Metadata",
+      summary: "Add command registry metadata display in Command Deck shell",
+      rationale: "After the Hotkey Registry inventory exists, users need to see command metadata (name, description, category).",
+      risk: "low",
+      recommendedNextAction: "Implement in v36c after v36b is accepted",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "v36c Command Registry Metadata",
+      whyItMatters: "Users need to see command metadata in the Command Deck.",
+      suggestedFutureBite: "Add command registry metadata display with name, description, category",
+      risk: "low",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV36a: BanditAdvisorySection = {
   questions: [
     {
