@@ -90,6 +90,10 @@ Prioritize upcoming systems by **input contracts**, not feature excitement. Foll
 25. **Read-Only Graph Theme Token Preview** — **completed (v54)**.
 26. **Graph Theme Application Contract** — **completed (v55)**.
 27. **Graph Shell Theme Evidence Application** — **completed (v56)**.
+28. **Graph Theme Token Value Application Contract** — **completed (v57)**.
+29. **Graph Theme Application Readiness Diagnostic** — **completed (v58)**.
+30. **Motion Safety / Epilepsy Guard Contract** — **current pass (v59)**.
+31. **Reduced Motion Guard Registry** — **next pass (v60)**.
 
 Guardrails:
 - Do **not** implement storage before override semantics exist (v33).
