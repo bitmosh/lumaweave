@@ -9,6 +9,8 @@
 
 import { CANONICAL_THEME_TOKEN_PATHS, type ThemeTokenPath, type ThemeTokenValue } from "./themeTokenPaths";
 
+export type { ThemeTokenValue } from "./themeTokenPaths";
+
 const STORAGE_KEY = "lumaweave-theme-overrides";
 const STORAGE_VERSION = "1.0.0";
 

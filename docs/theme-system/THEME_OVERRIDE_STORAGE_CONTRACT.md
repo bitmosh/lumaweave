@@ -1,11 +1,11 @@
-# Theme Override / Storage Contract (v33 Planning, updated v34a global-only storage implementation)
+# Theme Override / Storage Contract (v33 Planning, updated v34a global-only storage implementation, updated v34b narrow theme mapping edit control)
 
 ## Status
 - **v33 contract only**. This document defines semantics and preconditions for future theme override storage implementation.
 - v34a has implemented global-only theme override storage foundation.
+- v34b has enabled one narrow theme mapping edit control (panel.background on mission-control.panel).
 - No runtime override storage existed before v34a.
-- No generated controls are editable yet.
-- v34b may enable editing UI after v34a storage is accepted.
+- No generated controls were editable before v34b.
 - v34c may implement preset save/export after v34b is accepted.
 - v32 generated read-only controls remain disabled and read-only during v33.
 

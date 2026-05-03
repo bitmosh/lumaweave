@@ -399,6 +399,89 @@ export const advisoryV30b: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV34b: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v34b-single-control-enabled",
+      prompt: "Is exactly one control enabled for panel.background on mission-control.panel?",
+      context: "v34b should enable only the panel.background control on mission-control.panel. All other controls must remain disabled.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v34b-control-wired",
+      prompt: "Is the enabled control wired to v34a global override storage?",
+      context: "Editing the control should write a validated global override via setGlobalOverride. The value should persist across page reloads.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v34b-reset-works",
+      prompt: "Does the reset button clear the override?",
+      context: "Clicking reset should call removeGlobalOverride and clear the stored value. The input should revert to empty.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v34b-others-disabled",
+      prompt: "Do all other controls remain disabled?",
+      context: "Only panel.background on mission-control.panel should be enabled. All other rows on all other targets must remain disabled.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v34b-candidates-no-editing",
+      prompt: "Do candidate targets show no editing controls?",
+      context: "Candidate/unregistered targets should remain diagnostic only with no enabled editing controls.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "v34c-preset-export",
+      title: "v34c Preset Save/Export Capability",
+      summary: "Add the smallest safe preset save/export capability based on accepted override storage",
+      rationale: "After editing controls are working, users may want to save custom theme configurations as presets for reuse.",
+      risk: "medium",
+      recommendedNextAction: "Implement in v34c after v34b is accepted",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "v34c Preset Save/Export Capability",
+      whyItMatters: "Users may want to save custom theme configurations as presets for reuse.",
+      suggestedFutureBite: "Export current overrides as JSON",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "Enable additional narrow controls",
+      whyItMatters: "After panel.background control is stable, enable more controls incrementally.",
+      suggestedFutureBite: "Enable panel.border or text.primary for mission-control.panel",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "Expand to target-scoped overrides",
+      whyItMatters: "Global-only is the smallest safe scope. Target-scoped overrides enable per-surface customization.",
+      suggestedFutureBite: "Add target-scoped storage after global-only is stable",
+      risk: "medium",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV34a: BanditAdvisorySection = {
   questions: [
     {
@@ -2504,6 +2587,9 @@ export const advisoryV17a: BanditAdvisorySection = {
 
 // Advisory lookup function - returns appropriate advisory based on qaKey
 export function getAdvisoryForChecklist(featureId: string, qaVersion: number, checklistKey: string): BanditAdvisorySection {
+  if (featureId === "narrow-theme-mapping-edit-control-v34b" || qaVersion === 35 || checklistKey === "v34b") {
+    return advisoryV34b;
+  }
   if (featureId === "global-theme-override-storage-foundation-v34a" || qaVersion === 34 || checklistKey === "v34a") {
     return advisoryV34a;
   }
@@ -2570,6 +2656,9 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number, ch
 
 // Advisory lookup function keyed by canonical qaKey
 export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
+  if (qaKey === "v34b") {
+    return advisoryV34b;
+  }
   if (qaKey === "v34a") {
     return advisoryV34a;
   }

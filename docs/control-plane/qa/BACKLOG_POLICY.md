@@ -12,6 +12,9 @@ As of v33, the Theme Override / Storage Contract defines semantics for future th
 ## v34a Note
 As of v34a, global-only theme override storage foundation has been implemented. Storage validates canonical token paths, rejects planned/noncanonical strings, supports reset/remove behavior, and persists via localStorage. Theme Mapping Panel controls remain disabled; v34b will enable editing UI.
 
+## v34b Note
+As of v34b, one narrow theme mapping edit control has been enabled for panel.background on mission-control.panel. The control is wired to v34a global override storage, supports reset/remove, and persists via localStorage. All other controls remain disabled.
+
 ## Backlog Auto-Management Rule
 
 A backlog item can be promoted during the pass that implements it, but after acceptance it must be marked completed, removed from active candidates, or converted into explicit follow-up subtasks.

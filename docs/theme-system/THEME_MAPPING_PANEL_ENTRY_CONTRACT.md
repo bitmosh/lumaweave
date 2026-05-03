@@ -1,4 +1,4 @@
-# Theme Mapping Panel Entry Contract (v28 Planning, updated v31 token path citations, updated v32 generated read-only controls, updated v33 theme override storage contract, updated v34a global-only storage implementation)
+# Theme Mapping Panel Entry Contract (v28 Planning, updated v31 token path citations, updated v32 generated read-only controls, updated v33 theme override storage contract, updated v34a global-only storage implementation, updated v34b narrow theme mapping edit control)
 
 ## Purpose
 Theme Mapping Panel v0 will eventually expose editable theme controls for qualified UI surfaces. This document captures the contract that gates each surface before any runtime editing UI or storage work begins. It stitches together the accepted inspector stack (UI Inspector toggle, metadata panel, ghost overlay, ThemeTargetRegistry, runtime probe, warning badges, token governance, visual handles, and canonical `ThemeTokenPath` vocabulary) so future editing passes do not re-litigate requirements.
@@ -16,6 +16,9 @@ As of v33, the Theme Override / Storage Contract defines semantics for future th
 
 ## v34a Note
 As of v34a, global-only theme override storage foundation has been implemented. Storage validates canonical token paths, rejects planned/noncanonical strings, supports reset/remove behavior, and persists via localStorage. Theme Mapping Panel controls remain disabled; v34b will enable editing UI.
+
+## v34b Note
+As of v34b, one narrow theme mapping edit control has been enabled for panel.background on mission-control.panel. The control is wired to v34a global override storage, supports reset/remove, and persists via localStorage. All other controls remain disabled.
 
 ## 1. Entry Requirements for Editable Surfaces
 A DOM surface may enter the future Theme Mapping Panel only if **all** of the following are true:
