@@ -399,6 +399,107 @@ export const advisoryV30b: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV33: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v33-smallest-safe-scope",
+      prompt: "Should v34 start with global-only overrides, or include target-scoped overrides from the start?",
+      context: "The contract proposes global, theme target, and visual handle scopes. Starting with global-only is the smallest safe initial scope, but target-scoped may be more useful.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v33-reset-semantics",
+      prompt: "Should reset/remove semantics be per-scope or global?",
+      context: "Users may want to reset all overrides, or reset only specific scopes (e.g., reset target overrides while keeping global overrides).",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v33-validation-migration",
+      prompt: "How strict should validation and migration requirements be for v34?",
+      context: "Storage must validate token paths and support migration for schema changes. Should migration be automatic or require user confirmation?",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v33-preset-save-split",
+      prompt: "Should preset save remain deferred to v34b, or be included in v34?",
+      context: "The contract suggests preset save is a separate capability. v34 could implement override-only storage first, then add preset save in v34b.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v33-storage-evidence",
+      prompt: "How should storage evidence be exposed in QA Debug/Mission Control?",
+      context: "Once v34 implements storage, users and QA need visibility into stored overrides. Should this be in the Debug tab, Mission Control, or both?",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v33-contract-completeness",
+      prompt: "Does the v33 contract adequately define the override model for v34 implementation?",
+      context: "Review the contract doc for completeness: definitions, scope model, eligible tokens, storage boundary, preset relationship, validation requirements, and preconditions.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "v34-global-only-storage",
+      title: "v34 Global-Only Override Storage",
+      summary: "Implement theme override storage with global scope only in v34",
+      rationale: "Global-only scope is the smallest safe initial scope. It simplifies storage, validation, and reset behavior. Target-scoped and visual handle-scoped overrides can be added in v34b or later.",
+      risk: "low",
+      recommendedNextAction: "Implement in v34 after v33 contract acceptance",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+    {
+      id: "v34-target-scoped-storage",
+      title: "v34 Target-Scoped Override Storage",
+      summary: "Implement theme override storage with both global and target-scoped overrides in v34",
+      rationale: "Target-scoped overrides enable per-surface customization, which is more useful than global-only. However, it adds complexity to storage, validation, and reset behavior.",
+      risk: "medium",
+      recommendedNextAction: "Consider for v34b after global-only storage is stable",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "v34 Theme Override Storage Implementation",
+      whyItMatters: "Storage is required before any editing behavior can be implemented in the Theme Mapping Panel.",
+      suggestedFutureBite: "Implement override storage with global scope only",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "Enable Theme Mapping Panel Controls",
+      whyItMatters: "After storage is implemented, the disabled controls can be enabled to allow actual theme editing.",
+      suggestedFutureBite: "Wire controls to storage read/write operations",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "Preset Save/Export Capability",
+      whyItMatters: "Users may want to save custom theme configurations as presets for reuse.",
+      suggestedFutureBite: "Implement preset save/export after override storage is stable",
+      risk: "low",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV32: BanditAdvisorySection = {
   questions: [
     {
@@ -2320,6 +2421,9 @@ export const advisoryV17a: BanditAdvisorySection = {
 
 // Advisory lookup function - returns appropriate advisory based on qaKey
 export function getAdvisoryForChecklist(featureId: string, qaVersion: number, checklistKey: string): BanditAdvisorySection {
+  if (featureId === "theme-override-storage-contract-v33" || qaVersion === 33 || checklistKey === "v33") {
+    return advisoryV33;
+  }
   if (featureId === "generated-readonly-theme-mapping-controls-v32" || qaVersion === 32 || checklistKey === "v32") {
     return advisoryV32;
   }
@@ -2380,6 +2484,9 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number, ch
 
 // Advisory lookup function keyed by canonical qaKey
 export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
+  if (qaKey === "v33") {
+    return advisoryV33;
+  }
   if (qaKey === "v32") {
     return advisoryV32;
   }

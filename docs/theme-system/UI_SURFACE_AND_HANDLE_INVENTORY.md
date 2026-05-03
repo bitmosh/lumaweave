@@ -1,4 +1,4 @@
-# UI Surface & Handle Inventory (v23 Planning, updated v28 contract references, updated v31 token path citations, updated v32 generated read-only controls)
+# UI Surface & Handle Inventory (v23 Planning, updated v28 contract references, updated v31 token path citations, updated v32 generated read-only controls, updated v33 theme override storage contract)
 
 ## Purpose
 Establish a single additive reference for every front-facing UI surface that may eventually become theme-editable, inspected via the UI Inspector, or exposed through the future Theme Mapping Panel. This inventory keeps DOM/UI concerns separate from graph-rendered elements and prevents accidental drift between ThemeTargetRegistry, visual handles, QA evidence, and Playwright selectors. As of v28 planning, the new [Theme Mapping Panel Entry Contract](./THEME_MAPPING_PANEL_ENTRY_CONTRACT.md) inherits this inventory as a prerequisite for any editable surface.
@@ -8,6 +8,9 @@ As of v31, visual handles in 09_VISUAL_HANDLE_LIBRARY.md cite canonical token pa
 
 ## v32 Note
 As of v32, the Theme Mapping Panel generates read-only/disabled control rows for registered pinned targets, displaying canonical token paths and visual handle relationships. This makes the panel feel like it is showing the future editing surface, but nothing is editable yet. Storage and editing remain locked until v33–v34.
+
+## v33 Note
+As of v33, the Theme Override / Storage Contract defines semantics for future theme override storage implementation. v33 is contract-only with no storage implementation. v34 may implement storage only after this contract is accepted.
 
 ## Source-of-Truth Relationships
 - **ThemeTargetRegistry** (`src/themes/themeTargetRegistry.ts`) — authoritative list of themeTargetId values, surfaces, and canonical ThemeTokenPath bindings.
