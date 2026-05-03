@@ -82,7 +82,9 @@ Prioritize upcoming systems by **input contracts**, not feature excitement. Foll
 17. **First Passive Graph Runtime Probe** — **completed (v46)**.
 18. **First Promoted Graph Runtime Mutation Contract** — **completed (v47)**.
 19. **First Safe Graph Runtime Mutation** — **completed (v48)**.
-20. **Graph visual/theme mapping** (after runtime boundary contract, passive probe, and first safe mutation).
+20. **Graph Visual / Theme Mapping Contract** — **completed (v49)**.
+21. **Passive Graph Theme Mapping Inventory** — **current pass (v50)**.
+22. **Runtime graph theme application** (after contract and passive inventory are accepted).
 
 Guardrails:
 - Do **not** implement storage before override semantics exist (v33).
