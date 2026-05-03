@@ -399,6 +399,89 @@ export const advisoryV30b: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV34a: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v34a-storage-validation",
+      prompt: "Does the storage module correctly validate canonical token paths and reject planned/noncanonical strings?",
+      context: "Storage must only accept canonical ThemeTokenPath values. Planned tokens and noncanonical strings should be rejected with clear error messages.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v34a-reset-remove",
+      prompt: "Do reset and remove behaviors work correctly?",
+      context: "Storage must support removeGlobalOverride for individual paths and resetAllOverrides for clearing all overrides.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v34a-persistence",
+      prompt: "Does storage persist correctly across page reloads?",
+      context: "localStorage should persist overrides across browser sessions. Test this by setting an override, reloading, and verifying it persists.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v34a-base-preset-immutable",
+      prompt: "Do base presets remain immutable?",
+      context: "Storage should not mutate built-in preset definitions. Verify preset files are unchanged and overrides are stored separately.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v34a-controls-readonly",
+      prompt: "Do Theme Mapping Panel controls remain read-only?",
+      context: "v34a is storage-only. Controls should still be disabled. v34b will enable editing UI.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "v34b-narrow-control",
+      title: "v34b Enable One Narrow Theme Mapping Control",
+      summary: "Enable exactly one narrow editing path in the Theme Mapping Panel using v34a global override storage",
+      rationale: "After storage foundation is stable, enable one minimal control to prove the editing path works. Start with a single canonical token path like panel.background.",
+      risk: "low",
+      recommendedNextAction: "Implement in v34b after v34a is accepted",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "v34b Enable One Narrow Theme Mapping Control",
+      whyItMatters: "After storage foundation is stable, enable one minimal control to prove the editing path works.",
+      suggestedFutureBite: "Enable panel.background control with text input",
+      risk: "low",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "v34c Preset Save/Export Capability",
+      whyItMatters: "Users may want to save custom theme configurations as presets for reuse.",
+      suggestedFutureBite: "Export current overrides as JSON",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "Expand to target-scoped overrides",
+      whyItMatters: "Global-only is the smallest safe scope. Target-scoped overrides enable per-surface customization.",
+      suggestedFutureBite: "Add target-scoped storage after global-only is stable",
+      risk: "medium",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV33: BanditAdvisorySection = {
   questions: [
     {
@@ -2421,6 +2504,9 @@ export const advisoryV17a: BanditAdvisorySection = {
 
 // Advisory lookup function - returns appropriate advisory based on qaKey
 export function getAdvisoryForChecklist(featureId: string, qaVersion: number, checklistKey: string): BanditAdvisorySection {
+  if (featureId === "global-theme-override-storage-foundation-v34a" || qaVersion === 34 || checklistKey === "v34a") {
+    return advisoryV34a;
+  }
   if (featureId === "theme-override-storage-contract-v33" || qaVersion === 33 || checklistKey === "v33") {
     return advisoryV33;
   }
@@ -2484,6 +2570,9 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number, ch
 
 // Advisory lookup function keyed by canonical qaKey
 export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
+  if (qaKey === "v34a") {
+    return advisoryV34a;
+  }
   if (qaKey === "v33") {
     return advisoryV33;
   }

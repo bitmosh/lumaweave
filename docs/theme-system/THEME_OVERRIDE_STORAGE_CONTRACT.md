@@ -1,10 +1,12 @@
-# Theme Override / Storage Contract (v33)
+# Theme Override / Storage Contract (v33 Planning, updated v34a global-only storage implementation)
 
 ## Status
 - **v33 contract only**. This document defines semantics and preconditions for future theme override storage implementation.
-- No runtime override storage exists yet.
+- v34a has implemented global-only theme override storage foundation.
+- No runtime override storage existed before v34a.
 - No generated controls are editable yet.
-- v34 may implement storage only after this contract is accepted.
+- v34b may enable editing UI after v34a storage is accepted.
+- v34c may implement preset save/export after v34b is accepted.
 - v32 generated read-only controls remain disabled and read-only during v33.
 
 ## Purpose

@@ -9,6 +9,9 @@ As of v32, the Theme Mapping Panel generates read-only/disabled control rows for
 ## v33 Note
 As of v33, the Theme Override / Storage Contract defines semantics for future theme override storage implementation. v33 is contract-only with no storage implementation. v34 may implement storage only after this contract is accepted.
 
+## v34a Note
+As of v34a, global-only theme override storage foundation has been implemented. Storage validates canonical token paths, rejects planned/noncanonical strings, supports reset/remove behavior, and persists via localStorage. Theme Mapping Panel controls remain disabled; v34b will enable editing UI.
+
 ## Backlog Auto-Management Rule
 
 A backlog item can be promoted during the pass that implements it, but after acceptance it must be marked completed, removed from active candidates, or converted into explicit follow-up subtasks.

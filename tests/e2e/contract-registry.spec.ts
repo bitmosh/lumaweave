@@ -13,9 +13,9 @@ import {
 } from "./helpers/qa";
 import type { ThemeTargetProbeResult } from "../../src/themes/themeTargetHeuristics";
 
-const CURRENT_QA_KEY = "v33";
-const PRIMARY_PROPOSAL_ID = "v34-global-only-storage";
-const SECONDARY_PROPOSAL_ID = "v34-target-scoped-storage";
+const CURRENT_QA_KEY = "v34a";
+const PRIMARY_PROPOSAL_ID = "v34b-narrow-control";
+const SECONDARY_PROPOSAL_ID = "v34b-narrow-control";
 
 type ProbeWindow = Window & {
   __lwRunThemeTargetProbe?: (options?: { minSignals?: number }) => ThemeTargetProbeResult | null;
@@ -251,13 +251,13 @@ test("Bandit Backlog Top 10 renders", async ({ page }) => {
   await expect(backlogItem.getByTestId("bandit-backlog-title")).not.toHaveText("");
 });
 
-test("v33 is default active checklist", async ({ page }) => {
+test("v34a is default active checklist", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await expectCurrentQaKey(page, CURRENT_QA_KEY);
 });
 
-test("v33 identity diagnostics visible in Debug tab", async ({ page }) => {
+test("v34a identity diagnostics visible in Debug tab", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
 
@@ -338,7 +338,7 @@ test("advisory backlog reorder persists through tab switching", async ({ page })
   await expect(page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title")).toHaveText(reorderedFirstTitle || "");
 });
 
-test("v33 advisory questions cite theme override storage contract", async ({ page }) => {
+test("v34a advisory questions cite global override storage foundation", async ({ page }) => {
   await page.goto("/");
 
   // QA panel is in the left dock - use nth(1) to get the main panel
@@ -349,21 +349,20 @@ test("v33 advisory questions cite theme override storage contract", async ({ pag
   const advisoryTab = page.getByTestId("qa-tab-advisory");
   await advisoryTab.click();
 
-  // Verify v33-specific question identifiers are visible
+  // Verify v34a-specific question identifiers are visible
   const pageContent = await page.content();
-  expect(pageContent).toContain("v33-smallest-safe-scope");
-  expect(pageContent).toContain("v33-reset-semantics");
-  expect(pageContent).toContain("v33-validation-migration");
-  expect(pageContent).toContain("v33-preset-save-split");
-  expect(pageContent).toContain("v33-storage-evidence");
-  expect(pageContent).toContain("v33-contract-completeness");
+  expect(pageContent).toContain("v34a-storage-validation");
+  expect(pageContent).toContain("v34a-reset-remove");
+  expect(pageContent).toContain("v34a-persistence");
+  expect(pageContent).toContain("v34a-base-preset-immutable");
+  expect(pageContent).toContain("v34a-controls-readonly");
 
-  // Verify v32 generated controls advisory is no longer the active set
-  expect(pageContent).not.toContain("v32-registered-shows-generated-rows");
-  expect(pageContent).not.toContain("v32-rows-show-canonical-token");
+  // Verify v33 contract advisory is no longer the active set
+  expect(pageContent).not.toContain("v33-smallest-safe-scope");
+  expect(pageContent).not.toContain("v33-reset-semantics");
 });
 
-test("v33 report includes Advisory Set Key", async ({ page }) => {
+test("v34a report includes Advisory Set Key", async ({ page }) => {
   await page.goto("/");
 
   // Complete checklist and submit report using helper
@@ -372,12 +371,12 @@ test("v33 report includes Advisory Set Key", async ({ page }) => {
   // Get last report text
   const reportText = await getLastReportText(page);
 
-  // Verify report includes Advisory Set Key: v33
+  // Verify report includes Advisory Set Key: v34a
   expect(reportText).toContain("Advisory Set Key:");
   expect(reportText).toContain(CURRENT_QA_KEY);
 });
 
-test("v33 report stays blocked when contract checks are unverified", async ({ page }) => {
+test("v34a report stays blocked when storage checks are unverified", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openChecklistTab(page);
@@ -391,7 +390,7 @@ test("v33 report stays blocked when contract checks are unverified", async ({ pa
   expect(reportText).not.toContain("**ACCEPT**");
 });
 
-test("v33 acceptance decision requires zero blocked or unverified", async ({ page }) => {
+test("v34a acceptance decision requires zero blocked or unverified", async ({ page }) => {
   await page.goto("/");
   await completeChecklistAndSubmitReport(page);
 
@@ -402,24 +401,23 @@ test("v33 acceptance decision requires zero blocked or unverified", async ({ pag
   expect(reportText).toContain("- Unverified: 0");
 });
 
-test("v33 checklist includes theme override storage contract checks", async ({ page }) => {
+test("v34a checklist includes global override storage foundation checks", async ({ page }) => {
   await page.goto("/");
   await expectChecklistContainsChecks(page, [
-    "v33 is default active checklist",
-    "v33 contract doc exists",
-    "Storage/editing remains locked",
-    "No runtime override storage implemented",
-    "v32 generated controls remain read-only",
-    "v34 implementation preconditions documented",
-    "Scope model is defined conservatively",
-    "Eligible token paths documented",
-    "Forbidden until promoted clearly listed",
+    "v34a is default active checklist",
+    "Global override storage module exists",
+    "Canonical token path validation exists",
+    "Invalid token paths rejected",
+    "Reset/remove behavior exists",
+    "Base presets remain immutable",
+    "Theme Mapping controls remain read-only",
+    "Storage persists across page reloads",
     "Typecheck passes",
     "Playwright passes with 0 skipped",
   ]);
 });
 
-test("v33 proposal decisions and backlog order persist after submit", async ({ page }) => {
+test("v34a proposal decisions and backlog order persist after submit", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);
