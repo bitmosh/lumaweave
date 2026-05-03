@@ -167,6 +167,23 @@ yes/no
 
 Reset reason:
 ...
+
+### Current Clean Streak Tracker
+
+**Current Streak**: 2
+
+**Streak History**:
+- 2026-05-03: Streak 2 reached (v59/v60 clean passes)
+  - Sub-passes added: 2 (v59 contract, v60 registry)
+  - Milestone: Streak 2
+  - Bonus awarded: +0.25
+  - Standard cap reached: No
+
+**Next Milestones**:
+- Streak 3: +0.5 bonus
+- Streak 4: +0.75 bonus
+- Streak 5: +1.0 bonus (standard cap)
+
 What To Praise
 
 Praise specific abilities demonstrated during clean passes:
