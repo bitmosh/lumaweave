@@ -35,12 +35,27 @@ Modernization means preserving accepted contracts while wrapping them in clearer
 | `05_PASS_PREBRIEF_TEMPLATE.md` | Template Bandit should complete before risky implementation passes. |
 | `06_PASS_POSTMORTEM_TEMPLATE.md` | Template Bandit should complete after a pass or recovery. |
 | `07_CANONICAL_TERMS_GLOSSARY.md` | Short definitions for repeated terms and stable naming conventions. |
+| `09_QA_PLAYWRIGHT_EVIDENCE_POLICY.md` | Defines accepted QA/Playwright evidence paths and forbids manual DevTools, skipped tests, and weakened tests as acceptance shortcuts. |
 | `10_SELF_SPLITTING_QUEST_PROTOCOL.md` | Defines operating protocol for long quests with architecture boundary splitting. |
 | `11_QUEST_MODE_PROMPT_TEMPLATE.md` | Template for assigning Bandit longer LumaWeave arcs with Quest Mode. |
 | `12_QUEST_MODE_FIELD_GUIDE.md` | Field guide for when to use Quest Mode and how to identify good/bad quest candidates. |
+| `13_PLAYWRIGHT_OPERATING_PROCEDURES.md` | Defines Playwright regression-containment procedures, failure classification, state isolation, locator discipline, and test-cascade handling. |
+| `14_MCP_TOOL_SUITE_PROTOCOL.md` | Defines when and how Bandit should use Sequential Thinking, Context7, and Playwright MCP during LumaWeave work. |
+| `15_BANDIT_ABILITY_AUDIT.md` | Profiles Bandit’s current strengths, weaknesses, abilities, upgrade priorities, boss fights, and training rules. |
+| `16_PLAYWRIGHT_WORKING_PATTERN_DIFF_AUDIT.md` | Defines how Bandit should compare failing tests against working Playwright patterns and the last accepted green commit before repairing cascades. |
 | `graphs/identity_system_graph.md` | Relationship graph for IDs, contracts, runtime, DOM, and tests. |
 | `graphs/theme_contract_pipeline.md` | Theme Token Path → Theme Target Registry → DOM marker → overlay → QA pipeline. |
 | `graphs/qa_contract_pipeline.md` | QA/advisory/test evidence pipeline. |
+
+## High-Risk Reading Sets
+
+For long or broad tasks, read:
+
+```txt
+10_SELF_SPLITTING_QUEST_PROTOCOL.md
+11_QUEST_MODE_PROMPT_TEMPLATE.md
+12_QUEST_MODE_FIELD_GUIDE.md
+15_BANDIT_ABILITY_AUDIT.md
 
 ## Agent Operating Loop
 
