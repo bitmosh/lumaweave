@@ -1070,13 +1070,18 @@ export function QaPanel({
       {panelView === "debug" && (
         <div className="flex-1 overflow-y-auto p-3">
           <div className="bg-slate-900/70 rounded-lg p-3 border border-slate-800">
-            <div className="text-xs font-semibold text-slate-400 mb-3">Debug Checkpoint Summary</div>
-            
+            <div className="text-xs font-semibold text-slate-400 mb-3">QA Identity Diagnostics</div>
+
             <div className="mb-3">
               <div className="text-xs text-slate-500 mb-1">Active Checklist</div>
               <div className="text-sm text-slate-300">{activeChecklistKey}</div>
             </div>
-            
+
+            <div className="mb-3">
+              <div className="text-xs text-slate-500 mb-1">Current QA Key</div>
+              <div className="text-sm text-slate-300">Current QA Key: {activeChecklistKey}</div>
+            </div>
+
             <div className="mb-3">
               <div className="text-xs text-slate-500 mb-1">Active Feature</div>
               <div className="text-sm text-slate-300">{activeFeatureId}</div>
@@ -1352,7 +1357,7 @@ export function QaPanel({
       )}
 
       {panelView === "advisory" && (
-        <div className="flex-1 overflow-y-auto p-3">
+        <div className="flex-1 overflow-y-auto p-3" data-testid="qa-advisory-section">
           <div className="bg-slate-900/70 rounded-lg p-3 border border-slate-800">
             <div className="text-xs font-semibold text-slate-400 mb-3">Bandit Questions</div>
             <div className="text-xs text-slate-500 mb-4">

@@ -14,8 +14,8 @@ import {
 import type { ThemeTargetProbeResult } from "../../src/themes/themeTargetHeuristics";
 
 const CURRENT_QA_KEY = "v38";
-const PRIMARY_PROPOSAL_ID = "v36d-command-execution";
-const SECONDARY_PROPOSAL_ID = "v36e-command-palette";
+const PRIMARY_PROPOSAL_ID = "v39-graph-physics-playwright";
+const SECONDARY_PROPOSAL_ID = "v39-graph-physics-playwright";
 
 type ProbeWindow = Window & {
   __lwRunThemeTargetProbe?: (options?: { minSignals?: number }) => ThemeTargetProbeResult | null;
@@ -227,7 +227,7 @@ test("Bandit Proposals render in Advisory tab", async ({ page }) => {
   await expect(proposalsSection).toBeVisible();
 });
 
-test.skip("Proposal decision can be changed", async ({ page }) => {
+test("Proposal decision can be changed", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);
@@ -238,7 +238,7 @@ test.skip("Proposal decision can be changed", async ({ page }) => {
   await expect(decisionDropdown).toHaveValue("accept-for-future");
 });
 
-test.skip("Proposal notes field accepts input", async ({ page }) => {
+test("Proposal notes field accepts input", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);
@@ -265,7 +265,7 @@ test("v38 is default active checklist", async ({ page }) => {
   await expectCurrentQaKey(page, CURRENT_QA_KEY);
 });
 
-test.skip("v38 identity diagnostics visible in Debug tab", async ({ page }) => {
+test("v38 identity diagnostics visible in Debug tab", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
 
@@ -343,7 +343,7 @@ test("advisory backlog reorder persists through tab switching", async ({ page })
   await expect(page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title")).toHaveText(reorderedFirstTitle || "");
 });
 
-test.skip("v38 advisory tab renders perspective system questions", async ({ page }) => {
+test("v38 advisory tab renders perspective system questions", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);
@@ -472,7 +472,7 @@ test("v34b narrow theme mapping control behavior preserved", async ({ page }) =>
   expect(afterReset).toBe(false);
 });
 
-test.skip("v38 proposal decisions and backlog order persist after submit", async ({ page }) => {
+test("v38 proposal decisions and backlog order persist after submit", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);
