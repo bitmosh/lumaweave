@@ -843,6 +843,81 @@ export const advisoryV43: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV44: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v44-evidence-tests-expanded",
+      prompt: "Were Playwright evidence tests expanded?",
+      context: "Tests for registry/inventory count match, stable testids, graph surface visibility, no Sigma controls, read-only proof should exist.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v44-no-sigma-mutation",
+      prompt: "Did evidence hardening mutate Sigma renderer?",
+      context: "Evidence hardening should not control Sigma internals or rendering.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v44-no-physics-changes",
+      prompt: "Did evidence hardening change graph physics behavior?",
+      context: "Evidence hardening should not change physics settings or behavior.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v44-typecheck-passes",
+      prompt: "Does typecheck pass with zero errors?",
+      context: "npm run typecheck should pass with zero errors.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v44-playwright-passes",
+      prompt: "Do Playwright tests pass with zero skips?",
+      context: "npm run qa:e2e should pass with zero failures and zero skips.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "v45-graph-visual-mapping",
+      title: "v45 Graph Visual Mapping",
+      summary: "Implement theme mapping for graph visual elements",
+      rationale: "After v44 evidence hardening is accepted, v45 can implement theme mapping for graph colors, background, borders.",
+      risk: "medium",
+      recommendedNextAction: "Implement in v45 after v44 is accepted",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "v45 Graph Visual Mapping",
+      whyItMatters: "Implement theme mapping for graph visual elements after registry/policy are hardened.",
+      suggestedFutureBite: "Add theme mapping for graph colors, background, borders",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "v46 Graph Physics Controls",
+      whyItMatters: "Implement graph physics controls after visual mapping is in place.",
+      suggestedFutureBite: "Add physics sliders for node size, link distance, repel force",
+      risk: "high",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV40: BanditAdvisorySection = {
   questions: [
     {
@@ -3376,6 +3451,9 @@ export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
   }
   if (qaKey === "v43") {
     return advisoryV43;
+  }
+  if (qaKey === "v44") {
+    return advisoryV44;
   }
   if (qaKey === "v41") {
     return advisoryV41;

@@ -13,9 +13,9 @@ import {
 } from "./helpers/qa";
 import type { ThemeTargetProbeResult } from "../../src/themes/themeTargetHeuristics";
 
-const CURRENT_QA_KEY = "v43";
-const PRIMARY_PROPOSAL_ID = "v44-graph-evidence-hardening";
-const SECONDARY_PROPOSAL_ID = "v44-graph-evidence-hardening";
+const CURRENT_QA_KEY = "v44";
+const PRIMARY_PROPOSAL_ID = "v45-graph-visual-mapping";
+const SECONDARY_PROPOSAL_ID = "v45-graph-visual-mapping";
 
 type ProbeWindow = Window & {
   __lwRunThemeTargetProbe?: (options?: { minSignals?: number }) => ThemeTargetProbeResult | null;
@@ -259,13 +259,13 @@ test("Bandit Backlog Top 10 renders", async ({ page }) => {
   await expect(backlogItem.getByTestId("bandit-backlog-title")).not.toHaveText("");
 });
 
-test("v43 is default active checklist", async ({ page }) => {
+test("v44 is default active checklist", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await expectCurrentQaKey(page, CURRENT_QA_KEY);
 });
 
-test("v43 identity diagnostics visible in Debug tab", async ({ page }) => {
+test("v44 identity diagnostics visible in Debug tab", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
 
@@ -275,7 +275,7 @@ test("v43 identity diagnostics visible in Debug tab", async ({ page }) => {
   const identitySection = page.getByText("QA Identity Diagnostics");
   await expect(identitySection).toBeVisible();
 
-  const currentQaKey = page.getByText(`Current QA Key: v43`);
+  const currentQaKey = page.getByText(`Current QA Key: v44`);
   await expect(currentQaKey).toBeVisible();
 });
 
@@ -343,21 +343,21 @@ test("advisory backlog reorder persists through tab switching", async ({ page })
   await expect(page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title")).toHaveText(reorderedFirstTitle || "");
 });
 
-test("v43 advisory tab renders registry alignment questions", async ({ page }) => {
+test("v44 advisory tab renders evidence hardening questions", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);
 
-  // Verify v43 advisory section is visible
+  // Verify v44 advisory section is visible
   const advisorySection = page.getByTestId("qa-advisory-section");
   await expect(advisorySection).toBeVisible();
 
-  // Verify registry alignment questions are rendered
-  const registryQuestion = page.getByText("Does the Graph View Element Registry align with the contract?");
-  await expect(registryQuestion).toBeVisible();
+  // Verify evidence hardening questions are rendered
+  const evidenceQuestion = page.getByText("Were Playwright evidence tests expanded?");
+  await expect(evidenceQuestion).toBeVisible();
 });
 
-test("v43 report includes Advisory Set Key", async ({ page }) => {
+test("v44 report includes Advisory Set Key", async ({ page }) => {
   await page.goto("/");
 
   // Complete checklist and submit report using helper
@@ -370,7 +370,7 @@ test("v43 report includes Advisory Set Key", async ({ page }) => {
   expect(reportText).toContain(CURRENT_QA_KEY);
 });
 
-test("v43 report stays blocked when control checks are unverified", async ({ page }) => {
+test("v44 report stays blocked when control checks are unverified", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openChecklistTab(page);
@@ -384,7 +384,7 @@ test("v43 report stays blocked when control checks are unverified", async ({ pag
   expect(reportText).not.toContain("**ACCEPT**");
 });
 
-test("v43 acceptance decision requires zero blocked or unverified", async ({ page }) => {
+test("v44 acceptance decision requires zero blocked or unverified", async ({ page }) => {
   await page.goto("/");
   await completeChecklistAndSubmitReport(page);
 
@@ -395,13 +395,13 @@ test("v43 acceptance decision requires zero blocked or unverified", async ({ pag
   expect(reportText).toContain("- Unverified: 0");
 });
 
-test("v43 checklist includes registry alignment checks", async ({ page }) => {
+test("v44 checklist includes evidence hardening checks", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openChecklistTab(page);
 
   await expectChecklistContainsChecks(page, [
-    "Registry contract alignment",
+    "Playwright evidence tests expanded",
     "No Sigma/renderer mutation",
     "No graph physics changes",
     "Typecheck passes",
@@ -463,7 +463,7 @@ test("v34b narrow theme mapping control behavior preserved", async ({ page }) =>
   expect(afterReset).toBe(false);
 });
 
-test("v43 proposal decisions and backlog order persist after submit", async ({ page }) => {
+test("v44 proposal decisions and backlog order persist after submit", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);

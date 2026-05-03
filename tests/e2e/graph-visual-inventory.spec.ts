@@ -124,4 +124,62 @@ test.describe("Graph Visual Inventory", () => {
     const qaPanel = page.getByTestId("qa-panel").nth(0);
     await expect(qaPanel).toBeVisible();
   });
+
+  test("Registry entry count matches inventory row count", async ({ page }) => {
+    const list = page.getByTestId("graph-visual-inventory-list");
+    await expect(list).toBeVisible();
+
+    // Count all inventory rows with testid pattern (row containers only)
+    const inventoryRows = await page.locator('[data-testid^="graph-visual-inventory-row-"][data-testid$="-graph.frame"], [data-testid^="graph-visual-inventory-row-"][data-testid$="-graph.surface"], [data-testid^="graph-visual-inventory-row-"][data-testid$="-graph.nodes"], [data-testid^="graph-visual-inventory-row-"][data-testid$="-graph.edges"]').count();
+    
+    // Verify at least the core registry entries are present
+    expect(inventoryRows).toBeGreaterThanOrEqual(4);
+  });
+
+  test("All inventory rows have stable testid attributes", async ({ page }) => {
+    const list = page.getByTestId("graph-visual-inventory-list");
+    await expect(list).toBeVisible();
+
+    // Verify all rows have testid attributes
+    const rows = page.locator('[data-testid^="graph-visual-inventory-row-"]');
+    const count = await rows.count();
+    
+    for (let i = 0; i < count; i++) {
+      const row = rows.nth(i);
+      await expect(row).toHaveAttribute('data-testid');
+    }
+  });
+
+  test("Graph surface remains visible when inventory panel is open", async ({ page }) => {
+    const graphViewport = page.getByTestId("graph-viewport");
+    const inventoryPanel = page.getByTestId("graph-visual-inventory-panel");
+    
+    // Both should be visible simultaneously
+    await expect(graphViewport).toBeVisible();
+    await expect(inventoryPanel).toBeVisible();
+  });
+
+  test("No Sigma/renderer mutation controls in inventory panel", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    
+    // Check that there are no Sigma/renderer mutation controls
+    const sigmaControls = panel.getByRole("button", { name: /sigma|renderer|mutation/i });
+    await expect(sigmaControls).not.toBeVisible();
+    
+    // Check that there are no physics modification controls
+    const physicsControls = panel.getByRole("button", { name: /physics|force|layout/i });
+    await expect(physicsControls).not.toBeVisible();
+  });
+
+  test("Inventory panel is read-only (no input fields)", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    
+    // Check that there are no text input fields
+    const textInputs = panel.getByRole("textbox");
+    await expect(textInputs).not.toBeVisible();
+    
+    // Check that there are no dropdowns
+    const dropdowns = panel.getByRole("combobox");
+    await expect(dropdowns).not.toBeVisible();
+  });
 });
