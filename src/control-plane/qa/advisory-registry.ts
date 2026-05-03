@@ -272,6 +272,126 @@ export const defaultAdvisoryV13: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV29: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "pin-hotkey",
+      prompt: "Does Alt+Shift+P pin/unpin the current inspector entity without adding new hotkeys?",
+      context: "Lock/pin must remain a debugger-only behavior sharing the same discipline as Alt+Shift+I.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "pin-registered-flow",
+      prompt: "Can registered surfaces be pinned, remain visible after hover leaves, and unpin cleanly?",
+      context: "Lock/pin needs to stabilize the metadata panel for real targets before Theme Mapping.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "pin-candidate-flow",
+      prompt: "Do >=3-signal warning candidates show diagnostic metadata when pinned?",
+      context: "Candidates must stay badge-only but pinning should aid manual review.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "pin-clear-behavior",
+      prompt: "Can pinned entities be cleared via second Alt+Shift+P or inspector toggle?",
+      context: "Pinned state must stay lightweight and reversible.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "pin-scope-guardrails",
+      prompt: "Do unknown/never-warn/overlay/Sigma elements remain unpinnable?",
+      context: "Lock/pin is limited to registered or >=3-signal candidates only.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "pin-storage-block",
+      prompt: "Does documentation emphasize that pinned state is read-only with zero storage/preset impact?",
+      context: "Pinned identity is diagnostic only until Theme Mapping + override contract exist.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "pin-theme-mapping-bridge",
+      prompt: "Is lock/pin documented as the bridge into Theme Mapping Panel entry contract?",
+      context: "This pass must prepare Theme Mapping without jumping into runtime editors.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "theme-mapping-panel-v0-plan",
+      title: "Plan Theme Mapping Panel runtime scope",
+      summary: "Translate entry contract + lock/pin evidence into the first read-only Theme Mapping Panel design.",
+      rationale: "Need UX + QA plan before implementing v30 shell.",
+      risk: "medium",
+      recommendedNextAction: "Draft panel wireframe, QA checklist, and dependencies on lock/pin + entry contract.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+    {
+      id: "visual-handle-token-mapping",
+      title: "Document visual handle → token mappings",
+      summary: "Publish definitive map so component roles inherit canonical ThemeTokenPaths before generated controls.",
+      rationale: "Ensures Theme Mapping Panel reuses existing vocabulary without inventing new tokens.",
+      risk: "medium",
+      recommendedNextAction: "Update UI Surface & Handle Inventory + QA Debug evidence to enumerate handle/token pairs.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "Theme Mapping Panel v0",
+      whyItMatters: "Now that lock/pin exists, we can safely render read-only Theme Mapping controls before storage.",
+      suggestedFutureBite:
+        "Dependencies: token governance accepted, inspector stack through v29, entry contract accepted, storage work scheduled separately.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "Visual handles cite token paths",
+      whyItMatters: "Component role editing depends on a canonical handle → token reference before UI generation.",
+      suggestedFutureBite:
+        "Publish handle/token table in docs + QA evidence; wire into Mission Control Debug.",
+      risk: "low",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "Theme override storage + save preset",
+      whyItMatters: "Editable controls will eventually need persistence; storage must be designed separately.",
+      suggestedFutureBite: "Define override data model, preset save/import, reset/revert semantics, QA coverage.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 4,
+      title: "Graph physics Playwright coverage",
+      whyItMatters: "Graph controls must stay deterministic before Theme Mapping integrates graph HUDs.",
+      suggestedFutureBite:
+        "Add Playwright fixtures for physics sliders/toggles, ensuring they stay unaffected by inspector work.",
+      risk: "medium",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV28: BanditAdvisorySection = {
   questions: [
     {
@@ -1899,6 +2019,9 @@ export const advisoryV17a: BanditAdvisorySection = {
 
 // Advisory lookup function - returns appropriate advisory based on qaKey
 export function getAdvisoryForChecklist(featureId: string, qaVersion: number, checklistKey: string): BanditAdvisorySection {
+  if (featureId === "lock-pin-selected-target-v29" && qaVersion === 29) {
+    return advisoryV29;
+  }
   if (featureId === "registered-unregistered-heuristic-runtime-probe-v27a" && qaVersion === 27) {
     return advisoryV27a;
   }
@@ -1947,6 +2070,9 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number, ch
 
 // Advisory lookup function keyed by canonical qaKey
 export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
+  if (qaKey === "v29") {
+    return advisoryV29;
+  }
   if (qaKey === "v28") {
     return advisoryV28;
   }

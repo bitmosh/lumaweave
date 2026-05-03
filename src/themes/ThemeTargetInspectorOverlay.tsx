@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getThemeTargetById, type ThemeTargetContract } from "./themeTargetRegistry";
 import {
   installThemeTargetProbeGlobal,
@@ -8,10 +8,18 @@ import {
   type ThemeTargetCandidateSignal,
 } from "./themeTargetHeuristics";
 
-interface HoverState {
-  themeTargetId: string;
-  metadata?: ThemeTargetContract;
-}
+type InspectorEntity =
+  | {
+      kind: "registered";
+      themeTargetId: string;
+      metadata?: ThemeTargetContract;
+    }
+  | {
+      kind: "candidate";
+      descriptor: string;
+      dataTestId?: string | null;
+      signals: ThemeTargetCandidateSignal[];
+    };
 
 interface GraphViewportOffsets {
   right: number;
@@ -38,7 +46,9 @@ interface WarningBadge {
 installThemeTargetProbeGlobal();
 
 const HOTKEY_LABEL = "Alt+Shift+I";
+const PIN_HOTKEY_LABEL = "Alt+Shift+P";
 const GRAPH_VIEWPORT_SELECTOR = "[data-testid='graph-viewport']";
+const SIGMA_ELEMENT_SELECTOR = `${GRAPH_VIEWPORT_SELECTOR} canvas, ${GRAPH_VIEWPORT_SELECTOR} svg, ${GRAPH_VIEWPORT_SELECTOR} [data-sigma-element]`;
 const REGISTERED_TARGET_SELECTOR = "[data-lw-theme-target]";
 const OVERLAY_ROOT_SELECTOR = "[data-testid='theme-target-inspector-overlay']";
 const PANEL_MARGIN_PX = 24;
@@ -76,13 +86,49 @@ interface ThemeTargetInspectorOverlayProps {
   onEnabledChange: (nextEnabled: boolean) => void;
 }
 
+const describeElementForMatching = (element: HTMLElement | null): string | null => {
+  if (!element) {
+    return null;
+  }
+  const tag = element.tagName.toLowerCase();
+  const idPart = element.id ? `#${element.id}` : "";
+  const classes = Array.from(element.classList).slice(0, 2);
+  const classPart = classes.length ? `.${classes.join(".")}` : "";
+  const testId = element.getAttribute("data-testid");
+  const testIdPart = testId ? `[${testId}]` : "";
+  return `${tag}${idPart}${classPart}${testIdPart}`;
+};
+
+const inspectorEntitiesAreEqual = (a: InspectorEntity | null, b: InspectorEntity | null): boolean => {
+  if (!a || !b) {
+    return false;
+  }
+  if (a.kind !== b.kind) {
+    return false;
+  }
+  if (a.kind === "registered" && b.kind === "registered") {
+    return a.themeTargetId === b.themeTargetId;
+  }
+  if (a.kind === "candidate" && b.kind === "candidate") {
+    return a.descriptor === b.descriptor;
+  }
+  return false;
+};
+
 export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeTargetInspectorOverlayProps) {
-  const [hoverState, setHoverState] = useState<HoverState | null>(null);
+  const [hoverEntity, setHoverEntity] = useState<InspectorEntity | null>(null);
+  const [pinnedEntity, setPinnedEntity] = useState<InspectorEntity | null>(null);
+  const [latestProbeResult, setLatestProbeResult] = useState<ThemeTargetProbeResult | null>(null);
+  const candidateLookupRef = useRef<Map<string, ThemeTargetProbeResult["candidates"][number]>>(new Map());
   const [graphViewportOffsets, setGraphViewportOffsets] = useState<GraphViewportOffsets | null>(null);
   const [ghostOutlines, setGhostOutlines] = useState<GhostOutline[]>([]);
   const [warningBadges, setWarningBadges] = useState<WarningBadge[]>([]);
 
-  const tokenBindingEntries = hoverState?.metadata ? Object.entries(hoverState.metadata.tokenBindings) : [];
+  const displayEntity = pinnedEntity ?? hoverEntity;
+  const tokenBindingEntries =
+    displayEntity?.kind === "registered" && displayEntity.metadata
+      ? Object.entries(displayEntity.metadata.tokenBindings)
+      : [];
   const hasTokenBindings = tokenBindingEntries.length > 0;
 
   useEffect(() => {
@@ -101,7 +147,8 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
 
       event.preventDefault();
       onEnabledChange(!enabled);
-      setHoverState(null);
+      setHoverEntity(null);
+      setPinnedEntity(null);
     };
 
     window.addEventListener("keydown", handleKeydown);
@@ -147,32 +194,56 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
 
   useEffect(() => {
     if (!enabled) {
-      setHoverState(null);
+      setHoverEntity(null);
+      setPinnedEntity(null);
       setGhostOutlines([]);
       setWarningBadges([]);
+      setLatestProbeResult(null);
+      candidateLookupRef.current = new Map();
       return;
     }
 
     const runProbe = () => runAndRecordThemeTargetProbe();
 
+    const resolveEntityFromEventTarget = (rawTarget: EventTarget | null): InspectorEntity | null => {
+      let current = rawTarget instanceof HTMLElement ? rawTarget : null;
+      if (current && current.matches(SIGMA_ELEMENT_SELECTOR)) {
+        return null;
+      }
+      while (current) {
+        if (isWithinOverlay(current)) {
+          return null;
+        }
+        if (current.matches(REGISTERED_TARGET_SELECTOR)) {
+          const themeTargetId = current.getAttribute("data-lw-theme-target");
+          if (themeTargetId) {
+            return {
+              kind: "registered",
+              themeTargetId,
+              metadata: getThemeTargetById(themeTargetId) ?? undefined,
+            };
+          }
+        }
+        const descriptor = describeElementForMatching(current);
+        if (descriptor && candidateLookupRef.current.has(descriptor)) {
+          const candidate = candidateLookupRef.current.get(descriptor)!;
+          if (candidate.status === "candidate") {
+            return {
+              kind: "candidate",
+              descriptor: candidate.descriptor,
+              dataTestId: candidate.dataTestId,
+              signals: candidate.signals,
+            };
+          }
+        }
+        current = current.parentElement;
+      }
+      return null;
+    };
+
     const handleMouseMove = (event: MouseEvent) => {
-      const targetElement = (event.target as HTMLElement | null)?.closest<HTMLElement>(REGISTERED_TARGET_SELECTOR);
-      if (!targetElement) {
-        setHoverState(null);
-        return;
-      }
-
-      const themeTargetId = targetElement.getAttribute("data-lw-theme-target");
-      if (!themeTargetId) {
-        setHoverState(null);
-        return;
-      }
-
-      const metadata = getThemeTargetById(themeTargetId) ?? undefined;
-      setHoverState({
-        themeTargetId,
-        metadata,
-      });
+      const entity = resolveEntityFromEventTarget(event.target);
+      setHoverEntity(entity);
     };
 
     const scheduleGhostOutlineUpdate = (() => {
@@ -279,6 +350,8 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
     const mapResultToBadges = (result: ThemeTargetProbeResult | null) => {
       if (!result) {
         setWarningBadges([]);
+        setLatestProbeResult(null);
+        candidateLookupRef.current = new Map();
         return;
       }
       const unique = new Map<string, WarningBadge>();
@@ -296,6 +369,8 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
         });
       }
       setWarningBadges(Array.from(unique.values()));
+      setLatestProbeResult(result);
+      candidateLookupRef.current = new Map(result.candidates.map((candidate) => [candidate.descriptor, candidate]));
     };
 
     const handleProbe = (event: Event) => {
@@ -310,6 +385,65 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
       window.removeEventListener(THEME_TARGET_PROBE_EVENT, handleProbe as EventListener);
     };
   }, [enabled]);
+
+  useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+    const handlePinToggle = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() !== "p" || !event.altKey || !event.shiftKey) {
+        return;
+      }
+
+      const targetElement = (event.target as HTMLElement | null) ?? null;
+      const activeElement = (document.activeElement as HTMLElement | null) ?? null;
+      const focusIsEditable = isEditableElement(targetElement) || isEditableElement(activeElement);
+      if (focusIsEditable) {
+        return;
+      }
+
+      event.preventDefault();
+      setPinnedEntity((current) => {
+        if (current && hoverEntity && !inspectorEntitiesAreEqual(current, hoverEntity)) {
+          return hoverEntity;
+        }
+        if (current) {
+          return null;
+        }
+        return hoverEntity;
+      });
+    };
+
+    window.addEventListener("keydown", handlePinToggle);
+    return () => window.removeEventListener("keydown", handlePinToggle);
+  }, [enabled, hoverEntity]);
+
+  useEffect(() => {
+    if (!pinnedEntity) {
+      return;
+    }
+    if (pinnedEntity.kind === "registered") {
+      const exists = Boolean(
+        typeof document !== "undefined"
+          ? document.querySelector<HTMLElement>(`[data-lw-theme-target='${pinnedEntity.themeTargetId}']`)
+          : null,
+      );
+      if (!exists) {
+        setPinnedEntity(null);
+      }
+      return;
+    }
+    if (!latestProbeResult) {
+      setPinnedEntity(null);
+      return;
+    }
+    const stillExists = latestProbeResult.candidates.some((candidate) => candidate.descriptor === pinnedEntity.descriptor);
+    if (!stillExists) {
+      setPinnedEntity(null);
+    }
+  }, [pinnedEntity, latestProbeResult]);
+
+  const showInspectorPanel = enabled && Boolean(displayEntity);
 
   return (
     <>
@@ -462,7 +596,7 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
           </div>
         )}
 
-        {enabled && hoverState && (
+        {showInspectorPanel && displayEntity && (
           <div
             data-testid="theme-target-inspector-panel"
             style={{
@@ -487,50 +621,91 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
                 boxShadow: "0 18px 36px rgba(2, 6, 23, 0.55)",
               }}
             >
-              <div style={{ fontSize: "0.85rem", fontWeight: 600 }}>
-                {hoverState.metadata?.label ?? hoverState.themeTargetId}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.5rem" }}>
+                <div
+                  data-testid="theme-target-display-kind"
+                  style={{ fontSize: "0.85rem", fontWeight: 600 }}
+                >
+                  {displayEntity.kind === "registered"
+                    ? displayEntity.metadata?.label ?? displayEntity.themeTargetId
+                    : "Candidate surface"}
+                </div>
+                {pinnedEntity ? (
+                  <span
+                    data-testid="theme-target-pinned-state"
+                    style={{
+                      fontSize: "0.65rem",
+                      padding: "0.15rem 0.45rem",
+                      borderRadius: "9999px",
+                      border: "1px solid rgba(148, 163, 184, 0.4)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    Pinned · {PIN_HOTKEY_LABEL}
+                  </span>
+                ) : (
+                  <span
+                    data-testid="theme-target-pin-hint"
+                    style={{ fontSize: "0.65rem", color: "#94a3b8" }}
+                  >
+                    {PIN_HOTKEY_LABEL} to pin
+                  </span>
+                )}
               </div>
               <div style={{ fontSize: "0.75rem", color: "#94a3b8", marginBottom: "0.65rem" }}>
-                {hoverState.themeTargetId} · surface {hoverState.metadata?.surface ?? "unknown"}
+                {displayEntity.kind === "registered"
+                  ? `${displayEntity.themeTargetId} · surface ${displayEntity.metadata?.surface ?? "unknown"}`
+                  : `${displayEntity.descriptor} ${displayEntity.dataTestId ? `· [${displayEntity.dataTestId}]` : ""}`}
               </div>
 
-              <dl style={{ fontSize: "0.75rem", lineHeight: 1.5 }}>
-                {hoverState.metadata?.status && (
+              {displayEntity.kind === "registered" ? (
+                <dl style={{ fontSize: "0.75rem", lineHeight: 1.5 }}>
+                  {displayEntity.metadata?.status && (
+                    <div>
+                      <dt style={{ color: "#94a3b8" }}>Status</dt>
+                      <dd>{displayEntity.metadata.status}</dd>
+                    </div>
+                  )}
+
+                  {displayEntity.metadata?.visualHandle && (
+                    <div style={{ marginTop: "0.35rem" }}>
+                      <dt style={{ color: "#94a3b8" }}>Visual Handle</dt>
+                      <dd>{displayEntity.metadata.visualHandle}</dd>
+                    </div>
+                  )}
+
+                  {displayEntity.metadata?.editableProperties.length ? (
+                    <div style={{ marginTop: "0.35rem" }}>
+                      <dt style={{ color: "#94a3b8" }}>Editable Props</dt>
+                      <dd>{displayEntity.metadata.editableProperties.join(", ")}</dd>
+                    </div>
+                  ) : null}
+
+                  {hasTokenBindings ? (
+                    <div style={{ marginTop: "0.35rem" }}>
+                      <dt style={{ color: "#94a3b8" }}>Token Bindings</dt>
+                      <dd>
+                        <ul style={{ paddingLeft: "1rem", margin: 0 }}>
+                          {tokenBindingEntries.map(([property, path]) => (
+                            <li key={property}>{`${property}: ${path}`}</li>
+                          ))}
+                        </ul>
+                      </dd>
+                    </div>
+                  ) : (
+                    <div style={{ marginTop: "0.35rem", color: "#fbbf24" }}>No token bindings recorded</div>
+                  )}
+                </dl>
+              ) : (
+                <div style={{ fontSize: "0.75rem", lineHeight: 1.6 }}>
+                  <div style={{ color: "#fbbf24", marginBottom: "0.35rem" }}>Status: Review for registration</div>
                   <div>
-                    <dt style={{ color: "#94a3b8" }}>Status</dt>
-                    <dd>{hoverState.metadata.status}</dd>
+                    <span style={{ color: "#94a3b8" }}>Signals ({displayEntity.signals.length}): </span>
+                    {displayEntity.signals.join(" · ")}
                   </div>
-                )}
-
-                {hoverState.metadata?.visualHandle && (
-                  <div style={{ marginTop: "0.35rem" }}>
-                    <dt style={{ color: "#94a3b8" }}>Visual Handle</dt>
-                    <dd>{hoverState.metadata.visualHandle}</dd>
-                  </div>
-                )}
-
-                {hoverState.metadata?.editableProperties.length ? (
-                  <div style={{ marginTop: "0.35rem" }}>
-                    <dt style={{ color: "#94a3b8" }}>Editable Props</dt>
-                    <dd>{hoverState.metadata.editableProperties.join(", ")}</dd>
-                  </div>
-                ) : null}
-
-                {hasTokenBindings ? (
-                  <div style={{ marginTop: "0.35rem" }}>
-                    <dt style={{ color: "#94a3b8" }}>Token Bindings</dt>
-                    <dd>
-                      <ul style={{ paddingLeft: "1rem", margin: 0 }}>
-                        {tokenBindingEntries.map(([property, path]) => (
-                          <li key={property}>{`${property}: ${path}`}</li>
-                        ))}
-                      </ul>
-                    </dd>
-                  </div>
-                ) : (
-                  <div style={{ marginTop: "0.35rem", color: "#fbbf24" }}>No token bindings recorded</div>
-                )}
-              </dl>
+                </div>
+              )}
             </div>
           </div>
         )}

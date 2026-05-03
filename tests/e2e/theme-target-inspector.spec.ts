@@ -29,6 +29,8 @@ type SyntheticCandidateOptions = {
   left?: number;
 };
 
+const PIN_HOTKEY = "Alt+Shift+P";
+
 const createSyntheticCandidate = async (
   page: Page,
   elementOrOptions?: string | SyntheticCandidateOptions,
@@ -60,6 +62,22 @@ const createSyntheticCandidate = async (
     container.appendChild(secondButton);
     document.body.appendChild(container);
   }, { id: elementId, topPosition: top, leftPosition: left });
+};
+
+const createUnknownFixture = async (page: Page, elementId = "probe-unknown-container"): Promise<void> => {
+  await page.evaluate((id) => {
+    document.getElementById(id)?.remove();
+    const element = document.createElement("div");
+    element.id = id;
+    element.setAttribute("data-testid", "mission-control-unknown-surface");
+    element.style.width = "200px";
+    element.style.height = "80px";
+    document.body.appendChild(element);
+  }, elementId);
+};
+
+const triggerPinHotkey = async (page: Page): Promise<void> => {
+  await page.keyboard.press(PIN_HOTKEY);
 };
 
 const removeElementById = async (page: Page, elementId: string): Promise<void> => {
@@ -577,5 +595,134 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
 
     await disableInspector(page);
     await removeElementById(page, "pointer-events-candidate");
+  });
+
+  test("registered target can be pinned, persist after hover leaves, and unpinned", async ({ page }) => {
+    await page.goto("/");
+    await enableInspector(page);
+
+    const missionControlPanel = page.locator('[data-lw-theme-target="mission-control.panel"]').first();
+    await missionControlPanel.hover();
+    const pinnedBadge = page.getByTestId("theme-target-pinned-state");
+
+    await triggerPinHotkey(page);
+    await page.mouse.move(0, 0);
+    await expect(pinnedBadge).toBeVisible();
+
+    await missionControlPanel.hover();
+    await triggerPinHotkey(page);
+    await expect(page.getByTestId("theme-target-pin-hint")).toBeVisible();
+    await disableInspector(page);
+  });
+
+  test("inspector OFF clears pinned state", async ({ page }) => {
+    await page.goto("/");
+    await enableInspector(page);
+
+    await page.locator('[data-lw-theme-target="mission-control.panel"]').first().hover();
+    await triggerPinHotkey(page);
+    await expect(page.getByTestId("theme-target-pinned-state")).toBeVisible();
+
+    await disableInspector(page);
+    await expect(page.getByTestId("theme-target-inspector-panel")).not.toBeVisible();
+
+    await enableInspector(page);
+    await expect(page.getByTestId("theme-target-pinned-state")).toHaveCount(0);
+    await disableInspector(page);
+  });
+
+  test("warning candidate can be pinned", async ({ page }) => {
+    await page.goto("/");
+    const candidateId = "pin-candidate";
+    await createSyntheticCandidate(page, candidateId);
+    await enableInspector(page);
+    await waitForWarningLayerToSettle(page);
+
+    await page.locator(`#${candidateId}`).hover();
+    await expect(page.getByTestId("theme-target-display-kind")).toContainText("Candidate surface");
+    await triggerPinHotkey(page);
+    await page.locator("body").hover();
+    await expect(page.getByTestId("theme-target-pinned-state")).toBeVisible();
+
+    await disableInspector(page);
+    await removeElementById(page, candidateId);
+  });
+
+  test("unknown fixtures cannot be pinned", async ({ page }) => {
+    await page.goto("/");
+    const unknownId = "pin-unknown";
+    await createUnknownFixture(page, unknownId);
+    await enableInspector(page);
+
+    await page.locator(`#${unknownId}`).hover();
+    await triggerPinHotkey(page);
+    await expect(page.getByTestId("theme-target-inspector-panel")).not.toBeVisible();
+
+    await disableInspector(page);
+    await removeElementById(page, unknownId);
+  });
+
+  test("never-warn fixtures cannot be pinned", async ({ page }) => {
+    await page.goto("/");
+    await page.evaluate(() => {
+      document.getElementById("pin-button")?.remove();
+      const button = document.createElement("button");
+      button.id = "pin-button";
+      button.textContent = "Pinned?";
+      document.body.appendChild(button);
+    });
+
+    await enableInspector(page);
+    await page.locator("#pin-button").hover();
+    await triggerPinHotkey(page);
+    await expect(page.getByTestId("theme-target-inspector-panel")).not.toBeVisible();
+
+    await disableInspector(page);
+    await removeElementById(page, "pin-button");
+  });
+
+  test("overlay DOM cannot be pinned", async ({ page }) => {
+    await page.goto("/");
+    await enableInspector(page);
+
+    await page.evaluate(() => {
+      const overlay = document.querySelector<HTMLElement>("[data-testid='theme-target-inspector-overlay']");
+      overlay?.dispatchEvent(new MouseEvent("mousemove", { bubbles: true }));
+    });
+    await triggerPinHotkey(page);
+    await expect(page.getByTestId("theme-target-inspector-panel")).not.toBeVisible();
+
+    await disableInspector(page);
+  });
+
+  test("Sigma/graph primitives cannot be pinned", async ({ page }) => {
+    await page.goto("/");
+    await enableInspector(page);
+    const missionControlPanel = page.locator('[data-lw-theme-target="mission-control.panel"]').first();
+    await missionControlPanel.hover();
+    await triggerPinHotkey(page);
+    await expect(page.getByTestId("theme-target-pinned-state")).toBeVisible();
+
+    await page.mouse.move(0, 0);
+    await page.evaluate(() => {
+      const viewport = document.querySelector('[data-testid="graph-viewport"]');
+      const existing = document.getElementById("sigma-mock-canvas");
+      existing?.remove();
+      const canvas = document.createElement("canvas");
+      canvas.id = "sigma-mock-canvas";
+      canvas.setAttribute("data-sigma-element", "mock-node");
+      canvas.width = 200;
+      canvas.height = 120;
+      canvas.style.position = "absolute";
+      canvas.style.top = "10px";
+      canvas.style.left = "10px";
+      viewport?.appendChild(canvas);
+    });
+    const sigmaCanvas = page.locator("#sigma-mock-canvas");
+    await sigmaCanvas.hover({ force: true, position: { x: 50, y: 50 } });
+    await triggerPinHotkey(page);
+    await page.mouse.move(0, 0);
+    await expect(page.getByTestId("theme-target-pinned-state")).toHaveCount(0);
+    await disableInspector(page);
   });
 });

@@ -77,6 +77,7 @@ Establish a single additive reference for every front-facing UI surface that may
 7. **Graph/Sigma elements stay in their own registry** — Sigma primitives continue to use the Graph View Element Registration Model + Graph Visual Policy tokens, never DOM markers.
 8. **Ghost overlay + registered/unregistered warnings must consult this model** — only major surfaces (and any future HUD containers) should be outlined; warnings must ignore expected unregistered nested elements.
 9. **Theme Mapping Panel entry contract depends on this model** — see [v28 entry contract](./THEME_MAPPING_PANEL_ENTRY_CONTRACT.md); generated controls must use componentRoleId + handleId references from this inventory and remain read-only until storage work lands.
+10. **Lock/pin (v29) stabilizes inspector identity only** — pinned targets/candidates freeze the metadata panel for diagnostics, but do not register nested controls, edit tokens, or lift the storage ban.
 
 ### v26 Registered/Unregistered Heuristic Planning
 

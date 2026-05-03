@@ -3,7 +3,7 @@
 ## Purpose
 Theme Mapping Panel v0 will eventually expose editable theme controls for qualified UI surfaces. This document captures the contract that gates each surface before any runtime editing UI or storage work begins. It stitches together the accepted inspector stack (UI Inspector toggle, metadata panel, ghost overlay, ThemeTargetRegistry, runtime probe, warning badges, token governance, visual handles, and canonical `ThemeTokenPath` vocabulary) so future editing passes do not re-litigate requirements.
 
-This contract is planning-only. No runtime Theme Mapping Panel exists yet. All rules below are enforced through documentation, QA/advisory identity, and Playwright/QA evidence once implemented.
+This contract is planning-only. No runtime Theme Mapping Panel exists yet. All rules below are enforced through documentation, QA/advisory identity, and Playwright/QA evidence once implemented. v29 lock/pin behavior simply stabilizes which inspector target you are reviewing; it does **not** enable editing or storage and exists purely as the bridge into this entry contract.
 
 ## 1. Entry Requirements for Editable Surfaces
 A DOM surface may enter the future Theme Mapping Panel only if **all** of the following are true:

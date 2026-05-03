@@ -13,9 +13,9 @@ import {
 } from "./helpers/qa";
 import type { ThemeTargetProbeResult } from "../../src/themes/themeTargetHeuristics";
 
-const CURRENT_QA_KEY = "v28";
-const PRIMARY_PROPOSAL_ID = "lock-pin-behavior-plan";
-const SECONDARY_PROPOSAL_ID = "theme-mapping-panel-v0-plan";
+const CURRENT_QA_KEY = "v29";
+const PRIMARY_PROPOSAL_ID = "theme-mapping-panel-v0-plan";
+const SECONDARY_PROPOSAL_ID = "visual-handle-token-mapping";
 
 type ProbeWindow = Window & {
   __lwRunThemeTargetProbe?: (options?: { minSignals?: number }) => ThemeTargetProbeResult | null;
@@ -338,7 +338,7 @@ test("advisory backlog reorder persists through tab switching", async ({ page })
   await expect(page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title")).toHaveText(reorderedFirstTitle || "");
 });
 
-test("v28 advisory questions cite entry contract", async ({ page }) => {
+test("v29 advisory questions cite lock/pin contract", async ({ page }) => {
   await page.goto("/");
 
   // QA panel is in the left dock - use nth(1) to get the main panel
@@ -349,24 +349,23 @@ test("v28 advisory questions cite entry contract", async ({ page }) => {
   const advisoryTab = page.getByTestId("qa-tab-advisory");
   await advisoryTab.click();
 
-  // Verify v28-specific question identifiers are visible
+  // Verify v29-specific question identifiers are visible
   const pageContent = await page.content();
-  expect(pageContent).toContain("entry-contract-source");
-  expect(pageContent).toContain("registered-surface-flow");
-  expect(pageContent).toContain("candidate-review-path");
-  expect(pageContent).toContain("unknown-path-visible");
-  expect(pageContent).toContain("component-text-role-guardrails");
-  expect(pageContent).toContain("graph-sigma-exclusion");
-  expect(pageContent).toContain("storage-block-restate");
-  expect(pageContent).toContain("qa-evidence-plan");
+  expect(pageContent).toContain("pin-hotkey");
+  expect(pageContent).toContain("pin-registered-flow");
+  expect(pageContent).toContain("pin-candidate-flow");
+  expect(pageContent).toContain("pin-clear-behavior");
+  expect(pageContent).toContain("pin-scope-guardrails");
+  expect(pageContent).toContain("pin-storage-block");
+  expect(pageContent).toContain("pin-theme-mapping-bridge");
 
-  // Verify old v27b badge questions are no longer the active advisory set
+  // Verify v28 entry-contract questions are no longer the active advisory set
+  expect(pageContent).not.toContain("entry-contract-source");
+  expect(pageContent).not.toContain("registered-surface-flow");
   expect(pageContent).not.toContain("warning-layer-gated");
-  expect(pageContent).not.toContain("warning-candidates-proof");
-  expect(pageContent).not.toContain("warning-pointer-events");
 });
 
-test("v28 report includes Advisory Set Key", async ({ page }) => {
+test("v29 report includes Advisory Set Key", async ({ page }) => {
   await page.goto("/");
 
   // Complete checklist and submit report using helper
@@ -375,12 +374,12 @@ test("v28 report includes Advisory Set Key", async ({ page }) => {
   // Get last report text
   const reportText = await getLastReportText(page);
 
-  // Verify report includes Advisory Set Key: v28
+  // Verify report includes Advisory Set Key: v29
   expect(reportText).toContain("Advisory Set Key:");
   expect(reportText).toContain(CURRENT_QA_KEY);
 });
 
-test("v28 report stays blocked when contract checks are unverified", async ({ page }) => {
+test("v29 report stays blocked when lock/pin checks are unverified", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openChecklistTab(page);
@@ -394,7 +393,7 @@ test("v28 report stays blocked when contract checks are unverified", async ({ pa
   expect(reportText).not.toContain("**ACCEPT**");
 });
 
-test("v28 acceptance decision requires zero blocked or unverified", async ({ page }) => {
+test("v29 acceptance decision requires zero blocked or unverified", async ({ page }) => {
   await page.goto("/");
   await completeChecklistAndSubmitReport(page);
 
@@ -405,29 +404,31 @@ test("v28 acceptance decision requires zero blocked or unverified", async ({ pag
   expect(reportText).toContain("- Unverified: 0");
 });
 
-test("v28 checklist includes entry contract checks", async ({ page }) => {
+test("v29 checklist includes lock/pin checks", async ({ page }) => {
   await page.goto("/");
   await expectChecklistContainsChecks(page, [
-    "v28 is default active checklist",
-    "Entry contract doc exists",
-    "Registered surface path defined",
-    "Candidate surface path defined",
-    "Unknown path defined",
-    "Component role path defined",
-    "Text role path defined",
-    "Graph/Sigma path excluded from DOM mapping",
-    "Storage remains blocked",
-    "Future QA evidence defined",
-    "No Theme Mapping runtime UI implemented",
-    "No editing controls added",
-    "No override/preset storage",
-    "No graph renderer changes",
+    "v29 is default active checklist",
+    "Registered target can be pinned",
+    "Pinned registered target remains visible after cursor leaves",
+    "Pinned target can be cleared",
+    "UI Inspector OFF clears pinned target",
+    "Warning candidate can be pinned",
+    "Unknown entries cannot be pinned",
+    "Never-warn categories cannot be pinned",
+    "Inspector overlay DOM cannot be pinned",
+    "Sigma/graph primitives cannot be pinned",
+    "Ghost overlay behavior unchanged",
+    "Warning badges unchanged",
+    "Mission Control toggle unchanged",
+    "Hotkeys remain Alt+Shift+I / Alt+Shift+P only",
+    "No Theme Mapping/editing/storage",
+    "Graph renderer unaffected",
     "Typecheck passes",
     "Playwright passes with 0 skipped",
   ]);
 });
 
-test("v28 proposal decisions and backlog order persist after submit", async ({ page }) => {
+test("v29 proposal decisions and backlog order persist after submit", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);
