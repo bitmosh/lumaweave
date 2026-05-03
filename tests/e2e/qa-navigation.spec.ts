@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test("QA notes persist when moving next and previous (for multi-check checklists)", async ({ page }) => {
   await page.goto("/");
 
-  const qaPanel = page.getByTestId("qa-panel").nth(1);
+  const qaPanel = page.getByTestId("qa-panel").first();
   await expect(qaPanel).toBeVisible();
 
   // Check if navigation is available (multi-check checklist)

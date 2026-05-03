@@ -21,10 +21,9 @@ function parseQuestionCounterText(text: string | null): { total: number } {
 
 /**
  * Open the QA panel in the left dock
- * Uses nth(1) to get the main panel (not the dock preview)
  */
 export async function openQaPanel(page: Page): Promise<void> {
-  const qaPanel = page.getByTestId("qa-panel").nth(1);
+  const qaPanel = page.getByTestId("qa-panel").first();
   await expect(qaPanel).toBeVisible();
 }
 
@@ -66,7 +65,7 @@ export async function openLastReportTab(page: Page): Promise<void> {
  * @param status - Status to mark: "pass", "fail", "blocked", "unverified"
  */
 export async function markAllCurrentChecklistItems(page: Page, status: "pass" | "fail" | "blocked" | "unverified"): Promise<void> {
-  const qaPanel = page.getByTestId("qa-panel").nth(1);
+  const qaPanel = page.getByTestId("qa-panel").first();
   await expect(qaPanel).toBeVisible();
 
   const counterText = await qaPanel.getByTestId("qa-question-counter").textContent();
@@ -92,7 +91,7 @@ export async function markAllCurrentChecklistItems(page: Page, status: "pass" | 
  * Assumes checklist items are already marked
  */
 export async function submitQaReport(page: Page): Promise<void> {
-  const qaPanel = page.getByTestId("qa-panel").nth(1);
+  const qaPanel = page.getByTestId("qa-panel").first();
   const submitButton = qaPanel.getByRole("button", { name: /submit report/i });
   await submitButton.click();
 }
@@ -101,7 +100,7 @@ export async function submitQaReport(page: Page): Promise<void> {
  * Copy the last submission to clipboard
  */
 export async function copyLastSubmission(page: Page): Promise<void> {
-  const qaPanel = page.getByTestId("qa-panel").nth(1);
+  const qaPanel = page.getByTestId("qa-panel").first();
   const copyButton = qaPanel.getByRole("button", { name: /copy last submission/i });
   await copyButton.click();
 }
@@ -113,7 +112,7 @@ export async function copyLastSubmission(page: Page): Promise<void> {
  * @param expectedQaKey - Expected QA key (e.g., "v17")
  */
 export async function expectCurrentQaKey(page: Page, expectedQaKey: string): Promise<void> {
-  const qaPanel = page.getByTestId("qa-panel").nth(1);
+  const qaPanel = page.getByTestId("qa-panel").first();
   await expect(qaPanel).toBeVisible();
 
   // Check header badge shows expected QA key
@@ -154,7 +153,7 @@ export async function expectReportChecklistKey(page: Page, expectedQaKey: string
  * @param status - Status to mark: "pass", "fail", "blocked", "unverified"
  */
 export async function markCheckByTitle(page: Page, checkTitle: string, status: "pass" | "fail" | "blocked" | "unverified"): Promise<void> {
-  const qaPanel = page.getByTestId("qa-panel").nth(1);
+  const qaPanel = page.getByTestId("qa-panel").first();
   await expect(qaPanel).toBeVisible();
 
   // Find the check by title
@@ -203,7 +202,7 @@ export async function expectChecklistContainsChecks(page: Page, expectedTitles: 
   await openQaPanel(page);
   await openChecklistTab(page);
 
-  const qaPanel = page.getByTestId("qa-panel").nth(1);
+  const qaPanel = page.getByTestId("qa-panel").first();
   await expect(qaPanel).toBeVisible();
 
   const counterText = await qaPanel.getByTestId("qa-question-counter").textContent();

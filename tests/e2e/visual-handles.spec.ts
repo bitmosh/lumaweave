@@ -22,7 +22,7 @@ test.describe("Visual Handle Library v0", () => {
   test("Advisory tab opens", async ({ page }) => {
     await page.goto("/");
 
-    const qaPanel = page.getByTestId("qa-panel").nth(1);
+    const qaPanel = page.getByTestId("qa-panel").first();
     await expect(qaPanel).toBeVisible();
 
     const advisoryTab = page.getByTestId("qa-tab-advisory");
