@@ -12,8 +12,8 @@ It is not an active feature contract by itself. It should be read alongside:
 docs/LUMAWEAVE_PLAYWRIGHT_TESTING_GUIDE.md
 docs/control-plane/qa/BACKLOG_POLICY.md
 docs/mission-control/QA_ADVISORY_PROTOCOL.md
-docs/lumaweave_bandit_brain_packet/docs/agent-learning/09_QA_PLAYWRIGHT_EVIDENCE_POLICY.md
-docs/lumaweave_bandit_brain_packet/docs/agent-learning/10_SELF_SPLITTING_QUEST_PROTOCOL.md
+docs/lumaweave_bandit_brain_packet/docs/agent-learning/08_QA_PLAYWRIGHT_EVIDENCE_POLICY.md
+docs/lumaweave_bandit_brain_packet/docs/agent-learning/09_SELF_SPLITTING_QUEST_PROTOCOL.md
 ```
 
 ## Purpose
