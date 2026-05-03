@@ -35,6 +35,9 @@ Modernization means preserving accepted contracts while wrapping them in clearer
 | `05_PASS_PREBRIEF_TEMPLATE.md` | Template Bandit should complete before risky implementation passes. |
 | `06_PASS_POSTMORTEM_TEMPLATE.md` | Template Bandit should complete after a pass or recovery. |
 | `07_CANONICAL_TERMS_GLOSSARY.md` | Short definitions for repeated terms and stable naming conventions. |
+| `10_SELF_SPLITTING_QUEST_PROTOCOL.md` | Defines operating protocol for long quests with architecture boundary splitting. |
+| `11_QUEST_MODE_PROMPT_TEMPLATE.md` | Template for assigning Bandit longer LumaWeave arcs with Quest Mode. |
+| `12_QUEST_MODE_FIELD_GUIDE.md` | Field guide for when to use Quest Mode and how to identify good/bad quest candidates. |
 | `graphs/identity_system_graph.md` | Relationship graph for IDs, contracts, runtime, DOM, and tests. |
 | `graphs/theme_contract_pipeline.md` | Theme Token Path → Theme Target Registry → DOM marker → overlay → QA pipeline. |
 | `graphs/qa_contract_pipeline.md` | QA/advisory/test evidence pipeline. |
