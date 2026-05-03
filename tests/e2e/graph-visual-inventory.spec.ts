@@ -182,4 +182,69 @@ test.describe("Graph Visual Inventory", () => {
     const dropdowns = panel.getByRole("combobox");
     await expect(dropdowns).not.toBeVisible();
   });
+
+  test.describe("Graph Runtime Probe (v46)", () => {
+    test("Runtime probe section is visible", async ({ page }) => {
+      const probeSection = page.getByTestId("graph-runtime-probe-section");
+      await expect(probeSection).toBeVisible();
+    });
+
+    test("Runtime probe title is visible", async ({ page }) => {
+      const probeTitle = page.getByTestId("graph-runtime-probe-title");
+      await expect(probeTitle).toBeVisible();
+      await expect(probeTitle).toHaveText("Graph Runtime Probe (v46)");
+    });
+
+    test("Runtime probe description indicates passive readout", async ({ page }) => {
+      const probeDescription = page.getByTestId("graph-runtime-probe-description");
+      await expect(probeDescription).toBeVisible();
+      await expect(probeDescription).toHaveText("Passive readout of graph container/evidence status. No mutation.");
+    });
+
+    test("Runtime probe reports registry entries count", async ({ page }) => {
+      const registryCount = page.getByTestId("graph-runtime-probe-registry-count");
+      await expect(registryCount).toBeVisible();
+      const count = await registryCount.textContent();
+      expect(count).not.toBe("");
+      expect(parseInt(count || "0")).toBeGreaterThan(0);
+    });
+
+    test("Runtime probe reports mutation status as locked/deferred", async ({ page }) => {
+      const mutationStatus = page.getByTestId("graph-runtime-probe-mutation-status");
+      await expect(mutationStatus).toBeVisible();
+      await expect(mutationStatus).toHaveText("locked/deferred");
+    });
+
+    test("Runtime probe reports Sigma mutation status as forbidden", async ({ page }) => {
+      const sigmaStatus = page.getByTestId("graph-runtime-probe-sigma-status");
+      await expect(sigmaStatus).toBeVisible();
+      await expect(sigmaStatus).toHaveText("forbidden in v46");
+    });
+
+    test("Runtime probe reports physics mutation status as forbidden", async ({ page }) => {
+      const physicsStatus = page.getByTestId("graph-runtime-probe-physics-status");
+      await expect(physicsStatus).toBeVisible();
+      await expect(physicsStatus).toHaveText("forbidden in v46");
+    });
+
+    test("Runtime probe has no enabled controls", async ({ page }) => {
+      const probeSection = page.getByTestId("graph-runtime-probe-section");
+      const controls = probeSection.locator("button, input, select");
+      const count = await controls.count();
+      expect(count).toBe(0);
+    });
+
+    test("Graph surface still mounts with runtime probe present", async ({ page }) => {
+      const canvas = page.locator("canvas").first();
+      await expect(canvas).toBeVisible();
+    });
+
+    test("Graph Visual Inventory still works with runtime probe", async ({ page }) => {
+      const list = page.getByTestId("graph-visual-inventory-list");
+      await expect(list).toBeVisible();
+
+      const graphFrameRow = page.getByTestId("graph-visual-inventory-row-graph.frame");
+      await expect(graphFrameRow).toBeVisible();
+    });
+  });
 });

@@ -24,6 +24,45 @@ export function GraphVisualInventoryPanel(): React.JSX.Element {
         </p>
       </div>
 
+      {/* Passive Runtime Probe Section (v46) */}
+      <div
+        className="mb-4 p-3 border border-blue-200 rounded bg-blue-50"
+        data-testid="graph-runtime-probe-section"
+      >
+        <h3 className="text-sm font-semibold text-blue-900 mb-2" data-testid="graph-runtime-probe-title">
+          Graph Runtime Probe (v46)
+        </h3>
+        <p className="text-xs text-blue-700 mb-3" data-testid="graph-runtime-probe-description">
+          Passive readout of graph container/evidence status. No mutation.
+        </p>
+        <div className="space-y-1 text-xs">
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Registry entries:</span>
+            <span className="font-mono text-blue-800" data-testid="graph-runtime-probe-registry-count">
+              {elements.length}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Runtime mutation status:</span>
+            <span className="font-mono text-red-600 font-semibold" data-testid="graph-runtime-probe-mutation-status">
+              locked/deferred
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Sigma mutation status:</span>
+            <span className="font-mono text-red-600 font-semibold" data-testid="graph-runtime-probe-sigma-status">
+              forbidden in v46
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Physics mutation status:</span>
+            <span className="font-mono text-red-600 font-semibold" data-testid="graph-runtime-probe-physics-status">
+              forbidden in v46
+            </span>
+          </div>
+        </div>
+      </div>
+
       <div className="space-y-2" data-testid="graph-visual-inventory-list">
         {elements.map((element) => (
           <GraphVisualInventoryRow key={element.id} element={element} />

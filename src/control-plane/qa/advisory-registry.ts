@@ -1017,6 +1017,113 @@ export const advisoryV45: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV46: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v46-runtime-probe-visible",
+      prompt: "Is the runtime probe section visible?",
+      context: "Passive runtime probe section should be visible in Graph Visual Inventory.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v46-probe-labeled-passive",
+      prompt: "Is the probe labeled passive/read-only?",
+      context: "Probe title and description should indicate passive readout with no mutation.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v46-probe-reports-evidence",
+      prompt: "Does the probe report evidence?",
+      context: "Probe should report registry entries count and mutation boundaries (locked/deferred, forbidden).",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v46-no-enabled-controls",
+      prompt: "Are there no enabled controls in the probe?",
+      context: "Probe should have no buttons, inputs, or selects.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v46-graph-surface-mounts",
+      prompt: "Does the graph surface still mount?",
+      context: "Graph canvas should be visible with probe present.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v46-inventory-still-works",
+      prompt: "Does Graph Visual Inventory still work?",
+      context: "Inventory panel and registry rows should still be visible.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v46-typecheck-passes",
+      prompt: "Does typecheck pass with zero errors?",
+      context: "npm run typecheck should pass with zero errors.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v46-playwright-passes",
+      prompt: "Do Playwright tests pass with zero skips?",
+      context: "npm run qa:e2e should pass with zero failures and zero skips.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "v47-first-promoted-runtime-mutation",
+      title: "v47 First Promoted Runtime Mutation",
+      summary: "Implement first actual runtime graph mutation after boundary contract and passive probe are accepted",
+      rationale: "After v46 passive probe is accepted, v47 can implement the first actual runtime graph mutation with specific contract and full evidence.",
+      risk: "high",
+      recommendedNextAction: "Define specific mutation contract (e.g., physics tuning) before implementation",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "v47 First Promoted Runtime Mutation",
+      whyItMatters: "Implement first actual runtime graph mutation after boundary contract and passive probe are accepted.",
+      suggestedFutureBite: "Define specific mutation contract (e.g., physics tuning) and implement with full evidence",
+      risk: "high",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "v48 Graph Visual Mapping",
+      whyItMatters: "Implement theme mapping for graph visual elements after runtime boundaries are established.",
+      suggestedFutureBite: "Add theme mapping for graph colors, background, borders",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "v49 Graph Physics Controls",
+      whyItMatters: "Implement graph physics controls after visual mapping is in place.",
+      suggestedFutureBite: "Add physics sliders for node size, link distance, repel force",
+      risk: "high",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV40: BanditAdvisorySection = {
   questions: [
     {
@@ -3556,6 +3663,9 @@ export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
   }
   if (qaKey === "v45") {
     return advisoryV45;
+  }
+  if (qaKey === "v46") {
+    return advisoryV46;
   }
   if (qaKey === "v41") {
     return advisoryV41;
