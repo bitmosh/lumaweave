@@ -4,6 +4,10 @@
 
 This document documents future handles for theme customization and Mission Control / Agent Chat features. All handles in this document are classified as PLANNED.
 
+## v31 Note
+
+As of v31, visual handles in 09_VISUAL_HANDLE_LIBRARY.md now cite canonical token paths from THEME_TOKEN_PATH_MAP.md. This document remains focused on planned settings handles for future Theme Mapping controls.
+
 ## Theme Handles
 
 ### appearance.theme

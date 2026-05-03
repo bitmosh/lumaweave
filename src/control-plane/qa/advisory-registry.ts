@@ -399,6 +399,97 @@ export const advisoryV30b: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV31: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v31-visual-handle-docs-updated",
+      prompt: "Does the Visual Handle Library doc cite v31 and include canonical token paths for active handles?",
+      context: "Active handles (lw-panel, lw-card, lw-badge, lw-divider, lw-control-grid) must cite canonical token paths matching Theme Target Registry bindings.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v31-active-handles-cite-correct-paths",
+      prompt: "Do lw-panel, lw-card, lw-badge, lw-divider cite the correct canonical token paths?",
+      context: "lw-panel should cite panel.background, panel.border, text.primary. lw-card should cite panel.background, panel.border, text.primary. lw-badge should cite accent.primary, text.primary. lw-divider should cite panel.border.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v31-scaffolded-handles-cite-planned-paths",
+      prompt: "Do scaffolded handles cite only canonical token paths (not planned tokens)?",
+      context: "lw-button should cite only text.primary, accent.primary (control.background/control.border are planned and not promoted). lw-node-glow should cite graph.node.fill, effects.glow.intensity. lw-edge-glow should cite graph.edge.stroke, effects.glow.intensity.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v31-no-planned-tokens-promoted",
+      prompt: "Are no planned-only token paths promoted to canonical in this pass?",
+      context: "control.background, control.border, and other planned tokens must remain in the planned section of THEME_TOKEN_PATH_MAP.md and not be cited as canonical in visual handle docs.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v31-token-paths-match-registry",
+      prompt: "Do visual handle token paths align with Theme Target Registry surface bindings?",
+      context: "lw-panel paths should match mission-control.panel and settings.panel bindings. lw-card paths should match mission-control.*card bindings. All cited paths must exist in THEME_TOKEN_PATH_MAP.md.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v31-no-runtime-changes",
+      prompt: "Did this pass avoid CSS, component, or runtime code changes (docs-only)?",
+      context: "v31 is a docs/contract/QA pass to prevent drift between visual handles and canonical tokens. No runtime changes should occur.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "generated-readonly-controls",
+      title: "Generated read-only Theme Mapping controls",
+      summary: "Emit deterministic disabled controls per editable property now that handles cite tokens.",
+      rationale: "Visual handles now cite canonical token paths, enabling trustworthy control generation scaffolding.",
+      risk: "medium",
+      recommendedNextAction: "Prototype generated disabled controls referencing the handle/token table after v31.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "Generated read-only Theme Mapping controls",
+      whyItMatters: "Now that handles cite canonical token paths, we can generate trustworthy disabled controls per editable property.",
+      suggestedFutureBite: "Emit deterministic disabled controls per editable property referencing the handle/token table.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "Theme override/storage contract",
+      whyItMatters: "Editable controls cannot ship without a formal override data model and governance.",
+      suggestedFutureBite: "Define override schema, lifecycle, and QA evidence before any runtime mutation.",
+      risk: "high",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "Theme override storage + save preset",
+      whyItMatters: "Once overrides exist, presets and persistence unlock practical workflows.",
+      suggestedFutureBite: "Implement storage backend, preset save/load, reset/revert, and QA hooks after contract approval.",
+      risk: "medium",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV29: BanditAdvisorySection = {
   questions: [
     {
@@ -2146,6 +2237,9 @@ export const advisoryV17a: BanditAdvisorySection = {
 
 // Advisory lookup function - returns appropriate advisory based on qaKey
 export function getAdvisoryForChecklist(featureId: string, qaVersion: number, checklistKey: string): BanditAdvisorySection {
+  if (featureId === "visual-handles-cite-token-paths-v31" && (qaVersion === 31 || checklistKey === "v31")) {
+    return advisoryV31;
+  }
   if (featureId === "theme-mapping-panel-shell-v30b" && (qaVersion === 30 || checklistKey === "v30b")) {
     return advisoryV30b;
   }
@@ -2200,6 +2294,9 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number, ch
 
 // Advisory lookup function keyed by canonical qaKey
 export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
+  if (qaKey === "v31") {
+    return advisoryV31;
+  }
   if (qaKey === "v30b") {
     return advisoryV30b;
   }

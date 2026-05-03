@@ -1,7 +1,10 @@
-# UI Surface & Handle Inventory (v23 Planning, updated v28 contract references)
+# UI Surface & Handle Inventory (v23 Planning, updated v28 contract references, updated v31 token path citations)
 
 ## Purpose
 Establish a single additive reference for every front-facing UI surface that may eventually become theme-editable, inspected via the UI Inspector, or exposed through the future Theme Mapping Panel. This inventory keeps DOM/UI concerns separate from graph-rendered elements and prevents accidental drift between ThemeTargetRegistry, visual handles, QA evidence, and Playwright selectors. As of v28 planning, the new [Theme Mapping Panel Entry Contract](./THEME_MAPPING_PANEL_ENTRY_CONTRACT.md) inherits this inventory as a prerequisite for any editable surface.
+
+## v31 Note
+As of v31, visual handles in 09_VISUAL_HANDLE_LIBRARY.md cite canonical token paths from THEME_TOKEN_PATH_MAP.md. This inventory references those handles and their token bindings to prevent drift between visual handles, Theme Target Registry, and canonical tokens.
 
 ## Source-of-Truth Relationships
 - **ThemeTargetRegistry** (`src/themes/themeTargetRegistry.ts`) — authoritative list of themeTargetId values, surfaces, and canonical ThemeTokenPath bindings.

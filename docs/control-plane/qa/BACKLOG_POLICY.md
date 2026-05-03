@@ -1,5 +1,8 @@
 # QA Backlog Policy
 
+## v31 Note
+As of v31, visual handles in 09_VISUAL_HANDLE_LIBRARY.md cite canonical token paths from THEME_TOKEN_PATH_MAP.md. This prevents drift between visual handles, Theme Target Registry token bindings, and canonical tokens before generated Theme Mapping controls are implemented. This is a docs/contract/QA pass with no runtime changes.
+
 ## Backlog Auto-Management Rule
 
 A backlog item can be promoted during the pass that implements it, but after acceptance it must be marked completed, removed from active candidates, or converted into explicit follow-up subtasks.

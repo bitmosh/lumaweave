@@ -13,8 +13,8 @@ import {
 } from "./helpers/qa";
 import type { ThemeTargetProbeResult } from "../../src/themes/themeTargetHeuristics";
 
-const CURRENT_QA_KEY = "v30b";
-const PRIMARY_PROPOSAL_ID = "visual-handles-cite-token-paths";
+const CURRENT_QA_KEY = "v31";
+const PRIMARY_PROPOSAL_ID = "generated-readonly-controls";
 const SECONDARY_PROPOSAL_ID = "generated-readonly-controls";
 
 type ProbeWindow = Window & {
@@ -251,13 +251,13 @@ test("Bandit Backlog Top 10 renders", async ({ page }) => {
   await expect(backlogItem.getByTestId("bandit-backlog-title")).not.toHaveText("");
 });
 
-test("v30b is default active checklist", async ({ page }) => {
+test("v31 is default active checklist", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await expectCurrentQaKey(page, CURRENT_QA_KEY);
 });
 
-test("v30b identity diagnostics visible in Debug tab", async ({ page }) => {
+test("v31 identity diagnostics visible in Debug tab", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
 
@@ -338,7 +338,7 @@ test("advisory backlog reorder persists through tab switching", async ({ page })
   await expect(page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title")).toHaveText(reorderedFirstTitle || "");
 });
 
-test("v30b advisory questions cite Theme Mapping shell contract", async ({ page }) => {
+test("v31 advisory questions cite visual handles token paths contract", async ({ page }) => {
   await page.goto("/");
 
   // QA panel is in the left dock - use nth(1) to get the main panel
@@ -349,22 +349,20 @@ test("v30b advisory questions cite Theme Mapping shell contract", async ({ page 
   const advisoryTab = page.getByTestId("qa-tab-advisory");
   await advisoryTab.click();
 
-  // Verify v30b-specific question identifiers are visible
+  // Verify v31-specific question identifiers are visible
   const pageContent = await page.content();
-  expect(pageContent).toContain("v30b-empty-state");
-  expect(pageContent).toContain("v30b-registered-metadata");
-  expect(pageContent).toContain("v30b-candidate-metadata-only");
-  expect(pageContent).toContain("v30b-no-editable-controls");
-  expect(pageContent).toContain("v30b-storage-locked");
-  expect(pageContent).toContain("v30b-no-runtime-mutation");
-  expect(pageContent).toContain("v30b-inspector-invariants");
+  expect(pageContent).toContain("v31-visual-handle-docs-updated");
+  expect(pageContent).toContain("v31-active-handles-cite-correct-paths");
+  expect(pageContent).toContain("v31-scaffolded-handles-cite-planned-paths");
+  expect(pageContent).toContain("v31-token-paths-match-registry");
+  expect(pageContent).toContain("v31-no-runtime-changes");
 
-  // Verify v29 lock/pin advisory is no longer the active set
-  expect(pageContent).not.toContain("pin-hotkey");
-  expect(pageContent).not.toContain("pin-registered-flow");
+  // Verify v30b Theme Mapping advisory is no longer the active set
+  expect(pageContent).not.toContain("v30b-empty-state");
+  expect(pageContent).not.toContain("v30b-registered-metadata");
 });
 
-test("v30b report includes Advisory Set Key", async ({ page }) => {
+test("v31 report includes Advisory Set Key", async ({ page }) => {
   await page.goto("/");
 
   // Complete checklist and submit report using helper
@@ -373,12 +371,12 @@ test("v30b report includes Advisory Set Key", async ({ page }) => {
   // Get last report text
   const reportText = await getLastReportText(page);
 
-  // Verify report includes Advisory Set Key: v30b
+  // Verify report includes Advisory Set Key: v31
   expect(reportText).toContain("Advisory Set Key:");
   expect(reportText).toContain(CURRENT_QA_KEY);
 });
 
-test("v30b report stays blocked when Theme Mapping checks are unverified", async ({ page }) => {
+test("v31 report stays blocked when visual handle checks are unverified", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openChecklistTab(page);
@@ -392,7 +390,7 @@ test("v30b report stays blocked when Theme Mapping checks are unverified", async
   expect(reportText).not.toContain("**ACCEPT**");
 });
 
-test("v30b acceptance decision requires zero blocked or unverified", async ({ page }) => {
+test("v31 acceptance decision requires zero blocked or unverified", async ({ page }) => {
   await page.goto("/");
   await completeChecklistAndSubmitReport(page);
 
@@ -403,27 +401,22 @@ test("v30b acceptance decision requires zero blocked or unverified", async ({ pa
   expect(reportText).toContain("- Unverified: 0");
 });
 
-test("v30b checklist includes Theme Mapping shell checks", async ({ page }) => {
+test("v31 checklist includes visual handles token paths checks", async ({ page }) => {
   await page.goto("/");
   await expectChecklistContainsChecks(page, [
-    "v30b is default active checklist",
-    "Theme Mapping Panel renders",
-    "Empty state renders with no pinned target",
-    "Registered target displays metadata",
-    "Registered target lists token bindings",
-    "Future controls are disabled/read-only",
-    "Storage lock notice",
-    "Pinned candidate displays diagnostic metadata",
-    "Candidates do not show editable controls",
-    "Pin/unpin behavior still works",
-    "Inspector/ghost/warning layer preserved",
-    "No editing/storage schema changes",
+    "v31 is default active checklist",
+    "Visual Handle Library updated to v31",
+    "Active handles cite canonical token paths",
+    "Scaffolded handles cite only canonical token paths",
+    "No planned-only token path is promoted to canonical",
+    "Token path citations match Theme Target Registry",
+    "No runtime changes (docs-only pass)",
     "Typecheck passes",
     "Playwright passes with 0 skipped",
   ]);
 });
 
-test("v30b proposal decisions and backlog order persist after submit", async ({ page }) => {
+test("v31 proposal decisions and backlog order persist after submit", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);
