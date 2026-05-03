@@ -626,6 +626,81 @@ export const advisoryV38: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV40: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v40-element-registry-contract-exists",
+      prompt: "Does the Graph View Element Registry contract exist?",
+      context: "docs/graph/GRAPH_VIEW_ELEMENT_REGISTRY_CONTRACT.md should exist with all required sections.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v40-visual-policy-contract-exists",
+      prompt: "Does the Graph Visual Policy contract exist?",
+      context: "docs/graph/GRAPH_VISUAL_POLICY.md should exist with all required sections.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v40-no-runtime-implementation",
+      prompt: "Is the implementation docs-only with no runtime code?",
+      context: "Contracts should be docs-only, no runtime Element Registry or Visual Policy enforcement exists.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v40-no-graph-mutation",
+      prompt: "Do the contracts mutate graph/Sigma renderer?",
+      context: "Contracts should not mutate graph/Sigma renderer or behavior.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v40-no-visual-changes",
+      prompt: "Do the contracts change current graph visual behavior?",
+      context: "Contracts should not change current graph visual behavior.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "v41-graph-visual-registry-v0",
+      title: "v41 Graph Visual Registry v0",
+      summary: "Implement typed inventory of graph visual elements after policy is accepted",
+      rationale: "After v40 policy is accepted, v41 can implement runtime graph element registry v0.",
+      risk: "high",
+      recommendedNextAction: "Implement in v41 after v40 is accepted",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "v41 Graph Visual Registry v0",
+      whyItMatters: "Implement typed inventory of graph visual elements after policy is accepted.",
+      suggestedFutureBite: "Create runtime graph element registry v0",
+      risk: "high",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "v42 Graph Physics Test Hardening",
+      whyItMatters: "Expand test coverage for graph physics behavior after registry is in place.",
+      suggestedFutureBite: "Add more comprehensive graph physics tests",
+      risk: "medium",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV39: BanditAdvisorySection = {
   questions: [
     {
@@ -3079,6 +3154,9 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number, ch
 
 // Advisory lookup function keyed by canonical qaKey
 export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
+  if (qaKey === "v40") {
+    return advisoryV40;
+  }
   if (qaKey === "v39") {
     return advisoryV39;
   }
