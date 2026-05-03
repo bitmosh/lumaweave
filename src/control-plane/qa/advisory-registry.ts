@@ -482,6 +482,73 @@ export const advisoryV34b: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV36a: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v36a-shell-visible",
+      prompt: "Is the Command Deck shell visible in Mission Control?",
+      context: "Command Deck panel should appear in the left sidebar below the QA panel.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v36a-shell-readonly",
+      prompt: "Does the shell display read-only status correctly?",
+      context: "Shell should show 'Read-Only Shell' status and locked/deferred execution message.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v36a-no-execution-controls",
+      prompt: "Are there no command execution controls in the shell?",
+      context: "Shell must have no enabled buttons or execution handlers - it is a discovery surface only.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v36a-no-new-hotkeys",
+      prompt: "Were no new hotkeys added?",
+      context: "v36a must not add any new keyboard shortcuts. Only existing Alt+Shift+I and Alt+Shift+P should remain.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "v36b-hotkey-inventory",
+      title: "v36b Hotkey Registry Inventory",
+      summary: "Add read-only Hotkey Registry inventory showing accepted hotkeys and banned hotkey policy",
+      rationale: "After the Command Deck shell exists, users need to see which hotkeys are registered and which are banned.",
+      risk: "low",
+      recommendedNextAction: "Implement in v36b after v36a is accepted",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "v36b Hotkey Registry Inventory",
+      whyItMatters: "Users need visibility into the hotkey registry and banned hotkey policy.",
+      suggestedFutureBite: "Add read-only inventory panel showing Alt+Shift+I, Alt+Shift+P, and banned hotkey list",
+      risk: "low",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "v36c Command Registry Metadata",
+      whyItMatters: "Users need to see command metadata (name, description, category) in the Command Deck.",
+      suggestedFutureBite: "Add command registry metadata display in Command Deck shell",
+      risk: "low",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV34c1: BanditAdvisorySection = {
   questions: [
     {

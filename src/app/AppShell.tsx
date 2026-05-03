@@ -3,6 +3,7 @@ import { SettingsPanel } from "../control-plane/settings/SettingsPanel";
 import { QaPanel } from "../control-plane/qa/QaPanel";
 import { InspectorPanel } from "../control-plane/panels/InspectorPanel";
 import { CollapsiblePanel } from "../control-plane/panels/CollapsiblePanel";
+import { CommandDeckPanel } from "../control-plane/command-deck/CommandDeckPanel";
 import { useSettingsStore } from "../control-plane/settings/settings.store";
 import { useGraphSourceSummary } from "../graph/ingest/useGraphSourceSummary";
 import { SigmaGraphView } from "../graph/renderers/sigma2d/SigmaGraphView";
@@ -342,6 +343,26 @@ export function AppShell() {
                   themePanelBorder={themeTokens.app.panelBorder}
                   themeInspectorEnabled={themeInspectorEnabled}
                   onThemeInspectorToggle={() => setThemeInspectorEnabled((prev) => !prev)}
+                />
+              </div>
+            </div>
+
+            <div
+              className="mt-4 rounded-xl p-4"
+              data-testid="command-deck-panel"
+              style={{
+                border: `1px solid ${themeTokens.app.panelBorder}`,
+                backgroundColor: `${themeTokens.app.background}70`,
+              }}
+            >
+              <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
+                Command Deck
+              </h3>
+              <div className="min-h-0">
+                <CommandDeckPanel
+                  themeAccent={themeTokens.app.accent}
+                  themeTextMuted={themeTokens.app.textMuted}
+                  themePanelBorder={themeTokens.app.panelBorder}
                 />
               </div>
             </div>
