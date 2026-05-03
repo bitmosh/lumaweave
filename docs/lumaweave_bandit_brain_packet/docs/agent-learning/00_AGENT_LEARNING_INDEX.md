@@ -43,6 +43,8 @@ Modernization means preserving accepted contracts while wrapping them in clearer
 | `14_MCP_TOOL_SUITE_PROTOCOL.md` | Defines when and how Bandit should use Sequential Thinking, Context7, and Playwright MCP during LumaWeave work. |
 | `15_BANDIT_ABILITY_AUDIT.md` | Profiles Bandit's current strengths, weaknesses, abilities, upgrade priorities, boss fights, and training rules. |
 | `16_PLAYWRIGHT_WORKING_PATTERN_DIFF_AUDIT.md` | Defines how Bandit should compare failing tests against working Playwright patterns and the last accepted green commit before repairing cascades. |
+| `17_SELF_IMPROVEMENT_SUGGESTION_BOX.md` | Tracks recurring Bandit friction, weaknesses, near-misses, and proposed operating improvements. |
+| `18_PASS_FRICTION_REPORT_TEMPLATE.md` | Template for after-action friction reports after failed, risky, recovery, Playwright-heavy, or Quest Mode passes. |
 | `graphs/identity_system_graph.md` | Relationship graph for IDs, contracts, runtime, DOM, and tests. |
 | `graphs/theme_contract_pipeline.md` | Theme Token Path → Theme Target Registry → DOM marker → overlay → QA pipeline. |
 | `graphs/qa_contract_pipeline.md` | QA/advisory/test evidence pipeline. |
@@ -71,6 +73,16 @@ For MCP-assisted work, uncertain API behavior, UI inspection, or graph physics p
 ```txt
 14_MCP_TOOL_SUITE_PROTOCOL.md
 15_BANDIT_ABILITY_AUDIT.md
+```
+
+For recovery, postmortem, or repeated-agent-error work, read:
+
+```txt
+04_FAULT_POINT_LEDGER.md
+06_PASS_POSTMORTEM_TEMPLATE.md
+15_BANDIT_ABILITY_AUDIT.md
+17_SELF_IMPROVEMENT_SUGGESTION_BOX.md
+18_PASS_FRICTION_REPORT_TEMPLATE.md
 ```
 
 ## Agent Operating Loop
