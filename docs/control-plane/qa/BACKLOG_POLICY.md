@@ -79,8 +79,10 @@ Prioritize upcoming systems by **input contracts**, not feature excitement. Foll
 14. **Graph Registry Alignment / Contract Sync** — **completed (v43)**.
 15. **Graph Evidence Hardening** — **completed (v44)**.
 16. **Graph Runtime Boundary Contract** — **completed (v45)**.
-17. **First Passive Graph Runtime Probe** — **current pass (v46)**.
-18. **Graph visual/theme mapping** (after runtime boundary contract and passive probe).
+17. **First Passive Graph Runtime Probe** — **completed (v46)**.
+18. **First Promoted Graph Runtime Mutation Contract** — **current pass (v47)**.
+19. **First Safe Graph Runtime Mutation** — **next (v48)**.
+20. **Graph visual/theme mapping** (after runtime boundary contract, passive probe, and first safe mutation).
 
 Guardrails:
 - Do **not** implement storage before override semantics exist (v33).

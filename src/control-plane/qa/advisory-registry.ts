@@ -1124,6 +1124,177 @@ export const advisoryV46: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV47: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v47-mutation-contract-exists",
+      prompt: "Does the First Graph Runtime Mutation Contract exist?",
+      context: "docs/graph/FIRST_GRAPH_RUNTIME_MUTATION_CONTRACT.md should exist with all 19 required sections.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v47-first-mutation-candidate-defined",
+      prompt: "Is the first mutation candidate defined?",
+      context: "Graph Evidence Detail Mode should be clearly defined as the first mutation candidate.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v47-allowed-boundary-clear",
+      prompt: "Is the allowed mutation boundary clear?",
+      context: "Allowed mutation boundary should be clearly defined (app-level UI state only).",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v47-forbidden-boundary-clear",
+      prompt: "Are the forbidden mutation boundaries clear?",
+      context: "Forbidden mutation boundaries should be clearly defined (Sigma, physics, camera, filter, data, commands, hotkeys).",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v47-sigma-non-mutation-guarantee",
+      prompt: "Is the Sigma non-mutation guarantee explicit?",
+      context: "Sigma/renderer non-mutation guarantee should be explicit.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v47-physics-non-mutation-guarantee",
+      prompt: "Is the physics non-mutation guarantee explicit?",
+      context: "Physics/layout non-mutation guarantee should be explicit.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v47-camera-non-mutation-guarantee",
+      prompt: "Is the camera non-mutation guarantee explicit?",
+      context: "Camera/filter non-mutation guarantee should be explicit.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v47-storage-boundary-clear",
+      prompt: "Is the storage boundary clear?",
+      context: "No persistence should be explicitly required.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v47-command-deck-boundary-clear",
+      prompt: "Is the command deck boundary clear?",
+      context: "No command execution should be explicitly required.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v47-hotkey-boundary-clear",
+      prompt: "Is the hotkey boundary clear?",
+      context: "No hotkeys should be explicitly required.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v47-accessibility-requirements-defined",
+      prompt: "Are accessibility requirements defined?",
+      context: "Accessibility requirements should be defined.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v47-playwright-evidence-requirements-defined",
+      prompt: "Are Playwright evidence requirements defined?",
+      context: "Playwright evidence requirements should be defined.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v47-v48-preconditions-defined",
+      prompt: "Are v48 preconditions defined?",
+      context: "v48 preconditions should be clear and testable.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v47-v49-promotion-path-defined",
+      prompt: "Is the v49+ promotion path defined?",
+      context: "v49+ promotion path should be defined.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v47-typecheck-passes",
+      prompt: "Does typecheck pass with zero errors?",
+      context: "npm run typecheck should pass with zero errors.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v47-playwright-passes",
+      prompt: "Do Playwright tests pass with zero skips?",
+      context: "npm run qa:e2e should pass with zero failures and zero skips.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "v48-graph-evidence-detail-mode",
+      title: "v48 Graph Evidence Detail Mode",
+      summary: "Implement the first safe promoted graph runtime mutation as app-level UI state only",
+      rationale: "After v47 contract is accepted, v48 can implement Graph Evidence Detail Mode - a non-persistent UI mode that switches displayed evidence text between Summary and Detailed.",
+      risk: "medium",
+      recommendedNextAction: "Implement local React state for Summary/Detailed mode in GraphVisualInventoryPanel with Playwright tests",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "v48 Graph Evidence Detail Mode",
+      whyItMatters: "Implement the first safe promoted graph runtime mutation as app-level UI state only.",
+      suggestedFutureBite: "Add local React state for Summary/Detailed mode in GraphVisualInventoryPanel",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "v49 First Real Graph/Sigma Mutation",
+      whyItMatters: "After v48 proves app-level UI mutation is safe, v49 can implement the first real graph/Sigma mutation with new explicit contract.",
+      suggestedFutureBite: "Define specific mutation contract (e.g., physics tuning) and implement with full evidence",
+      risk: "high",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "v50 Graph Visual Mapping",
+      whyItMatters: "After runtime boundaries are established, implement theme mapping for graph visual elements.",
+      suggestedFutureBite: "Add theme mapping for graph colors, background, borders",
+      risk: "medium",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV40: BanditAdvisorySection = {
   questions: [
     {
@@ -3666,6 +3837,9 @@ export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
   }
   if (qaKey === "v46") {
     return advisoryV46;
+  }
+  if (qaKey === "v47") {
+    return advisoryV47;
   }
   if (qaKey === "v41") {
     return advisoryV41;
