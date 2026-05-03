@@ -918,6 +918,105 @@ export const advisoryV44: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV45: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v45-contract-exists",
+      prompt: "Does the Graph Runtime Boundary Contract exist?",
+      context: "docs/graph/GRAPH_RUNTIME_BOUNDARY_CONTRACT.md should exist with all 20 required sections.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v45-sigma-boundary-defined",
+      prompt: "Does the contract define Sigma/renderer boundary without mutation?",
+      context: "Contract should define Sigma as black box with no mutation allowed in v45/v46.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v45-physics-boundary-defined",
+      prompt: "Does the contract define physics boundary without mutation?",
+      context: "Contract should define physics as protected subsystem with no mutation allowed in v45/v46.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v45-passive-observation-defined",
+      prompt: "Does the contract define passive observation boundary for v46?",
+      context: "Contract should define what is allowed/forbidden in passive observation zone.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v45-forbidden-categories-defined",
+      prompt: "Are forbidden until promoted categories clearly defined?",
+      context: "Contract should clearly list what runtime mutations are forbidden until v47+.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v45-typecheck-passes",
+      prompt: "Does typecheck pass with zero errors?",
+      context: "npm run typecheck should pass with zero errors.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v45-playwright-passes",
+      prompt: "Do Playwright tests pass with zero skips?",
+      context: "npm run qa:e2e should pass with zero failures and zero skips.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "v46-passive-graph-runtime-probe",
+      title: "v46 First Passive Graph Runtime Probe",
+      summary: "Implement the smallest safe passive graph runtime probe/readout",
+      rationale: "After v45 runtime boundary contract is accepted, v46 can implement a passive probe that observes existing graph container/evidence status without mutation.",
+      risk: "low",
+      recommendedNextAction: "Implement in v46 after v45 is accepted",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "v46 First Passive Graph Runtime Probe",
+      whyItMatters: "Implement passive observation of graph container/evidence status before any actual runtime mutation.",
+      suggestedFutureBite: "Add passive readout panel that reports graph frame, surface, registry, and inventory status",
+      risk: "low",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "v47 First Promoted Runtime Mutation",
+      whyItMatters: "Implement first actual runtime graph mutation after boundary contract and passive probe are accepted.",
+      suggestedFutureBite: "Define specific mutation contract (e.g., physics tuning) and implement with full evidence",
+      risk: "high",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "v48 Graph Visual Mapping",
+      whyItMatters: "Implement theme mapping for graph visual elements after runtime boundaries are established.",
+      suggestedFutureBite: "Add theme mapping for graph colors, background, borders",
+      risk: "medium",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV40: BanditAdvisorySection = {
   questions: [
     {
@@ -3454,6 +3553,9 @@ export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
   }
   if (qaKey === "v44") {
     return advisoryV44;
+  }
+  if (qaKey === "v45") {
+    return advisoryV45;
   }
   if (qaKey === "v41") {
     return advisoryV41;

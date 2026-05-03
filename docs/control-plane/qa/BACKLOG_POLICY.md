@@ -77,8 +77,10 @@ Prioritize upcoming systems by **input contracts**, not feature excitement. Foll
 12. **Graph View Element Registry v0** — **completed (v41)**.
 13. **Graph Visual Inventory** — **completed (v42)**.
 14. **Graph Registry Alignment / Contract Sync** — **completed (v43)**.
-15. **Graph Evidence Hardening** — **current pass (v44)**.
-16. **Graph visual/theme mapping** (after registry/policy refresh).
+15. **Graph Evidence Hardening** — **completed (v44)**.
+16. **Graph Runtime Boundary Contract** — **current pass (v45)**.
+17. **First Passive Graph Runtime Probe** — **next (v46)**.
+18. **Graph visual/theme mapping** (after runtime boundary contract and passive probe).
 
 Guardrails:
 - Do **not** implement storage before override semantics exist (v33).
