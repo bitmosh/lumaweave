@@ -8,9 +8,9 @@ import {
   openAdvisoryTab,
 } from "./helpers/qa";
 
-const CURRENT_QA_KEY = "v25";
-const PRIMARY_PROPOSAL_ID = "registered-unregistered-heuristic-plan";
-const SECONDARY_PROPOSAL_ID = "inspector-lock-mode-plan";
+const CURRENT_QA_KEY = "v26";
+const PRIMARY_PROPOSAL_ID = "warning-badge-implementation-plan";
+const SECONDARY_PROPOSAL_ID = "lock-pin-behavior-plan";
 
 test("Mission Control tabs are visible", async ({ page }) => {
   await page.goto("/");
@@ -242,13 +242,13 @@ test("Bandit Backlog Top 10 renders", async ({ page }) => {
   await expect(backlogItem.getByTestId("bandit-backlog-title")).not.toHaveText("");
 });
 
-test("v25 is default active checklist", async ({ page }) => {
+test("v26 is default active checklist", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await expectCurrentQaKey(page, CURRENT_QA_KEY);
 });
 
-test("v25 identity diagnostics visible in Debug tab", async ({ page }) => {
+test("v26 identity diagnostics visible in Debug tab", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
 
@@ -325,12 +325,12 @@ test("v25 advisory questions are specific to current pass", async ({ page }) => 
   const advisoryTab = page.getByTestId("qa-tab-advisory");
   await advisoryTab.click();
 
-  // Verify v25-specific questions are visible
+  // Verify v26-specific questions are visible
   const pageContent = await page.content();
-  expect(pageContent).toContain("ghost-layer-visual-proof");
-  expect(pageContent).toContain("nested-control-outline-guard");
-  expect(pageContent).toContain("ghost-layer-pointer-events-none-proof");
-  expect(pageContent).toContain("ghost-layer-graph-separation");
+  expect(pageContent).toContain("heuristic-signal-proof");
+  expect(pageContent).toContain("heuristic-never-warn-proof");
+  expect(pageContent).toContain("sigma-separation-proof");
+  expect(pageContent).toContain("no-warning-runtime-change");
 
   // Verify old v15/v13/v16d/v17 questions are NOT visible (stale questions should not appear)
   expect(pageContent).not.toContain("Mission Control Advisory cleanup");
@@ -339,7 +339,7 @@ test("v25 advisory questions are specific to current pass", async ({ page }) => 
   expect(pageContent).not.toContain("visual-handle-token-declaration");
 });
 
-test("v25 report includes Advisory Set Key", async ({ page }) => {
+test("v26 report includes Advisory Set Key", async ({ page }) => {
   await page.goto("/");
 
   // Complete checklist and submit report using helper
@@ -348,22 +348,23 @@ test("v25 report includes Advisory Set Key", async ({ page }) => {
   // Get last report text
   const reportText = await getLastReportText(page);
 
-  // Verify report includes Advisory Set Key: v25
+  // Verify report includes Advisory Set Key: v26
   expect(reportText).toContain("Advisory Set Key:");
   expect(reportText).toContain(CURRENT_QA_KEY);
 });
 
-test("v25 checklist includes ghost overlay checks", async ({ page }) => {
+test("v26 checklist includes heuristic planning checks", async ({ page }) => {
   await page.goto("/");
   await expectChecklistContainsChecks(page, [
-    "Ghost overlay renders only when UI Inspector is ON",
-    "Registered surfaces receive outlines",
-    "Ghost layer remains pointer-events none",
-    "No registered/unregistered warnings yet",
+    "Heuristic defines candidate major-surface signals",
+    "Heuristic defines never-warn categories",
+    "Sigma primitives remain excluded",
+    "Ghost overlay remains visual-only",
+    "No warning badges implemented",
   ]);
 });
 
-test("v25 proposal decisions and backlog order persist after submit", async ({ page }) => {
+test("v26 proposal decisions and backlog order persist after submit", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);

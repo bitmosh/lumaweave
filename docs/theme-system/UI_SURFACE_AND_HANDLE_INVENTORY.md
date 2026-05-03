@@ -78,6 +78,36 @@ Establish a single additive reference for every front-facing UI surface that may
 8. **Ghost overlay + registered/unregistered warnings must consult this model** — only major surfaces (and any future HUD containers) should be outlined; warnings must ignore expected unregistered nested elements.
 9. **Theme Mapping Panel will rely on componentRoleId + handleId** — when editable controls arrive, generated UI should reference these roles instead of inventing new theme targets per control.
 
+### v26 Registered/Unregistered Heuristic Planning
+
+The v26 planning pass defines how we will *detect* likely missing major-surface registrations **before** any runtime warnings exist. This is a model-only artifact; the UI Inspector overlay continues to render ghost outlines without badges.
+
+#### Candidate major-surface signals (need >=3 before considering a warning)
+- Structural container: element uses `.lw-panel`, `.lw-card`, `.lw-graph-hud`, or another documented major-surface handle.
+- Semantic landmark: carries `role="region"`, `aria-label`/`aria-labelledby`, or a `data-testid` naming a Mission Control / Settings / graph HUD section (`qa-panel`, `mission-control-backlog`, `settings-panel`, etc.).
+- Layout footprint: bounding box width >= 320px *or* height >= 120px **and** it contains at least two child content groups.
+- Control aggregation: wraps >=2 interactive controls (tabs, sliders, dropdowns, report tables) that rely on the container for context.
+- Graph-adjacent HUD: DOM sibling of `[data-testid="graph-viewport"]` that overlays graph stats without belonging to Sigma.
+- Registry proximity: nearest ancestor/descendant already appears in ThemeTargetRegistry but the visually distinct container lacks `data-lw-theme-target`.
+
+#### Never-warn categories (always excluded)
+- Buttons, tabs, sliders, dropdowns, badges, labels, values, static text, icons, status chips.
+- Specific control instances tracked via `handleId` / `settingsKey`.
+- Nested utility wrappers (`div`/`span` flex shims, `.lw-control-grid` children).
+- UI Inspector HUD + ghost overlay DOM, tooltip internals, QA debug scaffolding.
+- Sigma-rendered primitives: nodes, edges, labels, and canvas/WebGL internals.
+
+#### Evidence requirements before any warning is shown (future pass)
+1. Documentation in this file + the Graph View Element Registration Model describing signals, exclusions, and Sigma isolation.
+2. QA checklist (v26) proving the heuristic plan exists and no runtime changes shipped prematurely.
+3. Playwright/manual QA (future) confirming that intentionally de-registered major surfaces trigger warnings while nested controls and Sigma elements remain quiet.
+4. Conservative default: when signals disagree, emit "unknown" and do **not** warn.
+
+#### Operational constraints for v26
+- Ghost overlay remains visual-only; no badges, lock/pin, or editing UI.
+- No new `data-lw-theme-target` markers are added to nested controls.
+- Sigma/Graph renderer stays untouched; heuristics operate strictly on DOM surfaces listed in this inventory.
+
 ### Handling Nested Controls Until Theme Mapping
 - Buttons, tabs, dropdowns, etc. remain discoverable at the **component role** layer, not by attaching unique `data-lw-*` markers per instance.
 - When Theme Mapping Panel work begins, these roles will inform generated controls and token bindings; for now, document them with `visualHandle` + `data-testid` references so QA can trace behavior without runtime churn.

@@ -272,6 +272,110 @@ export const defaultAdvisoryV13: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV26: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "heuristic-signal-proof",
+      prompt: "Does documentation define the candidate major-surface signals (structural handle, landmark data-testid, layout footprint, control aggregation, graph HUD, registry proximity) and require >=3 before flagging?",
+      context: "v26 is a planning pass; we need a conservative heuristic before any runtime warnings exist.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "heuristic-never-warn-proof",
+      prompt: "Do the docs explicitly list never-warn categories (buttons, tabs, sliders, dropdowns, labels, values, badges, icons, text, nested wrappers, Sigma primitives)?",
+      context: "QA must ensure the heuristic never targets component roles, specific controls, or Sigma elements.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "sigma-separation-proof",
+      prompt: "Does the Graph View registry doc reiterate that Sigma nodes/edges/labels remain out-of-scope for DOM heuristics?",
+      context: "We cannot derive warnings from Sigma internals; DOM and Sigma registries stay separate.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "no-warning-runtime-change",
+      prompt: "Did we confirm no runtime overlay files changed while defining the heuristic?",
+      context: "Planning must not sneak in warning UI or overlay mutations.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "warning-badge-implementation-plan",
+      title: "Plan warning badge implementation",
+      summary: "Translate the heuristic into runtime signals (data collection, diffing, QA evidence) without shipping UI yet.",
+      rationale: "After planning, we need a blueprint for instrumentation + badge rendering before v27+ work.",
+      risk: "medium",
+      recommendedNextAction: "Outline data sources (ThemeTargetRegistry, DOM scan) and QA hooks for badge implementation.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+    {
+      id: "lock-pin-behavior-plan",
+      title: "Plan lock/pin selected target behavior",
+      summary: "Define UX + QA contract for pinning a target once heuristics & warnings exist.",
+      rationale: "Pinning depends on reliable warning context and must not regress Mission Control tasks.",
+      risk: "medium",
+      recommendedNextAction: "Document escape behaviors, keyboard flow, and QA instrumentation for lock mode.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "Inspector overlay hardening",
+      whyItMatters:
+        "Ghost overlay exists and the heuristic is being planned; we must finalize warnings + lock/pin before Theme Mapping.",
+      suggestedFutureBite:
+        "Child tasks:\n- Mission Control UI Inspector toggle (completed v24)\n- UI Part / Component Role Registration Model (completed v24a/v24b)\n- Ghost overlay registered-surface layer (completed v25)\n- Registered/unregistered heuristic (planning v26)\n- Lock/pin selected target behavior (future candidate)",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "Theme Mapping Panel v0",
+      whyItMatters: "Editing controls depend on overlay hardening + heuristics before exposing token editing.",
+      suggestedFutureBite:
+        "Dependencies: Inspector overlay hardening + warning heuristic proof. Includes governance polish so registry context shows up in QA evidence.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "Theme override storage + save preset",
+      whyItMatters: "Editing flows require durable storage before UI is exposed to operators.",
+      suggestedFutureBite: "Dependency: Theme Mapping Panel semantics.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 4,
+      title: "Graph physics Playwright coverage",
+      whyItMatters: "Physics sliders remain lightly tested; coverage is required before exposing more graph controls.",
+      suggestedFutureBite: "Add focused Playwright coverage for physics controls once selectors stabilize.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 5,
+      title: "Visual handles cite token paths",
+      whyItMatters: "Visual handle documentation must list canonical token paths once governance is enforced.",
+      suggestedFutureBite: "Document handle -> token bindings in the visual handle library and plan runtime bindings.",
+      risk: "medium",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV25: BanditAdvisorySection = {
   questions: [
     {
@@ -336,25 +440,40 @@ export const advisoryV25: BanditAdvisorySection = {
       whyItMatters:
         "Ghost overlay is now in place; we must immediately sequence heuristics before exposing editing controls.",
       suggestedFutureBite:
-        "Child tasks:\n- Mission Control UI Inspector toggle (completed v24)\n- UI Part / Component Role Registration Model (completed v24b)\n- Ghost overlay registered-surface layer (completed v25)\n- Registered/unregistered heuristic (next)\n- Lock/pin selected target behavior",
+        "Child tasks:\n- Mission Control UI Inspector toggle (completed v24)\n- UI Part / Component Role Registration Model (completed v24a/v24b)\n- Ghost overlay registered-surface layer (completed v25)\n- Registered/unregistered heuristic (next candidate)\n- Lock/pin selected target behavior (future candidate)",
       risk: "medium",
       status: "candidate",
     },
     {
       rank: 2,
-      title: "Registered/unregistered heuristic",
-      whyItMatters: "Operators need clear signals about missing registrations before Theme Mapping unlocks editing.",
+      title: "Theme Mapping Panel v0",
+      whyItMatters: "Editing controls depend on ghost overlay + heuristics before exposing token editing.",
       suggestedFutureBite:
-        "Design heuristic + QA validation referencing ThemeTargetRegistry + UI Part model; do not ship warnings until heuristic proven.",
+        "Dependencies: Inspector overlay hardening + registered/unregistered heuristic proof. Includes governance polish so registry context shows up in QA evidence.",
       risk: "medium",
       status: "candidate",
     },
     {
       rank: 3,
-      title: "Theme Mapping Panel v0",
-      whyItMatters: "Editing controls depend on ghost overlay + heuristics to be reliable.",
-      suggestedFutureBite:
-        "Dependencies: Inspector overlay hardening + heuristics + governance. Includes governance polish to surface signals in QA Debug.",
+      title: "Theme override storage + save preset",
+      whyItMatters: "Editing flows require durable storage before UI is exposed to operators.",
+      suggestedFutureBite: "Dependency: Theme Mapping Panel semantics.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 4,
+      title: "Graph physics Playwright coverage",
+      whyItMatters: "Physics sliders remain lightly tested; coverage is required before exposing more graph controls.",
+      suggestedFutureBite: "Add focused Playwright coverage for physics controls once selectors stabilize.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 5,
+      title: "Visual handles cite token paths",
+      whyItMatters: "Visual handle documentation must list canonical token paths once governance is enforced.",
+      suggestedFutureBite: "Document handle -> token bindings in the visual handle library and plan runtime bindings.",
       risk: "medium",
       status: "candidate",
     },
@@ -623,14 +742,6 @@ export const advisoryV21a: BanditAdvisorySection = {
     },
     {
       rank: 2,
-      title: "Token path governance check",
-      whyItMatters: "Linting canonical paths prevents drift as Theme Target Registry grows.",
-      suggestedFutureBite: "Ship npm run qa:no-skips + governance script",
-      risk: "low",
-      status: "candidate",
-    },
-    {
-      rank: 3,
       title: "Theme Mapping Panel v0",
       whyItMatters: "Actual Ableton-style controls require generating UI from Theme Target Registry entries.",
       suggestedFutureBite: "Generate read-write controls for mission-control.panel targets",
@@ -638,7 +749,7 @@ export const advisoryV21a: BanditAdvisorySection = {
       status: "candidate",
     },
     {
-      rank: 4,
+      rank: 3,
       title: "Theme override storage + save preset",
       whyItMatters: "Inspector adjustments need durable storage before they can ship to users.",
       suggestedFutureBite: "Design override schema mapping themeTargetId + tokenPath -> value",
@@ -646,10 +757,18 @@ export const advisoryV21a: BanditAdvisorySection = {
       status: "candidate",
     },
     {
-      rank: 5,
+      rank: 4,
       title: "Graph physics Playwright coverage",
       whyItMatters: "Physics sliders remain the largest chunk of missing UI coverage.",
       suggestedFutureBite: "Add e2e coverage once stable selectors exist for sliders",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 5,
+      title: "Visual handles cite token paths",
+      whyItMatters: "Visual handle documentation must list canonical token paths once governance is enforced.",
+      suggestedFutureBite: "Document handle -> token bindings in the visual handle library and plan runtime bindings.",
       risk: "medium",
       status: "candidate",
     },
@@ -764,10 +883,10 @@ export const advisoryV20: BanditAdvisorySection = {
     },
     {
       rank: 5,
-      title: "Token path governance check",
-      whyItMatters: "Linting canonical paths prevents drift as Theme Target Registry grows.",
-      suggestedFutureBite: "Ship npm run qa:no-skips + governance script",
-      risk: "low",
+      title: "Visual handles cite token paths",
+      whyItMatters: "Visual handle documentation must list canonical token paths once governance is enforced.",
+      suggestedFutureBite: "Document handle -> token bindings in the visual handle library and plan runtime bindings.",
+      risk: "medium",
       status: "candidate",
     },
   ],
@@ -873,10 +992,10 @@ export const advisoryV19: BanditAdvisorySection = {
     },
     {
       rank: 4,
-      title: "Token path governance check",
-      whyItMatters: "Any new theme affordance must cite canonical paths to prevent vocabulary drift after v19.",
-      suggestedFutureBite: "Add lint/validation command (npm run qa:contracts?) that flags unknown tokenPath strings.",
-      risk: "low",
+      title: "Visual handles cite token paths",
+      whyItMatters: "Visual handle metadata should reference canonical tokens once governance is in place to avoid drift.",
+      suggestedFutureBite: "Document handle -> token bindings in the visual handle library and plan runtime bindings.",
+      risk: "medium",
       status: "candidate",
     },
     {
@@ -1447,6 +1566,9 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number): B
 
 // Advisory lookup function keyed by canonical qaKey
 export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
+  if (qaKey === "v26") {
+    return advisoryV26;
+  }
   if (qaKey === "v25") {
     return advisoryV25;
   }
