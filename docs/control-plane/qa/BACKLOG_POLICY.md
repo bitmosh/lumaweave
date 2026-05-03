@@ -81,7 +81,7 @@ Prioritize upcoming systems by **input contracts**, not feature excitement. Foll
 16. **Graph Runtime Boundary Contract** — **completed (v45)**.
 17. **First Passive Graph Runtime Probe** — **completed (v46)**.
 18. **First Promoted Graph Runtime Mutation Contract** — **completed (v47)**.
-19. **First Safe Graph Runtime Mutation** — **current pass (v48)**.
+19. **First Safe Graph Runtime Mutation** — **completed (v48)**.
 20. **Graph visual/theme mapping** (after runtime boundary contract, passive probe, and first safe mutation).
 
 Guardrails:
