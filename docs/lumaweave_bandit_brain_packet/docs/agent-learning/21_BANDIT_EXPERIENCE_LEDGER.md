@@ -207,31 +207,38 @@ v53: Graph Theme Token Value Preview Contract (docs-only governance)
 v54: Graph Theme Token Value Preview (read-only value display)
 
 **What Went Well:**
-- Read-only inspection before any mutation
-- Token path metadata before value resolution
-- Playwright evidence for readout behavior
-- No Sigma/renderer mutation
-- No token value application
+- Contract-first approach: v53 contract defined token path metadata vs token value preview distinction
+- Read-only preview implementation: v54 displayed "metadata only (value preview deferred)" status
+- All forbidden boundaries respected (Sigma mutation, node/edge styling, CSS writes, storage, hotkeys)
+- Zero skipped tests in both v53 (208 passed) and v54 (219 passed, 11 new tests)
+- Playwright tests proved read-only behavior with no apply/edit/save controls
+- Clean Quest Mode split with separate commits for contract and implementation
 
 **Reusable Lesson:**
-Observation-before-mutation pattern works reliably. Build read-only registries and inspection UI before considering any runtime application. Display metadata as readout before resolving actual values.
+Token path metadata vs token value preview distinction is a critical boundary. Display metadata as readout before resolving actual values. Implement read-only preview modes before any application modes. Use Playwright evidence to prove read-only nature by asserting absence of apply/edit/save controls.
 
 **Behavior To Reinforce:**
-- Build passive/inventory modes before active/runtime modes
-- Display metadata before resolving values
-- Verify read-only nature with Playwright assertions
+- Define token path vs token value boundaries in contract before implementation
+- Display metadata as readout before resolving values
+- Use Playwright to assert absence of mutation controls in read-only modes
+- Maintain zero skipped tests as acceptance gate
+- Keep separate commits for contract and implementation
 
 **Evidence Pattern:**
-- Typecheck: PASS
-- Playwright: PASS
-- No skipped tests
+- v53: Typecheck 0 errors, Playwright 208 passed, 0 failures, 0 skips
+- v54: Typecheck 0 errors, Playwright 219 passed (11 new tests), 0 failures, 0 skips
+- No skipped tests: confirmed via grep
+- Post-commit git status: clean
 
 **Future Prompt / Protocol Improvement:**
-- Consider standardizing read-only mode patterns
+- Standardize read-only mode patterns with explicit absence-of-controls assertions
+- Consider adding automated checks for forbidden control presence
 
 **Related Abilities:**
+- Contract Sentinel
 - Evidence Guardian
 - Playwright Scout
+- Quest Splitter
 - Context Oracle
 
 **Status:**
