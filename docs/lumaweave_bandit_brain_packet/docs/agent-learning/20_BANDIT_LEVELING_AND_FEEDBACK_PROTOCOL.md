@@ -121,6 +121,7 @@ Titles awarded based on demonstrated abilities:
 - **Repo Root Warden**: Consistently verified repo root before all commands
 - **Graph Boundary Squire**: Respected graph/Sigma circuit breakers across multiple passes
 - **Quest Mode Initiate**: Successfully completed multi-step Quest Mode with clean sub-passes
+- **Graph Boundary Sentinel**: Enforced graph/Sigma circuit breakers in v50 implementation, explicitly forbidding Sigma/renderer mutation, node/edge styling changes, and runtime theme application
 
 ## How To Use In Quest Mode
 
