@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getThemeTargetById, type ThemeTargetContract } from "./themeTargetRegistry";
+import { installThemeTargetProbeGlobal, runAndRecordThemeTargetProbe } from "./themeTargetHeuristics";
 
 interface HoverState {
   themeTargetId: string;
@@ -18,6 +19,8 @@ interface GhostOutline {
   width: number;
   height: number;
 }
+
+installThemeTargetProbeGlobal();
 
 const HOTKEY_LABEL = "Alt+Shift+I";
 const GRAPH_VIEWPORT_SELECTOR = "[data-testid='graph-viewport']";
@@ -128,6 +131,8 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
       return;
     }
 
+    const runProbe = () => runAndRecordThemeTargetProbe();
+
     const handleMouseMove = (event: MouseEvent) => {
       const targetElement = (event.target as HTMLElement | null)?.closest<HTMLElement>(REGISTERED_TARGET_SELECTOR);
       if (!targetElement) {
@@ -184,9 +189,11 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
 
     const handleResizeOrScroll = () => {
       scheduleGhostOutlineUpdate();
+      runProbe();
     };
 
     scheduleGhostOutlineUpdate();
+    runProbe();
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("resize", handleResizeOrScroll);
     window.addEventListener("scroll", handleResizeOrScroll, true);
@@ -214,6 +221,7 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
           });
           if (shouldUpdate) {
             scheduleGhostOutlineUpdate();
+            runProbe();
           }
         })
       : null;

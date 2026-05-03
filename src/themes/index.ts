@@ -11,3 +11,4 @@ export * from "./themeTokenPaths";
 export * from "./themeTargetRegistry";
 export * from "./applyTheme";
 export { resolveGraphVisualTokens } from "./themeTokens";
+export * from "./themeTargetHeuristics";

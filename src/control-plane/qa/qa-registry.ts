@@ -45,7 +45,10 @@ export const qaCheckDefinitions: QaCheckDefinition[] = [
     steps: [
       "Open QA Debug tab",
       "Verify Runtime Probe Snapshot renders",
-      "Run window.__lwRunThemeTargetProbe() from devtools and confirm summary updates",
+      "Run npm run qa:e2e.",
+      "Confirm Playwright invokes window.__lwRunThemeTargetProbe via page.evaluate or another app-supported automation path.",
+      "Confirm QA Debug renders the Runtime Probe Snapshot with timestamp/run metadata.",
+      "Confirm no manual DevTools console execution is required.",
     ],
     required: true,
   },

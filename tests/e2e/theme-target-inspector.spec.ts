@@ -208,6 +208,7 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
   test("ghost overlay toggles via hotkey", async ({ page }) => {
     await page.goto("/");
 
+    await page.click("body");
     await page.keyboard.press("Alt+Shift+I");
     await expect(page.getByTestId("theme-target-ghost-layer")).toBeVisible();
 

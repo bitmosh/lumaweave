@@ -146,8 +146,18 @@ export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
 
 **Identity validation (v17 family and later):**
 - Submit-time validation checks that all identity surfaces agree on the canonical `qaKey`
-- If mismatch detected: block submission, show error, do not create report, do not reset form fields, do not update history
-- Debug tab displays identity diagnostics for troubleshooting
+- If mismatch detected: block submission, show error, do not create report, do not update history
+
+### Manual QA Evidence Policy (v27a correction)
+
+- QA checks must be executable by **one** of the following evidence paths:
+  1. Clicking or observing the LumaWeave app UI directly.
+  2. Reading an in-app QA Debug readout (e.g., Mission Control Debug tab entries).
+  3. Citing automated Playwright evidence that already exercises the behavior.
+- Do **not** require engineers to paste JavaScript into DevTools unless the user explicitly asks for a console-driven workflow.
+- When a Playwright spec covers the behavior, the checklist steps should reference that spec (and the `npm run qa:e2e` command) instead of manual scripting instructions.
+- Use this policy for all future checklist updates to keep QA evidence reproducible and free of ad-hoc DevTools snippets.
+- See `docs/lumaweave_bandit_brain_packet/docs/agent-learning/09_QA_PLAYWRIGHT_EVIDENCE_POLICY.md` for the canonical Bandit brain rules that must be mirrored in new QA passes.
 
 ## Bandit Questions
 

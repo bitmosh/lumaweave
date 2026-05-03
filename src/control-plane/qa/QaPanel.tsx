@@ -6,13 +6,14 @@ import { generateContractSummary } from "../contracts";
 import { getAdvisoryForQaKey } from "./advisory-registry";
 import { getThemeTargetSummary, getThemeTargetsBySurface } from "../../themes";
 import type { ThemeTargetContract, ThemeTargetSurface } from "../../themes";
+import { THEME_TARGET_PROBE_EVENT, type ThemeTargetProbeResult } from "../../themes/themeTargetHeuristics";
 
 const ACTIVE_CHECKLIST_STORAGE_KEY = "lumaweave-qa-active-checklist";
 const BACKLOG_STORAGE_KEY = "lumaweave-advisory-backlog-order";
 const QUESTION_ANSWER_STORAGE_KEY = "lumaweave-advisory-question-answers";
 const PROPOSAL_DECISIONS_STORAGE_KEY = "lumaweave-advisory-proposal-decisions";
-const DEFAULT_QA_KEY = "v26";
-const DEFAULT_FEATURE_ID = "registered-unregistered-heuristic-planning-v26";
+const DEFAULT_QA_KEY = "v27a";
+const DEFAULT_FEATURE_ID = "registered-unregistered-heuristic-runtime-probe-v27a";
 const PROPOSAL_DECISION_OPTIONS: readonly BanditProposalDecision[] = [
   "unreviewed",
   "accept-for-future",
@@ -97,12 +98,30 @@ export function QaPanel({
     return DEFAULT_FEATURE_ID; // Default feature
   });
 
-  const [activeQaVersion, setActiveQaVersion] = useState<number>(() => extractQaVersion(activeQaKey) ?? 18);
+  const [activeQaVersion, setActiveQaVersion] = useState<number>(() => extractQaVersion(activeQaKey) ?? 27);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [submitMessage, setSubmitMessage] = useState<string>("");
   const [localNotes, setLocalNotes] = useState<string>("");
   const [panelView, setPanelView] = useState<PanelView>("checklist");
   const [identityError, setIdentityError] = useState<string>("");
+  const [probeResult, setProbeResult] = useState<ThemeTargetProbeResult | null>(() => {
+    if (typeof window === "undefined") {
+      return null;
+    }
+    return window.__lwLastThemeTargetProbeResult ?? null;
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    const handleProbe = (event: Event) => {
+      const { detail } = event as CustomEvent<ThemeTargetProbeResult>;
+      setProbeResult(detail);
+    };
+    window.addEventListener(THEME_TARGET_PROBE_EVENT, handleProbe);
+    return () => window.removeEventListener(THEME_TARGET_PROBE_EVENT, handleProbe);
+  }, []);
 
   const contractSummary = useMemo(() => generateContractSummary(), []);
   const themeTargetSummary = useMemo(() => getThemeTargetSummary(), []);
@@ -1037,7 +1056,7 @@ export function QaPanel({
               <div className="text-sm text-slate-300">v{activeQaVersion}</div>
             </div>
 
-            <div className="mb-4">
+            <div className="mb-3">
               <div className="text-xs text-slate-500 mb-1">UI Inspector Toggle</div>
               <div className="flex flex-wrap items-center gap-2">
                 <span
@@ -1069,6 +1088,19 @@ export function QaPanel({
                 Hotkey {""}
                 <span className="font-semibold text-slate-300">Alt+Shift+I</span> remains available.
               </p>
+            </div>
+
+            <div className="mb-3">
+              <div className="text-xs text-slate-500 mb-1">Runtime Probe Snapshot (v27a)</div>
+              {probeResult ? (
+                <div className="text-xs text-slate-400 space-y-0.5" data-testid="theme-target-probe-summary">
+                  <div>Candidates: {probeResult.candidateCount}</div>
+                  <div>Unknown: {probeResult.unknownCount}</div>
+                  <div>Last Run: {new Date(probeResult.timestamp).toLocaleTimeString()}</div>
+                </div>
+              ) : (
+                <div className="text-xs text-slate-500">No runtime probe captured yet</div>
+              )}
             </div>
             
             <div className="mb-3">

@@ -108,6 +108,35 @@ The v26 planning pass defines how we will *detect* likely missing major-surface 
 - No new `data-lw-theme-target` markers are added to nested controls.
 - Sigma/Graph renderer stays untouched; heuristics operate strictly on DOM surfaces listed in this inventory.
 
+### v27a Registered/Unregistered Heuristic Runtime Probe (warning badges OFF)
+
+The v27a pass implements the *runtime/test probe* that applies the v26 heuristic at runtime without rendering any warning UI. The probe is exposed as `window.__lwRunThemeTargetProbe()` for automated QA/test harnesses and QA Debug evidence capture, records structured signals per element, and emits a custom event consumed by the QA Debug panel for evidence.
+
+#### Runtime probe contract
+- **Helper API**: `window.__lwRunThemeTargetProbe(options?: { minSignals?: number })` returns `{ candidates, unknown, excludedElementCount, timestamp }` and stores the last result on `window.__lwLastThemeTargetProbeResult`.
+- **Signal enforcement**: `candidates[]` only includes elements with **>=3** signals from the v26 list (structural handle, landmark `data-testid`/ARIA, layout footprint, control aggregation, graph HUD proximity, registry proximity).
+- **Unknown default**: Elements with 1–2 signals appear in `unknown[]` with `status: "unknown"`. These must *not* trigger warnings; QA evidence cites unknown entries rather than UI changes.
+- **Never-warn exclusions**: Buttons, tabs, sliders, dropdowns, badges, labels/values, static text, icons, status chips, handleId/settingsKey controls, flex/layout shims (e.g., `.lw-control-grid`), and QA tabs remain excluded before signal counting.
+- **DOM-only scope**: Probe skips `[data-lw-theme-target]` surfaces (already registered), UI Inspector HUD/ghost DOM, tooltip scaffolding, and Sigma/canvas internals inside `[data-testid="graph-viewport"]`.
+- **Graph adjacency**: Graph HUD containers (future) can contribute a `graph-hud` signal when they live alongside `[data-testid="graph-viewport"]`, but Sigma primitives never count toward DOM warnings.
+
+#### Evidence + QA hooks
+1. **QA Debug summary** renders `Candidates`, `Unknown`, and `Last Run` timestamps from the latest probe event so manual QA can capture screenshots/logs without enabling badges.
+2. **Playwright spec (`tests/e2e/theme-target-inspector.spec.ts`)** verifies:
+   - `window.__lwRunThemeTargetProbe` exists and returns structured data.
+   - Registered surfaces never appear in `candidates`.
+   - Nested controls, QA toggle buttons, overlay DOM, and Sigma primitives remain excluded.
+   - Synthetic test containers only appear after satisfying ≥3 signals, while <3-signal fixtures fall into `unknown`.
+   - No DOM warning badges (`data-testid="theme-target-warning-badge"`) render even after running the probe.
+3. **QA checklist v27a** covers every runtime probe guarantee (helper exists, ≥3-signal rule, unknown default, exclusion sets, overlay unchanged, hotkey/toggle unchanged, graph renderer unaffected, and baseline validation commands).
+4. **Advisory v27a** questions mirror those checklist items and funnel backlog sequencing: runtime probe (v27a) → badges (v27b) → lock/pin (later).
+
+#### Operational constraints for v27a
+- Still **no** warning UI/badges/lock-pins/Theme Mapping; runtime probe stays invisible outside QA Debug surfaces and automated QA harnesses.
+- Ghost overlay visuals remain untouched (pointer-events none, outlines only when inspector is ON).
+- Mission Control toggle + Alt+Shift+I hotkey continue controlling the inspector; probe simply reuses the DOM at measurement time.
+- Graph renderer (Sigma) is never mutated; probe filters out canvas/Sigma nodes before signal counting.
+
 ### Handling Nested Controls Until Theme Mapping
 - Buttons, tabs, dropdowns, etc. remain discoverable at the **component role** layer, not by attaching unique `data-lw-*` markers per instance.
 - When Theme Mapping Panel work begins, these roles will inform generated controls and token bindings; for now, document them with `visualHandle` + `data-testid` references so QA can trace behavior without runtime churn.

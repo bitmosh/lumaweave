@@ -272,6 +272,142 @@ export const defaultAdvisoryV13: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV27a: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "runtime-probe-helper-proof",
+      prompt: "Does QA evidence show window.__lwRunThemeTargetProbe exists, records timestamps, and is verified through Playwright or QA Debug?",
+      context: "v27a ships the runtime probe helper behind the scenes; we must prove the helper exists before badges ship.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "probe-three-signal-proof",
+      prompt: "Do probe results list per-element candidate signals and enforce the >=3 rule before surfacing candidates?",
+      context: "Conservative heuristic means no single DOM hint is enough; QA should cite structured signals in probe output.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "probe-unknown-default",
+      prompt: "Are <3-signal elements routed to unknown[] with status 'unknown / do not warn'?",
+      context: "Default fallback must remain 'unknown' instead of warning when the heuristic is unsure.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "probe-never-warn-exclusions",
+      prompt: "Do buttons, tabs, sliders, badges, layout shims, QA tabs, and handleId/settingsKey controls stay out of candidates[] and unknown[]?",
+      context: "Never-warn categories were locked in during v26; runtime probe must honor the same exclusions.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "probe-overlay-exclusion",
+      prompt: "Do UI Inspector HUD + ghost overlay DOM nodes remain excluded even when the inspector is ON?",
+      context: "The runtime probe cannot self-trigger by scanning the overlay it lives in.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "probe-sigma-exclusion",
+      prompt: "Does evidence show graph viewport canvases/Sigma nodes stay out of both candidates[] and unknown[]?",
+      context: "Sigma primitives remain governed by the Graph View registry; DOM probe must ignore them entirely.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "probe-no-visible-badges",
+      prompt: "Is the UI unchanged (no warning badges, no new HUD) even when probe candidates exist?",
+      context: "v27a is runtime instrumentation only; warning badges arrive in v27b.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "probe-no-theme-mapping",
+      prompt: "Did the pass avoid Theme Mapping panels, lock/pin behavior, or override storage while adding the probe?",
+      context: "Inspector overlay hardening must stay sequenced: runtime probe now, badges next, lock/pin later.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "visible-warning-badges-plan",
+      title: "Plan visible warning badges (v27b)",
+      summary: "Define how runtime probe output feeds conservative warning badges (placement, gating, QA evidence) without regressing ghost overlay.",
+      rationale: "Once probe data is trustworthy, the next step is surfacing it visually while staying conservative.",
+      risk: "medium",
+      recommendedNextAction: "Design badge contract (DOM anchors, severity, QA hooks) and map probe fields to UI copy before implementing.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+    {
+      id: "lock-pin-behavior-plan",
+      title: "Scope lock/pin selected target behavior",
+      summary: "Document UX + QA contract for pinning a target *after* runtime probe + warning badges stabilize.",
+      rationale: "Lock/pin depends on trustworthy heuristics; it should not ship until v27b proves badge quality.",
+      risk: "medium",
+      recommendedNextAction: "Outline escape behavior, keyboard support, and evidence needed once badges exist.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "Inspector overlay hardening",
+      whyItMatters:
+        "Ghost overlay + runtime probe must stay sequenced so Theme Mapping and lock/pin inherit a stable inspector stack.",
+      suggestedFutureBite:
+        "Child tasks:\n- Mission Control UI Inspector toggle (completed v24)\n- UI Part / Component Role Registration Model (completed v24a/v24b)\n- Ghost overlay registered-surface layer (completed v25)\n- Registered/unregistered heuristic planning (completed v26)\n- Registered/unregistered heuristic runtime probe (current v27a)\n- Visible warning badges (future v27b candidate)\n- Lock/pin selected target behavior (future candidate)",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "Theme Mapping Panel v0",
+      whyItMatters: "Editable controls must wait until runtime warnings exist; Theme Mapping inherits probe/badge evidence.",
+      suggestedFutureBite:
+        "Dependencies: Inspector overlay hardening through v27b + warning badges. Includes governance polish so registry context shows up in QA evidence.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "Theme override storage + save preset",
+      whyItMatters: "Editing flows require durable storage before UI is exposed to operators.",
+      suggestedFutureBite: "Dependency: Theme Mapping Panel semantics.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 4,
+      title: "Graph physics Playwright coverage",
+      whyItMatters: "Physics sliders remain lightly tested; coverage is required before exposing more graph controls.",
+      suggestedFutureBite: "Add focused Playwright coverage for physics controls once selectors stabilize.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 5,
+      title: "Visual handles cite token paths",
+      whyItMatters: "Visual handle documentation must list canonical token paths once governance is enforced.",
+      suggestedFutureBite: "Document handle -> token bindings in the visual handle library and plan runtime bindings.",
+      risk: "medium",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV26: BanditAdvisorySection = {
   questions: [
     {
@@ -334,9 +470,9 @@ export const advisoryV26: BanditAdvisorySection = {
       rank: 1,
       title: "Inspector overlay hardening",
       whyItMatters:
-        "Ghost overlay exists and the heuristic is being planned; we must finalize warnings + lock/pin before Theme Mapping.",
+        "Ghost overlay exists and the heuristic was planned in v26; runtime probe (v27a) and badges (v27b) must land before lock/pin or Theme Mapping.",
       suggestedFutureBite:
-        "Child tasks:\n- Mission Control UI Inspector toggle (completed v24)\n- UI Part / Component Role Registration Model (completed v24a/v24b)\n- Ghost overlay registered-surface layer (completed v25)\n- Registered/unregistered heuristic (planning v26)\n- Lock/pin selected target behavior (future candidate)",
+        "Child tasks:\n- Mission Control UI Inspector toggle (completed v24)\n- UI Part / Component Role Registration Model (completed v24a/v24b)\n- Ghost overlay registered-surface layer (completed v25)\n- Registered/unregistered heuristic planning (current v26)\n- Registered/unregistered heuristic runtime probe (next v27a)\n- Visible warning badges (future v27b candidate)\n- Lock/pin selected target behavior (future candidate)",
       risk: "medium",
       status: "candidate",
     },
@@ -1520,10 +1656,13 @@ export const advisoryV17a: BanditAdvisorySection = {
 };
 
 // Advisory lookup function - returns appropriate advisory based on qaKey
-export function getAdvisoryForChecklist(featureId: string, qaVersion: number): BanditAdvisorySection {
-  const checklistKey = `${featureId}:v${qaVersion}`;
-  
-  // v16c has its own advisory set
+export function getAdvisoryForChecklist(featureId: string, qaVersion: number, checklistKey: string): BanditAdvisorySection {
+  if (featureId === "registered-unregistered-heuristic-runtime-probe-v27a" && qaVersion === 27) {
+    return advisoryV27a;
+  }
+  if (featureId === "registered-unregistered-heuristic-planning-v26" && qaVersion === 26) {
+    return advisoryV26;
+  }
   if (checklistKey === "graph-state-preservation-and-advisory-rotation-v16c:v18") {
     return advisoryV16c;
   }
@@ -1566,6 +1705,9 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number): B
 
 // Advisory lookup function keyed by canonical qaKey
 export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
+  if (qaKey === "v27a") {
+    return advisoryV27a;
+  }
   if (qaKey === "v26") {
     return advisoryV26;
   }
