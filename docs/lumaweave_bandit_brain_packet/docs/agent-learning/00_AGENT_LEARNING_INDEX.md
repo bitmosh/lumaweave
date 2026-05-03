@@ -41,7 +41,7 @@ Modernization means preserving accepted contracts while wrapping them in clearer
 | `12_QUEST_MODE_FIELD_GUIDE.md` | Field guide for when to use Quest Mode and how to identify good/bad quest candidates. |
 | `13_PLAYWRIGHT_OPERATING_PROCEDURES.md` | Defines Playwright regression-containment procedures, failure classification, state isolation, locator discipline, and test-cascade handling. |
 | `14_MCP_TOOL_SUITE_PROTOCOL.md` | Defines when and how Bandit should use Sequential Thinking, Context7, and Playwright MCP during LumaWeave work. |
-| `15_BANDIT_ABILITY_AUDIT.md` | Profiles Bandit’s current strengths, weaknesses, abilities, upgrade priorities, boss fights, and training rules. |
+| `15_BANDIT_ABILITY_AUDIT.md` | Profiles Bandit's current strengths, weaknesses, abilities, upgrade priorities, boss fights, and training rules. |
 | `16_PLAYWRIGHT_WORKING_PATTERN_DIFF_AUDIT.md` | Defines how Bandit should compare failing tests against working Playwright patterns and the last accepted green commit before repairing cascades. |
 | `graphs/identity_system_graph.md` | Relationship graph for IDs, contracts, runtime, DOM, and tests. |
 | `graphs/theme_contract_pipeline.md` | Theme Token Path → Theme Target Registry → DOM marker → overlay → QA pipeline. |
@@ -56,6 +56,22 @@ For long or broad tasks, read:
 11_QUEST_MODE_PROMPT_TEMPLATE.md
 12_QUEST_MODE_FIELD_GUIDE.md
 15_BANDIT_ABILITY_AUDIT.md
+```
+
+For Playwright-heavy work or test cascades, read:
+
+```txt
+09_QA_PLAYWRIGHT_EVIDENCE_POLICY.md
+13_PLAYWRIGHT_OPERATING_PROCEDURES.md
+16_PLAYWRIGHT_WORKING_PATTERN_DIFF_AUDIT.md
+```
+
+For MCP-assisted work, uncertain API behavior, UI inspection, or graph physics preparation, read:
+
+```txt
+14_MCP_TOOL_SUITE_PROTOCOL.md
+15_BANDIT_ABILITY_AUDIT.md
+```
 
 ## Agent Operating Loop
 
@@ -75,6 +91,9 @@ Update this folder when:
 - a recovery reveals a strategic mistake
 - a naming convention becomes contract-critical
 - a new future system depends on today’s scaffold
+- a new tool-use rule changes future Bandit behavior
+- a Playwright cascade reveals a reusable diagnosis pattern
+- a working-pattern diff audit identifies a stable selector/helper contract
 
 Do not update this folder for:
 
