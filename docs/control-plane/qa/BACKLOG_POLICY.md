@@ -69,11 +69,12 @@ Prioritize upcoming systems by **input contracts**, not feature excitement. Foll
 4. **v32 — Generated read-only Theme Mapping controls** (no storage yet).
 5. **v33 — Theme override/storage contract** (data model + QA plan).
 6. **v34 — Theme override storage + save preset** (runtime persistence once contract is proven).
-7. **Command Deck / Hotkey Registry planning packet** (docs-only governance before new hotkeys/panels).
-8. **Perspective System model** (defines how multiple inspector views coexist).
-9. **Graph physics Playwright coverage** (stabilize physics sliders/toggles before more graph controls).
-10. **Graph View Element Registry / Graph Visual Policy refresh**.
-11. **Graph visual/theme mapping** (after registry/policy refresh).
+7. **Command Deck / Hotkey Registry planning packet** (docs-only governance before new hotkeys/panels) — **completed (v35 planning, v36 runtime)**.
+8. **Perspective System model** (defines how multiple inspector views coexist) — **completed (v37 contract)**.
+9. **Perspective System v0** (read-only perspective registry and panel) — **current pass (v38)**.
+10. **Graph physics Playwright coverage** (stabilize physics sliders/toggles before more graph controls).
+11. **Graph View Element Registry / Graph Visual Policy refresh**.
+12. **Graph visual/theme mapping** (after registry/policy refresh).
 
 Guardrails:
 - Do **not** implement storage before override semantics exist (v33).
