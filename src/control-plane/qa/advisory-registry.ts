@@ -272,6 +272,133 @@ export const defaultAdvisoryV13: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV30b: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v30b-empty-state",
+      prompt: "Does the Theme Mapping Panel render a clear empty state when no target is pinned?",
+      context: "Panel must coach operators to use Alt+Shift+P without implying editing is available.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v30b-registered-metadata",
+      prompt: "Does a pinned registered target display label, themeTargetId, surface, status, handle, editable props, and token bindings?",
+      context: "Registered surfaces need the full contract visible before we ever enable editing.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v30b-candidate-metadata-only",
+      prompt: "Does a pinned candidate display descriptor/testId + signals without showing editable controls?",
+      context: "Candidates are diagnostic only until they complete ThemeTargetRegistry review.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v30b-no-editable-controls",
+      prompt: "Are candidate/unknown targets kept from generating editable controls while registered targets show disabled controls only?",
+      context: "Bridge must prove we can distinguish future-control rows without enabling them.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v30b-storage-locked",
+      prompt: "Do all rendered controls include a clear read-only + storage-locked notice?",
+      context: "Theme Mapping storage contract is still blocked; shell must remind operators of that fact.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v30b-no-runtime-mutation",
+      prompt: "Did this pass avoid token mutation, color pickers, override storage, preset save, and settings schema changes?",
+      context: "Shell-only work must not leak editing semantics into runtime yet.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v30b-inspector-invariants",
+      prompt: "Did UI Inspector pin/unpin, ghost overlay, warning badges, and graph renderer behavior remain unchanged?",
+      context: "Bridge consumers must never regress the inspector stack or Sigma exclusions.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "visual-handles-cite-token-paths",
+      title: "Visual handles cite token paths",
+      summary: "Document handle → ThemeTokenPath references so generated controls inherit canonical bindings.",
+      rationale: "Mapping shell exposed the need for trustworthy handle/token alignment before generation.",
+      risk: "medium",
+      recommendedNextAction: "Update UI Surface & Handle Inventory + Mission Control Debug to cite token paths per handle.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+    {
+      id: "generated-readonly-controls",
+      title: "Generated read-only Theme Mapping controls",
+      summary: "Emit deterministic disabled controls per editable property once handles cite tokens.",
+      rationale: "Ensures UI scaffolding exists before override storage and editing semantics ship.",
+      risk: "medium",
+      recommendedNextAction: "Prototype generated disabled controls referencing the handle/token table after v30b.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "Theme Mapping Panel v0",
+      whyItMatters:
+        "Complete the Theme Mapping dependency ladder: entry contract (v28), lock/pin bridge (v29/v30a), read-only shell (v30b). Next steps require modular pockets ready for other control-plane sections.",
+      suggestedFutureBite:
+        "Architecture note: keep Mission Control panels modular so Theme Mapping, physics settings, label controls, inspector evidence, graph lenses, and QA workflows can share reusable pockets.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "Theme override/storage contract",
+      whyItMatters: "Editable controls cannot ship without a formal override data model and governance.",
+      suggestedFutureBite: "Define override schema, lifecycle, and QA evidence before any runtime mutation.",
+      risk: "high",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "Theme override storage + save preset",
+      whyItMatters: "Once overrides exist, presets and persistence unlock practical workflows.",
+      suggestedFutureBite: "Implement storage backend, preset save/load, reset/revert, and QA hooks after contract approval.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 4,
+      title: "Command Deck / Hotkey Registry planning",
+      whyItMatters: "Future hotkeys (e.g., Alt+Shift+P) need a formal registry before more diagnostic shortcuts appear.",
+      suggestedFutureBite: "Design Command Deck scaffolding and governance before additional shortcuts ship.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 5,
+      title: "Graph physics Playwright coverage",
+      whyItMatters: "Graph behavior must remain stable while Mission Control gains more panels.",
+      suggestedFutureBite: "Add coverage for physics sliders/toggles to guard against future control-plane changes.",
+      risk: "medium",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV29: BanditAdvisorySection = {
   questions: [
     {
@@ -2019,6 +2146,9 @@ export const advisoryV17a: BanditAdvisorySection = {
 
 // Advisory lookup function - returns appropriate advisory based on qaKey
 export function getAdvisoryForChecklist(featureId: string, qaVersion: number, checklistKey: string): BanditAdvisorySection {
+  if (featureId === "theme-mapping-panel-shell-v30b" && (qaVersion === 30 || checklistKey === "v30b")) {
+    return advisoryV30b;
+  }
   if (featureId === "lock-pin-selected-target-v29" && qaVersion === 29) {
     return advisoryV29;
   }
@@ -2070,6 +2200,9 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number, ch
 
 // Advisory lookup function keyed by canonical qaKey
 export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
+  if (qaKey === "v30b") {
+    return advisoryV30b;
+  }
   if (qaKey === "v29") {
     return advisoryV29;
   }

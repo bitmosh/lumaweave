@@ -13,9 +13,9 @@ import {
 } from "./helpers/qa";
 import type { ThemeTargetProbeResult } from "../../src/themes/themeTargetHeuristics";
 
-const CURRENT_QA_KEY = "v29";
-const PRIMARY_PROPOSAL_ID = "theme-mapping-panel-v0-plan";
-const SECONDARY_PROPOSAL_ID = "visual-handle-token-mapping";
+const CURRENT_QA_KEY = "v30b";
+const PRIMARY_PROPOSAL_ID = "visual-handles-cite-token-paths";
+const SECONDARY_PROPOSAL_ID = "generated-readonly-controls";
 
 type ProbeWindow = Window & {
   __lwRunThemeTargetProbe?: (options?: { minSignals?: number }) => ThemeTargetProbeResult | null;
@@ -251,13 +251,13 @@ test("Bandit Backlog Top 10 renders", async ({ page }) => {
   await expect(backlogItem.getByTestId("bandit-backlog-title")).not.toHaveText("");
 });
 
-test("v27b is default active checklist", async ({ page }) => {
+test("v30b is default active checklist", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await expectCurrentQaKey(page, CURRENT_QA_KEY);
 });
 
-test("v27b identity diagnostics visible in Debug tab", async ({ page }) => {
+test("v30b identity diagnostics visible in Debug tab", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
 
@@ -338,7 +338,7 @@ test("advisory backlog reorder persists through tab switching", async ({ page })
   await expect(page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title")).toHaveText(reorderedFirstTitle || "");
 });
 
-test("v29 advisory questions cite lock/pin contract", async ({ page }) => {
+test("v30b advisory questions cite Theme Mapping shell contract", async ({ page }) => {
   await page.goto("/");
 
   // QA panel is in the left dock - use nth(1) to get the main panel
@@ -349,23 +349,22 @@ test("v29 advisory questions cite lock/pin contract", async ({ page }) => {
   const advisoryTab = page.getByTestId("qa-tab-advisory");
   await advisoryTab.click();
 
-  // Verify v29-specific question identifiers are visible
+  // Verify v30b-specific question identifiers are visible
   const pageContent = await page.content();
-  expect(pageContent).toContain("pin-hotkey");
-  expect(pageContent).toContain("pin-registered-flow");
-  expect(pageContent).toContain("pin-candidate-flow");
-  expect(pageContent).toContain("pin-clear-behavior");
-  expect(pageContent).toContain("pin-scope-guardrails");
-  expect(pageContent).toContain("pin-storage-block");
-  expect(pageContent).toContain("pin-theme-mapping-bridge");
+  expect(pageContent).toContain("v30b-empty-state");
+  expect(pageContent).toContain("v30b-registered-metadata");
+  expect(pageContent).toContain("v30b-candidate-metadata-only");
+  expect(pageContent).toContain("v30b-no-editable-controls");
+  expect(pageContent).toContain("v30b-storage-locked");
+  expect(pageContent).toContain("v30b-no-runtime-mutation");
+  expect(pageContent).toContain("v30b-inspector-invariants");
 
-  // Verify v28 entry-contract questions are no longer the active advisory set
-  expect(pageContent).not.toContain("entry-contract-source");
-  expect(pageContent).not.toContain("registered-surface-flow");
-  expect(pageContent).not.toContain("warning-layer-gated");
+  // Verify v29 lock/pin advisory is no longer the active set
+  expect(pageContent).not.toContain("pin-hotkey");
+  expect(pageContent).not.toContain("pin-registered-flow");
 });
 
-test("v29 report includes Advisory Set Key", async ({ page }) => {
+test("v30b report includes Advisory Set Key", async ({ page }) => {
   await page.goto("/");
 
   // Complete checklist and submit report using helper
@@ -374,12 +373,12 @@ test("v29 report includes Advisory Set Key", async ({ page }) => {
   // Get last report text
   const reportText = await getLastReportText(page);
 
-  // Verify report includes Advisory Set Key: v29
+  // Verify report includes Advisory Set Key: v30b
   expect(reportText).toContain("Advisory Set Key:");
   expect(reportText).toContain(CURRENT_QA_KEY);
 });
 
-test("v29 report stays blocked when lock/pin checks are unverified", async ({ page }) => {
+test("v30b report stays blocked when Theme Mapping checks are unverified", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openChecklistTab(page);
@@ -393,7 +392,7 @@ test("v29 report stays blocked when lock/pin checks are unverified", async ({ pa
   expect(reportText).not.toContain("**ACCEPT**");
 });
 
-test("v29 acceptance decision requires zero blocked or unverified", async ({ page }) => {
+test("v30b acceptance decision requires zero blocked or unverified", async ({ page }) => {
   await page.goto("/");
   await completeChecklistAndSubmitReport(page);
 
@@ -404,31 +403,27 @@ test("v29 acceptance decision requires zero blocked or unverified", async ({ pag
   expect(reportText).toContain("- Unverified: 0");
 });
 
-test("v29 checklist includes lock/pin checks", async ({ page }) => {
+test("v30b checklist includes Theme Mapping shell checks", async ({ page }) => {
   await page.goto("/");
   await expectChecklistContainsChecks(page, [
-    "v29 is default active checklist",
-    "Registered target can be pinned",
-    "Pinned registered target remains visible after cursor leaves",
-    "Pinned target can be cleared",
-    "UI Inspector OFF clears pinned target",
-    "Warning candidate can be pinned",
-    "Unknown entries cannot be pinned",
-    "Never-warn categories cannot be pinned",
-    "Inspector overlay DOM cannot be pinned",
-    "Sigma/graph primitives cannot be pinned",
-    "Ghost overlay behavior unchanged",
-    "Warning badges unchanged",
-    "Mission Control toggle unchanged",
-    "Hotkeys remain Alt+Shift+I / Alt+Shift+P only",
-    "No Theme Mapping/editing/storage",
-    "Graph renderer unaffected",
+    "v30b is default active checklist",
+    "Theme Mapping Panel renders",
+    "Empty state renders with no pinned target",
+    "Registered target displays metadata",
+    "Registered target lists token bindings",
+    "Future controls are disabled/read-only",
+    "Storage lock notice",
+    "Pinned candidate displays diagnostic metadata",
+    "Candidates do not show editable controls",
+    "Pin/unpin behavior still works",
+    "Inspector/ghost/warning layer preserved",
+    "No editing/storage schema changes",
     "Typecheck passes",
     "Playwright passes with 0 skipped",
   ]);
 });
 
-test("v29 proposal decisions and backlog order persist after submit", async ({ page }) => {
+test("v30b proposal decisions and backlog order persist after submit", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);

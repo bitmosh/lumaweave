@@ -7,13 +7,15 @@ import { getAdvisoryForQaKey } from "./advisory-registry";
 import { getThemeTargetSummary, getThemeTargetsBySurface } from "../../themes";
 import type { ThemeTargetContract, ThemeTargetSurface } from "../../themes";
 import { THEME_TARGET_PROBE_EVENT, type ThemeTargetProbeResult } from "../../themes/themeTargetHeuristics";
+import { THEME_TARGET_PIN_EVENT, type ThemeTargetInspectorEntity } from "../../themes/themeTargetInspectorTypes";
+import { ThemeMappingPanel } from "../panels/ThemeMappingPanel";
 
 const ACTIVE_CHECKLIST_STORAGE_KEY = "lumaweave-qa-active-checklist";
 const BACKLOG_STORAGE_KEY = "lumaweave-advisory-backlog-order";
 const QUESTION_ANSWER_STORAGE_KEY = "lumaweave-advisory-question-answers";
 const PROPOSAL_DECISIONS_STORAGE_KEY = "lumaweave-advisory-proposal-decisions";
-const DEFAULT_QA_KEY = "v29";
-const DEFAULT_FEATURE_ID = "lock-pin-selected-target-v29";
+const DEFAULT_QA_KEY = "v30b";
+const DEFAULT_FEATURE_ID = "theme-mapping-panel-shell-v30b";
 const PROPOSAL_DECISION_OPTIONS: readonly BanditProposalDecision[] = [
   "unreviewed",
   "accept-for-future",
@@ -56,7 +58,7 @@ const persistProposalDecisions = (proposals: { id: string; userDecision: BanditP
   localStorage.setItem(PROPOSAL_DECISIONS_STORAGE_KEY, JSON.stringify(decisionsMap));
 };
 
-type PanelView = "checklist" | "last-submission" | "history" | "debug" | "advisory";
+type PanelView = "checklist" | "last-submission" | "history" | "mapping" | "debug" | "advisory";
 
 interface QaPanelProps {
   themeAccent?: string;
@@ -110,6 +112,9 @@ export function QaPanel({
     }
     return window.__lwLastThemeTargetProbeResult ?? null;
   });
+  const [pinnedInspectorEntity, setPinnedInspectorEntity] = useState<ThemeTargetInspectorEntity | null>(() =>
+    typeof window === "undefined" ? null : window.__lwPinnedInspectorEntity ?? null,
+  );
   useEffect(() => {
     if (typeof window === "undefined") {
       return;
@@ -120,6 +125,18 @@ export function QaPanel({
     };
     window.addEventListener(THEME_TARGET_PROBE_EVENT, handleProbe);
     return () => window.removeEventListener(THEME_TARGET_PROBE_EVENT, handleProbe);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    const handlePinnedChange = (event: Event) => {
+      const { detail } = event as CustomEvent<ThemeTargetInspectorEntity | null>;
+      setPinnedInspectorEntity(detail ?? null);
+    };
+    window.addEventListener(THEME_TARGET_PIN_EVENT, handlePinnedChange as EventListener);
+    return () => window.removeEventListener(THEME_TARGET_PIN_EVENT, handlePinnedChange as EventListener);
   }, []);
 
   const contractSummary = useMemo(() => generateContractSummary(), []);
@@ -271,7 +288,7 @@ export function QaPanel({
       ).map((qaKey) => {
         const qaVersion = parseInt(qaKey.replace(/^v/, ''), 10);
         const check = qaCheckDefinitions.find(
-          (c) => (c.qaKey ?? `v${c.qaVersion}`) === qaKey
+          (c) => (c.qaKey ?? `v${c.qaVersion}`) === qaKey && c.active !== false
         );
         return { qaKey, qaVersion, featureId: check?.featureId || "unknown" };
       });
@@ -302,7 +319,7 @@ export function QaPanel({
   ).map((qaKey) => {
     // Find a check with this qaKey to get feature info
     const check = qaCheckDefinitions.find(
-      (c) => (c.qaKey ?? `v${c.qaVersion}`) === qaKey
+      (c) => (c.qaKey ?? `v${c.qaVersion}`) === qaKey && c.active !== false
     );
     const qaVersion = parseInt(qaKey.replace(/^v/, ''), 10);
     return {
@@ -720,7 +737,7 @@ export function QaPanel({
             <select
               value={activeChecklistKey}
               onChange={(e) => handleChecklistChange(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-300 text-xs"
+              className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs"
               data-testid="qa-checklist-selector"
             >
               {uniqueChecklists.map((checklist) => (
@@ -771,6 +788,17 @@ export function QaPanel({
           } as React.CSSProperties}
         >
           History
+        </button>
+        <button
+          onClick={() => setPanelView("mapping")}
+          className={`px-2 py-1 text-xs rounded`}
+          data-testid="qa-tab-mapping"
+          style={{
+            backgroundColor: panelView === "mapping" ? `${themeAccent}20` : "rgba(30, 41, 59, 0.8)",
+            color: panelView === "mapping" ? themeAccent : themeTextMuted,
+          } as React.CSSProperties}
+        >
+          Mapping
         </button>
         <button
           onClick={() => setPanelView("debug")}
@@ -830,9 +858,9 @@ export function QaPanel({
           <span className="text-xs font-semibold text-slate-300">Decision: </span>
           <span className={`text-xs font-semibold ${
             acceptanceDecision === "ACCEPT" ? "text-green-400" :
-            acceptanceDecision === "ACCEPT WITH FALLBACK REQUIRED" ? "text-yellow-400" :
             acceptanceDecision === "DO NOT ACCEPT" ? "text-red-400" :
             acceptanceDecision === "BLOCKED" ? "text-yellow-400" :
+            acceptanceDecision === "INCOMPLETE" ? "text-slate-400" :
             "text-slate-400"
           }`}>
             {acceptanceDecision}
@@ -1032,6 +1060,12 @@ export function QaPanel({
               No history for this feature
             </div>
           )}
+        </div>
+      )}
+
+      {panelView === "mapping" && (
+        <div className="flex-1 overflow-y-auto p-3" data-testid="qa-theme-mapping-tab">
+          <ThemeMappingPanel pinnedEntity={pinnedInspectorEntity} />
         </div>
       )}
 
