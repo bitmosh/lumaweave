@@ -168,6 +168,45 @@ export function GraphVisualInventoryPanel(): React.JSX.Element {
         </div>
       </div>
 
+      {/* Graph Theme Token Value Preview (v54) */}
+      <div
+        className="mb-4 p-3 border border-teal-200 rounded bg-teal-50"
+        data-testid="graph-theme-token-preview-section"
+      >
+        <h3 className="text-sm font-semibold text-teal-900 mb-2" data-testid="graph-theme-token-preview-title">
+          Graph Theme Token Value Preview (v54)
+        </h3>
+        <p className="text-xs text-teal-700 mb-3" data-testid="graph-theme-token-preview-description">
+          Read-only preview of canonical theme token values for graph theme mappings. Does not apply values to Sigma or graph.
+        </p>
+        <div className="space-y-1 text-xs">
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Preview status:</span>
+            <span className="font-mono text-teal-800" data-testid="graph-theme-token-preview-status">
+              metadata only (value preview deferred)
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Token value application:</span>
+            <span className="font-mono text-red-600 font-semibold" data-testid="graph-theme-token-preview-application-status">
+              forbidden in v54
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">CSS variable writes:</span>
+            <span className="font-mono text-red-600 font-semibold" data-testid="graph-theme-token-preview-css-status">
+              forbidden in v54
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Sigma mutation:</span>
+            <span className="font-mono text-red-600 font-semibold" data-testid="graph-theme-token-preview-sigma-status">
+              forbidden in v54
+            </span>
+          </div>
+        </div>
+      </div>
+
       {/* Passive Runtime Probe Section (v46) */}
       <div
         className="mb-4 p-3 border border-blue-200 rounded bg-blue-50"

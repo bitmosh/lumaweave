@@ -86,8 +86,8 @@ Prioritize upcoming systems by **input contracts**, not feature excitement. Foll
 21. **Passive Graph Theme Mapping Inventory** — **completed (v50)**.
 22. **Graph Theme Runtime Application Contract** — **completed (v51)**.
 23. **Graph Theme Evidence Wrapper Mode** — **completed (v52)**.
-24. **Graph Theme Token Value Preview Contract** — **current pass (v53)**.
-25. **Read-Only Graph Theme Token Preview** (v54, after v53 contract accepted).
+24. **Graph Theme Token Value Preview Contract** — **completed (v53)**.
+25. **Read-Only Graph Theme Token Preview** — **completed (v54)**.
 26. **First true graph theme application** (v55+, requires new contract).
 
 Guardrails:

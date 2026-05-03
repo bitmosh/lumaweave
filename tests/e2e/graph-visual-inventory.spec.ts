@@ -689,4 +689,76 @@ test.describe("Graph Visual Inventory", () => {
       await expect(status).toHaveText("Theme evidence: inactive");
     });
   });
+
+  test.describe("Graph Theme Token Value Preview (v54)", () => {
+    test("Token value preview section is visible", async ({ page }) => {
+      const section = page.getByTestId("graph-theme-token-preview-section");
+      await expect(section).toBeVisible();
+    });
+
+    test("Token value preview title is visible", async ({ page }) => {
+      const title = page.getByTestId("graph-theme-token-preview-title");
+      await expect(title).toBeVisible();
+      await expect(title).toHaveText("Graph Theme Token Value Preview (v54)");
+    });
+
+    test("Token value preview description is visible", async ({ page }) => {
+      const description = page.getByTestId("graph-theme-token-preview-description");
+      await expect(description).toBeVisible();
+      await expect(description).toHaveText(
+        "Read-only preview of canonical theme token values for graph theme mappings. Does not apply values to Sigma or graph."
+      );
+    });
+
+    test("Preview status is visible", async ({ page }) => {
+      const status = page.getByTestId("graph-theme-token-preview-status");
+      await expect(status).toBeVisible();
+      await expect(status).toHaveText("metadata only (value preview deferred)");
+    });
+
+    test("Token value application status shows forbidden", async ({ page }) => {
+      const status = page.getByTestId("graph-theme-token-preview-application-status");
+      await expect(status).toBeVisible();
+      await expect(status).toHaveText("forbidden in v54");
+    });
+
+    test("CSS variable writes status shows forbidden", async ({ page }) => {
+      const status = page.getByTestId("graph-theme-token-preview-css-status");
+      await expect(status).toBeVisible();
+      await expect(status).toHaveText("forbidden in v54");
+    });
+
+    test("Sigma mutation status shows forbidden", async ({ page }) => {
+      const status = page.getByTestId("graph-theme-token-preview-sigma-status");
+      await expect(status).toBeVisible();
+      await expect(status).toHaveText("forbidden in v54");
+    });
+
+    test("No apply/edit/save controls exist", async ({ page }) => {
+      // Verify no enabled controls for applying token values
+      const section = page.getByTestId("graph-theme-token-preview-section");
+      const buttons = section.getByRole("button");
+      const buttonCount = await buttons.count();
+      await expect(buttonCount).toBe(0);
+    });
+
+    test("Existing graph inventory still works", async ({ page }) => {
+      // Verify existing inventory functionality is not broken
+      const inventoryTitle = page.getByTestId("graph-visual-inventory-title");
+      await expect(inventoryTitle).toBeVisible();
+      await expect(inventoryTitle).toHaveText("Graph Visual Inventory");
+    });
+
+    test("Existing graph theme mapping inventory still works", async ({ page }) => {
+      // Verify existing theme mapping functionality is not broken
+      const mappingSection = page.getByTestId("graph-theme-mapping-inventory-section");
+      await expect(mappingSection).toBeVisible();
+    });
+
+    test("Existing graph theme evidence wrapper mode still works", async ({ page }) => {
+      // Verify existing evidence wrapper mode functionality is not broken
+      const evidenceSection = page.getByTestId("graph-theme-evidence-wrapper-mode-section");
+      await expect(evidenceSection).toBeVisible();
+    });
+  });
 });
