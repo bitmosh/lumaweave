@@ -110,7 +110,6 @@ export function QaPanel({
     }
     return window.__lwLastThemeTargetProbeResult ?? null;
   });
-
   useEffect(() => {
     if (typeof window === "undefined") {
       return;

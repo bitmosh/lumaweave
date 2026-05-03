@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { getThemeTargetById, type ThemeTargetContract } from "./themeTargetRegistry";
+import { getThemeTargetById } from "./themeTargetRegistry";
 import {
   installThemeTargetProbeGlobal,
   runAndRecordThemeTargetProbe,
@@ -7,19 +7,10 @@ import {
   type ThemeTargetProbeResult,
   type ThemeTargetCandidateSignal,
 } from "./themeTargetHeuristics";
-
-type InspectorEntity =
-  | {
-      kind: "registered";
-      themeTargetId: string;
-      metadata?: ThemeTargetContract;
-    }
-  | {
-      kind: "candidate";
-      descriptor: string;
-      dataTestId?: string | null;
-      signals: ThemeTargetCandidateSignal[];
-    };
+import {
+  type ThemeTargetInspectorEntity,
+  THEME_TARGET_PIN_EVENT,
+} from "./themeTargetInspectorTypes";
 
 interface GraphViewportOffsets {
   right: number;
@@ -99,7 +90,7 @@ const describeElementForMatching = (element: HTMLElement | null): string | null 
   return `${tag}${idPart}${classPart}${testIdPart}`;
 };
 
-const inspectorEntitiesAreEqual = (a: InspectorEntity | null, b: InspectorEntity | null): boolean => {
+const inspectorEntitiesAreEqual = (a: ThemeTargetInspectorEntity | null, b: ThemeTargetInspectorEntity | null): boolean => {
   if (!a || !b) {
     return false;
   }
@@ -116,8 +107,8 @@ const inspectorEntitiesAreEqual = (a: InspectorEntity | null, b: InspectorEntity
 };
 
 export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeTargetInspectorOverlayProps) {
-  const [hoverEntity, setHoverEntity] = useState<InspectorEntity | null>(null);
-  const [pinnedEntity, setPinnedEntity] = useState<InspectorEntity | null>(null);
+  const [hoverEntity, setHoverEntity] = useState<ThemeTargetInspectorEntity | null>(null);
+  const [pinnedEntity, setPinnedEntity] = useState<ThemeTargetInspectorEntity | null>(null);
   const [latestProbeResult, setLatestProbeResult] = useState<ThemeTargetProbeResult | null>(null);
   const candidateLookupRef = useRef<Map<string, ThemeTargetProbeResult["candidates"][number]>>(new Map());
   const [graphViewportOffsets, setGraphViewportOffsets] = useState<GraphViewportOffsets | null>(null);
@@ -205,7 +196,7 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
 
     const runProbe = () => runAndRecordThemeTargetProbe();
 
-    const resolveEntityFromEventTarget = (rawTarget: EventTarget | null): InspectorEntity | null => {
+    const resolveEntityFromEventTarget = (rawTarget: EventTarget | null): ThemeTargetInspectorEntity | null => {
       let current = rawTarget instanceof HTMLElement ? rawTarget : null;
       if (current && current.matches(SIGMA_ELEMENT_SELECTOR)) {
         return null;
@@ -442,6 +433,15 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
       setPinnedEntity(null);
     }
   }, [pinnedEntity, latestProbeResult]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    window.__lwPinnedInspectorEntity = pinnedEntity ?? null;
+    const pinEvent = new CustomEvent(THEME_TARGET_PIN_EVENT, { detail: pinnedEntity ?? null });
+    window.dispatchEvent(pinEvent);
+  }, [pinnedEntity]);
 
   const showInspectorPanel = enabled && Boolean(displayEntity);
 
