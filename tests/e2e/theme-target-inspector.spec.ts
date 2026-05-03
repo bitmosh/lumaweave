@@ -14,6 +14,52 @@ const runRuntimeProbe = async (
 ): Promise<ThemeTargetProbeResult | null> =>
   page.evaluate((opts) => (window as ProbeWindow).__lwRunThemeTargetProbe?.(opts) ?? null, options);
 
+const enableInspector = async (page: Page): Promise<void> => {
+  await page.click("body");
+  await page.keyboard.press("Alt+Shift+I");
+};
+
+const disableInspector = async (page: Page): Promise<void> => {
+  await page.keyboard.press("Alt+Shift+I");
+};
+
+const createSyntheticCandidate = async (page: Page, elementId = "probe-warning-candidate"): Promise<void> => {
+  await page.evaluate((id) => {
+    const existing = document.getElementById(id);
+    existing?.remove();
+
+    const container = document.createElement("div");
+    container.id = id;
+    container.className = "lw-panel probe-warning";
+    container.setAttribute("data-testid", "mission-control-probe-warning");
+    Object.assign(container.style, {
+      width: "360px",
+      height: "200px",
+      position: "absolute",
+      top: "160px",
+      left: "160px",
+      zIndex: 1,
+    });
+    const firstButton = document.createElement("button");
+    firstButton.textContent = "Primary";
+    const secondButton = document.createElement("button");
+    secondButton.textContent = "Secondary";
+    container.appendChild(firstButton);
+    container.appendChild(secondButton);
+    document.body.appendChild(container);
+  }, elementId);
+};
+
+const removeElementById = async (page: Page, elementId: string): Promise<void> => {
+  await page.evaluate((id) => {
+    document.getElementById(id)?.remove();
+  }, elementId);
+};
+
+const waitForWarningLayerToSettle = async (page: Page): Promise<void> => {
+  await page.waitForTimeout(250);
+};
+
 test.describe("Theme Target Registry + Inspector Overlay", () => {
   test("debug tab shows Theme Target registry summary", async ({ page }) => {
     await page.goto("/");
@@ -208,11 +254,10 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
   test("ghost overlay toggles via hotkey", async ({ page }) => {
     await page.goto("/");
 
-    await page.click("body");
-    await page.keyboard.press("Alt+Shift+I");
+    await enableInspector(page);
     await expect(page.getByTestId("theme-target-ghost-layer")).toBeVisible();
 
-    await page.keyboard.press("Alt+Shift+I");
+    await disableInspector(page);
     await expect(page.getByTestId("theme-target-ghost-layer")).toHaveCount(0);
   });
 
@@ -304,8 +349,7 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
 
   test("ghost overlay DOM remains excluded even when inspector is on", async ({ page }) => {
     await page.goto("/");
-    await page.click("body");
-    await page.keyboard.press("Alt+Shift+I");
+    await enableInspector(page);
     const ghostLayer = page.getByTestId("theme-target-ghost-layer");
     await expect(ghostLayer).toBeVisible();
     const ghostOutlines = page.getByTestId("theme-target-ghost-outline");
@@ -402,43 +446,100 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
     });
   });
 
-  test("runtime probe does not render warning badges", async ({ page }) => {
+  test("warning badges appear for >=3-signal candidates only while inspector is on", async ({ page }) => {
+    await page.goto("/");
+    await enableInspector(page);
+    await waitForWarningLayerToSettle(page);
+    const baselineCount = await page.getByTestId("theme-target-warning-badge").count();
+    await disableInspector(page);
+
+    await createSyntheticCandidate(page);
+    await enableInspector(page);
+    await waitForWarningLayerToSettle(page);
+    const updatedCount = await page.getByTestId("theme-target-warning-badge").count();
+    expect(updatedCount).toBeGreaterThan(baselineCount);
+
+    await disableInspector(page);
+    await expect(page.getByTestId("theme-target-warning-badge")).toHaveCount(0);
+    await removeElementById(page, "probe-warning-candidate");
+  });
+
+  test("unknown <3-signal fixtures never render warning badges", async ({ page }) => {
     await page.goto("/");
     await page.evaluate(() => {
-      const existing = document.getElementById("probe-warning-candidate");
-      existing?.remove();
-      const container = document.createElement("div");
-      container.id = "probe-warning-candidate";
-      container.className = "lw-panel probe-warning";
-      container.setAttribute("data-testid", "mission-control-probe-warning");
-      Object.assign(container.style, {
-        width: "360px",
-        height: "200px",
-        position: "absolute",
-        top: "160px",
-        left: "160px",
-      });
-      const firstButton = document.createElement("button");
-      firstButton.textContent = "Primary";
-      const secondButton = document.createElement("button");
-      secondButton.textContent = "Secondary";
-      container.appendChild(firstButton);
-      container.appendChild(secondButton);
-      document.body.appendChild(container);
+      const targetId = "probe-unknown-container";
+      document.getElementById(targetId)?.remove();
+      const element = document.createElement("div");
+      element.id = targetId;
+      element.setAttribute("data-testid", "mission-control-unknown-surface");
+      element.style.width = "200px";
+      element.style.height = "80px";
+      document.body.appendChild(element);
     });
 
-    const result = await runRuntimeProbe(page);
-    expect(result).not.toBeNull();
-    expect(result?.candidates.length ?? 0).toBeGreaterThan(0);
+    await enableInspector(page);
+    await waitForWarningLayerToSettle(page);
+    const baselineCount = await page.getByTestId("theme-target-warning-badge").count();
+    await disableInspector(page);
 
-    await page.keyboard.press("Alt+Shift+I");
-    await expect(page.getByTestId("theme-target-warning-badge")).toHaveCount(0);
-    await expect(page.locator('[data-testid="theme-target-warning-indicator"]')).toHaveCount(0);
-    await page.keyboard.press("Alt+Shift+I");
-    await expect(page.getByTestId("theme-target-warning-badge")).toHaveCount(0);
+    await enableInspector(page);
+    await waitForWarningLayerToSettle(page);
+    const postUnknownCount = await page.getByTestId("theme-target-warning-badge").count();
+    expect(postUnknownCount).toBe(baselineCount);
+    await disableInspector(page);
+    await removeElementById(page, "probe-unknown-container");
+  });
 
+  test("warning badges ignore never-warn fixtures", async ({ page }) => {
+    await page.goto("/");
     await page.evaluate(() => {
-      document.getElementById("probe-warning-candidate")?.remove();
+      const ids = [
+        "v27b-never-warn-button",
+        "v27b-never-warn-label",
+      ];
+      ids.forEach((id) => document.getElementById(id)?.remove());
+
+      const button = document.createElement("button");
+      button.id = "v27b-never-warn-button";
+      button.textContent = "Excluded button";
+      const label = document.createElement("label");
+      label.id = "v27b-never-warn-label";
+      label.textContent = "Excluded label";
+      document.body.appendChild(button);
+      document.body.appendChild(label);
     });
+
+    await enableInspector(page);
+    await waitForWarningLayerToSettle(page);
+    const baselineCount = await page.getByTestId("theme-target-warning-badge").count();
+    await disableInspector(page);
+
+    await enableInspector(page);
+    await waitForWarningLayerToSettle(page);
+    const postCount = await page.getByTestId("theme-target-warning-badge").count();
+    expect(postCount).toBe(baselineCount);
+    await disableInspector(page);
+    await removeElementById(page, "v27b-never-warn-button");
+    await removeElementById(page, "v27b-never-warn-label");
+  });
+
+  test("warning layer remains pointer-events none", async ({ page }) => {
+    await page.goto("/");
+    await createSyntheticCandidate(page, "pointer-events-candidate");
+    await enableInspector(page);
+    await waitForWarningLayerToSettle(page);
+
+    const warningLayer = page.getByTestId("theme-target-warning-layer");
+    await expect(warningLayer).toBeVisible();
+    await expect(warningLayer).toHaveCSS("pointer-events", "none");
+    const badges = page.getByTestId("theme-target-warning-badge");
+    const badgeCount = await badges.count();
+    expect(badgeCount).toBeGreaterThan(0);
+    for (let i = 0; i < badgeCount; i += 1) {
+      await expect(badges.nth(i)).toHaveCSS("pointer-events", "none");
+    }
+
+    await disableInspector(page);
+    await removeElementById(page, "pointer-events-candidate");
   });
 });

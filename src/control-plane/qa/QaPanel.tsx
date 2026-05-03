@@ -12,8 +12,8 @@ const ACTIVE_CHECKLIST_STORAGE_KEY = "lumaweave-qa-active-checklist";
 const BACKLOG_STORAGE_KEY = "lumaweave-advisory-backlog-order";
 const QUESTION_ANSWER_STORAGE_KEY = "lumaweave-advisory-question-answers";
 const PROPOSAL_DECISIONS_STORAGE_KEY = "lumaweave-advisory-proposal-decisions";
-const DEFAULT_QA_KEY = "v27a";
-const DEFAULT_FEATURE_ID = "registered-unregistered-heuristic-runtime-probe-v27a";
+const DEFAULT_QA_KEY = "v27b";
+const DEFAULT_FEATURE_ID = "registered-unregistered-warning-badges-v27b";
 const PROPOSAL_DECISION_OPTIONS: readonly BanditProposalDecision[] = [
   "unreviewed",
   "accept-for-future",

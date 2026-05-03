@@ -17,3 +17,17 @@ A backlog item can be promoted during the pass that implements it, but after acc
 - Ghost overlay, warning heuristics, and Theme Mapping Panel tasks must cite the registration model they consume; if the model changes (new componentRoleId, handleId, etc.), update both docs and backlog context in the same pass.
 - Registered/unregistered warning passes (v26+) must deliver a conservative heuristic + evidence plan before any runtime warnings are allowed. The backlog item stays under "Inspector overlay hardening" until documentation, QA checklist, and test plan entries all exist.
 - After v26 planning, ship the **v27a runtime probe** (data collection only) before any badges: `window.__lwRunThemeTargetProbe` must exist, QA Debug must show probe evidence, Playwright must verify exclusions, and runtime behavior must stay badge-free. Only once v27a evidence is accepted can v27b (visible badges) proceed.
+
+## Inspector Overlay Hardening Milestones
+
+The "Inspector overlay hardening" backlog item tracks the following sequence:
+
+1. Mission Control UI Inspector toggle — **completed (v24)**
+2. UI Part / Component Role Registration Model — **completed (v24a/v24b)**
+3. Ghost overlay registered-surface layer — **completed (v25)**
+4. Registered/unregistered heuristic planning — **completed (v26)**
+5. Runtime probe instrumentation — **accepted (v27a)**
+6. Visible conservative warning badges — **current pass (v27b)**
+7. Lock/pin selected target behavior — **future candidate**
+
+Each milestone must produce Playwright/QA Debug evidence before advancing to the next stage.

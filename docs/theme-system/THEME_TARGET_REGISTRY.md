@@ -62,6 +62,7 @@ These bindings drive the new `data-lw-theme-target` markers but do not alter run
 - When enabled (v25), a ghost overlay outlines registered major DOM surfaces (`data-lw-theme-target` nodes only) using pointer-events:none dashed rectangles so QA can visually confirm coverage without touching nested controls or Sigma primitives.
 - Hovering a registered target opens a fixed, bottom-right metadata panel (read-only) that lists label, ID, surface, status, visual handle, editable properties, and token bindings.
 - UI Inspector never enables editing, never modifies layout, uses `pointer-events: none` for the HUD + panel so normal UI interactions continue, and anchors its metadata panel to the graph viewport’s lower-right corner so it does not cover Mission Control or the Control Plane.
+- v27b introduces **warning badges** that reuse the v27a probe output; badges render only while the inspector is ON, are positioned near the candidate’s top-right corner, and inherit the same pointer-events:none discipline so they remain purely diagnostic.
 
 ## Non-Goals
 - No Theme Mapping Panel UI.

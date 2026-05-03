@@ -13,9 +13,9 @@ import {
 } from "./helpers/qa";
 import type { ThemeTargetProbeResult } from "../../src/themes/themeTargetHeuristics";
 
-const CURRENT_QA_KEY = "v27a";
-const PRIMARY_PROPOSAL_ID = "visible-warning-badges-plan";
-const SECONDARY_PROPOSAL_ID = "lock-pin-behavior-plan";
+const CURRENT_QA_KEY = "v27b";
+const PRIMARY_PROPOSAL_ID = "lock-pin-behavior-plan";
+const SECONDARY_PROPOSAL_ID = "theme-mapping-panel-plan";
 
 type ProbeWindow = Window & {
   __lwRunThemeTargetProbe?: (options?: { minSignals?: number }) => ThemeTargetProbeResult | null;
@@ -251,13 +251,13 @@ test("Bandit Backlog Top 10 renders", async ({ page }) => {
   await expect(backlogItem.getByTestId("bandit-backlog-title")).not.toHaveText("");
 });
 
-test("v27a is default active checklist", async ({ page }) => {
+test("v27b is default active checklist", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await expectCurrentQaKey(page, CURRENT_QA_KEY);
 });
 
-test("v27a identity diagnostics visible in Debug tab", async ({ page }) => {
+test("v27b identity diagnostics visible in Debug tab", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
 
@@ -338,7 +338,7 @@ test("advisory backlog reorder persists through tab switching", async ({ page })
   await expect(page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title")).toHaveText(reorderedFirstTitle || "");
 });
 
-test("v27a advisory questions are specific to current pass", async ({ page }) => {
+test("v27b advisory questions are specific to current pass", async ({ page }) => {
   await page.goto("/");
 
   // QA panel is in the left dock - use nth(1) to get the main panel
@@ -349,12 +349,13 @@ test("v27a advisory questions are specific to current pass", async ({ page }) =>
   const advisoryTab = page.getByTestId("qa-tab-advisory");
   await advisoryTab.click();
 
-  // Verify v27a-specific questions are visible
+  // Verify v27b-specific questions are visible
   const pageContent = await page.content();
-  expect(pageContent).toContain("runtime-probe-helper-proof");
-  expect(pageContent).toContain("probe-three-signal-proof");
-  expect(pageContent).toContain("probe-unknown-default");
-  expect(pageContent).toContain("probe-no-visible-badges");
+  expect(pageContent).toContain("warning-layer-gated");
+  expect(pageContent).toContain("warning-candidates-proof");
+  expect(pageContent).toContain("warning-unknown-default");
+  expect(pageContent).toContain("warning-never-warn-proof");
+  expect(pageContent).toContain("warning-pointer-events");
 
   // Verify old v15/v13/v16d/v17 questions are NOT visible (stale questions should not appear)
   expect(pageContent).not.toContain("Mission Control Advisory cleanup");
@@ -363,7 +364,7 @@ test("v27a advisory questions are specific to current pass", async ({ page }) =>
   expect(pageContent).not.toContain("visual-handle-token-declaration");
 });
 
-test("v27a report includes Advisory Set Key", async ({ page }) => {
+test("v27b report includes Advisory Set Key", async ({ page }) => {
   await page.goto("/");
 
   // Complete checklist and submit report using helper
@@ -372,12 +373,12 @@ test("v27a report includes Advisory Set Key", async ({ page }) => {
   // Get last report text
   const reportText = await getLastReportText(page);
 
-  // Verify report includes Advisory Set Key: v27a
+  // Verify report includes Advisory Set Key: v27b
   expect(reportText).toContain("Advisory Set Key:");
   expect(reportText).toContain(CURRENT_QA_KEY);
 });
 
-test("v27a report stays blocked when probe checks are unverified", async ({ page }) => {
+test("v27b report stays blocked when badge checks are unverified", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openChecklistTab(page);
@@ -391,7 +392,7 @@ test("v27a report stays blocked when probe checks are unverified", async ({ page
   expect(reportText).not.toContain("**ACCEPT**");
 });
 
-test("v27a acceptance decision requires zero blocked or unverified", async ({ page }) => {
+test("v27b acceptance decision requires zero blocked or unverified", async ({ page }) => {
   await page.goto("/");
   await completeChecklistAndSubmitReport(page);
 
@@ -402,20 +403,21 @@ test("v27a acceptance decision requires zero blocked or unverified", async ({ pa
   expect(reportText).toContain("- Unverified: 0");
 });
 
-test("v27a checklist includes runtime probe checks", async ({ page }) => {
+test("v27b checklist includes warning badge checks", async ({ page }) => {
   await page.goto("/");
   await expectChecklistContainsChecks(page, [
-    "Heuristic runtime probe helper exists",
-    ">=3 candidate signals enforced",
-    "Insufficient signals return unknown/no warning",
-    "Never-warn categories excluded",
-    "Nested controls/text remain excluded",
-    "UI Inspector overlay DOM excluded",
-    "Sigma/graph primitives ignored",
-    "No visible warning badges",
+    "Warning layer only appears when inspector is ON",
+    "Badges render for probe candidates[] only",
+    "Unknown entries never render badges",
+    "Never-warn categories stay badge-free",
+    "Inspector overlay DOM never badged",
+    "Sigma/graph primitives remain excluded",
+    "Badges immediately clear when inspector is OFF",
+    "Warning layer is pointer-events none",
     "Ghost overlay behavior unchanged",
-    "Mission Control toggle unchanged",
-    "Alt+Shift+I hotkey unchanged",
+    "Metadata panel remains unchanged",
+    "Alt+Shift+I behavior unchanged",
+    "No lock/pin behavior added",
     "No Theme Mapping/editing/storage added",
     "Graph renderer unaffected",
     "Typecheck passes",
@@ -423,7 +425,7 @@ test("v27a checklist includes runtime probe checks", async ({ page }) => {
   ]);
 });
 
-test("v27a proposal decisions and backlog order persist after submit", async ({ page }) => {
+test("v27b proposal decisions and backlog order persist after submit", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);

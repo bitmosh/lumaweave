@@ -137,6 +137,22 @@ The v27a pass implements the *runtime/test probe* that applies the v26 heuristic
 - Mission Control toggle + Alt+Shift+I hotkey continue controlling the inspector; probe simply reuses the DOM at measurement time.
 - Graph renderer (Sigma) is never mutated; probe filters out canvas/Sigma nodes before signal counting.
 
+### v27b Visible Conservative Warning Badges (diagnostic)
+
+- When the UI Inspector is ON, the v27b pass reuses the v27a probe output to render subtle warning badges (`data-testid="theme-target-warning-badge"`) for `result.candidates[]` only.
+- Badges remain capped to conservative wording (“Candidate surface / Review registration”), avoid alarming copy, and surface up to three probe signals inline.
+- The warning layer uses `data-testid="theme-target-warning-layer"`, is `position: fixed`, and enforces `pointer-events: none` so users can continue interacting with Mission Control.
+- `result.unknown[]`, never-warn categories, nested controls/text roles, QA tabs, overlay DOM, and Sigma primitives remain unbadged. The probe still omits registered targets entirely.
+- Disabling the inspector immediately clears the warning layer; badges never persist outside inspector mode, and there is no lock/pin or Theme Mapping UI yet.
+
+#### Evidence + QA hooks (v27b additions)
+1. **Playwright spec** now asserts:
+   - Synthetic ≥3-signal fixtures spawn warning badges only while the inspector is enabled.
+   - <3-signal fixtures, never-warn controls, overlay DOM, and graph primitives never create badges.
+   - Warning layer/badges report `pointer-events: none` and disappear when the inspector toggles OFF.
+2. **QA checklist v27b** includes the new badge-specific guarantees (candidates-only, unknown default, never-warn exclusion, inspector gating, pointer-events none, no lock/pin, no Theme Mapping, graph renderer unaffected, typecheck/Playwright status).
+3. **Advisory v27b** questions map to the same evidence: inspector gating, candidate-only badges, never-warn coverage, pointer-events none, and future lock/pin planning.
+
 ### Handling Nested Controls Until Theme Mapping
 - Buttons, tabs, dropdowns, etc. remain discoverable at the **component role** layer, not by attaching unique `data-lw-*` markers per instance.
 - When Theme Mapping Panel work begins, these roles will inform generated controls and token bindings; for now, document them with `visualHandle` + `data-testid` references so QA can trace behavior without runtime churn.

@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { getThemeTargetById, type ThemeTargetContract } from "./themeTargetRegistry";
-import { installThemeTargetProbeGlobal, runAndRecordThemeTargetProbe } from "./themeTargetHeuristics";
+import {
+  installThemeTargetProbeGlobal,
+  runAndRecordThemeTargetProbe,
+  THEME_TARGET_PROBE_EVENT,
+  type ThemeTargetProbeResult,
+  type ThemeTargetCandidateSignal,
+} from "./themeTargetHeuristics";
 
 interface HoverState {
   themeTargetId: string;
@@ -18,6 +24,15 @@ interface GhostOutline {
   left: number;
   width: number;
   height: number;
+}
+
+interface WarningBadge {
+  descriptor: string;
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+  signals: ThemeTargetCandidateSignal[];
 }
 
 installThemeTargetProbeGlobal();
@@ -60,6 +75,7 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
   const [hoverState, setHoverState] = useState<HoverState | null>(null);
   const [graphViewportOffsets, setGraphViewportOffsets] = useState<GraphViewportOffsets | null>(null);
   const [ghostOutlines, setGhostOutlines] = useState<GhostOutline[]>([]);
+  const [warningBadges, setWarningBadges] = useState<WarningBadge[]>([]);
 
   const tokenBindingEntries = hoverState?.metadata ? Object.entries(hoverState.metadata.tokenBindings) : [];
   const hasTokenBindings = tokenBindingEntries.length > 0;
@@ -128,6 +144,7 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
     if (!enabled) {
       setHoverState(null);
       setGhostOutlines([]);
+      setWarningBadges([]);
       return;
     }
 
@@ -245,6 +262,50 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
     };
   }, [enabled]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    if (!enabled) {
+      setWarningBadges([]);
+      return;
+    }
+
+    const mapResultToBadges = (result: ThemeTargetProbeResult | null) => {
+      if (!result) {
+        setWarningBadges([]);
+        return;
+      }
+      const unique = new Map<string, WarningBadge>();
+      for (const candidate of result.candidates) {
+        if (!candidate.bounds || !candidate.signals.length) {
+          continue;
+        }
+        unique.set(candidate.descriptor, {
+          descriptor: candidate.descriptor,
+          top: candidate.bounds.top,
+          left: candidate.bounds.left,
+          width: candidate.bounds.width,
+          height: candidate.bounds.height,
+          signals: candidate.signals,
+        });
+      }
+      setWarningBadges(Array.from(unique.values()));
+    };
+
+    const handleProbe = (event: Event) => {
+      const { detail } = event as CustomEvent<ThemeTargetProbeResult>;
+      mapResultToBadges(detail);
+    };
+
+    window.addEventListener(THEME_TARGET_PROBE_EVENT, handleProbe as EventListener);
+    mapResultToBadges(window.__lwLastThemeTargetProbeResult ?? null);
+
+    return () => {
+      window.removeEventListener(THEME_TARGET_PROBE_EVENT, handleProbe as EventListener);
+    };
+  }, [enabled]);
+
   return (
     <>
       <div
@@ -315,6 +376,65 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
                 </span>
               </div>
             ))}
+          </div>
+        )}
+
+        {enabled && warningBadges.length > 0 && (
+          <div
+            data-testid="theme-target-warning-layer"
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 5200,
+              pointerEvents: "none",
+            }}
+          >
+            {warningBadges.map((badge) => {
+              const viewportWidth = typeof window !== "undefined" ? window.innerWidth : undefined;
+              const badgeTop = Math.max(badge.top - 18, 8);
+              const desiredLeft = badge.left + badge.width - 20;
+              const safeLeft = viewportWidth ? Math.min(desiredLeft, viewportWidth - 140) : desiredLeft;
+              return (
+                <div
+                  key={badge.descriptor}
+                  data-testid="theme-target-warning-badge"
+                  title="Potential missing theme target"
+                  style={{
+                    position: "absolute",
+                    top: `${badgeTop}px`,
+                    left: `${Math.max(safeLeft, 8)}px`,
+                    minWidth: "120px",
+                    padding: "0.3rem 0.65rem",
+                    borderRadius: "9999px",
+                    backgroundColor: "rgba(251, 191, 36, 0.92)",
+                    color: "#0f172a",
+                    fontSize: "0.65rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.04em",
+                    textTransform: "uppercase",
+                    boxShadow: "0 10px 30px rgba(15, 23, 42, 0.35)",
+                    border: "1px solid rgba(245, 158, 11, 0.5)",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.15rem",
+                    pointerEvents: "none",
+                  }}
+                >
+                  <span>Candidate surface</span>
+                  <span
+                    style={{
+                      fontSize: "0.55rem",
+                      fontWeight: 500,
+                      textTransform: "none",
+                      letterSpacing: "0",
+                      color: "rgba(15, 23, 42, 0.8)",
+                    }}
+                  >
+                    {badge.signals.slice(0, 3).join(" • ")}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         )}
 

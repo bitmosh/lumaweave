@@ -79,11 +79,19 @@ export type ThemeTargetCandidateSignal =
   | "graph-hud"
   | "registry-proximity";
 
+export interface ThemeTargetProbeCandidateBounds {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+}
+
 export interface ThemeTargetProbeCandidate {
   descriptor: string;
   dataTestId?: string | null;
   signals: ThemeTargetCandidateSignal[];
   status: "candidate" | "unknown";
+  bounds?: ThemeTargetProbeCandidateBounds | null;
 }
 
 export interface ThemeTargetProbeResult {
@@ -301,11 +309,22 @@ export const runThemeTargetProbe = (options?: ThemeTargetProbeOptions): ThemeTar
     }
 
     const descriptor = describeElement(element);
+    const rect = element.getBoundingClientRect();
+    const bounds = rect.width && rect.height
+      ? {
+          top: rect.top,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height,
+        }
+      : null;
+
     const candidate: ThemeTargetProbeCandidate = {
       descriptor,
       dataTestId: element.getAttribute("data-testid"),
       signals,
       status: signals.length >= minSignals ? "candidate" : "unknown",
+      bounds,
     };
 
     if (candidate.status === "candidate") {

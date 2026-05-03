@@ -272,6 +272,102 @@ export const defaultAdvisoryV13: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV27b: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "warning-layer-gated",
+      prompt: "Do warning badges appear only when the UI Inspector is ON and disappear immediately when it is OFF?",
+      context: "Badges must remain diagnostic overlays gated by the inspector state, never a persistent HUD.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "warning-candidates-proof",
+      prompt: "Does Playwright prove >=3-signal candidates receive badges with readable copy/signals?",
+      context: "Only result.candidates[] (never unknown[]) should earn a badge, and the badge copy should stay calm.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "warning-unknown-default",
+      prompt: "Do <3-signal unknown surfaces remain badge-free while still logging as unknown[]?",
+      context: "Unknown entries must remain invisible diagnostics so QA does not over-warn borderline cases.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "warning-never-warn-proof",
+      prompt: "Do never-warn categories (buttons, tabs, QA tabs, layout shims, overlay DOM, Sigma primitives) remain unbadged?",
+      context: "v26 never-warn doctrine still applies; v27b badges cannot regress those exclusions.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "warning-pointer-events",
+      prompt: "Is the warning layer pointer-events none and read-only so it never blocks Mission Control interactions?",
+      context: "Badges must feel like annotations, not controls; pointer-events none protects primary workflows.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "lock-pin-behavior-plan",
+      title: "Scope lock/pin selected target behavior",
+      summary: "Define UX + QA contract for pinning a target once badges prove the heuristic is trustworthy.",
+      rationale: "Lock/pin relies on badges being accurate so pinned targets represent high-confidence surfaces.",
+      risk: "medium",
+      recommendedNextAction: "Outline pin/unpin flows, keyboard access, and QA evidence requirements that build on v27b badges.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+    {
+      id: "theme-mapping-panel-plan",
+      title: "Plan Theme Mapping Panel entry",
+      summary: "Document how warning badges + runtime probe feed into Theme Mapping UI once lock/pin is ready.",
+      rationale: "Theme Mapping must inherit the diagnostic layer so editing starts from proven signals.",
+      risk: "medium",
+      recommendedNextAction: "Capture dependencies (v27b badges + lock/pin) and list governance/QA hooks needed for editing.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "Inspector overlay hardening",
+      whyItMatters:
+        "Badge work completes the diagnostic stack so future lock/pin + Theme Mapping features inherit a stable overlay.",
+      suggestedFutureBite:
+        "Child tasks:\n- Mission Control UI Inspector toggle (completed v24)\n- UI Part / Component Role Registration Model (completed v24a/v24b)\n- Ghost overlay registered-surface layer (completed v25)\n- Registered/unregistered heuristic planning (completed v26)\n- Registered/unregistered heuristic runtime probe (accepted v27a)\n- Visible warning badges (accepted v27b)\n- Lock/pin selected target behavior (next candidate)",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "Theme Mapping Panel v0",
+      whyItMatters: "Editable controls depend on warning badges + lock/pin to avoid editing the wrong target.",
+      suggestedFutureBite:
+        "Dependencies: Inspector overlay hardening through v27b + lock/pin. Includes governance polish so badge evidence feeds Theme Mapping mode.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "Theme override storage + save preset",
+      whyItMatters: "Once Theme Mapping exists, designers need persistent overrides/presets.",
+      suggestedFutureBite: "Dependency: Theme Mapping Panel semantics + governance policy.",
+      risk: "medium",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV27a: BanditAdvisorySection = {
   questions: [
     {
@@ -368,7 +464,7 @@ export const advisoryV27a: BanditAdvisorySection = {
       whyItMatters:
         "Ghost overlay + runtime probe must stay sequenced so Theme Mapping and lock/pin inherit a stable inspector stack.",
       suggestedFutureBite:
-        "Child tasks:\n- Mission Control UI Inspector toggle (completed v24)\n- UI Part / Component Role Registration Model (completed v24a/v24b)\n- Ghost overlay registered-surface layer (completed v25)\n- Registered/unregistered heuristic planning (completed v26)\n- Registered/unregistered heuristic runtime probe (current v27a)\n- Visible warning badges (future v27b candidate)\n- Lock/pin selected target behavior (future candidate)",
+        "Child tasks:\n- Mission Control UI Inspector toggle (completed v24)\n- UI Part / Component Role Registration Model (completed v24a/v24b)\n- Ghost overlay registered-surface layer (completed v25)\n- Registered/unregistered heuristic planning (completed v26)\n- Registered/unregistered heuristic runtime probe (accepted v27a)\n- Visible warning badges (in progress v27b)\n- Lock/pin selected target behavior (future candidate)",
       risk: "medium",
       status: "candidate",
     },
@@ -1705,6 +1801,9 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number, ch
 
 // Advisory lookup function keyed by canonical qaKey
 export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
+  if (qaKey === "v27b") {
+    return advisoryV27b;
+  }
   if (qaKey === "v27a") {
     return advisoryV27a;
   }
