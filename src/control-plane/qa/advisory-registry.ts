@@ -520,6 +520,16 @@ export const advisoryV36c: BanditAdvisorySection = {
       userDecision: "unreviewed",
       userNotes: "",
     },
+    {
+      id: "v36e-command-palette",
+      title: "v36e Command Palette Integration",
+      summary: "Add keyboard-driven command palette for accessing commands",
+      rationale: "Users may want a keyboard-driven interface for discovering and executing commands.",
+      risk: "medium",
+      recommendedNextAction: "Implement in v36e or later after v36c is accepted",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
   ],
   backlog: [
     {
@@ -528,6 +538,14 @@ export const advisoryV36c: BanditAdvisorySection = {
       whyItMatters: "Users may want to execute commands from the Command Deck.",
       suggestedFutureBite: "Add command execution with proper governance and testing",
       risk: "high",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "v36e Command Palette Integration",
+      whyItMatters: "Users may want to access commands via a keyboard-driven command palette.",
+      suggestedFutureBite: "Add command palette with fuzzy search and keyboard navigation",
+      risk: "medium",
       status: "candidate",
     },
   ],
@@ -2913,6 +2931,15 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number, ch
 export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
   if (qaKey === "v34c1") {
     return advisoryV34c1;
+  }
+  if (qaKey === "v36c") {
+    return advisoryV36c;
+  }
+  if (qaKey === "v36b") {
+    return advisoryV36b;
+  }
+  if (qaKey === "v36a") {
+    return advisoryV36a;
   }
   if (qaKey === "v34b") {
     return advisoryV34b;

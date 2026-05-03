@@ -15,7 +15,7 @@ import type { ThemeTargetProbeResult } from "../../src/themes/themeTargetHeurist
 
 const CURRENT_QA_KEY = "v36c";
 const PRIMARY_PROPOSAL_ID = "v36d-command-execution";
-const SECONDARY_PROPOSAL_ID = "v36d-command-execution";
+const SECONDARY_PROPOSAL_ID = "v36e-command-palette";
 
 type ProbeWindow = Window & {
   __lwRunThemeTargetProbe?: (options?: { minSignals?: number }) => ThemeTargetProbeResult | null;
@@ -227,7 +227,7 @@ test("Bandit Proposals render in Advisory tab", async ({ page }) => {
   await expect(proposalsSection).toBeVisible();
 });
 
-test.skip("Proposal decision can be changed", async ({ page }) => {
+test("Proposal decision can be changed", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);
@@ -238,7 +238,7 @@ test.skip("Proposal decision can be changed", async ({ page }) => {
   await expect(decisionDropdown).toHaveValue("accept-for-future");
 });
 
-test.skip("Proposal notes field accepts input", async ({ page }) => {
+test("Proposal notes field accepts input", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);
@@ -249,7 +249,7 @@ test.skip("Proposal notes field accepts input", async ({ page }) => {
   await expect(notesTextarea).toHaveValue("Test notes for proposal");
 });
 
-test.skip("Bandit Backlog Top 10 renders", async ({ page }) => {
+test("Bandit Backlog Top 10 renders", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);
@@ -311,7 +311,7 @@ test("Debug tab shows grouped missing Playwright coverage", async ({ page }) => 
   await expect(page.getByTestId("missing-playwright-missionControl")).toContainText("Mission Control Tabs");
 });
 
-test.skip("advisory backlog reorder moves item up", async ({ page }) => {
+test("advisory backlog reorder moves item up", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);
@@ -321,7 +321,7 @@ test.skip("advisory backlog reorder moves item up", async ({ page }) => {
   await expect(page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title")).toHaveText(secondTitle || "");
 });
 
-test.skip("advisory backlog reorder moves item down", async ({ page }) => {
+test("advisory backlog reorder moves item down", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);
@@ -331,7 +331,7 @@ test.skip("advisory backlog reorder moves item down", async ({ page }) => {
   await expect(page.getByTestId("bandit-backlog-item-2").getByTestId("bandit-backlog-title")).toHaveText(firstTitle || "");
 });
 
-test.skip("advisory backlog reorder persists through tab switching", async ({ page }) => {
+test("advisory backlog reorder persists through tab switching", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);
@@ -469,7 +469,7 @@ test("v34b narrow theme mapping control behavior preserved", async ({ page }) =>
   expect(afterReset).toBe(false);
 });
 
-test.skip("v36c proposal decisions and backlog order persist after submit", async ({ page }) => {
+test("v36c proposal decisions and backlog order persist after submit", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);
