@@ -1295,6 +1295,169 @@ export const advisoryV47: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV48: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v48-detail-mode-section-visible",
+      prompt: "Is the Graph Evidence Detail Mode section visible?",
+      context: "Graph Evidence Detail Mode section should be visible in Graph Visual Inventory.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v48-summary-mode-default",
+      prompt: "Is Summary mode the default?",
+      context: "Summary mode should be visible by default on page load.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v48-detailed-mode-works",
+      prompt: "Does Detailed mode work?",
+      context: "Clicking Detailed mode should change visible evidence text.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v48-mode-switching-works",
+      prompt: "Does mode switching work?",
+      context: "Switching between Summary and Detailed should visibly change text.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v48-no-sigma-mutation",
+      prompt: "Is there no Sigma/renderer mutation?",
+      context: "No Sigma/renderer mutation should occur.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v48-no-physics-change",
+      prompt: "Is there no physics parameter change?",
+      context: "No physics parameters should change.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v48-no-camera-filter",
+      prompt: "Is there no camera/filter behavior?",
+      context: "No camera/filter behavior should be added.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v48-no-storage",
+      prompt: "Is there no storage/persistence?",
+      context: "No storage/persistence should be added.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v48-no-hotkeys",
+      prompt: "Are there no hotkeys/listeners?",
+      context: "No new hotkeys/listeners should be added.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v48-no-commands",
+      prompt: "Is there no command execution?",
+      context: "No command execution should be added.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v48-active-controls",
+      prompt: "Are controls genuinely active?",
+      context: "Controls should be genuinely active (not dead).",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v48-graph-surface-mounts",
+      prompt: "Does the graph surface still mount?",
+      context: "Graph surface should still mount and be visible.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v48-runtime-probe-works",
+      prompt: "Does the runtime probe still work?",
+      context: "Runtime probe should still report mutation boundaries.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v48-typecheck-passes",
+      prompt: "Does typecheck pass with zero errors?",
+      context: "npm run typecheck should pass with zero errors.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v48-playwright-passes",
+      prompt: "Do Playwright tests pass with zero skips?",
+      context: "npm run qa:e2e should pass with zero failures and zero skips.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "v49-first-real-graph-mutation",
+      title: "v49 First Real Graph/Sigma Mutation",
+      summary: "Implement the first real graph/Sigma mutation with explicit new contract",
+      rationale: "After v48 proves app-level UI mutation is safe, v49 can implement the first real graph/Sigma mutation with new explicit contract.",
+      risk: "high",
+      recommendedNextAction: "Define specific mutation contract (e.g., physics tuning) and implement with full evidence",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "v49 First Real Graph/Sigma Mutation",
+      whyItMatters: "After v48 proves app-level UI mutation is safe, v49 can implement the first real graph/Sigma mutation with new explicit contract.",
+      suggestedFutureBite: "Define specific mutation contract (e.g., physics tuning) and implement with full evidence",
+      risk: "high",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "v50 Graph Visual Mapping",
+      whyItMatters: "After runtime boundaries are established, implement theme mapping for graph visual elements.",
+      suggestedFutureBite: "Add theme mapping for graph colors, background, borders",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "v51 Graph Physics Controls",
+      whyItMatters: "Implement graph physics controls after visual mapping is in place.",
+      suggestedFutureBite: "Add physics sliders for node size, link distance, repel force",
+      risk: "high",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV40: BanditAdvisorySection = {
   questions: [
     {
@@ -3840,6 +4003,9 @@ export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
   }
   if (qaKey === "v47") {
     return advisoryV47;
+  }
+  if (qaKey === "v48") {
+    return advisoryV48;
   }
   if (qaKey === "v41") {
     return advisoryV41;

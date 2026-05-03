@@ -5,13 +5,17 @@
  *
  * This panel is read-only and does not control Sigma or graph rendering.
  * It displays registry metadata for evidence and inspection only.
+ *
+ * v48: Added Graph Evidence Detail Mode - a non-persistent UI mode that switches
+ * displayed evidence text between Summary and Detailed.
  */
 
-import React from "react";
+import React, { useState } from "react";
 import { getAllGraphViewElements, type GraphViewElement } from "../../graph/graphViewElementRegistry";
 
 export function GraphVisualInventoryPanel(): React.JSX.Element {
   const elements = getAllGraphViewElements();
+  const [detailMode, setDetailMode] = useState<"summary" | "detailed">("summary");
 
   return (
     <div>
@@ -22,6 +26,51 @@ export function GraphVisualInventoryPanel(): React.JSX.Element {
         <p className="text-sm text-gray-600" data-testid="graph-visual-inventory-description">
           Read-only inventory of graph visual elements
         </p>
+      </div>
+
+      {/* Graph Evidence Detail Mode (v48) */}
+      <div
+        className="mb-4 p-3 border border-purple-200 rounded bg-purple-50"
+        data-testid="graph-evidence-detail-mode"
+      >
+        <h3 className="text-sm font-semibold text-purple-900 mb-2" data-testid="graph-evidence-detail-mode-title">
+          Graph Evidence Detail Mode (v48)
+        </h3>
+        <p className="text-xs text-purple-700 mb-3" data-testid="graph-evidence-detail-mode-description">
+          Non-persistent UI mode: switch between Summary and Detailed evidence display
+        </p>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setDetailMode("summary")}
+            aria-pressed={detailMode === "summary"}
+            data-testid="graph-evidence-mode-summary"
+            className={`px-3 py-1 text-xs rounded ${
+              detailMode === "summary"
+                ? "bg-purple-600 text-white"
+                : "bg-white text-purple-700 border border-purple-300"
+            }`}
+          >
+            Summary
+          </button>
+          <button
+            onClick={() => setDetailMode("detailed")}
+            aria-pressed={detailMode === "detailed"}
+            data-testid="graph-evidence-mode-detailed"
+            className={`px-3 py-1 text-xs rounded ${
+              detailMode === "detailed"
+                ? "bg-purple-600 text-white"
+                : "bg-white text-purple-700 border border-purple-300"
+            }`}
+          >
+            Detailed
+          </button>
+          <span
+            className="text-xs font-mono text-purple-800"
+            data-testid="graph-evidence-detail-readout"
+          >
+            Mode: {detailMode}
+          </span>
+        </div>
       </div>
 
       {/* Passive Runtime Probe Section (v46) */}
@@ -65,7 +114,7 @@ export function GraphVisualInventoryPanel(): React.JSX.Element {
 
       <div className="space-y-2" data-testid="graph-visual-inventory-list">
         {elements.map((element) => (
-          <GraphVisualInventoryRow key={element.id} element={element} />
+          <GraphVisualInventoryRow key={element.id} element={element} detailMode={detailMode} />
         ))}
       </div>
     </div>
@@ -74,9 +123,10 @@ export function GraphVisualInventoryPanel(): React.JSX.Element {
 
 interface GraphVisualInventoryRowProps {
   element: GraphViewElement;
+  detailMode: "summary" | "detailed";
 }
 
-function GraphVisualInventoryRow({ element }: GraphVisualInventoryRowProps): React.JSX.Element {
+function GraphVisualInventoryRow({ element, detailMode }: GraphVisualInventoryRowProps): React.JSX.Element {
   const statusColor = getStatusColor(element.status);
 
   return (
@@ -110,13 +160,13 @@ function GraphVisualInventoryRow({ element }: GraphVisualInventoryRowProps): Rea
         </span>
       </div>
 
-      {element.sigmaBoundary && (
+      {detailMode === "detailed" && element.sigmaBoundary && (
         <div className="mt-2 text-xs text-gray-500 italic" data-testid={`graph-visual-inventory-row-sigma-boundary-${element.id}`}>
           Sigma Boundary: {element.sigmaBoundary}
         </div>
       )}
 
-      {element.policyNote && (
+      {detailMode === "detailed" && element.policyNote && (
         <div className="mt-1 text-xs text-gray-500 italic" data-testid={`graph-visual-inventory-row-policy-${element.id}`}>
           Policy: {element.policyNote}
         </div>

@@ -13,9 +13,9 @@ import {
 } from "./helpers/qa";
 import type { ThemeTargetProbeResult } from "../../src/themes/themeTargetHeuristics";
 
-const CURRENT_QA_KEY = "v47";
-const PRIMARY_PROPOSAL_ID = "v48-graph-evidence-detail-mode";
-const SECONDARY_PROPOSAL_ID = "v48-graph-evidence-detail-mode";
+const CURRENT_QA_KEY = "v48";
+const PRIMARY_PROPOSAL_ID = "v49-first-real-graph-mutation";
+const SECONDARY_PROPOSAL_ID = "v49-first-real-graph-mutation";
 
 type ProbeWindow = Window & {
   __lwRunThemeTargetProbe?: (options?: { minSignals?: number }) => ThemeTargetProbeResult | null;
@@ -259,13 +259,13 @@ test("Bandit Backlog Top 10 renders", async ({ page }) => {
   await expect(backlogItem.getByTestId("bandit-backlog-title")).not.toHaveText("");
 });
 
-test("v47 is default active checklist", async ({ page }) => {
+test("v48 is default active checklist", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await expectCurrentQaKey(page, CURRENT_QA_KEY);
 });
 
-test("v47 identity diagnostics visible in Debug tab", async ({ page }) => {
+test("v48 identity diagnostics visible in Debug tab", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
 
@@ -275,7 +275,7 @@ test("v47 identity diagnostics visible in Debug tab", async ({ page }) => {
   const identitySection = page.getByText("QA Identity Diagnostics");
   await expect(identitySection).toBeVisible();
 
-  const currentQaKey = page.getByText(`Current QA Key: v47`);
+  const currentQaKey = page.getByText(`Current QA Key: v48`);
   await expect(currentQaKey).toBeVisible();
 });
 
@@ -343,21 +343,21 @@ test("advisory backlog reorder persists through tab switching", async ({ page })
   await expect(page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title")).toHaveText(reorderedFirstTitle || "");
 });
 
-test("v47 advisory tab renders first mutation contract questions", async ({ page }) => {
+test("v48 advisory tab renders detail mode questions", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);
 
-  // Verify v47 advisory section is visible
+  // Verify v48 advisory section is visible
   const advisorySection = page.getByTestId("qa-advisory-section");
   await expect(advisorySection).toBeVisible();
 
-  // Verify first mutation contract questions are rendered
-  const contractQuestion = page.getByText("Does the First Graph Runtime Mutation Contract exist?");
-  await expect(contractQuestion).toBeVisible();
+  // Verify detail mode questions are rendered
+  const detailModeQuestion = page.getByText("Is the Graph Evidence Detail Mode section visible?");
+  await expect(detailModeQuestion).toBeVisible();
 });
 
-test("v47 report includes Advisory Set Key", async ({ page }) => {
+test("v48 report includes Advisory Set Key", async ({ page }) => {
   await page.goto("/");
 
   // Complete checklist and submit report using helper
@@ -370,7 +370,7 @@ test("v47 report includes Advisory Set Key", async ({ page }) => {
   expect(reportText).toContain(CURRENT_QA_KEY);
 });
 
-test("v47 report stays blocked when control checks are unverified", async ({ page }) => {
+test("v48 report stays blocked when control checks are unverified", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openChecklistTab(page);
@@ -384,7 +384,7 @@ test("v47 report stays blocked when control checks are unverified", async ({ pag
   expect(reportText).not.toContain("**ACCEPT**");
 });
 
-test("v47 acceptance decision requires zero blocked or unverified", async ({ page }) => {
+test("v48 acceptance decision requires zero blocked or unverified", async ({ page }) => {
   await page.goto("/");
   await completeChecklistAndSubmitReport(page);
 
@@ -395,26 +395,25 @@ test("v47 acceptance decision requires zero blocked or unverified", async ({ pag
   expect(reportText).toContain("- Unverified: 0");
 });
 
-test("v47 checklist includes first mutation contract checks", async ({ page }) => {
+test("v48 checklist includes detail mode checks", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openChecklistTab(page);
 
   await expectChecklistContainsChecks(page, [
-    "First graph runtime mutation contract exists",
-    "First mutation candidate defined",
-    "Allowed mutation boundary clear",
-    "Forbidden mutation boundary clear",
-    "Sigma non-mutation guarantee",
-    "Physics non-mutation guarantee",
-    "Camera non-mutation guarantee",
-    "Storage boundary clear",
-    "Command deck boundary clear",
-    "Hotkey boundary clear",
-    "Accessibility requirements defined",
-    "Playwright evidence requirements defined",
-    "v48 preconditions defined",
-    "v49+ promotion path defined",
+    "Graph Evidence Detail Mode section is visible",
+    "Summary mode is default",
+    "Detailed mode works",
+    "Mode switching works",
+    "No Sigma/renderer mutation",
+    "No physics parameter change",
+    "No camera/filter behavior",
+    "No storage/persistence",
+    "No hotkeys/listeners",
+    "No command execution",
+    "Controls are genuinely active",
+    "Graph surface still mounts",
+    "Runtime probe still works",
     "Typecheck passes",
     "Playwright passes",
   ]);
@@ -474,7 +473,7 @@ test("v34b narrow theme mapping control behavior preserved", async ({ page }) =>
   expect(afterReset).toBe(false);
 });
 
-test("v47 proposal decisions and backlog order persist after submit", async ({ page }) => {
+test("v48 proposal decisions and backlog order persist after submit", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);

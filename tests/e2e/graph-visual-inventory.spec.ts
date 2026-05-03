@@ -74,11 +74,17 @@ test.describe("Graph Visual Inventory", () => {
   });
 
   test("Registry entries show sigma boundary", async ({ page }) => {
+    const detailedButton = page.getByTestId("graph-evidence-mode-detailed");
+    await detailedButton.click();
+
     const graphFrameSigma = page.getByTestId("graph-visual-inventory-row-sigma-boundary-graph.frame");
     await expect(graphFrameSigma).toBeVisible();
   });
 
   test("Registry entries show policy note", async ({ page }) => {
+    const detailedButton = page.getByTestId("graph-evidence-mode-detailed");
+    await detailedButton.click();
+
     const graphFramePolicy = page.getByTestId("graph-visual-inventory-row-policy-graph.frame");
     await expect(graphFramePolicy).toBeVisible();
   });
@@ -245,6 +251,125 @@ test.describe("Graph Visual Inventory", () => {
 
       const graphFrameRow = page.getByTestId("graph-visual-inventory-row-graph.frame");
       await expect(graphFrameRow).toBeVisible();
+    });
+  });
+
+  test.describe("Graph Evidence Detail Mode (v48)", () => {
+    test("Graph Evidence Detail Mode section is visible", async ({ page }) => {
+      const detailModeSection = page.getByTestId("graph-evidence-detail-mode");
+      await expect(detailModeSection).toBeVisible();
+    });
+
+    test("Graph Evidence Detail Mode title is visible", async ({ page }) => {
+      const detailModeTitle = page.getByTestId("graph-evidence-detail-mode-title");
+      await expect(detailModeTitle).toBeVisible();
+      await expect(detailModeTitle).toHaveText("Graph Evidence Detail Mode (v48)");
+    });
+
+    test("Graph Evidence Detail Mode description indicates non-persistent UI mode", async ({ page }) => {
+      const detailModeDescription = page.getByTestId("graph-evidence-detail-mode-description");
+      await expect(detailModeDescription).toBeVisible();
+      await expect(detailModeDescription).toHaveText("Non-persistent UI mode: switch between Summary and Detailed evidence display");
+    });
+
+    test("Summary mode button is visible", async ({ page }) => {
+      const summaryButton = page.getByTestId("graph-evidence-mode-summary");
+      await expect(summaryButton).toBeVisible();
+      await expect(summaryButton).toHaveText("Summary");
+    });
+
+    test("Detailed mode button is visible", async ({ page }) => {
+      const detailedButton = page.getByTestId("graph-evidence-mode-detailed");
+      await expect(detailedButton).toBeVisible();
+      await expect(detailedButton).toHaveText("Detailed");
+    });
+
+    test("Mode readout is visible", async ({ page }) => {
+      const modeReadout = page.getByTestId("graph-evidence-detail-readout");
+      await expect(modeReadout).toBeVisible();
+      const readoutText = await modeReadout.textContent();
+      expect(readoutText).toContain("Mode:");
+    });
+
+    test("Summary mode is default", async ({ page }) => {
+      const modeReadout = page.getByTestId("graph-evidence-detail-readout");
+      await expect(modeReadout).toHaveText("Mode: summary");
+    });
+
+    test("Clicking Detailed mode changes mode readout", async ({ page }) => {
+      const detailedButton = page.getByTestId("graph-evidence-mode-detailed");
+      const modeReadout = page.getByTestId("graph-evidence-detail-readout");
+
+      await detailedButton.click();
+      await expect(modeReadout).toHaveText("Mode: detailed");
+    });
+
+    test("Clicking Summary mode changes mode readout back", async ({ page }) => {
+      const detailedButton = page.getByTestId("graph-evidence-mode-detailed");
+      const summaryButton = page.getByTestId("graph-evidence-mode-summary");
+      const modeReadout = page.getByTestId("graph-evidence-detail-readout");
+
+      await detailedButton.click();
+      await expect(modeReadout).toHaveText("Mode: detailed");
+
+      await summaryButton.click();
+      await expect(modeReadout).toHaveText("Mode: summary");
+    });
+
+    test("Summary mode hides sigma boundary and policy text", async ({ page }) => {
+      const summaryButton = page.getByTestId("graph-evidence-mode-summary");
+      const graphFrameSigmaBoundary = page.getByTestId("graph-visual-inventory-row-sigma-boundary-graph.frame");
+      const graphFramePolicy = page.getByTestId("graph-visual-inventory-row-policy-graph.frame");
+
+      await summaryButton.click();
+      await expect(graphFrameSigmaBoundary).not.toBeVisible();
+      await expect(graphFramePolicy).not.toBeVisible();
+    });
+
+    test("Detailed mode shows sigma boundary and policy text", async ({ page }) => {
+      const detailedButton = page.getByTestId("graph-evidence-mode-detailed");
+      const graphFrameSigmaBoundary = page.getByTestId("graph-visual-inventory-row-sigma-boundary-graph.frame");
+      const graphFramePolicy = page.getByTestId("graph-visual-inventory-row-policy-graph.frame");
+
+      await detailedButton.click();
+      await expect(graphFrameSigmaBoundary).toBeVisible();
+      await expect(graphFramePolicy).toBeVisible();
+    });
+
+    test("Graph surface still mounts with detail mode present", async ({ page }) => {
+      const canvas = page.locator("canvas").first();
+      await expect(canvas).toBeVisible();
+    });
+
+    test("Runtime probe still reports mutation boundaries with detail mode", async ({ page }) => {
+      const mutationStatus = page.getByTestId("graph-runtime-probe-mutation-status");
+      await expect(mutationStatus).toBeVisible();
+      await expect(mutationStatus).toHaveText("locked/deferred");
+    });
+
+    test("No new graph renderer/physics/camera/filter controls are introduced", async ({ page }) => {
+      const panel = page.getByTestId("graph-visual-inventory-panel");
+
+      // Check that there are no new Sigma/renderer mutation controls
+      const sigmaControls = panel.getByRole("button", { name: /sigma|renderer|mutation/i });
+      await expect(sigmaControls).not.toBeVisible();
+
+      // Check that there are no new physics modification controls
+      const physicsControls = panel.getByRole("button", { name: /physics|force|layout/i });
+      await expect(physicsControls).not.toBeVisible();
+    });
+
+    test("Controls are genuinely active (not dead)", async ({ page }) => {
+      const detailedButton = page.getByTestId("graph-evidence-mode-detailed");
+      const summaryButton = page.getByTestId("graph-evidence-mode-summary");
+      const modeReadout = page.getByTestId("graph-evidence-detail-readout");
+
+      // Verify buttons are clickable and change state
+      await detailedButton.click();
+      await expect(modeReadout).toHaveText("Mode: detailed");
+
+      await summaryButton.click();
+      await expect(modeReadout).toHaveText("Mode: summary");
     });
   });
 });
