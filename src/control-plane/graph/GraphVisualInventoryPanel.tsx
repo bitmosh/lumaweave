@@ -13,10 +13,12 @@
 import React, { useState } from "react";
 import { getAllGraphViewElements, type GraphViewElement } from "../../graph/graphViewElementRegistry";
 import { getAllGraphVisualThemeMappings, type GraphVisualThemeMapping } from "../../graph/graphVisualThemeMappingRegistry";
+import { getAllMotionSafetyEntries } from "../../accessibility/motionSafetyRegistry";
 
 export function GraphVisualInventoryPanel(): React.JSX.Element {
   const elements = getAllGraphViewElements();
   const themeMappings = getAllGraphVisualThemeMappings();
+  const motionSafetyEntries = getAllMotionSafetyEntries();
   const [detailMode, setDetailMode] = useState<"summary" | "detailed">("summary");
   const [themeEvidenceMode, setThemeEvidenceMode] = useState<boolean>(false);
   const [themeApplicationMode, setThemeApplicationMode] = useState<boolean>(false);
@@ -344,6 +346,60 @@ export function GraphVisualInventoryPanel(): React.JSX.Element {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Motion Safety Guard Registry (v60) */}
+      <div
+        className="mb-4 p-3 border border-rose-200 rounded bg-rose-50"
+        data-testid="motion-safety-guard-registry-section"
+      >
+        <h3 className="text-sm font-semibold text-rose-900 mb-2" data-testid="motion-safety-guard-registry-title">
+          Motion Safety Guard Registry (v60)
+        </h3>
+        <p className="text-xs text-rose-700 mb-3" data-testid="motion-safety-guard-registry-description">
+          Static, read-only registry of visual effects classified by motion risk, reduced-motion behavior, and epilepsy risk. No effect execution.
+        </p>
+        <div className="space-y-1 text-xs mb-3">
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Registry entries:</span>
+            <span className="font-mono text-rose-800" data-testid="motion-safety-registry-count">
+              {motionSafetyEntries.length}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Safe effects:</span>
+            <span className="font-mono text-green-700 font-semibold" data-testid="motion-safety-safe-count">
+              {motionSafetyEntries.filter((e) => e.risk === "safe").length}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Low-risk effects:</span>
+            <span className="font-mono text-yellow-700 font-semibold" data-testid="motion-safety-low-count">
+              {motionSafetyEntries.filter((e) => e.risk === "low").length}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Moderate-risk effects:</span>
+            <span className="font-mono text-orange-700 font-semibold" data-testid="motion-safety-moderate-count">
+              {motionSafetyEntries.filter((e) => e.risk === "moderate").length}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">High-risk effects:</span>
+            <span className="font-mono text-red-700 font-semibold" data-testid="motion-safety-high-count">
+              {motionSafetyEntries.filter((e) => e.risk === "high").length}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Requires explicit opt-in:</span>
+            <span className="font-mono text-purple-700 font-semibold" data-testid="motion-safety-optin-count">
+              {motionSafetyEntries.filter((e) => e.requiresExplicitOptIn).length}
+            </span>
+          </div>
+        </div>
+        <div className="mt-2 pt-2 border-t border-rose-300 text-xs text-gray-500 italic" data-testid="motion-safety-registry-notice">
+          Registry is static/read-only classification only. No animation, no audio input, no music reactivity, no graph/Sigma mutation, no active controls.
+        </div>
       </div>
 
       {/* Passive Runtime Probe Section (v46) */}

@@ -1066,4 +1066,102 @@ test.describe("Graph Visual Inventory", () => {
       await expect(status).toHaveText("Diagnostic mode: inactive");
     });
   });
+
+  test.describe("Motion Safety Guard Registry (v60)", () => {
+    test("Motion Safety Guard Registry section is visible", async ({ page }) => {
+      const section = page.getByTestId("motion-safety-guard-registry-section");
+      await expect(section).toBeVisible();
+    });
+
+    test("Motion Safety Guard Registry title is visible", async ({ page }) => {
+      const title = page.getByTestId("motion-safety-guard-registry-title");
+      await expect(title).toBeVisible();
+      await expect(title).toHaveText("Motion Safety Guard Registry (v60)");
+    });
+
+    test("Motion Safety Guard Registry description is visible", async ({ page }) => {
+      const description = page.getByTestId("motion-safety-guard-registry-description");
+      await expect(description).toBeVisible();
+      await expect(description).toHaveText(/static.*read-only.*registry/i);
+    });
+
+    test("Registry entries count is visible", async ({ page }) => {
+      const count = page.getByTestId("motion-safety-registry-count");
+      await expect(count).toBeVisible();
+      await expect(count).toHaveText("8");
+    });
+
+    test("Safe effects count is visible", async ({ page }) => {
+      const count = page.getByTestId("motion-safety-safe-count");
+      await expect(count).toBeVisible();
+      await expect(count).toHaveText("3");
+    });
+
+    test("Low-risk effects count is visible", async ({ page }) => {
+      const count = page.getByTestId("motion-safety-low-count");
+      await expect(count).toBeVisible();
+      await expect(count).toHaveText("3");
+    });
+
+    test("Moderate-risk effects count is visible", async ({ page }) => {
+      const count = page.getByTestId("motion-safety-moderate-count");
+      await expect(count).toBeVisible();
+      await expect(count).toHaveText("2");
+    });
+
+    test("High-risk effects count is visible", async ({ page }) => {
+      const count = page.getByTestId("motion-safety-high-count");
+      await expect(count).toBeVisible();
+      await expect(count).toHaveText("0");
+    });
+
+    test("Requires explicit opt-in count is visible", async ({ page }) => {
+      const count = page.getByTestId("motion-safety-optin-count");
+      await expect(count).toBeVisible();
+      await expect(count).toHaveText("2");
+    });
+
+    test("Registry notice is visible and confirms passive nature", async ({ page }) => {
+      const notice = page.getByTestId("motion-safety-registry-notice");
+      await expect(notice).toBeVisible();
+      await expect(notice).toContainText("static/read-only");
+      await expect(notice).toContainText("No animation");
+      await expect(notice).toContainText("no audio input");
+      await expect(notice).toContainText("no music reactivity");
+      await expect(notice).toContainText("no active controls");
+    });
+
+    test("Existing inventory/probe/detail mode/theme mapping/evidence wrapper/token preview/theme application/diagnostic still works", async ({ page }) => {
+      // Check that existing modes are still visible
+      const detailModeSection = page.getByTestId("graph-evidence-detail-mode");
+      await expect(detailModeSection).toBeVisible();
+
+      const mappingSection = page.getByTestId("graph-theme-mapping-inventory-section");
+      await expect(mappingSection).toBeVisible();
+
+      const evidenceSection = page.getByTestId("graph-theme-evidence-wrapper-mode-section");
+      await expect(evidenceSection).toBeVisible();
+
+      const previewSection = page.getByTestId("graph-theme-token-preview-section");
+      await expect(previewSection).toBeVisible();
+
+      const applicationSection = page.getByTestId("graph-theme-application-section");
+      await expect(applicationSection).toBeVisible();
+
+      const diagnosticSection = page.getByTestId("graph-theme-readiness-diagnostic-section");
+      await expect(diagnosticSection).toBeVisible();
+    });
+
+    test("No animation/audio/graph mutation controls are active", async ({ page }) => {
+      const panel = page.getByTestId("graph-visual-inventory-panel");
+
+      // Check that there are no new animation/audio controls in motion safety section
+      const animationControls = panel.getByRole("button", { name: /animation|audio|music|reactive/i });
+      await expect(animationControls).not.toBeVisible();
+
+      // Check that there are no new graph mutation controls
+      const graphControls = panel.getByRole("button", { name: /sigma|renderer|mutation/i });
+      await expect(graphControls).not.toBeVisible();
+    });
+  });
 });
