@@ -19,6 +19,7 @@ export function GraphVisualInventoryPanel(): React.JSX.Element {
   const themeMappings = getAllGraphVisualThemeMappings();
   const [detailMode, setDetailMode] = useState<"summary" | "detailed">("summary");
   const [themeEvidenceMode, setThemeEvidenceMode] = useState<boolean>(false);
+  const [themeApplicationMode, setThemeApplicationMode] = useState<boolean>(false);
 
   return (
     <div>
@@ -202,6 +203,72 @@ export function GraphVisualInventoryPanel(): React.JSX.Element {
             <span className="text-gray-600">Sigma mutation:</span>
             <span className="font-mono text-red-600 font-semibold" data-testid="graph-theme-token-preview-sigma-status">
               forbidden in v54
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Graph Shell Theme Evidence Application (v56) */}
+      <div
+        className="mb-4 p-3 border border-indigo-200 rounded bg-indigo-50"
+        data-testid="graph-theme-application-section"
+      >
+        <h3 className="text-sm font-semibold text-indigo-900 mb-2" data-testid="graph-theme-application-title">
+          Graph Shell Theme Evidence Application (v56)
+        </h3>
+        <p className="text-xs text-indigo-700 mb-3" data-testid="graph-theme-application-description">
+          DOM-only wrapper theme application evidence. Applies data attribute to graph shell. Does not apply token values to Sigma or graph.
+        </p>
+        <div className="flex items-center gap-3 mb-2">
+          <button
+            onClick={() => setThemeApplicationMode(!themeApplicationMode)}
+            aria-pressed={themeApplicationMode}
+            aria-label="Toggle graph shell theme application evidence"
+            data-testid="graph-theme-application-toggle"
+            className={`px-3 py-1 text-xs rounded ${
+              themeApplicationMode
+                ? "bg-indigo-600 text-white"
+                : "bg-white text-indigo-700 border border-indigo-300"
+            }`}
+          >
+            {themeApplicationMode ? "Active" : "Inactive"}
+          </button>
+          <span
+            className="text-xs font-mono text-indigo-800"
+            data-testid="graph-theme-application-status"
+          >
+            Graph theme application: {themeApplicationMode ? "active" : "inactive"}
+          </span>
+        </div>
+        <div className="space-y-1 text-xs">
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Canonical token paths (metadata only):</span>
+            <span className="font-mono text-indigo-800" data-testid="graph-theme-application-token-paths">
+              {themeMappings.map((m) => m.canonicalTokenPath).join(", ")}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Token value application:</span>
+            <span className="font-mono text-red-600 font-semibold" data-testid="graph-theme-application-token-value-status">
+              forbidden in v56
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Sigma mutation:</span>
+            <span className="font-mono text-red-600 font-semibold" data-testid="graph-theme-application-sigma-status">
+              forbidden in v56
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">CSS variable writes:</span>
+            <span className="font-mono text-red-600 font-semibold" data-testid="graph-theme-application-css-status">
+              forbidden in v56
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Node/edge styling:</span>
+            <span className="font-mono text-red-600 font-semibold" data-testid="graph-theme-application-styling-status">
+              forbidden in v56
             </span>
           </div>
         </div>

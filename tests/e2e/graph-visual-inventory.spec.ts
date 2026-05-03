@@ -761,4 +761,141 @@ test.describe("Graph Visual Inventory", () => {
       await expect(evidenceSection).toBeVisible();
     });
   });
+
+  test.describe("Graph Shell Theme Evidence Application (v56)", () => {
+    test("Graph theme application section is visible", async ({ page }) => {
+      const section = page.getByTestId("graph-theme-application-section");
+      await expect(section).toBeVisible();
+    });
+
+    test("Graph theme application title is visible", async ({ page }) => {
+      const title = page.getByTestId("graph-theme-application-title");
+      await expect(title).toBeVisible();
+      await expect(title).toHaveText("Graph Shell Theme Evidence Application (v56)");
+    });
+
+    test("Graph theme application description is visible", async ({ page }) => {
+      const description = page.getByTestId("graph-theme-application-description");
+      await expect(description).toBeVisible();
+      await expect(description).toHaveText(
+        "DOM-only wrapper theme application evidence. Applies data attribute to graph shell. Does not apply token values to Sigma or graph."
+      );
+    });
+
+    test("Graph theme application toggle is visible", async ({ page }) => {
+      const toggle = page.getByTestId("graph-theme-application-toggle");
+      await expect(toggle).toBeVisible();
+    });
+
+    test("Default graph theme application status is inactive", async ({ page }) => {
+      const status = page.getByTestId("graph-theme-application-status");
+      await expect(status).toBeVisible();
+      await expect(status).toHaveText("Graph theme application: inactive");
+    });
+
+    test("Toggle button shows Inactive by default", async ({ page }) => {
+      const toggle = page.getByTestId("graph-theme-application-toggle");
+      await expect(toggle).toBeVisible();
+      await expect(toggle).toHaveText("Inactive");
+      await expect(toggle).toHaveAttribute("aria-pressed", "false");
+    });
+
+    test("Clicking toggle changes status to active", async ({ page }) => {
+      const toggle = page.getByTestId("graph-theme-application-toggle");
+      const status = page.getByTestId("graph-theme-application-status");
+
+      await toggle.click();
+      await expect(status).toHaveText("Graph theme application: active");
+      await expect(toggle).toHaveText("Active");
+      await expect(toggle).toHaveAttribute("aria-pressed", "true");
+    });
+
+    test("Clicking toggle again returns status to inactive", async ({ page }) => {
+      const toggle = page.getByTestId("graph-theme-application-toggle");
+      const status = page.getByTestId("graph-theme-application-status");
+
+      await toggle.click();
+      await expect(status).toHaveText("Graph theme application: active");
+
+      await toggle.click();
+      await expect(status).toHaveText("Graph theme application: inactive");
+      await expect(toggle).toHaveAttribute("aria-pressed", "false");
+    });
+
+    test("Canonical token paths metadata is visible", async ({ page }) => {
+      const tokenPaths = page.getByTestId("graph-theme-application-token-paths");
+      await expect(tokenPaths).toBeVisible();
+      const tokenText = await tokenPaths.textContent();
+      expect(tokenText).toContain("panel.border");
+      expect(tokenText).toContain("app.background");
+    });
+
+    test("Token value application status is forbidden", async ({ page }) => {
+      const tokenValueStatus = page.getByTestId("graph-theme-application-token-value-status");
+      await expect(tokenValueStatus).toBeVisible();
+      await expect(tokenValueStatus).toHaveText("forbidden in v56");
+    });
+
+    test("Sigma mutation status is forbidden", async ({ page }) => {
+      const sigmaStatus = page.getByTestId("graph-theme-application-sigma-status");
+      await expect(sigmaStatus).toBeVisible();
+      await expect(sigmaStatus).toHaveText("forbidden in v56");
+    });
+
+    test("CSS variable writes status is forbidden", async ({ page }) => {
+      const cssStatus = page.getByTestId("graph-theme-application-css-status");
+      await expect(cssStatus).toBeVisible();
+      await expect(cssStatus).toHaveText("forbidden in v56");
+    });
+
+    test("Node/edge styling status is forbidden", async ({ page }) => {
+      const stylingStatus = page.getByTestId("graph-theme-application-styling-status");
+      await expect(stylingStatus).toBeVisible();
+      await expect(stylingStatus).toHaveText("forbidden in v56");
+    });
+
+    test("Graph surface still mounts with application mode present", async ({ page }) => {
+      const canvas = page.locator("canvas").first();
+      await expect(canvas).toBeVisible();
+    });
+
+    test("Existing graph inventory still works with application mode", async ({ page }) => {
+      const inventoryList = page.getByTestId("graph-visual-inventory-list");
+      await expect(inventoryList).toBeVisible();
+    });
+
+    test("Existing graph theme mapping inventory still works with application mode", async ({ page }) => {
+      const mappingSection = page.getByTestId("graph-theme-mapping-inventory-section");
+      await expect(mappingSection).toBeVisible();
+    });
+
+    test("Existing graph theme evidence wrapper mode still works with application mode", async ({ page }) => {
+      const evidenceSection = page.getByTestId("graph-theme-evidence-wrapper-mode-section");
+      await expect(evidenceSection).toBeVisible();
+    });
+
+    test("No new Sigma/renderer/node/edge/canvas controls are introduced", async ({ page }) => {
+      const panel = page.getByTestId("graph-visual-inventory-panel");
+
+      // Check that there are no new Sigma/renderer mutation controls
+      const sigmaControls = panel.getByRole("button", { name: /sigma|renderer|mutation/i });
+      await expect(sigmaControls).not.toBeVisible();
+
+      // Check that there are no new physics modification controls
+      const physicsControls = panel.getByRole("button", { name: /physics|force|layout/i });
+      await expect(physicsControls).not.toBeVisible();
+    });
+
+    test("Controls are genuinely active (not dead)", async ({ page }) => {
+      const toggle = page.getByTestId("graph-theme-application-toggle");
+      const status = page.getByTestId("graph-theme-application-status");
+
+      // Verify toggle is clickable and changes state
+      await toggle.click();
+      await expect(status).toHaveText("Graph theme application: active");
+
+      await toggle.click();
+      await expect(status).toHaveText("Graph theme application: inactive");
+    });
+  });
 });
