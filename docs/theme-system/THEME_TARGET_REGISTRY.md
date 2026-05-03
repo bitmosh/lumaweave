@@ -14,6 +14,7 @@ The Theme Target Registry defines the canonical set of inspectable UI surfaces f
 ## Relationship to Theme Mapping Mode
 - Theme Mapping Mode will use `themeTargetId` as the binding between inspector overlay, generated controls, and token overrides.
 - Registry entries act as the contract that the Ableton-style inspector must target; no target ID, no mapping.
+- The v28 [Theme Mapping Panel Entry Contract](./THEME_MAPPING_PANEL_ENTRY_CONTRACT.md) enumerates every prerequisite (registered surface path, candidate path, storage block, QA evidence). Surfaces must satisfy this registry contract **and** the entry contract before editable controls become possible.
 
 ## ThemeTargetContract Shape
 ```ts

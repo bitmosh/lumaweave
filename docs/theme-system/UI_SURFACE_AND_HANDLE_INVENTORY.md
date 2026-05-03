@@ -1,7 +1,7 @@
-# UI Surface & Handle Inventory (v23 Planning)
+# UI Surface & Handle Inventory (v23 Planning, updated v28 contract references)
 
 ## Purpose
-Establish a single additive reference for every front-facing UI surface that may eventually become theme-editable, inspected via the UI Inspector, or exposed through the future Theme Mapping Panel. This inventory keeps DOM/UI concerns separate from graph-rendered elements and prevents accidental drift between ThemeTargetRegistry, visual handles, QA evidence, and Playwright selectors.
+Establish a single additive reference for every front-facing UI surface that may eventually become theme-editable, inspected via the UI Inspector, or exposed through the future Theme Mapping Panel. This inventory keeps DOM/UI concerns separate from graph-rendered elements and prevents accidental drift between ThemeTargetRegistry, visual handles, QA evidence, and Playwright selectors. As of v28 planning, the new [Theme Mapping Panel Entry Contract](./THEME_MAPPING_PANEL_ENTRY_CONTRACT.md) inherits this inventory as a prerequisite for any editable surface.
 
 ## Source-of-Truth Relationships
 - **ThemeTargetRegistry** (`src/themes/themeTargetRegistry.ts`) — authoritative list of themeTargetId values, surfaces, and canonical ThemeTokenPath bindings.
@@ -76,7 +76,7 @@ Establish a single additive reference for every front-facing UI surface that may
 6. **Nested controls must not be registered ad hoc** — future ghost overlays should outline registered surfaces only, not every nested element lacking a theme target.
 7. **Graph/Sigma elements stay in their own registry** — Sigma primitives continue to use the Graph View Element Registration Model + Graph Visual Policy tokens, never DOM markers.
 8. **Ghost overlay + registered/unregistered warnings must consult this model** — only major surfaces (and any future HUD containers) should be outlined; warnings must ignore expected unregistered nested elements.
-9. **Theme Mapping Panel will rely on componentRoleId + handleId** — when editable controls arrive, generated UI should reference these roles instead of inventing new theme targets per control.
+9. **Theme Mapping Panel entry contract depends on this model** — see [v28 entry contract](./THEME_MAPPING_PANEL_ENTRY_CONTRACT.md); generated controls must use componentRoleId + handleId references from this inventory and remain read-only until storage work lands.
 
 ### v26 Registered/Unregistered Heuristic Planning
 

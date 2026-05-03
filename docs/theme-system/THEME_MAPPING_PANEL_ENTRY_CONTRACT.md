@@ -1,0 +1,144 @@
+# Theme Mapping Panel Entry Contract (v28 Planning)
+
+## Purpose
+Theme Mapping Panel v0 will eventually expose editable theme controls for qualified UI surfaces. This document captures the contract that gates each surface before any runtime editing UI or storage work begins. It stitches together the accepted inspector stack (UI Inspector toggle, metadata panel, ghost overlay, ThemeTargetRegistry, runtime probe, warning badges, token governance, visual handles, and canonical `ThemeTokenPath` vocabulary) so future editing passes do not re-litigate requirements.
+
+This contract is planning-only. No runtime Theme Mapping Panel exists yet. All rules below are enforced through documentation, QA/advisory identity, and Playwright/QA evidence once implemented.
+
+## 1. Entry Requirements for Editable Surfaces
+A DOM surface may enter the future Theme Mapping Panel only if **all** of the following are true:
+
+1. **themeTargetId** – The surface is registered in `ThemeTargetRegistry` with a stable `themeTargetId`.
+2. **Registry contract** – The registry entry includes canonical `tokenBindings`, `visualHandle`, and `surface` metadata.
+3. **DOM marker** – The live DOM node carries `data-lw-theme-target="<themeTargetId>"` and appears in existing Playwright witnesses.
+4. **Inspector fidelity** – UI Inspector metadata tooltip displays its registry metadata and ghost overlay outlines it when enabled.
+5. **Runtime probe** – The registered surface shows up in probe/ghost overlays as “registered” (never in candidates/unknown).
+6. **Warning badges** – No active warning badge for that surface; badges only highlight *unregistered* candidates.
+7. **Token governance** – All tokenBindings use canonical `ThemeTokenPath` entries (no planned-only placeholders) per the accepted governance pass.
+8. **QA evidence** – A QA checklist/advisory item cites the surface as ready for mapping and references Playwright/Debug evidence.
+
+Surfaces missing any of these remain read-only and continue to rely on inspector/debug tooling only.
+
+## 2. Registered Surface Path
+```
+ThemeTargetRegistry entry (themeTargetId + tokenBindings)
+→ DOM node annotated with data-lw-theme-target
+→ UI Inspector metadata + ghost outline evidence
+→ Runtime probe marks as registered (never candidate)
+→ Manual QA confirms warning badges are absent
+→ Future Theme Mapping Panel generates read-only controls bound to canonical tokenBindings
+```
+
+Key rules:
+- Generated controls inherit the registry’s `tokenBindings` — no ad-hoc tokens.
+- Entry contract does **not** grant mutation. Controls remain read-only until storage work lands.
+- QA must cite `themeTargetId`, `visualHandle`, and the canonical token paths when referencing a ready surface.
+
+## 3. Candidate Surface Path (Warning Badges)
+```
+runtime probe candidate (>=3 signals, no themeTargetId)
+→ warning badge visible while UI Inspector is ON
+→ manual/design review of candidate descriptor + signals
+→ ThemeTargetRegistry proposal filed (docs + backlog)
+→ QA/advisory approval for registry change
+→ surface promoted to registered path above
+→ only then can Theme Mapping controls be generated
+```
+
+Important:
+- Warning badges **never** auto-generate mapping controls.
+- Candidate review must reference badge descriptor + signals and decide whether to add a registry entry or ignore the candidate.
+- Playwright evidence must prove candidates stay badge-only until promoted.
+
+## 4. Unknown Path
+```
+runtime probe unknown (<3 signals)
+→ zero warning badges (diagnostic only)
+→ QA Debug / Playwright logging optional
+→ no ThemeTargetRegistry promotion until signals improve
+→ no mapping UI, no read-only controls
+```
+
+Unknown entries ensure borderline elements remain invisible to operators. They can inform documentation or future heuristic tweaks but do not produce badges or controls.
+
+## 5. Component Role Path
+Component roles cover reusable widgets (buttons, tabs, sliders, dropdowns, badges, panels headings, status chips, etc.). Their flow is:
+```
+componentRoleId / visualHandle defined in docs
+→ shared styling tokens (e.g., button.primary → accent.primary)
+→ referenced by multiple DOM instances via className/handleId
+→ future Theme Mapping Panel may expose role-level controls (not surface-specific)
+```
+
+Rules:
+- Component roles stay separate from ThemeTargetRegistry entries. They **do not** get `data-lw-theme-target`.
+- Roles only become editable once a dedicated component-role contract exists (post v28 planning) and QA proves role-wide controls behave.
+- Nested buttons/sliders remain read-only under parent surfaces until role editing unlocks.
+
+## 6. Text Role Path
+```
+text role (text.primary, text.muted, label.text, value.text, heading.text, description.text)
+→ referenced directly in component/token definitions
+→ static copy inherits these tokens automatically
+→ no per-string themeTargetId or unique token paths
+→ Theme Mapping Panel may expose role-level toggles once text-role policy exists
+```
+
+Rules:
+- Do not register individual text spans or labels as theme targets.
+- Any future editable control for text must operate on the *role* (e.g., all `label.text`), not a specific string.
+
+## 7. Graph / Sigma Path
+Sigma-rendered primitives remain outside DOM Theme Mapping scope:
+```
+Graph View Element Registry + Graph Visual Policy
+→ tokens for graph.node.*, graph.edge.*, graph.label.*
+→ Sigma renderer applies tokens directly
+→ DOM inspector tooling never touches Sigma primitives
+```
+
+Rules:
+- No `data-lw-theme-target` on Sigma elements.
+- Theme Mapping Panel must not expose DOM controls for Sigma primitives until the Graph Visual Policy exposes its own editor.
+- DOM graph HUDs (panels overlaying the graph) follow the registered-surface path, but WebGL/Canvas internals stay separate.
+
+## 8. Storage Block
+Theme Mapping Panel Entry Contract does **not** unlock persistence:
+- No theme override storage.
+- No preset save/import/export.
+- No schema mutations to `settings` or `themeSelector` state.
+- No localStorage writes beyond existing QA/debug data.
+
+Future dependencies before storage:
+1. Theme override data model (file + runtime contract).
+2. Save preset UX, reset/revert semantics, and evidence.
+3. QA/Playwright coverage proving mutations persist and roll back safely.
+
+Until those ship, any generated controls must be read-only previews of canonical token bindings.
+
+## 9. QA Evidence Requirements (Future Runtime Pass)
+When Theme Mapping Panel v0 ships, QA must prove:
+1. Only registered surfaces (per Section 2) receive editable controls.
+2. Warning badge candidates do **not** generate controls until promoted.
+3. Unknown entries never produce controls.
+4. Component roles remain role-level, not auto-promoted to surface controls.
+5. Token bindings for every control reference canonical `ThemeTokenPath` entries.
+6. Controls default to read-only / disabled state until storage dependencies land.
+7. Graph/Sigma primitives stay excluded from DOM mapping.
+8. Typecheck + Playwright suites pass with zero skipped tests.
+9. QA report references this contract and includes evidence for each path above.
+
+## 10. Non-Goals / Explicit Exclusions
+- No runtime Theme Mapping Panel UI.
+- No color pickers, sliders, or overrides beyond existing inspector/debug features.
+- No lock/pin behavior (remains part of inspector hardening backlog).
+- No changes to ThemeTargetRegistry entries or warning badge heuristics.
+- No new hotkeys or Command Deck registry work.
+- No graph renderer (Sigma) modifications.
+
+## References
+- `docs/theme-system/UI_SURFACE_AND_HANDLE_INVENTORY.md`
+- `docs/theme-system/THEME_TARGET_REGISTRY.md`
+- `docs/control-plane/qa/BACKLOG_POLICY.md`
+- `tests/e2e/theme-target-inspector.spec.ts`
+- `tests/e2e/contract-registry.spec.ts`

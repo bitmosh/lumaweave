@@ -272,6 +272,134 @@ export const defaultAdvisoryV13: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV28: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "entry-contract-source",
+      prompt: "Does docs/theme-system/THEME_MAPPING_PANEL_ENTRY_CONTRACT.md cite every inspector dependency?",
+      context: "Entry contract must inherit toggle, metadata panel, ghost overlay, runtime probe, warning badges, token governance, and ThemeTargetRegistry context.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "registered-surface-flow",
+      prompt: "Is the registered surface path documented from registry → DOM → inspector → badges → future controls?",
+      context: "Editable controls must start with accepted surfaces only; doc must show the entire chain.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "candidate-review-path",
+      prompt: "Do candidate badges flow through manual review + registry proposal before mapping mode?",
+      context: "Badges must stay diagnostic until promoted; contract must block auto-editing.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "unknown-path-visible",
+      prompt: "Does the contract keep unknown (<3-signal) entries invisible and control-free?",
+      context: "Unknowns should remain debug-only until they meet candidate requirements.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "component-text-role-guardrails",
+      prompt: "Are component roles + text roles explicitly kept out of ThemeTargetRegistry until future role contracts?",
+      context: "Prevent per-instance IDs; Theme Mapping Panel must stay role-driven for nested controls/text.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "graph-sigma-exclusion",
+      prompt: "Does the contract ensure Sigma primitives remain outside DOM mapping?",
+      context: "Only DOM HUD surfaces can flow through ThemeTargetRegistry; Sigma stays governed by Graph Visual Policy.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "storage-block-restate",
+      prompt: "Is storage/preset/override behavior explicitly blocked until future passes?",
+      context: "Theme Mapping Panel entry contract must keep controls read-only until storage model ships.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "qa-evidence-plan",
+      prompt: "Do QA expectations cover registered-only controls, candidate/unknown exclusion, and typecheck/Playwright gates?",
+      context: "Future runtime pass must cite this plan before enabling controls.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "lock-pin-behavior-plan",
+      title: "Scope lock/pin selected target behavior",
+      summary: "Document UX + QA contract for pinning a target once badges + entry contract are proven.",
+      rationale: "Lock/pin remains the next inspector hardening milestone before any Theme Mapping UI.",
+      risk: "medium",
+      recommendedNextAction: "Outline pin/unpin flows, keyboard access, QA hooks, and dependencies on entry contract + badges.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+    {
+      id: "theme-mapping-panel-v0-plan",
+      title: "Plan Theme Mapping Panel runtime scope",
+      summary: "Translate entry contract into UI/QA requirements for the actual editable panel without implementing it yet.",
+      rationale: "Need a design/QA plan that respects lock/pin + storage dependencies before runtime work.",
+      risk: "medium",
+      recommendedNextAction: "Produce UX wireframe + QA checklist draft referencing entry contract constraints.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "Theme Mapping Panel v0",
+      whyItMatters: "Editable controls depend on an accepted entry contract plus lock/pin to avoid mis-targeting surfaces.",
+      suggestedFutureBite:
+        "Dependencies: token governance accepted, inspector stack through v27b follow-up, v28 entry contract accepted, lock/pin behavior ready, storage work scheduled separately.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "Theme override storage + save preset",
+      whyItMatters: "Once Theme Mapping exists, designers need persistent overrides/presets; storage stays blocked until its own pass.",
+      suggestedFutureBite: "Define override data model, preset save/import, reset/revert semantics, QA evidence.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "Graph physics Playwright coverage",
+      whyItMatters: "Graph controls need deterministic evidence before inspector-driven editing touches graph surfaces.",
+      suggestedFutureBite:
+        "Add Playwright coverage for physics sliders/toggles so Theme Mapping inherits stable graph behavior.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 4,
+      title: "Visual handles cite token paths",
+      whyItMatters: "Visual handle docs must cite canonical ThemeTokenPath mappings before Mapping Panel surfaces become editable.",
+      suggestedFutureBite:
+        "Publish handle → ThemeTokenPath mapping in docs + QA Debug so downstream systems inherit the vocabulary.",
+      risk: "low",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV27b: BanditAdvisorySection = {
   questions: [
     {
@@ -1819,6 +1947,9 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number, ch
 
 // Advisory lookup function keyed by canonical qaKey
 export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
+  if (qaKey === "v28") {
+    return advisoryV28;
+  }
   if (qaKey === "v27b") {
     return advisoryV27b;
   }
