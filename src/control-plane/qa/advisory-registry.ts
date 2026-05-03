@@ -626,6 +626,81 @@ export const advisoryV38: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV39: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v39-graph-physics-test-file-exists",
+      prompt: "Does the graph physics Playwright test file exist?",
+      context: "tests/e2e/graph-physics-coverage.spec.ts should exist with coverage for graph physics UI.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v39-graph-surface-mounts",
+      prompt: "Does the graph surface mount and remain visible?",
+      context: "Graph canvas should be visible on page load and remain visible during UI interactions.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v39-physics-controls-present",
+      prompt: "Are physics controls present and accessible?",
+      context: "Graph physics sliders (nodeSize, linkDistance, repelForce) should have stable data-testid attributes.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v39-no-graph-behavior-changes",
+      prompt: "Do tests verify graph behavior without changing physics?",
+      context: "Tests should only observe existing behavior, not mutate physics settings or Sigma renderer.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v39-no-skipped-tests",
+      prompt: "Are all graph physics tests running without skips?",
+      context: "No test.skip should exist in graph-physics-coverage.spec.ts.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "v40-graph-view-element-registry",
+      title: "v40 Graph View Element Registry / Graph Visual Policy Refresh",
+      summary: "Refresh graph visual policy and define Graph View Element Registry contract",
+      rationale: "Before adding perspective-based graph filtering, we need updated governance for graph visual elements.",
+      risk: "high",
+      recommendedNextAction: "Implement in v40 after v39 is accepted",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "v40 Graph View Element Registry",
+      whyItMatters: "Refresh Graph View Element Registry and Graph Visual Policy before adding perspective-based graph filtering.",
+      suggestedFutureBite: "Update registry and policy for graph visual behavior",
+      risk: "high",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "v41 Graph Visual Registry v0",
+      whyItMatters: "Implement typed inventory of graph visual elements after policy is accepted.",
+      suggestedFutureBite: "Create runtime graph element registry v0",
+      risk: "high",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV36b: BanditAdvisorySection = {
   questions: [
     {
@@ -3004,6 +3079,9 @@ export function getAdvisoryForChecklist(featureId: string, qaVersion: number, ch
 
 // Advisory lookup function keyed by canonical qaKey
 export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
+  if (qaKey === "v39") {
+    return advisoryV39;
+  }
   if (qaKey === "v34c1") {
     return advisoryV34c1;
   }
