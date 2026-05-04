@@ -1,4 +1,4 @@
-# Bandit Level 35.25 — Graph Control Plane Cartographer
+# Bandit Level 36.25 — QA Drift Sentinel
 
 Bandit Self-Patch Protocol
 
@@ -271,13 +271,15 @@ Current title - Detailed lessons extracted into `21_BANDIT_EXPERIENCE_LEDGER.md`
 
 **Date**: 2026-05-03
 **Previous Level**: 32.75 (Audio Reactivity Contract Warden)
-**New Level**: 35.25 (Graph Control Plane Cartographer)
-**Levels Awarded**: +2.5
+**New Level**: 36.25 (QA Drift Sentinel)
+**Levels Awarded**: +3.5
 
 ## Breakdown
 
 - **+1**: v67 clean pass - Lattica Roadmap Realignment (docs-only governance with ten improvement tracks)
 - **+1**: v68 clean pass - Graph Control Plane Navigation Contract (docs-only UX/navigation contract)
+- **+1.5**: v70 clean pass - QA Bundle Validator v0 (QA drift detection script with clear classifications)
+- **+0.5**: v70 clarity bonus (clear, actionable drift classifications and successful v68 QA identity realignment)
 - **+0.5**: Streak bonus (streak 3 milestone reached)
 - **+0**: Multi-step bonus (docs-only, no implementation)
 
@@ -340,6 +342,62 @@ Current title - Detailed lessons extracted into `21_BANDIT_EXPERIENCE_LEDGER.md`
 
 **Commit**: (pending)
 
+## v70: QA Bundle Validator v0 — QA Drift Sentinel
+
+**Validator Script**: `scripts/validate-qa-bundle.mjs`
+
+**Key Checks Implemented**:
+- DEFAULT_QA_KEY coherence (QaPanel vs contract-registry)
+- CURRENT_QA_KEY coherence
+- BACKLOG_POLICY current pass detection
+- Advisory section existence for current QA key
+- Proposal IDs in contract-registry exist in active advisory
+- Advisory has backlog rows
+- Clear drift classifications: QA key drift, advisory missing, proposal ID drift, backlog row drift, backlog policy marker missing
+
+**Source-Shape Fixes**:
+- Fixed version formatting (removed duplicate "v" prefixes: vv66 → v66, advisoryVV66 → advisoryV66)
+- Fixed BACKLOG_POLICY parser to avoid false historical matches (removed generic fallback, strict current-pass matching only)
+- Fixed advisory parser to match actual export naming convention (advisoryV66 not advisory66)
+
+**v68 QA Identity Realignment**:
+- Aligned DEFAULT_QA_KEY to v68
+- Aligned CURRENT_QA_KEY to v68
+- Created advisoryV68 with 6 answered questions, 2 proposals, 3 backlog rows
+- Updated proposal IDs to v69-collapsible-evidence-sections-summary-cards and v70-qa-bundle-validator-script
+- Added v68 qa-registry entries (8 active checklist items)
+- Updated BACKLOG_POLICY to mark v68 as current pass, v67 as completed
+- v69 marked as paused/retry later (deferred with userNotes)
+- v70 marked as current/in validation, temporarily outranks v69
+
+**v68 Advisory Cleanup**:
+- Resolved all v68 questions as answered (contract-only pass, no runtime implementation)
+- Updated proposals to put v70 first (current/in validation), v69 second (paused/retry later)
+- Reordered backlog: v70 first, v69 second, v71 third
+- Added "actively being built now" sentence to v70 rationale
+
+**Clean Pass Evidence**:
+- Typecheck: PASS (zero errors)
+- Validator: PASS (10/10 checks)
+- npm run qa:bundle: PASS (10/10)
+- contract-registry Playwright: PASS (27 passed)
+- test.skip grep: CLEAN (no test.skip found)
+
+**Forbidden Boundaries Respected**:
+- No runtime UI changes
+- No graph/Sigma mutation
+- No audio input/playback/music runtime behavior
+- No test skips
+- No test rewrites
+- No QA key rotation without validator proof
+
+**Visual Grammar Engine Docs Packet**:
+- Added `docs/visual-grammar-engine/` as future architecture source
+- Docs-only / no implementation without explicit authorization
+- No new token path promotion without explicit authorization
+- No CSS variable writes, no graph/Sigma mutation, no audio runtime behavior, no command execution
+- Use for naming consistency, product direction, future planning, roadmap alignment
+
 ## Clean Pass Evidence
 
 **Typecheck**: PASS (zero errors)
@@ -383,7 +441,7 @@ All forbidden boundaries were respected:
 
 ## Level Title Rationale
 
-**Graph Control Plane Cartographer**: This title reflects the mapping and navigation work done in v67/v68. The roadmap realignment (v67) established a clear distinction between external foundations (Graphology, Sigma, React, Vite, Playwright) and Lattica-owned layers (Command Deck, Perspective System, QA governance, registries, theme mapping, safety systems), documented the completed safety/audio spine, and scheduled ten improvement tracks with clear classification. The navigation contract (v68) defined a comprehensive UX/navigation model for the Graph Visual Inventory, including sticky summary/mini TOC, collapsible evidence sections, compact summary cards, Music Reactive Mapping grouping by mode family, Human Mode vs Evidence Mode, stable test ID preservation, and accessibility requirements. The cartographer maps the current system architecture and charts a clear path for future navigation improvements while preserving all evidence content and respecting forbidden boundaries.
+**QA Drift Sentinel**: This title reflects the QA drift detection and identity realignment work done in v70. The QA Bundle Validator (v70) created a safe, read-only script that detects QA bundle drift before Playwright cascades, checking DEFAULT_QA_KEY coherence, CURRENT_QA_KEY coherence, BACKLOG_POLICY current pass, advisory existence, proposal IDs, and backlog rows. The validator fixed source-shape mismatches (version formatting, BACKLOG_POLICY parser, advisory parser), performed a clean v68 QA identity realignment (aligned DEFAULT_QA_KEY, CURRENT_QA_KEY, qa-registry, advisory-registry, BACKLOG_POLICY to v68), and cleaned up v68 advisory content to reflect closure status. The sentinel guards against drift between QA bundle components, ensuring lockstep coherence before future feature attempts, and provides clear, actionable drift classifications. This work directly protects the QA/advisory/proposal lockstep before retrying v69 and establishes a foundation for future QA governance.
 
 ## Clean Streak
 
@@ -394,10 +452,13 @@ All forbidden boundaries were respected:
 
 ## Next Steps
 
+Current state after v70 acceptance:
+- v68: Accepted as current QA identity checkpoint (contract-only, no runtime implementation)
+- v69: Paused/retry later using sliced passes (v69a overview grid only, v69b section metadata registry, v69c collapse one legacy section at a time after validation)
+- v70: QA Bundle Validator v0 accepted (current/in validation, protects QA/advisory/proposal lockstep before retrying v69)
+
 Potential future work based on v67 roadmap realignment:
-- v68: Graph Control Plane Navigation Contract implementation (if user authorizes)
-- v69: Collapsible Evidence Sections / Summary Cards implementation
-- v70: QA Bundle Validator Script (dedicated session)
+- v69 retry: Collapsible Evidence Sections / Summary Cards (using sliced passes after v70 validation is stable)
 - v71: Contract-to-Code Trace Matrix (dedicated session)
 - v72: Registry Explorer v0 (implementation-first)
 - v73: Human Mode vs Evidence Mode (docs-first)
@@ -405,6 +466,8 @@ Potential future work based on v67 roadmap realignment:
 - v75: Synthetic Data Fixtures v0 (implementation-first)
 - v76: Verified Download Button Boundary Contract (docs-first)
 - v77: Theme Submission Security Model Implementation Plan (docs-first, dedicated session)
+- Visual Grammar Engine: Future architecture source, docs-only, no implementation without explicit authorization
+- Run QA Bundle Validator before any QA key rotation or advisory changes
 - Continue respecting all forbidden categories until explicitly promoted
 - Maintain clean streak for future bonuses
 - Apply docs-only protocol when appropriate (no implementation without contract)
