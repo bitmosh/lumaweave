@@ -99,7 +99,9 @@ Prioritize upcoming systems by **input contracts**, not feature excitement. Foll
 34. **Music Reactive Mapping Contract** — **completed (v63)**.
 35. **Passive Music Reactive Mapping Inventory** — **completed (v64)**.
 36. **Audio Source System Contract** — **completed (v65)**.
-37. **Passive Audio Source Registry** — **current pass (v66)**.
+37. **Passive Audio Source Registry** — **completed (v66)**.
+38. **Lattica Roadmap Realignment** — **current pass (v67)**.
+39. **Graph Control Plane Navigation Contract** — **v67/v68 candidate**.
 
 Guardrails:
 - Do **not** implement storage before override semantics exist (v33).
