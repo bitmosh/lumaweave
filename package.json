@@ -14,7 +14,8 @@
     "qa:e2e": "playwright test",
     "qa:e2e:headed": "playwright test --headed",
     "qa:e2e:ui": "playwright test --ui",
-    "qa:bundle": "node scripts/validate-qa-bundle.mjs"
+    "qa:bundle": "node scripts/validate-qa-bundle.mjs",
+    "trace:contracts": "node scripts/validate-contract-trace.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
