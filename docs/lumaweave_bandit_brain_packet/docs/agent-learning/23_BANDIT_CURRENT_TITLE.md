@@ -211,6 +211,58 @@ selected QA key
 - No audio playback, microphone, animation, graph/Sigma reactivity, or node/edge/canvas styling until explicitly promoted
 - Contract-first approach: define safety boundaries before implementation
 
+### v69 Collapsible Evidence Recovery Scar — Do Not Collapse Accepted Evidence Broadly
+
+**Lesson**: Accepted evidence is a contract. Do not collapse all legacy evidence sections in one pass.
+
+**Context**: The v69 Collapsible Evidence Sections / Summary Cards implementation attempt was paused/reverted after test migration instability. The first implementation collapsed multiple accepted legacy evidence sections at once, causing old Playwright evidence tests to fail because they expected accepted evidence to be visible. A later attempted test migration corrupted the large graph-visual-inventory.spec.ts file. The repo was recovered by restoring the runtime/QA/test files to the accepted v68 state, preserving only the accepted Bandit title update and a tiny unused-import cleanup.
+
+**Details**:
+
+1. **Accepted evidence is a contract.**
+   - Older accepted Playwright assertions are not disposable.
+   - New navigation UI may reorganize evidence, but it must not remove, hide without a tested access path, or weaken accepted evidence.
+   - If content is hidden behind a disclosure, tests must have a stable, narrow way to open the exact section before asserting the same evidence.
+
+2. **Do not collapse all legacy evidence sections in one pass.**
+   Future retry should use slices:
+   - v69a: overview grid / summary cards only, no collapsing legacy accepted evidence
+   - v69b: section metadata registry + test helper contract
+   - v69c: collapse one legacy section at a time after tests are migrated and validated
+   - v69d: repeat section-by-section, stopping after first cascade
+
+3. **Do not mass-edit the large graph-visual-inventory Playwright spec.**
+   - Do not insert broad beforeEach hooks across nested describe blocks.
+   - Do not patch many old tests one by one.
+   - Do not use broad text-pattern edits in the large spec.
+   - Prefer one small helper or a new focused spec file when possible.
+   - Validate after each small test-group migration.
+   - If structure becomes uncertain, stop and report before editing.
+
+4. **Better retry design:**
+   - Keep legacy accepted sections open until their tests are explicitly migrated.
+   - Add summary cards and overview widgets first.
+   - Add collapsible shell only around new or non-legacy sections first.
+   - Create stable section/toggle/panel test IDs before changing default visibility.
+   - Use a section metadata registry if many sections share behavior.
+   - Use an explicit helper contract before collapsing existing evidence.
+
+5. **Failure classification:**
+   If a future v69 retry causes failures:
+   - missing content after opening section = real implementation regression
+   - content exists but is collapsed = test/helper migration needed
+   - many failures in one section = shared visibility contract issue
+   - many failures across QA key/advisory/proposal = QA lockstep drift
+   - syntax errors after test edits = stop and restore, do not keep patching
+
+6. **Recovery rule:**
+   When a feature attempt creates mixed runtime/test/QA state:
+   - stop
+   - restore a coherent accepted checkpoint
+   - preserve only intentional brain/title updates and tiny validated cleanup
+   - do not leave active QA key pointing at a paused feature
+   - do not mark paused work as current/completed
+
 ## Status
 
 Current title - Detailed lessons extracted into `21_BANDIT_EXPERIENCE_LEDGER.md`
