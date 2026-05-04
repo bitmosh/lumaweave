@@ -15,12 +15,16 @@ import { getAllGraphViewElements, type GraphViewElement } from "../../graph/grap
 import { getAllGraphVisualThemeMappings, type GraphVisualThemeMapping } from "../../graph/graphVisualThemeMappingRegistry";
 import { getAllMotionSafetyEntries } from "../../accessibility/motionSafetyRegistry";
 import { getAllSyntheticSignals } from "../../audio/syntheticAudioSignal";
+import { getAllMusicReactiveMappings, type MusicReactiveMapping } from "../../audio/musicReactiveMappingRegistry";
+import { getAllAudioSources, type AudioSource } from "../../audio/audioSourceRegistry";
 
 export function GraphVisualInventoryPanel(): React.JSX.Element {
   const elements = getAllGraphViewElements();
   const themeMappings = getAllGraphVisualThemeMappings();
   const motionSafetyEntries = getAllMotionSafetyEntries();
   const syntheticSignals = getAllSyntheticSignals();
+  const musicReactiveMappings = getAllMusicReactiveMappings();
+  const audioSources = getAllAudioSources();
   const [detailMode, setDetailMode] = useState<"summary" | "detailed">("summary");
   const [themeEvidenceMode, setThemeEvidenceMode] = useState<boolean>(false);
   const [themeApplicationMode, setThemeApplicationMode] = useState<boolean>(false);
@@ -507,6 +511,208 @@ export function GraphVisualInventoryPanel(): React.JSX.Element {
         </div>
       </div>
 
+      {/* Audio Source Registry (v66) */}
+      <div
+        className="mb-4 p-3 border border-emerald-200 rounded bg-emerald-50"
+        data-testid="audio-source-registry-section"
+      >
+        <h3 className="text-sm font-semibold text-emerald-900 mb-2" data-testid="audio-source-registry-title">
+          Audio Source Registry (v66)
+        </h3>
+        <p className="text-xs text-emerald-700 mb-3" data-testid="audio-source-registry-description">
+          Passive inventory of audio source types. Only synthetic source is active in v66. No microphone, no file upload, no playback, no graph/Sigma mutation.
+        </p>
+        <div className="space-y-2">
+          {audioSources.map((source) => (
+            <div
+              key={source.id}
+              className="p-2 border border-emerald-200 rounded bg-white"
+              data-testid="audio-source-row"
+            >
+              <div className="flex items-center justify-between mb-1">
+                <div className="font-semibold text-gray-800" data-testid={`audio-source-title-${source.id}`}>
+                  {source.title}
+                </div>
+                <div className="text-xs">
+                  <span className="px-2 py-1 rounded font-semibold" data-testid={`audio-source-status-${source.id}`} style={{
+                    backgroundColor: source.status === "active-passive" ? "#dcfce7" :
+                                   source.status === "future" ? "#fef3c7" :
+                                   source.status === "locked" ? "#fee2e2" :
+                                   source.status === "deferred" ? "#e5e7eb" : "#e5e7eb",
+                    color: source.status === "active-passive" ? "#166534" :
+                           source.status === "future" ? "#92400e" :
+                           source.status === "locked" ? "#991b1b" :
+                           source.status === "deferred" ? "#374151" : "#374151"
+                  }}>
+                    {source.status}
+                  </span>
+                </div>
+              </div>
+              <div className="text-gray-600 text-xs mb-2" data-testid={`audio-source-description-${source.id}`}>
+                {source.description}
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-xs">
+                <div>
+                  <span className="text-gray-500">Permission:</span>
+                  <span className="font-mono text-emerald-800 ml-1" data-testid={`audio-source-permission-${source.id}`}>
+                    {source.permission}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Privacy:</span>
+                  <span className="font-mono text-emerald-800 ml-1" data-testid={`audio-source-privacy-${source.id}`}>
+                    {source.privacyRisk}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Playback:</span>
+                  <span className="font-mono text-red-600 ml-1" data-testid={`audio-source-playback-${source.id}`}>
+                    {source.playback}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Decoding:</span>
+                  <span className="font-mono text-emerald-800 ml-1" data-testid={`audio-source-decoding-${source.id}`}>
+                    {source.decoding}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Visual:</span>
+                  <span className="font-mono text-red-600 ml-1" data-testid={`audio-source-visual-${source.id}`}>
+                    {source.visualOutput}
+                  </span>
+                </div>
+              </div>
+              {source.safetyNotes && (
+                <div className="mt-2 text-xs text-gray-500 italic" data-testid={`audio-source-safety-${source.id}`}>
+                  {source.safetyNotes}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        <div className="mt-2 pt-2 border-t border-emerald-300 text-xs text-gray-500 italic" data-testid="audio-source-registry-notice">
+          Registry is static/read-only classification only. No microphone active, no file input active, no playback active, no graph/Sigma mutation, no visual reactivity.
+        </div>
+      </div>
+
+      {/* Music Reactive Mapping Inventory (v64) */}
+      <div
+        className="mb-4 p-3 border border-cyan-200 rounded bg-cyan-50"
+        data-testid="music-reactive-mapping-inventory-section"
+      >
+        <h3 className="text-sm font-semibold text-cyan-900 mb-2" data-testid="music-reactive-mapping-inventory-title">
+          Music Reactive Mapping Inventory (v64)
+        </h3>
+        <p className="text-xs text-cyan-700 mb-3" data-testid="music-reactive-mapping-inventory-description">
+          Passive inventory of proposed mappings from synthetic audio signal channels to future graph visual targets. No reactive visuals active in v64.
+        </p>
+        <div className="space-y-1 text-xs mb-3">
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Mapping entries:</span>
+            <span className="font-mono text-cyan-800" data-testid="music-reactive-mapping-count">
+              {musicReactiveMappings.length}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Visual output status:</span>
+            <span className="font-mono text-red-600 font-semibold" data-testid="music-reactive-visual-output-status">
+              deferred
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Reactive visuals active:</span>
+            <span className="font-mono text-red-600 font-semibold" data-testid="music-reactive-active-status">
+              none in v64
+            </span>
+          </div>
+        </div>
+        <div className="space-y-2">
+          {musicReactiveMappings.map((mapping) => (
+            <div
+              key={mapping.id}
+              className="p-2 border border-cyan-200 rounded bg-white"
+              data-testid="music-reactive-mapping-row"
+            >
+              <div className="flex items-center justify-between mb-1">
+                <div className="font-semibold text-gray-800 text-xs" data-testid={`music-reactive-mapping-title-${mapping.id}`}>
+                  {mapping.title}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`text-xs px-2 py-1 rounded ${getStatusColor(mapping.status)}`}
+                    data-testid={`music-reactive-mapping-status-${mapping.id}`}
+                  >
+                    {mapping.status}
+                  </span>
+                  <span
+                    className={`text-xs px-2 py-1 rounded ${getRiskColor(mapping.risk)}`}
+                    data-testid={`music-reactive-mapping-risk-${mapping.id}`}
+                  >
+                    {mapping.risk}
+                  </span>
+                </div>
+              </div>
+              <div className="text-gray-600 text-xs mb-2" data-testid={`music-reactive-mapping-description-${mapping.id}`}>
+                {mapping.description}
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div>
+                  <span className="text-gray-500">Mode family:</span>
+                  <span className="font-mono text-cyan-800 ml-1" data-testid={`music-reactive-mapping-mode-family-${mapping.id}`}>
+                    {mapping.modeFamily}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Audio channel:</span>
+                  <span className="font-mono text-cyan-800 ml-1" data-testid={`music-reactive-mapping-audio-channel-${mapping.id}`}>
+                    {mapping.audioChannel}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Graph target:</span>
+                  <span className="font-mono text-cyan-800 ml-1" data-testid={`music-reactive-mapping-graph-target-${mapping.id}`}>
+                    {mapping.graphTarget}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Motion Safety effect:</span>
+                  <span className="font-mono text-cyan-800 ml-1" data-testid={`music-reactive-mapping-motion-safety-${mapping.id}`}>
+                    {mapping.motionSafetyEffectId}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Reduced motion:</span>
+                  <span className="font-mono text-cyan-800 ml-1" data-testid={`music-reactive-mapping-reduced-motion-${mapping.id}`}>
+                    {mapping.reducedMotionBehavior}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Epilepsy risk:</span>
+                  <span className="font-mono text-cyan-800 ml-1" data-testid={`music-reactive-mapping-epilepsy-risk-${mapping.id}`}>
+                    {mapping.epilepsyRisk}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Future phase:</span>
+                  <span className="font-mono text-cyan-800 ml-1" data-testid={`music-reactive-mapping-future-phase-${mapping.id}`}>
+                    {mapping.futurePhase}
+                  </span>
+                </div>
+              </div>
+              {mapping.safetyNotes && (
+                <div className="mt-2 text-xs text-gray-500 italic" data-testid={`music-reactive-mapping-safety-notes-${mapping.id}`}>
+                  Safety: {mapping.safetyNotes}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        <div className="mt-2 pt-2 border-t border-cyan-300 text-xs text-gray-500 italic" data-testid="music-reactive-mapping-inventory-notice">
+          Inventory is static/read-only classification only. No animation, no audio input/playback, no music-reactive visuals, no graph/Sigma mutation, no active controls.
+        </div>
+      </div>
+
       {/* Passive Runtime Probe Section (v46) */}
       <div
         className="mb-4 p-3 border border-blue-200 rounded bg-blue-50"
@@ -623,6 +829,21 @@ function getStatusColor(status: string): string {
     case "future":
       return "bg-yellow-100 text-yellow-800";
     case "locked":
+      return "bg-red-100 text-red-800";
+    default:
+      return "bg-gray-100 text-gray-800";
+  }
+}
+
+function getRiskColor(risk: string): string {
+  switch (risk) {
+    case "safe":
+      return "bg-green-100 text-green-800";
+    case "low":
+      return "bg-yellow-100 text-yellow-800";
+    case "moderate":
+      return "bg-orange-100 text-orange-800";
+    case "high":
       return "bg-red-100 text-red-800";
     default:
       return "bg-gray-100 text-gray-800";

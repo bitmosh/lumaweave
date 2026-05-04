@@ -139,6 +139,14 @@ export async function switchQaKey(page: Page, qaKey: string): Promise<void> {
 }
 
 /**
+ * Wait for the advisory section to be visible
+ * Use this only after opening the Advisory tab
+ */
+export async function waitForAdvisorySection(page: Page): Promise<void> {
+  await page.waitForSelector('[data-testid="qa-advisory-section"]', { state: "visible" });
+}
+
+/**
  * Expect the report to include the Advisory Set Key
  * @param page - Playwright page
  * @param expectedQaKey - Expected QA key (e.g., "v17")

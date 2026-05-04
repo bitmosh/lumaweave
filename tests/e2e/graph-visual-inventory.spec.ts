@@ -1251,9 +1251,274 @@ test.describe("Graph Visual Inventory", () => {
     await expect(bass).toBeVisible();
     await expect(bass).toHaveText("0");
 
+    const mid = panel.getByTestId("audio-signal-mid-silence");
+    await expect(mid).toBeVisible();
+    await expect(mid).toHaveText("0");
+
+    const treble = panel.getByTestId("audio-signal-treble-silence");
+    await expect(treble).toBeVisible();
+    await expect(treble).toHaveText("0");
+
+    const beat = panel.getByTestId("audio-signal-beat-silence");
+    await expect(beat).toBeVisible();
+    await expect(beat).toHaveText("0");
+
+    const silence = panel.getByTestId("audio-signal-silence-silence");
+    await expect(silence).toBeVisible();
+    await expect(silence).toHaveText("1");
+
     const tempo = panel.getByTestId("audio-signal-tempo-silence");
     await expect(tempo).toBeVisible();
     await expect(tempo).toHaveText("60");
+  });
+
+  test("Graph Visual Inventory › Audio Reactivity / Synthetic Signal Preview (v62) › Lantern Pulse Demo preset has correct values", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const title = panel.getByTestId("audio-signal-title-lantern-pulse-demo");
+    await expect(title).toBeVisible();
+    await expect(title).toHaveText("Lantern Pulse Demo");
+
+    const rms = panel.getByTestId("audio-signal-rms-lantern-pulse-demo");
+    await expect(rms).toBeVisible();
+    await expect(rms).toHaveText("0.15");
+  });
+
+  test("Graph Visual Inventory › Audio Reactivity / Synthetic Signal Preview (v62) › Plasma Loom Demo preset has correct values", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const title = panel.getByTestId("audio-signal-title-plasma-loom-demo");
+    await expect(title).toBeVisible();
+    await expect(title).toHaveText("Plasma Loom Demo");
+
+    const rms = panel.getByTestId("audio-signal-rms-plasma-loom-demo");
+    await expect(rms).toBeVisible();
+    await expect(rms).toHaveText("0.45");
+  });
+
+  test("Graph Visual Inventory › Audio Reactivity / Synthetic Signal Preview (v62) › Constellation Demo preset has correct values", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const title = panel.getByTestId("audio-signal-title-constellation-demo");
+    await expect(title).toBeVisible();
+    await expect(title).toHaveText("Constellation Demo");
+
+    const rms = panel.getByTestId("audio-signal-rms-constellation-demo");
+    await expect(rms).toBeVisible();
+    await expect(rms).toHaveText("0.75");
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › Section is visible", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const section = panel.getByTestId("music-reactive-mapping-inventory-section");
+    await expect(section).toBeVisible();
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › Title is visible", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const title = panel.getByTestId("music-reactive-mapping-inventory-title");
+    await expect(title).toBeVisible();
+    await expect(title).toHaveText("Music Reactive Mapping Inventory (v64)");
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › Description is visible", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const description = panel.getByTestId("music-reactive-mapping-inventory-description");
+    await expect(description).toBeVisible();
+    await expect(description).toHaveText(/Passive inventory of proposed mappings/);
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › Mapping count is 14", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const count = panel.getByTestId("music-reactive-mapping-count");
+    await expect(count).toBeVisible();
+    await expect(count).toHaveText("14");
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › Visual output is deferred", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const visualOutput = panel.getByTestId("music-reactive-visual-output-status");
+    await expect(visualOutput).toBeVisible();
+    await expect(visualOutput).toHaveText("deferred");
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › No reactive visuals active", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const activeStatus = panel.getByTestId("music-reactive-active-status");
+    await expect(activeStatus).toBeVisible();
+    await expect(activeStatus).toHaveText("none in v64");
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › All 14 mappings render", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const mappingRows = panel.getByTestId("music-reactive-mapping-row");
+    await expect(mappingRows).toHaveCount(14);
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › Lantern Pulse mode family appears", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const lanternPulseFamily = panel.getByTestId("music-reactive-mapping-mode-family-rms-to-shell-glow");
+    await expect(lanternPulseFamily).toBeVisible();
+    await expect(lanternPulseFamily).toHaveText("Lantern Pulse");
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › Plasma Loom mode family appears", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const plasmaLoomFamily = panel.getByTestId("music-reactive-mapping-mode-family-bass-to-node-halo");
+    await expect(plasmaLoomFamily).toBeVisible();
+    await expect(plasmaLoomFamily).toHaveText("Plasma Loom");
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › Constellation Beat mode family appears", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const constellationFamily = panel.getByTestId("music-reactive-mapping-mode-family-treble-to-label-glow");
+    await expect(constellationFamily).toBeVisible();
+    await expect(constellationFamily).toHaveText("Constellation Beat");
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › Signal Trace mode family appears", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const signalTraceFamily = panel.getByTestId("music-reactive-mapping-mode-family-mid-to-edge-current-trace");
+    await expect(signalTraceFamily).toBeVisible();
+    await expect(signalTraceFamily).toHaveText("Signal Trace");
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › Spectral Debug mode family appears", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const spectralDebugFamily = panel.getByTestId("music-reactive-mapping-mode-family-bass-to-depth-architecture");
+    await expect(spectralDebugFamily).toBeVisible();
+    await expect(spectralDebugFamily).toHaveText("Spectral Debug");
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › Focus-Safe mode family appears", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const focusSafeFamily = panel.getByTestId("music-reactive-mapping-mode-family-rms-to-signal-readout");
+    await expect(focusSafeFamily).toBeVisible();
+    await expect(focusSafeFamily).toHaveText("Focus-Safe");
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › RMS to Shell Glow is proposed-passive", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const status = panel.getByTestId("music-reactive-mapping-status-rms-to-shell-glow");
+    await expect(status).toBeVisible();
+    await expect(status).toHaveText("proposed-passive");
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › Beat to Shell Pulse is locked-until-safety-gate", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const status = panel.getByTestId("music-reactive-mapping-status-beat-to-shell-pulse");
+    await expect(status).toBeVisible();
+    await expect(status).toHaveText("locked-until-safety-gate");
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › Beat to Shell Pulse has moderate risk", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const risk = panel.getByTestId("music-reactive-mapping-risk-beat-to-shell-pulse");
+    await expect(risk).toBeVisible();
+    await expect(risk).toHaveText("moderate");
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › Beat to Shell Pulse has disable reduced motion behavior", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const reducedMotion = panel.getByTestId("music-reactive-mapping-reduced-motion-beat-to-shell-pulse");
+    await expect(reducedMotion).toBeVisible();
+    await expect(reducedMotion).toHaveText("disable");
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › RMS to Signal Readout is safe risk", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const risk = panel.getByTestId("music-reactive-mapping-risk-rms-to-signal-readout");
+    await expect(risk).toBeVisible();
+    await expect(risk).toHaveText("safe");
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › RMS to Signal Readout has allow reduced motion behavior", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const reducedMotion = panel.getByTestId("music-reactive-mapping-reduced-motion-rms-to-signal-readout");
+    await expect(reducedMotion).toBeVisible();
+    await expect(reducedMotion).toHaveText("allow");
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › Silence to Calm Indicator is proposed-passive", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const status = panel.getByTestId("music-reactive-mapping-status-silence-to-calm-indicator");
+    await expect(status).toBeVisible();
+    await expect(status).toHaveText("proposed-passive");
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › No audio input/playback controls exist", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    // Check that there are no audio input/playback controls in mapping inventory
+    const audioControls = panel.getByRole("button", { name: /audio|playback|microphone|record/i });
+    await expect(audioControls).not.toBeVisible();
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › No animation/graph mutation controls exist", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    // Check that there are no animation/graph mutation controls in mapping inventory
+    const mutationControls = panel.getByRole("button", { name: /animation|sigma|mutation|reactive|enable|apply/i });
+    await expect(mutationControls).not.toBeVisible();
+  });
+
+  test("Graph Visual Inventory › Music Reactive Mapping Inventory (v64) › Notice confirms passive nature", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const notice = panel.getByTestId("music-reactive-mapping-inventory-notice");
+    await expect(notice).toBeVisible();
+    await expect(notice).toHaveText(/static\/read-only classification only/);
+    await expect(notice).toHaveText(/No animation/);
+    await expect(notice).toHaveText(/no audio input\/playback/);
+    await expect(notice).toHaveText(/no music-reactive visuals/);
+    await expect(notice).toHaveText(/no graph\/Sigma mutation/);
+    await expect(notice).toHaveText(/no active controls/);
   });
 
   test("Graph Visual Inventory › Audio Reactivity / Synthetic Signal Preview (v62) › Constellation demo has correct values", async ({ page }) => {
@@ -1294,6 +1559,294 @@ test.describe("Graph Visual Inventory", () => {
     // Check that there are no microphone or audio input controls
     const microphoneControls = panel.getByRole("button", { name: /microphone|audio input|record/i });
     await expect(microphoneControls).not.toBeVisible();
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › Section is visible", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const section = panel.getByTestId("audio-source-registry-section");
+    await expect(section).toBeVisible();
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › Title is visible", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const title = panel.getByTestId("audio-source-registry-title");
+    await expect(title).toBeVisible();
+    await expect(title).toHaveText("Audio Source Registry (v66)");
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › Description is visible", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const description = panel.getByTestId("audio-source-registry-description");
+    await expect(description).toBeVisible();
+    await expect(description).toHaveText(/Passive inventory of audio source types/);
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › All 7 sources render", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const sourceRows = panel.getByTestId("audio-source-row");
+    await expect(sourceRows).toHaveCount(7);
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › Synthetic Signal Source is active-passive", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const status = panel.getByTestId("audio-source-status-synthetic-signal-source");
+    await expect(status).toBeVisible();
+    await expect(status).toHaveText("active-passive");
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › Synthetic Signal Source has none permission", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const permission = panel.getByTestId("audio-source-permission-synthetic-signal-source");
+    await expect(permission).toBeVisible();
+    await expect(permission).toHaveText("none");
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › Synthetic Signal Source has none privacy risk", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const privacy = panel.getByTestId("audio-source-privacy-synthetic-signal-source");
+    await expect(privacy).toBeVisible();
+    await expect(privacy).toHaveText("none");
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › Synthetic Signal Source has not-required playback", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const playback = panel.getByTestId("audio-source-playback-synthetic-signal-source");
+    await expect(playback).toBeVisible();
+    await expect(playback).toHaveText("not-required");
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › Synthetic Signal Source has not-required decoding", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const decoding = panel.getByTestId("audio-source-decoding-synthetic-signal-source");
+    await expect(decoding).toBeVisible();
+    await expect(decoding).toHaveText("not-required");
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › Synthetic Signal Source has deferred visual output", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const visual = panel.getByTestId("audio-source-visual-synthetic-signal-source");
+    await expect(visual).toBeVisible();
+    await expect(visual).toHaveText("deferred");
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › Local File Metadata Source is future", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const status = panel.getByTestId("audio-source-status-local-file-metadata-source");
+    await expect(status).toBeVisible();
+    await expect(status).toHaveText("future");
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › Local File Metadata Source has user-selected-file permission", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const permission = panel.getByTestId("audio-source-permission-local-file-metadata-source");
+    await expect(permission).toBeVisible();
+    await expect(permission).toHaveText("user-selected-file");
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › Local File Decoded Signal Source is locked", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const status = panel.getByTestId("audio-source-status-local-file-decoded-signal-source");
+    await expect(status).toBeVisible();
+    await expect(status).toHaveText("locked");
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › Local File Decoded Signal Source has moderate privacy risk", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const privacy = panel.getByTestId("audio-source-privacy-local-file-decoded-signal-source");
+    await expect(privacy).toBeVisible();
+    await expect(privacy).toHaveText("moderate");
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › Microphone Input Source is locked", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const status = panel.getByTestId("audio-source-status-microphone-input-source");
+    await expect(status).toBeVisible();
+    await expect(status).toHaveText("locked");
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › Microphone Input Source has high privacy risk", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const privacy = panel.getByTestId("audio-source-privacy-microphone-input-source");
+    await expect(privacy).toBeVisible();
+    await expect(privacy).toHaveText("high");
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › Microphone Input Source has explicit-browser-permission", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const permission = panel.getByTestId("audio-source-permission-microphone-input-source");
+    await expect(permission).toBeVisible();
+    await expect(permission).toHaveText("explicit-browser-permission");
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › System Audio Source is deferred", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const status = panel.getByTestId("audio-source-status-system-audio-source");
+    await expect(status).toBeVisible();
+    await expect(status).toHaveText("deferred");
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › System Audio Source has high privacy risk", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const privacy = panel.getByTestId("audio-source-privacy-system-audio-source");
+    await expect(privacy).toBeVisible();
+    await expect(privacy).toHaveText("high");
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › Streaming Source is deferred", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const status = panel.getByTestId("audio-source-status-streaming-source");
+    await expect(status).toBeVisible();
+    await expect(status).toHaveText("deferred");
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › Streaming Source has network permission", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const permission = panel.getByTestId("audio-source-permission-streaming-source");
+    await expect(permission).toBeVisible();
+    await expect(permission).toHaveText("network");
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › External Adapter Source is future", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const status = panel.getByTestId("audio-source-status-external-adapter-source");
+    await expect(status).toBeVisible();
+    await expect(status).toHaveText("future");
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › All sources have forbidden playback", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    // Check that all sources except synthetic have forbidden playback
+    const syntheticPlayback = panel.getByTestId("audio-source-playback-synthetic-signal-source");
+    await expect(syntheticPlayback).toHaveText("not-required");
+
+    const otherSources = ["local-file-metadata-source", "local-file-decoded-signal-source", "microphone-input-source", "system-audio-source", "streaming-source", "external-adapter-source"];
+    for (const sourceId of otherSources) {
+      const playback = panel.getByTestId(`audio-source-playback-${sourceId}`);
+      await expect(playback).toBeVisible();
+      const playbackText = await playback.textContent();
+      expect(playbackText).toMatch(/forbidden|locked-until-contracted/);
+    }
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › All sources have deferred visual output", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const sourceIds = ["synthetic-signal-source", "local-file-metadata-source", "local-file-decoded-signal-source", "microphone-input-source", "system-audio-source", "streaming-source", "external-adapter-source"];
+    for (const sourceId of sourceIds) {
+      const visual = panel.getByTestId(`audio-source-visual-${sourceId}`);
+      await expect(visual).toBeVisible();
+      await expect(visual).toHaveText("deferred");
+    }
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › No microphone active notice", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const notice = panel.getByTestId("audio-source-registry-notice");
+    await expect(notice).toBeVisible();
+    await expect(notice).toHaveText(/No microphone active/);
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › No file input active notice", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const notice = panel.getByTestId("audio-source-registry-notice");
+    await expect(notice).toBeVisible();
+    await expect(notice).toHaveText(/no file input active/);
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › No playback active notice", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const notice = panel.getByTestId("audio-source-registry-notice");
+    await expect(notice).toBeVisible();
+    await expect(notice).toHaveText(/no playback active/);
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › No graph/Sigma mutation notice", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const notice = panel.getByTestId("audio-source-registry-notice");
+    await expect(notice).toBeVisible();
+    await expect(notice).toHaveText(/no graph\/Sigma mutation/);
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › No visual reactivity notice", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const notice = panel.getByTestId("audio-source-registry-notice");
+    await expect(notice).toBeVisible();
+    await expect(notice).toHaveText(/no visual reactivity/);
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › No audio input/playback controls exist", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    // Check that there are no audio input/playback controls in source registry
+    const audioControls = panel.getByRole("button", { name: /audio|playback|microphone|record|file/i });
+    await expect(audioControls).not.toBeVisible();
+  });
+
+  test("Graph Visual Inventory › Audio Source Registry (v66) › No animation/graph mutation controls exist", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    // Check that there are no animation/graph mutation controls in source registry
+    const mutationControls = panel.getByRole("button", { name: /animation|sigma|mutation|reactive|enable|apply/i });
+    await expect(mutationControls).not.toBeVisible();
   });
 
   test("Graph Visual Inventory › Audio Reactivity / Synthetic Signal Preview (v62) › No playback controls exist", async ({ page }) => {

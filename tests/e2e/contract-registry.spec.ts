@@ -11,12 +11,13 @@ import {
   openDebugTab,
   submitQaReport,
   switchQaKey,
+  waitForAdvisorySection,
 } from "./helpers/qa";
 import type { ThemeTargetProbeResult } from "../../src/themes/themeTargetHeuristics";
 
-const CURRENT_QA_KEY = "v62";
-const PRIMARY_PROPOSAL_ID = "v63-music-reactive-mapping-contract";
-const SECONDARY_PROPOSAL_ID = "v63-music-reactive-mapping-contract";
+const CURRENT_QA_KEY = "v66";
+const PRIMARY_PROPOSAL_ID = "v67-local-audio-file-metadata-preview";
+const SECONDARY_PROPOSAL_ID = "v67-local-audio-file-metadata-preview";
 
 type ProbeWindow = Window & {
   __lwRunThemeTargetProbe?: (options?: { minSignals?: number }) => ThemeTargetProbeResult | null;
@@ -223,6 +224,8 @@ test("Bandit Proposals render in Advisory tab", async ({ page }) => {
   const advisoryTab = page.getByTestId("qa-tab-advisory");
   await advisoryTab.click();
 
+  await waitForAdvisorySection(page);
+
   // Verify Bandit Proposals section is visible
   const proposalsSection = page.getByText("Bandit Proposals");
   await expect(proposalsSection).toBeVisible();
@@ -232,6 +235,11 @@ test("Proposal decision can be changed", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);
+
+  await waitForAdvisorySection(page);
+
+  // Wait for the specific proposal element to be rendered
+  await page.waitForSelector(`[data-testid="bandit-proposal-decision-${PRIMARY_PROPOSAL_ID}"]`);
 
   const decisionDropdown = page.getByTestId(`bandit-proposal-decision-${PRIMARY_PROPOSAL_ID}`);
   await expect(decisionDropdown).toBeVisible();
@@ -244,6 +252,11 @@ test("Proposal notes field accepts input", async ({ page }) => {
   await openQaPanel(page);
   await openAdvisoryTab(page);
 
+  await waitForAdvisorySection(page);
+
+  // Wait for the specific proposal element to be rendered
+  await page.waitForSelector(`[data-testid="bandit-proposal-notes-${SECONDARY_PROPOSAL_ID}"]`);
+
   const notesTextarea = page.getByTestId(`bandit-proposal-notes-${SECONDARY_PROPOSAL_ID}`);
   await expect(notesTextarea).toBeVisible();
   await notesTextarea.fill("Test notes for proposal");
@@ -255,12 +268,17 @@ test("Bandit Backlog Top 10 renders", async ({ page }) => {
   await openQaPanel(page);
   await openAdvisoryTab(page);
 
+  await waitForAdvisorySection(page);
+
+  // Wait for backlog items to be rendered
+  await page.waitForSelector('[data-testid="bandit-backlog-item-1"]');
+
   const backlogItem = page.getByTestId("bandit-backlog-item-1");
   await expect(backlogItem).toBeVisible();
   await expect(backlogItem.getByTestId("bandit-backlog-title")).not.toHaveText("");
 });
 
-test("v62 is default active checklist", async ({ page }) => {
+test("v64 is default active checklist", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await expectCurrentQaKey(page, CURRENT_QA_KEY);
@@ -316,6 +334,11 @@ test("advisory backlog reorder moves item up", async ({ page }) => {
   await openQaPanel(page);
   await openAdvisoryTab(page);
 
+  await waitForAdvisorySection(page);
+
+  // Wait for backlog items to be rendered
+  await page.waitForSelector('[data-testid="bandit-backlog-item-2"]');
+
   const secondTitle = await page.getByTestId("bandit-backlog-item-2").getByTestId("bandit-backlog-title").textContent();
   await page.getByTestId("bandit-backlog-move-up-2").click();
   await expect(page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title")).toHaveText(secondTitle || "");
@@ -325,6 +348,11 @@ test("advisory backlog reorder moves item down", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);
+
+  await waitForAdvisorySection(page);
+
+  // Wait for backlog items to be rendered
+  await page.waitForSelector('[data-testid="bandit-backlog-item-1"]');
 
   const firstTitle = await page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title").textContent();
   await page.getByTestId("bandit-backlog-move-down-1").click();
@@ -336,12 +364,19 @@ test("advisory backlog reorder persists through tab switching", async ({ page })
   await openQaPanel(page);
   await openAdvisoryTab(page);
 
+  await waitForAdvisorySection(page);
+
+  // Wait for backlog items to be rendered
+  await page.waitForSelector('[data-testid="bandit-backlog-item-1"]');
+
   await page.getByTestId("bandit-backlog-move-down-1").click();
   const reorderedFirstTitle = await page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title").textContent();
 
   const checklistTab = page.getByTestId("qa-tab-checklist");
   await checklistTab.click();
   await openAdvisoryTab(page);
+
+  await waitForAdvisorySection(page);
 
   await expect(page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title")).toHaveText(reorderedFirstTitle || "");
 });
@@ -352,6 +387,7 @@ test("v48 advisory tab renders detail mode questions", async ({ page }) => {
   // Switch to v48 to verify historical v48 advisory content
   await switchQaKey(page, "v48");
   await openAdvisoryTab(page);
+  await waitForAdvisorySection(page);
 
   // Verify v48 advisory section is visible
   const advisorySection = page.getByTestId("qa-advisory-section");
@@ -490,9 +526,17 @@ test("v48 proposal decisions and backlog order persist after submit", async ({ p
   await openQaPanel(page);
   await openAdvisoryTab(page);
 
+  await waitForAdvisorySection(page);
+
+  // Wait for proposal element to be rendered
+  await page.waitForSelector(`[data-testid="bandit-proposal-decision-${PRIMARY_PROPOSAL_ID}"]`);
+
   const decisionDropdown = page.getByTestId(`bandit-proposal-decision-${PRIMARY_PROPOSAL_ID}`);
   await decisionDropdown.selectOption("accept-for-future");
   await expect(decisionDropdown).toHaveValue("accept-for-future");
+
+  // Wait for backlog items to be rendered
+  await page.waitForSelector('[data-testid="bandit-backlog-item-1"]');
 
   const originalFirstTitle = await page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title").textContent();
   await page.getByTestId("bandit-backlog-move-down-1").click();
@@ -501,6 +545,8 @@ test("v48 proposal decisions and backlog order persist after submit", async ({ p
 
   await completeChecklistAndSubmitReport(page);
   await openAdvisoryTab(page);
+
+  await waitForAdvisorySection(page);
 
   await expect(page.getByTestId(`bandit-proposal-decision-${PRIMARY_PROPOSAL_ID}`)).toHaveValue("accept-for-future");
   await expect(page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title")).toHaveText(reorderedFirstTitle || "");

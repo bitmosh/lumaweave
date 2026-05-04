@@ -1525,6 +1525,220 @@ export const advisoryV62: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV64: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v64-mapping-registry-exists",
+      prompt: "Does the music reactive mapping registry exist?",
+      context: "src/audio/musicReactiveMappingRegistry.ts should exist with 14 seed entries including mode family metadata.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v64-passive-ui-exists",
+      prompt: "Does the passive mapping inventory UI exist?",
+      context: "GraphVisualInventoryPanel should have Music Reactive Mapping Inventory section that renders from registry array.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v64-14-mappings-render",
+      prompt: "Do all 14 seed mappings render?",
+      context: "Mapping inventory should display all 14 seed entries from the registry.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v64-mode-families-visible",
+      prompt: "Are all mode families visible?",
+      context: "Lantern Pulse, Plasma Loom, Constellation Beat, Signal Trace, Spectral Debug, and Focus-Safe mode families should appear.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v64-visual-output-deferred",
+      prompt: "Is visual output status deferred?",
+      context: "Mapping inventory should show visual output is deferred and no reactive visuals are active in v64.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v64-no-active-controls",
+      prompt: "Are there no active enable/apply/play controls?",
+      context: "No audio input/playback controls, no animation/graph mutation controls should exist.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v64-playwright-tests",
+      prompt: "Do Playwright tests prove passive nature?",
+      context: "Playwright tests should verify mapping inventory is passive/read-only with no active controls.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "v65-safety-gated-dom-reactive-evidence-mode",
+      title: "v65 Safety-Gated DOM-Only Reactive Evidence Mode",
+      summary: "Implement safety-gated DOM-only reactive evidence with real audio input processing and explicit user opt-in.",
+      rationale: "After v64 proves passive mapping inventory is safe, v65 can implement safety-gated real audio processing with explicit opt-in.",
+      risk: "high",
+      recommendedNextAction: "Implement in v65 after v64 is accepted and safety gate is implemented",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "v65 Safety-Gated DOM-Only Reactive Evidence Mode",
+      whyItMatters: "After passive mapping inventory is proven, v65 can implement safety-gated real audio processing with explicit opt-in and Motion Safety gate enforcement.",
+      suggestedFutureBite: "Implement safety gate for runtime audio enforcement with DOM-only reactive evidence",
+      risk: "high",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "v66 Passive Music Reactive Mode Presets",
+      whyItMatters: "After safety gate is implemented, v66 can add passive mode presets for music-reactive configurations.",
+      suggestedFutureBite: "Add passive mode presets for music-reactive configurations",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "v65/v66 Graph Control Plane Navigation + Collapsible Evidence Sections",
+      whyItMatters: "The control panel has become too long for efficient human navigation. UX improvements are needed to enhance usability and visibility of key elements as the Lattica platform grows.",
+      suggestedFutureBite: "Implement sticky summary/TOC, collapsible evidence sections, compact summary cards, and compact table with expandable row details for Music Reactive Mappings grouped by mode family",
+      risk: "low",
+      status: "candidate",
+    },
+  ],
+};
+
+export const advisoryV66: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v66-audio-source-contract-exists",
+      prompt: "Does the Audio Source System contract exist?",
+      context: "docs/audio/AUDIO_SOURCE_SYSTEM_CONTRACT.md should exist with all 22 required sections.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v66-audio-source-registry-exists",
+      prompt: "Does the Audio Source Registry exist?",
+      context: "src/audio/audioSourceRegistry.ts should exist with 7 seed entries (synthetic, local-file-metadata, local-file-decoded-signal, microphone, system-audio, streaming, external-adapter).",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v66-audio-source-ui-exists",
+      prompt: "Does the Audio Source Registry UI exist?",
+      context: "GraphVisualInventoryPanel should have Audio Source Registry section that renders from registry array.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v66-7-sources-render",
+      prompt: "Do all 7 audio sources render?",
+      context: "Audio Source Registry should display all 7 seed entries from the registry.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v66-synthetic-active-passive",
+      prompt: "Is the synthetic signal source active-passive?",
+      context: "Synthetic signal source should have status active-passive, permission none, privacy risk none.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v66-microphone-locked",
+      prompt: "Is the microphone input source locked?",
+      context: "Microphone input source should have status locked, permission explicit-browser-permission, privacy risk high.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v66-visual-output-deferred",
+      prompt: "Is visual output status deferred for all sources?",
+      context: "All audio sources should show visual output status as deferred and no reactive visuals are active in v66.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v66-no-active-controls",
+      prompt: "Are there no active microphone/file/playback controls?",
+      context: "No microphone permission requests, no file upload controls, no audio playback controls, no Web Audio API usage should exist.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v66-playwright-tests",
+      prompt: "Do Playwright tests prove passive nature?",
+      context: "Playwright tests should verify Audio Source Registry is passive/read-only with no active controls.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "v67-local-audio-file-metadata-preview",
+      title: "v67 Local Audio File Metadata Preview",
+      summary: "Implement file picker UI and metadata extraction for local audio files without decoding or playback.",
+      rationale: "After v66 proves Audio Source Registry is safe, v67 can implement file picker UI for metadata extraction (duration, format, sample rate) without signal decoding or playback.",
+      risk: "low",
+      recommendedNextAction: "Implement in v67 after v66 is accepted and file picker UI contract is approved",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "v67 Local Audio File Metadata Preview",
+      whyItMatters: "After Audio Source Registry is proven, v67 can implement file picker UI and metadata extraction without decoding or playback.",
+      suggestedFutureBite: "Implement file picker UI and metadata extraction for local audio files",
+      risk: "low",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "v68 Local Audio File Decoded Signal",
+      whyItMatters: "After file picker UI is implemented, v68 can add full audio file decoding with safety gate enforcement.",
+      suggestedFutureBite: "Add full audio file decoding with safety gate enforcement",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "v69 Microphone Input (Safety-Gated)",
+      whyItMatters: "After safety gate is implemented, v69 can add microphone input with explicit opt-in and Motion Safety gate.",
+      suggestedFutureBite: "Add microphone input with explicit opt-in and Motion Safety gate",
+      risk: "high",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV40: BanditAdvisorySection = {
   questions: [
     {
@@ -4073,6 +4287,12 @@ export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
   }
   if (qaKey === "v48") {
     return advisoryV48;
+  }
+  if (qaKey === "v64") {
+    return advisoryV64;
+  }
+  if (qaKey === "v66") {
+    return advisoryV66;
   }
   if (qaKey === "v62") {
     return advisoryV62;
