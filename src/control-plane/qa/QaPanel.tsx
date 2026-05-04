@@ -16,8 +16,8 @@ const ACTIVE_CHECKLIST_STORAGE_KEY = "lumaweave-qa-active-checklist";
 const getBacklogStorageKey = (qaKey: string) => `lumaweave-advisory-backlog-order:${qaKey}`;
 const getQuestionAnswerStorageKey = (qaKey: string) => `lumaweave-advisory-question-answers:${qaKey}`;
 const getProposalDecisionsStorageKey = (qaKey: string) => `lumaweave-advisory-proposal-decisions:${qaKey}`;
-const DEFAULT_QA_KEY = "v66";
-const DEFAULT_FEATURE_ID = "audio-source-registry";
+const DEFAULT_QA_KEY = "v68";
+const DEFAULT_FEATURE_ID = "graph-control-plane-navigation";
 const PROPOSAL_DECISION_OPTIONS: readonly BanditProposalDecision[] = [
   "unreviewed",
   "accept-for-future",

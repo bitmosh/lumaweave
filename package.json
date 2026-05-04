@@ -13,7 +13,8 @@
     "typecheck": "tsc --noEmit",
     "qa:e2e": "playwright test",
     "qa:e2e:headed": "playwright test --headed",
-    "qa:e2e:ui": "playwright test --ui"
+    "qa:e2e:ui": "playwright test --ui",
+    "qa:bundle": "node scripts/validate-qa-bundle.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",

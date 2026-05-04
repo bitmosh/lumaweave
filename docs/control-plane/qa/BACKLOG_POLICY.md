@@ -100,8 +100,8 @@ Prioritize upcoming systems by **input contracts**, not feature excitement. Foll
 35. **Passive Music Reactive Mapping Inventory** — **completed (v64)**.
 36. **Audio Source System Contract** — **completed (v65)**.
 37. **Passive Audio Source Registry** — **completed (v66)**.
-38. **Lattica Roadmap Realignment** — **current pass (v67)**.
-39. **Graph Control Plane Navigation Contract** — **v67/v68 candidate**.
+38. **Lattica Roadmap Realignment** — **completed (v67)**.
+39. **Graph Control Plane Navigation Contract** — **current pass (v68)**.
 
 Guardrails:
 - Do **not** implement storage before override semantics exist (v33).
@@ -109,3 +109,29 @@ Guardrails:
 - Do **not** implement graph visual mapping before the Graph View registry/policy is refreshed (steps 9–11).
 - Do **not** add more hotkeys before Command Deck / Hotkey Registry policy exists (step 7).
 - Do **not** start Theme Mapping runtime controls before lock/pin stability exists (step 1).
+
+## QA Bundle Validator (v70)
+
+Before bumping QA keys or making advisory changes, run the QA bundle validator to detect lockstep drift:
+
+```bash
+npm run qa:bundle
+```
+
+Or directly:
+```bash
+node scripts/validate-qa-bundle.mjs
+```
+
+The validator checks:
+- Current QA key coherence (QaPanel, contract-registry, qa-registry, BACKLOG_POLICY)
+- Advisory section existence for current QA key
+- Proposal IDs in contract-registry exist in active advisory
+- Advisory has backlog rows
+- BACKLOG_POLICY current pass wording coherence
+
+Fix categories reported:
+- QA key drift: DEFAULT_QA_KEY / CURRENT_QA_KEY mismatch
+- Advisory missing: No advisory section for current QA key
+- Proposal ID drift: Proposal IDs not found in active advisory
+- Backlog row drift: BACKLOG_POLICY current pass does not match QA key

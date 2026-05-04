@@ -1739,6 +1739,99 @@ export const advisoryV66: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV68: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v68-graph-control-plane-navigation-contract-exists",
+      prompt: "Does the Graph Control Plane Navigation contract exist?",
+      context: "docs/control-plane/GRAPH_CONTROL_PLANE_NAVIGATION_CONTRACT.md should exist with all required sections for navigation improvements.",
+      responseType: "choice",
+      userResponse: "yes",
+      status: "answered",
+    },
+    {
+      id: "v68-contract-only",
+      prompt: "Was v68 a contract-only pass with no runtime implementation?",
+      context: "v68 represents Graph Control Plane Navigation Contract / roadmap-navigation closure. No GraphVisualInventoryPanel runtime changes, no collapsible sections, no sticky summary.",
+      responseType: "choice",
+      userResponse: "yes",
+      status: "answered",
+    },
+    {
+      id: "v68-no-graph-sigma-mutation",
+      prompt: "Were there no graph/Sigma renderer mutations in v68?",
+      context: "v68 should not mutate graph/Sigma renderer or behavior. Contract-only pass.",
+      responseType: "choice",
+      userResponse: "yes",
+      status: "answered",
+    },
+    {
+      id: "v68-no-audio-runtime",
+      prompt: "Were there no audio input/playback/music runtime changes in v68?",
+      context: "v68 should not add microphone permission requests, file upload controls, audio playback, or Web Audio API usage.",
+      responseType: "choice",
+      userResponse: "yes",
+      status: "answered",
+    },
+    {
+      id: "v68-no-test-weakness",
+      prompt: "Were no Playwright tests weakened or skipped in v68?",
+      context: "v68 should not weaken assertions, add test.skip, or reduce test coverage. Evidence preservation.",
+      responseType: "choice",
+      userResponse: "yes",
+      status: "answered",
+    },
+  ],
+  proposals: [
+    {
+      id: "v70-qa-bundle-validator-script",
+      title: "v70 QA Bundle Validator Script",
+      summary: "Create a safe, read-only validator that detects QA bundle drift before Playwright cascades.",
+      rationale: "The project repeatedly risks drift between DEFAULT_QA_KEY, CURRENT_QA_KEY, proposal IDs, qa-registry, advisory-registry, and BACKLOG_POLICY. A validator will classify mismatch early and clearly. This is actively being built now and directly protects QA/advisory/proposal lockstep before retrying v69.",
+      risk: "low",
+      recommendedNextAction: "Implement in v70 as docs/tooling only. No runtime UI changes, no test rewrites, no QA key rotation without validator proof.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    },
+    {
+      id: "v69-collapsible-evidence-sections-summary-cards",
+      title: "v69 Collapsible Evidence Sections / Summary Cards",
+      summary: "Implement collapsible evidence sections and summary cards for improved navigation while preserving all accepted evidence.",
+      rationale: "The control panel has become too long for efficient navigation. UX improvements are needed with strict evidence preservation. v69 is paused after test migration instability. Retry later using sliced passes: v69a overview grid only, v69b section metadata registry, v69c collapse one legacy section at a time after validation.",
+      risk: "medium",
+      recommendedNextAction: "Pause and retry later using sliced passes. v70 QA Bundle Validator should temporarily rank ahead of v69 because it protects QA/advisory/proposal lockstep before retrying v69.",
+      userDecision: "defer",
+      userNotes: "Paused after test migration instability. Retry later using sliced passes.",
+    },
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "v70 QA Bundle Validator Script",
+      whyItMatters: "The project repeatedly risks drift between QA bundle components. A validator will detect drift early. This is actively being built now and directly protects QA/advisory/proposal lockstep before retrying v69.",
+      suggestedFutureBite: "Create read-only validator script that checks QA key coherence, advisory coherence, proposal ID coherence, and backlog coherence.",
+      risk: "low",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "v69 Collapsible Evidence Sections / Summary Cards",
+      whyItMatters: "The control panel has become too long for efficient navigation. UX improvements are needed with strict evidence preservation.",
+      suggestedFutureBite: "Retry later using sliced passes: v69a overview grid only, v69b section metadata registry + test helper contract, v69c collapse one legacy section at a time after validation.",
+      risk: "medium",
+      status: "candidate",
+    },
+    {
+      rank: 3,
+      title: "v71 Local Audio File Metadata Preview",
+      whyItMatters: "After v68 Graph Control Plane Navigation is accepted, v71 can implement file picker UI for metadata extraction without decoding or playback.",
+      suggestedFutureBite: "Implement file picker UI and metadata extraction for local audio files",
+      risk: "low",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV40: BanditAdvisorySection = {
   questions: [
     {
@@ -4293,6 +4386,9 @@ export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
   }
   if (qaKey === "v66") {
     return advisoryV66;
+  }
+  if (qaKey === "v68") {
+    return advisoryV68;
   }
   if (qaKey === "v62") {
     return advisoryV62;

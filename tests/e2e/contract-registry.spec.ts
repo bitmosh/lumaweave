@@ -15,9 +15,9 @@ import {
 } from "./helpers/qa";
 import type { ThemeTargetProbeResult } from "../../src/themes/themeTargetHeuristics";
 
-const CURRENT_QA_KEY = "v66";
-const PRIMARY_PROPOSAL_ID = "v67-local-audio-file-metadata-preview";
-const SECONDARY_PROPOSAL_ID = "v67-local-audio-file-metadata-preview";
+const CURRENT_QA_KEY = "v68";
+const PRIMARY_PROPOSAL_ID = "v69-collapsible-evidence-sections-summary-cards";
+const SECONDARY_PROPOSAL_ID = "v70-qa-bundle-validator-script";
 
 type ProbeWindow = Window & {
   __lwRunThemeTargetProbe?: (options?: { minSignals?: number }) => ThemeTargetProbeResult | null;
