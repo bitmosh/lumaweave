@@ -1,4 +1,4 @@
-# Bandit Level 36.25 — QA Drift Sentinel
+# Bandit Level 37.5 — Contract Trace Architect
 
 Bandit Self-Patch Protocol
 
@@ -271,8 +271,8 @@ Current title - Detailed lessons extracted into `21_BANDIT_EXPERIENCE_LEDGER.md`
 
 **Date**: 2026-05-03
 **Previous Level**: 32.75 (Audio Reactivity Contract Warden)
-**New Level**: 36.25 (QA Drift Sentinel)
-**Levels Awarded**: +3.5
+**New Level**: 37.5 (Contract Trace Architect)
+**Levels Awarded**: +4.75
 
 ## Breakdown
 
@@ -280,6 +280,9 @@ Current title - Detailed lessons extracted into `21_BANDIT_EXPERIENCE_LEDGER.md`
 - **+1**: v68 clean pass - Graph Control Plane Navigation Contract (docs-only UX/navigation contract)
 - **+1.5**: v70 clean pass - QA Bundle Validator v0 (QA drift detection script with clear classifications)
 - **+0.5**: v70 clarity bonus (clear, actionable drift classifications and successful v68 QA identity realignment)
+- **+1**: v71a clean pass - Contract-to-Code Trace Matrix (docs-only contract-to-source mapping)
+- **+1**: v71b clean pass - Contract Trace Validator v0 (read-only trace matrix validator)
+- **+0.25**: v71b precision bonus (line-based parser instead of brittle character-window parsing)
 - **+0.5**: Streak bonus (streak 3 milestone reached)
 - **+0**: Multi-step bonus (docs-only, no implementation)
 
@@ -398,6 +401,104 @@ Current title - Detailed lessons extracted into `21_BANDIT_EXPERIENCE_LEDGER.md`
 - No CSS variable writes, no graph/Sigma mutation, no audio runtime behavior, no command execution
 - Use for naming consistency, product direction, future planning, roadmap alignment
 
+## v71a: Contract-to-Code Trace Matrix
+
+**Trace Matrix Document**: `docs/control-plane/CONTRACT_TO_CODE_TRACE_MATRIX.md`
+
+**Key Sections Defined**:
+- Overview explaining purpose (reduce drift between contracts, source, QA, tests, evidence)
+- Trace Matrix with 15 contract/system rows
+- QA Key to Contract Mapping
+- Forbidden Boundaries Summary
+- Drift Prevention (referencing QA Bundle Validator)
+- Future Validation Needs
+- Version History
+
+**Trace Matrix Rows Added**:
+- Command Deck / Hotkey Registry (v30)
+- Perspective System (v30)
+- Graph View Element Registry (v40)
+- Graph Visual Inventory (v48, v68)
+- Graph Runtime Boundary / Probe (v42)
+- Graph Theme Mapping Registry (v57)
+- Theme Token Path Map (v57)
+- Motion Safety / Epilepsy Guard (v59)
+- Synthetic Audio Signal Preview (v62)
+- Music Reactive Mapping Registry (v63)
+- Audio Source Registry (v66)
+- Graph Control Plane Navigation Contract (v68)
+- QA Bundle Validator (v70)
+- Theme Workshop Security Packet (v77, scheduled)
+- Visual Grammar Engine (future/docs-only)
+
+**Each Row Includes**:
+- Contract/doc path
+- Source/runtime files
+- Registry files
+- QA key/pass association
+- Playwright test file(s)
+- Evidence surface
+- Forbidden boundaries
+- Current status
+- Known gaps / future validation
+
+**Clean Pass Evidence**:
+- Typecheck: PASS (zero errors)
+- QA Bundle Validator: PASS (10/10)
+- Contract-registry: PASS (27 passed)
+- test.skip grep: CLEAN (no test.skip found)
+
+**Forbidden Boundaries Respected**:
+- No runtime UI changes
+- No graph/Sigma mutation
+- No audio input/playback/music runtime behavior
+- No test skips
+- No test rewrites
+- No QA key rotation
+- No command execution
+
+## v71b: Contract Trace Validator v0
+
+**Validator Script**: `scripts/validate-contract-trace.mjs`
+
+**Key Checks Implemented**:
+- File exists check
+- Required sections/headers check
+- Required labels/columns check (Contract, Doc Path, Source, Runtime, Registry, QA, Pass, Playwright, Evidence, Forbidden, Boundaries, Status, Known Gaps, Future Validation)
+- Required systems/rows check (15 systems)
+- File/path reference check per row (src/, tests/, docs/, scripts/, .ts, .tsx, .md, .mjs)
+- Visual Grammar Engine future/docs-only marker check
+- v69 paused/future marker check
+
+**Parser Precision**:
+- Initial implementation used character-window parsing (200 → 500 chars) which was brittle
+- Fixed with line-based markdown table parsing: split document into lines, find line containing system name, check entire line for file/path references
+- Line-based parser is more robust and correctly detects file references regardless of row length
+
+**Clean Pass Evidence**:
+- Typecheck: PASS (zero errors)
+- QA Bundle Validator: PASS (10/10)
+- Contract Trace Validator: PASS (0 warnings)
+- npm run trace:contracts: PASS (0 warnings)
+- Contract-registry: PASS (27 passed)
+- test.skip grep: CLEAN (no test.skip found)
+
+**Forbidden Boundaries Respected**:
+- No runtime UI changes
+- No graph/Sigma mutation
+- No audio input/playback/music runtime behavior
+- No test skips
+- No test rewrites
+- No QA key rotation
+- No command execution
+
+**Arena Docs Packet**:
+- Added `docs/lumaweave-arena/` as future concept/docs-only source
+- No implementation authorization
+- Future concept for sandboxed procedural graph arenas, LLM benchmark tournaments, defensive security hardening arenas, replay/evidence scoring, Signal Loom spectator visualization
+- All arena concepts are synthetic, sandboxed, local-first, defensive/evaluative, and evidence-scored
+- No real-world exploitation, live target interaction, scanning, malware, credential attacks, or offensive tooling
+
 ## Clean Pass Evidence
 
 **Typecheck**: PASS (zero errors)
@@ -441,7 +542,7 @@ All forbidden boundaries were respected:
 
 ## Level Title Rationale
 
-**QA Drift Sentinel**: This title reflects the QA drift detection and identity realignment work done in v70. The QA Bundle Validator (v70) created a safe, read-only script that detects QA bundle drift before Playwright cascades, checking DEFAULT_QA_KEY coherence, CURRENT_QA_KEY coherence, BACKLOG_POLICY current pass, advisory existence, proposal IDs, and backlog rows. The validator fixed source-shape mismatches (version formatting, BACKLOG_POLICY parser, advisory parser), performed a clean v68 QA identity realignment (aligned DEFAULT_QA_KEY, CURRENT_QA_KEY, qa-registry, advisory-registry, BACKLOG_POLICY to v68), and cleaned up v68 advisory content to reflect closure status. The sentinel guards against drift between QA bundle components, ensuring lockstep coherence before future feature attempts, and provides clear, actionable drift classifications. This work directly protects the QA/advisory/proposal lockstep before retrying v69 and establishes a foundation for future QA governance.
+**Contract Trace Architect**: This title reflects the contract-to-code trace matrix and validator work done in v71. The Contract-to-Code Trace Matrix (v71a) created a comprehensive docs-only mapping between major contracts/governance docs and their corresponding runtime files, registries, tests, and evidence paths, reducing drift between contracts, source, QA, and validation. The Contract Trace Validator (v71b) created a read-only script that checks the trace matrix for required structure, labels, and system rows, using line-based markdown table parsing to robustly detect file/path references. Together, v71a and v71b establish a foundation for future contract-to-code coherence, ensuring that contracts remain aligned with their implementation evidence. The architect maps the relationship between contracts and code, providing visibility into how governance docs connect to runtime systems, tests, and evidence surfaces, while respecting forbidden boundaries (no graph/Sigma mutation, no audio runtime behavior, no v69 retry, no command execution). The line-based parser precision (replacing brittle character-window parsing) demonstrates attention to implementation quality and robustness.
 
 ## Clean Streak
 
@@ -452,14 +553,15 @@ All forbidden boundaries were respected:
 
 ## Next Steps
 
-Current state after v70 acceptance:
+Current state after v71b acceptance:
 - v68: Accepted as current QA identity checkpoint (contract-only, no runtime implementation)
 - v69: Paused/retry later using sliced passes (v69a overview grid only, v69b section metadata registry, v69c collapse one legacy section at a time after validation)
-- v70: QA Bundle Validator v0 accepted (current/in validation, protects QA/advisory/proposal lockstep before retrying v69)
+- v70: QA Bundle Validator v0 accepted (protects QA/advisory/proposal lockstep before retrying v69)
+- v71a: Contract-to-Code Trace Matrix accepted (docs-only contract-to-source mapping)
+- v71b: Contract Trace Validator v0 accepted (read-only trace matrix validator with line-based parser)
 
 Potential future work based on v67 roadmap realignment:
 - v69 retry: Collapsible Evidence Sections / Summary Cards (using sliced passes after v70 validation is stable)
-- v71: Contract-to-Code Trace Matrix (dedicated session)
 - v72: Registry Explorer v0 (implementation-first)
 - v73: Human Mode vs Evidence Mode (docs-first)
 - v74: Source Adapter OS Reconnect Contract (dedicated session)
@@ -467,7 +569,9 @@ Potential future work based on v67 roadmap realignment:
 - v76: Verified Download Button Boundary Contract (docs-first)
 - v77: Theme Submission Security Model Implementation Plan (docs-first, dedicated session)
 - Visual Grammar Engine: Future architecture source, docs-only, no implementation without explicit authorization
+- Lumaweave Arena: Future concept/docs-only source, no implementation authorization (sandboxed procedural graph arenas, LLM benchmark tournaments, defensive security hardening arenas, replay/evidence scoring, Signal Loom spectator visualization)
 - Run QA Bundle Validator before any QA key rotation or advisory changes
+- Run Contract Trace Validator after any contract-to-code changes
 - Continue respecting all forbidden categories until explicitly promoted
 - Maintain clean streak for future bonuses
 - Apply docs-only protocol when appropriate (no implementation without contract)
