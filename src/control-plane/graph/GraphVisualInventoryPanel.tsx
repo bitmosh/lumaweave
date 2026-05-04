@@ -15,8 +15,8 @@ import { getAllGraphViewElements, type GraphViewElement } from "../../graph/grap
 import { getAllGraphVisualThemeMappings, type GraphVisualThemeMapping } from "../../graph/graphVisualThemeMappingRegistry";
 import { getAllMotionSafetyEntries } from "../../accessibility/motionSafetyRegistry";
 import { getAllSyntheticSignals } from "../../audio/syntheticAudioSignal";
-import { getAllMusicReactiveMappings, type MusicReactiveMapping } from "../../audio/musicReactiveMappingRegistry";
-import { getAllAudioSources, type AudioSource } from "../../audio/audioSourceRegistry";
+import { getAllMusicReactiveMappings } from "../../audio/musicReactiveMappingRegistry";
+import { getAllAudioSources } from "../../audio/audioSourceRegistry";
 
 export function GraphVisualInventoryPanel(): React.JSX.Element {
   const elements = getAllGraphViewElements();
