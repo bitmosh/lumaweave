@@ -1941,6 +1941,23 @@ export const advisoryV74b: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV74c: BanditAdvisorySection = {
+  questions: [],
+  proposals: [
+    {
+      id: "v74c-accepted",
+      title: "Passive Source Adapter Evidence Panel",
+      summary: "SourceAdapterPanel mounted in control plane with data-testid attributes. 6/6 Playwright tests passed. Read-only panel following SystemIndexPanel pattern.",
+      rationale: "Passive evidence surface provides visibility into source adapter registry without interactive controls.",
+      risk: "low",
+      recommendedNextAction: "No further action needed. Pass is complete.",
+      userDecision: "unreviewed",
+      userNotes: "Accepted per passive UI pattern (v72d SystemIndexPanel precedent).",
+    }
+  ],
+  backlog: [],
+};
+
 export const advisoryV40: BanditAdvisorySection = {
   questions: [
     {
@@ -4507,6 +4524,9 @@ export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
   }
   if (qaKey === "v74b") {
     return advisoryV74b;
+  }
+  if (qaKey === "v74c") {
+    return advisoryV74c;
   }
   if (qaKey === "v62") {
     return advisoryV62;

@@ -3,18 +3,18 @@ id: policy.backlog
 title: QA Backlog Policy
 type: policy
 status: accepted
-version: v73c
+version: v74c
 domain: roadmap
 cluster: purple
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: v74c
 tags: [backlog, policy, QA, roadmap, passes, accepted]
 ---
 
 # QA Backlog Policy
 
-Current pass: **v74b — Source Adapter Base Registry + Validator** — ACTIVE
+Current pass: **v74c — Passive Source Adapter Evidence Panel** — ACTIVE
 
 ---
 
@@ -55,7 +55,8 @@ v73a      Human / Evidence / Debug Mode Contract           ACCEPTED
 v73b      Mode Metadata Registry                           ACCEPTED
 v73c      Mode Registry Validator v0                       ACCEPTED
 v74a      Source Adapter OS Foundation Contract           ACCEPTED
-v74b      Source Adapter Base Registry + Validator        ACTIVE ← current
+v74b      Source Adapter Base Registry + Validator        ACCEPTED
+v74c      Passive Source Adapter Evidence Panel           ACTIVE ← current
 ```
 
 **v69 (Collapsible Evidence Sections)** — PAUSED. Failed due to mass-edit approach. Retry as v69r after v75 arc, using additive overview grid only.

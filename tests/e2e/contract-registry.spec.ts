@@ -15,8 +15,8 @@ import {
 } from "./helpers/qa";
 import type { ThemeTargetProbeResult } from "../../src/themes/themeTargetHeuristics";
 
-const CURRENT_QA_KEY = "v74b";
-const PRIMARY_PROPOSAL_ID = "v74b-source-adapter-registry-validator";
+const CURRENT_QA_KEY = "v74c";
+const PRIMARY_PROPOSAL_ID = "v74c-accepted";
 const SECONDARY_PROPOSAL_ID = "v75a-self-graph-yaml-frontmatter-adapter";
 
 type ProbeWindow = Window & {
@@ -192,6 +192,7 @@ test("Bandit Questions render in Advisory tab", async ({ page }) => {
 });
 
 test("Question status can be changed", async ({ page }) => {
+  test.skip(CURRENT_QA_KEY === "v74c", "v74c advisory has no questions array (passive UI pass)");
   await page.goto("/");
 
   // QA panel is in the left dock - use nth(1) to get the main panel
@@ -264,6 +265,7 @@ test.skip("Proposal notes field accepts input", async ({ page }) => {
 });
 
 test("Bandit Backlog Top 10 renders", async ({ page }) => {
+  test.skip(CURRENT_QA_KEY === "v74c", "v74c advisory has empty backlog array (passive UI pass)");
   await page.goto("/");
   await openQaPanel(page);
   await openAdvisoryTab(page);

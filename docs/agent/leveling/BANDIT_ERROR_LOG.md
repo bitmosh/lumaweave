@@ -8,7 +8,7 @@ subdomain: leveling
 cluster: gray
 agent_readable: true
 include_in_self_graph: false
-last_updated: v73c
+last_updated: v74c
 tags: [error, log, bandit, agent, self-split, recovery, operational]
 ---
 
@@ -53,7 +53,11 @@ escalated         — requires architectural decision
 
 ## Error Log
 
-*No entries yet. First entry added when first self-split or recovery occurs.*
+2026-05-06 · v74c · Obsolete Test / Spec Debt · strategies: 0 · deferred
+  Failure: 6 pre-existing unconditional skips in contract-registry.spec.ts (lines 235, 251, 334, 349, 364, 526)
+  Attempted: none - inherited technical debt from before v74c
+  Root cause: tests for proposal decisions, proposal notes, backlog reorder, and v48 persistence are unconditionally skipped
+  Human action: defer to post-v75b test cleanup pass - do not touch in v74c
 
 ---
 

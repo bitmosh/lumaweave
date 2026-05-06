@@ -29,6 +29,14 @@ Updated by the agent that ran the pass before XP is awarded.
 ## 2026-05-06
 
 ```
+2026-05-06 · grammar-lens-contract · docs · ACCEPTED — Grammar Lens Contract
+  + Cursor Inspector Contract, formalizes overlay governance before
+  further implementation — no runtime changes — Bandit
+
+2026-05-06 · v74b · registry · ACCEPTED — Source Adapter Base Registry + Validator,
+  9 adapter entries, 12 validation checks against v74a contract —
+  Playwright: 340 passed, 6 skipped — Bandit
+
 2026-05-06 · v73c · validator · ACCEPTED — Mode Registry Validator v0,
   validates modeMetadataRegistry against v73a contract — [verify count] — Bandit
   Note: v73c was ready for validation at session start; confirm committed.
@@ -82,7 +90,7 @@ If multiple things happened in one session, use multiple lines:
 
 | Agent  | Accepted Passes | Last Pass | Current Streak |
 |--------|----------------|-----------|----------------|
-| Bandit | [update]       | v73c      | [update]       |
+| Bandit | 2 (v74b, grammar-lens-contract) | grammar-lens-contract | 2 |
 | DeepSeek | 0            | —         | 0              |
 
 *Update this table after each accepted pass.*

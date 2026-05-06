@@ -6,6 +6,7 @@ import { CollapsiblePanel } from "../control-plane/panels/CollapsiblePanel";
 import { CommandDeckPanel } from "../control-plane/command-deck/CommandDeckPanel";
 import { GraphVisualInventoryPanel } from "../control-plane/graph/GraphVisualInventoryPanel";
 import { SystemIndexPanel } from "../control-plane/system-index/SystemIndexPanel";
+import { SourceAdapterPanel } from "../source-adapter/SourceAdapterPanel";
 import { useSettingsStore } from "../control-plane/settings/settings.store";
 import { useGraphSourceSummary } from "../graph/ingest/useGraphSourceSummary";
 import { SigmaGraphView } from "../graph/renderers/sigma2d/SigmaGraphView";
@@ -398,6 +399,22 @@ export function AppShell() {
               </h3>
               <div className="min-h-0">
                 <SystemIndexPanel />
+              </div>
+            </div>
+
+            <div
+              className="mt-4 rounded-xl p-4"
+              data-testid="source-adapter-panel-shell"
+              style={{
+                border: `1px solid ${themeTokens.app.panelBorder}`,
+                backgroundColor: `${themeTokens.app.background}70`,
+              }}
+            >
+              <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
+                Source Adapter Registry
+              </h3>
+              <div className="min-h-0">
+                <SourceAdapterPanel />
               </div>
             </div>
           </aside>
