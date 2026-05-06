@@ -29,10 +29,9 @@ Updated by the agent that ran the pass before XP is awarded.
 ## 2026-05-06
 
 ```
-2026-05-06 · physics-wiring-v1 · playwright · ACCEPTED — Physics Wiring v1,
-  wire sliders to ForceAtlas2, install graphology-layout-forceatlas2,
-  add FA2 simulation to buildGraphologyGraph, wire repelForce/linkDistance/centerForce,
-  347 passed 9 skipped 0 failed, graph responds to slider changes — Bandit
+2026-05-06 · physics-wiring-v1 · runtime · ACCEPTED — ForceAtlas2 live physics,
+  wired repelForce + linkDistance + centerForce to FA2 parameters,
+  sunflower seeds layout, 347 passed 0 failed, streak 6 — Bandit
 
 2026-05-06 · repair-pass-v75b · playwright · ACCEPTED — Repair pass,
   fixed 6 pre-existing failures + 2 fixture interference issues,
