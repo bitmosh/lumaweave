@@ -14,7 +14,7 @@ tags: [backlog, policy, QA, roadmap, passes, accepted]
 
 # QA Backlog Policy
 
-Current pass: **v73c — Mode Registry Validator v0** — ACCEPTED
+Current pass: **v74b — Source Adapter Base Registry + Validator** — ACTIVE
 
 ---
 
@@ -53,7 +53,9 @@ v72d.2    AppShell / Route Pattern Discovery               ACCEPTED
 v72d.3    Passive SystemIndexPanel Mount + Playwright      ACCEPTED
 v73a      Human / Evidence / Debug Mode Contract           ACCEPTED
 v73b      Mode Metadata Registry                           ACCEPTED
-v73c      Mode Registry Validator v0                       ACCEPTED ← current
+v73c      Mode Registry Validator v0                       ACCEPTED
+v74a      Source Adapter OS Foundation Contract           ACCEPTED
+v74b      Source Adapter Base Registry + Validator        ACTIVE ← current
 ```
 
 **v69 (Collapsible Evidence Sections)** — PAUSED. Failed due to mass-edit approach. Retry as v69r after v75 arc, using additive overview grid only.
@@ -63,9 +65,7 @@ v73c      Mode Registry Validator v0                       ACCEPTED ← current
 ## Active Roadmap
 
 ```
-v74a   Source Adapter OS Foundation Contract          ← next (docs-only)
-v74b   Source Adapter Base Registry + Validator
-v75a   Synthetic Data Fixtures v0 — Self-Graph Seed
+v75a   Synthetic Data Fixtures v0 — Self-Graph Seed       ← next
 v75b   Self-Graph Passive Mount — First Demo Surface
 v76    Verified Download Button Boundary Contract
 v77a   Theme Workshop Security Model — Docs Pass
@@ -120,3 +120,6 @@ Checks:
 - Do not promote audio from synthetic to real without explicit ladder pass
 - Do not implement cross-layer override cache without formal contract
 - Do not implement Grammar Lens batch scope without GLOBAL_ELEMENT_UPDATE_CONTRACT
+- QA key increments every accepted pass regardless of whether an in-app QA report was submitted
+- Passes without submitted reports use lifecycle state "accepted-unverified" — not a blocker, not a failure
+- Do not attempt to backfill QA report submissions for historical accepted-unverified passes

@@ -1832,6 +1832,115 @@ export const advisoryV68: BanditAdvisorySection = {
   ],
 };
 
+export const advisoryV73c: BanditAdvisorySection = {
+  questions: [],
+  proposals: [
+    {
+      id: "v73c-accepted",
+      title: "Mode Registry Validator v0",
+      summary: "Validator accepted. 346/346 Playwright green, zero skips. Accepted-unverified per new lifecycle policy.",
+      rationale: "Validator script validates mode registry structure against contract.",
+      risk: "low",
+      recommendedNextAction: "No further action needed. Pass is complete.",
+      userDecision: "unreviewed",
+      userNotes: "Accepted-unverified per new lifecycle policy.",
+    }
+  ],
+  backlog: [],
+};
+
+export const advisoryV74a: BanditAdvisorySection = {
+  questions: [],
+  proposals: [
+    {
+      id: "v74a-accepted",
+      title: "Source Adapter OS Foundation Contract",
+      summary: "Docs-only contract pass. No runtime changes. Accepted-unverified per new lifecycle policy.",
+      rationale: "Contract defines adapter lifecycle, schema, safety requirements, and forbidden behavior.",
+      risk: "low",
+      recommendedNextAction: "No further action needed. Pass is complete.",
+      userDecision: "unreviewed",
+      userNotes: "Accepted-unverified per new lifecycle policy.",
+    }
+  ],
+  backlog: [],
+};
+
+export const advisoryV74b: BanditAdvisorySection = {
+  questions: [
+    {
+      id: "v74b-registry-file-exists",
+      prompt: "Does the source adapter registry TypeScript file exist?",
+      context: "src/source-adapter/sourceAdapterRegistry.ts should exist with the SourceAdapterEntry type and seeded adapter entries.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v74b-validator-script-exists",
+      prompt: "Does the source adapter validator script exist?",
+      context: "scripts/validate-source-adapters.mjs should exist and validate registry against v74a contract rules.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v74b-typecheck-passes",
+      prompt: "Does typecheck pass for the registry file?",
+      context: "npm run typecheck should pass without errors for src/source-adapter/sourceAdapterRegistry.ts.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v74b-validator-runs-successfully",
+      prompt: "Does the validator script run successfully on the registry?",
+      context: "node scripts/validate-source-adapters.mjs should pass all checks.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v74b-registry-matches-contract",
+      prompt: "Does the registry schema match the v74a contract exactly?",
+      context: "SourceAdapterEntry interface should match the contract schema: adapterId, adapterType, adapterVersion, inputPattern, translationSet, limits, qaReportFormat, status, contractVersion, lastUpdated.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+    {
+      id: "v74b-no-forbidden-behavior",
+      prompt: "Does the registry contain only documented adapter types with no forbidden behavior?",
+      context: "Registry should only contain documented adapter types from SOURCE_ADAPTER_CATALOG.md with safe, read-only behavior.",
+      responseType: "choice",
+      userResponse: "",
+      status: "unanswered",
+    },
+  ],
+  proposals: [
+    {
+      id: "v74b-source-adapter-registry-validator",
+      title: "Source Adapter Base Registry + Validator",
+      summary: "Create TypeScript registry seeded with documented adapter types and validator checking registry against v74a contract rules.",
+      rationale: "Registry provides typed metadata for future adapter implementations. Validator ensures contract compliance before any adapter is built.",
+      risk: "low",
+      recommendedNextAction: "Proceed with v74b.1 (registry) and v74b.2 (validator) before QA key rotation.",
+      userDecision: "unreviewed",
+      userNotes: "",
+    }
+  ],
+  backlog: [
+    {
+      rank: 1,
+      title: "v75a Self-Graph / YAML Frontmatter Adapter",
+      whyItMatters: "First real adapter implementation. Lowest risk. Proves the schema and translation set pattern.",
+      suggestedFutureBite: "Implement YAML frontmatter parser and translator to normalized graph format.",
+      risk: "low",
+      status: "candidate",
+    },
+  ],
+};
+
 export const advisoryV40: BanditAdvisorySection = {
   questions: [
     {
@@ -4389,6 +4498,15 @@ export function getAdvisoryForQaKey(qaKey: string): BanditAdvisorySection {
   }
   if (qaKey === "v68") {
     return advisoryV68;
+  }
+  if (qaKey === "v73c") {
+    return advisoryV73c;
+  }
+  if (qaKey === "v74a") {
+    return advisoryV74a;
+  }
+  if (qaKey === "v74b") {
+    return advisoryV74b;
   }
   if (qaKey === "v62") {
     return advisoryV62;

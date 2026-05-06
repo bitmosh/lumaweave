@@ -77,6 +77,28 @@ BLOCKED                = cannot evaluate until blocker removed
 
 ---
 
+## Accepted-Unverified Lifecycle State
+
+QA keys increment every accepted pass regardless of whether an in-app QA report was submitted.
+
+Passes without submitted reports use lifecycle state:
+  accepted-unverified
+
+Rules:
+- Not a failure. Not a blocker.
+- Pass was accepted via Playwright + typecheck evidence
+- In-app QA report was not submitted
+- Archived and available to pull up later if needed
+- No effect on future passes or clean streak
+- QA key still increments normally on the next pass
+
+Retroactive application:
+- Passes v69–v73c are retroactively accepted-unverified
+- The registry moves forward from v74b
+- Do not attempt to backfill submitted reports for these passes
+
+---
+
 ## QA Key Promotion Rules
 
 A QA key can be promoted to accepted only when:
