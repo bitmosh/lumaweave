@@ -3,17 +3,17 @@ id: system.grammar.lens.current.state
 title: Ghost Overlay — Current Implementation State
 type: manual
 status: partial
-version: v73c
+version: v75
 domain: grammar-lens
 cluster: blue
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: v75
 depends_on:
   - contract.graph.runtime.boundary
-related:
   - contract.grammar.lens
   - contract.cursor.inspector
+related:
   - contract.cross.layer.override.cache
 governs:
   - src/[overlay implementation — confirm path with user]
@@ -197,10 +197,10 @@ vGrammar-6: Preview-only Grammar Lens   ← partially reached (live apply workin
 ```
 
 Still needed before the overlay can be considered fully contracted:
-- Grammar Lens Contract (formal allowed/forbidden definition)
-- Cursor Inspector Contract (hold-key behavior spec)
-- Global Element Update Contract (scope model)
-- Cross-Layer Override Cache Contract (inactive layer behavior)
+- Grammar Lens Contract (v75 — now written)
+- Cursor Inspector Contract (v75 — now written)
+- Global Element Update Contract (scope model — not yet written)
+- Cross-Layer Override Cache Contract (v73c — accepted)
 
 These contracts should be written before further overlay
 implementation work proceeds.

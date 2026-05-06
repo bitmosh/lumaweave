@@ -94,13 +94,16 @@ Rules:
 
 ## Ghost Overlay / Grammar Lens
 
-Current state (partial — in development):
+Primary:
 ```
+docs/grammar-lens/GRAMMAR_LENS_CONTRACT.md
+docs/grammar-lens/CURSOR_INSPECTOR_CONTRACT.md
 docs/grammar-lens/GHOST_OVERLAY_CURRENT_STATE.md
 src/[overlay implementation — ask user for current path]
 ```
 
 Rules:
+- Grammar Lens and Cursor Inspector contracts (v75) govern overlay behavior.
 - Overlay uses `data-lw-*` DOM attributes to identify clickable elements.
 - Overlay respects forbidden boundaries — it cannot expose or edit
   contract truth, evidence status, or Sigma internals.
@@ -110,6 +113,8 @@ Rules:
   passing each through the canonical token path validation and Motion
   Safety gate before applying.
 - Grammar Lens popout shows per-element YAML/JSON slice only.
+- Cursor Inspector defines hold-key + click activation, popout behavior,
+  editable/read-only semantics, and scope model.
 - Global element type updates ("apply to all type:border") require the
   GLOBAL_ELEMENT_UPDATE_CONTRACT before implementation.
 
