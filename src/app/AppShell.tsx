@@ -18,11 +18,17 @@ import {
 } from "../graph/renderers/sigma2d/buildGraphologyGraph";
 import { getThemeRuntimeTokens, resolveGraphVisualTokens } from "../themes";
 import { ThemeTargetInspectorOverlay } from "../themes/ThemeTargetInspectorOverlay";
+import { selfGraphFixture } from "../fixtures/self-graph-fixture";
+import { adaptSelfGraphToSigma } from "../fixtures/self-graph-adapter";
 
 export function AppShell() {
   const settings = useSettingsStore((state) => state.settings);
   const setSetting = useSettingsStore((state) => state.setSetting);
   const { summary, error: summaryError } = useGraphSourceSummary();
+
+  // Self-graph fixture for demo (v75a)
+  const [useFixture] = useState(true);
+  const adaptedFixture = adaptSelfGraphToSigma(selfGraphFixture);
 
   // Get theme tokens for current theme
   const themeTokens = getThemeRuntimeTokens(settings.appearance.theme);
@@ -40,30 +46,34 @@ export function AppShell() {
   const [inspectorExpanded, setInspectorExpanded] = useState(false);
   const [themeInspectorEnabled, setThemeInspectorEnabled] = useState(false);
 
+  // Determine which graph data to use
+  const graphNodes = useFixture ? adaptedFixture.nodes : summary.normalizedNodes;
+  const graphEdges = useFixture ? adaptedFixture.edges : summary.normalizedEdges;
+
   const selectedNode = selectedNodeId
-    ? summary.normalizedNodes?.find((node) => node.id === selectedNodeId) || null
+    ? graphNodes?.find((node) => node.id === selectedNodeId) || null
     : null;
 
   const selectedEdge = selectedEdgeId
-    ? summary.normalizedEdges?.find((edge) => edge.id === selectedEdgeId) || null
+    ? graphEdges?.find((edge) => edge.id === selectedEdgeId) || null
     : null;
 
   const selectedEdgeSource = selectedEdge
-    ? summary.normalizedNodes?.find((node) => node.id === selectedEdge.source) || null
+    ? graphNodes?.find((node) => node.id === selectedEdge.source) || null
     : null;
 
   const selectedEdgeTarget = selectedEdge
-    ? summary.normalizedNodes?.find((node) => node.id === selectedEdge.target) || null
+    ? graphNodes?.find((node) => node.id === selectedEdge.target) || null
     : null;
 
   // Compute neighborhood for selected edge
   let secondaryEdgeCount = 0;
   let secondaryNodeCount = 0;
 
-  if (selectedEdgeId && summary.normalizedNodes && summary.normalizedEdges) {
+  if (selectedEdgeId && graphNodes && graphEdges) {
     const { graph } = buildGraphologyGraph(
-      summary.normalizedNodes,
-      summary.normalizedEdges,
+      graphNodes,
+      graphEdges,
       { nodeSize: 1, linkDistance: 1, repelForce: 1 },
     );
     const neighborhood = getRelationshipNeighborhood(graph, selectedEdgeId);
@@ -71,16 +81,27 @@ export function AppShell() {
     secondaryNodeCount = neighborhood.secondaryNodeIds.length;
   }
 
-  const graphSummary = {
-    source: "ai-lab",
-    rawNodeCount: summary.nodeCount,
-    rawEdgeCount: summary.edgeCount,
-    normalizedNodeCount: summary.normalizedNodeCount,
-    normalizedEdgeCount: summary.normalizedEdgeCount,
-    renderer: "sigma2d",
-    layout: "sunflower",
-    status: summary.status,
-  };
+  const graphSummary = useFixture
+    ? {
+        source: "self-graph-fixture",
+        rawNodeCount: selfGraphFixture.metadata.nodeCount,
+        rawEdgeCount: selfGraphFixture.metadata.edgeCount,
+        normalizedNodeCount: adaptedFixture.nodes.length,
+        normalizedEdgeCount: adaptedFixture.edges.length,
+        renderer: "sigma2d",
+        layout: "sunflower",
+        status: "loaded",
+      }
+    : {
+        source: "ai-lab",
+        rawNodeCount: summary.nodeCount,
+        rawEdgeCount: summary.edgeCount,
+        normalizedNodeCount: summary.normalizedNodeCount,
+        normalizedEdgeCount: summary.normalizedEdgeCount,
+        renderer: "sigma2d",
+        layout: "sunflower",
+        status: summary.status,
+      };
 
   return (
     <main 
@@ -421,7 +442,7 @@ export function AppShell() {
 
           <section 
             className="relative min-h-0 overflow-hidden"
-            data-testid="graph-viewport"
+            data-testid={useFixture ? "self-graph-fixture-loaded" : "graph-viewport"}
             style={{
               background: `radial-gradient(circle at center, ${themeTokens.app.accent}16, transparent 35%), radial-gradient(circle at bottom right, ${themeTokens.app.glow}12, transparent 30%)`,
             } as React.CSSProperties}
@@ -433,13 +454,13 @@ export function AppShell() {
             />
 
             <div className="relative h-full">
-              {summary.normalizedNodes &&
-              summary.normalizedEdges &&
-              summary.normalizedNodes.length > 0 ? (
+              {graphNodes &&
+              graphEdges &&
+              graphNodes.length > 0 ? (
                 (() => {
                   console.log("AppShell Sigma props", {
-                    normalizedNodes: summary.normalizedNodes.length,
-                    normalizedEdges: summary.normalizedEdges.length,
+                    normalizedNodes: graphNodes.length,
+                    normalizedEdges: graphEdges.length,
                     nodeSize: settings.physics.nodeSize,
                     linkDistance: settings.physics.linkDistance,
                     repelForce: settings.physics.repelForce,
@@ -450,8 +471,8 @@ export function AppShell() {
                   return (
                     <>
                       <SigmaGraphView
-                        nodes={summary.normalizedNodes}
-                        edges={summary.normalizedEdges}
+                        nodes={graphNodes}
+                        edges={graphEdges}
                         nodeSize={settings.physics.nodeSize}
                         linkDistance={settings.physics.linkDistance}
                         repelForce={settings.physics.repelForce}

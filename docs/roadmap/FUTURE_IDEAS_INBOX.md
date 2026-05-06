@@ -30,6 +30,7 @@ Items here are promoted to the roadmap only when:
 - **Edge confidence visualization** — edge thickness or opacity encodes confidence class (observed / inferred / ai-inferred)
 - **Node importance rings** — high-weight nodes rendered with a subtle ring/corona to indicate weight
 - **Graph diff view** — highlight nodes/edges that changed between two history slider positions
+- **Cluster drag interaction** — Hold modifier key (Alt or Shift) + drag node → node and all directly connected neighbors move as a rigid unit with proportions locked, external edges stretch/compress naturally, on key release: force simulation resumes from new positions. Priority: after basic node dragging works. Relevant for: Helix dialect (moving constellation branches without breaking the backbone). Physics wiring order: 1. Fix static sunflower / force layout, 2. Wire repel + gravity controls, 3. Individual node drag, 4. Cluster drag with modifier key, 5. Physics dialect selection.
 
 ---
 
