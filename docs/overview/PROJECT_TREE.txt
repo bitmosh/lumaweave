@@ -1,0 +1,274 @@
+/home/boop/Projects/lumaweave
+├── .claw
+│   └── sessions
+│       └── 61bc5dda8e6b8deb
+│           ├── session-1778042786416-0.jsonl
+│           └── session-1778042825874-0.jsonl
+├── docs
+│   ├── agent
+│   │   ├── brain
+│   │   │   ├── 00_AGENT_LEARNING_INDEX.md
+│   │   │   ├── 21_BANDIT_EXPERIENCE_LEDGER.md
+│   │   │   ├── 22_BANDIT_PREVIOUS_TITLE.md
+│   │   │   ├── 23_BANDIT_CURRENT_TITLE.md
+│   │   │   ├── 24_BANDIT_WORKING_MEMORY_REFRESHER.md
+│   │   │   └── 25_BANDIT_SELF_MODEL_AND_GROWTH_PROTOCOL.md
+│   │   ├── leveling
+│   │   │   ├── BANDIT_CHANGELOG.md
+│   │   │   └── BANDIT_ERROR_LOG.md
+│   │   ├── onboarding
+│   │   │   ├── MULTI_AGENT_POLICY.md
+│   │   │   └── NEW_AGENT_ONBOARDING.md
+│   │   └── protocols
+│   │       ├── BANDIT_PROTOCOL.md
+│   │       └── BANDIT_SELF_SPLIT_PROTOCOL.md
+│   ├── audio
+│   │   └── UNIVERSAL_AUDIO_HANDLE_ROUTING.md
+│   ├── grammar-lens
+│   │   └── GHOST_OVERLAY_CURRENT_STATE.md
+│   ├── layout
+│   │   ├── LENS_NAVIGATION_MODEL.md
+│   │   └── TILE_WORKSPACE_SYSTEM.md
+│   ├── operating-policies
+│   │   ├── QA_AND_PLAYWRIGHT.md
+│   │   ├── SESSION_AND_STACK.md
+│   │   └── SOURCE_OF_TRUTH.md
+│   ├── overview
+│   │   ├── DOCS_INDEX.md
+│   │   ├── LUMAWEAVE_HIGH_DEF_OVERVIEW.md
+│   │   └── PROJECT_TREE.txt
+│   ├── physics
+│   │   ├── CONSTELLATION_MODE_DIALECT.md
+│   │   ├── GALAXY_MODE_DIALECT.md
+│   │   ├── HELIX_CONSTELLATION_DIALECT.md
+│   │   └── PHYSICS_DIALECT_SYSTEM.md
+│   ├── platform
+│   │   ├── CREATIVE_PIPELINE_CONCEPT.md
+│   │   └── PLATFORM_VISION.md
+│   ├── quest
+│   │   └── QUEST_TEMPLATE.md
+│   ├── rendering
+│   │   ├── CROSS_LAYER_OVERRIDE_CACHE_CONTRACT.md
+│   │   └── RENDERING_LAYER_ARCHITECTURE.md
+│   └── vr
+│       ├── AGENT_FAMILIAR_SYSTEM.md
+│       └── VR_COMPATIBILITY_CONCEPT.md
+├── examples
+│   └── ai-lab
+│       └── graphify-out -> /home/boop/Projects/ai-lab/graphify-out
+├── migration_docs
+│   └── 00_INDEX.md
+├── public
+│   ├── examples
+│   │   └── ai-lab
+│   │       └── graphify-out -> /home/boop/Projects/ai-lab/graphify-out
+│   ├── tauri.svg
+│   └── vite.svg
+├── scripts
+│   ├── bandit-shell.sh
+│   ├── lw-repo-run.sh
+│   ├── validate-contract-trace.mjs
+│   ├── validate-control-plane-modes.mjs
+│   ├── validate-qa-bundle.mjs
+│   └── validate-system-index.mjs
+├── src
+│   ├── accessibility
+│   │   └── motionSafetyRegistry.ts
+│   ├── app
+│   │   ├── AppProviders.tsx
+│   │   └── AppShell.tsx
+│   ├── assets
+│   │   └── react.svg
+│   ├── audio
+│   │   ├── audioSourceRegistry.ts
+│   │   ├── musicReactiveMappingRegistry.ts
+│   │   └── syntheticAudioSignal.ts
+│   ├── control-plane
+│   │   ├── command-deck
+│   │   │   ├── CommandDeckPanel.tsx
+│   │   │   └── CommandDeckShell.tsx
+│   │   ├── commands
+│   │   │   ├── CommandPalette.tsx
+│   │   │   ├── command-registry.ts
+│   │   │   └── command.types.ts
+│   │   ├── contracts
+│   │   │   ├── controlSurfaceContract.registry.ts
+│   │   │   ├── controlSurfaceContract.types.ts
+│   │   │   ├── controlSurfaceContract.utils.ts
+│   │   │   └── index.ts
+│   │   ├── features
+│   │   │   ├── feature-flags.ts
+│   │   │   └── feature-registry.ts
+│   │   ├── graph
+│   │   │   └── GraphVisualInventoryPanel.tsx
+│   │   ├── handles
+│   │   │   ├── handleset.registry.ts
+│   │   │   ├── handleset.types.ts
+│   │   │   ├── handleset.utils.ts
+│   │   │   └── index.ts
+│   │   ├── modes
+│   │   │   └── controlPlaneModeRegistry.ts
+│   │   ├── panels
+│   │   │   ├── CollapsiblePanel.tsx
+│   │   │   ├── DockLayout.tsx
+│   │   │   ├── InspectorPanel.tsx
+│   │   │   ├── panel-registry.ts
+│   │   │   ├── panel.types.ts
+│   │   │   └── ThemeMappingPanel.tsx
+│   │   ├── perspectives
+│   │   │   └── perspectiveRegistry.ts
+│   │   ├── presets
+│   │   │   ├── performance-presets.ts
+│   │   │   ├── physics-presets.ts
+│   │   │   ├── theme-presets.ts
+│   │   │   └── workflow-presets.ts
+│   │   ├── qa
+│   │   │   ├── advisory-registry.ts
+│   │   │   ├── QaPanel.tsx
+│   │   │   ├── qa-registry.ts
+│   │   │   ├── qa.store.ts
+│   │   │   └── qa.types.ts
+│   │   ├── settings
+│   │   │   ├── settings.defaults.ts
+│   │   │   ├── settings.migrations.ts
+│   │   │   ├── SettingsPanel.tsx
+│   │   │   ├── settings.registry.ts
+│   │   │   ├── settings.schema.ts
+│   │   │   └── settings.store.ts
+│   │   └── system-index
+│   │       ├── SystemIndexPanel.tsx
+│   │       └── systemIndexRegistry.ts
+│   ├── core
+│   │   ├── evidence
+│   │   ├── ingest
+│   │   ├── lenses
+│   │   ├── normalize
+│   │   ├── schema
+│   │   └── store
+│   ├── graph
+│   │   ├── ingest
+│   │   │   ├── loadGraphifySource.ts
+│   │   │   └── useGraphSourceSummary.ts
+│   │   ├── lenses
+│   │   ├── normalize
+│   │   │   └── normalizeGraphifyGraph.ts
+│   │   ├── renderers
+│   │   │   └── sigma2d
+│   │   │       ├── buildGraphologyGraph.ts
+│   │   │       ├── labelPolicy.ts
+│   │   │       ├── selectionColors.ts
+│   │   │       ├── selectionNeighborhood.ts
+│   │   │       └── SigmaGraphView.tsx
+│   │   ├── schema
+│   │   │   └── graph.types.ts
+│   │   ├── visual
+│   │   │   ├── applyGraphLabelPolicyToGraphology.ts
+│   │   │   ├── graphLabelPolicy.ts
+│   │   │   ├── graphStylePolicy.ts
+│   │   │   ├── graphVisualTokens.ts
+│   │   │   └── graphVisualTypes.ts
+│   │   ├── graphViewElementRegistry.ts
+│   │   └── graphVisualThemeMappingRegistry.ts
+│   ├── qa
+│   ├── renderers
+│   │   ├── sigma2d
+│   │   └── three3d
+│   ├── styles
+│   │   └── lumaweave-visual-handles.css
+│   ├── themes
+│   │   ├── applyTheme.ts
+│   │   ├── index.ts
+│   │   ├── themeOverrideStorage.ts
+│   │   ├── themePresets.ts
+│   │   ├── themeTargetHeuristics.ts
+│   │   ├── ThemeTargetInspectorOverlay.tsx
+│   │   ├── themeTargetInspectorTypes.ts
+│   │   ├── themeTargetRegistry.ts
+│   │   ├── themeTokenGovernance.ts
+│   │   ├── themeTokenPaths.ts
+│   │   ├── themeTokens.ts
+│   │   ├── theme.types.ts
+│   │   └── tokens.ts
+│   ├── ui
+│   │   ├── controls
+│   │   └── panels
+│   ├── App.css
+│   ├── App.tsx
+│   ├── main.tsx
+│   └── vite-env.d.ts
+├── src-tauri
+│   ├── capabilities
+│   │   └── default.json
+│   ├── gen
+│   │   └── schemas
+│   │       ├── acl-manifests.json
+│   │       ├── capabilities.json
+│   │       ├── desktop-schema.json
+│   │       └── linux-schema.json
+│   ├── icons
+│   │   ├── 128x128@2x.png
+│   │   ├── 128x128.png
+│   │   ├── 32x32.png
+│   │   ├── icon.icns
+│   │   ├── icon.ico
+│   │   ├── icon.png
+│   │   ├── Square107x107Logo.png
+│   │   ├── Square142x142Logo.png
+│   │   ├── Square150x150Logo.png
+│   │   ├── Square284x284Logo.png
+│   │   ├── Square30x30Logo.png
+│   │   ├── Square310x310Logo.png
+│   │   ├── Square44x44Logo.png
+│   │   ├── Square71x71Logo.png
+│   │   ├── Square89x89Logo.png
+│   │   └── StoreLogo.png
+│   ├── src
+│   │   ├── lib.rs
+│   │   └── main.rs
+│   ├── build.rs
+│   ├── Cargo.lock
+│   ├── Cargo.toml
+│   ├── .gitignore
+│   └── tauri.conf.json
+├── tests
+│   └── e2e
+│       ├── helpers
+│       │   └── qa.ts
+│       ├── app-smoke.spec.ts
+│       ├── command-deck.spec.ts
+│       ├── contract-registry.spec.ts
+│       ├── edge-label-truncation.spec.ts
+│       ├── graph-physics-coverage.spec.ts
+│       ├── graph-visual-inventory.spec.ts
+│       ├── graph-visual-state-stability.spec.ts
+│       ├── perspective-system.spec.ts
+│       ├── qa-navigation.spec.ts
+│       ├── qa-panel.spec.ts
+│       ├── qa-refresh.spec.ts
+│       ├── qa-submit.spec.ts
+│       ├── settings-label-controls.spec.ts
+│       ├── system-index.spec.ts
+│       ├── theme-override-storage.spec.ts
+│       ├── theme-selector.spec.ts
+│       ├── theme-target-inspector.spec.ts
+│       ├── theme-token-governance.spec.ts
+│       ├── theme-token-paths.spec.ts
+│       ├── viewport-stability.spec.ts
+│       └── visual-handles.spec.ts
+├── .vscode
+│   └── extensions.json
+├── .windsurf
+│   └── rules
+│       ├── starmap_operating_policy.md
+│       └── starmap_project_mission.md
+├── .gitignore
+├── index.html
+├── package.json
+├── package-lock.json
+├── playwright.config.ts
+├── README.md
+├── tsconfig.json
+├── tsconfig.node.json
+└── vite.config.ts
+
+84 directories, 188 files

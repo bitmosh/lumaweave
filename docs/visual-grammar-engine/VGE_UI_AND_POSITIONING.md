@@ -1,0 +1,168 @@
+---
+id: vge.PLACEHOLDER
+title: Visual Grammar Engine — PLACEHOLDER
+type: concept
+status: concept
+version: v73c
+domain: visual-grammar-engine
+cluster: teal
+agent_readable: true
+include_in_self_graph: true
+last_updated: v73c
+tags: [vge, visual-grammar-engine, concept, future, docs-only]
+---
+# Visual Grammar Engine — UI Layout, Mode Presets & Product Positioning
+
+> Status: Future architecture / docs-only. No runtime implementation authorized.
+
+---
+
+## Favored Layout Worlds
+
+### 1. Overview Grid (A3 / Dashboard Grid)
+Default practical dashboard. Summary cards first, evidence activity below. Good for daily use and QA overview.
+```
+Top status strip → summary card grid → registry/evidence widgets → selected detail drawer
+```
+
+### 2. Documentation Reader (B1)
+Clean, stable, readable evidence/contract review mode. Best for QA, docs, and Playwright-friendly surfaces.
+```
+Sticky summary → clean sections → contract/evidence cards → compact registry tables
+```
+
+### 3. Architecture Atlas (C1)
+Luminous graph/evidence map. Strong product identity. Best bridge toward immersive architecture visualization.
+```
+Atlas index → graph/evidence map → selected evidence inscription panel → contract seals / visual dialect badges
+```
+
+### 4. Panorama Atlas
+Showcase/demo mode. Big visual world, immersive, less dense. Best for screenshots, trailers, Steam page, and future screensaver/ambient mode.
+
+---
+
+## Four Customization Layers
+
+```
+1. Layout Presets      Where panels/widgets live
+2. Display Depth       How much detail each panel shows
+3. Visual Theme        Color, shape language, typography, decorative treatment
+4. Interaction Mode    How panels open, link, pin, filter, inspect, and expose evidence
+```
+
+---
+
+## Display Depth Levels
+
+```
+0 = Minimal     Title only
+1 = Summary     Title + status + count
+2 = Operational Title + status + count + risk badges + next action
+3 = Evidence    Accepted version + test coverage + source
+4 = Debug       Data-testid + registry key + file path
+```
+
+---
+
+## Global Modes
+
+```
+Human Mode          Compact readable summary
+Evidence Mode       Expanded evidence, source IDs, test coverage, contracts
+Debug Mode          Registry keys, handles, test IDs, internal wiring
+Presentation Mode   Beautiful, reduced detail, demo-safe
+Screensaver / Ambient Observatory Mode   Future: living visual graph with safe signal routing
+```
+
+---
+
+## Widget Workspace Direction
+
+Long-term, the control plane becomes a widget workspace:
+```
+Command Deck / Mission Control Shell
+→ widget grid / docked / movable panels
+→ each widget has display depth
+→ each widget has evidence mode
+→ each widget has pin/open/collapse/link behavior
+→ theme controls change visual expression, not contract meaning
+```
+
+Customization ladder:
+```
+Phase 1: fixed presets          Phase 2: user-selectable presets
+Phase 3: widget visibility       Phase 4: resizable panels
+Phase 5: draggable panels        Phase 6: magnetic/smart layout guides
+Phase 7: saved custom workspaces Phase 8: inspector-based element styling
+```
+
+---
+
+## Theme Preset Worlds (12-theme set)
+
+```
+Professional / dev-friendly:
+  1. Obsidian Console     2. Paperlight Studio
+  3. Graphite Lab         4. Blueprint Glass
+
+Coder-centric vibespaces:
+  5. Cozy Terminal        6. Pastel Workspace
+
+Luminous / fantasy-inspired:
+  7. Solar Archive        8. Glade Atlas
+
+Neon / sci-fi:
+  9. Tokyo Neon           10. Aurora Shell
+
+Sacred geometry / fractal:
+  11. Lattice Mandala     12. Fractal Observatory
+```
+
+**Key UI rule:** Presentation is configurable. Evidence truth is not.
+
+---
+
+## Product Positioning
+
+### Core Technical Blurb
+Every visual element can resolve to a grammar handle. LumaWeave lets users inspect, edit, validate, preview, and save visual dialect overrides through safe, schema-governed workflows.
+
+### Emotional Blurb
+LumaWeave is about turning data into a place you can enter, understand, and reshape. Every visual element has grammar, and every grammar can become part of your own visual dialect.
+
+### Steam Hook
+Bring your data. Choose a visual dialect. Step inside the living graph.
+
+### Enterprise Hook
+A local-first architecture intelligence layer with evidence-backed visual governance.
+
+### Product Manifesto
+LumaWeave is not just a tool for visualizing data. It is a local-first environment for entering your data as a living system.
+
+Plug in code, documents, knowledge bases, workflows, media libraries, or operational networks. LumaWeave classifies the shape of the source, recommends a visual dialect, and lets you tune the physics, layout, theme, signal routing, and evidence overlays until the system feels natural to you.
+
+You do not just look at a graph. You walk through it. You watch it grow. You learn its rhythms. You live beside your data.
+
+### Steam Potential
+Strong Steam hooks: Architecture Atlas mode · Panorama Atlas mode · Self-graph fixture · Theme/dialect customization · Local-first privacy · Future safe Workshop-style theme/layout/grammar packs.
+
+### Patreon Framing
+- Help build a living data visualization engine
+- Support local-first visual tools
+- Watch the Visual Grammar Engine, Signal Loom, and Grammar Lens evolve
+- Vote on visual dialects, theme worlds, and layout presets
+- Access devlogs, design boards, and early concept packets
+
+### Taglines
+```
+Every visual element has grammar.
+Design the dialect of your data.
+Enter your data as a living system.
+Map your codebase like a world.
+Write the rhythm of your data.
+Safe visual grammar for living systems.
+```
+
+### Scope Caution
+Marketing must never imply real-world offensive capability, unauthorized pentesting, exploit execution, or bypassing safety boundaries. Always describe the product as synthetic, sandboxed, defensive/evaluative, local-first, and evidence-scored.
