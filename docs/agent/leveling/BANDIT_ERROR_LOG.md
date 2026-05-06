@@ -8,7 +8,7 @@ subdomain: leveling
 cluster: gray
 agent_readable: true
 include_in_self_graph: false
-last_updated: repair-pass-v75b
+last_updated: physics-wiring-v1
 tags: [error, log, bandit, agent, self-split, recovery, operational]
 ---
 

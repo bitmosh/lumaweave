@@ -8,7 +8,7 @@ subdomain: leveling
 cluster: gray
 agent_readable: true
 include_in_self_graph: false
-last_updated: repair-pass-v75b
+last_updated: physics-wiring-v1
 tags: [changelog, log, bandit, agent, operational]
 ---
 
@@ -29,6 +29,11 @@ Updated by the agent that ran the pass before XP is awarded.
 ## 2026-05-06
 
 ```
+2026-05-06 · physics-wiring-v1 · playwright · ACCEPTED — Physics Wiring v1,
+  wire sliders to ForceAtlas2, install graphology-layout-forceatlas2,
+  add FA2 simulation to buildGraphologyGraph, wire repelForce/linkDistance/centerForce,
+  347 passed 9 skipped 0 failed, graph responds to slider changes — Bandit
+
 2026-05-06 · repair-pass-v75b · playwright · ACCEPTED — Repair pass,
   fixed 6 pre-existing failures + 2 fixture interference issues,
   347 passed 9 skipped 0 failed (up from 341 passed 6 failed),
@@ -111,7 +116,7 @@ If multiple things happened in one session, use multiple lines:
 
 | Agent  | Accepted Passes | Last Pass | Current Streak |
 |--------|----------------|-----------|----------------|
-| Bandit | 5 (v74b, grammar-lens-contract, v75a, v75b, repair-pass-v75b) | repair-pass-v75b | 5 |
+| Bandit | 6 (v74b, grammar-lens-contract, v75a, v75b, repair-pass-v75b, physics-wiring-v1) | physics-wiring-v1 | 6 |
 | DeepSeek | 0            | —         | 0              |
 
 *Update this table after each accepted pass.*
