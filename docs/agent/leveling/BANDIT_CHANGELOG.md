@@ -8,7 +8,7 @@ subdomain: leveling
 cluster: gray
 agent_readable: true
 include_in_self_graph: false
-last_updated: v73c
+last_updated: v74c
 tags: [changelog, log, bandit, agent, operational]
 ---
 
@@ -29,6 +29,10 @@ Updated by the agent that ran the pass before XP is awarded.
 ## 2026-05-06
 
 ```
+2026-05-06 · v74c · passive-ui · ACCEPTED — Source Adapter Evidence Panel,
+  6 Playwright tests, 343 passed 9 skipped (6 pre-existing deferred,
+  3 conditional for passive UI structure) — Bandit
+
 2026-05-06 · grammar-lens-contract · docs · ACCEPTED — Grammar Lens Contract
   + Cursor Inspector Contract, formalizes overlay governance before
   further implementation — no runtime changes — Bandit
