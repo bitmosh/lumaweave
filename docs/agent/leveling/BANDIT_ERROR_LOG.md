@@ -8,7 +8,7 @@ subdomain: leveling
 cluster: gray
 agent_readable: true
 include_in_self_graph: false
-last_updated: v74c
+last_updated: v75a
 tags: [error, log, bandit, agent, self-split, recovery, operational]
 ---
 
@@ -52,6 +52,13 @@ escalated         — requires architectural decision
 ---
 
 ## Error Log
+
+2026-05-06 · v75a · Runtime Lifecycle / Regression · strategies: 0 · deferred
+  Failure: 8 pre-existing Playwright failures (command-deck: 1, graph-visual-inventory: 2,
+  graph-visual-state-stability: 3, theme-target-inspector: 2)
+  Attempted: none - inherited technical debt from before v75a
+  Root cause: tests failing on canvas visibility, slider state changes, and inspector panel positioning
+  Human action: defer to dedicated test repair pass post-v75b - do not touch in v75a
 
 2026-05-06 · v74c · Obsolete Test / Spec Debt · strategies: 0 · deferred
   Failure: 6 pre-existing unconditional skips in contract-registry.spec.ts (lines 235, 251, 334, 349, 364, 526)
