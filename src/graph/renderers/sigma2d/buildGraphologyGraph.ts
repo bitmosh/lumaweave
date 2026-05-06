@@ -67,7 +67,6 @@ export function buildGraphologyGraph(
     18 + settings.linkDistance * 0.2 + settings.repelForce * 0.08;
 
   const baseSize = 10;
-  const size = baseSize * settings.nodeSize;
 
   nodes.forEach((node, index) => {
     const position = getSunflowerPosition(index, layoutScale);
@@ -78,9 +77,9 @@ export function buildGraphologyGraph(
       label: node.label,
       fullLabel: node.label,
       originalLabel: node.label,
-      size,
-      baseSize: size,
-      color: "#22d3ee",
+      size: ((node.raw?.size as number) ?? baseSize) * settings.nodeSize,
+      baseSize: (node.raw?.size as number) ?? baseSize,
+      color: (node.raw?.color as string) ?? "#22d3ee",
       nodeType: node.type || "unknown",
       raw: node.raw,
     });
