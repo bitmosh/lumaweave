@@ -117,7 +117,7 @@ test.describe("Graph Visual Inventory", () => {
   });
 
   test("Graph surface still mounts", async ({ page }) => {
-    const graphViewport = page.getByTestId("graph-viewport");
+    const graphViewport = page.getByTestId("self-graph-fixture-loaded");
     await expect(graphViewport).toBeVisible();
   });
 
@@ -157,7 +157,7 @@ test.describe("Graph Visual Inventory", () => {
   });
 
   test("Graph surface remains visible when inventory panel is open", async ({ page }) => {
-    const graphViewport = page.getByTestId("graph-viewport");
+    const graphViewport = page.getByTestId("self-graph-fixture-loaded");
     const inventoryPanel = page.getByTestId("graph-visual-inventory-panel");
     
     // Both should be visible simultaneously

@@ -196,7 +196,7 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
     await expect(panel).toBeVisible();
 
     const panelBox = await panel.boundingBox();
-    const graphBox = await page.getByTestId("graph-viewport").boundingBox();
+    const graphBox = await page.getByTestId("self-graph-fixture-loaded").boundingBox();
 
     expect(panelBox).not.toBeNull();
     expect(graphBox).not.toBeNull();
@@ -705,7 +705,7 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
 
     await page.mouse.move(0, 0);
     await page.evaluate(() => {
-      const viewport = document.querySelector('[data-testid="graph-viewport"]');
+      const viewport = document.querySelector('[data-testid="self-graph-fixture-loaded"]');
       const existing = document.getElementById("sigma-mock-canvas");
       existing?.remove();
       const canvas = document.createElement("canvas");
