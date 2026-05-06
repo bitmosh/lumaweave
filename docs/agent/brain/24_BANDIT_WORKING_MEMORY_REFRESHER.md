@@ -45,6 +45,24 @@ Before anything else:
 
 ---
 
+## Tool Execution Rules
+
+Before running any terminal commands:
+
+```
+□ Run terminal commands one at a time, never in parallel
+□ Wait for each command to return output before running the next one
+□ If a command is canceled with "Step was canceled by user":
+    1. Do not continue with remaining commands
+    2. Do not re-run immediately
+    3. Report what was canceled and what succeeded
+    4. Wait for user to confirm before re-running
+□ This applies even when commands seem independent
+□ Parallel terminal execution is not reliable in this environment
+```
+
+---
+
 ## By Pass Type
 
 ### Contract Pass (docs-only)
