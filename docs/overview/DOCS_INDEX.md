@@ -202,7 +202,7 @@ Control plane contracts and QA.
 ### qa/
 | File | Purpose |
 |------|---------|
-| BACKLOG_POLICY.md | Completed and in-progress pass record (canonical) |
+| ../roadmap/BACKLOG_POLICY.md | Completed and in-progress pass record (canonical) |
 
 ---
 
