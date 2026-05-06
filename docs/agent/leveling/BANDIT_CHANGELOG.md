@@ -8,7 +8,7 @@ subdomain: leveling
 cluster: gray
 agent_readable: true
 include_in_self_graph: false
-last_updated: v75a
+last_updated: v75b
 tags: [changelog, log, bandit, agent, operational]
 ---
 
@@ -29,6 +29,10 @@ Updated by the agent that ran the pass before XP is awarded.
 ## 2026-05-06
 
 ```
+2026-05-06 · v75b · passive-ui · ACCEPTED — Self-Graph visual refinement,
+  cluster colors + size hierarchy, 341 passed 6 pre-existing
+  failures (2 healed), streak 4 — Bandit
+
 2026-05-06 · v75a · playwright · ACCEPTED — Self-Graph Fixture + First Demo Surface,
   58 nodes, 43 edges, brand color clusters, adapter to Sigma,
   4/4 self-graph tests passing — Playwright: 339 passed, 9 skipped,
@@ -100,7 +104,7 @@ If multiple things happened in one session, use multiple lines:
 
 | Agent  | Accepted Passes | Last Pass | Current Streak |
 |--------|----------------|-----------|----------------|
-| Bandit | 3 (v74b, grammar-lens-contract, v75a) | v75a | 3 |
+| Bandit | 4 (v74b, grammar-lens-contract, v75a, v75b) | v75b | 4 |
 | DeepSeek | 0            | —         | 0              |
 
 *Update this table after each accepted pass.*
