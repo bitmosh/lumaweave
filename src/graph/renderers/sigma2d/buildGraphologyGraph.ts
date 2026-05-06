@@ -4,6 +4,7 @@
  */
 
 import Graph from "graphology";
+import forceAtlas2 from "graphology-layout-forceatlas2";
 import type {
   LumaWeaveEdgeDraft,
   LumaWeaveNodeDraft,
@@ -13,6 +14,7 @@ export interface LayoutSettings {
   nodeSize: number;
   linkDistance: number;
   repelForce: number;
+  centerForce: number;
 }
 
 /**
@@ -101,6 +103,22 @@ export function buildGraphologyGraph(
     } catch (error) {
       console.warn(`Failed to add edge ${edge.id}:`, error);
     }
+  });
+
+  // Apply ForceAtlas2 force simulation
+  // Initial sunflower positions seed the layout
+  forceAtlas2.assign(graph, {
+    iterations: 100,
+    settings: {
+      gravity: Math.max(0.1, settings.centerForce * 0.01),
+      scalingRatio: Math.max(1, settings.repelForce * 0.15),
+      strongGravityMode: false,
+      linLogMode: false,
+      adjustSizes: true,
+      barnesHutOptimize: graph.order > 100,
+      barnesHutTheta: 0.5,
+      slowDown: Math.max(1, settings.linkDistance * 0.05),
+    },
   });
 
   const nodePositions = graph.nodes().map((id) => {

@@ -16,7 +16,8 @@
     "qa:e2e:ui": "playwright test --ui",
     "qa:bundle": "node scripts/validate-qa-bundle.mjs",
     "trace:contracts": "node scripts/validate-contract-trace.mjs",
-    "index:system": "node scripts/validate-system-index.mjs"
+    "index:system": "node scripts/validate-system-index.mjs",
+    "modes:control-plane": "node scripts/validate-control-plane-modes.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
@@ -26,6 +27,7 @@
     "@tauri-apps/plugin-opener": "^2",
     "clsx": "^2.1.1",
     "graphology": "^0.26.0",
+    "graphology-layout-forceatlas2": "^0.10.1",
     "lucide-react": "^1.14.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
