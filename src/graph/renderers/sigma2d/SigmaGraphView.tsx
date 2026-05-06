@@ -322,7 +322,73 @@ export function SigmaGraphView({
     setHoveredEdgeId(null);
   });
 
+  // Node drag state
+  const dragState: {
+    dragging: boolean;
+    nodeId: string | null;
+  } = { dragging: false, nodeId: null };
+
+  // Start drag on node mousedown
+  sigma.on("downNode", (e) => {
+    dragState.dragging = true;
+    dragState.nodeId = e.node;
+    sigma.getCamera().disable();
+    // Fix node position while dragging
+    graph.setNodeAttribute(e.node, "fixed", true);
+  });
+
+  // Update position on mouse move
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!dragState.dragging || !dragState.nodeId) return;
+
+    const graphCoords = sigma.viewportToGraph({
+      x: e.clientX -
+        sigma.getContainer().getBoundingClientRect().left,
+      y: e.clientY -
+        sigma.getContainer().getBoundingClientRect().top,
+    });
+
+    graph.setNodeAttribute(
+      dragState.nodeId, "x", graphCoords.x
+    );
+    graph.setNodeAttribute(
+      dragState.nodeId, "y", graphCoords.y
+    );
+  };
+
+  // End drag
+  const handleMouseUp = () => {
+    if (dragState.nodeId) {
+      // Unfix node so physics can resume
+      graph.setNodeAttribute(
+        dragState.nodeId, "fixed", false
+      );
+    }
+    dragState.dragging = false;
+    dragState.nodeId = null;
+    sigma.getCamera().enable();
+  };
+
+  sigma.getContainer().addEventListener(
+    "mousemove", handleMouseMove
+  );
+  sigma.getContainer().addEventListener(
+    "mouseup", handleMouseUp
+  );
+  sigma.getContainer().addEventListener(
+    "mouseleave", handleMouseUp
+  );
+
   return () => {
+    sigma.getContainer().removeEventListener(
+      "mousemove", handleMouseMove
+    );
+    sigma.getContainer().removeEventListener(
+      "mouseup", handleMouseUp
+    );
+    sigma.getContainer().removeEventListener(
+      "mouseleave", handleMouseUp
+    );
     sigma.kill();
     sigmaRef.current = null;
     hasInitialCameraResetRef.current = false;
