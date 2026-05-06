@@ -8,7 +8,7 @@ subdomain: leveling
 cluster: gray
 agent_readable: true
 include_in_self_graph: false
-last_updated: v75b
+last_updated: repair-pass-v75b
 tags: [changelog, log, bandit, agent, operational]
 ---
 
@@ -29,6 +29,13 @@ Updated by the agent that ran the pass before XP is awarded.
 ## 2026-05-06
 
 ```
+2026-05-06 · repair-pass-v75b · playwright · ACCEPTED — Repair pass,
+  fixed 6 pre-existing failures + 2 fixture interference issues,
+  347 passed 9 skipped 0 failed (up from 341 passed 6 failed),
+  testid updates (command-deck, graph-visual-inventory x2,
+  theme-target-inspector x2), overlay selector fix,
+  mode-aware assertions for physics tests — Bandit
+
 2026-05-06 · v75b · passive-ui · ACCEPTED — Self-Graph visual refinement,
   cluster colors + size hierarchy, 341 passed 6 pre-existing
   failures (2 healed), streak 4 — Bandit
@@ -104,7 +111,7 @@ If multiple things happened in one session, use multiple lines:
 
 | Agent  | Accepted Passes | Last Pass | Current Streak |
 |--------|----------------|-----------|----------------|
-| Bandit | 4 (v74b, grammar-lens-contract, v75a, v75b) | v75b | 4 |
+| Bandit | 5 (v74b, grammar-lens-contract, v75a, v75b, repair-pass-v75b) | repair-pass-v75b | 5 |
 | DeepSeek | 0            | —         | 0              |
 
 *Update this table after each accepted pass.*

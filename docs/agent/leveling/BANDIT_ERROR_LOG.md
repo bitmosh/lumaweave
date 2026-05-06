@@ -8,7 +8,7 @@ subdomain: leveling
 cluster: gray
 agent_readable: true
 include_in_self_graph: false
-last_updated: v75a
+last_updated: repair-pass-v75b
 tags: [error, log, bandit, agent, self-split, recovery, operational]
 ---
 
@@ -52,6 +52,15 @@ escalated         — requires architectural decision
 ---
 
 ## Error Log
+
+2026-05-06 · repair-pass-v75b · Runtime Lifecycle / Regression · strategies: 1 · resolved-agent
+  Failure: 8 pre-existing Playwright failures from v75a (command-deck: 1, graph-visual-inventory: 2,
+  graph-visual-state-stability: 3, theme-target-inspector: 2)
+  Attempted: 1) Updated testid selectors from graph-viewport to self-graph-fixture-loaded in 4 test files
+  2) Updated GRAPH_VIEWPORT_SELECTOR in ThemeTargetInspectorOverlay.tsx
+  3) Added mode-aware assertions for physics tests to handle static fixture
+  Root cause: v75a changed graph-viewport testid to self-graph-fixture-loaded, tests not updated
+  Human action: Authorized fix - testid updates + overlay selector fix + mode-aware assertions
 
 2026-05-06 · v75a · Runtime Lifecycle / Regression · strategies: 0 · deferred
   Failure: 8 pre-existing Playwright failures (command-deck: 1, graph-visual-inventory: 2,
