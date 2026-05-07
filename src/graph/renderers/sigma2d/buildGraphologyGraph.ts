@@ -5,6 +5,7 @@
 
 import Graph from "graphology";
 import forceAtlas2 from "graphology-layout-forceatlas2";
+import louvain from "graphology-communities-louvain";
 import type {
   LumaWeaveEdgeDraft,
   LumaWeaveNodeDraft,
@@ -53,6 +54,46 @@ function groupByCluster(
   return new Map(
     [...clusters.entries()].sort((a, b) => b[1].length - a[1].length)
   );
+}
+
+/**
+ * Map Louvain community numbers to brand cluster colors.
+ * Community 0 → blue, 1 → purple, 2 → gold, 3 → teal, 4 → green, 5+ → gray
+ */
+function mapCommunityToCluster(community: number): string {
+  const clusterMap: Record<number, string> = {
+    0: "blue",
+    1: "purple",
+    2: "gold",
+    3: "teal",
+    4: "green",
+  };
+  return clusterMap[community] ?? "gray";
+}
+
+/**
+ * Run Louvain community detection and assign clusters to nodes
+ * that don't already have a cluster assigned.
+ */
+function assignLouvainCommunities(
+  nodes: LumaWeaveNodeDraft[],
+  graph: Graph
+): void {
+  // Run Louvain on the graph - assigns community as node attribute
+  louvain.assign(graph);
+
+  // Assign cluster to nodes that don't have one
+  nodes.forEach((node) => {
+    if (!node.raw?.cluster) {
+      const community = graph.getNodeAttribute(node.id, "community") as number;
+      const clusterColor = mapCommunityToCluster(community);
+      node.raw = { ...node.raw, cluster: clusterColor };
+    }
+  });
+
+  console.log("Louvain communities assigned", {
+    totalNodes: nodes.length,
+  });
 }
 
 /**
@@ -226,6 +267,9 @@ export function buildGraphologyGraph(
 
   // Apply dialect-specific layout seeding
   if (settings.physicsDialect === "helix") {
+    // Run Louvain community detection before helix layout
+    // to assign clusters to nodes that don't have them
+    assignLouvainCommunities(nodes, graph);
     applyHelixLayout(nodes, graph);
   }
 
