@@ -232,16 +232,16 @@ export function buildGraphologyGraph(
   // Apply ForceAtlas2 force simulation
   // Initial sunflower positions seed the layout
   forceAtlas2.assign(graph, {
-    iterations: settings.physicsDialect === "helix" ? 30 : 100,
+    iterations: settings.physicsDialect === "helix" ? 10 : 100,
     settings: {
-      gravity: Math.max(0.1, settings.centerForce * 0.01),
-      scalingRatio: Math.max(1, settings.repelForce * 0.15),
-      strongGravityMode: settings.physicsDialect === "helix",
+      gravity: settings.physicsDialect === "helix" ? 0.001 : Math.max(0.1, settings.centerForce * 0.01),
+      scalingRatio: settings.physicsDialect === "helix" ? 0.1 : Math.max(1, settings.repelForce * 0.15),
+      strongGravityMode: false,
       linLogMode: false,
-      adjustSizes: true,
-      barnesHutOptimize: graph.order > 100,
+      adjustSizes: settings.physicsDialect === "helix" ? false : false,
+      barnesHutOptimize: settings.physicsDialect === "helix" ? false : false,
       barnesHutTheta: 0.5,
-      slowDown: Math.max(1, settings.linkDistance * 0.05),
+      slowDown: settings.physicsDialect === "helix" ? 10 : Math.max(1, settings.linkDistance * 0.05),
     },
   });
 

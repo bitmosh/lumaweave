@@ -92,7 +92,13 @@ export function AppShell() {
     const { graph } = buildGraphologyGraph(
       graphNodes,
       graphEdges,
-      { nodeSize: 1, linkDistance: 1, repelForce: 1, centerForce: 40, physicsDialect: "default" },
+      {
+        nodeSize: settings.physics.nodeSize,
+        linkDistance: settings.physics.linkDistance,
+        repelForce: settings.physics.repelForce,
+        centerForce: settings.physics.centerForce,
+        physicsDialect: "default",
+      },
     );
     const neighborhood = getRelationshipNeighborhood(graph, selectedEdgeId);
     secondaryEdgeCount = neighborhood.secondaryEdgeIds.length;

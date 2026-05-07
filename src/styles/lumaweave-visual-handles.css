@@ -193,10 +193,24 @@
   .lw-button {
     transition: none;
   }
-  
+
   .lw-node-glow,
   .lw-edge-glow {
     animation: none;
     transition: none;
   }
+}
+
+/* ========================================
+   Range Input (Slider)
+   ======================================== */
+
+input[type="range"] {
+  accent-color: var(--lw-visual-accent, #22d3ee);
+  cursor: pointer;
+  width: 100%;
+}
+
+input[type="range"]:focus {
+  outline: none;
 }

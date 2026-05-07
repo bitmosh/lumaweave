@@ -31,6 +31,8 @@ Items here are promoted to the roadmap only when:
 - **Node importance rings** — high-weight nodes rendered with a subtle ring/corona to indicate weight
 - **Graph diff view** — highlight nodes/edges that changed between two history slider positions
 - **Cluster drag interaction** — Hold modifier key (Alt or Shift) + drag node → node and all directly connected neighbors move as a rigid unit with proportions locked, external edges stretch/compress naturally, on key release: force simulation resumes from new positions. Priority: after basic node dragging works. Relevant for: Helix dialect (moving constellation branches without breaking the backbone). Physics wiring order: 1. Fix static sunflower / force layout, 2. Wire repel + gravity controls, 3. Individual node drag, 4. Cluster drag with modifier key, 5. Physics dialect selection.
+- **GRAPH ROTATION + PSEUDO-3D PROJECTION** — Right-click drag → rotate 2D graph coord space. Store helix node positions as true 3D (x, y, z). Project 3D → 2D with rotation matrix on Sigma. Animate projection angle on node selection. Auto-rotate to selected cluster centroid. No Three.js needed — pure projection math on existing Sigma 2D renderer. Three3d renderer (src/renderers/three3d/) is the future path for true 3D graphs. Priority: after cluster colors + graph density.
+- **Advanced Physics Controls** — Add direct FA2 parameter controls to settings.schema.ts physics section: gravityStrength (0.001–1.0), fa2Iterations (10–500), fa2SlowDown (1–20), adjustSizes (boolean), strongGravityMode (boolean), linLogMode (boolean). These give users fine-grained control over ForceAtlas2 behavior beyond the current 3 sliders (nodeSize, linkDistance, repelForce, centerForce). Priority: after helix dialect stabilization.
 
 ---
 
@@ -45,6 +47,7 @@ Items here are promoted to the roadmap only when:
 
 ## Workspace and Layout
 
+- **DEBUG STATUS BAR MERGE** — The Debug collapsible panel at the bottom of the left rail could be merged into the status bar. Status bar becomes an expandable debug surface: Click status bar → expands upward showing debug info, console output, system status. Collapses back to single line status bar. Removes need for Debug as a separate tab. Priority: UI polish pass.
 - **Tile snap-to-group** — drag multiple tiles, snap them to a named group, move group together
 - **Workspace version history** — undo/redo workspace layout changes independently of graph state
 - **Lens-specific hotkeys** — different hotkey sets activate depending on active lens
