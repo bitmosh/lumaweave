@@ -7,6 +7,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Sigma from "sigma";
+import FA2Layout from "graphology-layout-forceatlas2/worker";
 import type {
   LumaWeaveNodeDraft,
   LumaWeaveEdgeDraft,
@@ -142,6 +143,8 @@ export function SigmaGraphView({
 }: SigmaGraphViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const sigmaRef = useRef<Sigma | null>(null);
+  const fa2Ref = useRef<FA2Layout | null>(null);
+  const graphRef = useRef<any>(null);
   const onSelectNodeRef = useRef(onSelectNode);
   const onSelectEdgeRef = useRef(onSelectEdge);
   const onClearSelectionRef = useRef(onClearSelection);
@@ -204,6 +207,9 @@ export function SigmaGraphView({
     // Debounce only the graph rebuild
     debounceRef.current = setTimeout(() => {
       const { graph, diagnostics } = buildGraphologyGraph(nodes, edges, settings);
+
+      // Store graph for FA2 supervisor updates
+      graphRef.current = graph;
 
     setDebugInfo({
       sigmaInputNodes: nodes.length,
@@ -291,6 +297,30 @@ export function SigmaGraphView({
     console.log("[SIGMA CONFIG] labelColor: attribute-based with fallback", resolvedTokens.nodeLabelColor.default, ", edgeLabelSize:", edgeLabelFontSize);
 
   sigmaRef.current = sigma;
+
+  // Start continuous FA2 supervisor
+  // Stop any existing supervisor
+  if (fa2Ref.current) {
+    fa2Ref.current.stop();
+    fa2Ref.current.kill();
+  }
+
+  // Start continuous FA2 supervisor
+  const fa2Settings = {
+    gravity: Math.max(0.001, settings.centerForce * 0.005),
+    scalingRatio: Math.max(0.1, settings.repelForce * 0.1),
+    slowDown: Math.max(2, settings.linkDistance * 0.03),
+    strongGravityMode: false,
+    linLogMode: false,
+    adjustSizes: false,
+    barnesHutOptimize: graph.order > 150,
+    barnesHutTheta: 0.5,
+  };
+
+  fa2Ref.current = new FA2Layout(graph, {
+    settings: fa2Settings,
+  });
+  fa2Ref.current.start();
 
   // Camera preservation rule: Only reset camera once after initial graph load.
   // Browser resize should resize canvas but preserve camera position/ratio.
@@ -397,37 +427,76 @@ export function SigmaGraphView({
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
+    if (fa2Ref.current) {
+      fa2Ref.current.stop();
+      fa2Ref.current.kill();
+      fa2Ref.current = null;
+    }
+    if (sigmaRef.current) {
+      sigmaRef.current.kill();
+      sigmaRef.current = null;
+      hasInitialCameraResetRef.current = false;
+    }
+  }
+}, [nodes, edges, linkDistance, repelForce, centerForce, physicsDialect, resolvedTokens]);
+
+// Live slider updates for FA2 settings without graph rebuild
+useEffect(() => {
+  if (!graphRef.current) return;
+  if (fa2Ref.current) {
+    fa2Ref.current.stop();
+    fa2Ref.current.kill();
+  }
+  fa2Ref.current = new FA2Layout(graphRef.current, {
+    settings: {
+      gravity: Math.max(0.001, centerForce * 0.005),
+      scalingRatio: Math.max(0.1, repelForce * 0.1),
+      slowDown: Math.max(2, linkDistance * 0.03),
+      strongGravityMode: false,
+      linLogMode: false,
+      adjustSizes: false,
+      barnesHutOptimize: true,
+    },
+  });
+  fa2Ref.current.start();
+}, [centerForce, repelForce, linkDistance]);
+
+// Node size live update without rebuild
+useEffect(() => {
+  const sigma = sigmaRef.current;
+  if (!sigma) return;
+  const graph = sigma.getGraph();
+  graph.forEachNode((node) => {
+    const attrs = graph.getNodeAttributes(node);
+    const baseSize = attrs.baseSize as number;
+    graph.setNodeAttribute(node, "size", baseSize * nodeSize);
+  });
+  sigma.refresh();
+}, [nodeSize]);
+
+// ResizeObserver to handle container size changes
+useEffect(() => {
+  if (!containerRef.current) return;
+  
+  const resizeObserver = new ResizeObserver(() => {
+    if (sigmaRef.current) {
+      sigmaRef.current.resize();
+      sigmaRef.current.refresh(); // Ensure graph renders after container resize
+    }
+  });
+  resizeObserver.observe(containerRef.current);
+
+  return () => {
+    resizeObserver.disconnect();
     if (sigmaRef.current) {
       sigmaRef.current.kill();
       sigmaRef.current = null;
       hasInitialCameraResetRef.current = false;
     }
   };
-}, [nodes, edges, nodeSize, linkDistance, repelForce, centerForce, physicsDialect, resolvedTokens]);
+}, []);
 
-  // ResizeObserver to handle container size changes
-  useEffect(() => {
-    if (!containerRef.current) return;
-    
-    const resizeObserver = new ResizeObserver(() => {
-      if (sigmaRef.current) {
-        sigmaRef.current.resize();
-        sigmaRef.current.refresh(); // Ensure graph renders after container resize
-      }
-    });
-    resizeObserver.observe(containerRef.current);
-
-    return () => {
-      resizeObserver.disconnect();
-      if (sigmaRef.current) {
-        sigmaRef.current.kill();
-        sigmaRef.current = null;
-        hasInitialCameraResetRef.current = false;
-      }
-    };
-  }, []);
-
-  // Single selection styling effect - uses graph visual policy system
+// Single selection styling effect - uses graph visual policy system
   useEffect(() => {
     const sigma = sigmaRef.current;
     if (!sigma) return;

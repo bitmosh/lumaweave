@@ -4,7 +4,6 @@
  */
 
 import Graph from "graphology";
-import forceAtlas2 from "graphology-layout-forceatlas2";
 import noverlap from "graphology-layout-noverlap";
 import louvain from "graphology-communities-louvain";
 import { degree } from "graphology-metrics/centrality";
@@ -233,20 +232,24 @@ export function buildGraphologyGraph(
   const baseSize = 10;
 
   nodes.forEach((node, index) => {
-    const position = getSunflowerPosition(index, layoutScale);
+    try {
+      const position = getSunflowerPosition(index, layoutScale);
 
-    graph.addNode(node.id, {
-      x: position.x,
-      y: position.y,
-      label: node.label,
-      fullLabel: node.label,
-      originalLabel: node.label,
-      size: ((node.raw?.size as number) ?? baseSize) * settings.nodeSize,
-      baseSize: (node.raw?.size as number) ?? baseSize,
-      color: (node.raw?.color as string) ?? "#22d3ee",
-      nodeType: node.type || "unknown",
-      raw: node.raw,
-    });
+      graph.addNode(node.id, {
+        x: position.x,
+        y: position.y,
+        label: node.label,
+        fullLabel: node.label,
+        originalLabel: node.label,
+        size: ((node.raw?.size as number) ?? baseSize) * settings.nodeSize,
+        baseSize: (node.raw?.size as number) ?? baseSize,
+        color: (node.raw?.color as string) ?? "#22d3ee",
+        nodeType: node.type || "unknown",
+        raw: node.raw,
+      });
+    } catch (error) {
+      console.warn(`Failed to add node ${node.id}:`, error);
+    }
   });
 
   edges.forEach((edge) => {
@@ -296,20 +299,8 @@ export function buildGraphologyGraph(
   }
 
   // Apply ForceAtlas2 force simulation
+  // Moved to SigmaGraphView.tsx as continuous supervisor
   // Initial sunflower positions seed the layout
-  forceAtlas2.assign(graph, {
-    iterations: settings.physicsDialect === "helix" ? 10 : 100,
-    settings: {
-      gravity: settings.physicsDialect === "helix" ? 0.001 : Math.max(0.1, settings.centerForce * 0.01),
-      scalingRatio: settings.physicsDialect === "helix" ? 0.1 : Math.max(1, settings.repelForce * 0.15),
-      strongGravityMode: false,
-      linLogMode: false,
-      adjustSizes: settings.physicsDialect === "helix" ? false : false,
-      barnesHutOptimize: settings.physicsDialect === "helix" ? false : false,
-      barnesHutTheta: 0.5,
-      slowDown: settings.physicsDialect === "helix" ? 10 : Math.max(1, settings.linkDistance * 0.05),
-    },
-  });
 
   // Anti-collision pass — nudges nodes apart
   // after FA2 settles the layout
