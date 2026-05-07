@@ -5,6 +5,8 @@ test.describe("Graph Visual State Stability", () => {
     await page.goto("/");
   });
 
+  const waitForRender = (page: any) => page.waitForTimeout(100);
+
   test("graph remains visible after node size slider change", async ({ page }) => {
     const isFixtureMode = await page.getByTestId("self-graph-fixture-loaded").isVisible().catch(() => false);
 
@@ -23,6 +25,7 @@ test.describe("Graph Visual State Stability", () => {
 
       const nodeSizeSlider = page.locator("[data-testid='setting-physics-nodeSize']");
       await nodeSizeSlider.fill("1.5");
+      await waitForRender(page);
 
       await expect(canvas).toBeVisible();
 
@@ -51,6 +54,7 @@ test.describe("Graph Visual State Stability", () => {
 
       const linkDistanceSlider = page.locator("[data-testid='setting-physics-linkDistance']");
       await linkDistanceSlider.fill("50");
+      await waitForRender(page);
 
       await expect(canvas).toBeVisible();
 
@@ -72,6 +76,7 @@ test.describe("Graph Visual State Stability", () => {
 
     const repelForceSlider = page.locator("[data-testid='setting-physics-repelForce']");
     await repelForceSlider.fill("50");
+    await waitForRender(page);
 
     await expect(canvas).toBeVisible();
 
@@ -90,15 +95,19 @@ test.describe("Graph Visual State Stability", () => {
     const repelForceSlider = page.locator("[data-testid='setting-physics-repelForce']");
 
     await nodeSizeSlider.fill("1.5");
+    await waitForRender(page);
     await expect(canvas).toBeVisible();
 
     await linkDistanceSlider.fill("50");
+    await waitForRender(page);
     await expect(canvas).toBeVisible();
 
     await repelForceSlider.fill("50");
+    await waitForRender(page);
     await expect(canvas).toBeVisible();
 
     await nodeSizeSlider.fill("1");
+    await waitForRender(page);
     await expect(canvas).toBeVisible();
 
     const finalBox = await canvas.boundingBox();

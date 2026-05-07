@@ -143,10 +143,10 @@ export function AppShell() {
       data-lw-theme-target="app.shell"
     >
       <div className="grid h-screen grid-rows-[auto_1fr_auto]">
-        <header 
+        <header
           className="px-6 py-4"
           style={{
-            borderBottom: `1px solid ${themeTokens.app.panelBorder}`,
+            borderBottom: "1px solid rgba(34, 211, 238, 0.15)",
             backgroundColor: `${themeTokens.app.background}dd`,
           } as React.CSSProperties}
           data-lw-theme-target="topbar.root"
@@ -512,11 +512,11 @@ export function AppShell() {
             }
           />
 
-          <section 
+          <section
             className="relative min-h-0 overflow-hidden"
             data-testid={useFixture ? "self-graph-fixture-loaded" : "graph-viewport"}
             style={{
-              background: `radial-gradient(circle at center, ${themeTokens.app.accent}16, transparent 35%), radial-gradient(circle at bottom right, ${themeTokens.app.glow}12, transparent 30%)`,
+              background: "radial-gradient(ellipse at center, #0d1929 0%, #060b14 60%, #030508 100%)",
             } as React.CSSProperties}
             data-lw-theme-target="graph.frame"
           >
