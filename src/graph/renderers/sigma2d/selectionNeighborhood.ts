@@ -4,6 +4,7 @@
  */
 
 import Graph from "graphology";
+import { bfsFromNode } from "graphology-traversal";
 
 /**
  * Get the source and target node IDs for an edge
@@ -155,8 +156,7 @@ export function getRelationshipNeighborhood(
 }
 
 /**
- * Get the node neighborhood for a selected node
- * Mirrors getRelationshipNeighborhood structure for consistency
+ * Get the node neighborhood for a selected node using BFS traversal
  * Returns:
  * - directEdgeIds: edges directly connected to the node (primary edges)
  * - directNeighborNodeIds: nodes directly connected through those edges (secondary nodes)
@@ -181,46 +181,42 @@ export function getNodeNeighborhood(
     };
   }
 
-  const directEdgeIds = getConnectedEdgeIds(graph, nodeId);
+  const directEdgeIds = new Set<string>();
   const directNeighborNodeIds = new Set<string>();
   const secondaryEdgeIds = new Set<string>();
   const tertiaryNodeIds = new Set<string>();
 
-  // Get direct neighbors (secondary nodes)
-  directEdgeIds.forEach((edgeId) => {
-    const opposite = getOppositeNodeId(graph, edgeId, nodeId);
-    if (opposite) {
-      directNeighborNodeIds.add(opposite);
-    }
-  });
-
-  // Depth 3: compute secondary edges (edges connected to direct neighbors, excluding direct edges)
-  // and tertiary nodes (nodes connected through secondary edges, excluding selected and direct neighbors)
-  directNeighborNodeIds.forEach((secondaryNodeId) => {
-    if (graph.hasNode(secondaryNodeId)) {
-      const secondaryEdges = getConnectedEdgeIds(graph, secondaryNodeId);
-      secondaryEdges.forEach((e) => {
-        // Exclude direct edges (edges connected to selected node)
-        if (!directEdgeIds.includes(e)) {
-          const extremities = graph.extremities(e);
-          const connectsToSelected = extremities.includes(nodeId);
-          if (!connectsToSelected) {
-            secondaryEdgeIds.add(e);
-            const opposite = getOppositeNodeId(graph, e, secondaryNodeId);
-            // Add tertiary node if it's not the selected node or already a direct neighbor
-            if (opposite && !directNeighborNodeIds.has(opposite) && opposite !== nodeId) {
-              tertiaryNodeIds.add(opposite);
-            }
-          }
+  // BFS to find neighbors at different depths
+  bfsFromNode(graph, nodeId, (visitedNode, _attr, d) => {
+    if (visitedNode === nodeId) return;
+    
+    if (d === 1) {
+      directNeighborNodeIds.add(visitedNode);
+      // find edges between nodeId and visitedNode
+      graph.forEachEdge(nodeId, (edgeId, _attrs, src, tgt) => {
+        if (src === visitedNode || tgt === visitedNode) {
+          directEdgeIds.add(edgeId);
         }
       });
+    } else if (d === 2) {
+      // Find edges connecting depth 1 nodes to depth 2 nodes
+      graph.forEachEdge(visitedNode, (edgeId, _attrs, src, tgt) => {
+        if (directNeighborNodeIds.has(src) || directNeighborNodeIds.has(tgt) || src === nodeId || tgt === nodeId) {
+          secondaryEdgeIds.add(edgeId);
+        }
+      });
+    } else if (d === 3) {
+      // Add depth 3 nodes as tertiary
+      tertiaryNodeIds.add(visitedNode);
     }
-  });
+    // Stop at depth 3
+    if (d >= 3) return true;
+  }, { mode: "outbound" });
 
   return {
-    directEdgeIds,
-    directNeighborNodeIds: Array.from(directNeighborNodeIds),
-    secondaryEdgeIds: Array.from(secondaryEdgeIds),
-    tertiaryNodeIds: Array.from(tertiaryNodeIds),
+    directEdgeIds: [...directEdgeIds],
+    directNeighborNodeIds: [...directNeighborNodeIds],
+    secondaryEdgeIds: [...secondaryEdgeIds],
+    tertiaryNodeIds: [...tertiaryNodeIds],
   };
 }
