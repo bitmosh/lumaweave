@@ -137,6 +137,7 @@ export function AppShell() {
         "--lw-text-primary": themeTokens.app.textPrimary,
         "--lw-text-muted": themeTokens.app.textMuted,
         "--lw-accent": themeTokens.app.accent,
+        "--lw-visual-accent": themeTokens.app.accent,
         "--lw-glow": themeTokens.app.glow,
         backgroundColor: themeTokens.app.background,
       } as React.CSSProperties}
