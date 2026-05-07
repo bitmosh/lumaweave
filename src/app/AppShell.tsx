@@ -31,8 +31,14 @@ export function AppShell() {
   const { summary, error: summaryError } = useGraphSourceSummary();
 
   // Self-graph fixture for demo (v75a)
-  // TODO: Switch to smart fixture/real source toggle when tests are updated
+  // Smart switching deferred - layout assertions in theme-target-inspector.spec.ts
+  // expect fixture-specific dimensions. Update those tests before enabling:
+  // const hasRealSource = summary.normalizedNodes &&
+  //   summary.normalizedNodes.length > 0 &&
+  //   !summaryError;
+  // const useFixture = !hasRealSource;
   const [useFixture] = useState(true);
+
   const adaptedFixture = useMemo(
     () => adaptSelfGraphToSigma(generatedGraph as LumaSourceGraph),
     []

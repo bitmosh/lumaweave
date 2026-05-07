@@ -25,6 +25,54 @@ Items here are promoted to the roadmap only when:
 
 ## Graph Intelligence
 
+- **SOLAR ORBIT DIALECT — PHASE 1 (cluster gravity)**
+  Custom physics plugin: compute cluster centroid per frame,
+  apply inward pull to cluster members. Result: loose solar
+  system layout, clusters stay separated by centroid gravity
+  wells. Blendable: gravity well strength slider 0→1 mixes
+  between FA2 default and solar orbit. Phase 2: animated
+  orbital drift (angle per node). Phase 3: cluster boundary
+  repulsion (soft walls). Phase 4: Kepler-accurate orbital mechanics.
+  Pre-req: continuous FA2 loop (DONE). Priority: after physics
+  settings expansion.
+
+- **CLUSTER DEPTH SLIDER**
+  Replace neighborhood depth dropdown with a slider from
+  1.0 → 4.0 at 0.1 increments. Fractional depth: 1.4 shows
+  direct neighbors at 40% opacity fade. 2.7 shows depth-2 at
+  full and depth-3 at 70% opacity. Hold key combo (Alt+scroll)
+  to adjust live. 4th depth level: tertiary neighbors of
+  tertiary neighbors — shows the full extended neighborhood.
+  This was discussed with user and never made it to docs.
+  Capture it now. Priority: medium — high UX value.
+
+- **PHYSICS PLUGIN PIPELINE**
+  src/graph/physics/physics-pipeline.ts
+  Type: PhysicsPlugin = (graph, settings, frame) => void
+  Pipeline array runs each plugin per animation frame.
+  Custom behaviors slot in without touching FA2.
+  Examples: cluster gravity, helix attractor, repulsion walls,
+  orbital drift, spiral breathing. Architecture makes custom
+  physics trivial to add. Priority: after FA2 settings expansion.
+
+- **BLENDABLE CLUSTER MIXING**
+  In solar orbit mode, a "cluster cohesion" slider 0 = complete
+  mixing (pure FA2, no cluster gravity). 0.5 = soft neighborhood
+  bubbles, some mixing. 1.0 = hard cluster separation, no mixing.
+  Fractional values create the in-between states that are
+  visually most interesting. The slider blends between two
+  force systems. Priority: after solar orbit Phase 1 lands.
+
+- **YAML GRAPH PARSER — PRE-BUILD SCRIPT APPROACH**
+  Fix for self-split: use Node.js build script instead of Vite glob at runtime.
+  Script: scripts/generate-self-graph.mjs
+  Reads docs/ with fs, parses frontmatter, writes src/fixtures/self-graph-generated.json
+  Import JSON statically in AppShell.tsx.
+  Add to package.json scripts:
+    "generate:graph": "node scripts/generate-self-graph.mjs"
+  Run before dev/build to keep graph fresh.
+  108 docs with include_in_self_graph:true = 131+ nodes.
+
 - **GRAPHOLOGY ECOSYSTEM — HIGH PRIORITY INSTALLS**
   Three packages that would have immediate impact:
 
@@ -44,6 +92,24 @@ Items here are promoted to the roadmap only when:
     Anti-collision post-processing after FA2
     Prevents node overlap in dense graph regions
     Install with: next physics tuning pass
+
+- **USEFIXTURE SMART SWITCHING**
+  AppShell.tsx useFixture is hardcoded true.
+  Smart switching (derive from summary.normalizedNodes)
+  was attempted but broke theme-target-inspector.spec.ts.
+  Testid selectors updated (lines 199, 708) to accept either
+  testid, but layout assertions (lines 211-212) expect
+  fixture-specific graph dimensions (panelBox.x + width <= 861).
+  Real source (AI Lab: 233 nodes, 313 edges) has different
+  dimensions causing assertion failures.
+  Fix requires:
+  1. Update layout assertions to handle both fixture and real source
+  2. Either remove dimension checks or use relative positioning
+  3. Then: const hasRealSource = summary.normalizedNodes &&
+           summary.normalizedNodes.length > 0 && !summaryError;
+     const useFixture = !hasRealSource;
+  Priority: medium — affects demo experience
+  Constraint: 2 layout assertions need updating first
 
 - **Cluster gravity** — hard gravity walls between neighborhoods, nodes orbit within cluster (proto-Galaxy mode)
 - **Color-coded neighborhoods** — community detection driving brand cluster colors in graph
