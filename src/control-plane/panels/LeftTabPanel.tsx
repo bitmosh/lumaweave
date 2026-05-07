@@ -190,7 +190,10 @@ export function LeftTabPanel({
           <button
             key={tab.id}
             data-testid={`tab-${tab.id}`}
-            onClick={() => onTabChange(tab.id)}
+            onClick={() => {
+              onTabChange(tab.id);
+              document.getElementById(`tab-section-${tab.id}`)?.scrollIntoView({ behavior: "instant" });
+            }}
             disabled={isTiled(tab.id)}
             style={{
               flex: "0 0 auto",
@@ -271,7 +274,7 @@ export function LeftTabPanel({
         ◀ Collapse
       </button>
 
-      {/* Tab content - all tabs always rendered normally, no CSS hiding */}
+      {/* Tab content - all tabs always rendered normally */}
       <div
         style={{
           flex: 1,
@@ -279,11 +282,11 @@ export function LeftTabPanel({
           padding: "1rem",
         }}
       >
-        {graphTabContent}
-        {qaTabContent}
-        {evidenceTabContent}
-        {debugTabContent}
-        {settingsTabContent}
+        <div id="tab-section-graph">{graphTabContent}</div>
+        <div id="tab-section-qa">{qaTabContent}</div>
+        <div id="tab-section-evidence">{evidenceTabContent}</div>
+        <div id="tab-section-debug">{debugTabContent}</div>
+        <div id="tab-section-settings">{settingsTabContent}</div>
       </div>
     </aside>
   );
