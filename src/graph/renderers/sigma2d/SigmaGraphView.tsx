@@ -8,6 +8,7 @@
 import { useEffect, useRef, useState } from "react";
 import Sigma from "sigma";
 import FA2Layout from "graphology-layout-forceatlas2/worker";
+import { bidirectional } from "graphology-shortest-path";
 import type {
   LumaWeaveNodeDraft,
   LumaWeaveEdgeDraft,
@@ -52,6 +53,7 @@ interface SigmaGraphViewProps {
 
   selectedNodeId: string | null;
   selectedEdgeId?: string | null;
+  pathTargetId?: string | null;
   nodeSelectionStage?: 1 | 2 | 3;
 
   nodeLabelMode?: NodeLabelMode;
@@ -118,6 +120,7 @@ interface SigmaGraphViewProps {
   };
 
   onSelectNode: (nodeId: string) => void;
+  onSetPathTarget?: (nodeId: string) => void;
   onSelectEdge?: (edgeId: string) => void;
   onClearSelection: () => void;
 }
@@ -136,6 +139,7 @@ export function SigmaGraphView({
   barnesHutTheta = 0.5,
   selectedNodeId,
   selectedEdgeId = null,
+  pathTargetId = null,
   nodeSelectionStage = 1,
   nodeLabelMode = "selected-neighborhood",
   edgeLabelMode = "selected-neighborhood",
@@ -147,6 +151,7 @@ export function SigmaGraphView({
   hoverNodeColor = "#ffffff",
   resolvedTokens = graphVisualTokens,
   onSelectNode,
+  onSetPathTarget,
   onSelectEdge,
   onClearSelection,
 }: SigmaGraphViewProps) {
@@ -155,6 +160,7 @@ export function SigmaGraphView({
   const fa2Ref = useRef<FA2Layout | null>(null);
   const graphRef = useRef<any>(null);
   const onSelectNodeRef = useRef(onSelectNode);
+  const onSetPathTargetRef = useRef(onSetPathTarget);
   const onSelectEdgeRef = useRef(onSelectEdge);
   const onClearSelectionRef = useRef(onClearSelection);
   const hasInitialCameraResetRef = useRef(false);
@@ -193,9 +199,10 @@ export function SigmaGraphView({
 
   useEffect(() => {
     onSelectNodeRef.current = onSelectNode;
+    onSetPathTargetRef.current = onSetPathTarget;
     onSelectEdgeRef.current = onSelectEdge;
     onClearSelectionRef.current = onClearSelection;
-  }, [onSelectNode, onSelectEdge, onClearSelection]);
+  }, [onSelectNode, onSetPathTarget, onSelectEdge, onClearSelection]);
 
   console.log("SigmaGraphView input", {
     nodes: nodes.length,
@@ -348,8 +355,13 @@ export function SigmaGraphView({
     hasInitialCameraResetRef.current = true;
   }
 
-  sigma.on("clickNode", ({ node }) => {
-    onSelectNodeRef.current(node);
+  sigma.on("clickNode", ({ node, event }) => {
+    if (event.original.ctrlKey && selectedNodeId) {
+      // Ctrl+click with existing selection = set path target
+      onSetPathTargetRef.current?.(node);
+    } else {
+      onSelectNodeRef.current(node);
+    }
   });
 
   sigma.on("clickEdge", ({ edge }) => {
@@ -507,6 +519,90 @@ useEffect(() => {
   });
   sigma.refresh();
 }, [nodeSize]);
+
+// Compute and highlight shortest path when pathTargetId changes
+useEffect(() => {
+  const sigma = sigmaRef.current;
+  const graph = graphRef.current;
+  if (!sigma || !graph) return;
+  if (!selectedNodeId || !pathTargetId) return;
+
+  // Compute shortest path
+  const path = bidirectional(
+    graph,
+    selectedNodeId,
+    pathTargetId
+  );
+
+  if (!path) {
+    console.log("[PATH] No path found between",
+      selectedNodeId, "and", pathTargetId);
+    return;
+  }
+
+  console.log("[PATH] Found path:", path);
+
+  // Highlight path nodes
+  const pathNodeSet = new Set(path);
+  graph.forEachNode((nodeId: string) => {
+    if (pathNodeSet.has(nodeId)) {
+      graph.setNodeAttribute(
+        nodeId, "color", "#fbbf24"  // gold
+      );
+    }
+  });
+
+  // Highlight path edges
+  for (let i = 0; i < path.length - 1; i++) {
+    const source = path[i];
+    const target = path[i + 1];
+    // Find edge between these two nodes
+    graph.forEachEdge(source, (edgeId: string, _attrs: any,
+      src: string, tgt: string) => {
+      if (
+        (src === source && tgt === target) ||
+        (src === target && tgt === source)
+      ) {
+        graph.setEdgeAttribute(
+          edgeId, "color", "#fbbf24"
+        );
+        graph.setEdgeAttribute(
+          edgeId, "size", 5
+        );
+      }
+    });
+  }
+
+  sigma.refresh();
+
+}, [pathTargetId, selectedNodeId]);
+
+// Clear path highlighting when selection is cleared
+useEffect(() => {
+  const sigma = sigmaRef.current;
+  const graph = graphRef.current;
+  if (!sigma || !graph) return;
+  if (selectedNodeId !== null) return; // Only clear when deselected
+
+  // Reset all node and edge colors by reapplying style policy
+  applyGraphStylePolicy(
+    graph,
+    {
+      selectedNodeId,
+      selectedEdgeId,
+      hoveredNodeId,
+      hoveredEdgeId,
+      neighborhoodDepth: nodeSelectionStage as 1 | 2 | 3,
+    },
+    {
+      hoverNodeColor: hoverNodeColor || "#ffffff",
+      edgeLabelFontSize: edgeLabelFontSize || 13,
+    },
+    resolvedTokens
+  );
+  sigma.refresh();
+
+}, [selectedNodeId, selectedEdgeId, nodeSelectionStage, hoveredNodeId, hoveredEdgeId, hoverNodeColor, edgeLabelFontSize, resolvedTokens]);
 
 // ResizeObserver to handle container size changes
 useEffect(() => {

@@ -57,6 +57,7 @@ export function AppShell() {
 
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
+  const [pathTargetId, setPathTargetId] = useState<string | null>(null);
   const [inspectorExpanded, setInspectorExpanded] = useState(false);
   const [themeInspectorEnabled, setThemeInspectorEnabled] = useState(false);
 
@@ -658,6 +659,7 @@ export function AppShell() {
                         barnesHutTheta={settings.physics.barnesHutTheta}
                         selectedNodeId={selectedNodeId}
                         selectedEdgeId={selectedEdgeId}
+                        pathTargetId={pathTargetId}
                         nodeSelectionStage={nodeSelectionStage}
                         nodeLabelMode={settings.labels.nodeLabelMode}
                         edgeLabelMode={settings.labels.edgeLabelMode}
@@ -673,6 +675,9 @@ export function AppShell() {
                           setSelectedEdgeId(null);
                           setInspectorExpanded(true);
                         }}
+                        onSetPathTarget={(nodeId) => {
+                          setPathTargetId(nodeId);
+                        }}
                         onSelectEdge={(edgeId) => {
                           setSelectedEdgeId(edgeId);
                           setSelectedNodeId(null);
@@ -681,6 +686,7 @@ export function AppShell() {
                         onClearSelection={() => {
                           setSelectedNodeId(null);
                           setSelectedEdgeId(null);
+                          setPathTargetId(null);
                         }}
                       />
 
