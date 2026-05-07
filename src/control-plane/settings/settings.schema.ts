@@ -1,8 +1,10 @@
 export type ThemeId =
   | "solar-plasma"
   | "obsidian-aurora"
-  | "haunted-observatory"
-  | "glitter-goblin";
+  | "midnight-loom"
+  | "void-circuit"
+  | "agartha-dream"
+  | "agartha-dusk";
 
 export type EdgeLabelMode =
   | "off"

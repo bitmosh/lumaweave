@@ -15,12 +15,14 @@ test.describe("Theme Selector", () => {
     
     // Check that all built-in options exist
     const options = themeSelector.locator("option");
-    await expect(options).toHaveCount(4);
+    await expect(options).toHaveCount(6);
     
     await expect(options.nth(0)).toHaveText("Solar Plasma");
     await expect(options.nth(1)).toHaveText("Obsidian Aurora");
-    await expect(options.nth(2)).toHaveText("Haunted Observatory");
-    await expect(options.nth(3)).toHaveText("Glitter Goblin");
+    await expect(options.nth(2)).toHaveText("Midnight Loom");
+    await expect(options.nth(3)).toHaveText("Void Circuit");
+    await expect(options.nth(4)).toHaveText("Agartha Dream");
+    await expect(options.nth(5)).toHaveText("Agartha Dusk");
   });
 
   test("selecting one updates control value", async ({ page }) => {
@@ -30,13 +32,13 @@ test.describe("Theme Selector", () => {
     await themeSelector.selectOption("obsidian-aurora");
     await expect(themeSelector).toHaveValue("obsidian-aurora");
     
-    // Select Haunted Observatory
-    await themeSelector.selectOption("haunted-observatory");
-    await expect(themeSelector).toHaveValue("haunted-observatory");
+    // Select Midnight Loom
+    await themeSelector.selectOption("midnight-loom");
+    await expect(themeSelector).toHaveValue("midnight-loom");
     
-    // Select Glitter Goblin
-    await themeSelector.selectOption("glitter-goblin");
-    await expect(themeSelector).toHaveValue("glitter-goblin");
+    // Select Void Circuit
+    await themeSelector.selectOption("void-circuit");
+    await expect(themeSelector).toHaveValue("void-circuit");
     
     // Select Solar Plasma
     await themeSelector.selectOption("solar-plasma");
@@ -81,12 +83,12 @@ test.describe("Theme Selector", () => {
     expect(newState).toBe(!initialState);
   });
 
-  test("haunted observatory graph color switching", async ({ page }) => {
+  test("void circuit graph color switching", async ({ page }) => {
     const themeSelector = page.getByTestId("theme-preset-selector");
     
-    // Select Haunted Observatory
-    await themeSelector.selectOption("haunted-observatory");
-    await expect(themeSelector).toHaveValue("haunted-observatory");
+    // Select Void Circuit
+    await themeSelector.selectOption("void-circuit");
+    await expect(themeSelector).toHaveValue("void-circuit");
     
     // Wait for theme to apply
     await page.waitForTimeout(500);
@@ -98,9 +100,9 @@ test.describe("Theme Selector", () => {
     // Wait for theme to apply
     await page.waitForTimeout(500);
     
-    // Switch back to Haunted Observatory
-    await themeSelector.selectOption("haunted-observatory");
-    await expect(themeSelector).toHaveValue("haunted-observatory");
+    // Switch back to Void Circuit
+    await themeSelector.selectOption("void-circuit");
+    await expect(themeSelector).toHaveValue("void-circuit");
   });
 
   test("mission control decision badge visible", async ({ page }) => {

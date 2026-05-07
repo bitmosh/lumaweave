@@ -21,8 +21,8 @@ import {
 } from "../graph/renderers/sigma2d/buildGraphologyGraph";
 import { getThemeRuntimeTokens, resolveGraphVisualTokens } from "../themes";
 import { ThemeTargetInspectorOverlay } from "../themes/ThemeTargetInspectorOverlay";
-import { selfGraphFixture } from "../fixtures/self-graph-fixture";
 import { adaptSelfGraphToSigma } from "../fixtures/self-graph-adapter";
+import { selfGraphFixture } from "../fixtures/self-graph-fixture";
 
 export function AppShell() {
   const settings = useSettingsStore((state) => state.settings);
@@ -185,8 +185,10 @@ export function AppShell() {
                 >
                   <option value="solar-plasma">Solar Plasma</option>
                   <option value="obsidian-aurora">Obsidian Aurora</option>
-                  <option value="haunted-observatory">Haunted Observatory</option>
-                  <option value="glitter-goblin">Glitter Goblin</option>
+                  <option value="midnight-loom">Midnight Loom</option>
+                  <option value="void-circuit">Void Circuit</option>
+                  <option value="agartha-dream">Agartha Dream</option>
+                  <option value="agartha-dusk">Agartha Dusk</option>
                 </select>
 
                 <div className="flex items-center gap-4">

@@ -10,7 +10,7 @@ import { validateThemeTokenPaths } from "./themeTokenPaths";
 
 /**
  * Solar Plasma theme tokens
- * Bright solar/cyan/gold plasma theme
+ * Dark sci-fi with cyan/gold plasma
  */
 export const solarPlasmaTokens: ThemeRuntimeTokens = {
   app: {
@@ -47,7 +47,7 @@ export const solarPlasmaTokens: ThemeRuntimeTokens = {
 
 /**
  * Obsidian Aurora theme tokens
- * Dark theme with aurora borealis color palette
+ * Dark crystalline aurora borealis
  */
 export const obsidianAuroraTokens: ThemeRuntimeTokens = {
   app: {
@@ -83,76 +83,150 @@ export const obsidianAuroraTokens: ThemeRuntimeTokens = {
 };
 
 /**
- * Haunted Observatory theme tokens
- * Spooky dark theme with spectral green accents
+ * Midnight Loom theme tokens
+ * Dark warm gold candlelight
  */
-export const hauntedObservatoryTokens: ThemeRuntimeTokens = {
+export const midnightLoomTokens: ThemeRuntimeTokens = {
   app: {
-    background: "#050a05", // very dark green
-    panelBackground: "rgba(5, 15, 5, 0.85)",
-    panelBorder: "rgba(34, 197, 94, 0.25)", // green-500/25
-    textPrimary: "#d1fae5", // green-100
-    textMuted: "#4b5563", // gray-600
-    accent: "#22c55e", // green-500
-    glow: "rgba(34, 197, 94, 0.25)",
+    background: "#0c0a09", // amber-950
+    panelBackground: "rgba(20, 15, 10, 0.85)",
+    panelBorder: "rgba(251, 191, 36, 0.2)", // amber-400/20
+    textPrimary: "#fef3c7", // amber-100
+    textMuted: "#d6d3d1", // stone-300
+    accent: "#fbbf24", // amber-400
+    glow: "rgba(251, 191, 36, 0.3)",
   },
   graph: {
-    nodeDefault: "#22c55e", // green-500
-    nodeHover: "#bbf7d0", // green-200
-    nodeSelected: "#a3e635", // lime-400
-    nodeSecondary: "#4ade80", // green-400
-    nodeTertiary: "#86efac", // green-300
-    edgeDefault: "#374151", // gray-700
-    edgeHover: "#4ade80", // green-400
-    edgeSelected: "#22c55e", // green-500
-    edgeSecondary: "#86efac", // green-300
-    edgeTertiary: "#bbf7d0", // green-200
-    nodeLabel: "#d1fae5", // green-100
-    nodeLabelHover: "#022c22", // green-950
-    edgeLabel: "#4b5563", // gray-600
-    edgeLabelHover: "#6b7280", // gray-500
+    nodeDefault: "#fbbf24", // amber-400
+    nodeHover: "#fef9c3", // yellow-100
+    nodeSelected: "#f97316", // orange-500
+    nodeSecondary: "#f59e0b", // amber-500
+    nodeTertiary: "#fcd34d", // amber-300
+    edgeDefault: "#78716c", // stone-500
+    edgeHover: "#f59e0b", // amber-500
+    edgeSelected: "#f97316", // orange-500
+    edgeSecondary: "#fcd34d", // amber-300
+    edgeTertiary: "#fef9c3", // yellow-100
+    nodeLabel: "#fef3c7", // amber-100
+    nodeLabelHover: "#1c1917", // stone-900
+    edgeLabel: "#d6d3d1", // stone-300
+    edgeLabelHover: "#e7e5e4", // stone-200
   },
   effects: {
     glitterEnabled: false,
     starfieldEnabled: true,
-    glowIntensity: 0.5,
+    glowIntensity: 0.6,
   },
 };
 
 /**
- * Glitter Goblin theme tokens
- * Playful theme with bright glitter effects
+ * Void Circuit theme tokens
+ * Dark cyberpunk neon
  */
-export const glitterGoblinTokens: ThemeRuntimeTokens = {
+export const voidCircuitTokens: ThemeRuntimeTokens = {
   app: {
-    background: "#1a0524", // deep purple
-    panelBackground: "rgba(30, 5, 40, 0.85)",
+    background: "#050505", // black
+    panelBackground: "rgba(5, 5, 5, 0.9)",
     panelBorder: "rgba(236, 72, 153, 0.3)", // pink-500/30
-    textPrimary: "#fce7f3", // pink-100
-    textMuted: "#a855f7", // purple-500
+    textPrimary: "#f0abfc", // fuchsia-300
+    textMuted: "#a3a3a3", // neutral-400
     accent: "#ec4899", // pink-500
     glow: "rgba(236, 72, 153, 0.4)",
   },
   graph: {
     nodeDefault: "#ec4899", // pink-500
-    nodeHover: "#fbcfe8", // pink-200
-    nodeSelected: "#facc15", // yellow-400
-    nodeSecondary: "#f472b6", // pink-400
-    nodeTertiary: "#f9a8d4", // pink-300
-    edgeDefault: "#7c3aed", // violet-600
-    edgeHover: "#f472b6", // pink-400
-    edgeSelected: "#d946ef", // fuchsia-500
-    edgeSecondary: "#f9a8d4", // pink-300
-    edgeTertiary: "#fbcfe8", // pink-200
-    nodeLabel: "#fce7f3", // pink-100
-    nodeLabelHover: "#4a044e", // pink-950
-    edgeLabel: "#a855f7", // purple-500
-    edgeLabelHover: "#c084fc", // purple-400
+    nodeHover: "#f0abfc", // fuchsia-300
+    nodeSelected: "#06b6d4", // cyan-500
+    nodeSecondary: "#d946ef", // fuchsia-500
+    nodeTertiary: "#e879f9", // fuchsia-400
+    edgeDefault: "#404040", // neutral-700
+    edgeHover: "#06b6d4", // cyan-500
+    edgeSelected: "#0891b2", // cyan-600
+    edgeSecondary: "#22d3ee", // cyan-400
+    edgeTertiary: "#67e8f9", // cyan-300
+    nodeLabel: "#f0abfc", // fuchsia-300
+    nodeLabelHover: "#09090b", // neutral-950
+    edgeLabel: "#a3a3a3", // neutral-400
+    edgeLabelHover: "#d4d4d4", // neutral-300
   },
   effects: {
     glitterEnabled: true,
     starfieldEnabled: true,
-    glowIntensity: 1.5,
+    glowIntensity: 1.2,
+  },
+};
+
+/**
+ * Agartha Dream theme tokens
+ * Light pastel dreamy
+ */
+export const agarthaDreamTokens: ThemeRuntimeTokens = {
+  app: {
+    background: "#fefce8", // yellow-50
+    panelBackground: "rgba(255, 255, 255, 0.85)",
+    panelBorder: "rgba(168, 85, 247, 0.2)", // purple-500/20
+    textPrimary: "#1e1b4b", // indigo-950
+    textMuted: "#6b7280", // gray-500
+    accent: "#a855f7", // purple-500
+    glow: "rgba(168, 85, 247, 0.2)",
+  },
+  graph: {
+    nodeDefault: "#a855f7", // purple-500
+    nodeHover: "#e9d5ff", // purple-200
+    nodeSelected: "#f472b6", // pink-400
+    nodeSecondary: "#c084fc", // purple-400
+    nodeTertiary: "#d8b4fe", // purple-300
+    edgeDefault: "#d1d5db", // gray-300
+    edgeHover: "#c084fc", // purple-400
+    edgeSelected: "#a855f7", // purple-500
+    edgeSecondary: "#e9d5ff", // purple-200
+    edgeTertiary: "#f3e8ff", // purple-100
+    nodeLabel: "#1e1b4b", // indigo-950
+    nodeLabelHover: "#ffffff", // white
+    edgeLabel: "#6b7280", // gray-500
+    edgeLabelHover: "#9ca3af", // gray-400
+  },
+  effects: {
+    glitterEnabled: true,
+    starfieldEnabled: false,
+    glowIntensity: 0.4,
+  },
+};
+
+/**
+ * Agartha Dusk theme tokens
+ * Dark pastel moonlit night
+ */
+export const agarthaDuskTokens: ThemeRuntimeTokens = {
+  app: {
+    background: "#1e1b4b", // indigo-950
+    panelBackground: "rgba(30, 27, 75, 0.85)",
+    panelBorder: "rgba(244, 114, 182, 0.2)", // pink-400/20
+    textPrimary: "#f5d0fe", // fuchsia-200
+    textMuted: "#a78bfa", // purple-400
+    accent: "#f472b6", // pink-400
+    glow: "rgba(244, 114, 182, 0.25)",
+  },
+  graph: {
+    nodeDefault: "#f472b6", // pink-400
+    nodeHover: "#f9a8d4", // pink-300
+    nodeSelected: "#c084fc", // purple-400
+    nodeSecondary: "#f9a8d4", // pink-300
+    nodeTertiary: "#fbcfe8", // pink-200
+    edgeDefault: "#5b21b6", // violet-900
+    edgeHover: "#a78bfa", // purple-400
+    edgeSelected: "#c084fc", // purple-400
+    edgeSecondary: "#c4b5fd", // purple-300
+    edgeTertiary: "#ddd6fe", // purple-200
+    nodeLabel: "#f5d0fe", // fuchsia-200
+    nodeLabelHover: "#0f172a", // slate-900
+    edgeLabel: "#a78bfa", // purple-400
+    edgeLabelHover: "#c4b5fd", // purple-300
+  },
+  effects: {
+    glitterEnabled: false,
+    starfieldEnabled: true,
+    glowIntensity: 0.5,
   },
 };
 
@@ -163,8 +237,10 @@ export const glitterGoblinTokens: ThemeRuntimeTokens = {
 export const themeTokenMap: Record<ThemeId, ThemeRuntimeTokens> = {
   "solar-plasma": solarPlasmaTokens,
   "obsidian-aurora": obsidianAuroraTokens,
-  "haunted-observatory": hauntedObservatoryTokens,
-  "glitter-goblin": glitterGoblinTokens,
+  "midnight-loom": midnightLoomTokens,
+  "void-circuit": voidCircuitTokens,
+  "agartha-dream": agarthaDreamTokens,
+  "agartha-dusk": agarthaDuskTokens,
 };
 
 /**

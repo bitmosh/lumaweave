@@ -140,11 +140,11 @@ test("Theme runtime integrity - theme selector works", async ({ page }) => {
   // Verify the selected value is solar-plasma
   await expect(themeSelector).toHaveValue("solar-plasma");
 
-  // Switch to haunted-observatory theme
-  await themeSelector.selectOption("haunted-observatory");
+  // Switch to midnight-loom theme
+  await themeSelector.selectOption("midnight-loom");
 
-  // Verify the selected value is haunted-observatory
-  await expect(themeSelector).toHaveValue("haunted-observatory");
+  // Verify the selected value is midnight-loom
+  await expect(themeSelector).toHaveValue("midnight-loom");
 });
 
 test("Theme runtime integrity - glitter toggle updates visual state", async ({ page }) => {
