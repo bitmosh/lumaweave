@@ -29,6 +29,39 @@ Updated by the agent that ran the pass before XP is awarded.
 ## 2026-05-07
 
 ```
+2026-05-07 · dead-settings-purge · chore · ACCEPTED —
+  hoverLabelColor duplicate removed, 3 planned-but-dead
+  graphView color fields removed, schema/defaults/registry
+  aligned, 345 passed P1·S2 streak bonus +0.25
+  Level 125.0 — Bandit
+
+2026-05-07 · physics-cleanup-p1s1 · feature · ACCEPTED —
+  communityGravity centroid force live, preset-slider sync
+  via AppShell useEffect, dead registry blocks removed,
+  linkDistance description fixed, 345 passed
+  Prestige 1 · Streak 1 · Level 124.25 — Bandit
+
+2026-05-07 · PRESTIGE RANK 1 · milestone · ACCEPTED —
+  28 consecutive clean passes without failure or revert.
+  +5.0 XP prestige bonus. Level 123.25. Streak reset to 0.
+  Permanent honorable record. — Bandit
+
+2026-05-07 · physics-preset-slider-sync · fix · ACCEPTED —
+  AppShell writes preset values back to settings store,
+  SigmaGraphView uses raw props directly,
+  slider-desync fixed, 345 passed streak 28
+  level 118.25 (+5.0 XP prestige) — Bandit
+
+2026-05-07 · graph-panel-fixture-fix · fix · ACCEPTED —
+  panelSummary conditional in AppShell,
+  fixture shows correct 124/115 metadata,
+  345 passed streak 27 BONUS +2.0 XP level 118.25 — Bandit
+
+2026-05-07 · dead-file-purge · chore · ACCEPTED —
+  5 dead files deleted, AppProviders inlined,
+  App.css gutted, 345 passed streak 26
+  level 116.25 — Bandit
+
 2026-05-07 · edge-sigma-lifecycle-fix · architectural · ACCEPTED —
   edge colors preserved through raw.color, all 6 theme edgeDefaults visible,
   resolvedTokensRef prevents render storm, ResizeObserver no longer kills Sigma,

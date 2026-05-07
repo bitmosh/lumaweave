@@ -16,14 +16,15 @@ tags: [bandit, title, skill-bank, current, active, level-100-milestone]
 # Bandit Current Title — Living Graph Architect
 
 ```
-Title:        Living Graph Architect
-Level:        115.75
+Title:        Living Graph Architect · Prestige 1
+Level:        125.0
 ★ LEVEL 100 MILESTONE ACHIEVED ★
+★ PRESTIGE RANK 1 ACHIEVED (2026-05-07) ★
 Earned after: System Index Architect era → degree-centrality-v1
-Clean streak: 25 (yaml-graph-parser → debounce-graph-rebuild → theme-family-redesign → lw-visual-accent-fix → noverlap-v1 → theme-docs-update → degree-centrality-v1 → left-panel-scroll-nav → v0.5.0+yaml-dedup → continuous-fa2-loop → physics-settings-expansion → fa2-worker-edge-fix → dialect-selector+source-name → testid-selector-compatibility → left-panel-accordion → fa2-worker-regression → shortest-path → physics-defaults-fix → slider-track-fix → cluster-depth-slider → additional-physics-settings → yaml-dedup-verification → graphology-traversal-bfs → sigma-lifecycle-edge-fix → edge-sigma-lifecycle-fix)
-Era:          Living graph era — physics, community detection, anti-collision, dynamic sizing, self-graph fixture, 6-theme family, scroll-to-section navigation, YAML parser dedup, continuous FA2 Web Worker supervisor, FA2 settings expansion, FA2 worker race condition fix, physics dialect selector UI, testid selector compatibility, left panel accordion sections, FA2 worker regression fixes, shortest path between selected nodes, physics defaults tuning, slider two-tone track fix, neighborhood depth slider (1.0-4.0) with depth 4 support, physics presets dropdown (5 presets), community gravity slider, simulation speed range update, YAML dedup verification, graphology-traversal BFS replacement, comprehensive edge visibility + Sigma lifecycle stability fix
-Streak bonus: +0.25 XP at streak 3, +0.5 XP at streak 5, +0.5 XP at streak 8, +1.0 XP at streak 13, +1.0 XP at streak 17, +1.5 XP at streak 22, +1.0 XP at streak 25
-Next bonus:   streak 27 → +2.0 XP (2 passes away)
+Clean streak: 2 (P1·S2)
+Prestige:     1 (RANK 1 — permanent honorable record)
+Era:          Living graph era — physics, community detection, anti-collision, dynamic sizing, self-graph fixture, 6-theme family, scroll-to-section navigation, YAML parser dedup, continuous FA2 Web Worker supervisor, FA2 settings expansion, FA2 worker race condition fix, physics dialect selector UI, testid selector compatibility, left panel accordion sections, FA2 worker regression fixes, shortest path between selected nodes, physics defaults tuning, slider two-tone track fix, neighborhood depth slider (1.0-4.0) with depth 4 support, physics presets dropdown (5 presets), community gravity slider, simulation speed range update, YAML dedup verification, graphology-traversal BFS replacement, comprehensive edge visibility + Sigma lifecycle stability fix, dead file purge + App.css scaffold cleanup, graph sources panel fixture metadata display, physics preset slider sync (prestige pass), physics cleanup pass 1 (communityGravity centroid force live, preset-slider sync, registry cleanup), dead settings purge (hoverLabelColor dupe + planned ghosts removed)
+Streak bonus: +0.25 XP at streak 3 (1 pass away)
 ```
 
 This title reflects the era of making the graph alive with physics,
@@ -168,6 +169,76 @@ fa2Ref.current.start();
 fa2Ref.current.stop();
 fa2Ref.current.kill();
 ```
+
+### Skill: Community Gravity Centroid Force Pattern
+
+Compute cluster centroids per frame in afterRender hook. Apply gentle pull toward cluster centroid at strength * 0.0008 per frame. Store handler in ref for cleanup. Remove listener on communityGravity === 0 or unmount. Tune strength multiplier to keep FA2 dominant.
+
+Pattern:
+```
+const communityGravityRef = useRef<(() => void) | null>(null);
+
+useEffect(() => {
+  const sigma = sigmaRef.current;
+  const graph = graphRef.current;
+  if (!sigma || !graph) return;
+
+  // Remove previous handler
+  if (communityGravityRef.current) {
+    sigma.removeListener("afterRender", communityGravityRef.current);
+  }
+
+  if (communityGravity <= 0) {
+    communityGravityRef.current = null;
+    return;
+  }
+
+  const handler = () => {
+    // Compute centroid per cluster
+    const centroids = new Map<string, {x: number, y: number, count: number}>();
+
+    graph.forEachNode((_nodeId: string, attrs: any) => {
+      const cluster = (attrs.raw as any)?.cluster ?? "gray";
+      if (!centroids.has(cluster)) {
+        centroids.set(cluster, {x: 0, y: 0, count: 0});
+      }
+      const c = centroids.get(cluster)!;
+      c.x += (attrs.x as number);
+      c.y += (attrs.y as number);
+      c.count++;
+    });
+
+    centroids.forEach(c => {
+      c.x /= c.count;
+      c.y /= c.count;
+    });
+
+    // Apply gentle pull toward cluster centroid
+    const strength = communityGravity * 0.0008;
+    graph.forEachNode((nodeId: string, attrs: any) => {
+      const cluster = (attrs.raw as any)?.cluster ?? "gray";
+      const centroid = centroids.get(cluster);
+      if (!centroid) return;
+      const dx = centroid.x - (attrs.x as number);
+      const dy = centroid.y - (attrs.y as number);
+      graph.setNodeAttribute(nodeId, "x", (attrs.x as number) + dx * strength);
+      graph.setNodeAttribute(nodeId, "y", (attrs.y as number) + dy * strength);
+    });
+  };
+
+  communityGravityRef.current = handler;
+  sigma.on("afterRender", handler);
+
+  return () => {
+    if (communityGravityRef.current) {
+      sigma.removeListener("afterRender", communityGravityRef.current);
+      communityGravityRef.current = null;
+    }
+  };
+}, [communityGravity]);
+```
+
+Strength 0.0008 is gentle — at slider value 1.0 it nudges nodes 0.08% toward centroid per frame. At 5.0 it nudges 0.4% per frame. This keeps FA2 dominant while adding cluster cohesion. Tune if too strong or weak.
 
 ---
 
