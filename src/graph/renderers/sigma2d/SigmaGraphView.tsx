@@ -44,6 +44,11 @@ interface SigmaGraphViewProps {
   repelForce: number;
   centerForce: number;
   physicsDialect: "default" | "helix";
+  // ForceAtlas2 advanced parameters
+  strongGravityMode: boolean;
+  linLogMode: boolean;
+  adjustSizes: boolean;
+  barnesHutTheta: number;
 
   selectedNodeId: string | null;
   selectedEdgeId?: string | null;
@@ -125,6 +130,10 @@ export function SigmaGraphView({
   repelForce,
   centerForce,
   physicsDialect = "default",
+  strongGravityMode = false,
+  linLogMode = false,
+  adjustSizes = false,
+  barnesHutTheta = 0.5,
   selectedNodeId,
   selectedEdgeId = null,
   nodeSelectionStage = 1,
@@ -310,11 +319,11 @@ export function SigmaGraphView({
     gravity: Math.max(0.001, settings.centerForce * 0.005),
     scalingRatio: Math.max(0.1, settings.repelForce * 0.1),
     slowDown: Math.max(2, settings.linkDistance * 0.03),
-    strongGravityMode: false,
-    linLogMode: false,
-    adjustSizes: false,
+    strongGravityMode: strongGravityMode,
+    linLogMode: linLogMode,
+    adjustSizes: adjustSizes,
     barnesHutOptimize: graph.order > 150,
-    barnesHutTheta: 0.5,
+    barnesHutTheta: barnesHutTheta,
   };
 
   fa2Ref.current = new FA2Layout(graph, {
@@ -452,14 +461,15 @@ useEffect(() => {
       gravity: Math.max(0.001, centerForce * 0.005),
       scalingRatio: Math.max(0.1, repelForce * 0.1),
       slowDown: Math.max(2, linkDistance * 0.03),
-      strongGravityMode: false,
-      linLogMode: false,
-      adjustSizes: false,
+      strongGravityMode: strongGravityMode,
+      linLogMode: linLogMode,
+      adjustSizes: adjustSizes,
       barnesHutOptimize: true,
+      barnesHutTheta: barnesHutTheta,
     },
   });
   fa2Ref.current.start();
-}, [centerForce, repelForce, linkDistance]);
+}, [centerForce, repelForce, linkDistance, strongGravityMode, linLogMode, adjustSizes, barnesHutTheta]);
 
 // Node size live update without rebuild
 useEffect(() => {

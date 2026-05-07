@@ -42,6 +42,11 @@ export const defaultSettings: StarmapSettings = {
     curveAmount: 45,
     animationSoftness: 60,
     physicsDialect: "helix" as const,
+    // ForceAtlas2 advanced parameters
+    strongGravityMode: false,
+    linLogMode: false,
+    adjustSizes: false,
+    barnesHutTheta: 0.5,
   },
 
   labels: {

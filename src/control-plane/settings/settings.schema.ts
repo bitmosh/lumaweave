@@ -70,6 +70,11 @@ export interface StarmapSettings {
     curveAmount: number;
     animationSoftness: number;
     physicsDialect: "default" | "helix";
+    // ForceAtlas2 advanced parameters
+    strongGravityMode: boolean;
+    linLogMode: boolean;
+    adjustSizes: boolean;
+    barnesHutTheta: number;
   };
 
   labels: {
