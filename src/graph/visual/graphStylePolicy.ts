@@ -35,7 +35,12 @@ function resetGraphStyles(graph: Graph, tokens: ResolvedGraphVisualTokens): void
           ? attrs.size
           : 10;
 
-    graph.setNodeAttribute(node, "color", tokens.nodeColor.default);
+    // Use cluster color from raw if present,
+    // fall back to theme default
+    const clusterColor =
+      (attrs.raw?.color as string) ?? tokens.nodeColor.default;
+
+    graph.setNodeAttribute(node, "color", clusterColor);
     graph.setNodeAttribute(node, "size", baseSize);
   });
 
