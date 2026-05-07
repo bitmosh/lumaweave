@@ -146,6 +146,7 @@ export function SigmaGraphView({
   const onSelectEdgeRef = useRef(onSelectEdge);
   const onClearSelectionRef = useRef(onClearSelection);
   const hasInitialCameraResetRef = useRef(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [debugInfo, setDebugInfo] = useState<Record<string, string | number>>(
     {},
@@ -195,7 +196,14 @@ export function SigmaGraphView({
   useEffect(() => {
     if (!containerRef.current || nodes.length === 0) return;
 
-    const { graph, diagnostics } = buildGraphologyGraph(nodes, edges, settings);
+    // Clear any pending debounce
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    // Debounce only the graph rebuild
+    debounceRef.current = setTimeout(() => {
+      const { graph, diagnostics } = buildGraphologyGraph(nodes, edges, settings);
 
     setDebugInfo({
       sigmaInputNodes: nodes.length,
@@ -258,6 +266,8 @@ export function SigmaGraphView({
     };
 
     applyGraphStylePolicy(graph, interactionState, styleOptions, resolvedTokens);
+
+    if (!containerRef.current) return;
 
     const sigma = new Sigma(graph, containerRef.current, {
       renderLabels: true,
@@ -381,21 +391,19 @@ export function SigmaGraphView({
     "mouseleave", handleMouseUp
   );
 
+    }, 150);
+
   return () => {
-    sigma.getContainer().removeEventListener(
-      "mousemove", handleMouseMove
-    );
-    sigma.getContainer().removeEventListener(
-      "mouseup", handleMouseUp
-    );
-    sigma.getContainer().removeEventListener(
-      "mouseleave", handleMouseUp
-    );
-    sigma.kill();
-    sigmaRef.current = null;
-    hasInitialCameraResetRef.current = false;
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+    if (sigmaRef.current) {
+      sigmaRef.current.kill();
+      sigmaRef.current = null;
+      hasInitialCameraResetRef.current = false;
+    }
   };
-}, [nodes, edges, nodeSize, linkDistance, repelForce, resolvedTokens]);
+}, [nodes, edges, nodeSize, linkDistance, repelForce, centerForce, physicsDialect, resolvedTokens]);
 
   // ResizeObserver to handle container size changes
   useEffect(() => {
