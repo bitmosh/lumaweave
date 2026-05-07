@@ -80,6 +80,14 @@ export function SettingsPanel() {
                         max={setting.max}
                         step={setting.step}
                         value={Number(value)}
+                        ref={(el) => {
+                          if (!el) return;
+                          const min = Number(el.min) || 0;
+                          const max = Number(el.max) || 100;
+                          const val = Number(el.value);
+                          const pct = ((val - min) / (max - min)) * 100;
+                          el.style.setProperty("--range-progress", `${pct}%`);
+                        }}
                         onChange={(event) =>
                           setSetting(
                             setting.path,
