@@ -7,6 +7,7 @@ import Graph from "graphology";
 import forceAtlas2 from "graphology-layout-forceatlas2";
 import noverlap from "graphology-layout-noverlap";
 import louvain from "graphology-communities-louvain";
+import { degree } from "graphology-metrics/centrality";
 import type {
   LumaWeaveEdgeDraft,
   LumaWeaveNodeDraft,
@@ -264,6 +265,26 @@ export function buildGraphologyGraph(
     } catch (error) {
       console.warn(`Failed to add edge ${edge.id}:`, error);
     }
+  });
+
+  // Degree centrality — boost size of well-connected nodes
+  const centralityScores = degree(graph);
+  const maxCentrality = Math.max(
+    1,
+    ...Object.values(centralityScores)
+  );
+
+  graph.forEachNode((nodeId) => {
+    const attrs = graph.getNodeAttributes(nodeId);
+    const baseSz = (attrs.baseSize as number) ?? 8;
+    const c = (centralityScores[nodeId] ?? 0) as number;
+    const normalized = c / maxCentrality;
+    // Blend: base size + up to 80% boost for most connected
+    const newSize = baseSz * (1 + normalized * 0.8);
+    graph.setNodeAttribute(
+      nodeId, "size", newSize * settings.nodeSize
+    );
+    graph.setNodeAttribute(nodeId, "baseSize", newSize);
   });
 
   // Apply dialect-specific layout seeding
