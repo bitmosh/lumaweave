@@ -23,6 +23,7 @@ export interface LayoutSettings {
   repelForce: number;
   centerForce: number;
   physicsDialect: "default" | "helix";
+  nodeColorScale?: string[]; // theme-driven
 }
 
 /**
@@ -297,6 +298,38 @@ export function buildGraphologyGraph(
     );
     graph.setNodeAttribute(nodeId, "baseSize", newSize);
   });
+
+  // Apply theme-driven color scale by centrality rank
+  if (settings.nodeColorScale &&
+      settings.nodeColorScale.length > 0) {
+    const scale = settings.nodeColorScale;
+    const scaleLen = scale.length;
+
+    // Sort nodes by centrality score
+    const sortedNodes = graph.nodes().sort((a, b) => {
+      const ca = (centralityScores[a] ?? 0) as number;
+      const cb = (centralityScores[b] ?? 0) as number;
+      return ca - cb; // ascending: low → high
+    });
+
+    sortedNodes.forEach((nodeId, rank) => {
+      const scaleIndex = Math.min(
+        Math.floor(
+          (rank / Math.max(sortedNodes.length - 1, 1))
+          * scaleLen
+        ),
+        scaleLen - 1
+      );
+      const color = scale[scaleIndex];
+      graph.setNodeAttribute(nodeId, "color", color);
+      // Update raw.color so resetGraphStyles preserves it
+      const attrs = graph.getNodeAttributes(nodeId);
+      graph.setNodeAttribute(nodeId, "raw", {
+        ...(attrs.raw as object ?? {}),
+        color,
+      });
+    });
+  }
 
   // Apply dialect-specific layout seeding
   if (settings.physicsDialect === "helix") {

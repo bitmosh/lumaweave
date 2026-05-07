@@ -74,6 +74,8 @@ export interface ThemeRuntimeTokens {
     nodeLabelHover: string;
     edgeLabel: string;
     edgeLabelHover: string;
+    nodeColorScale: string[];
+    edgeColorScale: string[];
   };
   /** Effect toggles */
   effects: {

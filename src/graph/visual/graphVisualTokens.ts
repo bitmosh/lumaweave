@@ -29,7 +29,7 @@ export const nodeColorTokens = {
 
   /** Tertiary neighbor node fill color */
   tertiary: "#60a5fa",
-} as const;
+};
 
 /**
  * Edge stroke colors
@@ -49,7 +49,7 @@ export const edgeColorTokens = {
 
   /** Tertiary edge stroke color */
   tertiary: "#ddd6fe",
-} as const;
+};
 
 /**
  * Node label text colors
@@ -63,7 +63,7 @@ export const nodeLabelColorTokens = {
 
   /** Selected node label text color */
   selected: "#f1f5f9",
-} as const;
+};
 
 /**
  * Edge label text colors
@@ -74,7 +74,7 @@ export const edgeLabelColorTokens = {
 
   /** Selected edge label text color */
   selected: "#cbd5e1",
-} as const;
+};
 
 /**
  * Label font sizes
@@ -85,7 +85,7 @@ export const labelFontSizeTokens = {
 
   /** Default edge label font size */
   edge: 13,
-} as const;
+};
 
 /**
  * Node size multipliers
@@ -105,7 +105,7 @@ export const nodeSizeMultipliers = {
 
   /** Tertiary neighbor node size multiplier */
   tertiary: 1.2,
-} as const;
+};
 
 /**
  * Edge size values
@@ -125,7 +125,7 @@ export const edgeSizeTokens = {
 
   /** Tertiary edge stroke width */
   tertiary: 3,
-} as const;
+};
 
 /**
  * Label truncation
@@ -136,7 +136,7 @@ export const labelTruncationTokens = {
 
   /** Multiplier for all-medium mode (maxEdgeLabelLength * 2) */
   allMediumMultiplier: 2,
-} as const;
+};
 
 /**
  * Sigma configuration tokens
@@ -150,12 +150,12 @@ export const sigmaConfigTokens = {
 
   /** Edge label font family */
   edgeLabelFont: "sans-serif",
-} as const;
+};
 
 /**
  * Complete visual tokens object
  */
-export const graphVisualTokens = {
+export const graphVisualTokens: ResolvedGraphVisualTokens = {
   nodeColor: nodeColorTokens,
   edgeColor: edgeColorTokens,
   nodeLabelColor: nodeLabelColorTokens,
@@ -165,7 +165,23 @@ export const graphVisualTokens = {
   edgeSize: edgeSizeTokens,
   labelTruncation: labelTruncationTokens,
   sigmaConfig: sigmaConfigTokens,
-} as const;
+  nodeColorScale: [
+    "#7B2FFF",
+    "#4FACFF",
+    "#00D4FF",
+    "#CC2EFA",
+    "#FFB347",
+    "#FF6B1A",
+  ],
+  edgeColorScale: [
+    "rgba(75,100,180,0.2)",
+    "rgba(204,46,250,0.3)",
+    "rgba(255,215,0,0.35)",
+    "rgba(255,140,0,0.45)",
+    "rgba(255,107,26,0.55)",
+    "rgba(255,69,0,0.7)",
+  ],
+};
 
 /**
  * Mutable type for resolved graph visual tokens (allows string values instead of literal types)
@@ -222,4 +238,6 @@ export type ResolvedGraphVisualTokens = {
     labelFont: string;
     edgeLabelFont: string;
   };
+  nodeColorScale: string[];
+  edgeColorScale: string[];
 };

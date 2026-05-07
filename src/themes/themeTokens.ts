@@ -37,6 +37,22 @@ export const solarPlasmaTokens: ThemeRuntimeTokens = {
     nodeLabelHover: "#0f172a", // slate-900
     edgeLabel: "#94a3b8", // slate-400
     edgeLabelHover: "#cbd5e1", // slate-300
+    nodeColorScale: [
+      "#7B2FFF",  // peripheral — deep coronal purple
+      "#4FACFF",  // coronal blue
+      "#00D4FF",  // solar wind cyan
+      "#CC2EFA",  // chromosphere magenta
+      "#FFB347",  // prominence amber
+      "#FF6B1A",  // solar flare orange (hub nodes)
+    ],
+    edgeColorScale: [
+      "rgba(75,100,180,0.2)",
+      "rgba(204,46,250,0.3)",
+      "rgba(255,215,0,0.35)",
+      "rgba(255,140,0,0.45)",
+      "rgba(255,107,26,0.55)",
+      "rgba(255,69,0,0.7)",
+    ],
   },
   effects: {
     glitterEnabled: true,
@@ -74,6 +90,22 @@ export const obsidianAuroraTokens: ThemeRuntimeTokens = {
     nodeLabelHover: "#0f172a", // slate-900
     edgeLabel: "#64748b", // slate-500
     edgeLabelHover: "#94a3b8", // slate-400
+    nodeColorScale: [
+      "#3b1f6e",  // deep void purple
+      "#6d28d9",  // aurora violet
+      "#8b5cf6",  // violet mid
+      "#a78bfa",  // soft purple
+      "#c084fc",  // bright purple
+      "#f0abfc",  // aurora pink peak
+    ],
+    edgeColorScale: [
+      "rgba(109,40,217,0.2)",
+      "rgba(139,92,246,0.3)",
+      "rgba(167,139,250,0.35)",
+      "rgba(192,132,252,0.45)",
+      "rgba(240,171,252,0.55)",
+      "rgba(216,180,254,0.65)",
+    ],
   },
   effects: {
     glitterEnabled: false,
@@ -111,6 +143,22 @@ export const midnightLoomTokens: ThemeRuntimeTokens = {
     nodeLabelHover: "#1c1917", // stone-900
     edgeLabel: "#d6d3d1", // stone-300
     edgeLabelHover: "#e7e5e4", // stone-200
+    nodeColorScale: [
+      "#78350f",  // deep ember
+      "#b45309",  // amber dark
+      "#d97706",  // amber mid
+      "#f59e0b",  // amber bright
+      "#fbbf24",  // gold
+      "#fde68a",  // pale gold peak
+    ],
+    edgeColorScale: [
+      "rgba(120,53,15,0.25)",
+      "rgba(180,83,9,0.35)",
+      "rgba(217,119,6,0.4)",
+      "rgba(245,158,11,0.5)",
+      "rgba(251,191,36,0.6)",
+      "rgba(253,230,138,0.65)",
+    ],
   },
   effects: {
     glitterEnabled: false,
@@ -148,6 +196,22 @@ export const voidCircuitTokens: ThemeRuntimeTokens = {
     nodeLabelHover: "#09090b", // neutral-950
     edgeLabel: "#a3a3a3", // neutral-400
     edgeLabelHover: "#d4d4d4", // neutral-300
+    nodeColorScale: [
+      "#1e1b4b",  // deep void indigo
+      "#4f46e5",  // circuit indigo
+      "#7c3aed",  // neon purple
+      "#db2777",  // circuit pink
+      "#ec4899",  // hot pink
+      "#06b6d4",  // cyan spark peak
+    ],
+    edgeColorScale: [
+      "rgba(79,70,229,0.2)",
+      "rgba(124,58,237,0.3)",
+      "rgba(219,39,119,0.35)",
+      "rgba(236,72,153,0.45)",
+      "rgba(6,182,212,0.55)",
+      "rgba(103,232,249,0.65)",
+    ],
   },
   effects: {
     glitterEnabled: true,
@@ -185,6 +249,22 @@ export const agarthaDreamTokens: ThemeRuntimeTokens = {
     nodeLabelHover: "#ffffff", // white
     edgeLabel: "#6b7280", // gray-500
     edgeLabelHover: "#9ca3af", // gray-400
+    nodeColorScale: [
+      "#c9aaff",  // pale amethyst
+      "#a78bfa",  // crystal purple
+      "#7fdfb8",  // bioluminescent mint
+      "#87ceeb",  // underground lake blue
+      "#ffd89b",  // inner sun amber
+      "#ffb3de",  // rose quartz peak
+    ],
+    edgeColorScale: [
+      "rgba(167,139,250,0.2)",
+      "rgba(127,223,184,0.3)",
+      "rgba(135,206,235,0.35)",
+      "rgba(255,216,155,0.4)",
+      "rgba(255,179,222,0.5)",
+      "rgba(201,170,255,0.55)",
+    ],
   },
   effects: {
     glitterEnabled: true,
@@ -222,6 +302,22 @@ export const agarthaDuskTokens: ThemeRuntimeTokens = {
     nodeLabelHover: "#0f172a", // slate-900
     edgeLabel: "#a78bfa", // purple-400
     edgeLabelHover: "#c4b5fd", // purple-300
+    nodeColorScale: [
+      "#1e1b4b",  // deep indigo night
+      "#4338ca",  // moonlit indigo
+      "#7c3aed",  // dusk purple
+      "#a855f7",  // purple bloom
+      "#c084fc",  // soft violet
+      "#f472b6",  // pink moonrise peak
+    ],
+    edgeColorScale: [
+      "rgba(67,56,202,0.2)",
+      "rgba(124,58,237,0.3)",
+      "rgba(168,85,247,0.35)",
+      "rgba(192,132,252,0.45)",
+      "rgba(244,114,182,0.55)",
+      "rgba(196,181,253,0.6)",
+    ],
   },
   effects: {
     glitterEnabled: false,
@@ -311,6 +407,8 @@ export function resolveGraphVisualTokens(
     nodeLabelHover: string;
     edgeLabel: string;
     edgeLabelHover: string;
+    nodeColorScale: string[];
+    edgeColorScale: string[];
   },
   settings: {
     hoverNodeColor?: string;
@@ -371,5 +469,7 @@ export function resolveGraphVisualTokens(
       labelFont: "sans-serif",
       edgeLabelFont: "sans-serif",
     },
+    nodeColorScale: themeGraphTokens.nodeColorScale,
+    edgeColorScale: themeGraphTokens.edgeColorScale,
   };
 }

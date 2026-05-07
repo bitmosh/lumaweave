@@ -119,6 +119,8 @@ interface SigmaGraphViewProps {
       labelFont: string;
       edgeLabelFont: string;
     };
+    nodeColorScale: string[];
+    edgeColorScale: string[];
   };
 
   onSelectNode: (nodeId: string) => void;
@@ -260,7 +262,14 @@ export function SigmaGraphView({
     directNeighborCount: 0,
   });
 
-  const settings: LayoutSettings = { nodeSize, linkDistance, repelForce, centerForce, physicsDialect };
+  const settings: LayoutSettings = {
+    nodeSize,
+    linkDistance,
+    repelForce,
+    centerForce,
+    physicsDialect,
+    nodeColorScale: resolvedTokensRef.current?.nodeColorScale,
+  };
 
   const [activeSelectionMode, setActiveSelectionMode] = useState<
     "none" | "node-stage-1" | "node-stage-2" | "node-stage-3" | "edge-relationship"
