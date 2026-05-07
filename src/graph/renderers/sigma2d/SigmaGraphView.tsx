@@ -36,6 +36,7 @@ import {
   type NodeLabelMode,
   type EdgeLabelMode,
 } from "../../visual/applyGraphLabelPolicyToGraphology";
+import NodeSphereProgram from "./NodeSphereProgram";
 
 interface SigmaGraphViewProps {
   nodes: LumaWeaveNodeDraft[];
@@ -512,11 +513,16 @@ export function SigmaGraphView({
       edgeLabelFont: resolvedTokens.sigmaConfig.edgeLabelFont,
       edgeLabelSize: edgeLabelFontSize,
       edgeLabelColor: { color: resolvedTokens.edgeLabelColor.default },
+
+      nodeProgramClasses: {
+        circle: NodeSphereProgram,
+      },
+      defaultNodeType: "circle",
     });
 
     console.log("[SIGMA CONFIG] labelColor: attribute-based with fallback", resolvedTokens.nodeLabelColor.default, ", edgeLabelSize:", edgeLabelFontSize);
 
-  sigmaRef.current = sigma;
+    sigmaRef.current = sigma;
 
   // Start continuous FA2 supervisor
   // Stop any existing supervisor
