@@ -45,7 +45,7 @@ Live Update:    Yes — theme changes immediately on selection
 Status:         active
 Tests:          tests/e2e/theme-selector.spec.ts
 QA Checklist:   theme-mission-control-integrity-v11
-Notes:          Built-in presets only (solar-plasma, obsidian-aurora, haunted-observatory, glitter-goblin).
+Notes:          Built-in presets only (solar-plasma, obsidian-aurora, midnight-loom, void-circuit, agartha-dream, agartha-dusk).
                 Custom themes not yet supported.
 ```
 

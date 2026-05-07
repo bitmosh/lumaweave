@@ -26,7 +26,7 @@ tags: [theme, system, overview, presets, tokens, accepted]
 
 **What is implemented:**
 ```
-4 built-in theme presets: Solar Plasma, Obsidian Aurora, Haunted Observatory, Glitter Goblin
+6 built-in theme presets: Solar Plasma, Obsidian Aurora, Midnight Loom, Void Circuit, Agartha Dream, Agartha Dusk
 Theme preset selector in top bar (AppShell.tsx)
 Graph node/edge/label colors update on theme change
 Theme tokens defined in src/themes/themeTokens.ts
@@ -82,13 +82,15 @@ Theme tokens eventually drive these via `lumaweave-visual-handles.css`.
 
 ---
 
-## 4 Built-in Presets
+## 6 Built-in Presets
 
 ```
-solar-plasma        Default. Purple/violet nodes, cool blue edges.
-obsidian-aurora     Deep dark blues, aurora borealis accents.
-haunted-observatory Eerie dark blues, ghostly highlights. Graph nodes: green.
-glitter-goblin      Warm, sparkle-heavy, playful palette.
+solar-plasma       Dark sci-fi with cyan and gold plasma
+obsidian-aurora    Dark crystalline aurora borealis
+midnight-loom      Dark warm gold candlelight
+void-circuit       Dark cyberpunk neon
+agartha-dream      Light pastel dreamy
+agartha-dusk       Dark pastel moonlit night
 ```
 
 Presets are defined in `src/themes/themePresets.ts` and `src/themes/themeTokens.ts`.

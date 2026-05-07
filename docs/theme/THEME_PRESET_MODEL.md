@@ -76,35 +76,42 @@ interface GraphVisualTokens {
 
 ---
 
-## Built-in Presets (4 current)
+## Built-in Presets (6 current)
 
 ### Solar Plasma (default)
 ```
 id: "solar-plasma"
-nodeColorTokens.default: "#8b5cf6"  (purple)
-nodeColorTokens.selected: "#a78bfa"
-nodeColorTokens.hovered: "#c4b5fd"
-edgeColorTokens.default: "#6b7280"
-labelColorTokens.default: "#e5e7eb"
+Dark sci-fi with cyan and gold plasma
 ```
 
 ### Obsidian Aurora
 ```
 id: "obsidian-aurora"
-Dark blue/purple color scheme with aurora accents.
+Dark crystalline aurora borealis
 ```
 
-### Haunted Observatory
+### Midnight Loom
 ```
-id: "haunted-observatory"
-Eerie dark blues, ghostly highlights.
-IMPORTANT: Graph nodes are GREEN in this preset (historic defect fix).
+id: "midnight-loom"
+Dark warm gold candlelight
 ```
 
-### Glitter Goblin
+### Void Circuit
 ```
-id: "glitter-goblin"
-Warm, sparkle-heavy palette. Pink/gold tones.
+id: "void-circuit"
+Dark cyberpunk neon
+```
+
+### Agartha Dream
+```
+id: "agartha-dream"
+Light pastel dreamy
+```
+
+### Agartha Dusk
+```
+id: "agartha-dusk"
+Dark pastel moonlit night
 ```
 
 ---
