@@ -653,11 +653,13 @@ export function AppShell() {
                         linkDistance={settings.physics.linkDistance}
                         repelForce={settings.physics.repelForce}
                         centerForce={settings.physics.centerForce}
+                        physicsPreset={settings.physics.physicsPreset}
                         physicsDialect={settings.physics.physicsDialect}
                         strongGravityMode={settings.physics.strongGravityMode}
                         linLogMode={settings.physics.linLogMode}
                         adjustSizes={settings.physics.adjustSizes}
                         barnesHutTheta={settings.physics.barnesHutTheta}
+                        communityGravity={settings.physics.communityGravity}
                         selectedNodeId={selectedNodeId}
                         selectedEdgeId={selectedEdgeId}
                         pathTargetId={pathTargetId}

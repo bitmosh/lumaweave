@@ -33,12 +33,13 @@ export const defaultSettings: StarmapSettings = {
   },
 
   physics: {
+    physicsPreset: "balanced",
     nodeSize: 1,
     linkThickness: 1,
-    linkDistance: 50,
+    linkDistance: 3,
     repelForce: 100,
     centerForce: 200,
-    communityGravity: 80,
+    communityGravity: 0,
     curveAmount: 45,
     animationSoftness: 60,
     physicsDialect: "helix" as const,

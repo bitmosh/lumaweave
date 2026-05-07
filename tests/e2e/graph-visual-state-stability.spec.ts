@@ -98,7 +98,7 @@ test.describe("Graph Visual State Stability", () => {
     await waitForRender(page);
     await expect(canvas).toBeVisible();
 
-    await linkDistanceSlider.fill("50");
+    await linkDistanceSlider.fill("10");
     await waitForRender(page);
     await expect(canvas).toBeVisible();
 
@@ -149,7 +149,7 @@ test.describe("Graph Visual State Stability", () => {
     const repelForceSlider = page.locator("[data-testid='setting-physics-repelForce']");
 
     await nodeSizeSlider.fill("1.5");
-    await linkDistanceSlider.fill("50");
+    await linkDistanceSlider.fill("10");
     await repelForceSlider.fill("50");
     await nodeSizeSlider.fill("1");
 

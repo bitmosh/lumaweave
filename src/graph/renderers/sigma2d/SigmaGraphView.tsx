@@ -44,12 +44,14 @@ interface SigmaGraphViewProps {
   linkDistance: number;
   repelForce: number;
   centerForce: number;
+  physicsPreset: "custom" | "balanced" | "spread" | "tight" | "organic" | "performance";
   physicsDialect: "default" | "helix";
   // ForceAtlas2 advanced parameters
   strongGravityMode: boolean;
   linLogMode: boolean;
   adjustSizes: boolean;
   barnesHutTheta: number;
+  communityGravity: number;
 
   selectedNodeId: string | null;
   selectedEdgeId?: string | null;
@@ -132,11 +134,14 @@ export function SigmaGraphView({
   linkDistance,
   repelForce,
   centerForce,
+  physicsPreset = "balanced",
   physicsDialect = "default",
   strongGravityMode = false,
   linLogMode = false,
   adjustSizes = false,
   barnesHutTheta = 0.5,
+  // @ts-expect-error — Wired for future solar orbit dialect implementation
+  communityGravity = 0,
   selectedNodeId,
   selectedEdgeId = null,
   pathTargetId = null,
@@ -155,6 +160,32 @@ export function SigmaGraphView({
   onSelectEdge,
   onClearSelection,
 }: SigmaGraphViewProps) {
+  const PHYSICS_PRESETS = {
+    balanced:    { repelForce: 100, centerForce: 200, linkDistance: 3, strongGravityMode: false, linLogMode: false },
+    spread:      { repelForce: 300, centerForce: 50,  linkDistance: 1.5, strongGravityMode: false, linLogMode: false },
+    tight:       { repelForce: 50,  centerForce: 400, linkDistance: 4, strongGravityMode: true,  linLogMode: false },
+    organic:     { repelForce: 150, centerForce: 100, linkDistance: 2, strongGravityMode: false, linLogMode: true },
+    performance: { repelForce: 80,  centerForce: 200, linkDistance: 3, strongGravityMode: false, linLogMode: false },
+    custom:      null, // use individual slider values
+  };
+
+  // Apply preset values if not custom
+  const effectiveRepelForce = physicsPreset !== "custom" && PHYSICS_PRESETS[physicsPreset]?.repelForce !== undefined
+    ? PHYSICS_PRESETS[physicsPreset].repelForce
+    : repelForce;
+  const effectiveCenterForce = physicsPreset !== "custom" && PHYSICS_PRESETS[physicsPreset]?.centerForce !== undefined
+    ? PHYSICS_PRESETS[physicsPreset].centerForce
+    : centerForce;
+  const effectiveLinkDistance = physicsPreset !== "custom" && PHYSICS_PRESETS[physicsPreset]?.linkDistance !== undefined
+    ? PHYSICS_PRESETS[physicsPreset].linkDistance
+    : linkDistance;
+  const effectiveStrongGravityMode = physicsPreset !== "custom" && PHYSICS_PRESETS[physicsPreset]?.strongGravityMode !== undefined
+    ? PHYSICS_PRESETS[physicsPreset].strongGravityMode
+    : strongGravityMode;
+  const effectiveLinLogMode = physicsPreset !== "custom" && PHYSICS_PRESETS[physicsPreset]?.linLogMode !== undefined
+    ? PHYSICS_PRESETS[physicsPreset].linLogMode
+    : linLogMode;
+
   const containerRef = useRef<HTMLDivElement>(null);
   const sigmaRef = useRef<Sigma | null>(null);
   const fa2Ref = useRef<FA2Layout | null>(null);
@@ -189,7 +220,7 @@ export function SigmaGraphView({
     directNeighborCount: 0,
   });
 
-  const settings: LayoutSettings = { nodeSize, linkDistance, repelForce, centerForce, physicsDialect };
+  const settings: LayoutSettings = { nodeSize, linkDistance: effectiveLinkDistance, repelForce: effectiveRepelForce, centerForce: effectiveCenterForce, physicsDialect };
 
   const [activeSelectionMode, setActiveSelectionMode] = useState<
     "none" | "node-stage-1" | "node-stage-2" | "node-stage-3" | "edge-relationship"
@@ -323,11 +354,11 @@ export function SigmaGraphView({
 
   // Start continuous FA2 supervisor
   const fa2Settings = {
-    gravity: Math.max(0.001, settings.centerForce * 0.005),
-    scalingRatio: Math.max(0.1, settings.repelForce * 0.1),
-    slowDown: Math.max(2, settings.linkDistance * 0.03),
-    strongGravityMode: strongGravityMode,
-    linLogMode: linLogMode,
+    gravity: Math.max(0.001, effectiveCenterForce * 0.005),
+    scalingRatio: Math.max(0.1, effectiveRepelForce * 0.1),
+    slowDown: Math.max(1, effectiveLinkDistance * 1),
+    strongGravityMode: effectiveStrongGravityMode,
+    linLogMode: effectiveLinLogMode,
     adjustSizes: adjustSizes,
     barnesHutOptimize: graph.order > 150,
     barnesHutTheta: barnesHutTheta,
@@ -490,11 +521,11 @@ useEffect(() => {
     if (!graphRef.current) return;
     fa2Ref.current = new FA2Layout(graphRef.current, {
       settings: {
-        gravity: Math.max(0.001, centerForce * 0.005),
-        scalingRatio: Math.max(0.1, repelForce * 0.1),
-        slowDown: Math.max(2, linkDistance * 0.03),
-        strongGravityMode,
-        linLogMode,
+        gravity: Math.max(0.001, effectiveCenterForce * 0.005),
+        scalingRatio: Math.max(0.1, effectiveRepelForce * 0.1),
+        slowDown: Math.max(1, effectiveLinkDistance * 1),
+        strongGravityMode: effectiveStrongGravityMode,
+        linLogMode: effectiveLinLogMode,
         adjustSizes,
         barnesHutOptimize: true,
         barnesHutTheta,
@@ -503,9 +534,9 @@ useEffect(() => {
     fa2Ref.current.start();
   });
   sigmaRef.current.refresh();
-}, [centerForce, repelForce, linkDistance,
-    strongGravityMode, linLogMode, adjustSizes,
-    barnesHutTheta]);
+}, [effectiveCenterForce, effectiveRepelForce, effectiveLinkDistance,
+    effectiveStrongGravityMode, effectiveLinLogMode, adjustSizes,
+    barnesHutTheta, physicsPreset]);
 
 // Node size live update without rebuild
 useEffect(() => {

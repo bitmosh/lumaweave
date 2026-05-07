@@ -64,6 +64,21 @@ export const settingsRegistry: SettingControl[] = [
   {
     type: "select",
     category: "Physics",
+    path: "physics.physicsPreset",
+    label: "Physics Preset",
+    description: "Quick preset configurations for common graph layouts.",
+    options: [
+      { value: "custom", label: "Custom" },
+      { value: "balanced", label: "Balanced" },
+      { value: "spread", label: "Spread Out" },
+      { value: "tight", label: "Tight Clusters" },
+      { value: "organic", label: "Organic Flow" },
+      { value: "performance", label: "Performance" },
+    ],
+  },
+  {
+    type: "select",
+    category: "Physics",
     path: "physics.physicsDialect",
     label: "Physics Dialect",
     description: "Layout algorithm and shape",
@@ -86,9 +101,9 @@ export const settingsRegistry: SettingControl[] = [
     category: "Physics",
     path: "physics.linkDistance",
     label: "Simulation Speed",
-    min: 20,
-    max: 500,
-    step: 5,
+    min: 1,
+    max: 20,
+    step: 0.5,
   },
   {
     type: "range",
@@ -140,6 +155,16 @@ export const settingsRegistry: SettingControl[] = [
     min: 0.1,
     max: 1.2,
     step: 0.05,
+  },
+  {
+    type: "range",
+    category: "Physics",
+    path: "physics.communityGravity",
+    label: "Community Gravity",
+    description: "Extra gravitational pull toward cluster centroid. Tightens neighborhoods.",
+    min: 0,
+    max: 5,
+    step: 0.1,
   },
   // Planned physics settings hidden until wired to force layout
   // {

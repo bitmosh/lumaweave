@@ -61,6 +61,7 @@ export interface StarmapSettings {
   };
 
   physics: {
+    physicsPreset: "custom" | "balanced" | "spread" | "tight" | "organic" | "performance";
     nodeSize: number;
     linkThickness: number;
     linkDistance: number;
