@@ -52,8 +52,9 @@ export function AppShell() {
     hoverNodeColor: settings.graphView.hoverNodeColor,
   });
 
-  // Normalize nodeSelectionStage from string to number
-  const nodeSelectionStage = Number(settings.graphView.nodeSelectionStage) as 1 | 2 | 3;
+  const neighborhoodDepth = Math.floor(
+    settings.graphView.neighborhoodDepth ?? 2
+  ) as 1 | 2 | 3 | 4;
 
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
@@ -660,7 +661,7 @@ export function AppShell() {
                         selectedNodeId={selectedNodeId}
                         selectedEdgeId={selectedEdgeId}
                         pathTargetId={pathTargetId}
-                        nodeSelectionStage={nodeSelectionStage}
+                        neighborhoodDepth={neighborhoodDepth}
                         nodeLabelMode={settings.labels.nodeLabelMode}
                         edgeLabelMode={settings.labels.edgeLabelMode}
                         maxEdgeLabelLength={settings.labels.maxEdgeLabelLength}

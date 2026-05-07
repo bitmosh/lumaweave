@@ -21,10 +21,10 @@ export const defaultSettings: StarmapSettings = {
   graphView: {
     defaultRenderer: "sigma2d",
     defaultLayout: "constellation",
-    showArrows: true,
+    showArrows: false,
     showIsolatedNodes: false,
     showLowConfidenceEdges: false,
-    nodeSelectionStage: 1,
+    neighborhoodDepth: 2,
     hoverNodeColor: "#ffffff",
     hoverLabelColor: "#e0f2fe",
     selectedNodeColor: "#fbbf24",

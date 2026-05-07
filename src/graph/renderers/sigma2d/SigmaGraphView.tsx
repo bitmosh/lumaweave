@@ -54,7 +54,7 @@ interface SigmaGraphViewProps {
   selectedNodeId: string | null;
   selectedEdgeId?: string | null;
   pathTargetId?: string | null;
-  nodeSelectionStage?: 1 | 2 | 3;
+  neighborhoodDepth?: number;
 
   nodeLabelMode?: NodeLabelMode;
   edgeLabelMode?: EdgeLabelMode;
@@ -140,7 +140,7 @@ export function SigmaGraphView({
   selectedNodeId,
   selectedEdgeId = null,
   pathTargetId = null,
-  nodeSelectionStage = 1,
+  neighborhoodDepth = 2,
   nodeLabelMode = "selected-neighborhood",
   edgeLabelMode = "selected-neighborhood",
   maxEdgeLabelLength = 48,
@@ -258,7 +258,7 @@ export function SigmaGraphView({
     const selectionContext: SelectionContext = {
       selectedNodeId,
       selectedEdgeId,
-      nodeSelectionStage: nodeSelectionStage || 1,
+      neighborhoodDepth: Math.floor(neighborhoodDepth || 2) as 1 | 2 | 3,
       hoveredNodeId: null, // No hover during initial render
       hoveredEdgeId: null, // No hover during initial render
     };
@@ -279,7 +279,7 @@ export function SigmaGraphView({
       selectedEdgeId,
       hoveredNodeId: null, // No hover during initial render
       hoveredEdgeId: null, // No hover during initial render
-      neighborhoodDepth: nodeSelectionStage,
+      neighborhoodDepth: Math.floor(neighborhoodDepth || 2) as 1 | 2 | 3,
     };
 
     const styleOptions: StylePolicyOptions = {
@@ -592,7 +592,7 @@ useEffect(() => {
       selectedEdgeId,
       hoveredNodeId,
       hoveredEdgeId,
-      neighborhoodDepth: nodeSelectionStage as 1 | 2 | 3,
+      neighborhoodDepth: Math.floor(neighborhoodDepth || 2) as 1 | 2 | 3,
     },
     {
       hoverNodeColor: hoverNodeColor || "#ffffff",
@@ -602,7 +602,7 @@ useEffect(() => {
   );
   sigma.refresh();
 
-}, [selectedNodeId, selectedEdgeId, nodeSelectionStage, hoveredNodeId, hoveredEdgeId, hoverNodeColor, edgeLabelFontSize, resolvedTokens]);
+}, [selectedNodeId, selectedEdgeId, neighborhoodDepth, hoveredNodeId, hoveredEdgeId, hoverNodeColor, edgeLabelFontSize, resolvedTokens]);
 
 // ResizeObserver to handle container size changes
 useEffect(() => {
@@ -636,7 +636,7 @@ useEffect(() => {
     console.log("[STYLING] Running policy-based styling", {
       selectedNodeId,
       selectedEdgeId,
-      nodeSelectionStage,
+      neighborhoodDepth,
       hoveredNodeId,
       hoveredEdgeId,
       hoverNodeColor,
@@ -648,7 +648,7 @@ useEffect(() => {
       selectedEdgeId,
       hoveredNodeId,
       hoveredEdgeId,
-      neighborhoodDepth: nodeSelectionStage,
+      neighborhoodDepth: Math.floor(neighborhoodDepth || 2) as 1 | 2 | 3,
     };
 
     // Build style options for policy
@@ -708,8 +708,9 @@ useEffect(() => {
         2: "node-stage-2",
         3: "node-stage-3",
       };
-      setActiveSelectionMode(modeMap[nodeSelectionStage]);
-      console.log("[STYLING] Applied selected node styling:", selectedNodeId, "stage", nodeSelectionStage);
+      const depth = Math.floor(neighborhoodDepth || 2) as 1 | 2 | 3;
+      setActiveSelectionMode(modeMap[depth]);
+      console.log("[STYLING] Applied selected node styling:", selectedNodeId, "depth", depth);
     } else {
       setActiveSelectionMode("none");
       console.log("[STYLING] No selection");
@@ -717,7 +718,7 @@ useEffect(() => {
 
     sigma.refresh();
     console.log("[STYLING] Refreshed Sigma");
-  }, [selectedNodeId, selectedEdgeId, nodeSelectionStage, hoveredNodeId, hoveredEdgeId, hoverNodeColor, edgeLabelFontSize]);
+  }, [selectedNodeId, selectedEdgeId, neighborhoodDepth, hoveredNodeId, hoveredEdgeId, hoverNodeColor, edgeLabelFontSize]);
 
   // Edge label font size live update effect
   useEffect(() => {
@@ -751,7 +752,7 @@ useEffect(() => {
     const selectionContext: SelectionContext = {
       selectedNodeId,
       selectedEdgeId,
-      nodeSelectionStage,
+      neighborhoodDepth: Math.floor(neighborhoodDepth || 2) as 1 | 2 | 3,
       hoveredNodeId,
       hoveredEdgeId,
     };
@@ -767,7 +768,7 @@ useEffect(() => {
       edgeLabelMode,
       selectedNodeId,
       selectedEdgeId,
-      nodeSelectionStage,
+      neighborhoodDepth,
       hoveredNodeId,
       hoveredEdgeId,
     });
@@ -777,7 +778,7 @@ useEffect(() => {
 
     sigma.refresh();
     console.log("[LABEL POLICY] Applied and refreshed");
-  }, [selectedNodeId, selectedEdgeId, nodeSelectionStage, nodeLabelMode, edgeLabelMode, maxEdgeLabelLength, showLabelsOnHover, hoveredNodeId, hoveredEdgeId]);
+  }, [selectedNodeId, selectedEdgeId, neighborhoodDepth, nodeLabelMode, edgeLabelMode, maxEdgeLabelLength, showLabelsOnHover, hoveredNodeId, hoveredEdgeId]);
 
   return (
     <div className="relative h-full w-full" data-testid="renderer-debug-panel">
@@ -805,7 +806,7 @@ useEffect(() => {
           <DebugRow label="Repel Force" value={debugInfo.currentRepelForce} />
           <DebugRow label="Selected Node" value={selectedNodeId ?? "none"} data-testid="selected-node-debug-row" />
           <DebugRow label="Selected Edge" value={selectedEdgeId ?? "none"} data-testid="selected-edge-debug-row" />
-          <DebugRow label="Node Selection Stage" value={nodeSelectionStage} />
+          <DebugRow label="Neighborhood Depth" value={neighborhoodDepth} />
           <DebugRow label="Active Selection Mode" value={activeSelectionMode} />
           <DebugRow label="Node Label Mode" value={nodeLabelMode} data-testid="node-label-mode-debug-row" />
           <DebugRow label="Edge Label Mode" value={edgeLabelMode} data-testid="edge-label-mode-debug-row" />

@@ -27,7 +27,7 @@ import {
 export interface SelectionContext {
   selectedNodeId: string | null;
   selectedEdgeId: string | null;
-  nodeSelectionStage: 1 | 2 | 3;
+  neighborhoodDepth: number;
   hoveredNodeId: string | null;
   hoveredEdgeId: string | null;
 }
@@ -57,7 +57,7 @@ function convertSelectionContextToInteractionState(
     selectedEdgeId: selectionContext.selectedEdgeId,
     hoveredNodeId: selectionContext.hoveredNodeId,
     hoveredEdgeId: selectionContext.hoveredEdgeId,
-    neighborhoodDepth: selectionContext.nodeSelectionStage,
+    neighborhoodDepth: Math.floor(selectionContext.neighborhoodDepth ?? 2) as 1 | 2 | 3,
   };
 }
 

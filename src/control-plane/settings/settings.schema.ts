@@ -52,7 +52,7 @@ export interface StarmapSettings {
     showArrows: boolean;
     showIsolatedNodes: boolean;
     showLowConfidenceEdges: boolean;
-    nodeSelectionStage: 1 | 2 | 3;
+    neighborhoodDepth: number;
     hoverNodeColor: string;
     hoverLabelColor: string;
     selectedNodeColor: string;

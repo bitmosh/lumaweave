@@ -122,6 +122,17 @@ function applySelectedNodeStyles(
       }
     });
   }
+
+  // Depth 4: quaternary nodes (neighbors of tertiary nodes)
+  if (depth >= 4) {
+    neighborhood.tertiaryNodeIds.forEach((nId) => {
+      graph.forEachNeighbor(nId, (quatNodeId) => {
+        if (graph.hasNode(quatNodeId)) {
+          graph.setNodeAttribute(quatNodeId, "color", tokens.nodeColor.tertiary);
+        }
+      });
+    });
+  }
 }
 
 /**

@@ -262,16 +262,14 @@ export const settingsRegistry: SettingControl[] = [
   //   description: "Hex color for hover label text. Per-node hover label color is not yet implemented. Planned for future label color customization.",
   // },
   {
-    type: "select",
+    type: "range",
     category: "Graph View",
-    path: "graphView.nodeSelectionStage",
+    path: "graphView.neighborhoodDepth",
     label: "Neighborhood Depth",
-    description: "Controls how much neighborhood context appears when selecting a node.",
-    options: [
-      { value: "1", label: "Stage 1 — Node only" },
-      { value: "2", label: "Stage 2 — Node + direct edges" },
-      { value: "3", label: "Stage 3 — Node + edges + neighbor nodes" }
-    ],
+    description: "Depth of neighborhood shown when selecting a node. Fractional values fade between depths.",
+    min: 1,
+    max: 4,
+    step: 0.1,
   },
   {
     type: "text",

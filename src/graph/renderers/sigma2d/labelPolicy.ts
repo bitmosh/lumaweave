@@ -8,7 +8,7 @@ import Graph from "graphology";
 export interface SelectionContext {
   selectedNodeId: string | null;
   selectedEdgeId: string | null;
-  nodeSelectionStage: 1 | 2 | 3;
+  neighborhoodDepth: number;
   hoveredNodeId: string | null;
 }
 
@@ -81,7 +81,8 @@ export function applyNodeLabelPolicy(
   options: LabelPolicyOptions,
   mode: NodeLabelMode,
 ): void {
-  const { selectedNodeId, selectedEdgeId, nodeSelectionStage, hoveredNodeId } = selectionContext;
+  const depth = Math.floor(selectionContext.neighborhoodDepth || 2) as 1 | 2 | 3;
+  const { selectedNodeId, selectedEdgeId, hoveredNodeId } = selectionContext;
   const { showLabelsOnHover } = options;
 
   // Reset all node labels to empty
@@ -146,7 +147,7 @@ export function applyNodeLabelPolicy(
       graph.setNodeAttribute(selectedNodeId, "label", label);
 
       // Stage 2: show direct neighbor labels
-      if (nodeSelectionStage >= 2) {
+      if (depth >= 2) {
         graph.edges(selectedNodeId).forEach((edgeId) => {
           const extremities = graph.extremities(edgeId);
           extremities.forEach((nodeId) => {
@@ -160,7 +161,7 @@ export function applyNodeLabelPolicy(
       }
 
       // Stage 3: show secondary neighbor labels
-      if (nodeSelectionStage >= 3) {
+      if (depth >= 3) {
         const directNeighbors = new Set<string>();
         graph.edges(selectedNodeId).forEach((edgeId) => {
           const extremities = graph.extremities(edgeId);
@@ -210,7 +211,8 @@ export function applyEdgeLabelPolicy(
   options: LabelPolicyOptions,
   mode: EdgeLabelMode,
 ): void {
-  const { selectedNodeId, selectedEdgeId, nodeSelectionStage } = selectionContext;
+  const depth = Math.floor(selectionContext.neighborhoodDepth || 2) as 1 | 2 | 3;
+  const { selectedNodeId, selectedEdgeId } = selectionContext;
   const { maxEdgeLabelLength } = options;
 
   // Reset all edge labels to empty
@@ -257,7 +259,7 @@ export function applyEdgeLabelPolicy(
       graph.setEdgeAttribute(selectedEdgeId, "label", truncated);
 
       // Stage 2: show secondary edge labels
-      if (nodeSelectionStage >= 2) {
+      if (depth >= 2) {
         // Get relationship neighborhood for secondary edges
         // For now, we'll show all edges connected to source/target except the primary edge
         // This is a simplification - full implementation would use getRelationshipNeighborhood
@@ -275,7 +277,7 @@ export function applyEdgeLabelPolicy(
       }
 
       // Stage 3: show tertiary edge labels
-      if (nodeSelectionStage >= 3) {
+      if (depth >= 3) {
         // Show edges connected to secondary nodes (excluding primary and secondary)
         // This would use getRelationshipNeighborhood with tertiary edges
         // For v0, we keep it simple and show all connected edges at stage 2+
@@ -283,7 +285,7 @@ export function applyEdgeLabelPolicy(
     }
 
     // If node selected and stage >= 2, show direct connected edge labels
-    if (selectedNodeId && nodeSelectionStage >= 2 && graph.hasNode(selectedNodeId)) {
+    if (selectedNodeId && depth >= 2 && graph.hasNode(selectedNodeId)) {
       graph.edges(selectedNodeId).forEach((edgeId) => {
         if (graph.hasEdge(edgeId)) {
           const edgeAttrs = graph.getEdgeAttributes(edgeId);
@@ -295,7 +297,7 @@ export function applyEdgeLabelPolicy(
     }
 
     // If node selected and stage >= 3, show secondary edge labels
-    if (selectedNodeId && nodeSelectionStage >= 3 && graph.hasNode(selectedNodeId)) {
+    if (selectedNodeId && depth >= 3 && graph.hasNode(selectedNodeId)) {
       const directNeighbors = new Set<string>();
       graph.edges(selectedNodeId).forEach((edgeId) => {
         const extremities = graph.extremities(edgeId);
