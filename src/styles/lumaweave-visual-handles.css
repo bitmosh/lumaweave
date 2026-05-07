@@ -209,6 +209,28 @@ input[type="range"] {
   accent-color: var(--lw-visual-accent, #22d3ee);
   cursor: pointer;
   width: 100%;
+  background: linear-gradient(
+    to right,
+    var(--lw-visual-accent, #22d3ee) 0%,
+    var(--lw-visual-accent, #22d3ee) var(--range-progress, 50%),
+    var(--lw-text-muted, #475569) var(--range-progress, 50%),
+    var(--lw-text-muted, #475569) 100%
+  );
+  border-radius: 4px;
+  height: 4px;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--lw-app-background, #0f1420);
+  border: 2px solid var(--lw-visual-accent, #22d3ee);
+  cursor: pointer;
 }
 
 input[type="range"]:focus {

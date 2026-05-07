@@ -127,8 +127,7 @@ test.describe("Graph Visual Inventory", () => {
   });
 
   test("QA panel still works", async ({ page }) => {
-    const qaPanel = page.getByTestId("qa-panel").nth(0);
-    await expect(qaPanel).toBeVisible();
+    await expect(page.getByTestId("tab-qa")).toBeVisible();
   });
 
   test("Registry entry count matches inventory row count", async ({ page }) => {

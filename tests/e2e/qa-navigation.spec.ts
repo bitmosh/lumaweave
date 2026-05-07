@@ -1,10 +1,11 @@
 import { expect, test } from "@playwright/test";
+import { openQaPanel } from "./helpers/qa";
 
 test("QA notes persist when moving next and previous (for multi-check checklists)", async ({ page }) => {
   await page.goto("/");
+  await openQaPanel(page);
 
   const qaPanel = page.getByTestId("qa-panel").first();
-  await expect(qaPanel).toBeVisible();
 
   // Check if navigation is available (multi-check checklist)
   const nextButton = page.getByRole("button", { name: /next/i });

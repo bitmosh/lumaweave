@@ -23,8 +23,38 @@ function parseQuestionCounterText(text: string | null): { total: number } {
  * Open the QA panel in the left dock
  */
 export async function openQaPanel(page: Page): Promise<void> {
+  // Check if left panel is collapsed
+  const collapsedPanel = page.getByTestId("left-tab-panel-collapsed");
+  const isCollapsed = await collapsedPanel.isVisible().catch(() => false);
+
+  if (isCollapsed) {
+    // Click QA icon in collapsed panel to expand and switch to QA
+    const qaIcon = page.getByTestId("left-panel-icon-qa");
+    await expect(qaIcon).toBeVisible();
+    await qaIcon.click();
+  } else {
+    // Click QA tab in expanded panel to switch to QA
+    const qaTab = page.getByTestId("tab-qa");
+    await expect(qaTab).toBeVisible();
+    await qaTab.click();
+  }
+
+  // Wait for QA panel to be visible
   const qaPanel = page.getByTestId("qa-panel").first();
   await expect(qaPanel).toBeVisible();
+}
+
+/**
+ * Navigate to the QA tab in the left panel
+ * Use this before any QA content interaction
+ */
+export async function navigateToQaTab(page: Page): Promise<void> {
+  // Click QA tab in expanded left panel to switch to QA content
+  const qaTab = page.getByTestId("tab-qa");
+  await expect(qaTab).toBeVisible();
+  await qaTab.click();
+  // Wait for QA panel content to render
+  await page.waitForTimeout(300);
 }
 
 /**
@@ -33,6 +63,7 @@ export async function openQaPanel(page: Page): Promise<void> {
 export async function openAdvisoryTab(page: Page): Promise<void> {
   const advisoryTab = page.getByTestId("qa-tab-advisory");
   await advisoryTab.click();
+  await page.waitForTimeout(150); // wait for content
 }
 
 /**

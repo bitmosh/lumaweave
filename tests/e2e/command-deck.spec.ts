@@ -32,9 +32,8 @@ test("command deck shell has no execution controls", async ({ page }) => {
 test("existing hotkeys still work after command deck addition", async ({ page }) => {
   await page.goto("/");
 
-  // Verify QA panel is still visible
-  const qaPanel = page.getByTestId("qa-panel").first();
-  await expect(qaPanel).toBeVisible();
+  // Verify QA tab is visible
+  await expect(page.getByTestId("tab-qa")).toBeVisible();
 
   // Verify graph viewport is still visible (fixture is active by default in v75a+)
   const graphViewport = page.getByTestId("self-graph-fixture-loaded");

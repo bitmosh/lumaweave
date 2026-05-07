@@ -153,13 +153,13 @@ export function AppShell() {
         >
           <div className="flex items-center justify-between">
             <div>
-              <h1 
+              <h1
                 className="text-2xl font-bold"
-                style={{ color: themeTokens.app.accent } as React.CSSProperties}
+                style={{ color: "var(--lw-visual-accent, #22d3ee)" } as React.CSSProperties}
               >
                 LumaWeave Observatory
               </h1>
-              <p className="text-sm" style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>
+              <p className="text-sm" style={{ color: "var(--lw-text-muted, #94a3b8)" } as React.CSSProperties}>
                 Local-first luminous architecture workbench
               </p>
             </div>

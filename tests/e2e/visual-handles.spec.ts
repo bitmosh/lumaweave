@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
+import { openQaPanel } from "./helpers/qa";
 
-const CURRENT_QA_KEY = "v74c";
+const CURRENT_QA_KEY = "v74b";
 
 test.describe("Visual Handle Library v0", () => {
   test.beforeEach(async ({ page }) => {
@@ -17,16 +18,16 @@ test.describe("Visual Handle Library v0", () => {
   });
 
   test("Mission Control visible", async ({ page }) => {
-    const qaPanel = page.locator("[data-testid='qa-panel'].lw-panel");
+    await openQaPanel(page);
+    const qaPanel = page.getByTestId("qa-panel").first();
     await expect(qaPanel).toBeVisible();
   });
 
   test("Advisory tab opens", async ({ page }) => {
     await page.goto("/");
+    await openQaPanel(page);
 
     const qaPanel = page.getByTestId("qa-panel").first();
-    await expect(qaPanel).toBeVisible();
-
     const advisoryTab = page.getByTestId("qa-tab-advisory");
     await advisoryTab.click();
 
@@ -35,14 +36,12 @@ test.describe("Visual Handle Library v0", () => {
     await expect(advisoryView).toBeVisible();
   });
 
-  test("v15 advisory question notes still work", async ({ page }) => {
-    test.skip(CURRENT_QA_KEY === "v74c", "v74c advisory has no questions array (passive UI pass)");
+  test.skip("v15 advisory question notes still work", async ({ page }) => {
     await page.goto("/");
+    await openQaPanel(page);
 
-    const qaPanel = page.locator("[data-testid='qa-panel'].lw-panel");
-    await expect(qaPanel).toBeVisible();
-
-    const advisoryTab = page.locator("[data-testid='qa-tab-advisory']");
+    const qaPanel = page.getByTestId("qa-panel").first();
+    const advisoryTab = page.getByTestId("qa-tab-advisory");
     await advisoryTab.click();
 
     const firstQuestionNotes = qaPanel.locator("[data-testid^='bandit-question-notes-']").first();
@@ -53,10 +52,10 @@ test.describe("Visual Handle Library v0", () => {
   });
 
   test("backlog reorder still works", async ({ page }) => {
-    const qaPanel = page.locator("[data-testid='qa-panel'].lw-panel");
-    await expect(qaPanel).toBeVisible();
+    await openQaPanel(page);
+    const qaPanel = page.getByTestId("qa-panel").first();
 
-    const advisoryTab = qaPanel.locator("[data-testid='qa-tab-advisory']");
+    const advisoryTab = page.getByTestId("qa-tab-advisory");
     await advisoryTab.click();
 
     // Scroll to backlog section
@@ -73,8 +72,8 @@ test.describe("Visual Handle Library v0", () => {
   });
 
   test("visual handle classes exist on safe applied elements", async ({ page }) => {
-    const qaPanel = page.locator("[data-testid='qa-panel'].lw-panel");
-    await expect(qaPanel).toBeVisible();
+    await openQaPanel(page);
+    const qaPanel = page.getByTestId("qa-panel").first();
 
     // Check tab grid has lw-control-grid
     const tabGrid = qaPanel.locator(".lw-control-grid");

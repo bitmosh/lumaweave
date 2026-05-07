@@ -3,8 +3,7 @@ import { expect, test } from "@playwright/test";
 test("graph remains visible after QA navigation (for multi-check checklists)", async ({ page }) => {
   await page.goto("/");
 
-  const qaPanel = page.getByTestId("qa-panel").first();
-  await expect(qaPanel).toBeVisible();
+  await expect(page.getByTestId("tab-qa")).toBeVisible();
 
   // Check if navigation is available (multi-check checklist)
   const nextButton = page.getByRole("button", { name: /next/i });

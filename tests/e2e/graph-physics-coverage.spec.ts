@@ -34,9 +34,8 @@ test.describe("Graph Physics Playwright Coverage", () => {
     const canvas = page.locator("canvas").first();
     await expect(canvas).toBeVisible();
 
-    // QA panel should be visible (Mission Control is the QA panel)
-    const qaPanel = page.getByTestId("qa-panel").first();
-    await expect(qaPanel).toBeVisible();
+    // QA tab should be visible (Mission Control is the QA panel)
+    await expect(page.getByTestId("tab-qa")).toBeVisible();
   });
 
   test("graph shell remains visible after opening Command Deck", async ({ page }) => {

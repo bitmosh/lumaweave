@@ -104,9 +104,8 @@ test.describe("Theme Selector", () => {
   });
 
   test("mission control decision badge visible", async ({ page }) => {
-    // Navigate to QA panel if visible
-    const qaPanel = page.locator('[data-testid="qa-panel"]').or(page.locator('text=QA Panel'));
-    const isVisible = await qaPanel.isVisible().catch(() => false);
+    // Check if QA tab is visible
+    const isVisible = await page.getByTestId("tab-qa").isVisible().catch(() => false);
     
     if (isVisible) {
       // Check for version badge
@@ -120,9 +119,8 @@ test.describe("Theme Selector", () => {
   });
 
   test("mission control history sorting", async ({ page }) => {
-    // Navigate to QA panel if visible
-    const qaPanel = page.locator('[data-testid="qa-panel"]').or(page.locator('text=QA Panel'));
-    const isVisible = await qaPanel.isVisible().catch(() => false);
+    // Check if QA tab is visible
+    const isVisible = await page.getByTestId("tab-qa").isVisible().catch(() => false);
     
     if (isVisible) {
       // Click on History tab

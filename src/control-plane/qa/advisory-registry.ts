@@ -1927,6 +1927,15 @@ export const advisoryV74b: BanditAdvisorySection = {
       recommendedNextAction: "Proceed with v74b.1 (registry) and v74b.2 (validator) before QA key rotation.",
       userDecision: "unreviewed",
       userNotes: "",
+    },
+    {
+      id: "v74b-noverlap-anti-collision",
+      title: "Add graphology-layout-noverlap",
+      summary: "Anti-collision post-processing after FA2. Prevents node overlap in dense graph regions. Run after ForceAtlas2 for cleaner visual separation.",
+      risk: "low",
+      recommendedNextAction: "Install with next physics tuning pass",
+      userDecision: "unreviewed",
+      userNotes: "",
     }
   ],
   backlog: [
@@ -1935,6 +1944,14 @@ export const advisoryV74b: BanditAdvisorySection = {
       title: "v75a Self-Graph / YAML Frontmatter Adapter",
       whyItMatters: "First real adapter implementation. Lowest risk. Proves the schema and translation set pattern.",
       suggestedFutureBite: "Implement YAML frontmatter parser and translator to normalized graph format.",
+      risk: "low",
+      status: "candidate",
+    },
+    {
+      rank: 2,
+      title: "Install graphology-communities-louvain",
+      whyItMatters: "Auto community detection for any graph source. Makes helix dialect work universally without manual cluster assignments.",
+      suggestedFutureBite: "Install graphology-communities-louvain package",
       risk: "low",
       status: "candidate",
     },

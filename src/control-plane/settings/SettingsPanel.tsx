@@ -86,6 +86,16 @@ export function SettingsPanel() {
                             Number(event.currentTarget.value),
                           )
                         }
+                        onInput={(e) => {
+                          const input = e.target as HTMLInputElement;
+                          const min = Number(input.min) || 0;
+                          const max = Number(input.max) || 100;
+                          const val = Number(input.value);
+                          const pct = ((val - min) / (max - min)) * 100;
+                          input.style.setProperty(
+                            "--range-progress", `${pct}%`
+                          );
+                        }}
                         className="w-full"
                       />
                     </label>

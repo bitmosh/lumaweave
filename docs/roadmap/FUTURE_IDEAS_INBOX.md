@@ -25,6 +25,26 @@ Items here are promoted to the roadmap only when:
 
 ## Graph Intelligence
 
+- **GRAPHOLOGY ECOSYSTEM — HIGH PRIORITY INSTALLS**
+  Three packages that would have immediate impact:
+
+  **graphology-communities-louvain**
+    Auto community detection for ANY graph source
+    Makes helix dialect work universally (not just
+    self-graph fixture which has manual clusters)
+    Install before: helix dialect becomes default
+
+  **graphology-metrics**
+    Degree centrality → auto node size by connections
+    Betweenness centrality → identify bridge nodes
+    PageRank → identify influential nodes
+    Install before: YAML frontmatter parser pass
+
+  **graphology-layout-noverlap**
+    Anti-collision post-processing after FA2
+    Prevents node overlap in dense graph regions
+    Install with: next physics tuning pass
+
 - **Cluster gravity** — hard gravity walls between neighborhoods, nodes orbit within cluster (proto-Galaxy mode)
 - **Color-coded neighborhoods** — community detection driving brand cluster colors in graph
 - **Edge confidence visualization** — edge thickness or opacity encodes confidence class (observed / inferred / ai-inferred)
@@ -52,6 +72,12 @@ Items here are promoted to the roadmap only when:
 - **Workspace version history** — undo/redo workspace layout changes independently of graph state
 - **Lens-specific hotkeys** — different hotkey sets activate depending on active lens
 - **Mini-map tile** — small overview tile showing where you are in a large graph
+
+---
+
+## QA and Testing
+
+- **QA KEY AUTO-INCREMENT** — QA key should auto-increment on every accepted pass without requiring manual rotation. Passes without submitted reports: accepted-unverified (already in docs — needs code implementation). The qa-registry.ts CURRENT_QA_KEY constant and all five bundle files should update automatically as part of the commit acceptance workflow. Consider: a script that reads the last qaKey, increments it, and updates all five files atomically. Priority: medium — reduces manual rotation overhead.
 
 ---
 
