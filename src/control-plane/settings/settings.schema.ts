@@ -54,22 +54,15 @@ export interface StarmapSettings {
     showLowConfidenceEdges: boolean;
     neighborhoodDepth: number;
     hoverNodeColor: string;
-    hoverLabelColor: string;
-    selectedNodeColor: string;
-    defaultNodeColor: string;
-    selectedEdgeColor: string;
   };
 
   physics: {
     physicsPreset: "custom" | "balanced" | "spread" | "tight" | "organic" | "performance";
     nodeSize: number;
-    linkThickness: number;
     linkDistance: number;
     repelForce: number;
     centerForce: number;
     communityGravity: number;
-    curveAmount: number;
-    animationSoftness: number;
     physicsDialect: "default" | "helix";
     // ForceAtlas2 advanced parameters
     strongGravityMode: boolean;

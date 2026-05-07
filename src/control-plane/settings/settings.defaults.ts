@@ -26,22 +26,15 @@ export const defaultSettings: StarmapSettings = {
     showLowConfidenceEdges: false,
     neighborhoodDepth: 2,
     hoverNodeColor: "#ffffff",
-    hoverLabelColor: "#e0f2fe",
-    selectedNodeColor: "#fbbf24",
-    defaultNodeColor: "#22d3ee",
-    selectedEdgeColor: "#a855f7",
   },
 
   physics: {
     physicsPreset: "balanced",
     nodeSize: 1,
-    linkThickness: 1,
     linkDistance: 3,
     repelForce: 100,
     centerForce: 200,
     communityGravity: 0,
-    curveAmount: 45,
-    animationSoftness: 60,
     physicsDialect: "helix" as const,
     // ForceAtlas2 advanced parameters
     strongGravityMode: false,
