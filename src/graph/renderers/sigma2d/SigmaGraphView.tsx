@@ -281,7 +281,13 @@ export function SigmaGraphView({
     });
 
     graph.forEachEdge((edge) => {
-      graph.setEdgeAttribute(edge, "color", resolvedTokens.edgeColor.default);
+      const attrs = graph.getEdgeAttributes(edge);
+      const rawColor = (attrs.raw as any)?.color;
+      graph.setEdgeAttribute(
+        edge,
+        "color",
+        rawColor ?? "rgba(100,130,180,0.5)"
+      );
     });
 
     // Apply label policy to graphology graph before Sigma renders
@@ -507,7 +513,35 @@ export function SigmaGraphView({
       hasInitialCameraResetRef.current = false;
     }
   }
-}, [nodes, edges, linkDistance, repelForce, centerForce, physicsDialect, resolvedTokens]);
+}, [nodes, edges, linkDistance, repelForce, centerForce, physicsDialect]);
+
+// Live theme token updates without graph rebuild
+useEffect(() => {
+  const graph = graphRef.current;
+  const sigma = sigmaRef.current;
+  if (!graph || !sigma) return;
+
+  // Update node colors from theme tokens
+  graph.forEachNode((node: string) => {
+    graph.setNodeAttribute(
+      node, "color",
+      resolvedTokens.nodeColor.default
+    );
+  });
+
+  // Update edge colors from raw attributes
+  graph.forEachEdge((edge: string) => {
+    const attrs = graph.getEdgeAttributes(edge);
+    const rawColor = (attrs.raw as any)?.color;
+    graph.setEdgeAttribute(
+      edge,
+      "color",
+      rawColor ?? "rgba(100,130,180,0.5)"
+    );
+  });
+
+  sigma.refresh();
+}, [resolvedTokens]);
 
 // Live slider updates for FA2 settings without graph rebuild
 useEffect(() => {
