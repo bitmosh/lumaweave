@@ -84,6 +84,7 @@ export const defaultSettings: StarmapSettings = {
   ui: {
     leftPanelCollapsed: false,
     leftPanelActiveTab: "graph",
+    leftPanelWidth: 280,
     graphTabSections: {
       graphSources: true,
       sourceAdapter: true,

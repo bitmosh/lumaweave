@@ -231,7 +231,7 @@ export function AppShell() {
           className="grid min-h-0"
           style={{
             gridTemplateColumns: `var(--left-width) 1fr var(--right-width)`,
-            "--left-width": settings.ui.leftPanelCollapsed ? "0px" : "280px",
+            "--left-width": settings.ui.leftPanelCollapsed ? "0px" : `${settings.ui.leftPanelWidth}px`,
             "--right-width": settings.ui.controlDockCollapsed
               ? `${settings.ui.controlDockCollapsedWidth}px`
               : `${settings.ui.controlDockWidth}px`,
@@ -239,6 +239,10 @@ export function AppShell() {
         >
           <LeftTabPanel
             collapsed={settings.ui.leftPanelCollapsed}
+            panelWidth={settings.ui.leftPanelWidth}
+            onWidthChange={(width) =>
+              setSetting("ui", { ...settings.ui, leftPanelWidth: width })
+            }
             activeTab={settings.ui.leftPanelActiveTab}
             onTabChange={(tab) =>
               setSetting("ui", { ...settings.ui, leftPanelActiveTab: tab as any })

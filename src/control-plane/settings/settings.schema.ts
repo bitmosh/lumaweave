@@ -111,6 +111,7 @@ export interface StarmapSettings {
     // Left panel
     leftPanelCollapsed: boolean;
     leftPanelActiveTab: "graph" | "qa" | "evidence" | "debug" | "settings";
+    leftPanelWidth: number; // px when expanded (default 280)
 
     // Left panel section collapse states per tab
     graphTabSections: {

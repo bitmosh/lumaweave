@@ -2,6 +2,8 @@ import { ReactNode } from "react";
 
 interface LeftTabPanelProps {
   collapsed: boolean;
+  panelWidth: number;
+  onWidthChange: (width: number) => void;
   activeTab: "graph" | "qa" | "evidence" | "debug" | "settings";
   onTabChange: (tab: string) => void;
   onCollapse: () => void;
@@ -34,6 +36,8 @@ interface LeftTabPanelProps {
 
 export function LeftTabPanel({
   collapsed,
+  panelWidth,
+  onWidthChange,
   activeTab,
   onTabChange,
   onCollapse,
@@ -51,6 +55,13 @@ export function LeftTabPanel({
   debugTabContent,
   settingsTabContent,
 }: LeftTabPanelProps) {
+  const TAB_ICONS: Record<string, string> = {
+    graph: "⬡",
+    qa: "✓",
+    evidence: "◈",
+    debug: "⌥",
+  };
+
   const tabs = [
     { id: "graph" as const, label: "Graph" },
     { id: "qa" as const, label: "QA" },
@@ -61,7 +72,7 @@ export function LeftTabPanel({
 
   const isTiled = (tabId: string) => tiledTabs.includes(tabId);
 
-  // Collapsed state - narrow strip with expand button
+  // Collapsed state - narrow strip with tab icons
   if (collapsed) {
     return (
       <aside
@@ -73,36 +84,40 @@ export function LeftTabPanel({
           backgroundColor: "#0f172a",
           borderRight: "1px solid rgba(34, 211, 238, 0.1)",
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          cursor: "pointer",
+          gap: "8px",
+          padding: "8px 0",
         }}
-        onClick={onCollapse}
-        title="Expand panel (Ctrl+\\)"
       >
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onCollapse();
-          }}
-          style={{
-            background: "transparent",
-            border: "none",
-            color: "#94a3b8",
-            cursor: "pointer",
-            fontSize: "1.25rem",
-            padding: "0.5rem",
-            borderRadius: "0.5rem",
-            transition: "all 0.15s ease",
-            minWidth: "32px",
-            minHeight: "32px",
-          }}
-          title="Expand panel (Ctrl+\\)"
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#3b82f620")}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
-        >
-          ▶
-        </button>
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            data-testid={`left-panel-icon-${tab.id}`}
+            onClick={() => {
+              onTabChange(tab.id);
+              onCollapse();
+            }}
+            title={tab.label}
+            style={{
+              background: activeTab === tab.id ? "#1e293b" : "transparent",
+              border: "none",
+              color: activeTab === tab.id ? "#22d3ee" : "#94a3b8",
+              cursor: "pointer",
+              fontSize: "1.1rem",
+              padding: "0.5rem",
+              borderRadius: "0.5rem",
+              transition: "all 0.15s ease",
+              minWidth: "32px",
+              minHeight: "32px",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#3b82f620")}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = activeTab === tab.id ? "#1e293b" : "transparent")}
+          >
+            {TAB_ICONS[tab.id] || tab.label[0]}
+          </button>
+        ))}
       </aside>
     );
   }
@@ -112,16 +127,50 @@ export function LeftTabPanel({
     <aside
       data-testid="left-tab-panel"
       style={{
-        width: "280px",
-        minWidth: "280px",
-        maxWidth: "280px",
+        width: `${panelWidth}px`,
+        minWidth: `${panelWidth}px`,
+        maxWidth: `${panelWidth}px`,
         backgroundColor: "#0f172a",
         borderRight: "1px solid rgba(34, 211, 238, 0.1)",
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
+        position: "relative",
       }}
     >
+      {/* Resize handle on right edge */}
+      <div
+        data-testid="left-panel-resize-handle"
+        style={{
+          position: "absolute",
+          right: 0,
+          top: 0,
+          bottom: 0,
+          width: "4px",
+          cursor: "col-resize",
+          background: "transparent",
+          zIndex: 10,
+        }}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          const startX = e.clientX;
+          const startWidth = panelWidth;
+
+          const onMouseMove = (e: MouseEvent) => {
+            const delta = e.clientX - startX;
+            const newWidth = Math.min(480, Math.max(200, startWidth + delta));
+            onWidthChange(newWidth);
+          };
+
+          const onMouseUp = () => {
+            document.removeEventListener("mousemove", onMouseMove);
+            document.removeEventListener("mouseup", onMouseUp);
+          };
+
+          document.addEventListener("mousemove", onMouseMove);
+          document.addEventListener("mouseup", onMouseUp);
+        }}
+      />
       {/* Tab bar */}
       <div
         style={{
