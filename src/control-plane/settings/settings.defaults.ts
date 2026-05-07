@@ -35,9 +35,9 @@ export const defaultSettings: StarmapSettings = {
   physics: {
     nodeSize: 1,
     linkThickness: 1,
-    linkDistance: 120,
+    linkDistance: 50,
     repelForce: 100,
-    centerForce: 40,
+    centerForce: 200,
     communityGravity: 80,
     curveAmount: 45,
     animationSoftness: 60,

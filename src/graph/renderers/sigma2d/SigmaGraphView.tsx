@@ -801,7 +801,7 @@ useEffect(() => {
           <DebugRow label="Min Y" value={debugInfo.minY} />
           <DebugRow label="Max Y" value={debugInfo.maxY} />
           <DebugRow label="Node Size" value={debugInfo.currentNodeSize} />
-          <DebugRow label="Link Distance" value={debugInfo.currentLinkDistance} />
+          <DebugRow label="Simulation Speed" value={debugInfo.currentLinkDistance} />
           <DebugRow label="Repel Force" value={debugInfo.currentRepelForce} />
           <DebugRow label="Selected Node" value={selectedNodeId ?? "none"} data-testid="selected-node-debug-row" />
           <DebugRow label="Selected Edge" value={selectedEdgeId ?? "none"} data-testid="selected-edge-debug-row" />

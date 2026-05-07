@@ -85,7 +85,7 @@ export const settingsRegistry: SettingControl[] = [
     type: "range",
     category: "Physics",
     path: "physics.linkDistance",
-    label: "Link Distance",
+    label: "Simulation Speed",
     min: 20,
     max: 500,
     step: 5,

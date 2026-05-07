@@ -228,7 +228,7 @@ export const handlesetRegistry: HandlesetRegistry = {
 
     {
       handle: "physics.linkDistance",
-      label: "Link Distance",
+      label: "Simulation Speed",
       category: "Graph View",
       defaultValue: 1.0,
       controlType: "range",
