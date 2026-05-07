@@ -326,10 +326,19 @@ export function SigmaGraphView({
     barnesHutTheta: barnesHutTheta,
   };
 
-  fa2Ref.current = new FA2Layout(graph, {
-    settings: fa2Settings,
+  // Start FA2 worker after Sigma completes first render
+  // This ensures Sigma has fully registered all nodes AND edges
+  // before the worker starts mutating positions
+  sigma.once("afterRender", () => {
+    if (fa2Ref.current) {
+      fa2Ref.current.stop();
+      fa2Ref.current.kill();
+    }
+    fa2Ref.current = new FA2Layout(graph, {
+      settings: fa2Settings,
+    });
+    fa2Ref.current.start();
   });
-  fa2Ref.current.start();
 
   // Camera preservation rule: Only reset camera once after initial graph load.
   // Browser resize should resize canvas but preserve camera position/ratio.
