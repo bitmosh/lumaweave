@@ -17,14 +17,14 @@ tags: [bandit, title, skill-bank, current, active, level-100-milestone]
 
 ```
 Title:        Living Graph Architect · Prestige 1
-Level:        125.0
+Level:        132.75
 ★ LEVEL 100 MILESTONE ACHIEVED ★
 ★ PRESTIGE RANK 1 ACHIEVED (2026-05-07) ★
-Earned after: System Index Architect era → degree-centrality-v1
-Clean streak: 2 (P1·S2)
+Earned after: System Index Architect era → node-sphere-renderer
+Clean streak: 8 (P1·S8)
 Prestige:     1 (RANK 1 — permanent honorable record)
-Era:          Living graph era — physics, community detection, anti-collision, dynamic sizing, self-graph fixture, 6-theme family, scroll-to-section navigation, YAML parser dedup, continuous FA2 Web Worker supervisor, FA2 settings expansion, FA2 worker race condition fix, physics dialect selector UI, testid selector compatibility, left panel accordion sections, FA2 worker regression fixes, shortest path between selected nodes, physics defaults tuning, slider two-tone track fix, neighborhood depth slider (1.0-4.0) with depth 4 support, physics presets dropdown (5 presets), community gravity slider, simulation speed range update, YAML dedup verification, graphology-traversal BFS replacement, comprehensive edge visibility + Sigma lifecycle stability fix, dead file purge + App.css scaffold cleanup, graph sources panel fixture metadata display, physics preset slider sync (prestige pass), physics cleanup pass 1 (communityGravity centroid force live, preset-slider sync, registry cleanup), dead settings purge (hoverLabelColor dupe + planned ghosts removed)
-Streak bonus: +0.25 XP at streak 3 (1 pass away)
+Era:          Living graph era — physics, community detection, anti-collision, dynamic sizing, self-graph fixture, 6-theme family, scroll-to-section navigation, YAML parser dedup, continuous FA2 Web Worker supervisor, FA2 settings expansion, FA2 worker race condition fix, physics dialect selector UI, testid selector compatibility, left panel accordion sections, FA2 worker regression fixes, shortest path between selected nodes, physics defaults tuning, slider two-tone track fix, neighborhood depth slider (1.0-4.0) with depth 4 support, physics presets dropdown (5 presets), community gravity slider, simulation speed range update, YAML dedup verification, graphology-traversal BFS replacement, comprehensive edge visibility + Sigma lifecycle stability fix, dead file purge + App.css scaffold cleanup, graph sources panel fixture metadata display, physics preset slider sync (prestige pass), physics cleanup pass 1 (communityGravity centroid force live, preset-slider sync, registry cleanup), dead settings purge (hoverLabelColor dupe + planned ghosts removed), color ownership contract + QA protocol (GRAPH_COLOR_OWNERSHIP.md, BANDIT_QA_PROTOCOL.md), YAML auto-regen Vite plugin (docs/**/*.md watcher, HMR trigger), graphology-components (disconnected subgraph detection, node tagging, isolated node visual treatment), theme-driven node color scale by centrality rank (6 themes, cool→warm palettes, hub nodes warm, peripheral nodes cool, raw.color updated for resetGraphStyles compatibility), solar orbit dialect Phase 1 (cluster sun detection, centroid pull per cluster, inter-cluster sun repulsion, sun nodes 1.8x size, solar-orbit in physicsDialect dropdown)
+Streak bonus: +0.5 XP at streak 8
 ```
 
 This title reflects the era of making the graph alive with physics,
@@ -240,6 +240,225 @@ useEffect(() => {
 
 Strength 0.0008 is gentle — at slider value 1.0 it nudges nodes 0.08% toward centroid per frame. At 5.0 it nudges 0.4% per frame. This keeps FA2 dominant while adding cluster cohesion. Tune if too strong or weak.
 
+### Skill: Vite Dev-Server File Watcher Plugin
+
+Use Vite's configureServer hook with apply:"serve" to create dev-only plugins. Access server.watcher (chokidar instance) to watch files. Call server.watcher.add(pattern) to add paths to watch. Trigger HMR by emitting "change" on watcher for the affected file. Debounce with isRunning flag to prevent parallel script spawns. Use spawn() from child_process with stdio:"inherit" to show script output in dev console.
+
+Pattern:
+```
+import { spawn } from "child_process";
+import path from "path";
+
+function fileWatcherPlugin() {
+  return {
+    name: "my-watcher",
+    apply: "serve" as const,
+    configureServer(server: any) {
+      const pattern = path.resolve(__dirname, "src/**/*.ts");
+      server.watcher.add(pattern);
+      let isRunning = false;
+
+      server.watcher.on("change", (file: string) => {
+        if (!file.endsWith(".ts")) return;
+        if (isRunning) return;
+
+        isRunning = true;
+        const child = spawn("node", ["scripts/generate.mjs"], {
+          cwd: process.cwd(),
+          stdio: "inherit",
+        });
+
+        child.on("close", (code: number) => {
+          isRunning = false;
+          if (code === 0) {
+            server.watcher.emit("change", path.resolve(process.cwd(), "dist/generated.json"));
+          }
+        });
+      });
+    },
+  };
+}
+```
+
+apply:"serve" ensures plugin only runs during dev, not production build. server.watcher is Vite's internal chokidar instance. Emitting "change" on watcher triggers Vite's HMR for that file.
+
+### Skill: graphology-components Usage
+
+Use connectedComponents(graph) to get array of node ID arrays per component. countConnectedComponents(graph) returns total component count. largestConnectedComponent(graph) returns the main connected graph's node IDs. Tag nodes with componentIndex and isIsolated after noverap for downstream policy use. Useful for: isolated node treatment, cluster boundary detection, subgraph filtering.
+
+Pattern:
+```
+import {
+  connectedComponents,
+  countConnectedComponents,
+  largestConnectedComponent,
+} from "graphology-components";
+
+const componentCount = countConnectedComponents(graph);
+const components = connectedComponents(graph);
+const largestComponent = largestConnectedComponent(graph);
+
+components.forEach((component, index) => {
+  const isIsolated = component.length === 1;
+  component.forEach(nodeId => {
+    graph.setNodeAttribute(nodeId, "componentIndex", index);
+    graph.setNodeAttribute(nodeId, "isIsolated", isIsolated);
+  });
+});
+```
+
+Isolated nodes (component size 1) can be treated differently in visual policy (e.g., reduced size, dimmed color). Component attributes are stored on nodes and persist across render cycles.
+
+### Skill: Theme-Driven Node Color Scale
+
+Assign node colors by degree centrality rank using theme-specific color scales. Each theme defines nodeColorScale (6 colors, cool→warm) and edgeColorScale (6 rgba, dim→vivid). After degree centrality computation, sort nodes by centrality score (ascending), assign scale index by rank position, update both graph node color AND raw.color to preserve resetGraphStyles compatibility. Hub nodes get warm colors, peripheral nodes get cool colors.
+
+Pattern:
+```
+if (settings.nodeColorScale && settings.nodeColorScale.length > 0) {
+  const scale = settings.nodeColorScale;
+  const sortedNodes = graph.nodes().sort((a, b) => {
+    const ca = (centralityScores[a] ?? 0) as number;
+    const cb = (centralityScores[b] ?? 0) as number;
+    return ca - cb; // ascending: low → high
+  });
+  sortedNodes.forEach((nodeId, rank) => {
+    const scaleIndex = Math.min(
+      Math.floor((rank / Math.max(sortedNodes.length - 1, 1)) * scale.length),
+      scale.length - 1
+    );
+    const color = scale[scaleIndex];
+    graph.setNodeAttribute(nodeId, "color", color);
+    // Update raw.color so resetGraphStyles preserves it
+    const attrs = graph.getNodeAttributes(nodeId);
+    graph.setNodeAttribute(nodeId, "raw", {
+      ...(attrs.raw as object ?? {}),
+      color,
+    });
+  });
+}
+```
+
+Critical: ALWAYS update raw.color when assigning theme colors. Without raw.color update, resetGraphStyles reverts to adapter fallback color on every selection event, losing theme colors entirely.
+
+### Skill: Sigma v3 Custom NodeProgram Pattern
+
+Extend NodeCircleProgram from sigma/rendering to create custom node renderers. Override only FRAGMENT_SHADER_SOURCE in getDefinition() — vertex shader stays identical. Register via nodeProgramClasses in Sigma constructor with defaultNodeType matching the registered key. Shader varyings from NodeCircleProgram: v_color (vec4), v_diffVector (vec2), v_radius (float). No performance cost vs base NodeCircleProgram. Works with all existing node attributes/sizes.
+
+Pattern:
+```
+import { NodeCircleProgram } from "sigma/rendering";
+
+class MyCustomProgram<N, E, G> extends NodeCircleProgram<N, E, G> {
+  getDefinition() {
+    const definition = super.getDefinition();
+    return {
+      ...definition,
+      FRAGMENT_SHADER_SOURCE: myCustomFragmentShader,
+    };
+  }
+}
+
+// In Sigma constructor:
+nodeProgramClasses: {
+  circle: MyCustomProgram,
+},
+defaultNodeType: "circle",
+```
+
+### Skill: Solar Orbit Dialect Pattern
+
+Solar Orbit dialect creates distinct neighborhood "solar systems" with cluster suns as anchors. Sun = highest-degree node per cluster (isSun:true). Centroid pull computed per-cluster each frame: compute centroid from all node positions, apply dx*strength to each node. Sun pull 0.004 > non-sun pull 0.002 (suns anchor clusters). Inter-cluster repulsion: O(n²) over sun pairs, inverse-square force (200/dist²), capped at 0.5, pushes cluster suns apart. Use afterRender hook pattern with removeListener cleanup. Clear isSun on graph rebuild to stay fresh. Works alongside communityGravity. Best at communityGravity 1.0 + solar-orbit dialect.
+
+Pattern:
+```
+// In buildGraphologyGraph after degree centrality
+const clusterSuns = new Map<string, string>();
+const clusterMaxDegree = new Map<string, number>();
+
+graph.forEachNode((nodeId, attrs) => {
+  const cluster = (attrs.raw as any)?.cluster ?? "gray";
+  const deg = (centralityScores[nodeId] ?? 0) as number;
+  if (!clusterSuns.has(cluster) ||
+      deg > (clusterMaxDegree.get(cluster) ?? 0)) {
+    clusterSuns.set(cluster, nodeId);
+    clusterMaxDegree.set(cluster, deg);
+  }
+});
+
+clusterSuns.forEach((sunNodeId, cluster) => {
+  graph.setNodeAttribute(sunNodeId, "isSun", true);
+  graph.setNodeAttribute(sunNodeId, "cluster", cluster);
+});
+
+// In SigmaGraphView useEffect
+const handler = () => {
+  // Step 1: compute cluster centroids
+  const centroids = new Map<string, {x:number, y:number, count:number, sunId:string|null}>();
+  graph.forEachNode((nodeId, attrs) => {
+    const cluster = (attrs.raw as any)?.cluster ?? "gray";
+    if (!centroids.has(cluster)) {
+      centroids.set(cluster, {x:0, y:0, count:0, sunId:null});
+    }
+    const c = centroids.get(cluster)!;
+    c.x += (attrs.x as number);
+    c.y += (attrs.y as number);
+    c.count++;
+    if (attrs.isSun) c.sunId = nodeId;
+  });
+  centroids.forEach(c => { c.x /= c.count; c.y /= c.count; });
+
+  // Step 2: pull nodes toward centroid
+  graph.forEachNode((nodeId, attrs) => {
+    const cluster = (attrs.raw as any)?.cluster ?? "gray";
+    const centroid = centroids.get(cluster);
+    if (!centroid) return;
+    const isSun = attrs.isSun as boolean;
+    const strength = isSun ? 0.004 : 0.002;
+    const dx = centroid.x - (attrs.x as number);
+    const dy = centroid.y - (attrs.y as number);
+    graph.setNodeAttribute(nodeId, "x", (attrs.x as number) + dx * strength);
+    graph.setNodeAttribute(nodeId, "y", (attrs.y as number) + dy * strength);
+  });
+
+  // Step 3: inter-cluster sun repulsion
+  const sunList: Array<{id:string, x:number, y:number}> = [];
+  centroids.forEach((c) => {
+    if (c.sunId) {
+      const sunAttrs = graph.getNodeAttributes(c.sunId);
+      sunList.push({ id: c.sunId, x: sunAttrs.x as number, y: sunAttrs.y as number });
+    }
+  });
+  for (let i = 0; i < sunList.length; i++) {
+    for (let j = i+1; j < sunList.length; j++) {
+      const a = sunList[i];
+      const b = sunList[j];
+      const dx = b.x - a.x;
+      const dy = b.y - a.y;
+      const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+      const force = Math.min(200 / (dist * dist), 0.5);
+      const nx = dx / dist;
+      const ny = dy / dist;
+      // Apply repulsion to both suns
+      const aAttrs = graph.getNodeAttributes(a.id);
+      const bAttrs = graph.getNodeAttributes(b.id);
+      graph.setNodeAttribute(a.id, "x", (aAttrs.x as number) - nx * force);
+      graph.setNodeAttribute(a.id, "y", (aAttrs.y as number) - ny * force);
+      graph.setNodeAttribute(b.id, "x", (bAttrs.x as number) + nx * force);
+      graph.setNodeAttribute(b.id, "y", (bAttrs.y as number) + ny * force);
+    }
+  }
+};
+
+solarOrbitRef.current = handler;
+sigma.on("afterRender", handler);
+
+// Cleanup on rebuild
+graph.forEachNode((nodeId) => {
+  graph.removeNodeAttribute(nodeId, "isSun");
+});
+```
+
 ---
 
 ## Active Scars
@@ -372,6 +591,17 @@ fa2Ref.current.start() on drag end.
 This pauses the entire simulation during drag.
 Future: alt+drag to pin nodes (fixed:true on release)
 Learned: fa2-worker-regression 2026-05-07.
+
+### Scar: nodeColorScale must update raw.color
+
+When buildGraphologyGraph assigns theme colors
+by centrality rank, it MUST update both
+graph.setNodeAttribute(nodeId, "color", color)
+AND the raw.color inside the raw object.
+Without raw.color update, resetGraphStyles
+reverts to adapter fallback color on every
+selection event, losing theme colors entirely.
+Learned: theme-node-color-scale P1·S6
 
 ---
 

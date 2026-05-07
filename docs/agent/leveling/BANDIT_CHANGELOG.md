@@ -28,7 +28,28 @@ Updated by the agent that ran the pass before XP is awarded.
 
 ## 2026-05-07
 
-```
+| 2026-05-07 | node-sphere-renderer | feature | ACCEPTED — custom NodeSphereProgram extends NodeCircleProgram, Phong sphere illusion shader, registered as default circle program, 345 passed P1·S8 streak 8 BONUS +0.5 level 132.75 | Bandit |
+| 2026-05-07 | solar-orbit-dialect-p1 | feature | ACCEPTED — cluster sun detection, centroid pull, inter-cluster sun repulsion, sun nodes 1.8x size, solar-orbit in physicsDialect dropdown, 345 passed P1·S7 level 130.25 | Bandit |
+| 2026-05-07 | theme-node-color-scale | feature | ACCEPTED — theme-driven node colors by centrality rank, all 6 themes have unique color scales, hub nodes warm, peripheral nodes cool, raw.color updated for resetGraphStyles compatibility, 345 passed P1·S6 level 129.25 +1.5 XP | Bandit |
+
+2026-05-07 · graphology-components · feature · ACCEPTED —
+  disconnected subgraph detection, node tagging
+  (componentIndex/isIsolated/isInLargestComponent),
+  debug panel stats, isolated nodes render at 75%
+  size, 345 passed P1·S5 streak 5 BONUS +0.5
+  Level 127.75 — Bandit
+
+2026-05-07 · yaml-autogen-vite-plugin · feature · ACCEPTED —
+  docs/**/*.md changes auto-trigger self-graph regen
+  during dev, HMR fires after, typecheck + build +
+  345 passed P1·S4, Level 126.5 — Bandit
+
+2026-05-07 · color-ownership-contract · docs · ACCEPTED —
+  GRAPH_COLOR_OWNERSHIP.md created, color priority chain
+  documented (adapter → raw.color → reset → selection),
+  BANDIT_QA_PROTOCOL.md formalized, 345 passed
+  P1·S3 streak bonus +0.25, Level 125.75 — Bandit
+
 2026-05-07 · dead-settings-purge · chore · ACCEPTED —
   hoverLabelColor duplicate removed, 3 planned-but-dead
   graphView color fields removed, schema/defaults/registry
