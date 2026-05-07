@@ -393,6 +393,10 @@ export function SigmaGraphView({
     dragState.dragging = true;
     dragState.nodeId = e.node;
     sigma.getCamera().disable();
+    // Pause worker during drag so it doesn't fight mouse position
+    if (fa2Ref.current) {
+      fa2Ref.current.stop();
+    }
     // Fix node position while dragging
     graph.setNodeAttribute(e.node, "fixed", true);
   });
@@ -427,6 +431,10 @@ export function SigmaGraphView({
     dragState.dragging = false;
     dragState.nodeId = null;
     sigma.getCamera().enable();
+    // Resume worker after drag ends
+    if (fa2Ref.current) {
+      fa2Ref.current.start();
+    }
   };
 
   sigma.getContainer().addEventListener(
@@ -460,25 +468,32 @@ export function SigmaGraphView({
 
 // Live slider updates for FA2 settings without graph rebuild
 useEffect(() => {
-  if (!graphRef.current) return;
+  if (!graphRef.current || !sigmaRef.current) return;
   if (fa2Ref.current) {
     fa2Ref.current.stop();
     fa2Ref.current.kill();
+    fa2Ref.current = null;
   }
-  fa2Ref.current = new FA2Layout(graphRef.current, {
-    settings: {
-      gravity: Math.max(0.001, centerForce * 0.005),
-      scalingRatio: Math.max(0.1, repelForce * 0.1),
-      slowDown: Math.max(2, linkDistance * 0.03),
-      strongGravityMode: strongGravityMode,
-      linLogMode: linLogMode,
-      adjustSizes: adjustSizes,
-      barnesHutOptimize: true,
-      barnesHutTheta: barnesHutTheta,
-    },
+  sigmaRef.current.once("afterRender", () => {
+    if (!graphRef.current) return;
+    fa2Ref.current = new FA2Layout(graphRef.current, {
+      settings: {
+        gravity: Math.max(0.001, centerForce * 0.005),
+        scalingRatio: Math.max(0.1, repelForce * 0.1),
+        slowDown: Math.max(2, linkDistance * 0.03),
+        strongGravityMode,
+        linLogMode,
+        adjustSizes,
+        barnesHutOptimize: true,
+        barnesHutTheta,
+      },
+    });
+    fa2Ref.current.start();
   });
-  fa2Ref.current.start();
-}, [centerForce, repelForce, linkDistance, strongGravityMode, linLogMode, adjustSizes, barnesHutTheta]);
+  sigmaRef.current.refresh();
+}, [centerForce, repelForce, linkDistance,
+    strongGravityMode, linLogMode, adjustSizes,
+    barnesHutTheta]);
 
 // Node size live update without rebuild
 useEffect(() => {
