@@ -3,6 +3,7 @@ import { SettingsPanel } from "../control-plane/settings/SettingsPanel";
 import { QaPanel } from "../control-plane/qa/QaPanel";
 import { InspectorPanel } from "../control-plane/panels/InspectorPanel";
 import { CollapsiblePanel } from "../control-plane/panels/CollapsiblePanel";
+import { CollapsibleSection } from "../control-plane/panels/CollapsibleSection";
 import { CommandDeckPanel } from "../control-plane/command-deck/CommandDeckPanel";
 import { GraphVisualInventoryPanel } from "../control-plane/graph/GraphVisualInventoryPanel";
 import { SystemIndexPanel } from "../control-plane/system-index/SystemIndexPanel";
@@ -31,14 +32,13 @@ export function AppShell() {
   const { summary, error: summaryError } = useGraphSourceSummary();
 
   // Self-graph fixture for demo (v75a)
-  // Smart switching deferred - layout assertions in theme-target-inspector.spec.ts
-  // expect fixture-specific dimensions. Update those tests before enabling:
-  // const hasRealSource = summary.normalizedNodes &&
-  //   summary.normalizedNodes.length > 0 &&
-  //   !summaryError;
-  // const useFixture = !hasRealSource;
+  // TODO: Smart switching deferred.
+  // Requires updating layout dimension assertions
+  // in theme-target-inspector.spec.ts lines 211-212
+  // which are hardcoded to fixture viewport geometry.
+  // Fix: derive expected dimensions from actual
+  // viewport instead of hardcoded pixel values.
   const [useFixture] = useState(true);
-
   const adaptedFixture = useMemo(
     () => adaptSelfGraphToSigma(generatedGraph as LumaSourceGraph),
     []
@@ -290,225 +290,309 @@ export function AppShell() {
             }
             graphTabContent={
               <>
-                <h2
-                  className="mb-3 text-sm font-semibold uppercase tracking-wider"
-                  style={{ color: themeTokens.app.textMuted } as React.CSSProperties}
+                <CollapsibleSection
+                  title="Graph Sources"
+                  isOpen={settings.ui.graphTabSections.graphSources}
+                  onToggle={() => setSetting("ui", {
+                    ...settings.ui,
+                    graphTabSections: {
+                      ...settings.ui.graphTabSections,
+                      graphSources: !settings.ui.graphTabSections.graphSources,
+                    }
+                  })}
+                  testId="section-graph-sources"
+                  accentColor={themeTokens.app.accent}
+                  borderColor={themeTokens.app.panelBorder}
                 >
-                  Graph Sources
-                </h2>
+                  <div
+                    className="rounded-xl p-4"
+                    style={{
+                      border: `1px solid ${themeTokens.app.panelBorder}`,
+                      backgroundColor: `${themeTokens.app.background}70`,
+                    } as React.CSSProperties}
+                  >
+                    <div style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>{summary.label}</div>
+                    <div className="mt-1 text-xs" style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>
+                      {summary.sourcePath}
+                    </div>
+                    <div
+                      className="mt-3 rounded-full px-3 py-1 text-xs"
+                      style={{
+                        backgroundColor: `${themeTokens.app.accent}10`,
+                        color: themeTokens.app.accent,
+                      } as React.CSSProperties}
+                    >
+                      {summary.status}
+                    </div>
+                    <div className="mt-3 space-y-1 text-xs">
+                      <div className="flex justify-between">
+                        <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>graph.json:</span>
+                        <span
+                          style={{
+                            color: summary.graphPresent ? themeTokens.app.accent : "#f87171",
+                          } as React.CSSProperties}
+                        >
+                          {summary.graphPresent ? "found" : "missing"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>manifest.json:</span>
+                        <span
+                          style={{
+                            color: summary.manifestPresent ? themeTokens.app.accent : themeTokens.app.textMuted,
+                          } as React.CSSProperties}
+                        >
+                          {summary.manifestPresent ? "found" : "missing"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>GRAPH_REPORT.md:</span>
+                        <span
+                          style={{
+                            color: summary.reportPresent ? themeTokens.app.accent : themeTokens.app.textMuted,
+                          } as React.CSSProperties}
+                        >
+                          {summary.reportPresent ? "found" : "missing"}
+                        </span>
+                      </div>
+                      <div className="mt-2 flex justify-between" style={{ borderTop: `1px solid ${themeTokens.app.panelBorder}10`, paddingTop: "0.5rem" }}>
+                        <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Raw nodes:</span>
+                        <span style={{ color: themeTokens.app.accent } as React.CSSProperties}>{summary.nodeCount}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Raw edges:</span>
+                        <span style={{ color: themeTokens.app.accent } as React.CSSProperties}>{summary.edgeCount}</span>
+                      </div>
+                      <div className="mt-2 flex justify-between" style={{ borderTop: `1px solid ${themeTokens.app.panelBorder}10`, paddingTop: "0.5rem" }}>
+                        <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Normalized nodes:</span>
+                        <span style={{ color: "#86efac" } as React.CSSProperties}>
+                          {summary.normalizedNodeCount}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Normalized edges:</span>
+                        <span style={{ color: "#86efac" } as React.CSSProperties}>
+                          {summary.normalizedEdgeCount}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Warnings:</span>
+                        <span
+                          style={{
+                            color: summary.warnings.length > 0 ? "#fbbf24" : themeTokens.app.textMuted,
+                          } as React.CSSProperties}
+                        >
+                          {summary.warnings.length}
+                        </span>
+                      </div>
+                    </div>
+                    {summary.warnings.length > 0 && (
+                      <div
+                        className="mt-3 rounded p-2"
+                        style={{
+                          border: `1px solid #fbbf2430`,
+                          backgroundColor: "#78350f10",
+                        } as React.CSSProperties}
+                      >
+                        <div className="mb-1 text-xs font-semibold" style={{ color: "#fbbf24" } as React.CSSProperties}>
+                          Warnings (first 3):
+                        </div>
+                        <ul className="space-y-1 text-xs" style={{ color: "#fcd34d99" } as React.CSSProperties}>
+                          {summary.warnings.slice(0, 3).map((warning, index) => (
+                            <li key={index} className="truncate">
+                              • {warning}
+                            </li>
+                          ))}
+                          {summary.warnings.length > 3 && (
+                            <li style={{ color: "#fbbf2460" } as React.CSSProperties}>
+                              ... and {summary.warnings.length - 3} more
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+                    )}
+                    {summaryError && (
+                      <div
+                        className="mt-3 rounded px-3 py-2 text-xs"
+                        style={{
+                          backgroundColor: "#7f1d1d30",
+                          color: "#fca5a5",
+                        } as React.CSSProperties}
+                      >
+                        {summaryError}
+                      </div>
+                    )}
+                  </div>
+                </CollapsibleSection>
+                <CollapsibleSection
+                  title="Source Adapter"
+                  isOpen={settings.ui.graphTabSections.sourceAdapter}
+                  onToggle={() => setSetting("ui", {
+                    ...settings.ui,
+                    graphTabSections: {
+                      ...settings.ui.graphTabSections,
+                      sourceAdapter: !settings.ui.graphTabSections.sourceAdapter,
+                    }
+                  })}
+                  testId="section-source-adapter"
+                  accentColor={themeTokens.app.accent}
+                  borderColor={themeTokens.app.panelBorder}
+                >
+                  <div
+                    className="rounded-xl p-4"
+                    data-testid="source-adapter-panel-shell"
+                    style={{
+                      border: `1px solid ${themeTokens.app.panelBorder}`,
+                      backgroundColor: `${themeTokens.app.background}70`,
+                    }}
+                  >
+                    <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
+                      Source Adapter Registry
+                    </h3>
+                    <div className="min-h-0">
+                      <SourceAdapterPanel />
+                    </div>
+                  </div>
+                </CollapsibleSection>
+              </>
+            }
+            qaTabContent={
+              <CollapsibleSection
+                title="QA"
+                isOpen={settings.ui.qaTabSections.qaPanel}
+                onToggle={() => setSetting("ui", {
+                  ...settings.ui,
+                  qaTabSections: {
+                    ...settings.ui.qaTabSections,
+                    qaPanel: !settings.ui.qaTabSections.qaPanel,
+                  }
+                })}
+                testId="section-qa-panel"
+                accentColor={themeTokens.app.accent}
+                borderColor={themeTokens.app.panelBorder}
+              >
                 <div
                   className="rounded-xl p-4"
+                  data-testid="qa-panel"
                   style={{
                     border: `1px solid ${themeTokens.app.panelBorder}`,
                     backgroundColor: `${themeTokens.app.background}70`,
                   } as React.CSSProperties}
                 >
-                  <div style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>{summary.label}</div>
-                  <div className="mt-1 text-xs" style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>
-                    {summary.sourcePath}
-                  </div>
-                  <div
-                    className="mt-3 rounded-full px-3 py-1 text-xs"
-                    style={{
-                      backgroundColor: `${themeTokens.app.accent}10`,
-                      color: themeTokens.app.accent,
-                    } as React.CSSProperties}
-                  >
-                    {summary.status}
-                  </div>
-                  <div className="mt-3 space-y-1 text-xs">
-                    <div className="flex justify-between">
-                      <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>graph.json:</span>
-                      <span
-                        style={{
-                          color: summary.graphPresent ? themeTokens.app.accent : "#f87171",
-                        } as React.CSSProperties}
-                      >
-                        {summary.graphPresent ? "found" : "missing"}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>manifest.json:</span>
-                      <span
-                        style={{
-                          color: summary.manifestPresent ? themeTokens.app.accent : themeTokens.app.textMuted,
-                        } as React.CSSProperties}
-                      >
-                        {summary.manifestPresent ? "found" : "missing"}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>GRAPH_REPORT.md:</span>
-                      <span
-                        style={{
-                          color: summary.reportPresent ? themeTokens.app.accent : themeTokens.app.textMuted,
-                        } as React.CSSProperties}
-                      >
-                        {summary.reportPresent ? "found" : "missing"}
-                      </span>
-                    </div>
-                    <div className="mt-2 flex justify-between" style={{ borderTop: `1px solid ${themeTokens.app.panelBorder}10`, paddingTop: "0.5rem" }}>
-                      <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Raw nodes:</span>
-                      <span style={{ color: themeTokens.app.accent } as React.CSSProperties}>{summary.nodeCount}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Raw edges:</span>
-                      <span style={{ color: themeTokens.app.accent } as React.CSSProperties}>{summary.edgeCount}</span>
-                    </div>
-                    <div className="mt-2 flex justify-between" style={{ borderTop: `1px solid ${themeTokens.app.panelBorder}10`, paddingTop: "0.5rem" }}>
-                      <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Normalized nodes:</span>
-                      <span style={{ color: "#86efac" } as React.CSSProperties}>
-                        {summary.normalizedNodeCount}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Normalized edges:</span>
-                      <span style={{ color: "#86efac" } as React.CSSProperties}>
-                        {summary.normalizedEdgeCount}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Warnings:</span>
-                      <span
-                        style={{
-                          color: summary.warnings.length > 0 ? "#fbbf24" : themeTokens.app.textMuted,
-                        } as React.CSSProperties}
-                      >
-                        {summary.warnings.length}
-                      </span>
-                    </div>
-                  </div>
-                  {summary.warnings.length > 0 && (
-                    <div
-                      className="mt-3 rounded p-2"
-                      style={{
-                        border: `1px solid #fbbf2430`,
-                        backgroundColor: "#78350f10",
-                      } as React.CSSProperties}
-                    >
-                      <div className="mb-1 text-xs font-semibold" style={{ color: "#fbbf24" } as React.CSSProperties}>
-                        Warnings (first 3):
-                      </div>
-                      <ul className="space-y-1 text-xs" style={{ color: "#fcd34d99" } as React.CSSProperties}>
-                        {summary.warnings.slice(0, 3).map((warning, index) => (
-                          <li key={index} className="truncate">
-                            • {warning}
-                          </li>
-                        ))}
-                        {summary.warnings.length > 3 && (
-                          <li style={{ color: "#fbbf2460" } as React.CSSProperties}>
-                            ... and {summary.warnings.length - 3} more
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-                  )}
-                  {summaryError && (
-                    <div
-                      className="mt-3 rounded px-3 py-2 text-xs"
-                      style={{
-                        backgroundColor: "#7f1d1d30",
-                        color: "#fca5a5",
-                      } as React.CSSProperties}
-                    >
-                      {summaryError}
-                    </div>
-                  )}
-                </div>
-                <div
-                  className="mt-4 rounded-xl p-4"
-                  data-testid="source-adapter-panel-shell"
-                  style={{
-                    border: `1px solid ${themeTokens.app.panelBorder}`,
-                    backgroundColor: `${themeTokens.app.background}70`,
-                  }}
-                >
                   <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
-                    Source Adapter Registry
+                    QA
                   </h3>
                   <div className="min-h-0">
-                    <SourceAdapterPanel />
+                    <QaPanel
+                      themeAccent={themeTokens.app.accent}
+                      themeTextMuted={themeTokens.app.textMuted}
+                      themePanelBorder={themeTokens.app.panelBorder}
+                      themeInspectorEnabled={themeInspectorEnabled}
+                      onThemeInspectorToggle={() => setThemeInspectorEnabled((prev) => !prev)}
+                    />
                   </div>
                 </div>
-              </>
-            }
-            qaTabContent={
-              <div
-                className="rounded-xl p-4"
-                data-testid="qa-panel"
-                style={{
-                  border: `1px solid ${themeTokens.app.panelBorder}`,
-                  backgroundColor: `${themeTokens.app.background}70`,
-                } as React.CSSProperties}
-              >
-                <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
-                  QA
-                </h3>
-                <div className="min-h-0">
-                  <QaPanel
-                    themeAccent={themeTokens.app.accent}
-                    themeTextMuted={themeTokens.app.textMuted}
-                    themePanelBorder={themeTokens.app.panelBorder}
-                    themeInspectorEnabled={themeInspectorEnabled}
-                    onThemeInspectorToggle={() => setThemeInspectorEnabled((prev) => !prev)}
-                  />
-                </div>
-              </div>
+              </CollapsibleSection>
             }
             evidenceTabContent={
               <>
-                <div
-                  className="rounded-xl p-4"
-                  data-testid="graph-visual-inventory-panel"
-                  style={{
-                    border: `1px solid ${themeTokens.app.panelBorder}`,
-                    backgroundColor: `${themeTokens.app.background}70`,
-                  }}
+                <CollapsibleSection
+                  title="Graph Visual Inventory"
+                  isOpen={settings.ui.evidenceTabSections.graphVisualInventory}
+                  onToggle={() => setSetting("ui", {
+                    ...settings.ui,
+                    evidenceTabSections: {
+                      ...settings.ui.evidenceTabSections,
+                      graphVisualInventory: !settings.ui.evidenceTabSections.graphVisualInventory,
+                    }
+                  })}
+                  testId="section-graph-visual-inventory"
+                  accentColor={themeTokens.app.accent}
+                  borderColor={themeTokens.app.panelBorder}
                 >
-                  <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
-                    Graph Visual Inventory
-                  </h3>
-                  <div className="min-h-0">
-                    <GraphVisualInventoryPanel />
+                  <div
+                    className="rounded-xl p-4"
+                    data-testid="graph-visual-inventory-panel"
+                    style={{
+                      border: `1px solid ${themeTokens.app.panelBorder}`,
+                      backgroundColor: `${themeTokens.app.background}70`,
+                    }}
+                  >
+                    <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
+                      Graph Visual Inventory
+                    </h3>
+                    <div className="min-h-0">
+                      <GraphVisualInventoryPanel />
+                    </div>
                   </div>
-                </div>
-                <div
-                  className="mt-4 rounded-xl p-4"
-                  data-testid="system-index-panel-shell"
-                  style={{
-                    border: `1px solid ${themeTokens.app.panelBorder}`,
-                    backgroundColor: `${themeTokens.app.background}70`,
-                  }}
+                </CollapsibleSection>
+                <CollapsibleSection
+                  title="System Index"
+                  isOpen={settings.ui.evidenceTabSections.systemIndex}
+                  onToggle={() => setSetting("ui", {
+                    ...settings.ui,
+                    evidenceTabSections: {
+                      ...settings.ui.evidenceTabSections,
+                      systemIndex: !settings.ui.evidenceTabSections.systemIndex,
+                    }
+                  })}
+                  testId="section-system-index"
+                  accentColor={themeTokens.app.accent}
+                  borderColor={themeTokens.app.panelBorder}
                 >
-                  <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
-                    System Index
-                  </h3>
-                  <div className="min-h-0">
-                    <SystemIndexPanel />
+                  <div
+                    className="rounded-xl p-4"
+                    data-testid="system-index-panel-shell"
+                    style={{
+                      border: `1px solid ${themeTokens.app.panelBorder}`,
+                      backgroundColor: `${themeTokens.app.background}70`,
+                    }}
+                  >
+                    <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
+                      System Index
+                    </h3>
+                    <div className="min-h-0">
+                      <SystemIndexPanel />
+                    </div>
                   </div>
-                </div>
+                </CollapsibleSection>
               </>
             }
             debugTabContent={
-              <div
-                className="rounded-xl p-4"
-                data-testid="command-deck-panel"
-                style={{
-                  border: `1px solid ${themeTokens.app.panelBorder}`,
-                  backgroundColor: `${themeTokens.app.background}70`,
-                }}
+              <CollapsibleSection
+                title="Command Deck"
+                isOpen={settings.ui.debugTabSections.commandDeck}
+                onToggle={() => setSetting("ui", {
+                  ...settings.ui,
+                  debugTabSections: {
+                    ...settings.ui.debugTabSections,
+                    commandDeck: !settings.ui.debugTabSections.commandDeck,
+                  }
+                })}
+                testId="section-command-deck"
+                accentColor={themeTokens.app.accent}
+                borderColor={themeTokens.app.panelBorder}
               >
-                <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
-                  Command Deck
-                </h3>
-                <div className="min-h-0">
-                  <CommandDeckPanel
-                    themeAccent={themeTokens.app.accent}
-                    themeTextMuted={themeTokens.app.textMuted}
-                    themePanelBorder={themeTokens.app.panelBorder}
-                  />
+                <div
+                  className="rounded-xl p-4"
+                  data-testid="command-deck-panel"
+                  style={{
+                    border: `1px solid ${themeTokens.app.panelBorder}`,
+                    backgroundColor: `${themeTokens.app.background}70`,
+                  }}
+                >
+                  <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
+                    Command Deck
+                  </h3>
+                  <div className="min-h-0">
+                    <CommandDeckPanel
+                      themeAccent={themeTokens.app.accent}
+                      themeTextMuted={themeTokens.app.textMuted}
+                      themePanelBorder={themeTokens.app.panelBorder}
+                    />
+                  </div>
                 </div>
-              </div>
+              </CollapsibleSection>
             }
             settingsTabContent={
               <div

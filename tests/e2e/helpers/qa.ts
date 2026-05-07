@@ -284,3 +284,24 @@ export async function expectChecklistContainsChecks(page: Page, expectedTitles: 
     await qaPanel.getByTestId("qa-check-previous").click();
   }
 }
+
+/**
+ * Expand a collapsible section if it's collapsed
+ * @param page - Playwright page
+ * @param testId - The testid of the collapsible section (without "-toggle" suffix)
+ */
+export async function expandSection(
+  page: Page,
+  testId: string
+): Promise<void> {
+  const toggle = page.getByTestId(
+    `${testId}-toggle`
+  );
+  const expanded = await toggle.getAttribute(
+    "aria-expanded"
+  );
+  if (expanded === "false") {
+    await toggle.click();
+    await page.waitForTimeout(250);
+  }
+}
