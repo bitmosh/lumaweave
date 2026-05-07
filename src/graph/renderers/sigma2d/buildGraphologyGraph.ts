@@ -22,7 +22,7 @@ export interface LayoutSettings {
   linkDistance: number;
   repelForce: number;
   centerForce: number;
-  physicsDialect: "default" | "helix";
+  physicsDialect: "default" | "helix" | "solar-orbit";
   nodeColorScale?: string[]; // theme-driven
 }
 
@@ -218,6 +218,7 @@ export interface GraphBuildResult {
     isolatedNodeCount: number;
     largestComponentSize: number;
   };
+  clusterSuns?: Map<string, string>;
 }
 
 /**
@@ -331,6 +332,33 @@ export function buildGraphologyGraph(
     });
   }
 
+  // Find the highest-degree node per cluster (the sun)
+  const clusterSuns = new Map<string, string>();
+  const clusterMaxDegree = new Map<string, number>();
+
+  graph.forEachNode((nodeId, attrs) => {
+    const cluster =
+      (attrs.raw as any)?.cluster ?? "gray";
+    const deg =
+      (centralityScores[nodeId] ?? 0) as number;
+    if (!clusterSuns.has(cluster) ||
+        deg > (clusterMaxDegree.get(cluster) ?? 0)) {
+      clusterSuns.set(cluster, nodeId);
+      clusterMaxDegree.set(cluster, deg);
+    }
+  });
+
+  // Tag cluster suns as node attribute
+  clusterSuns.forEach((sunNodeId, cluster) => {
+    graph.setNodeAttribute(sunNodeId, "isSun", true);
+    graph.setNodeAttribute(sunNodeId, "cluster", cluster);
+  });
+
+  // Add suns to diagnostics/graph attributes
+  graph.setAttribute(
+    "clusterSunCount", clusterSuns.size
+  );
+
   // Apply dialect-specific layout seeding
   if (settings.physicsDialect === "helix") {
     // Run Louvain community detection before helix layout
@@ -427,5 +455,6 @@ export function buildGraphologyGraph(
   return {
     graph,
     diagnostics,
+    clusterSuns,
   };
 }

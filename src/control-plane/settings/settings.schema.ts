@@ -63,7 +63,7 @@ export interface StarmapSettings {
     repelForce: number;
     centerForce: number;
     communityGravity: number;
-    physicsDialect: "default" | "helix";
+    physicsDialect: "default" | "helix" | "solar-orbit";
     // ForceAtlas2 advanced parameters
     strongGravityMode: boolean;
     linLogMode: boolean;

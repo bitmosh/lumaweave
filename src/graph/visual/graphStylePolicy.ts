@@ -49,6 +49,18 @@ function resetGraphStyles(graph: Graph, tokens: ResolvedGraphVisualTokens): void
     } else {
       graph.setNodeAttribute(node, "size", baseSize);
     }
+
+    // Visual treatment for sun nodes (solar-orbit dialect)
+    const isSun = attrs.isSun as boolean;
+    if (isSun) {
+      // Sun nodes render larger and brighter
+      graph.setNodeAttribute(
+        node, "size",
+        (attrs.baseSize as number) * 1.8
+      );
+      // Add a subtle border effect via zIndex
+      // (Sigma renders larger nodes on top)
+    }
   });
 
   graph.forEachEdge((edge) => {

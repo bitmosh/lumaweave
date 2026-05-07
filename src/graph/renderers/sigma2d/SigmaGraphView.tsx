@@ -45,7 +45,7 @@ interface SigmaGraphViewProps {
   repelForce: number;
   centerForce: number;
   physicsPreset: "custom" | "balanced" | "spread" | "tight" | "organic" | "performance";
-  physicsDialect: "default" | "helix";
+  physicsDialect: "default" | "helix" | "solar-orbit";
   // ForceAtlas2 advanced parameters
   strongGravityMode: boolean;
   linLogMode: boolean;
@@ -173,6 +173,7 @@ export function SigmaGraphView({
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resolvedTokensRef = useRef(resolvedTokens);
   const communityGravityRef = useRef<(() => void) | null>(null);
+  const solarOrbitRef = useRef<(() => void) | null>(null);
 
   // Sync resolvedTokens ref on every render
   useEffect(() => {
@@ -238,6 +239,134 @@ export function SigmaGraphView({
       }
     };
   }, [communityGravity]);
+
+  // Separate useEffect for solar-orbit dialect
+  useEffect(() => {
+    const sigma = sigmaRef.current;
+    const graph = graphRef.current;
+    if (!sigma || !graph) return;
+
+    // Remove previous handler
+    if (solarOrbitRef.current) {
+      sigma.removeListener("afterRender", solarOrbitRef.current);
+    }
+
+    if (physicsDialect !== "solar-orbit") {
+      solarOrbitRef.current = null;
+      return;
+    }
+
+    const handler = () => {
+      // Step 1: compute cluster centroids
+      const centroids = new Map<string,
+        {x:number, y:number, count:number,
+         sunId:string|null}>();
+
+      graph.forEachNode((nodeId: string, attrs: any) => {
+        const cluster =
+          (attrs.raw as any)?.cluster ?? "gray";
+        if (!centroids.has(cluster)) {
+          centroids.set(cluster,
+            {x:0, y:0, count:0, sunId:null});
+        }
+        const c = centroids.get(cluster)!;
+        c.x += (attrs.x as number);
+        c.y += (attrs.y as number);
+        c.count++;
+        if (attrs.isSun) c.sunId = nodeId;
+      });
+
+      centroids.forEach(c => {
+        c.x /= c.count;
+        c.y /= c.count;
+      });
+
+      // Step 2: pull nodes toward their centroid
+      // Sun nodes: stronger pull (they anchor cluster)
+      // Non-sun nodes: moderate pull
+      graph.forEachNode((nodeId: string, attrs: any) => {
+        const cluster =
+          (attrs.raw as any)?.cluster ?? "gray";
+        const centroid = centroids.get(cluster);
+        if (!centroid) return;
+
+        const isSun = attrs.isSun as boolean;
+        const strength = isSun ? 0.004 : 0.002;
+
+        const dx = centroid.x - (attrs.x as number);
+        const dy = centroid.y - (attrs.y as number);
+
+        graph.setNodeAttribute(nodeId, "x",
+          (attrs.x as number) + dx * strength);
+        graph.setNodeAttribute(nodeId, "y",
+          (attrs.y as number) + dy * strength);
+      });
+
+      // Step 3: inter-cluster sun repulsion
+      // Suns push away from other suns
+      const sunList: Array<{
+        id:string, x:number, y:number
+      }> = [];
+
+      centroids.forEach((c) => {
+        if (c.sunId) {
+          const sunAttrs =
+            graph.getNodeAttributes(c.sunId);
+          sunList.push({
+            id: c.sunId,
+            x: sunAttrs.x as number,
+            y: sunAttrs.y as number,
+          });
+        }
+      });
+
+      // Apply repulsion between each pair of suns
+      for (let i = 0; i < sunList.length; i++) {
+        for (let j = i+1; j < sunList.length; j++) {
+          const a = sunList[i];
+          const b = sunList[j];
+          const dx = b.x - a.x;
+          const dy = b.y - a.y;
+          const dist = Math.sqrt(dx*dx + dy*dy)
+            || 1;
+
+          // Repulsion falls off with distance
+          const force = Math.min(
+            200 / (dist * dist), 0.5
+          );
+          const nx = dx / dist;
+          const ny = dy / dist;
+
+          const aAttrs =
+            graph.getNodeAttributes(a.id);
+          const bAttrs =
+            graph.getNodeAttributes(b.id);
+
+          graph.setNodeAttribute(a.id, "x",
+            (aAttrs.x as number) - nx * force);
+          graph.setNodeAttribute(a.id, "y",
+            (aAttrs.y as number) - ny * force);
+          graph.setNodeAttribute(b.id, "x",
+            (bAttrs.x as number) + nx * force);
+          graph.setNodeAttribute(b.id, "y",
+            (bAttrs.y as number) + ny * force);
+        }
+      }
+    };
+
+    solarOrbitRef.current = handler;
+    sigma.on("afterRender", handler);
+
+    return () => {
+      if (solarOrbitRef.current) {
+        sigma.removeListener(
+          "afterRender",
+          solarOrbitRef.current
+        );
+        solarOrbitRef.current = null;
+      }
+    };
+  }, [physicsDialect]);
 
   const [debugInfo, setDebugInfo] = useState<Record<string, string | number>>(
     {},
@@ -306,6 +435,11 @@ export function SigmaGraphView({
 
       // Store graph for FA2 supervisor updates
       graphRef.current = graph;
+
+      // Clear solar orbit attributes on rebuild
+      graph.forEachNode((nodeId) => {
+        graph.removeNodeAttribute(nodeId, "isSun");
+      });
 
     setDebugInfo({
       sigmaInputNodes: nodes.length,

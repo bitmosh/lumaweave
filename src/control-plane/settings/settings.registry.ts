@@ -85,6 +85,7 @@ export const settingsRegistry: SettingControl[] = [
     options: [
       { value: "default", label: "Default (Force-Directed)" },
       { value: "helix", label: "Helix (Brand Shape)" },
+      { value: "solar-orbit", label: "Solar Orbit" },
     ],
   },
   {
