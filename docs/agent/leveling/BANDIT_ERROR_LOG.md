@@ -62,6 +62,16 @@ escalated         — requires architectural decision
   Root cause: v75a changed graph-viewport testid to self-graph-fixture-loaded, tests not updated
   Human action: Authorized fix - testid updates + overlay selector fix + mode-aware assertions
 
+2026-05-07 · yaml-graph-parser · Runtime Lifecycle · strategies: 1 · resolved-agent
+  Failure: YAML parser wired at module load caused DOM detachment cascade across all Playwright tests
+  Attempted: 1) Module-level constant fix to prevent re-renders (failed - parser threw at module load)
+  2) Reverted to static fixture to restore stability
+  Root cause: Vite glob import.meta.glob() + gray-matter parsing at module initialization caused full component remount on every render
+  Human action: Authorized revert to static fixture, preserve parser file for future debugging
+  Fix needed: lazy load parser, Web Worker, or Vite virtual module approach
+  XP: +0.0 (self-split recovery — no XP)
+  Clean streak: RESETS to 0
+
 2026-05-06 · v75a · Runtime Lifecycle / Regression · strategies: 0 · deferred
   Failure: 8 pre-existing Playwright failures (command-deck: 1, graph-visual-inventory: 2,
   graph-visual-state-stability: 3, theme-target-inspector: 2)

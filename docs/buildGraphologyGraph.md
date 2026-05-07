@@ -4,9 +4,9 @@
  */
 
 import Graph from "graphology";
+import forceAtlas2 from "graphology-layout-forceatlas2";
 import noverlap from "graphology-layout-noverlap";
 import louvain from "graphology-communities-louvain";
-import { degree } from "graphology-metrics/centrality";
 import type {
   LumaWeaveEdgeDraft,
   LumaWeaveNodeDraft,
@@ -232,24 +232,20 @@ export function buildGraphologyGraph(
   const baseSize = 10;
 
   nodes.forEach((node, index) => {
-    try {
-      const position = getSunflowerPosition(index, layoutScale);
+    const position = getSunflowerPosition(index, layoutScale);
 
-      graph.addNode(node.id, {
-        x: position.x,
-        y: position.y,
-        label: node.label,
-        fullLabel: node.label,
-        originalLabel: node.label,
-        size: ((node.raw?.size as number) ?? baseSize) * settings.nodeSize,
-        baseSize: (node.raw?.size as number) ?? baseSize,
-        color: (node.raw?.color as string) ?? "#22d3ee",
-        nodeType: node.type || "unknown",
-        raw: node.raw,
-      });
-    } catch (error) {
-      console.warn(`Failed to add node ${node.id}:`, error);
-    }
+    graph.addNode(node.id, {
+      x: position.x,
+      y: position.y,
+      label: node.label,
+      fullLabel: node.label,
+      originalLabel: node.label,
+      size: ((node.raw?.size as number) ?? baseSize) * settings.nodeSize,
+      baseSize: (node.raw?.size as number) ?? baseSize,
+      color: (node.raw?.color as string) ?? "#22d3ee",
+      nodeType: node.type || "unknown",
+      raw: node.raw,
+    });
   });
 
   edges.forEach((edge) => {
@@ -261,33 +257,13 @@ export function buildGraphologyGraph(
         label: relationshipLabel,
         fullLabel: relationshipLabel,
         originalLabel: relationshipLabel,
-        color: (edge.raw?.color as string) ?? "rgba(100,130,180,0.55)",
-        size: (edge.raw?.size as number) ?? 1.5,
+        color: "#64748b",
+        size: 3,
         raw: edge.raw,
       });
     } catch (error) {
       console.warn(`Failed to add edge ${edge.id}:`, error);
     }
-  });
-
-  // Degree centrality — boost size of well-connected nodes
-  const centralityScores = degree(graph);
-  const maxCentrality = Math.max(
-    1,
-    ...Object.values(centralityScores)
-  );
-
-  graph.forEachNode((nodeId) => {
-    const attrs = graph.getNodeAttributes(nodeId);
-    const baseSz = (attrs.baseSize as number) ?? 8;
-    const c = (centralityScores[nodeId] ?? 0) as number;
-    const normalized = c / maxCentrality;
-    // Blend: base size + up to 80% boost for most connected
-    const newSize = baseSz * (1 + normalized * 0.8);
-    graph.setNodeAttribute(
-      nodeId, "size", newSize * settings.nodeSize
-    );
-    graph.setNodeAttribute(nodeId, "baseSize", newSize);
   });
 
   // Apply dialect-specific layout seeding
@@ -299,8 +275,20 @@ export function buildGraphologyGraph(
   }
 
   // Apply ForceAtlas2 force simulation
-  // Moved to SigmaGraphView.tsx as continuous supervisor
   // Initial sunflower positions seed the layout
+  forceAtlas2.assign(graph, {
+    iterations: settings.physicsDialect === "helix" ? 10 : 100,
+    settings: {
+      gravity: settings.physicsDialect === "helix" ? 0.001 : Math.max(0.1, settings.centerForce * 0.01),
+      scalingRatio: settings.physicsDialect === "helix" ? 0.1 : Math.max(1, settings.repelForce * 0.15),
+      strongGravityMode: false,
+      linLogMode: false,
+      adjustSizes: settings.physicsDialect === "helix" ? false : false,
+      barnesHutOptimize: settings.physicsDialect === "helix" ? false : false,
+      barnesHutTheta: 0.5,
+      slowDown: settings.physicsDialect === "helix" ? 10 : Math.max(1, settings.linkDistance * 0.05),
+    },
+  });
 
   // Anti-collision pass — nudges nodes apart
   // after FA2 settles the layout

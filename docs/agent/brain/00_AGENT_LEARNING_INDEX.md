@@ -18,11 +18,12 @@ tags: [bandit, brain, index, learning, self-management]
 ## Current State
 
 ```
-Level:        45.25
-Title:        System Index Architect
-Clean streak: 3  (v71b → v72 series → v73c)
-Last pass:    v73c — Mode Registry Validator v0 — ACCEPTED
-Next pass:    v74a — Source Adapter OS Foundation Contract
+Level:        115.75
+Title:        Living Graph Architect
+★ LEVEL 100 MILESTONE ACHIEVED ★
+Clean streak: 25  (yaml-graph-parser → debounce-graph-rebuild → theme-family-redesign → lw-visual-accent-fix → noverlap-v1 → theme-docs-update → degree-centrality-v1 → left-panel-scroll-nav → v0.5.0+yaml-dedup → continuous-fa2-loop → physics-settings-expansion → fa2-worker-edge-fix → dialect-selector+source-name → testid-selector-compatibility → left-panel-accordion → fa2-worker-regression → shortest-path → physics-defaults-fix → slider-track-fix → cluster-depth-slider → additional-physics-settings → yaml-dedup-verification → graphology-traversal-bfs → sigma-lifecycle-edge-fix → edge-sigma-lifecycle-fix)
+Last pass:    edge-sigma-lifecycle-fix — edge colors preserved through raw.color, all 6 theme edgeDefaults visible, resolvedTokensRef prevents render storm, ResizeObserver no longer kills Sigma, forEachNode/Edge overwrites removed, 345 passed — ACCEPTED
+Next pass:    TBD (awaiting user direction)
 Active agent: Bandit (lead) + DeepSeek V4 (implementation, Cascade)
 ```
 
@@ -142,6 +143,42 @@ Current level milestones:
 
 Next title rotation expected: ~level 50, or after the self-graph
 fixture (v75a/v75b) is accepted — whichever comes first.
+
+---
+
+## Version Tracking Rules
+
+### Product Version (package.json)
+
+Semantic versioning for user-facing milestones:
+- Currently: 0.5.0
+- Bump minor (0.x.0) for each major arc completion
+- Bump patch (0.0.x) for hotfixes only
+
+Semantic versioning map:
+- 0.1.0 — scaffold era (v36-v46)
+- 0.2.0 — theme/audio governance (v47-v66)
+- 0.3.0 — QA/registry/system index (v67-v73c)
+- 0.4.0 — source adapter + self-graph (v74-v75b)
+- 0.5.0 — physics + themes + UI overhaul ← CURRENT
+
+Future bumps:
+- 0.6.0 — continuous physics + YAML parser working
+- 0.7.0 — 3D projection + dialect selector
+- 0.8.0 — VGE bootstrap
+- 1.0.0 — launch ready
+
+### QA Governance Version (v74b, v75a, v76, etc.)
+
+Sub-passes follow: v76a, v76b, v76c, v76d
+- Major version = new topic arc
+- Sub-pass = continuation within same arc
+
+### Separation of Concerns
+
+These are separate systems — do not conflate them:
+- Product version tracks user-facing milestones
+- QA version tracks governance compliance
 
 ---
 

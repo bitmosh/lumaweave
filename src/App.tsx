@@ -1,13 +1,8 @@
 import "./App.css";
-import { AppProviders } from "./app/AppProviders";
 import { AppShell } from "./app/AppShell";
 
 function App() {
-  return (
-    <AppProviders>
-      <AppShell />
-    </AppProviders>
-  );
+  return <AppShell />;
 }
 
 export default App;

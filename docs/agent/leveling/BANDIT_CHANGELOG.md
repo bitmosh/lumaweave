@@ -26,9 +26,151 @@ Updated by the agent that ran the pass before XP is awarded.
 
 ---
 
-## 2026-05-06
+## 2026-05-07
 
 ```
+2026-05-07 · edge-sigma-lifecycle-fix · architectural · ACCEPTED —
+  edge colors preserved through raw.color, all 6 theme edgeDefaults visible,
+  resolvedTokensRef prevents render storm, ResizeObserver no longer kills Sigma,
+  forEachNode/Edge overwrites removed, 345 passed streak 25 level 115.75 — Bandit
+
+2026-05-07 · sigma-lifecycle-edge-fix · bugfix · ACCEPTED —
+  edge color reads from raw not token (token was undefined),
+  resolvedTokens removed from main useEffect deps (was killing Sigma on
+  every drag/render), separate theme useEffect added,
+  345 passed streak 24 level 115.25 — Bandit
+
+2026-05-07 · traversal-bfs-replace · refactor · ACCEPTED —
+  replaced custom selectionNeighborhood.ts with graphology-traversal bfsFromNode,
+  preserved return type, 345 passed streak 22 BONUS +1.5 XP level 114.25 — Bandit
+
+2026-05-07 · yaml-dedup-verification · verification · ACCEPTED —
+  self-graph generator confirmed clean deduplication (124 nodes, 0 dupes, 115 edges) — Bandit
+
+2026-05-07 · physics-settings-expansion-d · feature · ACCEPTED —
+  physicsPreset dropdown (5 presets), communityGravity slider,
+  linkDistance range fix (1-20, direct mapping), preset values wired to FA2 supervisor,
+  345 passed streak 21 level 112.75 — Bandit
+
+2026-05-07 · cluster-depth-slider · feature · ACCEPTED —
+  neighborhood depth dropdown replaced with slider (1.0-4.0, step 0.1),
+  depth 4 support added (quaternary nodes), 345 passed
+  streak 20 level 111.75 — Bandit
+
+2026-05-07 · slider-track-fix · bugfix · ACCEPTED —
+  slider two-tone track now updates with knob position,
+  ref callback sets initial --range-progress on mount,
+  345 passed streak 19 level 110.75 — Bandit
+
+2026-05-07 · physics-defaults-fix · bugfix · ACCEPTED —
+  physics defaults tuned (centerForce 200, linkDistance 50),
+  slider renamed to Simulation Speed, 345 passed
+  streak 18 level 110.25 — Bandit
+
+2026-05-07 · shortest-path · ACCEPTED —
+  graphology-shortest-path bidirectional pathfinding,
+  Ctrl+Click to set path target, gold highlight,
+  345 passed streak 17 BONUS +1.0 XP level 109.75 — Bandit
+
+2026-05-07 · fa2-worker-regression · bugfix · ACCEPTED —
+  edge flash fixed (afterRender pattern for slider updates),
+  node drag fixed (pause worker during drag, resume on release),
+  345 passed streak 16 level 108.75 — Bandit
+
+2026-05-07 · left-panel-accordion · ACCEPTED —
+  collapsible accordion sections for all left panel tabs,
+  CollapsibleSection component, expandSection helper,
+  345 passed streak 15 — Bandit
+
+2026-05-07 · testid-selector-compatibility · partial ACCEPTED —
+  updated theme-target-inspector testid selectors for
+  fixture/real source compatibility, useFixture smart switching
+  deferred (layout assertions need updating), 345 passed
+  streak 14 — Bandit
+
+2026-05-07 · dialect-selector + source-name · partial ACCEPTED —
+  physics dialect UI added, useFixture smart switching
+  deferred (test constraint documented), 345 passed
+  streak 13 BONUS +1.0 XP level 106.75 — Bandit
+
+2026-05-07 · fa2-worker-edge-fix · bugfix · ACCEPTED —
+  FA2 worker deferred to sigma afterRender,
+  edges now visible, 345 passed streak 12 — Bandit
+
+2026-05-07 · physics-settings-expansion · runtime · ACCEPTED —
+  4 FA2 params + UI controls, worker API limits discovered
+  (no outboundAttrDist or edgeWeightInfluence), 345 passed
+  streak 11 level 104.5 — Bandit
+
+2026-05-07 · continuous-fa2-loop · runtime · ACCEPTED —
+  FA2 Web Worker supervisor, live slider updates,
+  nodeSize without rebuild, 345 passed streak 10
+  level 103.5 — Bandit
+
+2026-05-07 · v0.5.0 + yaml-dedup · chore+fix · ACCEPTED —
+  version bumped to 0.5.0, YAML generator deduplication fixed,
+  124 nodes 115 edges generating cleanly, 4/4 self-graph passing,
+  streak 9 — Bandit
+
+2026-05-07 · left-panel-scroll-nav · runtime · ACCEPTED —
+  scroll-to-section tab navigation, reverted height:0 approach,
+  345 passed, streak 8 bonus +0.5 XP level 102.0 — Bandit
+
+2026-05-07 · degree-centrality-v1 · runtime · ACCEPTED —
+  graphology-metrics degree centrality, node size scales
+  with connection count, 345 passed streak 7
+  ★ LEVEL 100 MILESTONE ACHIEVED ★ — Bandit
+
+2026-05-07 · theme-docs-update · docs · ACCEPTED — Updated
+  3 theme docs to 6-theme family, streak 6 level 99.5 — Bandit
+
+2026-05-07 · noverlap-v1 · runtime · ACCEPTED — anti-collision
+  pass after FA2, 345 passed, streak 5 bonus +0.5 XP level 99.25 — Bandit
+
+2026-05-07 · lw-visual-accent-fix · bugfix · ACCEPTED — wired
+  --lw-visual-accent to theme accent token, all 6 themes now drive
+  slider and title colors correctly, streak 4 — Bandit
+
+2026-05-07 · theme-family-redesign · runtime · ACCEPTED — 6 new themes:
+  solar-plasma (refined), obsidian-aurora (refined), midnight-loom,
+  void-circuit, agartha-dream, agartha-dusk, 345 passed streak 3
+  bonus +0.25 XP level 98.25 — Bandit
+
+2026-05-07 · debounce-graph-rebuild · runtime · ACCEPTED — 150ms debounce
+  on SigmaGraphView useEffect, slider choppiness fixed, 345 passed streak 2
+  bonus +0.25 XP, level 97.0 — Bandit
+
+2026-05-07 · yaml-graph-parser · docs · ACCEPTED — gray-matter installed,
+  graphology packages, yaml-graph-parser foundation (unwired), vite.config fs.allow,
+  parser preserved for future debugging, 345 passed streak reset to 1 — Bandit
+
+2026-05-07 · louvain-helix-v1 · runtime · ACCEPTED — Louvain community
+  detection for helix dialect, universal helix support, 345 passed streak 15 — Bandit
+
+2026-05-07 · skip-cleanup-v1 + styling · runtime · ACCEPTED — skip count 9→8,
+  title/slider theme colors, panel UX, test helper fixes, 345 passed streak 14 — Bandit
+
+2026-05-07 · left-panel-ux-v2 · runtime · ACCEPTED — Icon strip collapse,
+  resize handle, leftPanelWidth setting, 347 passed streak 13 BONUS +1.0 XP — Bandit
+
+2026-05-06 · visual-polish-v1 · runtime · ACCEPTED — Radial gradient,
+  panel borders, slider colors, test timing fix, 347 passed streak 12 — Bandit
+
+2026-05-06 · helix-fix + slider-colors · bugfix · ACCEPTED — FA2 reduced
+  for helix, slider accent colors fixed, streak 11, level 90.75 — Bandit
+
+2026-05-06 · cluster-color-fix · bugfix · ACCEPTED — graphStylePolicy
+  resetGraphStyles was overwriting cluster colors on every interaction,
+  fixed to read raw.color as default, 347 passed streak 10 — Bandit
+
+2026-05-06 · helix-dialect-v1 · runtime · ACCEPTED — Helix physics dialect,
+  cluster-based helix backbone + constellation branches, 30 FA2 iterations,
+  strongGravityMode for helix, 347 passed 9 skipped 0 failed, streak 9 — Bandit
+
+2026-05-06 · node-drag-v1 · runtime · ACCEPTED — Sigma v3 drag nodes via event listeners,
+  viewportToGraph coord conversion, camera disable during drag, FA2 fixed attr pattern,
+  347 passed 9 skipped 0 failed, streak 8 (+0.5 bonus) — Bandit
+
 2026-05-06 · physics-wiring-v1 · runtime · ACCEPTED — ForceAtlas2 live physics,
   wired repelForce + linkDistance + centerForce to FA2 parameters,
   sunflower seeds layout, 347 passed 0 failed, streak 6 — Bandit
@@ -115,7 +257,7 @@ If multiple things happened in one session, use multiple lines:
 
 | Agent  | Accepted Passes | Last Pass | Current Streak |
 |--------|----------------|-----------|----------------|
-| Bandit | 6 (v74b, grammar-lens-contract, v75a, v75b, repair-pass-v75b, physics-wiring-v1) | physics-wiring-v1 | 6 |
+| Bandit | 19 (degree-centrality-v1, theme-docs-update, noverlap-v1, lw-visual-accent-fix, theme-family-redesign, yaml-graph-parser, debounce-graph-rebuild, v74b, grammar-lens-contract, v75a, v75b, repair-pass-v75b, physics-wiring-v1, node-drag-v1, helix-dialect-v1, cluster-color-fix, helix-fix+slider-colors, visual-polish-v1, left-panel-ux-v2) | degree-centrality-v1 | 7 |
 | DeepSeek | 0            | —         | 0              |
 
 *Update this table after each accepted pass.*

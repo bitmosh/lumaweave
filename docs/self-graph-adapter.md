@@ -37,17 +37,6 @@ function typeToSize(type: string): number {
   return map[type] ?? 8;
 }
 
-function edgeTypeToColor(type: string): string {
-  const map: Record<string, string> = {
-    "contains":   "rgba(79,163,224,0.45)",
-    "governs":    "rgba(166,125,232,0.45)",
-    "depends_on": "rgba(79,217,200,0.45)",
-    "related":    "rgba(100,217,164,0.45)",
-    "imports":    "rgba(224,168,79,0.45)",
-  };
-  return map[type] ?? "rgba(100,130,180,0.4)";
-}
-
 export function adaptSelfGraphToSigma(graph: LumaSourceGraph): {
   nodes: LumaWeaveNodeDraft[];
   edges: LumaWeaveEdgeDraft[];
@@ -74,8 +63,6 @@ export function adaptSelfGraphToSigma(graph: LumaSourceGraph): {
       confidence: edge.confidence,
       weight: edge.weight,
       label: edge.label,
-      color: edgeTypeToColor(edge.type),
-      size: 1.5,
       ...edge.metadata,
     },
   }));

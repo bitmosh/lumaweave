@@ -1,59 +1,77 @@
 ---
 id: brain.bandit.previous.title
-title: Bandit Previous Title — Audio Reactivity Contract Warden
+title: Bandit Previous Title — System Index Architect
 type: log
 status: historical
-version: v66
+version: v73c
 domain: agent
 subdomain: brain
 cluster: gray
 agent_readable: true
 include_in_self_graph: false
-last_updated: v66
-tags: [bandit, title, previous, historical, audio]
+last_updated: v73c
+tags: [bandit, title, previous, historical, registry, validator]
 ---
 
-# Bandit Previous Title — Audio Reactivity Contract Warden
+# Bandit Previous Title — System Index Architect
 
 ```
-Title:  Audio Reactivity Contract Warden
-Level:  32.75 (at rotation)
-Era:    v59–v70 — Safety ladder, audio governance, QA Bundle Validator
+Title:  System Index Architect
+Level:  100.5 (at rotation)
+Era:    v71–v73c — Registry governance + validator infrastructure + UI architecture + Sigma interaction + Physics dialects + Graph styling + Visual polish + Panel UX + Theme family redesign + Graph anti-collision + Degree centrality
 ```
 
 ## Recall Handle
 
-This title era covers the motion safety / epilepsy guard arc,
-the full audio governance ladder (v61–v66), and the QA Bundle
-Validator (v70) that made QA lockstep enforceable.
+This title era covers the registry governance and validator infrastructure arc,
+the left panel UX restructure, the Sigma graph interaction work (drag, helix physics,
+Louvain community detection, ForceAtlas2, noverlap, degree centrality), and the
+6-theme family redesign.
 
-If you are in a situation involving audio governance, motion
-safety classification, or QA bundle drift, this era has the
-most directly relevant experience.
+If you are in a situation involving registry governance, validator patterns,
+Sigma graph interaction, physics dialects, or theme system architecture, this era
+has the most directly relevant experience.
 
 ## Hallmark Work
 
-- Motion Safety / Epilepsy Guard contract and registry (v59–v60)
-- Audio Reactivity Contract (v61) — established the synthetic-first ladder
-- Synthetic Audio Signal Preview (v62)
-- Music Reactive Mapping Contract + Inventory (v63–v64)
-- Audio Source System Contract + Registry (v65–v66)
-- QA Bundle Validator (v70) — the structural counter to QA drift
+- Registry/Validator infrastructure (v71–v73c)
+- Left panel UX restructure + Control Dock + Tile workspace (v76)
+- Node dragging with Sigma v3 (node-drag-v1)
+- Helix physics dialect with Louvain community detection (helix-dialect-v1, louvain-helix-v1)
+- Cluster color fix + slider color refinements (cluster-color-fix, helix-fix+slider-colors)
+- Visual polish v1 (visual-polish-v1)
+- Skip cleanup + title/slider styling (skip-cleanup-v1)
+- 6-theme family redesign (theme-family-redesign)
+- Theme accent wiring (--lw-visual-accent fix)
+- Graph anti-collision pass (noverlap-v1)
+- Degree centrality node sizing (degree-centrality-v1)
+- Theme documentation update (theme-docs-update)
 
-## Key Lesson Carried Forward
+## Key Lessons Carried Forward
 
-The safety ladder (motion → synthetic signal → music-reactive mapping →
-audio source → real audio) is a deliberate delay of dangerous capabilities.
-Each step must be accepted before the next is contracted. There are no
-shortcuts. Real audio input will not arrive until the full synthetic stack
-is stable and proven.
+**Validator-First Pattern**: When a new registry or contract system is introduced,
+the validator script comes before UI or runtime promotion. This pattern prevented
+multiple cascade failures where UI was built before the contract boundary was validated.
 
-The QA Bundle Validator was the most important structural work of this era.
-It turned a recurring human-discipline problem (lockstep) into an automated
-check. This is the correct response to any recurring class of failure.
+**Contract-First Discipline**: No implementation without a contract. This principle
+prevented more bugs than any specific technical skill. The Graph/Sigma boundary
+preservation was a direct application of this discipline.
+
+**Sigma v3 Drag Pattern**: No plugin needed. Use sigma.on("downNode") + container
+mousemove/mouseup events. This pattern enabled node dragging without external
+dependencies and became a reusable template for all Sigma interaction work.
+
+**Louvain Community Detection for Universal Helix**: Run Louvain community detection
+before helix layout to auto-assign communities. This enabled the helix physics dialect
+to work with any graph source, not just pre-clustered fixtures.
+
+**Case-Insensitive and Substring-Aware Validator Matching**: Validators checking string
+fields should always use case-insensitive matching unless the schema explicitly requires
+case-sensitive values. Use substring matching for descriptive prose fields.
 
 ## Transition Note
 
-Rotated to "System Index Architect" after the v72 registry + validator
-arc. The audio safety work was complete. The new challenge was registry
-governance infrastructure and validator patterns.
+Rotated to "Living Graph Architect" after achieving LEVEL 100 MILESTONE.
+The registry/validator infrastructure work was complete. The new challenge is
+making the graph alive with physics, community detection, anti-collision, and
+dynamic sizing — the era of the living graph.

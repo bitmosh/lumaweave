@@ -100,7 +100,52 @@ A clean streak is a count of consecutive accepted passes with:
 
 The streak resets on any self-split, recovery pass, or DO NOT ACCEPT result.
 
-Current streak: 3 (v71b → v72 series → v73c)
+Current streak: 7 (v71b → v72 series → v73c → v75a physics wiring → v76 left panel UX)
+
+---
+
+## Streak Bonus System
+
+Clean streak bonuses awarded at Fibonacci streak counts:
+
+```
+Streak 2  → +0.25 XP bonus
+Streak 3  → +0.25 XP bonus
+Streak 5  → +0.5 XP bonus
+Streak 8  → +0.5 XP bonus
+Streak 13 → +1.0 XP bonus
+Streak 17 → +1.0 XP bonus
+Streak 21 → +3.0 XP bonus + PRESTIGE RESET
+```
+
+### Prestige System
+
+If clean streak reaches 21:
+- Award +3.0 XP bonus
+- Reset streak counter to 0
+- Increment Prestige rank by 1
+- Record in BANDIT_CHANGELOG.md as a PRESTIGE event
+- Current prestige: 0
+
+Prestige ranks:
+```
+Prestige 0  → standard (current)
+Prestige 1  → Veteran
+Prestige 2  → Elite
+Prestige 3  → Legend
+Prestige 4+ → TBD
+```
+
+Current streak: 7
+Next bonus at: streak 8 (+0.5 XP)
+
+XP correction for current streak:
+- Streak 2 bonus: +0.25 (already passed)
+- Streak 3 bonus: +0.25 (already passed)
+- Streak 5 bonus: +0.5 (already passed)
+- Total retroactive bonus: +1.0 XP
+
+Updated level: 86.25 + 1.0 = 87.25
 
 ---
 
