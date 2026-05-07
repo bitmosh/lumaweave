@@ -5,6 +5,7 @@
 
 import Graph from "graphology";
 import forceAtlas2 from "graphology-layout-forceatlas2";
+import noverlap from "graphology-layout-noverlap";
 import louvain from "graphology-communities-louvain";
 import type {
   LumaWeaveEdgeDraft,
@@ -286,6 +287,19 @@ export function buildGraphologyGraph(
       barnesHutOptimize: settings.physicsDialect === "helix" ? false : false,
       barnesHutTheta: 0.5,
       slowDown: settings.physicsDialect === "helix" ? 10 : Math.max(1, settings.linkDistance * 0.05),
+    },
+  });
+
+  // Anti-collision pass — nudges nodes apart
+  // after FA2 settles the layout
+  noverlap.assign(graph, {
+    maxIterations: 50,
+    settings: {
+      ratio: 1.2,
+      margin: 2,
+      speed: 3,
+      gridSize: 25,
+      expansion: 1.5,
     },
   });
 
