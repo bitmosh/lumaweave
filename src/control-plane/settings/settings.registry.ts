@@ -62,6 +62,17 @@ export const settingsRegistry: SettingControl[] = [
   //   description: "Disables or softens animations.",
   // },
   {
+    type: "select",
+    category: "Physics",
+    path: "physics.physicsDialect",
+    label: "Physics Dialect",
+    description: "Layout algorithm and shape",
+    options: [
+      { value: "default", label: "Default (Force-Directed)" },
+      { value: "helix", label: "Helix (Brand Shape)" },
+    ],
+  },
+  {
     type: "range",
     category: "Physics",
     path: "physics.nodeSize",
@@ -87,6 +98,48 @@ export const settingsRegistry: SettingControl[] = [
     min: 0,
     max: 500,
     step: 5,
+  },
+  {
+    type: "range",
+    category: "Physics",
+    path: "physics.centerForce",
+    label: "Center Force",
+    description: "Controls attraction to graph center.",
+    min: 0,
+    max: 200,
+    step: 5,
+  },
+  // ForceAtlas2 advanced parameters
+  {
+    type: "boolean",
+    category: "Physics",
+    path: "physics.strongGravityMode",
+    label: "Strong Gravity Mode",
+    description: "Enables stronger gravity force for more compact layouts.",
+  },
+  {
+    type: "boolean",
+    category: "Physics",
+    path: "physics.linLogMode",
+    label: "Lin-Log Mode",
+    description: "Uses logarithmic attraction for better edge distribution.",
+  },
+  {
+    type: "boolean",
+    category: "Physics",
+    path: "physics.adjustSizes",
+    label: "Adjust Sizes",
+    description: "Allows FA2 to adjust node sizes during simulation.",
+  },
+  {
+    type: "range",
+    category: "Physics",
+    path: "physics.barnesHutTheta",
+    label: "Barnes-Hut Theta",
+    description: "Accuracy/performance tradeoff for Barnes-Hut approximation.",
+    min: 0.1,
+    max: 1.2,
+    step: 0.05,
   },
   // Planned physics settings hidden until wired to force layout
   // {

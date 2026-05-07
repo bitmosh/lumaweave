@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { SettingsPanel } from "../control-plane/settings/SettingsPanel";
 import { QaPanel } from "../control-plane/qa/QaPanel";
 import { InspectorPanel } from "../control-plane/panels/InspectorPanel";
@@ -22,7 +22,8 @@ import {
 import { getThemeRuntimeTokens, resolveGraphVisualTokens } from "../themes";
 import { ThemeTargetInspectorOverlay } from "../themes/ThemeTargetInspectorOverlay";
 import { adaptSelfGraphToSigma } from "../fixtures/self-graph-adapter";
-import { selfGraphFixture } from "../fixtures/self-graph-fixture";
+import generatedGraph from "../fixtures/self-graph-generated.json";
+import type { LumaSourceGraph } from "../fixtures/types";
 
 export function AppShell() {
   const settings = useSettingsStore((state) => state.settings);
@@ -30,8 +31,12 @@ export function AppShell() {
   const { summary, error: summaryError } = useGraphSourceSummary();
 
   // Self-graph fixture for demo (v75a)
+  // TODO: Switch to smart fixture/real source toggle when tests are updated
   const [useFixture] = useState(true);
-  const adaptedFixture = adaptSelfGraphToSigma(selfGraphFixture);
+  const adaptedFixture = useMemo(
+    () => adaptSelfGraphToSigma(generatedGraph as LumaSourceGraph),
+    []
+  );
 
   // Get theme tokens for current theme
   const themeTokens = getThemeRuntimeTokens(settings.appearance.theme);
@@ -107,9 +112,9 @@ export function AppShell() {
 
   const graphSummary = useFixture
     ? {
-        source: "self-graph-fixture",
-        rawNodeCount: selfGraphFixture.metadata.nodeCount,
-        rawEdgeCount: selfGraphFixture.metadata.edgeCount,
+        source: "Self-Graph (LumaWeave docs)",
+        rawNodeCount: generatedGraph.metadata.nodeCount,
+        rawEdgeCount: generatedGraph.metadata.edgeCount,
         normalizedNodeCount: adaptedFixture.nodes.length,
         normalizedEdgeCount: adaptedFixture.edges.length,
         renderer: "sigma2d",
@@ -117,7 +122,7 @@ export function AppShell() {
         status: "loaded",
       }
     : {
-        source: "ai-lab",
+        source: summary.sourceId || "Unknown",
         rawNodeCount: summary.nodeCount,
         rawEdgeCount: summary.edgeCount,
         normalizedNodeCount: summary.normalizedNodeCount,
@@ -557,6 +562,10 @@ export function AppShell() {
                         repelForce={settings.physics.repelForce}
                         centerForce={settings.physics.centerForce}
                         physicsDialect={settings.physics.physicsDialect}
+                        strongGravityMode={settings.physics.strongGravityMode}
+                        linLogMode={settings.physics.linLogMode}
+                        adjustSizes={settings.physics.adjustSizes}
+                        barnesHutTheta={settings.physics.barnesHutTheta}
                         selectedNodeId={selectedNodeId}
                         selectedEdgeId={selectedEdgeId}
                         nodeSelectionStage={nodeSelectionStage}
