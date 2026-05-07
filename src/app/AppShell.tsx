@@ -58,6 +58,58 @@ export function AppShell() {
     warnings: [] as string[],
   } : summary;
 
+  // Physics preset values for slider sync
+  const PRESET_VALUES = {
+    balanced: {
+      repelForce: 100,
+      centerForce: 200,
+      linkDistance: 3,
+      strongGravityMode: false,
+      linLogMode: false,
+    },
+    spread: {
+      repelForce: 300,
+      centerForce: 50,
+      linkDistance: 3,
+      strongGravityMode: false,
+      linLogMode: false,
+    },
+    tight: {
+      repelForce: 50,
+      centerForce: 400,
+      linkDistance: 5,
+      strongGravityMode: true,
+      linLogMode: false,
+    },
+    organic: {
+      repelForce: 150,
+      centerForce: 100,
+      linkDistance: 3,
+      strongGravityMode: false,
+      linLogMode: true,
+    },
+    performance: {
+      repelForce: 80,
+      centerForce: 200,
+      linkDistance: 3,
+      strongGravityMode: false,
+      linLogMode: false,
+    },
+  };
+
+  // Sync physics sliders with preset values
+  useEffect(() => {
+    const preset = settings.physics.physicsPreset;
+    if (preset === "custom") return;
+    const vals = PRESET_VALUES[preset as keyof typeof PRESET_VALUES];
+    if (!vals) return;
+    setSetting("physics", {
+      ...settings.physics,
+      ...vals,
+      physicsPreset: preset,
+    });
+  }, [settings.physics.physicsPreset]);
+
   // Get theme tokens for current theme
   const themeTokens = getThemeRuntimeTokens(settings.appearance.theme);
 
