@@ -140,7 +140,6 @@ export function SigmaGraphView({
   linLogMode = false,
   adjustSizes = false,
   barnesHutTheta = 0.5,
-  // @ts-expect-error — Wired for future solar orbit dialect implementation
   communityGravity = 0,
   selectedNodeId,
   selectedEdgeId = null,
@@ -171,11 +170,72 @@ export function SigmaGraphView({
   const hasInitialCameraResetRef = useRef(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resolvedTokensRef = useRef(resolvedTokens);
+  const communityGravityRef = useRef<(() => void) | null>(null);
 
   // Sync resolvedTokens ref on every render
   useEffect(() => {
     resolvedTokensRef.current = resolvedTokens;
   });
+
+  // Separate useEffect for communityGravity centroid force
+  useEffect(() => {
+    const sigma = sigmaRef.current;
+    const graph = graphRef.current;
+    if (!sigma || !graph) return;
+
+    // Remove previous handler
+    if (communityGravityRef.current) {
+      sigma.removeListener("afterRender", communityGravityRef.current);
+    }
+
+    if (communityGravity <= 0) {
+      communityGravityRef.current = null;
+      return;
+    }
+
+    const handler = () => {
+      // Compute centroid per cluster
+      const centroids = new Map<string, {x: number, y: number, count: number}>();
+
+      graph.forEachNode((_nodeId: string, attrs: any) => {
+        const cluster = (attrs.raw as any)?.cluster ?? "gray";
+        if (!centroids.has(cluster)) {
+          centroids.set(cluster, {x: 0, y: 0, count: 0});
+        }
+        const c = centroids.get(cluster)!;
+        c.x += (attrs.x as number);
+        c.y += (attrs.y as number);
+        c.count++;
+      });
+
+      centroids.forEach(c => {
+        c.x /= c.count;
+        c.y /= c.count;
+      });
+
+      // Apply gentle pull toward cluster centroid
+      const strength = communityGravity * 0.0008;
+      graph.forEachNode((nodeId: string, attrs: any) => {
+        const cluster = (attrs.raw as any)?.cluster ?? "gray";
+        const centroid = centroids.get(cluster);
+        if (!centroid) return;
+        const dx = centroid.x - (attrs.x as number);
+        const dy = centroid.y - (attrs.y as number);
+        graph.setNodeAttribute(nodeId, "x", (attrs.x as number) + dx * strength);
+        graph.setNodeAttribute(nodeId, "y", (attrs.y as number) + dy * strength);
+      });
+    };
+
+    communityGravityRef.current = handler;
+    sigma.on("afterRender", handler);
+
+    return () => {
+      if (communityGravityRef.current) {
+        sigma.removeListener("afterRender", communityGravityRef.current);
+        communityGravityRef.current = null;
+      }
+    };
+  }, [communityGravity]);
 
   const [debugInfo, setDebugInfo] = useState<Record<string, string | number>>(
     {},
