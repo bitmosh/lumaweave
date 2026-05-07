@@ -44,6 +44,20 @@ export function AppShell() {
     []
   );
 
+  const panelSummary = useFixture ? {
+    label: "LumaWeave Self-Graph",
+    sourcePath: "src/fixtures/self-graph-generated.json",
+    status: "loaded" as const,
+    graphPresent: true,
+    manifestPresent: false,
+    reportPresent: false,
+    nodeCount: 124,
+    edgeCount: 115,
+    normalizedNodeCount: 124,
+    normalizedEdgeCount: 115,
+    warnings: [] as string[],
+  } : summary;
+
   // Get theme tokens for current theme
   const themeTokens = getThemeRuntimeTokens(settings.appearance.theme);
 
@@ -313,9 +327,9 @@ export function AppShell() {
                       backgroundColor: `${themeTokens.app.background}70`,
                     } as React.CSSProperties}
                   >
-                    <div style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>{summary.label}</div>
+                    <div style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>{panelSummary.label}</div>
                     <div className="mt-1 text-xs" style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>
-                      {summary.sourcePath}
+                      {panelSummary.sourcePath}
                     </div>
                     <div
                       className="mt-3 rounded-full px-3 py-1 text-xs"
@@ -324,71 +338,71 @@ export function AppShell() {
                         color: themeTokens.app.accent,
                       } as React.CSSProperties}
                     >
-                      {summary.status}
+                      {panelSummary.status}
                     </div>
                     <div className="mt-3 space-y-1 text-xs">
                       <div className="flex justify-between">
                         <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>graph.json:</span>
                         <span
                           style={{
-                            color: summary.graphPresent ? themeTokens.app.accent : "#f87171",
+                            color: panelSummary.graphPresent ? themeTokens.app.accent : "#f87171",
                           } as React.CSSProperties}
                         >
-                          {summary.graphPresent ? "found" : "missing"}
+                          {panelSummary.graphPresent ? "found" : "missing"}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>manifest.json:</span>
                         <span
                           style={{
-                            color: summary.manifestPresent ? themeTokens.app.accent : themeTokens.app.textMuted,
+                            color: panelSummary.manifestPresent ? themeTokens.app.accent : themeTokens.app.textMuted,
                           } as React.CSSProperties}
                         >
-                          {summary.manifestPresent ? "found" : "missing"}
+                          {panelSummary.manifestPresent ? "found" : "missing"}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>GRAPH_REPORT.md:</span>
                         <span
                           style={{
-                            color: summary.reportPresent ? themeTokens.app.accent : themeTokens.app.textMuted,
+                            color: panelSummary.reportPresent ? themeTokens.app.accent : themeTokens.app.textMuted,
                           } as React.CSSProperties}
                         >
-                          {summary.reportPresent ? "found" : "missing"}
+                          {panelSummary.reportPresent ? "found" : "missing"}
                         </span>
                       </div>
                       <div className="mt-2 flex justify-between" style={{ borderTop: `1px solid ${themeTokens.app.panelBorder}10`, paddingTop: "0.5rem" }}>
                         <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Raw nodes:</span>
-                        <span style={{ color: themeTokens.app.accent } as React.CSSProperties}>{summary.nodeCount}</span>
+                        <span style={{ color: themeTokens.app.accent } as React.CSSProperties}>{panelSummary.nodeCount}</span>
                       </div>
                       <div className="flex justify-between">
                         <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Raw edges:</span>
-                        <span style={{ color: themeTokens.app.accent } as React.CSSProperties}>{summary.edgeCount}</span>
+                        <span style={{ color: themeTokens.app.accent } as React.CSSProperties}>{panelSummary.edgeCount}</span>
                       </div>
                       <div className="mt-2 flex justify-between" style={{ borderTop: `1px solid ${themeTokens.app.panelBorder}10`, paddingTop: "0.5rem" }}>
                         <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Normalized nodes:</span>
                         <span style={{ color: "#86efac" } as React.CSSProperties}>
-                          {summary.normalizedNodeCount}
+                          {panelSummary.normalizedNodeCount}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Normalized edges:</span>
                         <span style={{ color: "#86efac" } as React.CSSProperties}>
-                          {summary.normalizedEdgeCount}
+                          {panelSummary.normalizedEdgeCount}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Warnings:</span>
                         <span
                           style={{
-                            color: summary.warnings.length > 0 ? "#fbbf24" : themeTokens.app.textMuted,
+                            color: panelSummary.warnings.length > 0 ? "#fbbf24" : themeTokens.app.textMuted,
                           } as React.CSSProperties}
                         >
-                          {summary.warnings.length}
+                          {panelSummary.warnings.length}
                         </span>
                       </div>
                     </div>
-                    {summary.warnings.length > 0 && (
+                    {panelSummary.warnings.length > 0 && (
                       <div
                         className="mt-3 rounded p-2"
                         style={{
@@ -396,21 +410,16 @@ export function AppShell() {
                           backgroundColor: "#78350f10",
                         } as React.CSSProperties}
                       >
-                        <div className="mb-1 text-xs font-semibold" style={{ color: "#fbbf24" } as React.CSSProperties}>
-                          Warnings (first 3):
-                        </div>
-                        <ul className="space-y-1 text-xs" style={{ color: "#fcd34d99" } as React.CSSProperties}>
-                          {summary.warnings.slice(0, 3).map((warning, index) => (
-                            <li key={index} className="truncate">
-                              • {warning}
-                            </li>
-                          ))}
-                          {summary.warnings.length > 3 && (
-                            <li style={{ color: "#fbbf2460" } as React.CSSProperties}>
-                              ... and {summary.warnings.length - 3} more
-                            </li>
-                          )}
-                        </ul>
+                        {panelSummary.warnings.slice(0, 3).map((warning, index) => (
+                          <div key={index} className="text-xs" style={{ color: "#fbbf24" } as React.CSSProperties}>
+                            {warning}
+                          </div>
+                        ))}
+                        {panelSummary.warnings.length > 3 && (
+                          <div className="text-xs" style={{ color: "#fbbf24" } as React.CSSProperties}>
+                            ... and {panelSummary.warnings.length - 3} more
+                          </div>
+                        )}
                       </div>
                     )}
                     {summaryError && (
