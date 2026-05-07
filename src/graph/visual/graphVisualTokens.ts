@@ -36,7 +36,7 @@ export const nodeColorTokens = {
  */
 export const edgeColorTokens = {
   /** Default edge stroke color */
-  default: "#64748b",
+  default: "rgba(100,130,180,0.5)",
 
   /** Selected/primary edge stroke color */
   selected: "#a855f7",

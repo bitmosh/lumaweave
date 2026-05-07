@@ -45,8 +45,16 @@ function resetGraphStyles(graph: Graph, tokens: ResolvedGraphVisualTokens): void
   });
 
   graph.forEachEdge((edge) => {
-    graph.setEdgeAttribute(edge, "color", tokens.edgeColor.default);
-    graph.setEdgeAttribute(edge, "size", tokens.edgeSize.default);
+    const attrs = graph.getEdgeAttributes(edge);
+    const rawColor = (attrs.raw as any)?.color;
+    graph.setEdgeAttribute(
+      edge, "color",
+      rawColor ?? tokens.edgeColor.default
+    );
+    graph.setEdgeAttribute(
+      edge, "size",
+      tokens.edgeSize.default
+    );
   });
 }
 

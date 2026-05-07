@@ -196,6 +196,12 @@ export function SigmaGraphView({
   const onClearSelectionRef = useRef(onClearSelection);
   const hasInitialCameraResetRef = useRef(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const resolvedTokensRef = useRef(resolvedTokens);
+
+  // Sync resolvedTokens ref on every render
+  useEffect(() => {
+    resolvedTokensRef.current = resolvedTokens;
+  });
 
   const [debugInfo, setDebugInfo] = useState<Record<string, string | number>>(
     {},
@@ -272,16 +278,6 @@ export function SigmaGraphView({
       currentNodeSize: nodeSize,
       currentLinkDistance: linkDistance,
       currentRepelForce: repelForce,
-    });
-
-    // Apply theme colors to graphology graph before Sigma renders
-    // This prevents one-frame default state when sliders change
-    graph.forEachNode((node) => {
-      graph.setNodeAttribute(node, "color", resolvedTokens.nodeColor.default);
-    });
-
-    graph.forEachEdge((edge) => {
-      graph.setEdgeAttribute(edge, "color", resolvedTokens.edgeColor.default);
     });
 
     // Apply label policy to graphology graph before Sigma renders
@@ -629,11 +625,11 @@ useEffect(() => {
       hoverNodeColor: hoverNodeColor || "#ffffff",
       edgeLabelFontSize: edgeLabelFontSize || 13,
     },
-    resolvedTokens
+    resolvedTokensRef.current
   );
   sigma.refresh();
 
-}, [selectedNodeId, selectedEdgeId, neighborhoodDepth, hoveredNodeId, hoveredEdgeId, hoverNodeColor, edgeLabelFontSize, resolvedTokens]);
+}, [selectedNodeId, selectedEdgeId, neighborhoodDepth, hoveredNodeId, hoveredEdgeId, hoverNodeColor, edgeLabelFontSize]);
 
 // ResizeObserver to handle container size changes
 useEffect(() => {
@@ -649,11 +645,7 @@ useEffect(() => {
 
   return () => {
     resizeObserver.disconnect();
-    if (sigmaRef.current) {
-      sigmaRef.current.kill();
-      sigmaRef.current = null;
-      hasInitialCameraResetRef.current = false;
-    }
+    // Sigma lifecycle managed by main useEffect
   };
 }, []);
 

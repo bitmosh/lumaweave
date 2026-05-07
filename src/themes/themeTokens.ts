@@ -28,7 +28,7 @@ export const solarPlasmaTokens: ThemeRuntimeTokens = {
     nodeSelected: "#fbbf24", // amber-400
     nodeSecondary: "#3b82f6", // blue-500
     nodeTertiary: "#60a5fa", // blue-400
-    edgeDefault: "#64748b", // slate-500
+    edgeDefault: "rgba(100,163,224,0.4)", // visible blue
     edgeHover: "#d8b4fe", // purple-300
     edgeSelected: "#a855f7", // purple-500
     edgeSecondary: "#c4b5fd", // purple-300
@@ -65,7 +65,7 @@ export const obsidianAuroraTokens: ThemeRuntimeTokens = {
     nodeSelected: "#f472b6", // pink-400
     nodeSecondary: "#a78bfa", // purple-400
     nodeTertiary: "#c4b5fd", // purple-300
-    edgeDefault: "#475569", // slate-600
+    edgeDefault: "rgba(139,92,246,0.35)", // visible purple
     edgeHover: "#a78bfa", // purple-400
     edgeSelected: "#c084fc", // purple-400
     edgeSecondary: "#d8b4fe", // purple-300
@@ -102,7 +102,7 @@ export const midnightLoomTokens: ThemeRuntimeTokens = {
     nodeSelected: "#f97316", // orange-500
     nodeSecondary: "#f59e0b", // amber-500
     nodeTertiary: "#fcd34d", // amber-300
-    edgeDefault: "#78716c", // stone-500
+    edgeDefault: "rgba(251,191,36,0.35)", // visible amber
     edgeHover: "#f59e0b", // amber-500
     edgeSelected: "#f97316", // orange-500
     edgeSecondary: "#fcd34d", // amber-300
@@ -139,7 +139,7 @@ export const voidCircuitTokens: ThemeRuntimeTokens = {
     nodeSelected: "#06b6d4", // cyan-500
     nodeSecondary: "#d946ef", // fuchsia-500
     nodeTertiary: "#e879f9", // fuchsia-400
-    edgeDefault: "#404040", // neutral-700
+    edgeDefault: "rgba(236,72,153,0.35)", // visible pink
     edgeHover: "#06b6d4", // cyan-500
     edgeSelected: "#0891b2", // cyan-600
     edgeSecondary: "#22d3ee", // cyan-400
@@ -176,7 +176,7 @@ export const agarthaDreamTokens: ThemeRuntimeTokens = {
     nodeSelected: "#f472b6", // pink-400
     nodeSecondary: "#c084fc", // purple-400
     nodeTertiary: "#d8b4fe", // purple-300
-    edgeDefault: "#d1d5db", // gray-300
+    edgeDefault: "rgba(168,85,247,0.4)", // visible violet
     edgeHover: "#c084fc", // purple-400
     edgeSelected: "#a855f7", // purple-500
     edgeSecondary: "#e9d5ff", // purple-200
@@ -213,7 +213,7 @@ export const agarthaDuskTokens: ThemeRuntimeTokens = {
     nodeSelected: "#c084fc", // purple-400
     nodeSecondary: "#f9a8d4", // pink-300
     nodeTertiary: "#fbcfe8", // pink-200
-    edgeDefault: "#5b21b6", // violet-900
+    edgeDefault: "rgba(244,114,182,0.4)", // visible pink
     edgeHover: "#a78bfa", // purple-400
     edgeSelected: "#c084fc", // purple-400
     edgeSecondary: "#c4b5fd", // purple-300
