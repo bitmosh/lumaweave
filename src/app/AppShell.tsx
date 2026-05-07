@@ -56,6 +56,9 @@ export function AppShell() {
     normalizedNodeCount: 124,
     normalizedEdgeCount: 115,
     warnings: [] as string[],
+    componentCount: undefined,
+    isolatedNodeCount: undefined,
+    largestComponentSize: undefined,
   } : summary;
 
   // Physics preset values for slider sync
@@ -184,6 +187,32 @@ export function AppShell() {
     secondaryNodeCount = neighborhood.secondaryNodeIds.length;
   }
 
+  // Compute component diagnostics for fixture
+  let componentDiagnostics = {
+    componentCount: undefined as number | undefined,
+    isolatedNodeCount: undefined as number | undefined,
+    largestComponentSize: undefined as number | undefined,
+  };
+
+  if (useFixture && adaptedFixture.nodes.length > 0) {
+    const { diagnostics: fixtureDiagnostics } = buildGraphologyGraph(
+      adaptedFixture.nodes,
+      adaptedFixture.edges,
+      {
+        nodeSize: settings.physics.nodeSize,
+        linkDistance: settings.physics.linkDistance,
+        repelForce: settings.physics.repelForce,
+        centerForce: settings.physics.centerForce,
+        physicsDialect: "default",
+      },
+    );
+    componentDiagnostics = {
+      componentCount: fixtureDiagnostics.componentCount,
+      isolatedNodeCount: fixtureDiagnostics.isolatedNodeCount,
+      largestComponentSize: fixtureDiagnostics.largestComponentSize,
+    };
+  }
+
   const graphSummary = useFixture
     ? {
         source: "Self-Graph (LumaWeave docs)",
@@ -194,6 +223,7 @@ export function AppShell() {
         renderer: "sigma2d",
         layout: "sunflower",
         status: "loaded",
+        ...componentDiagnostics,
       }
     : {
         source: summary.sourceId || "Unknown",
@@ -451,6 +481,24 @@ export function AppShell() {
                           } as React.CSSProperties}
                         >
                           {panelSummary.warnings.length}
+                        </span>
+                      </div>
+                      <div className="mt-2 flex justify-between" style={{ borderTop: `1px solid ${themeTokens.app.panelBorder}10`, paddingTop: "0.5rem" }}>
+                        <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Connected Components:</span>
+                        <span style={{ color: "#93c5fd" } as React.CSSProperties}>
+                          {panelSummary.componentCount ?? "N/A"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Isolated Nodes:</span>
+                        <span style={{ color: "#fca5a5" } as React.CSSProperties}>
+                          {panelSummary.isolatedNodeCount ?? "N/A"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Largest Component:</span>
+                        <span style={{ color: "#86efac" } as React.CSSProperties}>
+                          {panelSummary.largestComponentSize ?? "N/A"}
                         </span>
                       </div>
                     </div>

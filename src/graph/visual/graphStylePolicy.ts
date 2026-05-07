@@ -41,7 +41,14 @@ function resetGraphStyles(graph: Graph, tokens: ResolvedGraphVisualTokens): void
       (attrs.raw?.color as string) ?? tokens.nodeColor.default;
 
     graph.setNodeAttribute(node, "color", clusterColor);
-    graph.setNodeAttribute(node, "size", baseSize);
+    
+    // Visual treatment for isolated nodes
+    const isIsolated = attrs.isIsolated as boolean;
+    if (isIsolated) {
+      graph.setNodeAttribute(node, "size", baseSize * 0.75);
+    } else {
+      graph.setNodeAttribute(node, "size", baseSize);
+    }
   });
 
   graph.forEachEdge((edge) => {

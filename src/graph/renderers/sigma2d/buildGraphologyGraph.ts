@@ -7,6 +7,11 @@ import Graph from "graphology";
 import noverlap from "graphology-layout-noverlap";
 import louvain from "graphology-communities-louvain";
 import { degree } from "graphology-metrics/centrality";
+import {
+  connectedComponents,
+  countConnectedComponents,
+  largestConnectedComponent,
+} from "graphology-components";
 import type {
   LumaWeaveEdgeDraft,
   LumaWeaveNodeDraft,
@@ -208,6 +213,9 @@ export interface GraphBuildResult {
     minY: number;
     maxY: number;
     sample: Array<{ id: string; x: number; y: number; label: string }>;
+    componentCount: number;
+    isolatedNodeCount: number;
+    largestComponentSize: number;
   };
 }
 
@@ -315,6 +323,34 @@ export function buildGraphologyGraph(
     },
   });
 
+  // Connected components analysis
+  const componentCount = countConnectedComponents(graph);
+  const components = connectedComponents(graph);
+  const largestComponent = largestConnectedComponent(graph);
+  const largestComponentSet = new Set(largestComponent);
+
+  // Tag each node with component attributes
+  components.forEach((component, index) => {
+    const isIsolated = component.length === 1;
+    const isLargest = component.every(id => largestComponentSet.has(id));
+    component.forEach(nodeId => {
+      graph.setNodeAttribute(nodeId, "componentIndex", index);
+      graph.setNodeAttribute(nodeId, "isIsolated", isIsolated);
+      graph.setNodeAttribute(nodeId, "isInLargestComponent", isLargest);
+    });
+  });
+
+  // Add graph-level attributes for diagnostics
+  graph.setAttribute("componentCount", componentCount);
+  graph.setAttribute(
+    "isolatedNodeCount",
+    components.filter(c => c.length === 1).length
+  );
+  graph.setAttribute(
+    "largestComponentSize",
+    largestComponent.length
+  );
+
   const nodePositions = graph.nodes().map((id) => {
     const attrs = graph.getNodeAttributes(id);
 
@@ -339,6 +375,9 @@ export function buildGraphologyGraph(
     minY: yValues.length ? Math.min(...yValues) : 0,
     maxY: yValues.length ? Math.max(...yValues) : 0,
     sample: nodePositions.slice(0, 10),
+    componentCount,
+    isolatedNodeCount: components.filter(c => c.length === 1).length,
+    largestComponentSize: largestComponent.length,
   };
 
   console.log("Graphology layout diagnostics", diagnostics);
