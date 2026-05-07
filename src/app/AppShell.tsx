@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SettingsPanel } from "../control-plane/settings/SettingsPanel";
 import { QaPanel } from "../control-plane/qa/QaPanel";
 import { InspectorPanel } from "../control-plane/panels/InspectorPanel";
@@ -7,6 +7,9 @@ import { CommandDeckPanel } from "../control-plane/command-deck/CommandDeckPanel
 import { GraphVisualInventoryPanel } from "../control-plane/graph/GraphVisualInventoryPanel";
 import { SystemIndexPanel } from "../control-plane/system-index/SystemIndexPanel";
 import { SourceAdapterPanel } from "../source-adapter/SourceAdapterPanel";
+import { LeftTabPanel } from "../control-plane/panels/LeftTabPanel";
+import { ControlDock } from "../control-plane/panels/ControlDock";
+import { Tile } from "../control-plane/panels/Tile";
 import { useSettingsStore } from "../control-plane/settings/settings.store";
 import { useGraphSourceSummary } from "../graph/ingest/useGraphSourceSummary";
 import { SigmaGraphView } from "../graph/renderers/sigma2d/SigmaGraphView";
@@ -46,6 +49,21 @@ export function AppShell() {
   const [inspectorExpanded, setInspectorExpanded] = useState(false);
   const [themeInspectorEnabled, setThemeInspectorEnabled] = useState(false);
 
+  // Ctrl+\ hotkey to toggle left panel
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === "\\") {
+        e.preventDefault();
+        setSetting("ui", {
+          ...settings.ui,
+          leftPanelCollapsed: !settings.ui.leftPanelCollapsed,
+        });
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [settings.ui, setSetting]);
+
   // Determine which graph data to use
   const graphNodes = useFixture ? adaptedFixture.nodes : summary.normalizedNodes;
   const graphEdges = useFixture ? adaptedFixture.edges : summary.normalizedEdges;
@@ -74,7 +92,7 @@ export function AppShell() {
     const { graph } = buildGraphologyGraph(
       graphNodes,
       graphEdges,
-      { nodeSize: 1, linkDistance: 1, repelForce: 1, centerForce: 40 },
+      { nodeSize: 1, linkDistance: 1, repelForce: 1, centerForce: 40, physicsDialect: "default" },
     );
     const neighborhood = getRelationshipNeighborhood(graph, selectedEdgeId);
     secondaryEdgeCount = neighborhood.secondaryEdgeIds.length;
@@ -203,242 +221,290 @@ export function AppShell() {
           </div>
         </header>
 
-        <section className="grid min-h-0 grid-cols-[280px_1fr_420px]">
-          <aside 
-            className="min-h-0 overflow-y-auto p-4"
-            data-testid="graph-sources-panel"
-            style={{
-              borderRight: `1px solid ${themeTokens.app.panelBorder}`,
-              backgroundColor: themeTokens.app.panelBackground,
-            } as React.CSSProperties}
-          >
-            <h2 
-              className="mb-3 text-sm font-semibold uppercase tracking-wider"
-              style={{ color: themeTokens.app.textMuted } as React.CSSProperties}
-            >
-              Graph Sources
-            </h2>
-
-            <div 
-              className="rounded-xl p-4"
-              style={{
-                border: `1px solid ${themeTokens.app.panelBorder}`,
-                backgroundColor: `${themeTokens.app.background}70`,
-              } as React.CSSProperties}
-            >
-              <div style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>{summary.label}</div>
-              <div className="mt-1 text-xs" style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>
-                {summary.sourcePath}
-              </div>
-              <div 
-                className="mt-3 rounded-full px-3 py-1 text-xs"
+        <section
+          className="grid min-h-0"
+          style={{
+            gridTemplateColumns: `var(--left-width) 1fr var(--right-width)`,
+            "--left-width": settings.ui.leftPanelCollapsed ? "0px" : "280px",
+            "--right-width": settings.ui.controlDockCollapsed
+              ? `${settings.ui.controlDockCollapsedWidth}px`
+              : `${settings.ui.controlDockWidth}px`,
+          } as React.CSSProperties}
+        >
+          <LeftTabPanel
+            collapsed={settings.ui.leftPanelCollapsed}
+            activeTab={settings.ui.leftPanelActiveTab}
+            onTabChange={(tab) =>
+              setSetting("ui", { ...settings.ui, leftPanelActiveTab: tab as any })
+            }
+            onCollapse={() =>
+              setSetting("ui", {
+                ...settings.ui,
+                leftPanelCollapsed: !settings.ui.leftPanelCollapsed,
+              })
+            }
+            graphTabSections={settings.ui.graphTabSections}
+            qaTabSections={settings.ui.qaTabSections}
+            evidenceTabSections={settings.ui.evidenceTabSections}
+            debugTabSections={settings.ui.debugTabSections}
+            settingsTabSections={settings.ui.settingsTabSections}
+            onSectionToggle={(tab, section) => {
+              const sectionKey = `${tab}TabSections` as keyof typeof settings.ui;
+              const sections = settings.ui[sectionKey] as any;
+              setSetting("ui", {
+                ...settings.ui,
+                [sectionKey]: { ...sections, [section]: !sections[section] },
+              });
+            }}
+            tiledTabs={settings.ui.tiledTabs}
+            onTileOut={(tabId) =>
+              setSetting("ui", {
+                ...settings.ui,
+                tiledTabs: [...settings.ui.tiledTabs, tabId],
+                leftPanelActiveTab: tabId as any,
+              })
+            }
+            graphTabContent={
+              <>
+                <h2
+                  className="mb-3 text-sm font-semibold uppercase tracking-wider"
+                  style={{ color: themeTokens.app.textMuted } as React.CSSProperties}
+                >
+                  Graph Sources
+                </h2>
+                <div
+                  className="rounded-xl p-4"
+                  style={{
+                    border: `1px solid ${themeTokens.app.panelBorder}`,
+                    backgroundColor: `${themeTokens.app.background}70`,
+                  } as React.CSSProperties}
+                >
+                  <div style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>{summary.label}</div>
+                  <div className="mt-1 text-xs" style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>
+                    {summary.sourcePath}
+                  </div>
+                  <div
+                    className="mt-3 rounded-full px-3 py-1 text-xs"
+                    style={{
+                      backgroundColor: `${themeTokens.app.accent}10`,
+                      color: themeTokens.app.accent,
+                    } as React.CSSProperties}
+                  >
+                    {summary.status}
+                  </div>
+                  <div className="mt-3 space-y-1 text-xs">
+                    <div className="flex justify-between">
+                      <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>graph.json:</span>
+                      <span
+                        style={{
+                          color: summary.graphPresent ? themeTokens.app.accent : "#f87171",
+                        } as React.CSSProperties}
+                      >
+                        {summary.graphPresent ? "found" : "missing"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>manifest.json:</span>
+                      <span
+                        style={{
+                          color: summary.manifestPresent ? themeTokens.app.accent : themeTokens.app.textMuted,
+                        } as React.CSSProperties}
+                      >
+                        {summary.manifestPresent ? "found" : "missing"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>GRAPH_REPORT.md:</span>
+                      <span
+                        style={{
+                          color: summary.reportPresent ? themeTokens.app.accent : themeTokens.app.textMuted,
+                        } as React.CSSProperties}
+                      >
+                        {summary.reportPresent ? "found" : "missing"}
+                      </span>
+                    </div>
+                    <div className="mt-2 flex justify-between" style={{ borderTop: `1px solid ${themeTokens.app.panelBorder}10`, paddingTop: "0.5rem" }}>
+                      <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Raw nodes:</span>
+                      <span style={{ color: themeTokens.app.accent } as React.CSSProperties}>{summary.nodeCount}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Raw edges:</span>
+                      <span style={{ color: themeTokens.app.accent } as React.CSSProperties}>{summary.edgeCount}</span>
+                    </div>
+                    <div className="mt-2 flex justify-between" style={{ borderTop: `1px solid ${themeTokens.app.panelBorder}10`, paddingTop: "0.5rem" }}>
+                      <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Normalized nodes:</span>
+                      <span style={{ color: "#86efac" } as React.CSSProperties}>
+                        {summary.normalizedNodeCount}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Normalized edges:</span>
+                      <span style={{ color: "#86efac" } as React.CSSProperties}>
+                        {summary.normalizedEdgeCount}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Warnings:</span>
+                      <span
+                        style={{
+                          color: summary.warnings.length > 0 ? "#fbbf24" : themeTokens.app.textMuted,
+                        } as React.CSSProperties}
+                      >
+                        {summary.warnings.length}
+                      </span>
+                    </div>
+                  </div>
+                  {summary.warnings.length > 0 && (
+                    <div
+                      className="mt-3 rounded p-2"
+                      style={{
+                        border: `1px solid #fbbf2430`,
+                        backgroundColor: "#78350f10",
+                      } as React.CSSProperties}
+                    >
+                      <div className="mb-1 text-xs font-semibold" style={{ color: "#fbbf24" } as React.CSSProperties}>
+                        Warnings (first 3):
+                      </div>
+                      <ul className="space-y-1 text-xs" style={{ color: "#fcd34d99" } as React.CSSProperties}>
+                        {summary.warnings.slice(0, 3).map((warning, index) => (
+                          <li key={index} className="truncate">
+                            • {warning}
+                          </li>
+                        ))}
+                        {summary.warnings.length > 3 && (
+                          <li style={{ color: "#fbbf2460" } as React.CSSProperties}>
+                            ... and {summary.warnings.length - 3} more
+                          </li>
+                        )}
+                      </ul>
+                    </div>
+                  )}
+                  {summaryError && (
+                    <div
+                      className="mt-3 rounded px-3 py-2 text-xs"
+                      style={{
+                        backgroundColor: "#7f1d1d30",
+                        color: "#fca5a5",
+                      } as React.CSSProperties}
+                    >
+                      {summaryError}
+                    </div>
+                  )}
+                </div>
+                <div
+                  className="mt-4 rounded-xl p-4"
+                  data-testid="source-adapter-panel-shell"
+                  style={{
+                    border: `1px solid ${themeTokens.app.panelBorder}`,
+                    backgroundColor: `${themeTokens.app.background}70`,
+                  }}
+                >
+                  <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
+                    Source Adapter Registry
+                  </h3>
+                  <div className="min-h-0">
+                    <SourceAdapterPanel />
+                  </div>
+                </div>
+              </>
+            }
+            qaTabContent={
+              <div
+                className="rounded-xl p-4"
+                data-testid="qa-panel"
                 style={{
-                  backgroundColor: `${themeTokens.app.accent}10`,
-                  color: themeTokens.app.accent,
+                  border: `1px solid ${themeTokens.app.panelBorder}`,
+                  backgroundColor: `${themeTokens.app.background}70`,
                 } as React.CSSProperties}
               >
-                {summary.status}
-              </div>
-
-              <div className="mt-3 space-y-1 text-xs">
-                <div className="flex justify-between">
-                  <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>graph.json:</span>
-                  <span
-                    style={{
-                      color: summary.graphPresent ? themeTokens.app.accent : "#f87171",
-                    } as React.CSSProperties}
-                  >
-                    {summary.graphPresent ? "found" : "missing"}
-                  </span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>manifest.json:</span>
-                  <span
-                    style={{
-                      color: summary.manifestPresent ? themeTokens.app.accent : themeTokens.app.textMuted,
-                    } as React.CSSProperties}
-                  >
-                    {summary.manifestPresent ? "found" : "missing"}
-                  </span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>GRAPH_REPORT.md:</span>
-                  <span
-                    style={{
-                      color: summary.reportPresent ? themeTokens.app.accent : themeTokens.app.textMuted,
-                    } as React.CSSProperties}
-                  >
-                    {summary.reportPresent ? "found" : "missing"}
-                  </span>
-                </div>
-
-                <div className="mt-2 flex justify-between" style={{ borderTop: `1px solid ${themeTokens.app.panelBorder}10`, paddingTop: "0.5rem" }}>
-                  <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Raw nodes:</span>
-                  <span style={{ color: themeTokens.app.accent } as React.CSSProperties}>{summary.nodeCount}</span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Raw edges:</span>
-                  <span style={{ color: themeTokens.app.accent } as React.CSSProperties}>{summary.edgeCount}</span>
-                </div>
-
-                <div className="mt-2 flex justify-between" style={{ borderTop: `1px solid ${themeTokens.app.panelBorder}10`, paddingTop: "0.5rem" }}>
-                  <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Normalized nodes:</span>
-                  <span style={{ color: "#86efac" } as React.CSSProperties}>
-                    {summary.normalizedNodeCount}
-                  </span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Normalized edges:</span>
-                  <span style={{ color: "#86efac" } as React.CSSProperties}>
-                    {summary.normalizedEdgeCount}
-                  </span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Warnings:</span>
-                  <span
-                    style={{
-                      color: summary.warnings.length > 0 ? "#fbbf24" : themeTokens.app.textMuted,
-                    } as React.CSSProperties}
-                  >
-                    {summary.warnings.length}
-                  </span>
+                <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
+                  QA
+                </h3>
+                <div className="min-h-0">
+                  <QaPanel
+                    themeAccent={themeTokens.app.accent}
+                    themeTextMuted={themeTokens.app.textMuted}
+                    themePanelBorder={themeTokens.app.panelBorder}
+                    themeInspectorEnabled={themeInspectorEnabled}
+                    onThemeInspectorToggle={() => setThemeInspectorEnabled((prev) => !prev)}
+                  />
                 </div>
               </div>
-
-              {summary.warnings.length > 0 && (
-                <div 
-                  className="mt-3 rounded p-2"
+            }
+            evidenceTabContent={
+              <>
+                <div
+                  className="rounded-xl p-4"
+                  data-testid="graph-visual-inventory-panel"
                   style={{
-                    border: `1px solid #fbbf2430`,
-                    backgroundColor: "#78350f10",
-                  } as React.CSSProperties}
+                    border: `1px solid ${themeTokens.app.panelBorder}`,
+                    backgroundColor: `${themeTokens.app.background}70`,
+                  }}
                 >
-                  <div className="mb-1 text-xs font-semibold" style={{ color: "#fbbf24" } as React.CSSProperties}>
-                    Warnings (first 3):
+                  <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
+                    Graph Visual Inventory
+                  </h3>
+                  <div className="min-h-0">
+                    <GraphVisualInventoryPanel />
                   </div>
-                  <ul className="space-y-1 text-xs" style={{ color: "#fcd34d99" } as React.CSSProperties}>
-                    {summary.warnings.slice(0, 3).map((warning, index) => (
-                      <li key={index} className="truncate">
-                        • {warning}
-                      </li>
-                    ))}
-                    {summary.warnings.length > 3 && (
-                      <li style={{ color: "#fbbf2460" } as React.CSSProperties}>
-                        ... and {summary.warnings.length - 3} more
-                      </li>
-                    )}
-                  </ul>
                 </div>
-              )}
-
-              {summaryError && (
-                <div 
-                  className="mt-3 rounded px-3 py-2 text-xs"
+                <div
+                  className="mt-4 rounded-xl p-4"
+                  data-testid="system-index-panel-shell"
                   style={{
-                    backgroundColor: "#7f1d1d30",
-                    color: "#fca5a5",
-                  } as React.CSSProperties}
+                    border: `1px solid ${themeTokens.app.panelBorder}`,
+                    backgroundColor: `${themeTokens.app.background}70`,
+                  }}
                 >
-                  {summaryError}
+                  <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
+                    System Index
+                  </h3>
+                  <div className="min-h-0">
+                    <SystemIndexPanel />
+                  </div>
                 </div>
-              )}
-            </div>
-
-            <div 
-              className="mt-4 rounded-xl p-4"
-              data-testid="qa-panel"
-              style={{
-                border: `1px solid ${themeTokens.app.panelBorder}`,
-                backgroundColor: `${themeTokens.app.background}70`,
-              } as React.CSSProperties}
-            >
-              <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
-                QA
-              </h3>
-              <div className="min-h-0">
-                <QaPanel
-                  themeAccent={themeTokens.app.accent}
-                  themeTextMuted={themeTokens.app.textMuted}
-                  themePanelBorder={themeTokens.app.panelBorder}
-                  themeInspectorEnabled={themeInspectorEnabled}
-                  onThemeInspectorToggle={() => setThemeInspectorEnabled((prev) => !prev)}
-                />
+              </>
+            }
+            debugTabContent={
+              <div
+                className="rounded-xl p-4"
+                data-testid="command-deck-panel"
+                style={{
+                  border: `1px solid ${themeTokens.app.panelBorder}`,
+                  backgroundColor: `${themeTokens.app.background}70`,
+                }}
+              >
+                <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
+                  Command Deck
+                </h3>
+                <div className="min-h-0">
+                  <CommandDeckPanel
+                    themeAccent={themeTokens.app.accent}
+                    themeTextMuted={themeTokens.app.textMuted}
+                    themePanelBorder={themeTokens.app.panelBorder}
+                  />
+                </div>
               </div>
-            </div>
-
-            <div
-              className="mt-4 rounded-xl p-4"
-              data-testid="command-deck-panel"
-              style={{
-                border: `1px solid ${themeTokens.app.panelBorder}`,
-                backgroundColor: `${themeTokens.app.background}70`,
-              }}
-            >
-              <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
-                Command Deck
-              </h3>
-              <div className="min-h-0">
-                <CommandDeckPanel
-                  themeAccent={themeTokens.app.accent}
-                  themeTextMuted={themeTokens.app.textMuted}
-                  themePanelBorder={themeTokens.app.panelBorder}
-                />
+            }
+            settingsTabContent={
+              <div
+                className="rounded-xl p-4"
+                style={{
+                  border: `1px solid ${themeTokens.app.panelBorder}`,
+                  backgroundColor: `${themeTokens.app.background}70`,
+                }}
+              >
+                <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
+                  Settings
+                </h3>
+                <div className="min-h-0">
+                  <div style={{ color: themeTokens.app.textMuted, textAlign: "center", padding: "2rem" } as React.CSSProperties}>
+                    Settings moved to Control Dock (right panel)
+                  </div>
+                </div>
               </div>
-            </div>
-
-            <div
-              className="mt-4 rounded-xl p-4"
-              data-testid="graph-visual-inventory-panel"
-              style={{
-                border: `1px solid ${themeTokens.app.panelBorder}`,
-                backgroundColor: `${themeTokens.app.background}70`,
-              }}
-            >
-              <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
-                Graph Visual Inventory
-              </h3>
-              <div className="min-h-0">
-                <GraphVisualInventoryPanel />
-              </div>
-            </div>
-
-            <div
-              className="mt-4 rounded-xl p-4"
-              data-testid="system-index-panel-shell"
-              style={{
-                border: `1px solid ${themeTokens.app.panelBorder}`,
-                backgroundColor: `${themeTokens.app.background}70`,
-              }}
-            >
-              <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
-                System Index
-              </h3>
-              <div className="min-h-0">
-                <SystemIndexPanel />
-              </div>
-            </div>
-
-            <div
-              className="mt-4 rounded-xl p-4"
-              data-testid="source-adapter-panel-shell"
-              style={{
-                border: `1px solid ${themeTokens.app.panelBorder}`,
-                backgroundColor: `${themeTokens.app.background}70`,
-              }}
-            >
-              <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
-                Source Adapter Registry
-              </h3>
-              <div className="min-h-0">
-                <SourceAdapterPanel />
-              </div>
-            </div>
-          </aside>
+            }
+          />
 
           <section 
             className="relative min-h-0 overflow-hidden"
@@ -477,6 +543,7 @@ export function AppShell() {
                         linkDistance={settings.physics.linkDistance}
                         repelForce={settings.physics.repelForce}
                         centerForce={settings.physics.centerForce}
+                        physicsDialect={settings.physics.physicsDialect}
                         selectedNodeId={selectedNodeId}
                         selectedEdgeId={selectedEdgeId}
                         nodeSelectionStage={nodeSelectionStage}
@@ -567,27 +634,99 @@ export function AppShell() {
             </div>
           </section>
 
-          <aside 
-            className="min-h-0 overflow-y-auto p-4"
-            data-testid="settings-panel"
-            style={{
-              borderLeft: `1px solid ${themeTokens.app.panelBorder}`,
-              backgroundColor: themeTokens.app.panelBackground,
-            } as React.CSSProperties}
-            data-lw-theme-target="settings.panel"
-          >
-            <h2 
-              className="mb-3 text-sm font-semibold uppercase tracking-wider"
-              style={{ color: themeTokens.app.textMuted } as React.CSSProperties}
-            >
-              Control Plane
-            </h2>
-
-            <div className="space-y-4">
-              <SettingsPanel />
-            </div>
-          </aside>
+          <ControlDock
+            collapsed={settings.ui.controlDockCollapsed}
+            width={settings.ui.controlDockWidth}
+            collapsedWidth={settings.ui.controlDockCollapsedWidth}
+            sections={settings.ui.controlDockSections}
+            onCollapse={() =>
+              setSetting("ui", {
+                ...settings.ui,
+                controlDockCollapsed: !settings.ui.controlDockCollapsed,
+              })
+            }
+            onSectionToggle={(section) => {
+              setSetting("ui", {
+                ...settings.ui,
+                controlDockSections: {
+                  ...settings.ui.controlDockSections,
+                  [section]: !settings.ui.controlDockSections[section as keyof typeof settings.ui.controlDockSections],
+                },
+              });
+            }}
+            onWidthChange={(width) =>
+              setSetting("ui", { ...settings.ui, controlDockWidth: width })
+            }
+            settings={settings}
+            setSetting={setSetting}
+          />
         </section>
+
+        {/* Tiles rendered outside grid, position fixed */}
+        {settings.ui.tiledTabs.map((tabId) => (
+          <Tile
+            key={tabId}
+            tabId={tabId}
+            title={tabId.charAt(0).toUpperCase() + tabId.slice(1)}
+            initialWidth={280}
+            initialHeight={500}
+            onClose={() =>
+              setSetting("ui", {
+                ...settings.ui,
+                tiledTabs: settings.ui.tiledTabs.filter((t) => t !== tabId),
+                leftPanelActiveTab: tabId as any,
+              })
+            }
+          >
+            {tabId === "graph" && (
+              <>
+                <h2
+                  className="mb-3 text-sm font-semibold uppercase tracking-wider"
+                  style={{ color: themeTokens.app.textMuted } as React.CSSProperties}
+                >
+                  Graph Sources
+                </h2>
+                <div
+                  className="rounded-xl p-4"
+                  style={{
+                    border: `1px solid ${themeTokens.app.panelBorder}`,
+                    backgroundColor: `${themeTokens.app.background}70`,
+                  } as React.CSSProperties}
+                >
+                  <div style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>{summary.label}</div>
+                  <div className="mt-1 text-xs" style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>
+                    {summary.sourcePath}
+                  </div>
+                </div>
+              </>
+            )}
+            {tabId === "qa" && (
+              <QaPanel
+                themeAccent={themeTokens.app.accent}
+                themeTextMuted={themeTokens.app.textMuted}
+                themePanelBorder={themeTokens.app.panelBorder}
+                themeInspectorEnabled={themeInspectorEnabled}
+                onThemeInspectorToggle={() => setThemeInspectorEnabled((prev) => !prev)}
+              />
+            )}
+            {tabId === "evidence" && (
+              <>
+                <GraphVisualInventoryPanel />
+                <div className="mt-4">
+                  <SystemIndexPanel />
+                </div>
+              </>
+            )}
+            {tabId === "debug" && (
+              <CommandDeckPanel
+                themeAccent={themeTokens.app.accent}
+                themeTextMuted={themeTokens.app.textMuted}
+                themePanelBorder={themeTokens.app.panelBorder}
+              />
+            )}
+            {tabId === "settings" && <SettingsPanel />}
+          </Tile>
+        ))}
 
         <footer 
           className="px-6 py-3 text-xs"

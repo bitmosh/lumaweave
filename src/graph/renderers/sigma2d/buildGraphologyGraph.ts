@@ -15,6 +15,7 @@ export interface LayoutSettings {
   linkDistance: number;
   repelForce: number;
   centerForce: number;
+  physicsDialect: "default" | "helix";
 }
 
 /**
@@ -33,6 +34,124 @@ function getSunflowerPosition(
     x: Math.cos(angle) * radius,
     y: Math.sin(angle) * radius,
   };
+}
+
+/**
+ * Group nodes by their cluster attribute.
+ * Returns clusters sorted by size (largest first).
+ */
+function groupByCluster(
+  nodes: LumaWeaveNodeDraft[]
+): Map<string, LumaWeaveNodeDraft[]> {
+  const clusters = new Map<string, LumaWeaveNodeDraft[]>();
+  nodes.forEach((node) => {
+    const cluster = (node.raw?.cluster as string) ?? "gray";
+    if (!clusters.has(cluster)) clusters.set(cluster, []);
+    clusters.get(cluster)!.push(node);
+  });
+  // Sort by size descending — largest cluster = backbone
+  return new Map(
+    [...clusters.entries()].sort((a, b) => b[1].length - a[1].length)
+  );
+}
+
+/**
+ * Get helix position for a node on the backbone.
+ * Arranges nodes along a 3D-projected helix spiral.
+ */
+function getHelixPosition(
+  index: number,
+  total: number,
+  helixRadius: number,
+  helixPitch: number,
+  helixTurns: number,
+): { x: number; y: number } {
+  const t = (index / Math.max(total - 1, 1)) * helixTurns * 2 * Math.PI;
+  return {
+    x: Math.cos(t) * helixRadius,
+    y: (t / (2 * Math.PI)) * helixPitch - (helixTurns * helixPitch) / 2,
+  };
+}
+
+/**
+ * Get constellation branch position.
+ * Spreads branch nodes in a small cluster around
+ * their nearest backbone node position.
+ */
+function getBranchPosition(
+  index: number,
+  total: number,
+  anchorX: number,
+  anchorY: number,
+  branchRadius: number,
+): { x: number; y: number } {
+  const angle = (index / Math.max(total, 1)) * 2 * Math.PI;
+  const r = branchRadius * (0.4 + 0.6 * (index / Math.max(total, 1)));
+  return {
+    x: anchorX + Math.cos(angle) * r,
+    y: anchorY + Math.sin(angle) * r,
+  };
+}
+
+/**
+ * Apply helix layout to graph.
+ * Places largest cluster along helix backbone,
+ * remaining clusters as constellation branches.
+ */
+function applyHelixLayout(
+  nodes: LumaWeaveNodeDraft[],
+  graph: Graph,
+): void {
+  const helixRadius = 120;
+  const helixPitch = 80;
+  const helixTurns = 3;
+  const branchRadius = 60;
+
+  const clusters = groupByCluster(nodes);
+  const clusterEntries = [...clusters.entries()];
+
+  // Largest cluster = backbone helix
+  const [backboneCluster, backboneNodes] = clusterEntries[0] ?? [];
+  const backbonePositions: { x: number; y: number }[] = [];
+
+  // Place backbone nodes along helix
+  if (backboneNodes) {
+    backboneNodes.forEach((node, i) => {
+      const pos = getHelixPosition(
+        i, backboneNodes.length,
+        helixRadius, helixPitch, helixTurns
+      );
+      backbonePositions.push(pos);
+      graph.setNodeAttribute(node.id, "x", pos.x);
+      graph.setNodeAttribute(node.id, "y", pos.y);
+    });
+  }
+
+  // Remaining clusters = constellation branches
+  clusterEntries.slice(1).forEach(([, branchNodes], clusterIdx) => {
+    // Find nearest backbone position for this branch
+    const anchorIdx = Math.floor(
+      (clusterIdx / (clusterEntries.length - 1)) *
+      Math.max(backbonePositions.length - 1, 0)
+    );
+    const anchor = backbonePositions[anchorIdx] ?? { x: 0, y: 0 };
+
+    // Spread branch nodes around anchor
+    branchNodes.forEach((node, i) => {
+      const pos = getBranchPosition(
+        i, branchNodes.length,
+        anchor.x, anchor.y, branchRadius
+      );
+      graph.setNodeAttribute(node.id, "x", pos.x);
+      graph.setNodeAttribute(node.id, "y", pos.y);
+    });
+  });
+
+  console.log("Helix layout applied", {
+    backboneCluster,
+    backboneSize: backboneNodes?.length ?? 0,
+    branchClusters: clusterEntries.length - 1,
+  });
 }
 
 export interface GraphBuildResult {
@@ -105,14 +224,19 @@ export function buildGraphologyGraph(
     }
   });
 
+  // Apply dialect-specific layout seeding
+  if (settings.physicsDialect === "helix") {
+    applyHelixLayout(nodes, graph);
+  }
+
   // Apply ForceAtlas2 force simulation
   // Initial sunflower positions seed the layout
   forceAtlas2.assign(graph, {
-    iterations: 100,
+    iterations: settings.physicsDialect === "helix" ? 30 : 100,
     settings: {
       gravity: Math.max(0.1, settings.centerForce * 0.01),
       scalingRatio: Math.max(1, settings.repelForce * 0.15),
-      strongGravityMode: false,
+      strongGravityMode: settings.physicsDialect === "helix",
       linLogMode: false,
       adjustSizes: true,
       barnesHutOptimize: graph.order > 100,

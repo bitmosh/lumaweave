@@ -41,6 +41,7 @@ export const defaultSettings: StarmapSettings = {
     communityGravity: 80,
     curveAmount: 45,
     animationSoftness: 60,
+    physicsDialect: "helix" as const,
   },
 
   labels: {
@@ -78,5 +79,40 @@ export const defaultSettings: StarmapSettings = {
     showDebugPanel: true,
     showFps: false,
     logLevel: "info",
+  },
+
+  ui: {
+    leftPanelCollapsed: false,
+    leftPanelActiveTab: "graph",
+    graphTabSections: {
+      graphSources: true,
+      sourceAdapter: true,
+    },
+    qaTabSections: {
+      qaPanel: true,
+    },
+    evidenceTabSections: {
+      graphVisualInventory: true,
+      systemIndex: true,
+      evidenceSettings: false,
+    },
+    debugTabSections: {
+      commandDeck: false,
+      debugInfo: false,
+      performanceSettings: false,
+    },
+    settingsTabSections: {
+      generalSettings: true,
+    },
+    tiledTabs: [],
+    controlDockCollapsed: false,
+    controlDockWidth: 420,
+    controlDockCollapsedWidth: 40,
+    controlDockSections: {
+      physics: true,
+      appearance: true,
+      labels: false,
+      graphView: false,
+    },
   },
 };

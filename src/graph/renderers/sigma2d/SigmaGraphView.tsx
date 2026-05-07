@@ -42,6 +42,7 @@ interface SigmaGraphViewProps {
   linkDistance: number;
   repelForce: number;
   centerForce: number;
+  physicsDialect: "default" | "helix";
 
   selectedNodeId: string | null;
   selectedEdgeId?: string | null;
@@ -122,6 +123,7 @@ export function SigmaGraphView({
   linkDistance,
   repelForce,
   centerForce,
+  physicsDialect = "default",
   selectedNodeId,
   selectedEdgeId = null,
   nodeSelectionStage = 1,
@@ -168,7 +170,7 @@ export function SigmaGraphView({
     directNeighborCount: 0,
   });
 
-  const settings: LayoutSettings = { nodeSize, linkDistance, repelForce, centerForce };
+  const settings: LayoutSettings = { nodeSize, linkDistance, repelForce, centerForce, physicsDialect };
 
   const [activeSelectionMode, setActiveSelectionMode] = useState<
     "none" | "node-stage-1" | "node-stage-2" | "node-stage-3" | "edge-relationship"

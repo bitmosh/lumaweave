@@ -67,6 +67,7 @@ export interface StarmapSettings {
     communityGravity: number;
     curveAmount: number;
     animationSoftness: number;
+    physicsDialect: "default" | "helix";
   };
 
   labels: {
@@ -104,5 +105,47 @@ export interface StarmapSettings {
     showDebugPanel: boolean;
     showFps: boolean;
     logLevel: "silent" | "error" | "warn" | "info" | "debug";
+  };
+
+  ui: {
+    // Left panel
+    leftPanelCollapsed: boolean;
+    leftPanelActiveTab: "graph" | "qa" | "evidence" | "debug" | "settings";
+
+    // Left panel section collapse states per tab
+    graphTabSections: {
+      graphSources: boolean;
+      sourceAdapter: boolean;
+    };
+    qaTabSections: {
+      qaPanel: boolean;
+    };
+    evidenceTabSections: {
+      graphVisualInventory: boolean;
+      systemIndex: boolean;
+      evidenceSettings: boolean;
+    };
+    debugTabSections: {
+      commandDeck: boolean;
+      debugInfo: boolean;
+      performanceSettings: boolean;
+    };
+    settingsTabSections: {
+      generalSettings: boolean;
+    };
+
+    // Tiles (popped out tabs)
+    tiledTabs: Array<"graph" | "qa" | "evidence" | "debug" | "settings">;
+
+    // Control Dock (right panel)
+    controlDockCollapsed: boolean;
+    controlDockWidth: number;           // px when expanded
+    controlDockCollapsedWidth: number;  // px when collapsed (default 40)
+    controlDockSections: {
+      physics: boolean;
+      appearance: boolean;
+      labels: boolean;
+      graphView: boolean;
+    };
   };
 }
