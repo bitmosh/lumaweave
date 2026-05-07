@@ -1,11 +1,11 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Self-Graph Fixture v75a", () => {
+test.describe("Self-Graph YAML Parser v75a", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
   });
 
-  test("graph canvas renders with self-graph fixture loaded", async ({ page }) => {
+  test("graph canvas renders with YAML parser graph loaded", async ({ page }) => {
     const graphViewport = page.getByTestId("self-graph-fixture-loaded");
     await expect(graphViewport).toBeVisible();
 
@@ -34,7 +34,7 @@ test.describe("Self-Graph Fixture v75a", () => {
     await expect(canvas).toBeVisible();
   });
 
-  test("spot check: docs.file.session-and-stack node present", async ({
+  test("spot check: docs.file.index.session.and.stack node present", async ({
     page,
   }) => {
     const graphViewport = page.getByTestId("self-graph-fixture-loaded");

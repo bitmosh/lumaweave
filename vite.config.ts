@@ -30,5 +30,9 @@ export default defineConfig(async () => ({
       // 3. tell Vite to ignore watching `src-tauri`
       ignored: ["**/src-tauri/**"],
     },
+    fs: {
+      // Allow importing from docs/ directory
+      allow: [".."],
+    },
   },
 }));
