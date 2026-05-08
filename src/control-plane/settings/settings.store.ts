@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { defaultSettings } from "./settings.defaults";
+import { migrateSettings } from "./settings.migrations";
 import type { StarmapSettings } from "./settings.schema";
 
 type SettingsStore = {
@@ -21,8 +22,22 @@ function setNestedValue(obj: any, path: string, value: unknown) {
   return copy;
 }
 
+// Load settings from localStorage with migration
+function loadSettings(): StarmapSettings {
+  try {
+    const saved = localStorage.getItem("lumaweave-settings");
+    if (!saved) {
+      return defaultSettings;
+    }
+    const parsed = JSON.parse(saved) as Partial<StarmapSettings>;
+    return migrateSettings(parsed);
+  } catch {
+    return defaultSettings;
+  }
+}
+
 export const useSettingsStore = create<SettingsStore>((set) => ({
-  settings: defaultSettings,
+  settings: loadSettings(),
 
   setSetting: (path, value) =>
     set((state) => ({

@@ -120,6 +120,19 @@ Never let spine version fall more than
 
 ---
 
+## MIGRATION RULE
+
+When adding new settings fields to schema:
+1. Bump version in schema.ts + defaults.ts
+2. Add migration function to MIGRATIONS record
+3. The migration ensures the field exists
+   with correct default for old localStorage
+Never add fields without bumping version.
+Never skip a version number.
+Current version: 2
+
+---
+
 ## Protocol Enforcement
 
 This protocol is permanent. It cannot be bypassed. Any violation constitutes a streak reset.

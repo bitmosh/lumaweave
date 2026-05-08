@@ -1,59 +1,100 @@
-import type { StarmapSettings } from "./settings.schema";
 import { defaultSettings } from "./settings.defaults";
+import type { StarmapSettings } from "./settings.schema";
 
-/**
- * Migrate saved settings to current schema version.
- * Called when loading settings from persistent storage.
- * Adds missing fields with defaults rather than
- * resetting everything on schema changes.
- */
+// Migration functions — one per version bump
+// Each takes the previous state, returns updated state
+const MIGRATIONS: Record<number,
+  (s: Partial<StarmapSettings>) => Partial<StarmapSettings>
+> = {
+  // v1 → v2: added physics presets + community gravity + advanced FA2 params
+  // deep merge handles new fields automatically
+  2: (s) => ({
+    ...s,
+    physics: {
+      ...defaultSettings.physics,
+      ...(s.physics ?? {}),
+      // Ensure new v2 fields exist
+      physicsPreset: s.physics?.physicsPreset
+        ?? defaultSettings.physics.physicsPreset,
+      communityGravity: s.physics?.communityGravity
+        ?? defaultSettings.physics.communityGravity,
+      strongGravityMode: s.physics?.strongGravityMode
+        ?? defaultSettings.physics.strongGravityMode,
+      linLogMode: s.physics?.linLogMode
+        ?? defaultSettings.physics.linLogMode,
+      adjustSizes: s.physics?.adjustSizes
+        ?? defaultSettings.physics.adjustSizes,
+      barnesHutTheta: s.physics?.barnesHutTheta
+        ?? defaultSettings.physics.barnesHutTheta,
+    },
+    graphView: {
+      ...defaultSettings.graphView,
+      ...(s.graphView ?? {}),
+      neighborhoodDepth: s.graphView?.neighborhoodDepth
+        ?? defaultSettings.graphView.neighborhoodDepth,
+    },
+  }),
+};
+
 export function migrateSettings(
   saved: Partial<StarmapSettings>
 ): StarmapSettings {
+  const savedVersion = saved.version ?? 1;
+  const targetVersion = defaultSettings.version;
+
+  let current = { ...saved };
+
+  // Run each migration in order
+  for (let v = savedVersion + 1; v <= targetVersion; v++) {
+    if (MIGRATIONS[v]) {
+      current = MIGRATIONS[v](current);
+    }
+  }
+
+  // Final deep merge with defaults as safety net
   return {
     ...defaultSettings,
-    ...saved,
-    // Deep merge nested sections so missing fields
-    // get defaults without overwriting saved values
-    general: { ...defaultSettings.general, ...saved.general },
-    appearance: { ...defaultSettings.appearance, ...saved.appearance },
-    graphView: { ...defaultSettings.graphView, ...saved.graphView },
-    physics: { ...defaultSettings.physics, ...saved.physics },
-    labels: { ...defaultSettings.labels, ...saved.labels },
-    evidence: { ...defaultSettings.evidence, ...saved.evidence },
-    sourceLinking: { ...defaultSettings.sourceLinking, ...saved.sourceLinking },
-    performance: { ...defaultSettings.performance, ...saved.performance },
-    developer: { ...defaultSettings.developer, ...saved.developer },
+    ...current,
+    version: targetVersion,
+    physics: {
+      ...defaultSettings.physics,
+      ...(current.physics ?? {}),
+    },
+    graphView: {
+      ...defaultSettings.graphView,
+      ...(current.graphView ?? {}),
+    },
+    labels: {
+      ...defaultSettings.labels,
+      ...(current.labels ?? {}),
+    },
     ui: {
       ...defaultSettings.ui,
-      ...saved.ui,
-      // Deep merge ui subsections
-      graphTabSections: {
-        ...defaultSettings.ui.graphTabSections,
-        ...saved.ui?.graphTabSections,
-      },
-      qaTabSections: {
-        ...defaultSettings.ui.qaTabSections,
-        ...saved.ui?.qaTabSections,
-      },
-      evidenceTabSections: {
-        ...defaultSettings.ui.evidenceTabSections,
-        ...saved.ui?.evidenceTabSections,
-      },
-      debugTabSections: {
-        ...defaultSettings.ui.debugTabSections,
-        ...saved.ui?.debugTabSections,
-      },
-      settingsTabSections: {
-        ...defaultSettings.ui.settingsTabSections,
-        ...saved.ui?.settingsTabSections,
-      },
-      controlDockSections: {
-        ...defaultSettings.ui.controlDockSections,
-        ...saved.ui?.controlDockSections,
-      },
-      tiledTabs: saved.ui?.tiledTabs ?? defaultSettings.ui.tiledTabs,
+      ...(current.ui ?? {}),
     },
-    version: defaultSettings.version,
+    appearance: {
+      ...defaultSettings.appearance,
+      ...(current.appearance ?? {}),
+    },
+    general: {
+      ...defaultSettings.general,
+      ...(current.general ?? {}),
+    },
+    evidence: {
+      ...defaultSettings.evidence,
+      ...(current.evidence ?? {}),
+    },
+    sourceLinking: {
+      ...defaultSettings.sourceLinking,
+      ...(current.sourceLinking ?? {}),
+    },
+    performance: {
+      ...defaultSettings.performance,
+      ...(current.performance ?? {}),
+    },
+    developer: {
+      ...defaultSettings.developer,
+      ...(current.developer ?? {}),
+    },
   };
 }

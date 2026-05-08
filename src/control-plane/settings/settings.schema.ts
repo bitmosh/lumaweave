@@ -29,7 +29,7 @@ export type LayoutLensId =
   | "impact-rings";
 
 export interface StarmapSettings {
-  version: number;
+  version: 2;
 
   general: {
     startupProjectId: string | null;

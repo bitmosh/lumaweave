@@ -1,7 +1,7 @@
 import type { StarmapSettings } from "./settings.schema";
 
 export const defaultSettings: StarmapSettings = {
-  version: 1,
+  version: 2,
 
   general: {
     startupProjectId: null,
