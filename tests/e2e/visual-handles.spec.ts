@@ -36,21 +36,6 @@ test.describe("Visual Handle Library v0", () => {
     await expect(advisoryView).toBeVisible();
   });
 
-  test.skip("v15 advisory question notes still work", async ({ page }) => {
-    await page.goto("/");
-    await openQaPanel(page);
-
-    const qaPanel = page.getByTestId("qa-panel").first();
-    const advisoryTab = page.getByTestId("qa-tab-advisory");
-    await advisoryTab.click();
-
-    const firstQuestionNotes = qaPanel.locator("[data-testid^='bandit-question-notes-']").first();
-    await expect(firstQuestionNotes).toBeVisible();
-    
-    await firstQuestionNotes.fill("Test notes for visual handle library v0");
-    await expect(firstQuestionNotes).toHaveValue("Test notes for visual handle library v0");
-  });
-
   test("backlog reorder still works", async ({ page }) => {
     await openQaPanel(page);
     const qaPanel = page.getByTestId("qa-panel").first();

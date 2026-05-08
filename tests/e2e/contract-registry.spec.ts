@@ -192,26 +192,6 @@ test("Bandit Questions render in Advisory tab", async ({ page }) => {
   await expect(questionsSection).toBeVisible();
 });
 
-test.skip("Question status can be changed", async ({ page }) => {
-  await page.goto("/");
-  await openQaPanel(page);
-
-  // Switch to Advisory tab
-  const advisoryTab = page.getByTestId("qa-tab-advisory");
-  await advisoryTab.click();
-  await page.waitForTimeout(150);
-
-  // Find a question status selector
-  const firstStatusSelector = page.locator("select").filter({ hasText: /unanswered/i }).first();
-  await expect(firstStatusSelector).toBeVisible();
-
-  // Change status
-  await firstStatusSelector.selectOption("answered");
-
-  // Verify value changed
-  await expect(firstStatusSelector).toHaveValue("answered");
-});
-
 test("Bandit Proposals render in Advisory tab", async ({ page }) => {
   await page.goto("/");
 
@@ -228,27 +208,6 @@ test("Bandit Proposals render in Advisory tab", async ({ page }) => {
   // Verify Bandit Proposals section is visible
   const proposalsSection = page.getByText("Bandit Proposals");
   await expect(proposalsSection).toBeVisible();
-});
-
-test.skip("Bandit Backlog Top 10 renders", async ({ page }) => {
-  await page.goto("/");
-  await openQaPanel(page);
-  await openAdvisoryTab(page);
-
-  await waitForAdvisorySection(page);
-
-  // Wait for backlog items to be rendered
-  await page.waitForSelector('[data-testid="bandit-backlog-item-1"]');
-
-  const backlogItem = page.getByTestId("bandit-backlog-item-1");
-  await expect(backlogItem).toBeVisible();
-  await expect(backlogItem.getByTestId("bandit-backlog-title")).not.toHaveText("");
-});
-
-test.skip("v64 is default active checklist", async ({ page }) => {
-  await page.goto("/");
-  await openQaPanel(page);
-  await expectCurrentQaKey(page, CURRENT_QA_KEY);
 });
 
 test("v48 identity diagnostics visible in Debug tab", async ({ page }) => {
@@ -296,58 +255,6 @@ test("Debug tab shows grouped missing Playwright coverage", async ({ page }) => 
   await expect(page.getByTestId("missing-playwright-missionControl")).toContainText("Mission Control Tabs");
 });
 
-test.skip("advisory backlog reorder moves item up", async ({ page }) => {
-  await page.goto("/");
-  await openQaPanel(page);
-  await openAdvisoryTab(page);
-
-  await waitForAdvisorySection(page);
-
-  // Wait for backlog items to be rendered
-  await page.waitForSelector('[data-testid="bandit-backlog-item-2"]');
-
-  const secondTitle = await page.getByTestId("bandit-backlog-item-2").getByTestId("bandit-backlog-title").textContent();
-  await page.getByTestId("bandit-backlog-move-up-2").click();
-  await expect(page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title")).toHaveText(secondTitle || "");
-});
-
-test.skip("advisory backlog reorder moves item down", async ({ page }) => {
-  await page.goto("/");
-  await openQaPanel(page);
-  await openAdvisoryTab(page);
-
-  await waitForAdvisorySection(page);
-
-  // Wait for backlog items to be rendered
-  await page.waitForSelector('[data-testid="bandit-backlog-item-1"]');
-
-  const firstTitle = await page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title").textContent();
-  await page.getByTestId("bandit-backlog-move-down-1").click();
-  await expect(page.getByTestId("bandit-backlog-item-2").getByTestId("bandit-backlog-title")).toHaveText(firstTitle || "");
-});
-
-test.skip("advisory backlog reorder persists through tab switching", async ({ page }) => {
-  await page.goto("/");
-  await openQaPanel(page);
-  await openAdvisoryTab(page);
-
-  await waitForAdvisorySection(page);
-
-  // Wait for backlog items to be rendered
-  await page.waitForSelector('[data-testid="bandit-backlog-item-1"]');
-
-  await page.getByTestId("bandit-backlog-move-down-1").click();
-  const reorderedFirstTitle = await page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title").textContent();
-
-  const checklistTab = page.getByTestId("qa-tab-checklist");
-  await checklistTab.click();
-  await openAdvisoryTab(page);
-
-  await waitForAdvisorySection(page);
-
-  await expect(page.getByTestId("bandit-backlog-item-1").getByTestId("bandit-backlog-title")).toHaveText(reorderedFirstTitle || "");
-});
-
 test("v48 advisory tab renders detail mode questions", async ({ page }) => {
   await page.goto("/");
   await openQaPanel(page);
@@ -368,19 +275,6 @@ test("v48 advisory tab renders detail mode questions", async ({ page }) => {
   // Also verify other v48 detail mode questions to prove v48 advisory content is loaded
   const summaryModeQuestion = page.getByText("Is Summary mode the default?");
   await expect(summaryModeQuestion).toBeVisible();
-});
-
-test.skip("v48 report includes Advisory Set Key", async ({ page }) => {
-  await page.goto("/");
-
-  // Complete checklist and submit report using helper
-  await completeChecklistAndSubmitReport(page);
-
-  // Get last report text
-  const reportText = await getLastReportText(page);
-
-  // Verify report includes current QA key
-  expect(reportText).toContain(CURRENT_QA_KEY);
 });
 
 test("v48 report stays blocked when control checks are unverified", async ({ page }) => {
