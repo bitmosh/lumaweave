@@ -77,6 +77,17 @@ const MIGRATIONS: Record<number,
     appearance.nodeGlow ??= 1.0;
     return { ...s, appearance } as Partial<StarmapSettings>;
   },
+
+  // v79 → v80: performance preset coupling fields (v86b)
+  80: (s) => {
+    const appearance = { ...(s.appearance ?? {}) } as any;
+    appearance.glitterDensity ??= "medium";
+    appearance.edgePlasmaMode ??= "animated-overlay";
+    appearance.backdropMotion ??= "half";
+    const physics = { ...(s.physics ?? {}) } as any;
+    physics.qualityPreset ??= defaultSettings.physics.qualityPreset;
+    return { ...s, appearance, physics } as Partial<StarmapSettings>;
+  },
 };
 
 export function migrateSettings(

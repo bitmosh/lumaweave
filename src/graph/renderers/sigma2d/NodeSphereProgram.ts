@@ -4,11 +4,19 @@ import type { Attributes } from "graphology-types";
 /**
  * NodeSphereProgram - Custom node renderer that creates a glowing sphere illusion
  * 
+ * v86b: Extended with 3 new uniforms for interior flow animation:
+ * - u_time: driven by rAF in SigmaGraphView
+ * - u_hum: appearance.nodeHum (0–2) - radial breathe
+ * - u_flowSpeed: appearance.nodeFlowSpeed (0–2) - interior rotating ellipse
+ * - u_glowStrength: appearance.nodeGlow (0.2–2) - glow scaling
+ * 
  * Extends NodeCircleProgram and overrides the fragment shader to add:
  * - Radial alpha mask (circle shape)
  * - Phong specular highlight at fixed angle
  * - Radial glow falloff beyond the circle edge
  * - Inner rim light at bottom-right edge
+ * - Hum: radial breathe animation
+ * - Flow: interior rotating ellipse animation
  * 
  * This produces a glowing sphere illusion from flat WebGL quads
  * with the same performance as circles.
@@ -18,6 +26,12 @@ precision mediump float;
 
 varying vec4 v_color;
 varying vec2 v_position;
+
+// NEW v86b uniforms
+uniform float u_time;
+uniform float u_hum;
+uniform float u_flowSpeed;
+uniform float u_glowStrength;
 
 void main() {
   // Distance from center (0,0 to 1,1 quad)
@@ -38,9 +52,22 @@ void main() {
   vec3 halfDir = normalize(lightDir + viewDir);
   float specular = pow(max(dot(normal, halfDir), 0.0), 32.0);
   
-  // Radial glow falloff beyond circle edge
+  // NEW v86b: hum — radial breathe
+  float humPulse = 0.5 + 0.5 * sin(u_time * u_hum);
+  vec3 humTint = v_color.rgb * (0.20 * humPulse);
+  
+  // NEW v86b: flow — interior rotating ellipse
+  float angle = u_time * u_flowSpeed;
+  vec2 flowed = vec2(
+    cos(angle) * (v_position.x - 0.5) - sin(angle) * (v_position.y - 0.5),
+    sin(angle) * (v_position.x - 0.5) + cos(angle) * (v_position.y - 0.5)
+  );
+  float flowMask = smoothstep(0.05, 0.0, abs(flowed.x * 1.4));
+  vec3 flowTint = v_color.rgb * flowMask * 0.45;
+  
+  // Radial glow falloff beyond circle edge (now scaled by u_glowStrength)
   float glow = smoothstep(radius, radius + 0.15, dist);
-  vec3 glowColor = v_color.rgb * 0.5 * glow;
+  vec3 glowColor = v_color.rgb * u_glowStrength * glow;
   
   // Inner rim light at bottom-right edge
   vec2 rimDir = normalize(vec2(1.0, 1.0));
@@ -48,7 +75,8 @@ void main() {
   float rimLight = pow(rim, 3.0) * 0.3;
   
   // Combine effects
-  vec3 finalColor = v_color.rgb + glowColor + vec3(specular) + vec3(rimLight);
+  vec3 finalColor = v_color.rgb + glowColor + vec3(specular) + vec3(rimLight)
+                  + humTint + flowTint;
   gl_FragColor = vec4(finalColor, v_color.a * alpha);
 }
 `;
@@ -58,6 +86,61 @@ export default class NodeSphereProgram<
   E extends Attributes = Attributes,
   G extends Attributes = Attributes
 > extends NodeCircleProgram<N, E, G> {
+  private uniformValues: {
+    u_time: number;
+    u_hum: number;
+    u_flowSpeed: number;
+    u_glowStrength: number;
+  } = {
+    u_time: 0,
+    u_hum: 0.7,
+    u_flowSpeed: 0.55,
+    u_glowStrength: 1.0,
+  };
+
+  // Cached uniform locations for GL calls
+  private uTimeLocation: WebGLUniformLocation | null = null;
+  private uHumLocation: WebGLUniformLocation | null = null;
+  private uFlowSpeedLocation: WebGLUniformLocation | null = null;
+  private uGlowStrengthLocation: WebGLUniformLocation | null = null;
+
+  setUniform(name: string, value: number): void {
+    if (name in this.uniformValues) {
+      (this.uniformValues as any)[name] = value;
+    }
+  }
+
+  // v86b: Override setUniforms to set GL uniforms per frame
+  // Sigma calls this each frame with the rendering context
+  setUniforms(params: any, programInfo: any): void {
+    super.setUniforms(params, programInfo);
+
+    const { gl } = programInfo;
+
+    // Cache uniform locations on first call
+    if (!this.uTimeLocation) {
+      this.uTimeLocation = gl.getUniformLocation(programInfo.program, "u_time");
+      this.uHumLocation = gl.getUniformLocation(programInfo.program, "u_hum");
+      this.uFlowSpeedLocation = gl.getUniformLocation(programInfo.program, "u_flowSpeed");
+      this.uGlowStrengthLocation = gl.getUniformLocation(programInfo.program, "u_glowStrength");
+    }
+
+    // Read animation state from Sigma settings (set by rAF loop in SigmaGraphView)
+    // Fallback to default values if setting not yet initialized
+    const v86bUniforms = (this.renderer as any).getSetting?.("v86bUniforms") ?? {
+      time: 0,
+      hum: this.uniformValues.u_hum,
+      flowSpeed: this.uniformValues.u_flowSpeed,
+      glowStrength: this.uniformValues.u_glowStrength,
+    };
+
+    // Set GL uniforms
+    if (this.uTimeLocation) gl.uniform1f(this.uTimeLocation, v86bUniforms.time);
+    if (this.uHumLocation) gl.uniform1f(this.uHumLocation, v86bUniforms.hum);
+    if (this.uFlowSpeedLocation) gl.uniform1f(this.uFlowSpeedLocation, v86bUniforms.flowSpeed);
+    if (this.uGlowStrengthLocation) gl.uniform1f(this.uGlowStrengthLocation, v86bUniforms.glowStrength);
+  }
+
   getDefinition() {
     const definition = super.getDefinition();
     return {

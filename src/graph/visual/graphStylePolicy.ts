@@ -6,6 +6,7 @@
  * 1. default styles
  * 2. selected/neighborhood styles
  * 3. hover overlay styles
+ * 4. dim mode (v86b)
  *
  * Selection must persist.
  * Hover must be temporary.
@@ -21,6 +22,7 @@ import {
 } from "./graphVisualTypes";
 import { type ResolvedGraphVisualTokens } from "./graphVisualTokens";
 import { getRelationshipNeighborhood, getNodeNeighborhood } from "../renderers/sigma2d/selectionNeighborhood";
+import { applyDimPolicy, type DimMode, type DimPolicyState } from "./dimmingPolicy";
 
 /**
  * Reset all nodes and edges to default styles
@@ -302,6 +304,8 @@ export function applyGraphStylePolicy(
   state: GraphInteractionState,
   options: StylePolicyOptions,
   tokens: ResolvedGraphVisualTokens,
+  dimMode?: DimMode,
+  dimOpacity?: number,
 ): void {
   const { selectedNodeId, selectedEdgeId, hoveredNodeId, hoveredEdgeId, neighborhoodDepth } = state;
 
@@ -320,5 +324,17 @@ export function applyGraphStylePolicy(
     applyHoverStyles(graph, state, options, tokens);
   } else {
     clearHoverStyles(graph);
+  }
+
+  // 4. Apply dim mode (v86b)
+  if (dimMode && dimMode !== "off" && dimOpacity !== undefined) {
+    const dimState: DimPolicyState = {
+      mode: dimMode,
+      clusterDepth: neighborhoodDepth ?? 2,
+      selectedNodeId: selectedNodeId ?? selectedEdgeId ? null : null, // dim mode only works with node selection
+      dimOpacity,
+      transitionMs: 200,
+    };
+    applyDimPolicy(graph, dimState);
   }
 }

@@ -11,7 +11,7 @@ import { SourceAdapterPanel } from "../source-adapter/SourceAdapterPanel";
 import { LeftTabPanel } from "../control-plane/panels/LeftTabPanel";
 import { ControlDock } from "../control-plane/panels/ControlDock";
 // v86a: Tile removed - tile system is v86c
-import { useSettingsStore } from "../control-plane/settings/settings.store";
+import { useSettingsStore, settingsStore } from "../control-plane/settings/settings.store";
 import { useGraphSourceSummary } from "../graph/ingest/useGraphSourceSummary";
 import { SigmaGraphView } from "../graph/renderers/sigma2d/SigmaGraphView";
 import {
@@ -30,6 +30,13 @@ export function AppShell() {
   const settings = useSettingsStore((state) => state.settings);
   const setSetting = useSettingsStore((state) => state.setSetting);
   const { summary, error: summaryError } = useGraphSourceSummary();
+
+  // Expose app state for Playwright tests (dev mode only)
+  useEffect(() => {
+    if (import.meta.env.DEV || (window as any).PLAYWRIGHT) {
+      (window as any).__lwStore = settingsStore;
+    }
+  }, []);
 
   // Smart fixture switching:
   // - Build-time injected by Vite define
@@ -108,6 +115,28 @@ export function AppShell() {
     },
   };
 
+  // v86b: Quality preset values for appearance sync
+  const QUALITY_PRESET_VALUES = {
+    potato: {
+      reduceMotion: true,
+      glitterDensity: "off" as const,
+      edgePlasmaMode: "static" as const,
+      backdropMotion: "off" as const,
+    },
+    balanced: {
+      reduceMotion: false,
+      glitterDensity: "medium" as const,
+      edgePlasmaMode: "animated-overlay" as const,
+      backdropMotion: "half" as const,
+    },
+    fancy: {
+      reduceMotion: false,
+      glitterDensity: "high" as const,
+      edgePlasmaMode: "animated-overlay" as const,
+      backdropMotion: "full" as const,
+    },
+  };
+
   // Sync physics sliders with preset values
   useEffect(() => {
     const preset = settings.physics.physicsPreset;
@@ -121,7 +150,50 @@ export function AppShell() {
     });
   }, [settings.physics.physicsPreset]);
 
-  // Get theme tokens for current theme
+  // v86b: Sync appearance settings with quality preset values
+  useEffect(() => {
+    const preset = settings.physics.qualityPreset;
+    if (preset === "custom") return;
+    
+    const vals = QUALITY_PRESET_VALUES[preset as keyof typeof QUALITY_PRESET_VALUES];
+    if (!vals) return;
+    
+    setSetting("appearance", {
+      ...settings.appearance,
+      ...vals,
+      physics: {
+        ...settings.physics,
+        qualityPreset: preset,
+      },
+    });
+  }, [settings.physics.qualityPreset]);
+
+  // v86b: Auto-flip qualityPreset to custom when appearance values change manually
+  useEffect(() => {
+    const preset = settings.physics.qualityPreset;
+    if (preset === "custom") return;
+    
+    const vals = QUALITY_PRESET_VALUES[preset as keyof typeof QUALITY_PRESET_VALUES];
+    if (!vals) return;
+    
+    // Check if any appearance value differs from preset defaults
+    const current = settings.appearance;
+    const differs = 
+      current.reduceMotion !== vals.reduceMotion ||
+      current.glitterDensity !== vals.glitterDensity ||
+      current.edgePlasmaMode !== vals.edgePlasmaMode ||
+      current.backdropMotion !== vals.backdropMotion;
+    
+    if (differs) {
+      setSetting("physics.qualityPreset", "custom");
+    }
+  }, [
+    settings.appearance.reduceMotion,
+    settings.appearance.glitterDensity,
+    settings.appearance.edgePlasmaMode,
+    settings.appearance.backdropMotion,
+  ]);
+
   const themeTokens = getThemeRuntimeTokens(settings.appearance.theme);
 
   // Resolve graph visual tokens from theme tokens with settings overrides

@@ -1,7 +1,7 @@
 import type { StarmapSettings } from "./settings.schema";
 
 export const defaultSettings: StarmapSettings = {
-  version: 79, // v86a: bumped from 2 to 79
+  version: 80, // v86b: bumped from 79 to 80
 
   general: {
     startupProjectId: null,
@@ -23,6 +23,10 @@ export const defaultSettings: StarmapSettings = {
     nodeHum: 0.7,
     nodeFlowSpeed: 0.55,
     nodeGlow: 1.0,
+    // NEW v86b defaults (performance preset coupling)
+    glitterDensity: "medium",
+    edgePlasmaMode: "animated-overlay",
+    backdropMotion: "half",
   },
 
   graphView: {
@@ -37,11 +41,12 @@ export const defaultSettings: StarmapSettings = {
 
   physics: {
     physicsPreset: "balanced",
-    nodeSize: 1,
-    linkDistance: 3,
-    repelForce: 100,
-    centerForce: 200,
-    communityGravity: 0,
+    qualityPreset: "balanced",
+    nodeSize: 4,
+    linkDistance: 120,
+    repelForce: 600,
+    centerForce: 0.05,
+    communityGravity: 0.5,
     physicsDialect: "helix" as const,
     // ForceAtlas2 advanced parameters
     strongGravityMode: false,

@@ -28,8 +28,7 @@ import {
   type GraphInteractionState,
   type StylePolicyOptions,
 } from "../../visual/graphVisualTypes";
-import {
-  applyNodeLabelPolicy,
+import { applyNodeLabelPolicy,
   applyEdgeLabelPolicy,
   type SelectionContext,
   type LegacyLabelPolicyOptions,
@@ -67,6 +66,12 @@ interface SigmaGraphViewProps {
   edgeLabelFontSize?: number;
   nodeLabelFontSize?: number;
   hoverNodeColor?: string;
+
+  // v86b: appearance settings for shader uniforms
+  nodeHum?: number;
+  nodeFlowSpeed?: number;
+  nodeGlow?: number;
+  reduceMotion?: boolean;
 
   resolvedTokens?: {
     nodeColor: {
@@ -156,6 +161,10 @@ export function SigmaGraphView({
   edgeLabelFontSize = 13,
   nodeLabelFontSize = 13,
   hoverNodeColor = graphVisualTokens.nodeColor.hover,
+  nodeHum = 0.7,
+  nodeFlowSpeed = 0.55,
+  nodeGlow = 1.0,
+  reduceMotion = false,
   resolvedTokens = graphVisualTokens,
   onSelectNode,
   onSetPathTarget,
@@ -180,6 +189,45 @@ export function SigmaGraphView({
   useEffect(() => {
     resolvedTokensRef.current = resolvedTokens;
   });
+
+  // v86b: Uniform wiring for NodeSphereProgram - rAF loop updates v86bUniforms per frame
+  // Sigma's NodeSphereProgram.setUniforms reads these values and sets GL uniforms
+  useEffect(() => {
+    const sigma = sigmaRef.current;
+    if (!sigma) return;
+
+    // Contract #1: reduceMotion halts uniforms at 0.0 (except glowStrength)
+    if (reduceMotion) {
+      const uniforms = {
+        time: 0,
+        hum: 0,
+        flowSpeed: 0,
+        glowStrength: nodeGlow ?? 1.0,
+      };
+      (sigma as any).setSetting("v86bUniforms", uniforms);
+      (sigma as any).__settings["v86bUniforms"] = uniforms;
+      sigma.refresh();
+      return;
+    }
+
+    // Normal mode: animate uniforms with rAF loop
+    let raf = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const uniforms = {
+        time: (now - start) / 1000,
+        hum: nodeHum ?? 0.7,
+        flowSpeed: nodeFlowSpeed ?? 0.55,
+        glowStrength: nodeGlow ?? 1.0,
+      };
+      (sigma as any).setSetting("v86bUniforms", uniforms);
+      (sigma as any).__settings["v86bUniforms"] = uniforms;
+      sigma.refresh();
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [nodeHum, nodeFlowSpeed, nodeGlow, reduceMotion]);
 
   // Separate useEffect for communityGravity centroid force
   useEffect(() => {
@@ -415,7 +463,15 @@ export function SigmaGraphView({
   }, [onSelectNode, onSetPathTarget, onSelectEdge, onClearSelection]);
 
   useEffect(() => {
-    if (!containerRef.current || nodes.length === 0) return;
+    console.log("[v86b-diag] useEffect entered", {
+      hasContainer: !!containerRef.current,
+      nodeCount: nodes.length,
+      edgeCount: edges.length,
+    });
+    if (!containerRef.current || nodes.length === 0) {
+      console.log("[v86b-diag] EARLY RETURN");
+      return;
+    }
 
     // Clear any pending debounce
     if (debounceRef.current) {
@@ -513,6 +569,17 @@ export function SigmaGraphView({
     });
 
     sigmaRef.current = sigma;
+
+    // Expose Sigma instance for Playwright tests
+    (window as any).__lwSigma = sigma;
+    if (!(sigma as any).getSetting) {
+      (sigma as any).getSetting = (key: string) => {
+        return (sigma as any).__settings?.[key];
+      };
+    }
+    if (!(sigma as any).__settings) {
+      (sigma as any).__settings = {};
+    }
 
   // Start continuous FA2 supervisor
   // Stop any existing supervisor

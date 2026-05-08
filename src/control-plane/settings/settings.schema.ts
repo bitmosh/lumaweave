@@ -40,7 +40,7 @@ export interface TileLayoutEntry {
 }
 
 export interface StarmapSettings {
-  version: 79; // v86a: bumped from 2 to 79
+  version: 80; // v86b: bumped from 79 to 80 (performance preset coupling fields)
 
   general: {
     startupProjectId: string | null;
@@ -62,6 +62,10 @@ export interface StarmapSettings {
     nodeHum: number; // 0–2 sphere fade rate
     nodeFlowSpeed: number; // 0–2 sphere flow speed
     nodeGlow: number; // 0.2–2 glow strength
+    // NEW v86b (performance preset coupling)
+    glitterDensity: "off" | "low" | "medium" | "high";
+    edgePlasmaMode: "static" | "animated-overlay";
+    backdropMotion: "off" | "low" | "half" | "full";
   };
 
   graphView: {
@@ -76,6 +80,7 @@ export interface StarmapSettings {
 
   physics: {
     physicsPreset: "custom" | "balanced" | "spread" | "tight" | "organic" | "performance";
+    qualityPreset: "custom" | "potato" | "balanced" | "fancy";
     nodeSize: number;
     linkDistance: number;
     repelForce: number;

@@ -3,9 +3,9 @@ import { defaultSettings } from "./settings.defaults";
 import { migrateSettings } from "./settings.migrations";
 import type { StarmapSettings } from "./settings.schema";
 
-export const CURRENT_SCHEMA_VERSION = 79;
+export const CURRENT_SCHEMA_VERSION = 80;
 
-type SettingsStore = {
+export type SettingsStore = {
   settings: StarmapSettings;
   setSetting: (path: string, value: unknown) => void;
   resetSettings: () => void;
@@ -60,3 +60,6 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
       settings: defaultSettings,
     }),
 }));
+
+// Export raw store for test helpers (dev mode only)
+export const settingsStore = useSettingsStore;

@@ -7,10 +7,14 @@ import * as ThemeOverrideStorage from "./themes/themeOverrideStorage";
 declare global {
   interface Window {
     __LUMAWEAVE_THEME_OVERRIDE_STORAGE__: typeof ThemeOverrideStorage;
+    PLAYWRIGHT: boolean;
   }
 }
 
 window.__LUMAWEAVE_THEME_OVERRIDE_STORAGE__ = ThemeOverrideStorage;
+
+// Set PLAYWRIGHT flag for test helpers
+(window as any).PLAYWRIGHT = true;
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
