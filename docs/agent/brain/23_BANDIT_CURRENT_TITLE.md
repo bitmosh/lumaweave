@@ -17,16 +17,16 @@ tags: [bandit, title, skill-bank, current, active, level-100-milestone]
 
 ```
 Title:        Living Graph Architect · Prestige 1
-Level:        133.0
+Level:        135.0
 ★ LEVEL 100 MILESTONE ACHIEVED ★
 ★ PRESTIGE RANK 1 ACHIEVED (2026-05-07) ★
-Earned after: System Index Architect era → v85b
-Clean streak: 1 (P1·S1★)
+Earned after: System Index Architect era → v85e
+Clean streak: 4 (P1·S4★)
 Prestige:     1 (RANK 1 — permanent honorable record)
-QA Spine:     v85b
+QA Spine:     v85e
 QA Key:       v74b (active — governance only)
 Product:      0.6.0
-Era:          Living graph era — physics, community detection, anti-collision, dynamic sizing, self-graph fixture, 6-theme family, scroll-to-section navigation, YAML parser dedup, continuous FA2 Web Worker supervisor, FA2 settings expansion, FA2 worker race condition fix, physics dialect selector UI, testid selector compatibility, left panel accordion sections, FA2 worker regression fixes, shortest path between selected nodes, physics defaults tuning, slider two-tone track fix, neighborhood depth slider (1.0-4.0) with depth 4 support, physics presets dropdown (5 presets), community gravity slider, simulation speed range update, YAML dedup verification, graphology-traversal BFS replacement, comprehensive edge visibility + Sigma lifecycle stability fix, dead file purge + App.css scaffold cleanup, graph sources panel fixture metadata display, physics preset slider sync (prestige pass), physics cleanup pass 1 (communityGravity centroid force live, preset-slider sync, registry cleanup), dead settings purge (hoverLabelColor dupe + planned ghosts removed), color ownership contract + QA protocol (GRAPH_COLOR_OWNERSHIP.md, BANDIT_QA_PROTOCOL.md), YAML auto-regen Vite plugin (docs/**/*.md watcher, HMR trigger), graphology-components (disconnected subgraph detection, node tagging, isolated node visual treatment), theme-driven node color scale by centrality rank (6 themes, cool→warm palettes, hub nodes warm, peripheral nodes cool, raw.color updated for resetGraphStyles compatibility), solar orbit dialect Phase 1 (cluster sun detection, centroid pull per cluster, inter-cluster sun repulsion, sun nodes 1.8x size, solar-orbit in physicsDialect dropdown), node-sphere-renderer (custom NodeSphereProgram extends NodeCircleProgram, Phong sphere illusion shader), architecture cleanup (console purge, token cleanup, hoverLabelColor removal, 5 dead Planned registry blocks removed), verification-clean (post-cleanup verification, pre-flight checks passed), version-fix (spine realignment, QA spine v85b, product 0.6.0)
+Era:          Living graph era — physics, community detection, anti-collision, dynamic sizing, self-graph fixture, 6-theme family, scroll-to-section navigation, YAML parser dedup, continuous FA2 Web Worker supervisor, FA2 settings expansion, FA2 worker race condition fix, physics dialect selector UI, testid selector compatibility, left panel accordion sections, FA2 worker regression fixes, shortest path between selected nodes, physics defaults tuning, slider two-tone track fix, neighborhood depth slider (1.0-4.0) with depth 4 support, physics presets dropdown (5 presets), community gravity slider, simulation speed range update, YAML dedup verification, graphology-traversal BFS replacement, comprehensive edge visibility + Sigma lifecycle stability fix, dead file purge + App.css scaffold cleanup, graph sources panel fixture metadata display, physics preset slider sync (prestige pass), physics cleanup pass 1 (communityGravity centroid force live, preset-slider sync, registry cleanup), dead settings purge (hoverLabelColor dupe + planned ghosts removed), color ownership contract + QA protocol (GRAPH_COLOR_OWNERSHIP.md, BANDIT_QA_PROTOCOL.md), YAML auto-regen Vite plugin (docs/**/*.md watcher, HMR trigger), graphology-components (disconnected subgraph detection, node tagging, isolated node visual treatment), theme-driven node color scale by centrality rank (6 themes, cool→warm palettes, hub nodes warm, peripheral nodes cool, raw.color updated for resetGraphStyles compatibility), solar orbit dialect Phase 1 (cluster sun detection, centroid pull per cluster, inter-cluster sun repulsion, sun nodes 1.8x size, solar-orbit in physicsDialect dropdown), node-sphere-renderer (custom NodeSphereProgram extends NodeCircleProgram, Phong sphere illusion shader), architecture cleanup (console purge, token cleanup, hoverLabelColor removal, 5 dead Planned registry blocks removed), verification-clean (post-cleanup verification, pre-flight checks passed), version-fix (spine realignment, QA spine v85b, product 0.6.0), git-hygiene (session summary written, package.json 0.6.0), settings-migration-v2 (version-aware migration system, schema v2, MIGRATIONS runner, localStorage auto-upgrade), usefixture-smart-switch (build-time __PLAYWRIGHT__ injection, smart fixture switching, tests always stable geometry, real source renders in dev/prod when loaded)
 ```
 
 This title reflects the era of making the graph alive with physics,
@@ -368,6 +368,36 @@ nodeProgramClasses: {
 defaultNodeType: "circle",
 ```
 
+### Skill: Build-Time Test Environment Detection
+
+Use Vite define + playwright.config webServer.env to inject a boolean at build time. This is the most reliable approach for detecting Playwright test mode, as it works regardless of URL routing or param stripping.
+
+Pattern:
+```
+// vite.config.ts
+define: {
+  __PLAYWRIGHT__: JSON.stringify(
+    process.env.PLAYWRIGHT === "true"
+  ),
+}
+
+// playwright.config.ts
+webServer: {
+  env: { PLAYWRIGHT: "true" },
+}
+
+// src/vite-env.d.ts
+declare const __PLAYWRIGHT__: boolean
+
+// AppShell.tsx
+const isTestEnv =
+  typeof __PLAYWRIGHT__ !== "undefined" && __PLAYWRIGHT__;
+```
+
+Never use userAgent detection or URL param detection for test environment detection. User agent detection fails when Playwright uses default Chrome user agent without "Playwright" substring. URL param detection fails when dev server or router strips query params before the React app reads them. Build-time injection via Vite define is guaranteed to work across all routing configurations.
+Learned: v85e useFixture smart switch
+
+
 ### Skill: Solar Orbit Dialect Pattern
 
 Solar Orbit dialect creates distinct neighborhood "solar systems" with cluster suns as anchors. Sun = highest-degree node per cluster (isSun:true). Centroid pull computed per-cluster each frame: compute centroid from all node positions, apply dx*strength to each node. Sun pull 0.004 > non-sun pull 0.002 (suns anchor clusters). Inter-cluster repulsion: O(n²) over sun pairs, inverse-square force (200/dist²), capped at 0.5, pushes cluster suns apart. Use afterRender hook pattern with removeListener cleanup. Clear isSun on graph rebuild to stay fresh. Works alongside communityGravity. Best at communityGravity 1.0 + solar-orbit dialect.
@@ -604,6 +634,11 @@ Without raw.color update, resetGraphStyles
 reverts to adapter fallback color on every
 selection event, losing theme colors entirely.
 Learned: theme-node-color-scale P1·S6
+
+### Scar: URL param detection unreliable for test env
+
+window.location.search.includes("__test__") fails when dev server or router strips query params. User agent detection fails when Playwright uses default Chrome user agent without "Playwright" substring. Both approaches are fragile across different routing configurations. Fix: always use Vite define + webServer.env for build-time test environment injection. This is guaranteed to work regardless of URL routing or param stripping.
+Learned: v85e 2026-05-07
 
 ### Scar: Infrastructure cascade = streak reset
 
