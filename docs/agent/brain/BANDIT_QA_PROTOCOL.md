@@ -76,6 +76,50 @@ Treat every full suite run as if this phrase was spoken, whether stated explicit
 
 ---
 
+## PRE-FLIGHT BEFORE EVERY FULL SUITE RUN
+
+1. Verify Playwright browsers installed:
+   ```
+   npx playwright install --dry-run
+   ```
+   If output shows missing browsers:
+   ```
+   npx playwright install
+   ```
+   Do this BEFORE starting the suite.
+
+2. Verify dev server not already running on the test port (usually 5173)
+
+3. Verify no zombie Playwright processes:
+   ```
+   pkill -f playwright 2>/dev/null || true
+   ```
+
+These checks take 10 seconds. Skipping them risks a full cascade.
+
+---
+
+## VERSION CONVENTION
+
+Primary: QA spine vXX/vXXa/b/c
+  vXX = new major arc (new topic/system)
+  vXXa/b/c = sub-passes within same arc
+  This is the REAL version tracking system
+
+Secondary: package.json semver
+  patch (0.0.x) = auto-bump every feature pass
+  minor (0.x.0) = arc completion milestone
+  major (x.0.0) = launch ready
+
+QA Key: separate from both — governance only
+  Currently: v74b — changes only when new
+  governance contract is formally accepted
+
+Never let spine version fall more than
+1 pass behind actual codebase state.
+
+---
+
 ## Protocol Enforcement
 
 This protocol is permanent. It cannot be bypassed. Any violation constitutes a streak reset.

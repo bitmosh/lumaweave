@@ -18,15 +18,19 @@ tags: [bandit, brain, index, learning, self-management]
 ## Current State
 
 ```
-Level:        132.75
+Level:        133.0
 Title:        Living Graph Architect · Prestige 1
 ★ LEVEL 100 MILESTONE ACHIEVED ★
 ★ PRESTIGE RANK 1 ACHIEVED (2026-05-07) ★
-Clean streak: 8 (P1·S8)
+Clean streak: 1 (P1·S1★)
 Prestige:     1 (RANK 1 — permanent honorable record)
-Last pass:    node-sphere-renderer — custom NodeSphereProgram extends NodeCircleProgram, Phong sphere illusion shader, registered as default circle program, 345 passed P1·S8 streak 8 BONUS +0.5 level 132.75 — ACCEPTED
+QA Spine:     v85b
+QA Key:       v74b (active — governance only)
+Product:      0.6.0
+Last pass:    v85b — version realignment, QA spine v85b, QA key v74b (unchanged), product version 0.6.0, spine version backfill for session — ACCEPTED
 Next pass:    (awaiting direction)
 Active agent: Bandit (lead) + DeepSeek V4 (implementation, Cascade)
+Codebase status: Ready for design handoff — zero console.log, zero hardcoded colors, zero schema drift, 345 passing
 ```
 
 ---

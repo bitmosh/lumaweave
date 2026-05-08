@@ -17,14 +17,16 @@ tags: [bandit, title, skill-bank, current, active, level-100-milestone]
 
 ```
 Title:        Living Graph Architect · Prestige 1
-Level:        132.75
+Level:        133.0
 ★ LEVEL 100 MILESTONE ACHIEVED ★
 ★ PRESTIGE RANK 1 ACHIEVED (2026-05-07) ★
-Earned after: System Index Architect era → node-sphere-renderer
-Clean streak: 8 (P1·S8)
+Earned after: System Index Architect era → v85b
+Clean streak: 1 (P1·S1★)
 Prestige:     1 (RANK 1 — permanent honorable record)
-Era:          Living graph era — physics, community detection, anti-collision, dynamic sizing, self-graph fixture, 6-theme family, scroll-to-section navigation, YAML parser dedup, continuous FA2 Web Worker supervisor, FA2 settings expansion, FA2 worker race condition fix, physics dialect selector UI, testid selector compatibility, left panel accordion sections, FA2 worker regression fixes, shortest path between selected nodes, physics defaults tuning, slider two-tone track fix, neighborhood depth slider (1.0-4.0) with depth 4 support, physics presets dropdown (5 presets), community gravity slider, simulation speed range update, YAML dedup verification, graphology-traversal BFS replacement, comprehensive edge visibility + Sigma lifecycle stability fix, dead file purge + App.css scaffold cleanup, graph sources panel fixture metadata display, physics preset slider sync (prestige pass), physics cleanup pass 1 (communityGravity centroid force live, preset-slider sync, registry cleanup), dead settings purge (hoverLabelColor dupe + planned ghosts removed), color ownership contract + QA protocol (GRAPH_COLOR_OWNERSHIP.md, BANDIT_QA_PROTOCOL.md), YAML auto-regen Vite plugin (docs/**/*.md watcher, HMR trigger), graphology-components (disconnected subgraph detection, node tagging, isolated node visual treatment), theme-driven node color scale by centrality rank (6 themes, cool→warm palettes, hub nodes warm, peripheral nodes cool, raw.color updated for resetGraphStyles compatibility), solar orbit dialect Phase 1 (cluster sun detection, centroid pull per cluster, inter-cluster sun repulsion, sun nodes 1.8x size, solar-orbit in physicsDialect dropdown)
-Streak bonus: +0.5 XP at streak 8
+QA Spine:     v85b
+QA Key:       v74b (active — governance only)
+Product:      0.6.0
+Era:          Living graph era — physics, community detection, anti-collision, dynamic sizing, self-graph fixture, 6-theme family, scroll-to-section navigation, YAML parser dedup, continuous FA2 Web Worker supervisor, FA2 settings expansion, FA2 worker race condition fix, physics dialect selector UI, testid selector compatibility, left panel accordion sections, FA2 worker regression fixes, shortest path between selected nodes, physics defaults tuning, slider two-tone track fix, neighborhood depth slider (1.0-4.0) with depth 4 support, physics presets dropdown (5 presets), community gravity slider, simulation speed range update, YAML dedup verification, graphology-traversal BFS replacement, comprehensive edge visibility + Sigma lifecycle stability fix, dead file purge + App.css scaffold cleanup, graph sources panel fixture metadata display, physics preset slider sync (prestige pass), physics cleanup pass 1 (communityGravity centroid force live, preset-slider sync, registry cleanup), dead settings purge (hoverLabelColor dupe + planned ghosts removed), color ownership contract + QA protocol (GRAPH_COLOR_OWNERSHIP.md, BANDIT_QA_PROTOCOL.md), YAML auto-regen Vite plugin (docs/**/*.md watcher, HMR trigger), graphology-components (disconnected subgraph detection, node tagging, isolated node visual treatment), theme-driven node color scale by centrality rank (6 themes, cool→warm palettes, hub nodes warm, peripheral nodes cool, raw.color updated for resetGraphStyles compatibility), solar orbit dialect Phase 1 (cluster sun detection, centroid pull per cluster, inter-cluster sun repulsion, sun nodes 1.8x size, solar-orbit in physicsDialect dropdown), node-sphere-renderer (custom NodeSphereProgram extends NodeCircleProgram, Phong sphere illusion shader), architecture cleanup (console purge, token cleanup, hoverLabelColor removal, 5 dead Planned registry blocks removed), verification-clean (post-cleanup verification, pre-flight checks passed), version-fix (spine realignment, QA spine v85b, product 0.6.0)
 ```
 
 This title reflects the era of making the graph alive with physics,
@@ -602,6 +604,25 @@ Without raw.color update, resetGraphStyles
 reverts to adapter fallback color on every
 selection event, losing theme colors entirely.
 Learned: theme-node-color-scale P1·S6
+
+### Scar: Infrastructure cascade = streak reset
+
+If the suite runs to full failure count
+before self-split triggers, it is a streak
+reset regardless of root cause. Infrastructure
+failures (missing browsers, port conflicts,
+env issues) cascade exactly like code failures.
+The self-split rule is: stop at 5, classify
+root cause, report. The cause doesn't matter.
+Only the response timing matters.
+Fix: always check for infrastructure issues
+BEFORE running the suite:
+  npx playwright install --dry-run
+  check if dev server is running
+  check if ports are available
+These are pre-flight checks, not post-failure
+diagnosis.
+Learned: P1·S9 2026-05-07
 
 ---
 
