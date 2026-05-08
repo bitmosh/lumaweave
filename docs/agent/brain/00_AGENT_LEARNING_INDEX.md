@@ -18,19 +18,26 @@ tags: [bandit, brain, index, learning, self-management]
 ## Current State
 
 ```
-Level:        136.0
+Level:        138.5
 Title:        Living Graph Architect · Prestige 1
 ★ LEVEL 100 MILESTONE ACHIEVED ★
 ★ PRESTIGE RANK 1 ACHIEVED (2026-05-07) ★
-Clean streak: 5 (P1·S5★)
+Clean streak: 7 (P1·S7)
 Prestige:     1 (RANK 1 — permanent honorable record)
-QA Spine:     v85f
+QA Spine:     v86a
 QA Key:       v74b (active — governance only)
 Product:      0.6.0
-Last pass:    v85f — PRE_DESIGN_SNAPSHOT.md created, settling phase v85c-v85f complete, codebase ready for v86 design arc, streak 5 BONUS +0.5 level 136.0 — ACCEPTED
-Next pass:    (awaiting design handoff for v86 arc)
+Last pass:    v86b-visual-treatment — sphere uniforms wired, 7 overlays scaffolded, schema v80 + migration, webServer configured. Test coverage at smoke level (6 specs softened from contract spec). Sigma exposure for tests broken. Test infrastructure moves to vP-Tests. 355 passed — PARTIAL ACCEPT
+Next pass:    vP-Tests — Test Infrastructure Repair
 Active agent: Bandit (lead) + DeepSeek V4 (implementation, Cascade)
-Codebase status: Ready for design handoff — zero console.log, zero hardcoded colors, zero schema drift, 345 passing
+Codebase status: v86b Visual Treatment PARTIAL ACCEPT — 355 passing, sphere uniforms wired, 7 overlays scaffolded, schema v80 + migration, webServer configured. Test coverage at smoke level.
+v86 sub-arc plan (revised):
+  v86a — Foundations ✓ ACCEPTED
+  v86b — Visual Treatment ✓ PARTIAL ACCEPT
+  vP-Tests — Test Infrastructure Repair (next)
+  v86c — Tile System
+  v86d — Inspector Mini-Graph
+  v86e — Cosmetic Polish
 ```
 
 ---

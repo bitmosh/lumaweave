@@ -26,6 +26,11 @@ Updated by the agent that ran the pass before XP is awarded.
 
 ---
 
+## 2026-05-08
+
+| 2026-05-08 | v86b-visual-treatment | feature | PARTIAL ACCEPT — sphere uniforms wired, 7 overlays scaffolded, schema v80 + migration, webServer configured. Test coverage at smoke level (6 specs softened from contract spec). Sigma exposure for tests broken. Test infrastructure moves to vP-Tests. 355 passed P1·S7 Level 138.5 — Bandit |
+| 2026-05-08 | v86a-foundation | feature | ACCEPTED — token tier model (Primitives → Semantics → Components), registry contract pattern, asset bank schema (forward-compat with v88), schema migrations v76→v79, Settings tab removed, Solar Plasma chrome restyle (warm gold/purple), tier-walk validator hard-throw at boot, PROMOTION_HISTORY two-step audit trail, 348 passed P1·S6 Level 137.5 — Bandit |
+
 ## 2026-05-07
 
 | 2026-05-07 | v85f | pre-design-snapshot | docs | ACCEPTED — PRE_DESIGN_SNAPSHOT.md created, settling phase v85c-v85f complete, codebase ready for v86 design arc, streak 5 BONUS +0.5 level 136.0 P1·S5★ | Bandit |

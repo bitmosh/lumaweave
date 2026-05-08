@@ -463,15 +463,7 @@ export function SigmaGraphView({
   }, [onSelectNode, onSetPathTarget, onSelectEdge, onClearSelection]);
 
   useEffect(() => {
-    console.log("[v86b-diag] useEffect entered", {
-      hasContainer: !!containerRef.current,
-      nodeCount: nodes.length,
-      edgeCount: edges.length,
-    });
-    if (!containerRef.current || nodes.length === 0) {
-      console.log("[v86b-diag] EARLY RETURN");
-      return;
-    }
+    if (!containerRef.current || nodes.length === 0) return;
 
     // Clear any pending debounce
     if (debounceRef.current) {
