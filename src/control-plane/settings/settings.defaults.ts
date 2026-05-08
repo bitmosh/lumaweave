@@ -51,7 +51,6 @@ export const defaultSettings: StarmapSettings = {
     zoomLabelThreshold: 1.15,
     edgeLabelFontSize: 13,
     nodeLabelFontSize: 13,
-    hoverLabelColor: "#e0f2fe",
   },
 
   evidence: {

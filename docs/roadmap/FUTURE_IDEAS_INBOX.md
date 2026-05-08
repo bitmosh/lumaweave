@@ -25,6 +25,30 @@ Items here are promoted to the roadmap only when:
 
 ## Graph Intelligence
 
+- **PLANNED SETTINGS — removed from registry (P1·S9 cleanup)**
+  These were commented-out Planned entries from settings.registry.ts.
+  Implement when renderer supports them:
+
+  zoomLabelThreshold: slider 0.5-3.0
+    Min zoom level to show labels
+    Requires Sigma camera zoom hook
+
+  hoverLabelColor: color picker
+    Per-node hover label text color
+    Requires Sigma per-node label color support
+
+  selectedNodeColor: color picker
+    Override selected node highlight color
+    Wire to graphVisualTokens.nodeColor.selected
+
+  defaultNodeColor: color picker
+    Override default node fill color
+    Wire to theme nodeColorScale[0]
+
+  selectedEdgeColor: color picker
+    Override selected edge stroke color
+    Wire to graphVisualTokens.edgeColor.selected
+
 - **SOLAR ORBIT DIALECT — PHASE 1 (cluster gravity)**
   Custom physics plugin: compute cluster centroid per frame,
   apply inward pull to cluster members. Result: loose solar

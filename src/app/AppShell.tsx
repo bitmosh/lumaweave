@@ -31,13 +31,6 @@ export function AppShell() {
   const setSetting = useSettingsStore((state) => state.setSetting);
   const { summary, error: summaryError } = useGraphSourceSummary();
 
-  // Self-graph fixture for demo (v75a)
-  // TODO: Smart switching deferred.
-  // Requires updating layout dimension assertions
-  // in theme-target-inspector.spec.ts lines 211-212
-  // which are hardcoded to fixture viewport geometry.
-  // Fix: derive expected dimensions from actual
-  // viewport instead of hardcoded pixel values.
   const [useFixture] = useState(true);
   const adaptedFixture = useMemo(
     () => adaptSelfGraphToSigma(generatedGraph as LumaSourceGraph),
@@ -743,16 +736,6 @@ export function AppShell() {
               graphEdges &&
               graphNodes.length > 0 ? (
                 (() => {
-                  console.log("AppShell Sigma props", {
-                    normalizedNodes: graphNodes.length,
-                    normalizedEdges: graphEdges.length,
-                    nodeSize: settings.physics.nodeSize,
-                    linkDistance: settings.physics.linkDistance,
-                    repelForce: settings.physics.repelForce,
-                    selectedNodeId,
-                    selectedEdgeId,
-                  });
-
                   return (
                     <>
                       <SigmaGraphView

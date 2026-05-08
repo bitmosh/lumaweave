@@ -16,6 +16,7 @@ import type {
   LumaWeaveEdgeDraft,
   LumaWeaveNodeDraft,
 } from "../../schema/graph.types";
+import { graphVisualTokens } from "../../visual/graphVisualTokens";
 
 export interface LayoutSettings {
   nodeSize: number;
@@ -97,10 +98,6 @@ function assignLouvainCommunities(
       node.raw = { ...node.raw, cluster: clusterColor };
     }
   });
-
-  console.log("Louvain communities assigned", {
-    totalNodes: nodes.length,
-  });
 }
 
 /**
@@ -159,7 +156,7 @@ function applyHelixLayout(
   const clusterEntries = [...clusters.entries()];
 
   // Largest cluster = backbone helix
-  const [backboneCluster, backboneNodes] = clusterEntries[0] ?? [];
+  const [, backboneNodes] = clusterEntries[0] ?? [];
   const backbonePositions: { x: number; y: number }[] = [];
 
   // Place backbone nodes along helix
@@ -194,12 +191,6 @@ function applyHelixLayout(
       graph.setNodeAttribute(node.id, "y", pos.y);
     });
   });
-
-  console.log("Helix layout applied", {
-    backboneCluster,
-    backboneSize: backboneNodes?.length ?? 0,
-    branchClusters: clusterEntries.length - 1,
-  });
 }
 
 export interface GraphBuildResult {
@@ -229,11 +220,6 @@ export function buildGraphologyGraph(
   edges: LumaWeaveEdgeDraft[],
   settings: LayoutSettings,
 ): GraphBuildResult {
-  console.log("Building Graphology graph", {
-    inputNodes: nodes.length,
-    inputEdges: edges.length,
-  });
-
   const graph = new Graph();
 
   const layoutScale =
@@ -253,7 +239,7 @@ export function buildGraphologyGraph(
         originalLabel: node.label,
         size: ((node.raw?.size as number) ?? baseSize) * settings.nodeSize,
         baseSize: (node.raw?.size as number) ?? baseSize,
-        color: (node.raw?.color as string) ?? "#22d3ee",
+        color: (node.raw?.color as string) ?? graphVisualTokens.nodeColor.default,
         nodeType: node.type || "unknown",
         raw: node.raw,
       });
@@ -440,17 +426,6 @@ export function buildGraphologyGraph(
     isolatedNodeCount: components.filter(c => c.length === 1).length,
     largestComponentSize: largestComponent.length,
   };
-
-  console.log("Graphology layout diagnostics", diagnostics);
-
-  console.log("Graphology output", {
-    order: graph.order,
-    size: graph.size,
-    sampleNodes: graph.nodes().slice(0, 5).map((id) => ({
-      id,
-      attrs: graph.getNodeAttributes(id),
-    })),
-  });
 
   return {
     graph,

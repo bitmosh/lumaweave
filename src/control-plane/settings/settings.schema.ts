@@ -79,7 +79,6 @@ export interface StarmapSettings {
     zoomLabelThreshold: number;
     edgeLabelFontSize: number;
     nodeLabelFontSize: number;
-    hoverLabelColor: string;
   };
 
   evidence: {

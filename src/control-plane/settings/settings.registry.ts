@@ -33,34 +33,6 @@ export type SettingControl =
     };
 
 export const settingsRegistry: SettingControl[] = [
-  // Theme and glitter controls moved to top bar for quick access
-  // {
-  //   type: "select",
-  //   category: "Appearance",
-  //   path: "appearance.theme",
-  //   label: "Theme",
-  //   options: [
-  //     { value: "solar-plasma", label: "Solar Plasma" },
-  //     { value: "obsidian-aurora", label: "Obsidian Aurora" },
-  //     { value: "haunted-observatory", label: "Haunted Observatory" },
-  //     { value: "glitter-goblin", label: "Glitter Goblin" },
-  //   ],
-  // },
-  // {
-  //   type: "boolean",
-  //   category: "Appearance",
-  //   path: "appearance.glitterEnabled",
-  //   label: "Enable Glitter",
-  //   description: "Turns semantic sparkle, flare, and plasma effects on or off.",
-  // },
-  // Reduce Motion moved to top bar for quick access
-  // {
-  //   type: "boolean",
-  //   category: "Accessibility",
-  //   path: "appearance.reduceMotion",
-  //   label: "Reduce Motion",
-  //   description: "Disables or softens animations.",
-  // },
   {
     type: "select",
     category: "Physics",
@@ -209,17 +181,6 @@ export const settingsRegistry: SettingControl[] = [
     label: "Show Labels On Hover",
     description: "Show node label when hovering over a node.",
   },
-  // Planned label settings hidden until wired to renderer
-  // {
-  //   type: "range",
-  //   category: "Labels",
-  //   path: "labels.zoomLabelThreshold",
-  //   label: "Zoom Label Threshold (Planned)",
-  //   description: "Minimum zoom level to show labels. Planned for future implementation.",
-  //   min: 0.5,
-  //   max: 3,
-  //   step: 0.05,
-  // },
   {
     type: "range",
     category: "Labels",
@@ -240,13 +201,6 @@ export const settingsRegistry: SettingControl[] = [
     max: 28,
     step: 1,
   },
-  // {
-  //   type: "text",
-  //   category: "Labels",
-  //   path: "labels.hoverLabelColor",
-  //   label: "Hover Label Color (Planned)",
-  //   description: "Hex color for hover label text. Per-node hover label color is not yet implemented. Planned for future label color customization.",
-  // },
   {
     type: "range",
     category: "Graph View",
@@ -264,26 +218,4 @@ export const settingsRegistry: SettingControl[] = [
     label: "Hover Node Color",
     description: "Hex color for node hover highlight. Example: #ffffff",
   },
-  // Planned settings hidden until wired to renderer
-  // {
-  //   type: "text",
-  //   category: "Graph View",
-  //   path: "graphView.selectedNodeColor",
-  //   label: "Selected Node Color (Planned)",
-  //   description: "Hex color for selected node highlight. Planned for future theme customization.",
-  // },
-  // {
-  //   type: "text",
-  //   category: "Graph View",
-  //   path: "graphView.defaultNodeColor",
-  //   label: "Default Node Color (Planned)",
-  //   description: "Hex color for default node fill. Planned for future theme customization.",
-  // },
-  // {
-  //   type: "text",
-  //   category: "Graph View",
-  //   path: "graphView.selectedEdgeColor",
-  //   label: "Selected Edge Color (Planned)",
-  //   description: "Hex color for selected edge stroke. Planned for future theme customization.",
-  // },
 ];

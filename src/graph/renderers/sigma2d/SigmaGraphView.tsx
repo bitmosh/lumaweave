@@ -155,7 +155,7 @@ export function SigmaGraphView({
   zoomLabelThreshold = 1.15,
   edgeLabelFontSize = 13,
   nodeLabelFontSize = 13,
-  hoverNodeColor = "#ffffff",
+  hoverNodeColor = graphVisualTokens.nodeColor.hover,
   resolvedTokens = graphVisualTokens,
   onSelectNode,
   onSetPathTarget,
@@ -414,14 +414,6 @@ export function SigmaGraphView({
     onClearSelectionRef.current = onClearSelection;
   }, [onSelectNode, onSetPathTarget, onSelectEdge, onClearSelection]);
 
-  console.log("SigmaGraphView input", {
-    nodes: nodes.length,
-    edges: edges.length,
-    nodeSize,
-    linkDistance,
-    repelForce,
-  });
-
   useEffect(() => {
     if (!containerRef.current || nodes.length === 0) return;
 
@@ -471,7 +463,7 @@ export function SigmaGraphView({
     const labelOptions: LegacyLabelPolicyOptions = {
       maxEdgeLabelLength: maxEdgeLabelLength || 20,
       showLabelsOnHover: showLabelsOnHover || false,
-      hoverLabelColor: "#0f172a", // Not used in v0, kept for API compatibility
+      hoverLabelColor: graphVisualTokens.nodeLabelColor.default, // Token-based hover label color
     };
 
     applyNodeLabelPolicy(graph, selectionContext, labelOptions, nodeLabelMode || "off");
@@ -519,8 +511,6 @@ export function SigmaGraphView({
       },
       defaultNodeType: "circle",
     });
-
-    console.log("[SIGMA CONFIG] labelColor: attribute-based with fallback", resolvedTokens.nodeLabelColor.default, ", edgeLabelSize:", edgeLabelFontSize);
 
     sigmaRef.current = sigma;
 
@@ -585,22 +575,18 @@ export function SigmaGraphView({
   });
 
   sigma.on("enterNode", ({ node }) => {
-    console.log("[HOVER] enterNode:", node);
     setHoveredNodeId(node);
   });
 
   sigma.on("leaveNode", () => {
-    console.log("[HOVER] leaveNode: clearing hoveredNodeId");
     setHoveredNodeId(null);
   });
 
   sigma.on("enterEdge", ({ edge }) => {
-    console.log("[HOVER] enterEdge:", edge);
     setHoveredEdgeId(edge);
   });
 
   sigma.on("leaveEdge", () => {
-    console.log("[HOVER] leaveEdge: clearing hoveredEdgeId");
     setHoveredEdgeId(null);
   });
 
@@ -745,19 +731,15 @@ useEffect(() => {
   );
 
   if (!path) {
-    console.log("[PATH] No path found between",
-      selectedNodeId, "and", pathTargetId);
     return;
   }
-
-  console.log("[PATH] Found path:", path);
 
   // Highlight path nodes
   const pathNodeSet = new Set(path);
   graph.forEachNode((nodeId: string) => {
     if (pathNodeSet.has(nodeId)) {
       graph.setNodeAttribute(
-        nodeId, "color", "#fbbf24"  // gold
+        nodeId, "color", graphVisualTokens.nodeColor.selected
       );
     }
   });
@@ -774,7 +756,7 @@ useEffect(() => {
         (src === target && tgt === source)
       ) {
         graph.setEdgeAttribute(
-          edgeId, "color", "#fbbf24"
+          edgeId, "color", graphVisualTokens.nodeColor.selected
         );
         graph.setEdgeAttribute(
           edgeId, "size", 5
@@ -805,7 +787,7 @@ useEffect(() => {
       neighborhoodDepth: Math.floor(neighborhoodDepth || 2) as 1 | 2 | 3,
     },
     {
-      hoverNodeColor: hoverNodeColor || "#ffffff",
+      hoverNodeColor: hoverNodeColor || (resolvedTokensRef.current?.nodeColor?.hover ?? graphVisualTokens.nodeColor.hover),
       edgeLabelFontSize: edgeLabelFontSize || 13,
     },
     resolvedTokensRef.current
@@ -838,15 +820,6 @@ useEffect(() => {
     if (!sigma) return;
 
     const graph = sigma.getGraph();
-
-    console.log("[STYLING] Running policy-based styling", {
-      selectedNodeId,
-      selectedEdgeId,
-      neighborhoodDepth,
-      hoveredNodeId,
-      hoveredEdgeId,
-      hoverNodeColor,
-    });
 
     // Build interaction state for policy
     const interactionState: GraphInteractionState = {
@@ -907,7 +880,6 @@ useEffect(() => {
     // Update active selection mode for debug panel
     if (selectedEdgeId) {
       setActiveSelectionMode("edge-relationship");
-      console.log("[STYLING] Applied selected edge styling:", selectedEdgeId);
     } else if (selectedNodeId) {
       const modeMap: Record<1 | 2 | 3, "node-stage-1" | "node-stage-2" | "node-stage-3"> = {
         1: "node-stage-1",
@@ -916,14 +888,11 @@ useEffect(() => {
       };
       const depth = Math.floor(neighborhoodDepth || 2) as 1 | 2 | 3;
       setActiveSelectionMode(modeMap[depth]);
-      console.log("[STYLING] Applied selected node styling:", selectedNodeId, "depth", depth);
     } else {
       setActiveSelectionMode("none");
-      console.log("[STYLING] No selection");
     }
 
     sigma.refresh();
-    console.log("[STYLING] Refreshed Sigma");
   }, [selectedNodeId, selectedEdgeId, neighborhoodDepth, hoveredNodeId, hoveredEdgeId, hoverNodeColor, edgeLabelFontSize]);
 
   // Edge label font size live update effect
@@ -931,10 +900,8 @@ useEffect(() => {
     const sigma = sigmaRef.current;
     if (!sigma) return;
 
-    console.log("[EDGE LABEL SIZE] Updating to:", edgeLabelFontSize);
     sigma.setSetting("edgeLabelSize", edgeLabelFontSize);
     sigma.refresh();
-    console.log("[EDGE LABEL SIZE] Updated and refreshed");
   }, [edgeLabelFontSize]);
 
   // Node label font size live update effect
@@ -942,10 +909,8 @@ useEffect(() => {
     const sigma = sigmaRef.current;
     if (!sigma) return;
 
-    console.log("[NODE LABEL SIZE] Updating to:", nodeLabelFontSize);
     sigma.setSetting("labelSize", nodeLabelFontSize);
     sigma.refresh();
-    console.log("[NODE LABEL SIZE] Updated and refreshed");
   }, [nodeLabelFontSize]);
 
   // Label policy effect - applies label visibility based on mode and selection
@@ -966,24 +931,13 @@ useEffect(() => {
     const labelOptions: LegacyLabelPolicyOptions = {
       maxEdgeLabelLength,
       showLabelsOnHover,
-      hoverLabelColor: "#0f172a", // Not used in v0, kept for API compatibility
+      hoverLabelColor: graphVisualTokens.nodeLabelColor.default, // Token-based hover label color
     };
-
-    console.log("[LABEL POLICY] Applying with", {
-      nodeLabelMode,
-      edgeLabelMode,
-      selectedNodeId,
-      selectedEdgeId,
-      neighborhoodDepth,
-      hoveredNodeId,
-      hoveredEdgeId,
-    });
 
     applyNodeLabelPolicy(graph, selectionContext, labelOptions, nodeLabelMode);
     applyEdgeLabelPolicy(graph, selectionContext, labelOptions, edgeLabelMode);
 
     sigma.refresh();
-    console.log("[LABEL POLICY] Applied and refreshed");
   }, [selectedNodeId, selectedEdgeId, neighborhoodDepth, nodeLabelMode, edgeLabelMode, maxEdgeLabelLength, showLabelsOnHover, hoveredNodeId, hoveredEdgeId]);
 
   return (
