@@ -28,6 +28,7 @@ Updated by the agent that ran the pass before XP is awarded.
 
 ## 2026-05-07
 
+| 2026-05-07 | v85f | pre-design-snapshot | docs | ACCEPTED — PRE_DESIGN_SNAPSHOT.md created, settling phase v85c-v85f complete, codebase ready for v86 design arc, streak 5 BONUS +0.5 level 136.0 P1·S5★ | Bandit |
 | 2026-05-07 | v85e | usefixture-smart-switch | feature | ACCEPTED — build-time __PLAYWRIGHT__ injection, smart fixture switching, tests always stable, real source renders in dev/prod when loaded, 345 passed P1·S4★ level 135.0 | Bandit |
 | 2026-05-07 | v85d | settings-migration-v2 | feature | ACCEPTED — version-aware migration system, schema v2, MIGRATIONS runner, 7 new fields handled gracefully for old localStorage, 345 passed P1·S3★ level 134.0 | Bandit |
 | 2026-05-07 | v85c | git-hygiene | chore | ACCEPTED — session summary written, package.json version 0.6.0, git hygiene pass, 345 passed 0 failed, Prestige 1 Streak 2 level 133.25 | Bandit |
