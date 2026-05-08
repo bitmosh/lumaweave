@@ -25,6 +25,7 @@ import { ThemeTargetInspectorOverlay } from "../themes/ThemeTargetInspectorOverl
 import { adaptSelfGraphToSigma } from "../fixtures/self-graph-adapter";
 import generatedGraph from "../fixtures/self-graph-generated.json";
 import type { LumaSourceGraph } from "../fixtures/types";
+import { PlasmaOverlayEdge } from "../graph/edges/PlasmaOverlayEdge";
 
 export function AppShell() {
   const settings = useSettingsStore((state) => state.settings);
@@ -830,6 +831,10 @@ export function AppShell() {
                         nodeLabelFontSize={settings.labels.nodeLabelFontSize}
                         hoverNodeColor={settings.graphView.hoverNodeColor}
                         resolvedTokens={resolvedGraphTokens}
+                        nodeHum={settings.appearance.nodeHum}
+                        nodeFlowSpeed={settings.appearance.nodeFlowSpeed}
+                        nodeGlow={settings.appearance.nodeGlow}
+                        reduceMotion={settings.appearance.reduceMotion}
                         onSelectNode={(nodeId) => {
                           setSelectedNodeId(nodeId);
                           setSelectedEdgeId(null);
@@ -849,6 +854,17 @@ export function AppShell() {
                           setPathTargetId(null);
                         }}
                       />
+
+                      {/* v86b: Plasma overlay for animated edge flow */}
+                      {(window as any).__lwSigma ? (
+                        <PlasmaOverlayEdge
+                          sigma={(window as any).__lwSigma}
+                          edges={graphEdges.map(e => ({ id: e.id, source: e.source, target: e.target }))}
+                          motionScale={settings.appearance.reduceMotion ? 0 : settings.appearance.motionScale ?? 0.6}
+                          flowSpeed={settings.appearance.nodeFlowSpeed ?? 0.55}
+                          edgePlasmaMode={settings.appearance.edgePlasmaMode ?? "animated-overlay"}
+                        />
+                      ) : null}
 
                       {/* Floating Graph Inspector Panel */}
                       <div className="absolute left-4 top-4 w-80">

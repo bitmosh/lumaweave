@@ -36,6 +36,7 @@ import { applyNodeLabelPolicy,
   type EdgeLabelMode,
 } from "../../visual/applyGraphLabelPolicyToGraphology";
 import NodeSphereProgram from "./NodeSphereProgram";
+import { attachCameraController } from "../../overlay/cameraController";
 
 interface SigmaGraphViewProps {
   nodes: LumaWeaveNodeDraft[];
@@ -173,6 +174,7 @@ export function SigmaGraphView({
 }: SigmaGraphViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const sigmaRef = useRef<Sigma | null>(null);
+  const cameraControllerRef = useRef<ReturnType<typeof attachCameraController> | null>(null);
   const fa2Ref = useRef<FA2Layout | null>(null);
   const graphRef = useRef<any>(null);
   const onSelectNodeRef = useRef(onSelectNode);
@@ -562,16 +564,32 @@ export function SigmaGraphView({
 
     sigmaRef.current = sigma;
 
-    // Expose Sigma instance for Playwright tests
+    // v86b: Attach camera controller for eased transitions and state preservation
+    cameraControllerRef.current = attachCameraController(sigma, {
+      reduceMotion: reduceMotion ?? false,
+    });
+
+    // Expose Sigma instance and camera controller for Playwright tests
     (window as any).__lwSigma = sigma;
-    if (!(sigma as any).getSetting) {
-      (sigma as any).getSetting = (key: string) => {
-        return (sigma as any).__settings?.[key];
-      };
-    }
+    (window as any).__lwCameraController = cameraControllerRef.current;
+    
+    // v86b: Override Sigma's getSetting to read from __settings for custom settings like v86bUniforms
+    (sigma as any).getSetting = (key: string) => {
+      return (sigma as any).__settings?.[key];
+    };
+    
     if (!(sigma as any).__settings) {
       (sigma as any).__settings = {};
     }
+
+    // v86b: Initialize v86bUniforms with current prop values
+    const initialUniforms = {
+      time: 0,
+      hum: reduceMotion ? 0 : (nodeHum ?? 0.7),
+      flowSpeed: reduceMotion ? 0 : (nodeFlowSpeed ?? 0.55),
+      glowStrength: nodeGlow ?? 1.0,
+    };
+    (sigma as any).__settings["v86bUniforms"] = initialUniforms;
 
   // Start continuous FA2 supervisor
   // Stop any existing supervisor
