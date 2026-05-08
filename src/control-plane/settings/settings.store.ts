@@ -3,6 +3,8 @@ import { defaultSettings } from "./settings.defaults";
 import { migrateSettings } from "./settings.migrations";
 import type { StarmapSettings } from "./settings.schema";
 
+export const CURRENT_SCHEMA_VERSION = 79;
+
 type SettingsStore = {
   settings: StarmapSettings;
   setSetting: (path: string, value: unknown) => void;
@@ -30,7 +32,16 @@ function loadSettings(): StarmapSettings {
       return defaultSettings;
     }
     const parsed = JSON.parse(saved) as Partial<StarmapSettings>;
-    return migrateSettings(parsed);
+    const migrated = migrateSettings(parsed);
+    
+    // Version gate: reject if migration didn't reach current version
+    if (migrated.version !== CURRENT_SCHEMA_VERSION) {
+      throw new Error(
+        `Settings migration ended at v${migrated.version}, expected v${CURRENT_SCHEMA_VERSION}. Migration chain is incomplete.`,
+      );
+    }
+    
+    return migrated;
   } catch {
     return defaultSettings;
   }

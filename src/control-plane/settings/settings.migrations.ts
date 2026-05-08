@@ -34,6 +34,49 @@ const MIGRATIONS: Record<number,
         ?? defaultSettings.graphView.neighborhoodDepth,
     },
   }),
+
+  // v76 → v77: settings tab removal (v86a)
+  77: (s) => {
+    const ui = { ...(s.ui ?? {}) } as any;
+    if (ui.leftPanelActiveTab === "settings") {
+      ui.leftPanelActiveTab = "graph";
+    }
+    delete ui.settingsTabSections;
+    if (Array.isArray(ui.tiledTabs)) {
+      ui.tiledTabs = ui.tiledTabs.filter((t: string) => t !== "settings");
+    }
+    return { ...s, ui } as Partial<StarmapSettings>;
+  },
+
+  // v77 → v78: tile layout reshape (v86a)
+  78: (s) => {
+    const ui = { ...(s.ui ?? {}) } as any;
+    const oldTabs = Array.isArray(ui.tiledTabs) ? ui.tiledTabs : [];
+    ui.tileLayout = oldTabs.map((tabId: string, i: number) => ({
+      id: `tile_legacy_${tabId}_${i}`,
+      sectionKey: tabId,
+      x: 200 + i * 30,
+      y: 120 + i * 30,
+      w: 320,
+      h: 480,
+      collapsed: false,
+      z: 1,
+    }));
+    ui.tiledTabs = [];
+    return { ...s, ui } as Partial<StarmapSettings>;
+  },
+
+  // v78 → v79: appearance defaults (v86a)
+  79: (s) => {
+    const appearance = { ...(s.appearance ?? {}) } as any;
+    appearance.drama ??= "cranked";
+    appearance.motionScale ??= 0.6;
+    appearance.panelBlur ??= 16;
+    appearance.nodeHum ??= 0.7;
+    appearance.nodeFlowSpeed ??= 0.55;
+    appearance.nodeGlow ??= 1.0;
+    return { ...s, appearance } as Partial<StarmapSettings>;
+  },
 };
 
 export function migrateSettings(

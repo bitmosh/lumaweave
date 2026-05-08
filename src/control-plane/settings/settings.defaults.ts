@@ -1,7 +1,7 @@
 import type { StarmapSettings } from "./settings.schema";
 
 export const defaultSettings: StarmapSettings = {
-  version: 2,
+  version: 79, // v86a: bumped from 2 to 79
 
   general: {
     startupProjectId: null,
@@ -16,6 +16,13 @@ export const defaultSettings: StarmapSettings = {
     glitterEnabled: true,
     reduceMotion: false,
     starfieldEnabled: true,
+    // NEW v86a defaults
+    drama: "cranked",
+    motionScale: 0.6,
+    panelBlur: 16,
+    nodeHum: 0.7,
+    nodeFlowSpeed: 0.55,
+    nodeGlow: 1.0,
   },
 
   graphView: {
@@ -100,10 +107,9 @@ export const defaultSettings: StarmapSettings = {
       debugInfo: false,
       performanceSettings: false,
     },
-    settingsTabSections: {
-      generalSettings: true,
-    },
-    tiledTabs: [],
+    // v86a: settingsTabSections removed
+    tiledTabs: [], // v86a: DEPRECATED - kept for migration only
+    tileLayout: [], // v86a: NEW - replaces tiledTabs in v86c
     controlDockCollapsed: false,
     controlDockWidth: 420,
     controlDockCollapsedWidth: 40,

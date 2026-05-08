@@ -5,6 +5,7 @@
  */
 
 import type { ThemeId } from "../control-plane/settings/settings.schema";
+import type { AssetType } from "./assetBank.types";
 
 /**
  * Unique identifier for a theme preset
@@ -29,6 +30,13 @@ export interface ThemePreset {
   tags?: string[];
   /** Additional notes */
   notes?: string;
+
+  /** NEW v86a: Asset references for this preset (optional for backward compatibility) */
+  assetRefs?: Array<{
+    assetId: string;
+    type: AssetType;
+    purpose: string; // "starfield", "node-shader", etc.
+  }>;
 }
 
 /**
@@ -82,5 +90,47 @@ export interface ThemeRuntimeTokens {
     glitterEnabled: boolean;
     starfieldEnabled: boolean;
     glowIntensity: number;
+  };
+  /** NEW v86a: Additional token paths */
+  backdrop: {
+    coronaColor: string;
+    coronaIntensity: number;
+    flareColor: string;
+    starfieldDensity: number;
+    vignetteIntensity: number;
+  };
+  node: {
+    sphereHumDuration: number;
+    sphereFlowDuration: number;
+    sphereGlowStrength: number;
+  };
+  edge: {
+    stylePreset: string;
+    plasmaFlowSpeed: number;
+  };
+  selection: {
+    haloColor: string;
+    haloMaxRadiusRatio: number;
+    glitterDensityScale: number;
+    dimOpacity: number;
+  };
+  bookmark: {
+    alertColor: string;
+    pinnedColor: string;
+    refColor: string;
+  };
+  panel: {
+    blurAmount: number;
+    tileHandleColor: string;
+    tileGroupOutlineColor: string;
+  };
+  inspector: {
+    radialSpokeColor: string;
+    radialHaloColor: string;
+  };
+  typography: {
+    fontDisplay: string;
+    fontBody: string;
+    fontMono: string;
   };
 }

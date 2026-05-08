@@ -4,7 +4,7 @@ interface LeftTabPanelProps {
   collapsed: boolean;
   panelWidth: number;
   onWidthChange: (width: number) => void;
-  activeTab: "graph" | "qa" | "evidence" | "debug" | "settings";
+  activeTab: "graph" | "qa" | "evidence" | "debug"; // v86a: settings removed
   onTabChange: (tab: string) => void;
   onCollapse: () => void;
   // Section states
@@ -20,18 +20,16 @@ interface LeftTabPanelProps {
     debugInfo: boolean;
     performanceSettings: boolean;
   };
-  settingsTabSections: {
-    generalSettings: boolean;
-  };
+  // v86a: settingsTabSections removed
   onSectionToggle: (tab: string, section: string) => void;
-  tiledTabs: string[];
-  onTileOut: (tab: string) => void;
+  tiledTabs: never[]; // v86a: deprecated - tile system is v86c
+  onTileOut: (tab: string) => void; // v86a: deprecated - tile system is v86c
   // Panel components passed as render props
   graphTabContent: ReactNode;
   qaTabContent: ReactNode;
   evidenceTabContent: ReactNode;
   debugTabContent: ReactNode;
-  settingsTabContent: ReactNode;
+  // v86a: settingsTabContent removed
 }
 
 export function LeftTabPanel({
@@ -45,7 +43,7 @@ export function LeftTabPanel({
   qaTabSections: _qaTabSections,
   evidenceTabSections: _evidenceTabSections,
   debugTabSections: _debugTabSections,
-  settingsTabSections: _settingsTabSections,
+  // v86a: settingsTabSections removed
   onSectionToggle: _onSectionToggle,
   tiledTabs,
   onTileOut,
@@ -53,7 +51,7 @@ export function LeftTabPanel({
   qaTabContent,
   evidenceTabContent,
   debugTabContent,
-  settingsTabContent,
+  // v86a: settingsTabContent removed
 }: LeftTabPanelProps) {
   const TAB_ICONS: Record<string, string> = {
     graph: "⬡",
@@ -67,10 +65,10 @@ export function LeftTabPanel({
     { id: "qa" as const, label: "QA" },
     { id: "evidence" as const, label: "Evidence" },
     { id: "debug" as const, label: "Debug" },
-    { id: "settings" as const, label: "Settings" },
+    // v86a: settings removed
   ] as const;
 
-  const isTiled = (tabId: string) => tiledTabs.includes(tabId);
+  const isTiled = (tabId: string) => tiledTabs.includes(tabId as never);
 
   // Collapsed state - narrow strip with tab icons
   if (collapsed) {
@@ -286,7 +284,7 @@ export function LeftTabPanel({
         <div id="tab-section-qa">{qaTabContent}</div>
         <div id="tab-section-evidence">{evidenceTabContent}</div>
         <div id="tab-section-debug">{debugTabContent}</div>
-        <div id="tab-section-settings">{settingsTabContent}</div>
+        {/* v86a: settings tab removed */}
       </div>
     </aside>
   );

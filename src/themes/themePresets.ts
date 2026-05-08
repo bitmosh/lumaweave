@@ -15,6 +15,7 @@ export const builtInThemePresets: ThemePreset[] = [
     themeId: "solar-plasma",
     tags: ["dark", "sci-fi"],
     notes: "Default LumaWeave theme",
+    assetRefs: [], // v88 Workshop will populate
   },
   {
     id: "obsidian-aurora",
@@ -24,6 +25,7 @@ export const builtInThemePresets: ThemePreset[] = [
     themeId: "obsidian-aurora",
     tags: ["dark", "aurora"],
     notes: "Inspired by northern lights over dark stone",
+    assetRefs: [], // v88 Workshop will populate
   },
   {
     id: "midnight-loom",
@@ -33,6 +35,7 @@ export const builtInThemePresets: ThemePreset[] = [
     themeId: "midnight-loom",
     tags: ["dark", "warm"],
     notes: "Cozy candlelit workspace",
+    assetRefs: [], // v88 Workshop will populate
   },
   {
     id: "void-circuit",
@@ -42,6 +45,7 @@ export const builtInThemePresets: ThemePreset[] = [
     themeId: "void-circuit",
     tags: ["dark", "cyberpunk"],
     notes: "High-contrast neon aesthetic",
+    assetRefs: [], // v88 Workshop will populate
   },
   {
     id: "agartha-dream",
@@ -51,6 +55,7 @@ export const builtInThemePresets: ThemePreset[] = [
     themeId: "agartha-dream",
     tags: ["light", "pastel"],
     notes: "Gentle dreamlike workspace",
+    assetRefs: [], // v88 Workshop will populate
   },
   {
     id: "agartha-dusk",
@@ -60,6 +65,7 @@ export const builtInThemePresets: ThemePreset[] = [
     themeId: "agartha-dusk",
     tags: ["dark", "pastel"],
     notes: "Soft moonlit atmosphere",
+    assetRefs: [], // v88 Workshop will populate
   },
 ];
 

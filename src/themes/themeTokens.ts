@@ -14,13 +14,13 @@ import { validateThemeTokenPaths } from "./themeTokenPaths";
  */
 export const solarPlasmaTokens: ThemeRuntimeTokens = {
   app: {
-    background: "#020617", // slate-950
-    panelBackground: "rgba(15, 23, 42, 0.82)", // slate-900 with opacity
-    panelBorder: "rgba(34, 211, 238, 0.2)", // cyan-400/20
-    textPrimary: "#f1f5f9", // slate-100
-    textMuted: "#94a3b8", // slate-400
-    accent: "#22d3ee", // cyan-400
-    glow: "rgba(34, 211, 238, 0.3)", // cyan-400 glow
+    background: "#03000A", // v86a restyled: void-deep
+    panelBackground: "rgba(27, 8, 48, 0.82)", // v86a restyled: void-warm
+    panelBorder: "rgba(255, 179, 71, 0.32)", // v86a restyled: gold
+    textPrimary: "#FFE9D6", // v86a restyled: cream
+    textMuted: "rgba(255, 215, 188, 0.55)", // v86a restyled: cream muted
+    accent: "#FFB347", // v86a restyled: gold
+    glow: "rgba(255, 107, 26, 0.40)", // v86a restyled: flare
   },
   graph: {
     nodeDefault: "#22d3ee", // cyan-400
@@ -33,10 +33,10 @@ export const solarPlasmaTokens: ThemeRuntimeTokens = {
     edgeSelected: "#a855f7", // purple-500
     edgeSecondary: "#c4b5fd", // purple-300
     edgeTertiary: "#ddd6fe", // purple-200
-    nodeLabel: "#f1f5f9", // slate-100
-    nodeLabelHover: "#0f172a", // slate-900
-    edgeLabel: "#94a3b8", // slate-400
-    edgeLabelHover: "#cbd5e1", // slate-300
+    nodeLabel: "#FFE9D6", // v86a restyled: cream
+    nodeLabelHover: "#1B0830", // v86a restyled: void-warm
+    edgeLabel: "rgba(255, 215, 188, 0.55)", // v86a restyled: cream muted
+    edgeLabelHover: "rgba(255, 233, 214, 0.85)", // v86a restyled: cream brighter
     nodeColorScale: [
       "#7B2FFF",  // peripheral — deep coronal purple
       "#4FACFF",  // coronal blue
@@ -58,6 +58,48 @@ export const solarPlasmaTokens: ThemeRuntimeTokens = {
     glitterEnabled: true,
     starfieldEnabled: true,
     glowIntensity: 1.0,
+  },
+  // NEW v86a: Additional token paths
+  backdrop: {
+    coronaColor: "rgba(255,179,71,0.28)",
+    coronaIntensity: 0.7,
+    flareColor: "rgba(255,107,26,0.55)",
+    starfieldDensity: 0.7,
+    vignetteIntensity: 0.92,
+  },
+  node: {
+    sphereHumDuration: 4.86,
+    sphereFlowDuration: 4.73,
+    sphereGlowStrength: 1.0,
+  },
+  edge: {
+    stylePreset: "plasma",
+    plasmaFlowSpeed: 0.55,
+  },
+  selection: {
+    haloColor: "rgba(255,179,71,0.6)",
+    haloMaxRadiusRatio: 0.25,
+    glitterDensityScale: 1.0,
+    dimOpacity: 0.18,
+  },
+  bookmark: {
+    alertColor: "#FF4D6D",
+    pinnedColor: "#FFB347",
+    refColor: "#00D4FF",
+  },
+  panel: {
+    blurAmount: 16,
+    tileHandleColor: "rgba(255,179,71,0.62)",
+    tileGroupOutlineColor: "#FFB347",
+  },
+  inspector: {
+    radialSpokeColor: "#FFB347",
+    radialHaloColor: "rgba(255,179,71,0.6)",
+  },
+  typography: {
+    fontDisplay: '"Space Grotesk", system-ui, sans-serif',
+    fontBody: '"IBM Plex Sans", system-ui, sans-serif',
+    fontMono: '"IBM Plex Mono", ui-monospace, monospace',
   },
 };
 
@@ -112,6 +154,48 @@ export const obsidianAuroraTokens: ThemeRuntimeTokens = {
     starfieldEnabled: true,
     glowIntensity: 0.7,
   },
+  // NEW v86a: Additional token paths (neutral defaults)
+  backdrop: {
+    coronaColor: "rgba(139,92,246,0.28)", // TODO(v87): review
+    coronaIntensity: 0.5, // TODO(v87): review
+    flareColor: "rgba(139,92,246,0.4)", // TODO(v87): review
+    starfieldDensity: 0.5, // TODO(v87): review
+    vignetteIntensity: 0.85, // TODO(v87): review
+  },
+  node: {
+    sphereHumDuration: 3.0, // TODO(v87): review
+    sphereFlowDuration: 3.0, // TODO(v87): review
+    sphereGlowStrength: 0.8, // TODO(v87): review
+  },
+  edge: {
+    stylePreset: "default", // TODO(v87): review
+    plasmaFlowSpeed: 0.5, // TODO(v87): review
+  },
+  selection: {
+    haloColor: "rgba(139,92,246,0.5)", // TODO(v87): review
+    haloMaxRadiusRatio: 0.2, // TODO(v87): review
+    glitterDensityScale: 0.8, // TODO(v87): review
+    dimOpacity: 0.2, // TODO(v87): review
+  },
+  bookmark: {
+    alertColor: "#f472b6", // TODO(v87): review
+    pinnedColor: "#8b5cf6", // TODO(v87): review
+    refColor: "#c084fc", // TODO(v87): review
+  },
+  panel: {
+    blurAmount: 12, // TODO(v87): review
+    tileHandleColor: "rgba(139,92,246,0.5)", // TODO(v87): review
+    tileGroupOutlineColor: "#8b5cf6", // TODO(v87): review
+  },
+  inspector: {
+    radialSpokeColor: "#8b5cf6", // TODO(v87): review
+    radialHaloColor: "rgba(139,92,246,0.5)", // TODO(v87): review
+  },
+  typography: {
+    fontDisplay: "system-ui, sans-serif", // TODO(v87): review
+    fontBody: "system-ui, sans-serif", // TODO(v87): review
+    fontMono: "ui-monospace, monospace", // TODO(v87): review
+  },
 };
 
 /**
@@ -164,6 +248,48 @@ export const midnightLoomTokens: ThemeRuntimeTokens = {
     glitterEnabled: false,
     starfieldEnabled: true,
     glowIntensity: 0.6,
+  },
+  // NEW v86a: Additional token paths (neutral defaults)
+  backdrop: {
+    coronaColor: "rgba(251,191,36,0.28)", // TODO(v87): review
+    coronaIntensity: 0.5, // TODO(v87): review
+    flareColor: "rgba(251,191,36,0.4)", // TODO(v87): review
+    starfieldDensity: 0.5, // TODO(v87): review
+    vignetteIntensity: 0.85, // TODO(v87): review
+  },
+  node: {
+    sphereHumDuration: 3.0, // TODO(v87): review
+    sphereFlowDuration: 3.0, // TODO(v87): review
+    sphereGlowStrength: 0.8, // TODO(v87): review
+  },
+  edge: {
+    stylePreset: "default", // TODO(v87): review
+    plasmaFlowSpeed: 0.5, // TODO(v87): review
+  },
+  selection: {
+    haloColor: "rgba(251,191,36,0.5)", // TODO(v87): review
+    haloMaxRadiusRatio: 0.2, // TODO(v87): review
+    glitterDensityScale: 0.8, // TODO(v87): review
+    dimOpacity: 0.2, // TODO(v87): review
+  },
+  bookmark: {
+    alertColor: "#f97316", // TODO(v87): review
+    pinnedColor: "#fbbf24", // TODO(v87): review
+    refColor: "#f59e0b", // TODO(v87): review
+  },
+  panel: {
+    blurAmount: 12, // TODO(v87): review
+    tileHandleColor: "rgba(251,191,36,0.5)", // TODO(v87): review
+    tileGroupOutlineColor: "#fbbf24", // TODO(v87): review
+  },
+  inspector: {
+    radialSpokeColor: "#fbbf24", // TODO(v87): review
+    radialHaloColor: "rgba(251,191,36,0.5)", // TODO(v87): review
+  },
+  typography: {
+    fontDisplay: "system-ui, sans-serif", // TODO(v87): review
+    fontBody: "system-ui, sans-serif", // TODO(v87): review
+    fontMono: "ui-monospace, monospace", // TODO(v87): review
   },
 };
 
@@ -218,6 +344,48 @@ export const voidCircuitTokens: ThemeRuntimeTokens = {
     starfieldEnabled: true,
     glowIntensity: 1.2,
   },
+  // NEW v86a: Additional token paths (neutral defaults)
+  backdrop: {
+    coronaColor: "rgba(236,72,153,0.28)", // TODO(v87): review
+    coronaIntensity: 0.5, // TODO(v87): review
+    flareColor: "rgba(236,72,153,0.4)", // TODO(v87): review
+    starfieldDensity: 0.5, // TODO(v87): review
+    vignetteIntensity: 0.85, // TODO(v87): review
+  },
+  node: {
+    sphereHumDuration: 3.0, // TODO(v87): review
+    sphereFlowDuration: 3.0, // TODO(v87): review
+    sphereGlowStrength: 0.8, // TODO(v87): review
+  },
+  edge: {
+    stylePreset: "default", // TODO(v87): review
+    plasmaFlowSpeed: 0.5, // TODO(v87): review
+  },
+  selection: {
+    haloColor: "rgba(236,72,153,0.5)", // TODO(v87): review
+    haloMaxRadiusRatio: 0.2, // TODO(v87): review
+    glitterDensityScale: 0.8, // TODO(v87): review
+    dimOpacity: 0.2, // TODO(v87): review
+  },
+  bookmark: {
+    alertColor: "#06b6d4", // TODO(v87): review
+    pinnedColor: "#ec4899", // TODO(v87): review
+    refColor: "#22d3ee", // TODO(v87): review
+  },
+  panel: {
+    blurAmount: 12, // TODO(v87): review
+    tileHandleColor: "rgba(236,72,153,0.5)", // TODO(v87): review
+    tileGroupOutlineColor: "#ec4899", // TODO(v87): review
+  },
+  inspector: {
+    radialSpokeColor: "#ec4899", // TODO(v87): review
+    radialHaloColor: "rgba(236,72,153,0.5)", // TODO(v87): review
+  },
+  typography: {
+    fontDisplay: "system-ui, sans-serif", // TODO(v87): review
+    fontBody: "system-ui, sans-serif", // TODO(v87): review
+    fontMono: "ui-monospace, monospace", // TODO(v87): review
+  },
 };
 
 /**
@@ -271,6 +439,48 @@ export const agarthaDreamTokens: ThemeRuntimeTokens = {
     starfieldEnabled: false,
     glowIntensity: 0.4,
   },
+  // NEW v86a: Additional token paths (neutral defaults)
+  backdrop: {
+    coronaColor: "rgba(168,85,247,0.28)", // TODO(v87): review
+    coronaIntensity: 0.5, // TODO(v87): review
+    flareColor: "rgba(168,85,247,0.4)", // TODO(v87): review
+    starfieldDensity: 0.5, // TODO(v87): review
+    vignetteIntensity: 0.85, // TODO(v87): review
+  },
+  node: {
+    sphereHumDuration: 3.0, // TODO(v87): review
+    sphereFlowDuration: 3.0, // TODO(v87): review
+    sphereGlowStrength: 0.8, // TODO(v87): review
+  },
+  edge: {
+    stylePreset: "default", // TODO(v87): review
+    plasmaFlowSpeed: 0.5, // TODO(v87): review
+  },
+  selection: {
+    haloColor: "rgba(168,85,247,0.5)", // TODO(v87): review
+    haloMaxRadiusRatio: 0.2, // TODO(v87): review
+    glitterDensityScale: 0.8, // TODO(v87): review
+    dimOpacity: 0.2, // TODO(v87): review
+  },
+  bookmark: {
+    alertColor: "#f472b6", // TODO(v87): review
+    pinnedColor: "#a855f7", // TODO(v87): review
+    refColor: "#c084fc", // TODO(v87): review
+  },
+  panel: {
+    blurAmount: 12, // TODO(v87): review
+    tileHandleColor: "rgba(168,85,247,0.5)", // TODO(v87): review
+    tileGroupOutlineColor: "#a855f7", // TODO(v87): review
+  },
+  inspector: {
+    radialSpokeColor: "#a855f7", // TODO(v87): review
+    radialHaloColor: "rgba(168,85,247,0.5)", // TODO(v87): review
+  },
+  typography: {
+    fontDisplay: "system-ui, sans-serif", // TODO(v87): review
+    fontBody: "system-ui, sans-serif", // TODO(v87): review
+    fontMono: "ui-monospace, monospace", // TODO(v87): review
+  },
 };
 
 /**
@@ -323,6 +533,48 @@ export const agarthaDuskTokens: ThemeRuntimeTokens = {
     glitterEnabled: false,
     starfieldEnabled: true,
     glowIntensity: 0.5,
+  },
+  // NEW v86a: Additional token paths (neutral defaults)
+  backdrop: {
+    coronaColor: "rgba(244,114,182,0.28)", // TODO(v87): review
+    coronaIntensity: 0.5, // TODO(v87): review
+    flareColor: "rgba(244,114,182,0.4)", // TODO(v87): review
+    starfieldDensity: 0.5, // TODO(v87): review
+    vignetteIntensity: 0.85, // TODO(v87): review
+  },
+  node: {
+    sphereHumDuration: 3.0, // TODO(v87): review
+    sphereFlowDuration: 3.0, // TODO(v87): review
+    sphereGlowStrength: 0.8, // TODO(v87): review
+  },
+  edge: {
+    stylePreset: "default", // TODO(v87): review
+    plasmaFlowSpeed: 0.5, // TODO(v87): review
+  },
+  selection: {
+    haloColor: "rgba(244,114,182,0.5)", // TODO(v87): review
+    haloMaxRadiusRatio: 0.2, // TODO(v87): review
+    glitterDensityScale: 0.8, // TODO(v87): review
+    dimOpacity: 0.2, // TODO(v87): review
+  },
+  bookmark: {
+    alertColor: "#c084fc", // TODO(v87): review
+    pinnedColor: "#f472b6", // TODO(v87): review
+    refColor: "#a78bfa", // TODO(v87): review
+  },
+  panel: {
+    blurAmount: 12, // TODO(v87): review
+    tileHandleColor: "rgba(244,114,182,0.5)", // TODO(v87): review
+    tileGroupOutlineColor: "#f472b6", // TODO(v87): review
+  },
+  inspector: {
+    radialSpokeColor: "#f472b6", // TODO(v87): review
+    radialHaloColor: "rgba(244,114,182,0.5)", // TODO(v87): review
+  },
+  typography: {
+    fontDisplay: "system-ui, sans-serif", // TODO(v87): review
+    fontBody: "system-ui, sans-serif", // TODO(v87): review
+    fontMono: "ui-monospace, monospace", // TODO(v87): review
   },
 };
 

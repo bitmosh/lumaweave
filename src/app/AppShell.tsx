@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { SettingsPanel } from "../control-plane/settings/SettingsPanel";
+// v86a: SettingsPanel removed - Settings tab removed from left panel
 import { QaPanel } from "../control-plane/qa/QaPanel";
 import { InspectorPanel } from "../control-plane/panels/InspectorPanel";
 import { CollapsiblePanel } from "../control-plane/panels/CollapsiblePanel";
@@ -10,7 +10,7 @@ import { SystemIndexPanel } from "../control-plane/system-index/SystemIndexPanel
 import { SourceAdapterPanel } from "../source-adapter/SourceAdapterPanel";
 import { LeftTabPanel } from "../control-plane/panels/LeftTabPanel";
 import { ControlDock } from "../control-plane/panels/ControlDock";
-import { Tile } from "../control-plane/panels/Tile";
+// v86a: Tile removed - tile system is v86c
 import { useSettingsStore } from "../control-plane/settings/settings.store";
 import { useGraphSourceSummary } from "../graph/ingest/useGraphSourceSummary";
 import { SigmaGraphView } from "../graph/renderers/sigma2d/SigmaGraphView";
@@ -377,7 +377,7 @@ export function AppShell() {
             qaTabSections={settings.ui.qaTabSections}
             evidenceTabSections={settings.ui.evidenceTabSections}
             debugTabSections={settings.ui.debugTabSections}
-            settingsTabSections={settings.ui.settingsTabSections}
+            // v86a: settingsTabSections removed
             onSectionToggle={(tab, section) => {
               const sectionKey = `${tab}TabSections` as keyof typeof settings.ui;
               const sections = settings.ui[sectionKey] as any;
@@ -386,14 +386,9 @@ export function AppShell() {
                 [sectionKey]: { ...sections, [section]: !sections[section] },
               });
             }}
-            tiledTabs={settings.ui.tiledTabs}
-            onTileOut={(tabId) =>
-              setSetting("ui", {
-                ...settings.ui,
-                tiledTabs: [...settings.ui.tiledTabs, tabId],
-                leftPanelActiveTab: tabId as any,
-              })
-            }
+            // v86a: tiledTabs deprecated - not used in UI yet
+            tiledTabs={[]}
+            onTileOut={() => {}}
             graphTabContent={
               <>
                 <CollapsibleSection
@@ -713,24 +708,7 @@ export function AppShell() {
                 </div>
               </CollapsibleSection>
             }
-            settingsTabContent={
-              <div
-                className="rounded-xl p-4"
-                style={{
-                  border: `1px solid ${themeTokens.app.panelBorder}`,
-                  backgroundColor: `${themeTokens.app.background}70`,
-                }}
-              >
-                <h3 className="mb-2 text-sm font-semibold" style={{ color: themeTokens.app.textPrimary } as React.CSSProperties}>
-                  Settings
-                </h3>
-                <div className="min-h-0">
-                  <div style={{ color: themeTokens.app.textMuted, textAlign: "center", padding: "2rem" } as React.CSSProperties}>
-                    Settings moved to Control Dock (right panel)
-                  </div>
-                </div>
-              </div>
-            }
+            // v86a: settingsTabContent removed
           />
 
           <section
@@ -891,7 +869,8 @@ export function AppShell() {
         </section>
 
         {/* Tiles rendered outside grid, position fixed */}
-        {settings.ui.tiledTabs.map((tabId) => (
+        {/* v86a: tile system is v86c - commented out for now */}
+        {/* {settings.ui.tiledTabs.map((tabId) => (
           <Tile
             key={tabId}
             tabId={tabId}
@@ -954,7 +933,7 @@ export function AppShell() {
             )}
             {tabId === "settings" && <SettingsPanel />}
           </Tile>
-        ))}
+        ))} */}
 
         <footer 
           className="px-6 py-3 text-xs"
