@@ -22,5 +22,8 @@ export default defineConfig({
     url: "http://localhost:1420",
     reuseExistingServer: true,
     timeout: 120_000,
+    env: {
+      PLAYWRIGHT: "true",
+    },
   },
 });

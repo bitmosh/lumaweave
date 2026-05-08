@@ -31,7 +31,22 @@ export function AppShell() {
   const setSetting = useSettingsStore((state) => state.setSetting);
   const { summary, error: summaryError } = useGraphSourceSummary();
 
-  const [useFixture] = useState(true);
+  // Smart fixture switching:
+  // - Build-time injected by Vite define
+  // - true when running under Playwright (stable geometry)
+  // - false in dev/prod
+  const isTestEnv =
+    typeof __PLAYWRIGHT__ !== "undefined" && __PLAYWRIGHT__;
+
+  const hasRealSource =
+    !summaryError &&
+    summary.normalizedNodes != null &&
+    summary.normalizedNodes.length > 0;
+
+  // In test env: always use fixture (stable geometry)
+  // In dev/prod: use real source if available
+  const useFixture = isTestEnv || !hasRealSource;
+
   const adaptedFixture = useMemo(
     () => adaptSelfGraphToSigma(generatedGraph as LumaSourceGraph),
     []
