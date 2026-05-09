@@ -1,26 +1,20 @@
 ---
-id: contract.audio.source.system
+id: audio.source.system.contract
 title: Audio Source System Contract
 type: contract
 status: accepted
 version: v65
-domain: audio
 cluster: ember
+domain: audio
 agent_readable: true
 include_in_self_graph: true
 last_updated: 2026-05-09
-depends_on:
-  - contract.audio.reactivity
-  - contract.music.reactive.mapping
-governs:
-  - src/audio/audioSourceRegistry.ts
-tags:
-  - audio
-  - source
-  - system
-  - contract
-  - accepted
-  - v65
+references:
+  - audio.reactivity.contract
+  - audio.music.reactive.mapping.contract
+  - audio.universal.handle.routing
+  - accessibility.motion.safety.contract
+tags: [audio, source-system, contract, v65, permission, privacy, security]
 ---
 
 # Audio Source System Contract

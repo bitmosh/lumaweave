@@ -1,26 +1,21 @@
 ---
-id: contract.audio.reactivity
+id: audio.reactivity.contract
 title: Audio Reactivity Contract
 type: contract
 status: accepted
 version: v61
-domain: audio
 cluster: ember
+domain: audio
 agent_readable: true
 include_in_self_graph: true
 last_updated: 2026-05-09
-depends_on:
-  - contract.motion.safety
-governs:
-  - src/audio/syntheticAudioSignal.ts
-tags:
-  - audio
-  - reactivity
-  - synthetic
-  - signal
-  - contract
-  - accepted
-  - v61
+references:
+  - audio.source.system.contract
+  - audio.music.reactive.mapping.contract
+  - audio.universal.handle.routing
+  - accessibility.motion.safety.contract
+  - graph.runtime.boundary.contract
+tags: [audio, reactivity, contract, v61, motion-safety, synthetic-signal]
 ---
 
 # Audio Reactivity Contract

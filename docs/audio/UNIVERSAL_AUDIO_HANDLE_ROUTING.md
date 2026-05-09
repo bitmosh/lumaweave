@@ -1,5 +1,5 @@
 ---
-id: contract.universal.audio.handle.routing
+id: audio.universal.handle.routing
 title: Universal Audio Handle Routing
 type: contract
 status: accepted

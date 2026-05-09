@@ -1,26 +1,21 @@
 ---
-id: contract.music.reactive.mapping
+id: audio.music.reactive.mapping.contract
 title: Music Reactive Mapping Contract
 type: contract
 status: accepted
 version: v63
-domain: audio
 cluster: ember
+domain: audio
 agent_readable: true
 include_in_self_graph: true
 last_updated: 2026-05-09
-depends_on:
-  - contract.audio.reactivity
-  - contract.motion.safety
-governs:
-  - src/audio/musicReactiveMappingRegistry.ts
-tags:
-  - music
-  - reactive
-  - mapping
-  - contract
-  - accepted
-  - v63
+references:
+  - audio.reactivity.contract
+  - audio.source.system.contract
+  - audio.universal.handle.routing
+  - accessibility.motion.safety.contract
+  - graph.runtime.boundary.contract
+tags: [audio, music-reactive, mapping, contract, v63, motion-safety]
 ---
 
 # Music Reactive Mapping Contract
