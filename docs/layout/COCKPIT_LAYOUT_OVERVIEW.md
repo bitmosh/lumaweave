@@ -1,135 +1,185 @@
 ---
 id: layout.cockpit.overview
 title: Cockpit Layout Overview
-type: manual
-status: accepted
-version: v73c
-domain: layout
+type: contract
+status: current
 cluster: stone
+domain: layout
 agent_readable: true
 include_in_self_graph: true
 last_updated: 2026-05-09
-governs:
-  - src/app/AppShell.tsx
-  - src/control-plane/panels/DockLayout.tsx
-tags:
-  - layout
-  - cockpit
-  - overview
-  - rails
-  - viewport
-  - topbar
-  - accepted
+references:
+  - layout.panel.zones
+  - layout.top.bar.control.plan
+  - layout.lens.navigation
+  - layout.tile.workspace.system
+  - theme.system.overview
+tags: [layout, cockpit, panels, rails, viewport, presets, responsive]
 ---
 
 # Cockpit Layout Overview
 
----
+## Overview
 
-## Current AppShell Implementation
+The cockpit layout defines the structure of the LumaWeave application interface, organizing panels and controls into logical zones for efficient graph exploration and analysis.
 
-```
-src/app/AppShell.tsx
+## Current Implementation
 
-Current structure:
-  Left panel:   Settings panel, QA panel
-  Right panel:  Inspector panel
-  Center:       SigmaGraphView
-  Top:          Title, theme selector, glitter toggle, reduce motion toggle
-  No documented layout zones
-  No layout preset system
-  CollapsiblePanel component exists (src/control-plane/panels/CollapsiblePanel.tsx)
-```
+The current AppShell (`src/app/AppShell.tsx`) has:
+- Left panel: Settings panel, QA panel
+- Right panel: Inspector panel
+- Center: SigmaGraphView
+- CollapsiblePanel component exists
+- No documented layout zones
+- No top bar theme controls
+- No layout preset system
 
----
-
-## Intended Layout Model
+## Intended Layout
 
 ```
-+------------------------------------------------------------------+
-| Top Bar                                                          |
-| [LumaWeave] [Project] [Theme ▼] [Layout ▼] [Renderer ▼] [Lens] |
-+------------------------------------------------------------------+
-| Left Rail    | Main Viewport              | Right Rail          |
-|--------------|----------------------------|---------------------|
-| Sources      |                            | Control Plane       |
-| QA/Mission   |   Graph Renderer           | Inspector           |
-| Actions      |   (Sigma / 3D / Flat)      | Renderer Debug      |
-|              |                            |                     |
-|              |   Physics overlay          |                     |
-|              |   Ghost overlay layer      |                     |
-|--------------|----------------------------|---------------------|
++-----------------------------------------------------------+
+| Top Bar                                                  |
+| [LumaWeave] [Project] [Theme ▼] [Layout ▼] [Renderer ▼] |
++-----------------------------------------------------------+
+| Left Rail | Main Viewport | Right Rail                 |
+|-----------|---------------|----------------------------|
+| Sources   |               | Control Plane             |
+| QA/Mission|   Graph       | Inspector                  |
+| Actions   |               | Renderer Debug             |
+|-----------|---------------|----------------------------|
 ```
-
-This is the target architecture. Current AppShell is an earlier approximation.
-
----
 
 ## Layout Zones
 
 ### Top Bar
-```
-LumaWeave title + Observatory branding
-Active project selector (future)
-Theme preset dropdown (IMPLEMENTED)
-Layout preset dropdown (planned)
-Renderer selector (planned — 2D / 3D / Flat)
-Lens selector (planned — Overview / Atlas / Evidence / Signal / Workshop / Mission)
-Future: save / export / import controls
-```
+- LumaWeave Observatory title
+- Active project selector
+- Theme preset dropdown
+- Layout preset dropdown
+- Renderer selector
+- Future save/export/import controls
 
-### Left Rail (default: 250px)
-```
-Graph Sources (partial)
-QA / Mission Control (IMPLEMENTED — QaPanel)
-Project/session actions (planned)
-```
+### Left Rail
+- Graph Sources
+- QA / Mission Control / future Agent Chat
+- Project/session actions
 
-### Right Rail (default: 300px)
-```
-Control Plane settings (IMPLEMENTED — SettingsPanel)
-Inspector — selected node/edge details (IMPLEMENTED — InspectorPanel)
-Renderer Debug (planned)
-```
+### Right Rail
+- Control Plane settings
+- Inspector
+- Renderer Debug
 
 ### Main Viewport
-```
-Graph renderer — Sigma 2D (IMPLEMENTED — SigmaGraphView)
-Physics overlay layer (planned)
-Ghost overlay layer (partial — ThemeTargetInspectorOverlay)
-Floating labels/tooltips (planned)
-```
-
----
+- Graph renderer
+- Overlays
+- Future floating labels/tooltips
 
 ## Layout Presets
 
-```
-Default       Left 250px, right 300px, both visible
-Focus Mode    Left collapsed, right collapsed — full-screen graph
-Debug Mode    Left 300px, right 400px, both expanded
-Inspector     Left collapsed, right 400px — focus on inspection
-QA Mode       Left 300px, right collapsed — focus on QA
-```
+### Default
+- Left rail: 250px
+- Right rail: 300px
+- Both rails visible
 
----
+### Focus Mode
+- Left rail: collapsed
+- Right rail: collapsed
+- Full-screen graph
 
-## Tile Workspace (New Architecture)
+### Debug Mode
+- Left rail: 300px
+- Right rail: 400px
+- Both rails expanded
 
-The Tile Workspace System supersedes the fixed rail model. See:
-```
-docs/layout/TILE_WORKSPACE_SYSTEM.md
-docs/layout/LENS_NAVIGATION_MODEL.md
-```
+### Inspector Mode
+- Left rail: collapsed
+- Right rail: 400px
+- Focus on inspection
 
-The current AppShell is Phase 1 (fixed layout). The tile workspace is Phase 5+.
-Current implementation is correct and stable — do not migrate to tiles without explicit contract.
+### QA Mode
+- Left rail: 300px
+- Right rail: collapsed
+- Focus on QA
 
----
+## Future Features
 
-## Implementation Guardrails
+### Resizable Panels
+- Drag handle between rails and viewport
+- Resize left rail
+- Resize right rail
+- Minimum/maximum width constraints
+- Persist panel sizes
 
-- Do not implement resizable/draggable panels without explicit layout contract
-- Do not implement floating panels without explicit contract
-- Do not add persistence for panel sizes without a storage contract
-- Collapsible panels (Phase 2) are the next safe step after v69r
+### Draggable Panels
+- Drag panels to different zones
+- Drag panels to floating
+- Drag panels to dock
+- Panel snap zones
+
+### Floating Panels
+- Detach panels from rails
+- Float over viewport
+- Re-dock to rails
+- Minimize/restore
+
+## Responsive Behavior
+
+### Desktop (>= 1200px)
+- Full layout
+- Both rails visible
+- All controls visible
+
+### Tablet (768px - 1199px)
+- Left rail collapsible
+- Right rail collapsible
+- Some controls in overflow menu
+
+### Mobile (< 768px)
+- Left rail hidden by default
+- Right rail hidden by default
+- Most controls in overflow menu
+- Drawer for panels
+
+## Panel States
+
+### Expanded
+- Panel fully visible
+- Full content accessible
+
+### Collapsed
+- Panel collapsed to icon bar
+- Content hidden
+- Quick expand on hover/click
+
+### Hidden
+- Panel completely hidden
+- No icon bar
+- Toggle button to show
+
+### Floating
+- Panel detached from rail
+- Floating over viewport
+- Draggable
+
+## Layout Persistence
+
+### Local Storage
+- Panel states (expanded/collapsed/hidden)
+- Panel sizes (resizable panels)
+- Panel positions (draggable panels)
+- Active layout preset
+
+### User Preferences
+- Remember last layout state
+- Remember panel sizes
+- Remember panel positions
+- Remember active preset
+
+## Notes
+
+- This is documentation and architecture scaffolding only
+- No implementation unless explicitly requested
+- Manual QA overrides code inspection
+- Do not implement resizable/draggable panels yet
+- Do not implement floating panels yet
+- Long-term implementation direction is the [Tile Workspace System](layout.tile.workspace.system), which generalizes panels into freely arrangeable tiles

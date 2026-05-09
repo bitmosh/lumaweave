@@ -1,28 +1,19 @@
 ---
-id: system.tile.workspace
+id: layout.tile.workspace.system
 title: Tile Workspace System
 type: concept
 status: concept
-version: v73c
-domain: layout
 cluster: stone
+domain: layout
 agent_readable: true
 include_in_self_graph: true
 last_updated: 2026-05-09
-depends_on:
-  - contract.cockpit.layout
-tags:
-  - tiles
-  - workspace
-  - layout
-  - movable
-  - snappable
-  - fullscreen
-  - panels
-  - widgets
 references:
-  - contract.workspace.configuration
-  - model.lens.navigation
+  - layout.cockpit.overview
+  - layout.lens.navigation
+  - layout.panel.zones
+  - layout.top.bar.control.plan
+tags: [tiles, workspace, layout, movable, snappable, fullscreen, panels, widgets]
 ---
 
 # Tile Workspace System

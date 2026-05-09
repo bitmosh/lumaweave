@@ -1,30 +1,19 @@
 ---
-id: model.lens.navigation
+id: layout.lens.navigation
 title: Lens Navigation Model
 type: concept
 status: concept
-version: v73c
-domain: layout
 cluster: stone
+domain: layout
 agent_readable: true
 include_in_self_graph: true
 last_updated: 2026-05-09
-depends_on:
-  - system.tile.workspace
-tags:
-  - lenses
-  - navigation
-  - overview
-  - atlas
-  - evidence
-  - signal
-  - workshop
-  - mission
-  - layout
 references:
-  - contract.cockpit.layout
+  - layout.tile.workspace.system
+  - layout.cockpit.overview
   - system.physics.dialects
-  - contract.human.evidence.debug.mode
+  - human.mode.evidence.mode.contract
+tags: [lenses, navigation, overview, atlas, evidence, signal, workshop, mission, layout]
 ---
 
 # Lens Navigation Model
