@@ -1,19 +1,41 @@
 ---
-id: vge.PLACEHOLDER
-title: Visual Grammar Engine — PLACEHOLDER
+id: vge.grammar.handle.and.lens
+title: Visual Grammar Engine — Grammar Handle Model & Grammar Lens
 type: concept
-status: concept
-version: v73c
+status: design-locked
+version: v86a
 domain: visual-grammar-engine
 cluster: teal
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-tags: [vge, visual-grammar-engine, concept, future, docs-only]
+last_updated: 2026-05-08
+references:
+  - vge.overview.and.terms
+  - vge.signal.loom
+  - vge.dialect.and.safety
+  - grammar.lens.contract
+  - cursor.inspector.contract
+  - ghost.overlay.current.state
+  - handleset.active
+  - handleset.planned
+  - theme.token.path.map
+  - theme.token.compatibility
+  - theme.override.storage.contract
+tags: [vge, grammar-handle, grammar-lens, cursor-inspector, future, docs-only]
 ---
+
 # Visual Grammar Engine — Grammar Handle Model & Grammar Lens
 
-> Status: Future architecture / docs-only. No runtime implementation authorized.
+> **Status:** Future architecture / docs-only. No runtime implementation authorized.
+
+## v86a Status Note
+
+This concept extends two shipping precursors:
+
+- **Grammar Lens** — A read-only precursor exists today as the [Grammar Lens Contract](grammar.lens.contract) and [Cursor Inspector Contract](cursor.inspector.contract). They cover click-to-inspect with metadata display. VGE Grammar Lens extends these with editing, validation, preview, and override flows.
+- **Visual Handles** — The current handleset cluster is a precursor to the Grammar Handle Registry. See [Active Handles](handleset.active) for what's wired today and [Planned Handles](handleset.planned) for what's queued. VGE handles add grammar paths, signal compatibility, and safety capabilities to the existing handle model.
+
+VGE Grammar Lens implementation is gated on prerequisite work documented in [VGE Roadmap](vge.roadmap).
 
 ---
 
@@ -24,6 +46,8 @@ tags: [vge, visual-grammar-engine, concept, future, docs-only]
 Every customizable visual element should resolve to a stable grammar handle.
 
 Handles expose editable presentation grammar. Handles do not expose source truth, contract truth, evidence status, permissions, command behavior, or uncontracted runtime capabilities.
+
+This is the same load-bearing principle as the [Theme Token Compatibility](theme.token.compatibility) doc, applied across all customizable visual elements rather than only theme tokens.
 
 ### Example DOM Metadata
 
@@ -68,11 +92,13 @@ Clicked element
 ### Editable vs Locked Fields
 
 **Editable:**
+
 - Surface appearance, accent roles, badge/icon style, glow strength, density
 - Border/radius/frame style, typography role
 - Signal mapping parameters, reduced-motion fallback selection
 
 **Locked (never editable through grammar):**
+
 - Evidence status, QA status, contract status, permission state
 - Source provenance
 - Whether graph/Sigma mutation, audio input/playback, or command execution is allowed
@@ -121,9 +147,9 @@ Grammar Lens is the direct manipulation UI for the Visual Grammar Engine. Users 
 ### Naming
 
 ```
-Grammar Lens            General click-to-inspect/edit feature
+Grammar Lens              General click-to-inspect/edit feature
 Cursor Grammar Inspector  Default-on/toggleable cursor popout mode
-Pinned Grammar Lens     Docked/pinned larger editor mode
+Pinned Grammar Lens       Docked/pinned larger editor mode
 ```
 
 ### Interaction Flow
@@ -184,6 +210,7 @@ Saved   → written into user preset / workspace override
 User flow: **Edit → Validate → Preview → Save**
 
 System flow:
+
 ```
 YAML text
 → parse
@@ -206,6 +233,8 @@ Base theme/preset
 → temporary Grammar Lens preview override
 ```
 
+This override layer extends the existing [Theme Override Storage Contract](theme.override.storage.contract) with grammar-level overrides on top of token-level overrides.
+
 Invalid edits do not apply. Unsafe edits transform or reject with clear explanation.
 
 ### Inline Validation Feedback Examples
@@ -227,3 +256,7 @@ Invalid edits do not apply. Unsafe edits transform or reject with clear explanat
 - Command execution, audio input/playback
 - Uncontracted graph/Sigma runtime mutation
 - Editing evidence truth or QA state as if it were visual style
+
+---
+
+*Frontmatter normalized v86a. Body content preserved as design-locked architecture. Connections added to current shipping precursors (Grammar Lens Contract, Cursor Inspector Contract, handleset cluster).*

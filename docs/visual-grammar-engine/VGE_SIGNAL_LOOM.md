@@ -1,19 +1,38 @@
 ---
-id: vge.PLACEHOLDER
-title: Visual Grammar Engine — PLACEHOLDER
+id: vge.signal.loom
+title: Visual Grammar Engine — Signal Loom Routing Model
 type: concept
-status: concept
-version: v73c
+status: design-locked
+version: v86a
 domain: visual-grammar-engine
 cluster: teal
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-tags: [vge, visual-grammar-engine, concept, future, docs-only]
+last_updated: 2026-05-08
+references:
+  - vge.overview.and.terms
+  - vge.grammar.handle.and.lens
+  - vge.dialect.and.safety
+  - audio.reactivity.contract
+  - music.reactive.mapping.contract
+  - audio.source.system.contract
+  - motion.safety.contract
+tags: [vge, signal-loom, routing, signals, future, docs-only]
 ---
+
 # Visual Grammar Engine — Signal Loom Routing Model
 
-> Status: Future architecture / docs-only. No runtime implementation authorized.
+> **Status:** Future architecture / docs-only. No runtime implementation authorized.
+
+## v86a Status Note
+
+Signal Loom adjacent contracts already exist in v86a:
+
+- **Audio reactivity** — [Audio Reactivity Contract](audio.reactivity.contract) and [Audio Source System Contract](audio.source.system.contract) define the boundaries for audio input. Signal Loom routes events through these contracts; it does not bypass them.
+- **Music reactivity** — [Music Reactive Mapping Contract](music.reactive.mapping.contract) is the registry contract for music-driven visual mappings. Signal Loom routes can target music handles defined here.
+- **Motion safety** — [Motion Safety Contract](motion.safety.contract) governs the reduced-motion fallback transforms used by every Signal Loom route. Routes must declare their reduced-motion safety transform.
+
+Signal Loom implementation is gated on the Source Adapter OS Reconnect Contract (v74) and Synthetic Data Fixtures v0 (v75). See [VGE Roadmap](vge.roadmap).
 
 ---
 
@@ -32,6 +51,7 @@ Source/Event → Signal/Envelope → Mapping → Target Handle → Safety Transf
 ```
 
 Example:
+
 ```
 diff.detected → doublePulse → saturation/radius → graph.node.glow → reducedMotion.staticHighlight
 ```
@@ -48,6 +68,7 @@ track.playing     →  tempoPulse         →  aura/opacity      → music.clust
 ```
 
 Cable metaphor:
+
 ```
 [Diff Events]    ─ cable ─ [Double Pulse Envelope] ─ cable ─ [Changed Node Glow]
 [Test Failures]  ─ cable ─ [Warning ADSR]          ─ cable ─ [Boundary Seal]
@@ -66,7 +87,7 @@ qa.bundle.changed           agent.patch.proposed agent.patch.accepted
 risk.increased              media.currentTrackMetadata
 ```
 
-Real audio input, playback, decoding, microphone, and Web Audio remain locked until explicit future contracts.
+Real audio input, playback, decoding, microphone, and Web Audio remain locked until explicit future contracts. The boundary is governed by [Audio Source System Contract](audio.source.system.contract).
 
 ---
 
@@ -114,6 +135,8 @@ reducedMotion.disablePulse
 reducedMotion.badgeOnly
 ```
 
+Every Signal Loom route must declare a safety transform per [Motion Safety Contract](motion.safety.contract). Routes without a declared safety transform are rejected.
+
 ---
 
 ## Example Visual Grammar Route (YAML)
@@ -144,6 +167,7 @@ routes:
 ## Screensaver / Live Desktop Vision
 
 Future use case — song library constellation screensaver:
+
 ```
 nodes = artists/albums/tracks/playlists
 edges = genre, playlist co-occurrence, listening history
@@ -158,6 +182,7 @@ output = graph pulses around current track and related clusters
 ## Initial Safety Position
 
 Signal Loom must not initially:
+
 - Play audio, capture audio, decode audio files
 - Mutate Sigma directly
 - Add high-frequency motion
@@ -171,3 +196,7 @@ Signal Loom must not initially:
 > Write the rhythm of your data.
 > Route events into light, motion, focus, and form.
 > Design how your system breathes.
+
+---
+
+*Frontmatter normalized v86a. Body content preserved as design-locked architecture. Connections added to current shipping audio/motion contracts.*

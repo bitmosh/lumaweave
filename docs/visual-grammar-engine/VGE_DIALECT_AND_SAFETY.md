@@ -1,19 +1,40 @@
 ---
-id: vge.PLACEHOLDER
-title: Visual Grammar Engine — PLACEHOLDER
+id: vge.dialect.and.safety
+title: Visual Grammar Engine — Visual Dialect Presets & Safety/Schema Governance
 type: concept
-status: concept
-version: v73c
+status: design-locked
+version: v86a
 domain: visual-grammar-engine
 cluster: teal
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-tags: [vge, visual-grammar-engine, concept, future, docs-only]
+last_updated: 2026-05-08
+references:
+  - vge.overview.and.terms
+  - vge.signal.loom
+  - vge.grammar.handle.and.lens
+  - vge.asset.and.tokens
+  - motion.safety.contract
+  - audio.source.system.contract
+  - theme.token.compatibility
+  - graph.runtime.boundary.contract
+tags: [vge, dialect, safety, schema, governance, future, docs-only]
 ---
+
 # Visual Grammar Engine — Visual Dialect Presets & Safety/Schema Governance
 
-> Status: Future architecture / docs-only. No runtime implementation authorized.
+> **Status:** Future architecture / docs-only. No runtime implementation authorized.
+
+## v86a Status Note
+
+The safety governance principles in this doc align with shipping v86a contracts:
+
+- **Motion safety** — [Motion Safety Contract](motion.safety.contract) is already enforced for current visual effects. VGE dialect presets must declare reduced-motion fallbacks consistent with this contract.
+- **Audio safety** — [Audio Source System Contract](audio.source.system.contract) governs all audio input boundaries. VGE dialect presets cannot bypass these boundaries.
+- **Graph runtime boundary** — [Graph Runtime Boundary Contract](graph.runtime.boundary.contract) gates all Sigma mutation. VGE dialect presets cannot mutate Sigma directly; they route through this contract.
+- **Theme token governance** — [Theme Token Compatibility](theme.token.compatibility) governs all token references. VGE dialect presets cannot create parallel token systems.
+
+VGE dialect implementation is gated on the Source Adapter OS Reconnect Contract (v74) and Synthetic Data Fixtures v0 (v75). See [VGE Roadmap](vge.roadmap).
 
 ---
 
@@ -148,6 +169,7 @@ safety:
 ### Import Rules
 
 Allowed:
+
 ```yaml
 imports:
   - preset: base.diff-pulse
@@ -156,6 +178,7 @@ imports:
 ```
 
 Forbidden:
+
 ```yaml
 imports:
   - https://random-site/script.js   # never
@@ -164,6 +187,7 @@ imports:
 ### Initial Scope
 
 First version: terminal-validation only.
+
 - Parse YAML, validate schema, validate known handles/target selectors/safety transforms
 - Report unsupported runtime features
 - No live application, no graph/Sigma mutation, no audio input/playback
@@ -213,6 +237,7 @@ YAML text
 ### Safety Gate Checklist
 
 Every visual grammar route must answer:
+
 ```
 What source event triggers this?
 What signal/envelope is emitted?
@@ -226,7 +251,7 @@ What contract authorizes this runtime behavior?
 
 ### Reduced Motion
 
-Reduced Motion is master authority. Grammar presets must provide or inherit reduced-motion fallback behavior for any effect with motion, pulse, shimmer, glow transition, or intensity envelope.
+Reduced Motion is master authority per [Motion Safety Contract](motion.safety.contract). Grammar presets must provide or inherit reduced-motion fallback behavior for any effect with motion, pulse, shimmer, glow transition, or intensity envelope.
 
 Allowed fallbacks: `static-highlight` · `color-shift-only` · `badge-only` · `disable-pulse` · `outline-only`
 
@@ -252,3 +277,7 @@ Runtime graph/Sigma or audio-reactive behavior: explicit promotion contracts onl
 Imported grammar/assets are not trusted by default.
 
 Lifecycle: `candidate → quarantined → validated → accepted → active → deprecated/rejected`
+
+---
+
+*Frontmatter normalized v86a. Body content preserved as design-locked architecture. Connections added to motion safety, audio source, graph runtime boundary, and theme token compatibility contracts.*
