@@ -3,18 +3,25 @@ id: guide.new.agent.onboarding
 title: New Agent Onboarding Guide
 type: manual
 status: accepted
-version: v73c
 domain: agent
 subdomain: onboarding
 cluster: purple
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-related:
+last_updated: 2026-05-09
+tags:
+  - onboarding
+  - agent
+  - new
+  - fresh
+  - brief
+  - deepseek
+  - bandit
+references:
   - policy.multi.agent
   - index.session.and.stack
   - index.source.of.truth
-tags: [onboarding, agent, new, fresh, brief, deepseek, bandit]
+last_pass: vP-Forensics-2
 ---
 
 # New Agent Onboarding Guide

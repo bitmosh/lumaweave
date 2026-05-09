@@ -3,17 +3,23 @@ id: policy.multi.agent
 title: Multi-Agent Operating Policy
 type: policy
 status: accepted
-version: v73c
 domain: agent
 subdomain: onboarding
 cluster: purple
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-related:
+last_updated: 2026-05-09
+tags:
+  - multi-agent
+  - policy
+  - operating
+  - deepseek
+  - bandit
+  - cascade
+references:
   - protocol.bandit.operating
   - index.session.and.stack
-tags: [multi-agent, policy, operating, deepseek, bandit, cascade]
+last_pass: vP-Forensics-2
 ---
 
 # Multi-Agent Operating Policy
