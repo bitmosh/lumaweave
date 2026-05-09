@@ -2,7 +2,7 @@
 id: brain.bandit.previous.title
 title: Bandit Previous Title — System Index Architect
 type: log
-status: historical
+status: archived
 domain: agent
 subdomain: brain
 cluster: purple

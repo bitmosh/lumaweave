@@ -2,7 +2,7 @@
 id: brain.bandit.experience.ledger
 title: Bandit Experience Ledger
 type: log
-status: active
+status: current
 domain: agent
 subdomain: brain
 cluster: purple

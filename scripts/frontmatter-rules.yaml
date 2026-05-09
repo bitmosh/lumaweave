@@ -8,58 +8,63 @@
 #   2. For each file, the path-relative-to-docs/ is matched against schemas
 #      in order (top to bottom)
 #   3. The FIRST schema whose `path_match` regex matches wins
-#   4. The schema's rules are applied
+#   4. The schema's rules are applied in order
 #   5. Schemas with `path_match: null` are stub schemas — declared for
 #      future use, not yet active
 #
-# Schema rules apply transformations:
-#   - field_renames: rename old field name → new field name (preserves value)
-#   - field_removals: delete fields entirely
-#   - field_defaults: set field IF AND ONLY IF the field is currently absent
-#   - field_overrides: set field unconditionally to a fixed value
-#   - last_updated_today: if true, set last_updated to today's ISO date
+# Schema rules (applied in this order):
+#   1. field_renames    — rename old field name → new field name (preserves value)
+#   2. field_removals   — delete fields entirely
+#   3. field_remaps     — within-field value remap (e.g. status: active → current)
+#   4. field_defaults   — set field IF AND ONLY IF the field is currently absent
+#   5. field_overrides  — set field unconditionally to a fixed value
+#   6. last_updated_today — if true, set last_updated to today's ISO date
 #
 # Validation rules describe what the doc SHOULD have after normalization:
 #   - required_fields: error if missing
 #   - status_options: error if status is not one of these values
 #
-# When validation fails, the script reports the issue in --dry-run output
-# but does NOT block writes. Allows progressive normalization.
+# When validation fails, the script reports the issue but does NOT block
+# writes (unless --strict is set). This lets you progressively normalize.
 #
 # ────────────────────────────────────────────────────────────
-# Status vocabulary (locked v86a):
+# Status vocabulary (locked v86a, refined to 5 values):
 #
 #   current       — actively maintained, reflects today's reality
-#   active        — actively in use / evolving (operational logs, ledgers)
+#                   (covers former 'active' usage too)
 #   accepted      — frozen at acceptance, reference state
-#   complete      — finished work product (e.g. session summary)
-#   historical    — preserved for reference, NOT current state
+#   complete      — finished work product (e.g. session summary, snapshot)
 #   archived      — removed from active flow, kept for record
+#                   (covers former 'historical' usage too)
 #   design-locked — design intentionally frozen, no implementation yet
+#                   (VGE only)
 #
-# Different doc types use different subsets. Each schema declares its
-# allowed status_options.
+# Different doc types use different subsets of this vocabulary. Each
+# schema declares its allowed `status_options`.
 # ────────────────────────────────────────────────────────────
 
 version: 1
 
-# Default values applied to ALL schemas unless overridden:
+# Defaults applied to ALL schemas unless overridden:
 defaults:
   last_updated_today: true
   field_renames:
     related: references
+  # Cleanup of legacy status vocabulary across all docs:
+  field_remaps:
+    status:
+      active: current
+      historical: archived
 
 schemas:
 
   # ============================================================
   # Agent / Brain — Bandit's operating documents
   # ============================================================
-  # Brain docs include indexes, ledgers, titles, summaries, snapshots —
-  # mix of evolving and frozen content. Wider status vocabulary needed.
   agent_brain:
     path_match: '^agent/brain/'
     cluster: purple
-    status_options: [current, active, accepted, complete, historical, archived]
+    status_options: [current, accepted, complete, archived]
     field_overrides:
       cluster: purple
       last_pass: 'vP-Forensics-2'
@@ -86,18 +91,17 @@ schemas:
   # ============================================================
   # Agent / Leveling — XP, changelog, error log
   # ============================================================
-  # Leveling docs are operational logs, mostly `active`.
   agent_leveling:
     path_match: '^agent/leveling/'
     cluster: purple
-    status_options: [current, active, accepted, archived]
+    status_options: [current, accepted, archived]
     field_overrides:
       cluster: purple
       last_pass: 'vP-Forensics-2'
     field_removals:
       - version
     field_defaults:
-      status: active
+      status: current
       type: log
       domain: agent
       subdomain: leveling
@@ -147,7 +151,6 @@ schemas:
   # ============================================================
   # Agent / Protocols — operating protocols
   # ============================================================
-  # Protocols are mostly `accepted` (frozen rules), occasionally `current`.
   agent_protocols:
     path_match: '^agent/protocols/'
     cluster: purple
@@ -208,10 +211,9 @@ schemas:
   # ============================================================
   # Stub schemas — declared for future use
   # ============================================================
-  # These schemas are placeholders. path_match is null so they don't
-  # match any docs. When ready to normalize a cluster, set path_match
-  # to a regex that captures the cluster's docs and run with --dry-run
-  # to preview.
+  # path_match is null so they don't match any docs. When ready to
+  # normalize a cluster, set path_match to a regex that captures the
+  # cluster's docs and run with --dry-run to preview.
 
   theme:
     path_match: null  # ^theme/

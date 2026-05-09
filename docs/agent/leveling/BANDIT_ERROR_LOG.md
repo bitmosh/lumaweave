@@ -2,14 +2,22 @@
 id: log.bandit.error
 title: Bandit Error Log
 type: log
-status: active
+status: current
 domain: agent
 subdomain: leveling
-cluster: gray
+cluster: purple
 agent_readable: true
 include_in_self_graph: false
-last_updated: physics-wiring-v1
-tags: [error, log, bandit, agent, self-split, recovery, operational]
+last_updated: 2026-05-09
+tags:
+  - error
+  - log
+  - bandit
+  - agent
+  - self-split
+  - recovery
+  - operational
+last_pass: vP-Forensics-2
 ---
 
 # Bandit Error Log

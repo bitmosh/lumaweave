@@ -2,7 +2,7 @@
 id: protocol.bandit.qa
 title: Bandit QA Protocol
 type: protocol
-status: active
+status: current
 domain: agent
 subdomain: qa
 cluster: purple

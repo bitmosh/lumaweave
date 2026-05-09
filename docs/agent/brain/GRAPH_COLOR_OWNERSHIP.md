@@ -2,7 +2,7 @@
 id: contract.graph.color.ownership
 title: Graph Color Ownership Contract
 type: contract
-status: active
+status: current
 domain: graph
 subdomain: color
 cluster: purple

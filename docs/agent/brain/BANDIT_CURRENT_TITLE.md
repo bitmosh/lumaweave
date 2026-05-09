@@ -2,7 +2,7 @@
 id: brain.bandit.current.title
 title: Bandit Current Title — Living Graph Architect
 type: log
-status: active
+status: current
 domain: agent
 subdomain: brain
 cluster: purple

@@ -3,14 +3,20 @@ id: protocol.bandit.leveling
 title: Bandit Leveling and Feedback Protocol
 type: protocol
 status: accepted
-version: v73c
 domain: agent
 subdomain: leveling
 cluster: purple
 agent_readable: true
 include_in_self_graph: false
-last_updated: v73c
-tags: [bandit, leveling, XP, title, feedback, protocol]
+last_updated: 2026-05-09
+tags:
+  - bandit
+  - leveling
+  - XP
+  - title
+  - feedback
+  - protocol
+last_pass: vP-Forensics-2
 ---
 
 # Bandit Leveling and Feedback Protocol
