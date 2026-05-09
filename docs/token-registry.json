@@ -1,0 +1,5263 @@
+[
+  {
+    "canonicalPath": "--lw-accent",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-accent",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/app/AppShell.tsx",
+        "line": 329
+      }
+    ],
+    "consumers": [
+      "src/app/AppShell.tsx"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-app-background",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-app-background",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 231
+      }
+    ],
+    "consumers": [
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-app-bg",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-app-bg",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/app/AppShell.tsx",
+        "line": 324
+      }
+    ],
+    "consumers": [
+      "src/app/AppShell.tsx"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-card-bg",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-card-bg",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 101
+      }
+    ],
+    "consumers": [
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-card-border",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-card-border",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 100
+      }
+    ],
+    "consumers": [
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-glow",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-glow",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/app/AppShell.tsx",
+        "line": 331
+      }
+    ],
+    "consumers": [
+      "src/app/AppShell.tsx"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-panel-bg",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-panel-bg",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/app/AppShell.tsx",
+        "line": 325
+      },
+      {
+        "file": "src/control-plane/command-deck/CommandDeckPanel.tsx",
+        "line": 19
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 92
+      }
+    ],
+    "consumers": [
+      "src/app/AppShell.tsx",
+      "src/control-plane/command-deck/CommandDeckPanel.tsx",
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-panel-border",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-panel-border",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/app/AppShell.tsx",
+        "line": 326
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 91
+      }
+    ],
+    "consumers": [
+      "src/app/AppShell.tsx",
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-text-muted",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-text-muted",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/app/AppShell.tsx",
+        "line": 328
+      },
+      {
+        "file": "src/app/AppShell.tsx",
+        "line": 353
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 216
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 217
+      }
+    ],
+    "consumers": [
+      "src/app/AppShell.tsx",
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-text-primary",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-text-primary",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/app/AppShell.tsx",
+        "line": 327
+      },
+      {
+        "file": "src/control-plane/command-deck/CommandDeckPanel.tsx",
+        "line": 24
+      },
+      {
+        "file": "src/control-plane/command-deck/CommandDeckShell.tsx",
+        "line": 31
+      },
+      {
+        "file": "src/control-plane/command-deck/CommandDeckShell.tsx",
+        "line": 61
+      },
+      {
+        "file": "src/control-plane/command-deck/CommandDeckShell.tsx",
+        "line": 129
+      },
+      {
+        "file": "src/control-plane/command-deck/CommandDeckShell.tsx",
+        "line": 152
+      },
+      {
+        "file": "src/control-plane/command-deck/CommandDeckShell.tsx",
+        "line": 195
+      }
+    ],
+    "consumers": [
+      "src/app/AppShell.tsx",
+      "src/control-plane/command-deck/CommandDeckPanel.tsx",
+      "src/control-plane/command-deck/CommandDeckShell.tsx"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-visual-accent",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-visual-accent",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/app/AppShell.tsx",
+        "line": 330
+      },
+      {
+        "file": "src/app/AppShell.tsx",
+        "line": 349
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 21
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 126
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 135
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 209
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 214
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 215
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 232
+      }
+    ],
+    "consumers": [
+      "src/app/AppShell.tsx",
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-visual-accent-hover",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-visual-accent-hover",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 23
+      }
+    ],
+    "consumers": [
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-visual-accent-soft",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-visual-accent-soft",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 22
+      }
+    ],
+    "consumers": [
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-visual-badge-bg",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-visual-badge-bg",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 34
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 156
+      }
+    ],
+    "consumers": [
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-visual-badge-text",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-visual-badge-text",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 35
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 157
+      }
+    ],
+    "consumers": [
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-visual-button-active-bg",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-visual-button-active-bg",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 45
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 130
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 134
+      }
+    ],
+    "consumers": [
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-visual-button-bg",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-visual-button-bg",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 41
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 114
+      }
+    ],
+    "consumers": [
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-visual-button-border",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-visual-button-border",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 42
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 113
+      }
+    ],
+    "consumers": [
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-visual-button-hover-bg",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-visual-button-hover-bg",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 44
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 125
+      }
+    ],
+    "consumers": [
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-visual-button-text",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-visual-button-text",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 43
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 115
+      }
+    ],
+    "consumers": [
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-visual-card-bg",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-visual-card-bg",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 30
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 101
+      }
+    ],
+    "consumers": [
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-visual-card-border",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-visual-card-border",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 31
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 100
+      }
+    ],
+    "consumers": [
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-visual-divider-color",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-visual-divider-color",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 38
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 164
+      }
+    ],
+    "consumers": [
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-visual-glow-color",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-visual-glow-color",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 52
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 177
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 184
+      }
+    ],
+    "consumers": [
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-visual-glow-spread",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-visual-glow-spread",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 53
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 177
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 184
+      }
+    ],
+    "consumers": [
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-visual-graph-frame-bg",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-visual-graph-frame-bg",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 48
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 79
+      }
+    ],
+    "consumers": [
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-visual-graph-frame-border",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-visual-graph-frame-border",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 49
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 80
+      }
+    ],
+    "consumers": [
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-visual-panel-bg",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-visual-panel-bg",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 26
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 65
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 72
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 92
+      }
+    ],
+    "consumers": [
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "--lw-visual-panel-border",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "--lw-visual-panel-border",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 27
+      },
+      {
+        "file": "src/styles/lumaweave-visual-handles.css",
+        "line": 91
+      }
+    ],
+    "consumers": [
+      "src/styles/lumaweave-visual-handles.css"
+    ],
+    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+  },
+  {
+    "canonicalPath": "accent.primary",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 55
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 19
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 78
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 167
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTargetRegistry.ts",
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "accent.secondary",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 60
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 128
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "agentChat.enabled",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/handles/handleset.registry.ts",
+        "line": 456
+      }
+    ],
+    "consumers": [
+      "src/control-plane/handles/handleset.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "allMediumMultiplier",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "allMediumMultiplier",
+    "sources": [],
+    "consumers": [],
+    "notes": "[ACTION-NEEDED] Parallel system token - needs conversion plan"
+  },
+  {
+    "canonicalPath": "api.endpoint",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 243
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "api.method",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 245
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "api.schema",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 244
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "app.background",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 71
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 40
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 52
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 130
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 13
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 72
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 155
+      }
+    ],
+    "consumers": [
+      "src/graph/graphVisualThemeMappingRegistry.ts",
+      "src/themes/themeTargetRegistry.ts",
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "app.glow",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 41
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 14
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 73
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 157
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTargetRegistry.ts",
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "app.shell",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/app/AppShell.tsx",
+        "line": 334
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 36
+      }
+    ],
+    "consumers": [
+      "src/app/AppShell.tsx",
+      "src/themes/themeTargetRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "app.surface",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 57
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 125
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "appearance.glitterEnabled",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/app/AppShell.tsx",
+        "line": 391
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 51
+      },
+      {
+        "file": "src/control-plane/handles/handleset.registry.ts",
+        "line": 192
+      }
+    ],
+    "consumers": [
+      "src/app/AppShell.tsx",
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+      "src/control-plane/handles/handleset.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "appearance.reduceMotion",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/app/AppShell.tsx",
+        "line": 407
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 79
+      }
+    ],
+    "consumers": [
+      "src/app/AppShell.tsx",
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "appearance.theme",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/app/AppShell.tsx",
+        "line": 364
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 23
+      },
+      {
+        "file": "src/control-plane/handles/handleset.registry.ts",
+        "line": 172
+      }
+    ],
+    "consumers": [
+      "src/app/AppShell.tsx",
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+      "src/control-plane/handles/handleset.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "audio.source.registry",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/system-index/systemIndexRegistry.ts",
+        "line": 205
+      },
+      {
+        "file": "src/control-plane/system-index/systemIndexRegistry.ts",
+        "line": 342
+      }
+    ],
+    "consumers": [
+      "src/control-plane/system-index/systemIndexRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "backdrop.corona.color",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 30
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 92
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 188
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "backdrop.corona.intensity",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 31
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 93
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 190
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "backdrop.flare.color",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 32
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 94
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 192
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "backdrop.starfield.density",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 33
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 95
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 194
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "backdrop.vignette.intensity",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 34
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 96
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 196
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "bookmark.alert.color",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 44
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 106
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 216
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "bookmark.pinned.color",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 45
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 107
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 218
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "bookmark.ref.color",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 46
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 108
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 220
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "calm.state.indicator",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 31
+      },
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 327
+      }
+    ],
+    "consumers": [
+      "src/audio/musicReactiveMappingRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "code.commit",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 137
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "code.file",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/fixtures/self-graph-adapter.ts",
+        "line": 32
+      },
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 134
+      }
+    ],
+    "consumers": [
+      "src/fixtures/self-graph-adapter.ts",
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "code.function",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 135
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "code.license",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 317
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "code.package",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 315
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "code.script",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/fixtures/self-graph-adapter.ts",
+        "line": 35
+      }
+    ],
+    "consumers": [
+      "src/fixtures/self-graph-adapter.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "code.symbol",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 136
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "code.system",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/fixtures/self-graph-adapter.ts",
+        "line": 30
+      }
+    ],
+    "consumers": [
+      "src/fixtures/self-graph-adapter.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "code.test",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/fixtures/self-graph-adapter.ts",
+        "line": 34
+      }
+    ],
+    "consumers": [
+      "src/fixtures/self-graph-adapter.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "code.version",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 316
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "contract.trace.matrix",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/system-index/systemIndexRegistry.ts",
+        "line": 115
+      },
+      {
+        "file": "src/control-plane/system-index/systemIndexRegistry.ts",
+        "line": 120
+      },
+      {
+        "file": "src/control-plane/system-index/systemIndexRegistry.ts",
+        "line": 153
+      }
+    ],
+    "consumers": [
+      "src/control-plane/system-index/systemIndexRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "contract.trace.validator",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/system-index/systemIndexRegistry.ts",
+        "line": 115
+      },
+      {
+        "file": "src/control-plane/system-index/systemIndexRegistry.ts",
+        "line": 131
+      },
+      {
+        "file": "src/control-plane/system-index/systemIndexRegistry.ts",
+        "line": 134
+      },
+      {
+        "file": "src/control-plane/system-index/systemIndexRegistry.ts",
+        "line": 139
+      }
+    ],
+    "consumers": [
+      "src/control-plane/system-index/systemIndexRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "control.active",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 63
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 131
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "control.background",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 61
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 129
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "control.border",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 62
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 130
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "db.column",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 280
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "db.constraint",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 282
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "db.index",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 281
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "db.table",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 279
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "doc.contract",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 99
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "doc.metadata",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 100
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "docs.file",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/fixtures/self-graph-adapter.ts",
+        "line": 33
+      }
+    ],
+    "consumers": [
+      "src/fixtures/self-graph-adapter.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "docs.folder",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/fixtures/self-graph-adapter.ts",
+        "line": 31
+      }
+    ],
+    "consumers": [
+      "src/fixtures/self-graph-adapter.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "edge",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "edge",
+    "sources": [],
+    "consumers": [],
+    "notes": "[ACTION-NEEDED] Parallel system token - needs conversion plan"
+  },
+  {
+    "canonicalPath": "edge.plasma.flowSpeed",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 39
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 101
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 206
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "edge.style.preset",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 38
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 100
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 204
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "edgeColor",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "edgeColor",
+    "sources": [],
+    "consumers": [],
+    "notes": "[ACTION-NEEDED] Parallel system token - needs conversion plan"
+  },
+  {
+    "canonicalPath": "edgeColorScale",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "edgeColorScale",
+    "sources": [],
+    "consumers": [],
+    "notes": "[ACTION-NEEDED] Parallel system token - needs conversion plan"
+  },
+  {
+    "canonicalPath": "edgeLabelColor",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "edgeLabelColor",
+    "sources": [],
+    "consumers": [],
+    "notes": "[ACTION-NEEDED] Parallel system token - needs conversion plan"
+  },
+  {
+    "canonicalPath": "edgeLabelFont",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "edgeLabelFont",
+    "sources": [],
+    "consumers": [],
+    "notes": "[ACTION-NEEDED] Parallel system token - needs conversion plan"
+  },
+  {
+    "canonicalPath": "edgeSize",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "edgeSize",
+    "sources": [],
+    "consumers": [],
+    "notes": "[ACTION-NEEDED] Parallel system token - needs conversion plan"
+  },
+  {
+    "canonicalPath": "effects.glow.intensity",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 159
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 28
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 87
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 185
+      }
+    ],
+    "consumers": [
+      "src/graph/graphVisualThemeMappingRegistry.ts",
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "graph.camera.breathing",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 25
+      }
+    ],
+    "consumers": [
+      "src/audio/musicReactiveMappingRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.cluster.aura",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 22
+      },
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 219
+      }
+    ],
+    "consumers": [
+      "src/audio/musicReactiveMappingRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.controls",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphViewElementRegistry.ts",
+        "line": 113
+      }
+    ],
+    "consumers": [
+      "src/graph/graphViewElementRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.depth.architecture",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 27
+      },
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 266
+      }
+    ],
+    "consumers": [
+      "src/audio/musicReactiveMappingRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.depth.leaf",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 29
+      },
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 296
+      }
+    ],
+    "consumers": [
+      "src/audio/musicReactiveMappingRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.depth.module",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 28
+      },
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 281
+      }
+    ],
+    "consumers": [
+      "src/audio/musicReactiveMappingRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.edge.current",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 21
+      },
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 173
+      }
+    ],
+    "consumers": [
+      "src/audio/musicReactiveMappingRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.edge.default",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 156
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTargetRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.edge.hoverStroke",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 119
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 25
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 84
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 179
+      }
+    ],
+    "consumers": [
+      "src/graph/graphVisualThemeMappingRegistry.ts",
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "graph.edge.label",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 135
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 27
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 86
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 183
+      }
+    ],
+    "consumers": [
+      "src/graph/graphVisualThemeMappingRegistry.ts",
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "graph.edge.selected",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 164
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTargetRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.edge.selectedStroke",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 127
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 26
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 85
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 181
+      }
+    ],
+    "consumers": [
+      "src/graph/graphVisualThemeMappingRegistry.ts",
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "graph.edge.stroke",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 111
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 24
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 83
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 177
+      }
+    ],
+    "consumers": [
+      "src/graph/graphVisualThemeMappingRegistry.ts",
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "graph.edgeLabelFontSize",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 217
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.edgeLabelMode",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 133
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.edges",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphViewElementRegistry.ts",
+        "line": 73
+      },
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 109
+      },
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 117
+      },
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 125
+      },
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 133
+      }
+    ],
+    "consumers": [
+      "src/graph/graphViewElementRegistry.ts",
+      "src/graph/graphVisualThemeMappingRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.fit",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/commands/command-registry.ts",
+        "line": 12
+      }
+    ],
+    "consumers": [
+      "src/control-plane/commands/command-registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.frame",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/app/AppShell.tsx",
+        "line": 793
+      },
+      {
+        "file": "src/graph/graphViewElementRegistry.ts",
+        "line": 41
+      },
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 53
+      },
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 61
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 126
+      }
+    ],
+    "consumers": [
+      "src/app/AppShell.tsx",
+      "src/graph/graphViewElementRegistry.ts",
+      "src/graph/graphVisualThemeMappingRegistry.ts",
+      "src/themes/themeTargetRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.frame.border",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 19
+      }
+    ],
+    "consumers": [
+      "src/audio/musicReactiveMappingRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.hoverNodeColor",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 299
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.hud",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphViewElementRegistry.ts",
+        "line": 103
+      }
+    ],
+    "consumers": [
+      "src/graph/graphViewElementRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.label.glow",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 23
+      },
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 204
+      }
+    ],
+    "consumers": [
+      "src/audio/musicReactiveMappingRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.labels",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphViewElementRegistry.ts",
+        "line": 83
+      },
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 141
+      },
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 149
+      }
+    ],
+    "consumers": [
+      "src/graph/graphViewElementRegistry.ts",
+      "src/graph/graphVisualThemeMappingRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.linkDistance",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 354
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.links",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/normalize/normalizeGraphifyGraph.ts",
+        "line": 252
+      },
+      {
+        "file": "src/graph/normalize/normalizeGraphifyGraph.ts",
+        "line": 336
+      }
+    ],
+    "consumers": [
+      "src/graph/normalize/normalizeGraphifyGraph.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.maxEdgeLabelLength",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 245
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.minimap",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphViewElementRegistry.ts",
+        "line": 135
+      }
+    ],
+    "consumers": [
+      "src/graph/graphViewElementRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.neighborhoodDepth",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 272
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.node.default",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 139
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTargetRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.node.fill",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 79
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 20
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 79
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 169
+      }
+    ],
+    "consumers": [
+      "src/graph/graphVisualThemeMappingRegistry.ts",
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "graph.node.halo",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 20
+      },
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 158
+      }
+    ],
+    "consumers": [
+      "src/audio/musicReactiveMappingRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.node.hoverFill",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 87
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 21
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 80
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 171
+      }
+    ],
+    "consumers": [
+      "src/graph/graphVisualThemeMappingRegistry.ts",
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "graph.node.label",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 103
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 23
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 82
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 175
+      }
+    ],
+    "consumers": [
+      "src/graph/graphVisualThemeMappingRegistry.ts",
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "graph.node.selected",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 148
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTargetRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.node.selectedFill",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 95
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 22
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 81
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 173
+      }
+    ],
+    "consumers": [
+      "src/graph/graphVisualThemeMappingRegistry.ts",
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "graph.nodeLabelFontSize",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 189
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.nodeLabelMode",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 105
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.nodes",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphViewElementRegistry.ts",
+        "line": 63
+      },
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 77
+      },
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 85
+      },
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 93
+      },
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 101
+      },
+      {
+        "file": "src/graph/normalize/normalizeGraphifyGraph.ts",
+        "line": 251
+      },
+      {
+        "file": "src/graph/normalize/normalizeGraphifyGraph.ts",
+        "line": 335
+      }
+    ],
+    "consumers": [
+      "src/graph/graphViewElementRegistry.ts",
+      "src/graph/graphVisualThemeMappingRegistry.ts",
+      "src/graph/normalize/normalizeGraphifyGraph.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.nodeSize",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 327
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.overlay",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphViewElementRegistry.ts",
+        "line": 93
+      }
+    ],
+    "consumers": [
+      "src/graph/graphViewElementRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.overlay.particles",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 24
+      },
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 188
+      }
+    ],
+    "consumers": [
+      "src/audio/musicReactiveMappingRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.path.highlight",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 26
+      },
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 235
+      },
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 250
+      }
+    ],
+    "consumers": [
+      "src/audio/musicReactiveMappingRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.physics",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphViewElementRegistry.ts",
+        "line": 124
+      }
+    ],
+    "consumers": [
+      "src/graph/graphViewElementRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.repelForce",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 381
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.resetView",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/commands/command-registry.ts",
+        "line": 19
+      }
+    ],
+    "consumers": [
+      "src/control-plane/commands/command-registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.runtime.boundary",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/system-index/systemIndexRegistry.ts",
+        "line": 211
+      }
+    ],
+    "consumers": [
+      "src/control-plane/system-index/systemIndexRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.shell.glow",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 17
+      },
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 127
+      }
+    ],
+    "consumers": [
+      "src/audio/musicReactiveMappingRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.shell.pulse",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 18
+      },
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 142
+      }
+    ],
+    "consumers": [
+      "src/audio/musicReactiveMappingRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.showLabelsOnHover",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 161
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.surface",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphViewElementRegistry.ts",
+        "line": 52
+      },
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 69
+      }
+    ],
+    "consumers": [
+      "src/graph/graphViewElementRegistry.ts",
+      "src/graph/graphVisualThemeMappingRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.theme.mapping.registry",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/system-index/systemIndexRegistry.ts",
+        "line": 201
+      },
+      {
+        "file": "src/control-plane/system-index/systemIndexRegistry.ts",
+        "line": 230
+      }
+    ],
+    "consumers": [
+      "src/control-plane/system-index/systemIndexRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.view.element.registry",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/system-index/systemIndexRegistry.ts",
+        "line": 200
+      }
+    ],
+    "consumers": [
+      "src/control-plane/system-index/systemIndexRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graph.visual.inventory",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/system-index/systemIndexRegistry.ts",
+        "line": 182
+      }
+    ],
+    "consumers": [
+      "src/control-plane/system-index/systemIndexRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graphIntelligence.clusterGravity",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/handles/handleset.registry.ts",
+        "line": 475
+      }
+    ],
+    "consumers": [
+      "src/control-plane/handles/handleset.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graphIntelligence.progressiveDepthSlider",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/handles/handleset.registry.ts",
+        "line": 494
+      }
+    ],
+    "consumers": [
+      "src/control-plane/handles/handleset.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graphView.hoverNodeColor",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 303
+      },
+      {
+        "file": "src/control-plane/handles/handleset.registry.ts",
+        "line": 153
+      },
+      {
+        "file": "src/control-plane/settings/settings.registry.ts",
+        "line": 217
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+      "src/control-plane/handles/handleset.registry.ts",
+      "src/control-plane/settings/settings.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graphView.neighborhoodDepth",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/settings/settings.registry.ts",
+        "line": 207
+      }
+    ],
+    "consumers": [
+      "src/control-plane/settings/settings.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "graphView.nodeSelectionStage",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 276
+      },
+      {
+        "file": "src/control-plane/handles/handleset.registry.ts",
+        "line": 134
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+      "src/control-plane/handles/handleset.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "hovered",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "hovered",
+    "sources": [],
+    "consumers": [],
+    "notes": "[ACTION-NEEDED] Parallel system token - needs conversion plan"
+  },
+  {
+    "canonicalPath": "infra.container",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 352
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "infra.role",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 354
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "infra.service",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 351
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "infra.storage",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 353
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "infrastructure.yaml",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 347
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "inspector.radial.haloColor",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 51
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 113
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 230
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "inspector.radial.spokeColor",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 50
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 112
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 228
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "issue.tracker.epic",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 389
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "issue.tracker.issue",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 388
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "issue.tracker.milestone",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 390
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "issue.tracker.owner",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 391
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "labelFont",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "labelFont",
+    "sources": [],
+    "consumers": [],
+    "notes": "[ACTION-NEEDED] Parallel system token - needs conversion plan"
+  },
+  {
+    "canonicalPath": "labelFontSize",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "labelFontSize",
+    "sources": [],
+    "consumers": [],
+    "notes": "[ACTION-NEEDED] Parallel system token - needs conversion plan"
+  },
+  {
+    "canonicalPath": "labelRenderedSizeThreshold",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "labelRenderedSizeThreshold",
+    "sources": [],
+    "consumers": [],
+    "notes": "[ACTION-NEEDED] Parallel system token - needs conversion plan"
+  },
+  {
+    "canonicalPath": "labels.edgeLabelFontSize",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 221
+      },
+      {
+        "file": "src/control-plane/handles/handleset.registry.ts",
+        "line": 77
+      },
+      {
+        "file": "src/control-plane/settings/settings.registry.ts",
+        "line": 187
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+      "src/control-plane/handles/handleset.registry.ts",
+      "src/control-plane/settings/settings.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "labels.edgeLabelMode",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 137
+      },
+      {
+        "file": "src/control-plane/handles/handleset.registry.ts",
+        "line": 39
+      },
+      {
+        "file": "src/control-plane/settings/settings.registry.ts",
+        "line": 158
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+      "src/control-plane/handles/handleset.registry.ts",
+      "src/control-plane/settings/settings.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "labels.maxEdgeLabelLength",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 249
+      },
+      {
+        "file": "src/control-plane/handles/handleset.registry.ts",
+        "line": 96
+      },
+      {
+        "file": "src/control-plane/settings/settings.registry.ts",
+        "line": 171
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+      "src/control-plane/handles/handleset.registry.ts",
+      "src/control-plane/settings/settings.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "labels.nodeLabelFontSize",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 193
+      },
+      {
+        "file": "src/control-plane/handles/handleset.registry.ts",
+        "line": 58
+      },
+      {
+        "file": "src/control-plane/settings/settings.registry.ts",
+        "line": 197
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+      "src/control-plane/handles/handleset.registry.ts",
+      "src/control-plane/settings/settings.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "labels.nodeLabelMode",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 109
+      },
+      {
+        "file": "src/control-plane/handles/handleset.registry.ts",
+        "line": 20
+      },
+      {
+        "file": "src/control-plane/handles/handleset.types.ts",
+        "line": 58
+      },
+      {
+        "file": "src/control-plane/settings/settings.registry.ts",
+        "line": 146
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+      "src/control-plane/handles/handleset.registry.ts",
+      "src/control-plane/handles/handleset.types.ts",
+      "src/control-plane/settings/settings.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "labels.showLabelsOnHover",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 165
+      },
+      {
+        "file": "src/control-plane/handles/handleset.registry.ts",
+        "line": 115
+      },
+      {
+        "file": "src/control-plane/settings/settings.registry.ts",
+        "line": 180
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+      "src/control-plane/handles/handleset.registry.ts",
+      "src/control-plane/settings/settings.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "labels.zoomLabelThreshold",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/handles/handleset.registry.ts",
+        "line": 344
+      }
+    ],
+    "consumers": [
+      "src/control-plane/handles/handleset.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "labelTruncation",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "labelTruncation",
+    "sources": [],
+    "consumers": [],
+    "notes": "[ACTION-NEEDED] Parallel system token - needs conversion plan"
+  },
+  {
+    "canonicalPath": "lumaweave.themeOverrideBundle",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeOverrideStorage.ts",
+        "line": 204
+      },
+      {
+        "file": "src/themes/themeOverrideStorage.ts",
+        "line": 229
+      }
+    ],
+    "consumers": [
+      "src/themes/themeOverrideStorage.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "main.tf",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 347
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "markdown.heading",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 208
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "markdown.note",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 207
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "markdown.tag",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 209
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "maxEdgeLabelLength",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "maxEdgeLabelLength",
+    "sources": [],
+    "consumers": [],
+    "notes": "[ACTION-NEEDED] Parallel system token - needs conversion plan"
+  },
+  {
+    "canonicalPath": "missionControl.activeChecklistId",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/handles/handleset.registry.ts",
+        "line": 363
+      }
+    ],
+    "consumers": [
+      "src/control-plane/handles/handleset.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "missionControl.checklistNavigation",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 438
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "missionControl.copyLastSubmission",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 552
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "missionControl.decisionBadge",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 579
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "missionControl.history",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 608
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "missionControl.lastSubmittedReport",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/handles/handleset.registry.ts",
+        "line": 381
+      }
+    ],
+    "consumers": [
+      "src/control-plane/handles/handleset.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "missionControl.notesField",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 494
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "missionControl.statusSelectors",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 467
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "missionControl.submissionHistory",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/handles/handleset.registry.ts",
+        "line": 399
+      }
+    ],
+    "consumers": [
+      "src/control-plane/handles/handleset.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "missionControl.submitReport",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 523
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "missionControl.tabs",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 410
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "motion.reduce",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 66
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 134
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "node",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "node",
+    "sources": [],
+    "consumers": [],
+    "notes": "[ACTION-NEEDED] Parallel system token - needs conversion plan"
+  },
+  {
+    "canonicalPath": "node.sphere.flowDuration",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 36
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 98
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 200
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "node.sphere.glowStrength",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 37
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 99
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 202
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "node.sphere.humDuration",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 35
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 97
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 198
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "nodeColor",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "nodeColor",
+    "sources": [],
+    "consumers": [],
+    "notes": "[ACTION-NEEDED] Parallel system token - needs conversion plan"
+  },
+  {
+    "canonicalPath": "nodeColorScale",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "nodeColorScale",
+    "sources": [],
+    "consumers": [],
+    "notes": "[ACTION-NEEDED] Parallel system token - needs conversion plan"
+  },
+  {
+    "canonicalPath": "nodeLabelColor",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "nodeLabelColor",
+    "sources": [],
+    "consumers": [],
+    "notes": "[ACTION-NEEDED] Parallel system token - needs conversion plan"
+  },
+  {
+    "canonicalPath": "nodeSizeMultiplier",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "nodeSizeMultiplier",
+    "sources": [],
+    "consumers": [],
+    "notes": "[ACTION-NEEDED] Parallel system token - needs conversion plan"
+  },
+  {
+    "canonicalPath": "openapi.json",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 239
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "package.json",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 311
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "panel.background",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/panels/ThemeMappingPanel.tsx",
+        "line": 29
+      },
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 63
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 66
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 79
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 92
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 105
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 118
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 15
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 74
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 159
+      }
+    ],
+    "consumers": [
+      "src/control-plane/panels/ThemeMappingPanel.tsx",
+      "src/graph/graphVisualThemeMappingRegistry.ts",
+      "src/themes/themeTargetRegistry.ts",
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "panel.blur.amount",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 47
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 109
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 222
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "panel.border",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 55
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 53
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 67
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 80
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 93
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 106
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 119
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 131
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 16
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 75
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 161
+      }
+    ],
+    "consumers": [
+      "src/graph/graphVisualThemeMappingRegistry.ts",
+      "src/themes/themeTargetRegistry.ts",
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "panel.card.background",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 64
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 132
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "panel.card.border",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 65
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 133
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "panel.tile.groupOutlineColor",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 49
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 111
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 226
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "panel.tile.handleColor",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 48
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 110
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 224
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "physics.adjustSizes",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/settings/settings.registry.ts",
+        "line": 119
+      }
+    ],
+    "consumers": [
+      "src/control-plane/settings/settings.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "physics.barnesHutTheta",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/settings/settings.registry.ts",
+        "line": 126
+      }
+    ],
+    "consumers": [
+      "src/control-plane/settings/settings.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "physics.centerForce",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/settings/settings.registry.ts",
+        "line": 94
+      }
+    ],
+    "consumers": [
+      "src/control-plane/settings/settings.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "physics.communityGravity",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/settings/settings.registry.ts",
+        "line": 136
+      }
+    ],
+    "consumers": [
+      "src/control-plane/settings/settings.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "physics.linkDistance",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 358
+      },
+      {
+        "file": "src/control-plane/handles/handleset.registry.ts",
+        "line": 230
+      },
+      {
+        "file": "src/control-plane/settings/settings.registry.ts",
+        "line": 75
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+      "src/control-plane/handles/handleset.registry.ts",
+      "src/control-plane/settings/settings.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "physics.linLogMode",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/settings/settings.registry.ts",
+        "line": 112
+      }
+    ],
+    "consumers": [
+      "src/control-plane/settings/settings.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "physics.nodeSize",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 331
+      },
+      {
+        "file": "src/control-plane/handles/handleset.registry.ts",
+        "line": 211
+      },
+      {
+        "file": "src/control-plane/settings/settings.registry.ts",
+        "line": 66
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+      "src/control-plane/handles/handleset.registry.ts",
+      "src/control-plane/settings/settings.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "physics.physicsDialect",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/settings/settings.registry.ts",
+        "line": 54
+      }
+    ],
+    "consumers": [
+      "src/control-plane/settings/settings.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "physics.physicsPreset",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/settings/settings.registry.ts",
+        "line": 39
+      }
+    ],
+    "consumers": [
+      "src/control-plane/settings/settings.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "physics.qualityPreset",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/app/AppShell.tsx",
+        "line": 189
+      }
+    ],
+    "consumers": [
+      "src/app/AppShell.tsx"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "physics.repelForce",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 385
+      },
+      {
+        "file": "src/control-plane/handles/handleset.registry.ts",
+        "line": 249
+      },
+      {
+        "file": "src/control-plane/settings/settings.registry.ts",
+        "line": 85
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+      "src/control-plane/handles/handleset.registry.ts",
+      "src/control-plane/settings/settings.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "physics.strongGravityMode",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/settings/settings.registry.ts",
+        "line": 105
+      }
+    ],
+    "consumers": [
+      "src/control-plane/settings/settings.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "qa.bundle.validator",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/system-index/systemIndexRegistry.ts",
+        "line": 97
+      }
+    ],
+    "consumers": [
+      "src/control-plane/system-index/systemIndexRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "qa.store.ts",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 413
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 441
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 470
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 497
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 526
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 555
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 582
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 611
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "relationshipEndpoint",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "relationshipEndpoint",
+    "sources": [],
+    "consumers": [],
+    "notes": "[ACTION-NEEDED] Parallel system token - needs conversion plan"
+  },
+  {
+    "canonicalPath": "schema.prisma",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 275
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "schema.sql",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 275
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "secondary",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "secondary",
+    "sources": [],
+    "consumers": [],
+    "notes": "[ACTION-NEEDED] Parallel system token - needs conversion plan"
+  },
+  {
+    "canonicalPath": "selection.dim.opacity",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 43
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 105
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 214
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "selection.glitter.densityScale",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 42
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 104
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 212
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "selection.halo.color",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 40
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 102
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 208
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "selection.halo.maxRadiusRatio",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 41
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 103
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 210
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "settings.open",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/commands/command-registry.ts",
+        "line": 5
+      }
+    ],
+    "consumers": [
+      "src/control-plane/commands/command-registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "settings.panel",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/panels/ControlDock.tsx",
+        "line": 242
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 113
+      }
+    ],
+    "consumers": [
+      "src/control-plane/panels/ControlDock.tsx",
+      "src/themes/themeTargetRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "settings.store.ts",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 22
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 50
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 78
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 108
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 136
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 164
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 192
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 220
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 248
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 275
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 302
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 330
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 357
+      },
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 384
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "sigmaConfig",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "sigmaConfig",
+    "sources": [],
+    "consumers": [],
+    "notes": "[ACTION-NEEDED] Parallel system token - needs conversion plan"
+  },
+  {
+    "canonicalPath": "static.signal.readout",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 30
+      },
+      {
+        "file": "src/audio/musicReactiveMappingRegistry.ts",
+        "line": 312
+      }
+    ],
+    "consumers": [
+      "src/audio/musicReactiveMappingRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "surface.background.deep",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenGovernance.ts",
+        "line": 41
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenGovernance.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "system.index.registry",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/system-index/systemIndexRegistry.ts",
+        "line": 177
+      },
+      {
+        "file": "src/control-plane/system-index/systemIndexRegistry.ts",
+        "line": 463
+      }
+    ],
+    "consumers": [
+      "src/control-plane/system-index/systemIndexRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "system.index.registry.contract",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/system-index/systemIndexRegistry.ts",
+        "line": 158
+      }
+    ],
+    "consumers": [
+      "src/control-plane/system-index/systemIndexRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "tertiary",
+    "status": "LEGACY",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "tertiary",
+    "sources": [],
+    "consumers": [],
+    "notes": "[ACTION-NEEDED] Parallel system token - needs conversion plan"
+  },
+  {
+    "canonicalPath": "test.skip",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/qa/qa-registry.ts",
+        "line": 2499
+      },
+      {
+        "file": "src/control-plane/qa/qa-registry.ts",
+        "line": 2763
+      }
+    ],
+    "consumers": [
+      "src/control-plane/qa/qa-registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "text.inverse",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 59
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 127
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "text.muted",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 151
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 18
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 77
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 165
+      }
+    ],
+    "consumers": [
+      "src/graph/graphVisualThemeMappingRegistry.ts",
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "text.primary",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 143
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 54
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 68
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 81
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 94
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 107
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 120
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 17
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 76
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 163
+      }
+    ],
+    "consumers": [
+      "src/graph/graphVisualThemeMappingRegistry.ts",
+      "src/themes/themeTargetRegistry.ts",
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "text.warning",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 58
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 126
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "theme.customThemePresets",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/handles/handleset.registry.ts",
+        "line": 437
+      }
+    ],
+    "consumers": [
+      "src/control-plane/handles/handleset.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "theme.presetDropdown",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/handles/handleset.registry.ts",
+        "line": 417
+      }
+    ],
+    "consumers": [
+      "src/control-plane/handles/handleset.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "themeTokenPaths.ts",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/graph/graphVisualThemeMappingRegistry.ts",
+        "line": 33
+      }
+    ],
+    "consumers": [
+      "src/graph/graphVisualThemeMappingRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "topbar.glitterToggle",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 47
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "topbar.reduceMotionToggle",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 75
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "topbar.root",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/app/AppShell.tsx",
+        "line": 343
+      },
+      {
+        "file": "src/themes/themeTargetRegistry.ts",
+        "line": 48
+      }
+    ],
+    "consumers": [
+      "src/app/AppShell.tsx",
+      "src/themes/themeTargetRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "topbar.themeSelector",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/control-plane/contracts/controlSurfaceContract.registry.ts",
+        "line": 19
+      }
+    ],
+    "consumers": [
+      "src/control-plane/contracts/controlSurfaceContract.registry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "typography.font.body",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 53
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 115
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 234
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "typography.font.display",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 52
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 114
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 232
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "typography.font.mono",
+    "status": "CANONICAL",
+    "tier": 2,
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 54
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 116
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 236
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": ""
+  },
+  {
+    "canonicalPath": "visualHandle.button.background",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 68
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 136
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "visualHandle.panel.background",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 67
+      },
+      {
+        "file": "src/themes/themeTokenPaths.ts",
+        "line": 135
+      }
+    ],
+    "consumers": [
+      "src/themes/themeTokenPaths.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "website.asset",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 174
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "website.heading",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 173
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  },
+  {
+    "canonicalPath": "website.page",
+    "status": "ORPHAN",
+    "tier": "LEGACY",
+    "cssVar": "none",
+    "tsIdentifier": "none",
+    "sources": [
+      {
+        "file": "src/source-adapter/sourceAdapterRegistry.ts",
+        "line": 172
+      }
+    ],
+    "consumers": [
+      "src/source-adapter/sourceAdapterRegistry.ts"
+    ],
+    "notes": "[ACTION-NEEDED] ORPHAN - not in canonical/planned arrays, investigate"
+  }
+]
