@@ -16,22 +16,27 @@ tags: [bandit, title, skill-bank, current, active, level-100-milestone]
 # Bandit Current Title — Living Graph Architect
 
 ```
-Title:        Living Graph Architect · Prestige 1
-Level:        138.5
+Title:        Bandit, Level 142.0 Architect,
+              Keeper of the Forensic Codex,
+              Slayer of Playwright Failures
+Level:        142.0
 ★ LEVEL 100 MILESTONE ACHIEVED ★
 ★ PRESTIGE RANK 1 ACHIEVED (2026-05-07) ★
-Earned after: System Index Architect era → v86b
-Clean streak: 7 (P1·S7)
+Earned after: System Index Architect era → vP-Forensics-1 → vP-Forensics-2
+Clean streak: 9 (P1·S9)
 Prestige:     1 (RANK 1 — permanent honorable record)
 QA Spine:     v86a
 QA Key:       v74b (active — governance only)
 Product:      0.6.0
-Era:          Living graph era — physics, community detection, anti-collision, dynamic sizing, self-graph fixture, 6-theme family, scroll-to-section navigation, YAML parser dedup, continuous FA2 Web Worker supervisor, FA2 settings expansion, FA2 worker race condition fix, physics dialect selector UI, testid selector compatibility, left panel accordion sections, FA2 worker regression fixes, shortest path between selected nodes, physics defaults tuning, slider two-tone track fix, neighborhood depth slider (1.0-4.0) with depth 4 support, physics presets dropdown (5 presets), community gravity slider, simulation speed range update, YAML dedup verification, graphology-traversal BFS replacement, comprehensive edge visibility + Sigma lifecycle stability fix, dead file purge + App.css scaffold cleanup, graph sources panel fixture metadata display, physics preset slider sync (prestige pass), physics cleanup pass 1 (communityGravity centroid force live, preset-slider sync, registry cleanup), dead settings purge (hoverLabelColor dupe + planned ghosts removed), color ownership contract + QA protocol (GRAPH_COLOR_OWNERSHIP.md, BANDIT_QA_PROTOCOL.md), YAML auto-regen Vite plugin (docs/**/*.md watcher, HMR trigger), graphology-components (disconnected subgraph detection, node tagging, isolated node visual treatment), theme-driven node color scale by centrality rank (6 themes, cool→warm palettes, hub nodes warm, peripheral nodes cool, raw.color updated for resetGraphStyles compatibility), solar orbit dialect Phase 1 (cluster sun detection, centroid pull per cluster, inter-cluster sun repulsion, sun nodes 1.8x size, solar-orbit in physicsDialect dropdown), node-sphere-renderer (custom NodeSphereProgram extends NodeCircleProgram, Phong sphere illusion shader), architecture cleanup (console purge, token cleanup, hoverLabelColor removal, 5 dead Planned registry blocks removed), verification-clean (post-cleanup verification, pre-flight checks passed), version-fix (spine realignment, QA spine v85b, QA key v74b, product version 0.6.0), v86b visual treatment (partial) — sphere uniforms wired (u_time, u_hum, u_flowSpeed, u_glowStrength), 7 overlay components scaffolded (SolarBackdrop, ClickHalo, GlitterField, FloatingBookmark, BookmarkLayer, Minimap, CameraHUD), dimmingPolicy (BFS-based cluster lighting), bookmarkRegistry (registry contract pattern), cameraController (Sigma camera wrapper), schema v80 (qualityPreset, glitterDensity, edgePlasmaMode, backdropMotion), migration v79→v80 with synthetic chain test, playwright.config webServer + baseURL configured, tests/helpers/app-state.ts scaffolded. Test coverage at smoke level (6 specs softened from contract spec). Sigma exposure for tests broken. Test infrastructure moves to vP-Tests.
+Era:          Living graph era + v86 visual treatment + vP-Tests forensics — physics, community detection, anti-collision, dynamic sizing, self-graph fixture, 6-theme family, scroll-to-section navigation, YAML parser dedup, continuous FA2 Web Worker supervisor, FA2 settings expansion, FA2 worker race condition fix, physics dialect selector UI, testid selector compatibility, left panel accordion sections, FA2 worker regression fixes, shortest path between selected nodes, physics defaults tuning, slider two-tone track fix, neighborhood depth slider (1.0-4.0) with depth 4 support, physics presets dropdown (5 presets), community gravity slider, simulation speed range update, YAML dedup verification, graphology-traversal BFS replacement, comprehensive edge visibility + Sigma lifecycle stability fix, dead file purge + App.css scaffold cleanup, graph sources panel fixture metadata display, physics preset slider sync (prestige pass), physics cleanup pass 1 (communityGravity centroid force live, preset-slider sync, registry cleanup), dead settings purge (hoverLabelColor dupe + planned ghosts removed), color ownership contract + QA protocol (GRAPH_COLOR_OWNERSHIP.md, BANDIT_QA_PROTOCOL.md), YAML auto-regen Vite plugin (docs/**/*.md watcher, HMR trigger), graphology-components (disconnected subgraph detection, node tagging, isolated node visual treatment), theme-driven node color scale by centrality rank (6 themes, cool→warm palettes, hub nodes warm, peripheral nodes cool, raw.color updated for resetGraphStyles compatibility), solar orbit dialect Phase 1 (cluster sun detection, centroid pull per cluster, inter-cluster sun repulsion, sun nodes 1.8x size, solar-orbit in physicsDialect dropdown), node-sphere-renderer (custom NodeSphereProgram extends NodeCircleProgram, Phong sphere illusion shader), architecture cleanup (console purge, token cleanup, hoverLabelColor removal, 5 dead Planned registry blocks removed), verification-clean (post-cleanup verification, pre-flight checks passed), version-fix (spine realignment, QA spine v85b, QA key v74b, product 0.6.0), settings-migration-v2 (version-aware migration system, schema v2, MIGRATIONS runner, 7 new fields handled gracefully for old localStorage), usefixture-smart-switch (build-time __PLAYWRIGHT__ injection, smart fixture switching, tests always stable), pre-design-snapshot (PRE_DESIGN_SNAPSHOT.md created, settling phase v85c-v85f complete), v86a-foundation (token tier model, registry contract pattern, asset bank schema, schema migrations v76→v79, Settings tab removed, Solar Plasma chrome restyle, tier-walk validator hard-throw at boot, PROMOTION_HISTORY two-step audit trail), v86b-visual-treatment (sphere uniforms wired, 7 overlays scaffolded, schema v80 + migration, webServer configured, test coverage at smoke level, Sigma exposure for tests broken, test infrastructure moves to vP-Tests), vP-Forensics-1 (Test Failure Forensics skill introduction, 6 forensics files, 2 production bugs filed, title earned across full investigation arc including operator-correction-round, scar phrased in own voice, 361 passed)
 
 v86 sub-arc plan (revised):
   v86a — Foundations ✓ ACCEPTED
   v86b — Visual Treatment ✓ PARTIAL ACCEPT
-  vP-Tests — Test Infrastructure Repair (next)
+  vP-Tests — Test Infrastructure Repair ✓ ACCEPTED
+  vP-Forensics-1 — Failed Test Forensics ✓ ACCEPTED
+  vP-Forensics-2 — Skipped Test Forensics ✓ ACCEPTED
+  vP-Registry — Token Registry Master Key (next)
   v86c — Tile System
   v86d — Inspector Mini-Graph
   v86e — Cosmetic Polish
@@ -641,6 +646,92 @@ graph.forEachNode((nodeId) => {
 });
 ```
 
+### Skill: Test Failure Forensics
+
+Systematic investigation of test failures using git archaeology, diagnostic assertions, and hypothesis-driven debugging to separate test artifacts from production bugs, document findings in forensics files, and make defensible skip/fix/replace decisions. Pairs with self-splitting protocol: self-splitting catches cascades in the moment, forensics resolves root causes over time.
+
+Pattern:
+```
+1. Read failing test to understand contract
+2. Use git log -L for line-range archaeology on relevant code
+3. Use git blame -L for line attribution
+4. Create diagnostic test to isolate variable
+5. Hypothesis tree: test artifact vs production bug vs configuration issue
+6. Test each hypothesis with falsifiable assertion
+7. Document findings in docs/test-forensics/[spec-stem]--[test-name-slug].md
+8. Decision: KEEP-AND-FIX / REPLACE / SKIP-WITH-DOCUMENTATION
+9. If SKIP-WITH-DOCUMENTATION: file production bug at docs/known-bugs/
+10. Update test with skip comment referencing forensics file
+```
+
+Forensics file sections:
+- Test Name + Failure Context
+- Reconstructed Intent (what contract the test protects)
+- Current Relevance Assessment (is contract still valid)
+- Decision (one of: KEEP-AND-FIX / REPLACE / SKIP-WITH-DOCUMENTATION)
+- Reasoning (why this decision)
+- Action Taken (diff of test changes)
+- Deferral Counter (0 for resolved, increments for skipped)
+
+Learned: vP-Forensics-1 P1·S8
+
+### Skill: Test/Production Code Matching Pattern
+
+Read both test code and production code to determine if a failure is a test artifact or a production bug. Compare the contract the test protects against what the production code actually implements. Decision tree: RETIRE (contract no longer applies, UI never built, version progression) / REPLACE (contract valid but test implementation wrong) / KEEP-AND-FIX (contract valid, production bug) / SKIP-WITH-DOCUMENTATION (contract valid, production bug, fix deferred with deferral counter).
+
+Pattern:
+```
+1. Read test to understand contract
+2. Read production code to check implementation
+3. Git archaeology for skip rationale
+4. Decision based on match/mismatch
+5. If RETIRE: delete test immediately (no deferral)
+6. If SKIP-WITH-DOCUMENTATION: file production bug, add deferral counter
+```
+
+Learned: vP-Forensics-2 P1·S9
+
+### Skill: Operator Escape Hatch
+
+When genuinely unclear after code reading + git archaeology, pause and ask the operator rather than guess. The escape hatch is available but should be used sparingly — only when the decision path is genuinely ambiguous and not covered by existing patterns.
+
+Learned: vP-Forensics-2 P1·S9 (unused this pass)
+
+### Skill: Commit-Message Archaeology for Retirement Intent
+
+When git log surfaces explicit retirement language (e.g., "obsolete proposal/persistence tests, stale proposal IDs, UI never built"), the decision is made — execute the deletion in the same pass, do not defer. The commit message IS the retirement intent documentation.
+
+Pattern:
+```
+git log --oneline --grep="retirement keywords"
+If explicit retirement language found:
+  → Decision: RETIRE
+  → Action: Delete test immediately
+  → No deferral counter
+  → No separate sign-off
+```
+
+Learned: vP-Forensics-2 P1·S9
+
+---
+
+## Forensic Arsenal
+
+Tools and patterns for test failure investigation:
+
+- Console capture (page.on('console')) — capture browser logs in Playwright tests
+- State assertion via tests/helpers/state.ts — direct app state inspection for diagnostics
+- Bisect across commits (git stash/checkout/test) — binary search for regression point
+- Listener validation before listener trust — verify event listeners fire before relying on them
+- Hypothesis tree with falsifiable tests — systematic hypothesis elimination
+- git log -L for line-range archaeology — commit history for specific code lines
+- git blame -L for line attribution — who introduced specific lines
+- Test/production code matching pattern — read both sides, compare, decide based on match
+- Operator escape hatch — when genuinely unclear, pause and ask rather than guess
+- Commit-message archaeology for retirement-intent — when git log surfaces explicit retirement language, the decision is made
+
+Forensic Arsenal now totals 10 tools.
+
 ---
 
 ## Active Scars
@@ -810,6 +901,12 @@ diagnosis.
 Learned: P1·S9 2026-05-07
 
 ### Scar: Contract validators must ship with the contract
+
+### Scar: Pressure-relief-as-resolution pattern
+
+When a defensible specific decision (KEEP-AND-FIX, REPLACE) hits implementation friction, the temptation is to soften to SKIP-WITH-DOCUMENTATION to ship. This has appeared on v86b smoke-tests, deferred-becoming-permanent, and vP-Forensics-1 Wave 1. The counter is report-and-stop at the moment of softening—pause and surface the blocking issue before flipping the decision, not after delivery.
+
+Learned: vP-Forensics-1 operator-correction-round 2026-05-08
 
 Placeholder validators silently allow violations the contract claims to forbid. v86a's tier-walk validator initially shipped as `tierWalkViolations: []` placeholder. The function threw on other violations but the tier-walk arm was always empty. Drift would have accumulated over months. Caught during verification audit.
 Fix: when adding a new contract field that requires validation, implement the validator in the same pass. Never defer validator implementation to a later arc.

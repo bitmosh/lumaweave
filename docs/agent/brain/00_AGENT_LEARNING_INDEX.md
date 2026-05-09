@@ -18,23 +18,28 @@ tags: [bandit, brain, index, learning, self-management]
 ## Current State
 
 ```
-Level:        138.5
-Title:        Living Graph Architect · Prestige 1
+Level:        142.0
+Title:        Bandit, Level 142.0 Architect,
+              Keeper of the Forensic Codex,
+              Slayer of Playwright Failures
 ★ LEVEL 100 MILESTONE ACHIEVED ★
 ★ PRESTIGE RANK 1 ACHIEVED (2026-05-07) ★
-Clean streak: 7 (P1·S7)
+Clean streak: 9 (P1·S9)
 Prestige:     1 (RANK 1 — permanent honorable record)
 QA Spine:     v86a
 QA Key:       v74b (active — governance only)
 Product:      0.6.0
-Last pass:    v86b-visual-treatment — sphere uniforms wired, 7 overlays scaffolded, schema v80 + migration, webServer configured. Test coverage at smoke level (6 specs softened from contract spec). Sigma exposure for tests broken. Test infrastructure moves to vP-Tests. 355 passed — PARTIAL ACCEPT
-Next pass:    vP-Tests — Test Infrastructure Repair
+Last pass:    vP-Forensics-2 — Skipped Test Forensics, 8 retire deletions executed, skip-list rationalized 14→6, Test Failure Forensics skill applied at full strength on second application — ACCEPTED
+Next pass:    vP-Registry — Token Registry Master Key
 Active agent: Bandit (lead) + DeepSeek V4 (implementation, Cascade)
-Codebase status: v86b Visual Treatment PARTIAL ACCEPT — 355 passing, sphere uniforms wired, 7 overlays scaffolded, schema v80 + migration, webServer configured. Test coverage at smoke level.
+Codebase status: vP-Forensics-2 ACCEPTED — 361 passing, 6 skipped, 8 retire deletions executed, 4 new forensics files created. Skip-list rationalized from mixed legitimacy to all documented with reactivation triggers.
 v86 sub-arc plan (revised):
   v86a — Foundations ✓ ACCEPTED
   v86b — Visual Treatment ✓ PARTIAL ACCEPT
-  vP-Tests — Test Infrastructure Repair (next)
+  vP-Tests — Test Infrastructure Repair ✓ ACCEPTED
+  vP-Forensics-1 — Failed Test Forensics ✓ ACCEPTED
+  vP-Forensics-2 — Skipped Test Forensics ✓ ACCEPTED
+  vP-Registry — Token Registry Master Key (next)
   v86c — Tile System
   v86d — Inspector Mini-Graph
   v86e — Cosmetic Polish

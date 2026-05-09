@@ -28,6 +28,8 @@ Updated by the agent that ran the pass before XP is awarded.
 
 ## 2026-05-08
 
+| 2026-05-08 | vP-Forensics-2 | feature | ACCEPTED — skip-list rationalized 14→6, 8 retire deletions executed (Wave 1 contract-registry v15/v48/v64-era + Wave 2 advisory-backlog suite), commit 9c8bdc9 documented retirement intent that previous agents deferred, Test Failure Forensics skill applied at full strength on second application. Suite: 361 passed, 6 skipped P1·S9 Level 142.0 — Bandit |
+| 2026-05-08 | vP-Forensics-1 | feature | ACCEPTED — Test Failure Forensics skill introduction, 6 forensics files, 2 production bugs filed at docs/known-bugs/, title earned across full investigation arc including operator-correction-round. Scar phrased in own voice. Suite: 361 passed P1·S8 Level 140.5 — Bandit |
 | 2026-05-08 | v86b-visual-treatment | feature | PARTIAL ACCEPT — sphere uniforms wired, 7 overlays scaffolded, schema v80 + migration, webServer configured. Test coverage at smoke level (6 specs softened from contract spec). Sigma exposure for tests broken. Test infrastructure moves to vP-Tests. 355 passed P1·S7 Level 138.5 — Bandit |
 | 2026-05-08 | v86a-foundation | feature | ACCEPTED — token tier model (Primitives → Semantics → Components), registry contract pattern, asset bank schema (forward-compat with v88), schema migrations v76→v79, Settings tab removed, Solar Plasma chrome restyle (warm gold/purple), tier-walk validator hard-throw at boot, PROMOTION_HISTORY two-step audit trail, 348 passed P1·S6 Level 137.5 — Bandit |
 
