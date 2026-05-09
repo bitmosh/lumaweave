@@ -1,21 +1,18 @@
 ---
-id: contract.cross.layer.override.cache
+id: rendering.cross.layer.override.cache
 title: Cross-Layer Override Cache Contract
 type: contract
 status: accepted
-version: v73c
+cluster: azure
 domain: rendering
-cluster: blue
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-depends_on:
-  - architecture.rendering.layers
-  - contract.graph.theme.application
-  - contract.grammar.lens
-related:
-  - contract.sigma.2d.layer
-  - system.grammar.lens.current.state
+last_updated: 2026-05-09
+references:
+  - rendering.layer.architecture
+  - graph.theme.application.contract
+  - grammar.lens.contract
+  - grammar.lens.ghost.overlay.current.state
 tags: [rendering, cross-layer, override, cache, grammar-lens, theme, contract]
 ---
 

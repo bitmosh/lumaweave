@@ -1,18 +1,17 @@
 ---
-id: concept.agent.familiar.system
+id: vr.agent.familiar.system
 title: Agent Familiar System
 type: concept
 status: concept
-version: v73c
+cluster: indigo
 domain: vr
-cluster: teal
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-related:
-  - concept.vr.compatibility
-  - vision.platform
-  - policy.multi.agent
+last_updated: 2026-05-09
+references:
+  - vr.compatibility.concept
+  - platform.vision
+  - agent.onboarding.multi.agent.policy
 tags: [vr, agents, familiars, bandit, deepseek, mission-control, concept]
 ---
 

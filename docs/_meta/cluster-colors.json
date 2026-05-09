@@ -52,6 +52,11 @@
       "hex": "#DC2626",
       "domain": "accessibility",
       "description": "Motion safety, epilepsy guard, sensory accessibility, future cognitive load"
+    },
+    "indigo": {
+      "hex": "#6366F1",
+      "domain": "platform",
+      "description": "Platform vision, creative pipeline, VR / immersive, agent familiar — long-horizon system concepts"
     }
   }
 }

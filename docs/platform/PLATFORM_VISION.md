@@ -1,20 +1,20 @@
 ---
-id: vision.platform
-title: Lattica Platform Vision
+id: platform.vision
+title: LumaWeave Platform Vision
 type: concept
-status: accepted
-version: v73c
+status: concept
+cluster: indigo
 domain: platform
-cluster: teal
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-related:
-  - vision.creative.pipeline
-  - vision.vr.compatibility
-  - system.tile.workspace
-  - model.lens.navigation
-tags: [platform, lattica, lumaweave, memory-palace, vision, product-family]
+last_updated: 2026-05-09
+references:
+  - platform.creative.pipeline
+  - vr.compatibility.concept
+  - vr.agent.familiar.system
+  - layout.tile.workspace.system
+  - layout.lens.navigation
+tags: [platform, lumaweave, lattica, memory-palace, vision, product-family]
 ---
 
 # Lattica Platform Vision

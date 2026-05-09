@@ -1,22 +1,18 @@
 ---
-id: architecture.rendering.layers
+id: rendering.layer.architecture
 title: Rendering Layer Architecture
 type: contract
 status: accepted
-version: v73c
+cluster: azure
 domain: rendering
-cluster: blue
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-depends_on:
-  - contract.graph.runtime.boundary
-  - contract.graph.theme.application
-related:
-  - contract.cross.layer.override.cache
-  - contract.sigma.2d.layer
-  - concept.hyper.3d.layer
-  - policy.grammar.lens.current.state
+last_updated: 2026-05-09
+references:
+  - graph.runtime.boundary.contract
+  - graph.theme.application.contract
+  - rendering.cross.layer.override.cache
+  - grammar.lens.contract
 tags: [rendering, layers, 2d, 3d, flat, architecture, sigma, cross-layer]
 ---
 

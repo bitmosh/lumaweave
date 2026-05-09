@@ -1,19 +1,18 @@
 ---
-id: concept.vr.compatibility
+id: vr.compatibility.concept
 title: VR Compatibility Concept
 type: concept
 status: concept
-version: v73c
+cluster: indigo
 domain: vr
-cluster: teal
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-related:
-  - vision.platform
-  - model.lens.navigation
-  - architecture.rendering.layers
-  - concept.agent.familiar.system
+last_updated: 2026-05-09
+references:
+  - platform.vision
+  - layout.lens.navigation
+  - rendering.layer.architecture
+  - vr.agent.familiar.system
 tags: [vr, compatibility, panorama-atlas, walk-around, immersive, future, concept]
 ---
 

@@ -1,19 +1,18 @@
 ---
-id: vision.creative.pipeline
+id: platform.creative.pipeline
 title: Creative Pipeline Concept
 type: concept
 status: concept
-version: v73c
+cluster: indigo
 domain: platform
-cluster: teal
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-related:
-  - vision.platform
-  - vision.vr.compatibility
+last_updated: 2026-05-09
+references:
+  - platform.vision
+  - vr.compatibility.concept
   - vge.asset.and.tokens
-  - system.tile.workspace
+  - layout.tile.workspace.system
 tags: [creative, artwork, generation, theme-engine, adaptation, vr, environment]
 ---
 
