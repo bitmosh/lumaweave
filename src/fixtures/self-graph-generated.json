@@ -376,38 +376,6 @@
       }
     },
     {
-      "id": "docs.folder.arena",
-      "label": "arena",
-      "type": "docs.folder",
-      "cluster": "teal",
-      "sourceAdapter": "yaml-frontmatter-parser",
-      "metadata": {
-        "path": "docs/arena"
-      }
-    },
-    {
-      "id": "docs.file.arena.PLACEHOLDER",
-      "label": "LumaWeave Arena",
-      "type": "docs.concept",
-      "cluster": "teal",
-      "sourceAdapter": "yaml-frontmatter-parser",
-      "metadata": {
-        "path": "docs/arena/ARENA_CONCEPT_AND_MODEL.md",
-        "status": "concept",
-        "domain": "arena",
-        "tags": [
-          "arena",
-          "LLM",
-          "tournament",
-          "graph",
-          "security",
-          "concept",
-          "future",
-          "docs-only"
-        ]
-      }
-    },
-    {
       "id": "docs.folder.audio",
       "label": "audio",
       "type": "docs.folder",
@@ -1601,55 +1569,6 @@
       }
     },
     {
-      "id": "docs.file.roadmap.realignment.v67",
-      "label": "Lattica Roadmap Realignment v67",
-      "type": "docs.roadmap",
-      "cluster": "purple",
-      "sourceAdapter": "yaml-frontmatter-parser",
-      "metadata": {
-        "path": "docs/roadmap/LATTICA_ROADMAP_REALIGNMENT_V67.md",
-        "status": "accepted",
-        "domain": "roadmap",
-        "tags": [
-          "roadmap",
-          "realignment",
-          "v67",
-          "planning",
-          "arc"
-        ]
-      }
-    },
-    {
-      "id": "docs.folder.security",
-      "label": "security",
-      "type": "docs.folder",
-      "cluster": "green",
-      "sourceAdapter": "yaml-frontmatter-parser",
-      "metadata": {
-        "path": "docs/security"
-      }
-    },
-    {
-      "id": "docs.file.security.lattica.theme.workshop.PLACEHOLDER",
-      "label": "Lattica Theme Workshop Security",
-      "type": "docs.contract",
-      "cluster": "green",
-      "sourceAdapter": "yaml-frontmatter-parser",
-      "metadata": {
-        "path": "docs/security/LATTICA_THEME_BUNDLE_FORMAT_CONTRACT.md",
-        "status": "accepted",
-        "domain": "security",
-        "tags": [
-          "security",
-          "lattica",
-          "theme",
-          "workshop",
-          "contract",
-          "accepted"
-        ]
-      }
-    },
-    {
       "id": "docs.folder.source-adapter",
       "label": "source-adapter",
       "type": "docs.folder",
@@ -2030,86 +1949,99 @@
       }
     },
     {
-      "id": "docs.file.model.theme.preset",
+      "id": "docs.file.theme.preset.model",
       "label": "Theme Preset Model",
-      "type": "docs.manual",
+      "type": "docs.model",
       "cluster": "gold",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/theme/THEME_PRESET_MODEL.md",
-        "status": "accepted",
+        "status": "current",
         "domain": "theme",
         "tags": [
           "theme",
-          "preset",
+          "presets",
           "model",
-          "tokens",
-          "graph",
-          "visual",
-          "accepted"
+          "v86a"
         ]
       }
     },
     {
-      "id": "docs.file.system.theme.overview",
+      "id": "docs.file.theme.system.overview",
       "label": "Theme System Overview",
-      "type": "docs.manual",
+      "type": "docs.overview",
       "cluster": "gold",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/theme/THEME_SYSTEM_OVERVIEW.md",
-        "status": "accepted",
+        "status": "current",
         "domain": "theme",
         "tags": [
           "theme",
           "system",
           "overview",
-          "presets",
-          "tokens",
-          "accepted"
+          "tier-model",
+          "v86a"
         ]
       }
     },
     {
-      "id": "docs.file.registry.theme.target",
+      "id": "docs.file.theme.target.registry",
       "label": "Theme Target Registry",
       "type": "docs.registry",
       "cluster": "gold",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/theme/THEME_TARGET_REGISTRY.md",
-        "status": "accepted",
+        "status": "current",
         "domain": "theme",
         "tags": [
           "theme",
           "target",
           "registry",
-          "inspector",
-          "overlay",
-          "data-lw",
-          "accepted",
-          "v20"
+          "surfaces",
+          "v86a"
         ]
       }
     },
     {
-      "id": "docs.file.map.theme.token.paths",
+      "id": "docs.file.theme.token.compatibility",
+      "label": "Theme Token Compatibility",
+      "type": "docs.contract",
+      "cluster": "gold",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/theme/THEME_TOKEN_COMPATIBILITY.md",
+        "status": "current",
+        "domain": "theme",
+        "tags": [
+          "theme",
+          "tokens",
+          "compatibility",
+          "governance",
+          "invariants",
+          "v86a"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.theme.token.path.map",
       "label": "Theme Token Path Map",
-      "type": "docs.registry",
+      "type": "docs.map",
       "cluster": "gold",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/theme/THEME_TOKEN_PATH_MAP.md",
-        "status": "accepted",
+        "status": "current",
         "domain": "theme",
         "tags": [
           "theme",
           "tokens",
           "paths",
           "canonical",
+          "planned",
           "map",
-          "accepted",
-          "v19"
+          "v86a"
         ]
       }
     },
@@ -2312,14 +2244,6 @@
       "id": "edge.contains.docs.file.tooling.tool.permission.policy",
       "source": "docs.folder.agent",
       "target": "docs.file.tooling.tool.permission.policy",
-      "type": "contains",
-      "confidence": "observed",
-      "metadata": {}
-    },
-    {
-      "id": "edge.contains.docs.file.arena.PLACEHOLDER",
-      "source": "docs.folder.arena",
-      "target": "docs.file.arena.PLACEHOLDER",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
@@ -2885,22 +2809,6 @@
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.roadmap.realignment.v67",
-      "source": "docs.folder.roadmap",
-      "target": "docs.file.roadmap.realignment.v67",
-      "type": "contains",
-      "confidence": "observed",
-      "metadata": {}
-    },
-    {
-      "id": "edge.contains.docs.file.security.lattica.theme.workshop.PLACEHOLDER",
-      "source": "docs.folder.security",
-      "target": "docs.file.security.lattica.theme.workshop.PLACEHOLDER",
-      "type": "contains",
-      "confidence": "observed",
-      "metadata": {}
-    },
-    {
       "id": "edge.contains.docs.file.policy.ingestion.safety.qa",
       "source": "docs.folder.source-adapter",
       "target": "docs.file.policy.ingestion.safety.qa",
@@ -3061,33 +2969,49 @@
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.model.theme.preset",
+      "id": "edge.contains.docs.file.theme.preset.model",
       "source": "docs.folder.theme",
-      "target": "docs.file.model.theme.preset",
+      "target": "docs.file.theme.preset.model",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.system.theme.overview",
+      "id": "edge.contains.docs.file.theme.system.overview",
       "source": "docs.folder.theme",
-      "target": "docs.file.system.theme.overview",
+      "target": "docs.file.theme.system.overview",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.registry.theme.target",
+      "id": "edge.contains.docs.file.theme.target.registry",
       "source": "docs.folder.theme",
-      "target": "docs.file.registry.theme.target",
+      "target": "docs.file.theme.target.registry",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.map.theme.token.paths",
+      "id": "edge.contains.docs.file.theme.token.compatibility",
       "source": "docs.folder.theme",
-      "target": "docs.file.map.theme.token.paths",
+      "target": "docs.file.theme.token.compatibility",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.governs.docs.file.theme.token.compatibility",
+      "source": "docs.file.theme.token.compatibility",
+      "target": "code.system.theme",
+      "type": "governs",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.theme.token.path.map",
+      "source": "docs.folder.theme",
+      "target": "docs.file.theme.token.path.map",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
@@ -3119,10 +3043,10 @@
   ],
   "metadata": {
     "adapterId": "yaml-frontmatter-parser",
-    "createdAt": "2026-05-07T08:38:31.432Z",
-    "inputSummary": "124 nodes from docs/ YAML frontmatter",
-    "nodeCount": 124,
-    "edgeCount": 115,
+    "createdAt": "2026-05-09T02:29:00.551Z",
+    "inputSummary": "120 nodes from docs/ YAML frontmatter",
+    "nodeCount": 120,
+    "edgeCount": 114,
     "warnings": []
   }
 }

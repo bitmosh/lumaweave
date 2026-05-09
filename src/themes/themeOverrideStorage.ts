@@ -14,10 +14,18 @@ export type { ThemeTokenValue } from "./themeTokenPaths";
 const STORAGE_KEY = "lumaweave-theme-overrides";
 const STORAGE_VERSION = "1.0.0";
 
+export interface OverrideScope {
+  kind: "global" | "target" | "target-kind" | "cluster";
+  targetId?: string; // for kind: "target"
+  targetKind?: string; // for kind: "target-kind"
+  clusterAnchor?: string; // for kind: "cluster"
+}
+
 export interface ThemeOverride {
   tokenPath: ThemeTokenPath;
   value: ThemeTokenValue;
   timestamp: number;
+  scope: OverrideScope; // v86a: added scope field
 }
 
 export interface ThemeOverrideStorage {
@@ -127,6 +135,7 @@ export function setGlobalOverride(tokenPath: ThemeTokenPath, value: ThemeTokenVa
     tokenPath,
     value,
     timestamp: Date.now(),
+    scope: { kind: "global" }, // v86a: only global scope implemented
   });
   
   saveOverrides(storage);
@@ -134,10 +143,11 @@ export function setGlobalOverride(tokenPath: ThemeTokenPath, value: ThemeTokenVa
 
 /**
  * Get a global override for a token path
+ * v86a: only checks global scope
  */
 export function getGlobalOverride(tokenPath: ThemeTokenPath): ThemeTokenValue | undefined {
   const storage = loadOverrides();
-  const override = storage.overrides.find((o) => o.tokenPath === tokenPath);
+  const override = storage.overrides.find((o) => o.tokenPath === tokenPath && o.scope.kind === "global");
   return override?.value;
 }
 

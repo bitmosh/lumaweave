@@ -6,21 +6,14 @@ test.describe("Graph Physics Playwright Coverage", () => {
   });
 
   test("graph surface mounts and is visible", async ({ page }) => {
-    const isFixtureMode = await page.getByTestId("self-graph-fixture-loaded").isVisible().catch(() => false);
+    // Verify graph canvas is visible (works in both fixture and normal mode)
+    const canvas = page.locator("canvas").first();
+    await expect(canvas).toBeVisible();
 
-    if (isFixtureMode) {
-      // Fixture is static — verify the fixture container is visible instead of canvas
-      await expect(page.getByTestId("self-graph-fixture-loaded")).toBeVisible();
-    } else {
-      // Normal mode — check canvas dimensions
-      const canvas = page.locator("canvas").first();
-      await expect(canvas).toBeVisible();
-
-      const boundingBox = await canvas.boundingBox();
-      expect(boundingBox).not.toBeNull();
-      expect(boundingBox!.width).toBeGreaterThan(100);
-      expect(boundingBox!.height).toBeGreaterThan(100);
-    }
+    const boundingBox = await canvas.boundingBox();
+    expect(boundingBox).not.toBeNull();
+    expect(boundingBox!.width).toBeGreaterThan(100);
+    expect(boundingBox!.height).toBeGreaterThan(100);
   });
 
   test("graph frame/container has stable evidence", async ({ page }) => {

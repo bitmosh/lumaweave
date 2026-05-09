@@ -41,4 +41,8 @@ export type GraphSourceSummary = {
   warnings: string[];
   normalizedNodes?: LumaWeaveNodeDraft[];
   normalizedEdges?: LumaWeaveEdgeDraft[];
+  // Connected components diagnostics
+  componentCount?: number;
+  isolatedNodeCount?: number;
+  largestComponentSize?: number;
 };

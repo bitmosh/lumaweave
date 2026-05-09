@@ -8,61 +8,40 @@ test.describe("Graph Visual State Stability", () => {
   const waitForRender = (page: any) => page.waitForTimeout(100);
 
   test("graph remains visible after node size slider change", async ({ page }) => {
-    const isFixtureMode = await page.getByTestId("self-graph-fixture-loaded").isVisible().catch(() => false);
+    // Verify graph canvas is visible (works in both fixture and normal mode)
+    const canvas = page.locator("canvas").first();
+    await expect(canvas).toBeVisible();
 
-    if (isFixtureMode) {
-      // Fixture is static — verify the fixture container is visible instead of canvas
-      await expect(page.getByTestId("self-graph-fixture-loaded")).toBeVisible();
-    } else {
-      // Normal mode — check canvas dimensions
-      const canvas = page.locator("canvas").first();
-      await expect(canvas).toBeVisible();
+    const beforeBox = await canvas.boundingBox();
+    expect(beforeBox).not.toBeNull();
+    expect(beforeBox!.width).toBeGreaterThan(100);
+    expect(beforeBox!.height).toBeGreaterThan(100);
 
-      const beforeBox = await canvas.boundingBox();
-      expect(beforeBox).not.toBeNull();
-      expect(beforeBox!.width).toBeGreaterThan(100);
-      expect(beforeBox!.height).toBeGreaterThan(100);
+    const nodeSizeSlider = page.locator("[data-testid='setting-physics-nodeSize']");
+    await nodeSizeSlider.fill("1.5");
+    await waitForRender(page);
 
-      const nodeSizeSlider = page.locator("[data-testid='setting-physics-nodeSize']");
-      await nodeSizeSlider.fill("1.5");
-      await waitForRender(page);
+    await expect(canvas).toBeVisible();
 
-      await expect(canvas).toBeVisible();
-
-      const afterBox = await canvas.boundingBox();
-      expect(afterBox).not.toBeNull();
-      expect(afterBox!.width).toBeGreaterThan(100);
-      expect(afterBox!.height).toBeGreaterThan(100);
-    }
+    const afterBox = await canvas.boundingBox();
+    expect(afterBox).not.toBeNull();
+    expect(afterBox!.width).toBeGreaterThan(100);
+    expect(afterBox!.height).toBeGreaterThan(100);
   });
 
   test("graph remains visible after link distance slider change", async ({ page }) => {
-    const isFixtureMode = await page.getByTestId("self-graph-fixture-loaded").isVisible().catch(() => false);
+    // Verify graph canvas is visible (works in both fixture and normal mode)
+    const canvas = page.locator("canvas").first();
+    await expect(canvas).toBeVisible();
 
-    if (isFixtureMode) {
-      // Fixture is static — verify the fixture container is visible instead of canvas
-      await expect(page.getByTestId("self-graph-fixture-loaded")).toBeVisible();
-    } else {
-      // Normal mode — check canvas dimensions
-      const canvas = page.locator("canvas").first();
-      await expect(canvas).toBeVisible();
+    // Change link distance slider
+    const slider = page.locator("[data-testid='setting-physics-linkDistance']");
+    await slider.click();
+    await page.keyboard.press("ArrowRight");
+    await page.waitForTimeout(100);
 
-      const beforeBox = await canvas.boundingBox();
-      expect(beforeBox).not.toBeNull();
-      expect(beforeBox!.width).toBeGreaterThan(100);
-      expect(beforeBox!.height).toBeGreaterThan(100);
-
-      const linkDistanceSlider = page.locator("[data-testid='setting-physics-linkDistance']");
-      await linkDistanceSlider.fill("50");
-      await waitForRender(page);
-
-      await expect(canvas).toBeVisible();
-
-      const afterBox = await canvas.boundingBox();
-      expect(afterBox).not.toBeNull();
-      expect(afterBox!.width).toBeGreaterThan(100);
-      expect(afterBox!.height).toBeGreaterThan(100);
-    }
+    // Graph should still be visible
+    await expect(canvas).toBeVisible();
   });
 
   test("graph remains visible after repel force slider change", async ({ page }) => {

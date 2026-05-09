@@ -10,7 +10,8 @@ import type { Attributes } from "graphology-types";
  * - u_flowSpeed: appearance.nodeFlowSpeed (0–2) - interior rotating ellipse
  * - u_glowStrength: appearance.nodeGlow (0.2–2) - glow scaling
  * 
- * Extends NodeCircleProgram and overrides the fragment shader to add:
+ * Extends NodeCircleProgram and overrides both vertex and fragment shaders to add:
+ * - Pass quad position from vertex to fragment shader
  * - Radial alpha mask (circle shape)
  * - Phong specular highlight at fixed angle
  * - Radial glow falloff beyond the circle edge
@@ -21,6 +22,36 @@ import type { Attributes } from "graphology-types";
  * This produces a glowing sphere illusion from flat WebGL quads
  * with the same performance as circles.
  */
+const SPHERE_VERTEX_SHADER = `
+attribute vec2 a_position;
+attribute float a_size;
+attribute vec4 a_color;
+
+uniform vec2 u_resolution;
+uniform float u_pixelRatio;
+uniform mat3 u_matrix;
+
+varying vec4 v_color;
+varying vec2 v_position;
+
+void main() {
+  // Apply transformation matrix
+  vec2 position = (u_matrix * vec3(a_position, 1.0)).xy;
+  
+  // Convert to clip space
+  vec2 screenPosition = position * u_pixelRatio;
+  vec2 clipSpace = (screenPosition / u_resolution) * 2.0 - 1.0;
+  
+  gl_Position = vec4(clipSpace, 0.0, 1.0);
+  gl_PointSize = a_size;
+  
+  // Pass color and position to fragment shader
+  v_color = a_color;
+  // Normalize position to quad space (0,0 to 1,1) for fragment shader
+  v_position = a_position;
+}
+`;
+
 const SPHERE_FRAGMENT_SHADER = `
 precision mediump float;
 
@@ -145,6 +176,7 @@ export default class NodeSphereProgram<
     const definition = super.getDefinition();
     return {
       ...definition,
+      VERTEX_SHADER_SOURCE: SPHERE_VERTEX_SHADER,
       FRAGMENT_SHADER_SOURCE: SPHERE_FRAGMENT_SHADER,
     };
   }

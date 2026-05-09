@@ -58,7 +58,7 @@ export async function getSigmaSetting(page: any, key: string) {
 }
 
 /**
- * Read Sigma camera state
+ * Read Sigma camera state (via camera controller if available)
  */
 export async function getSigmaCameraState(page: any) {
   return page.evaluate(() => {
@@ -68,6 +68,11 @@ export async function getSigmaCameraState(page: any) {
         "Sigma instance not exposed. Add window.__lwSigma = sigmaRef.current when Sigma mounts in dev mode or behind PLAYWRIGHT env flag."
       );
     }
-    return sigma.getCameraState();
+    // Try camera controller first (v86b), fall back to Sigma's camera
+    const cameraController = (window as any).__lwCameraController;
+    if (cameraController) {
+      return cameraController.getState();
+    }
+    return sigma.getCamera().getState();
   });
 }
