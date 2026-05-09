@@ -3,17 +3,22 @@ id: protocol.registry.contract.patterns
 title: Registry and Contract Patterns
 type: protocol
 status: accepted
-version: v73c
 domain: agent
 subdomain: protocols
 cluster: purple
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-related:
+last_updated: 2026-05-09
+tags:
+  - registry
+  - contract
+  - patterns
+  - protocol
+  - architecture
+references:
   - index.source.of.truth
   - protocol.pass.transition
-tags: [registry, contract, patterns, protocol, architecture]
+last_pass: vP-Forensics-2
 ---
 
 # Registry and Contract Patterns

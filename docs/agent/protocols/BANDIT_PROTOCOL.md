@@ -3,18 +3,25 @@ id: protocol.bandit.operating
 title: Bandit Protocol — Operating Rules & Brain Maintenance
 type: protocol
 status: accepted
-version: v73c
 domain: agent
 subdomain: protocols
 cluster: purple
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-related:
+last_updated: 2026-05-09
+tags:
+  - bandit
+  - protocol
+  - operating
+  - terminal
+  - brain
+  - self-split
+  - multi-agent
+references:
   - protocol.bandit.self.split
   - policy.multi.agent
   - index.session.and.stack
-tags: [bandit, protocol, operating, terminal, brain, self-split, multi-agent]
+last_pass: vP-Forensics-2
 ---
 
 # Bandit Protocol — Operating Rules, Abilities & Brain Maintenance

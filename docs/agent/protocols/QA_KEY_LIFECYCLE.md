@@ -3,17 +3,22 @@ id: protocol.qa.key.lifecycle
 title: QA Key Lifecycle
 type: protocol
 status: accepted
-version: v73c
 domain: agent
 subdomain: protocols
 cluster: purple
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-related:
+last_updated: 2026-05-09
+tags:
+  - qa
+  - key
+  - lifecycle
+  - versioning
+  - protocol
+references:
   - protocol.pass.transition
   - policy.qa.and.playwright
-tags: [qa, key, lifecycle, versioning, protocol]
+last_pass: vP-Forensics-2
 ---
 
 # QA Key Lifecycle
