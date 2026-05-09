@@ -3,14 +3,19 @@ id: brain.bandit.self.model
 title: Bandit Self-Model and Growth Protocol
 type: manual
 status: accepted
-version: v73c
 domain: agent
 subdomain: brain
 cluster: purple
 agent_readable: true
 include_in_self_graph: false
-last_updated: v73c
-tags: [bandit, self-model, growth, protocol, brain-management]
+last_updated: 2026-05-09
+tags:
+  - bandit
+  - self-model
+  - growth
+  - protocol
+  - brain-management
+last_pass: vP-Forensics-2
 ---
 
 # Bandit Self-Model and Growth Protocol

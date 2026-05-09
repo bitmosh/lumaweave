@@ -3,14 +3,19 @@ id: protocol.bandit.qa
 title: Bandit QA Protocol
 type: protocol
 status: active
-version: v1
 domain: agent
 subdomain: qa
-cluster: red
+cluster: purple
 agent_readable: true
 include_in_self_graph: false
-last_updated: 2026-05-07
-tags: [bandit, qa, protocol, self-split, testing]
+last_updated: 2026-05-09
+tags:
+  - bandit
+  - qa
+  - protocol
+  - self-split
+  - testing
+last_pass: vP-Forensics-2
 ---
 
 # Bandit QA Protocol

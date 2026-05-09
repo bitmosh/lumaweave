@@ -3,14 +3,21 @@ id: contract.graph.color.ownership
 title: Graph Color Ownership Contract
 type: contract
 status: active
-version: v1
 domain: graph
 subdomain: color
-cluster: red
+cluster: purple
 agent_readable: true
 include_in_self_graph: false
-last_updated: 2026-05-07
-tags: [bandit, contract, color, ownership, graph, sigma, style-policy]
+last_updated: 2026-05-09
+tags:
+  - bandit
+  - contract
+  - color
+  - ownership
+  - graph
+  - sigma
+  - style-policy
+last_pass: vP-Forensics-2
 ---
 
 # Graph Color Ownership Contract

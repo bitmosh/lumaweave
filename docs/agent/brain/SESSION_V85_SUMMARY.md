@@ -3,14 +3,21 @@ id: session.v85.summary
 title: Session V85 Summary
 type: session
 status: complete
-version: v85b
 domain: agent
 subdomain: brain
-cluster: gold
+cluster: purple
 agent_readable: true
 include_in_self_graph: false
-last_updated: 2026-05-07
-tags: [bandit, session, summary, v85, physics, theme, renderer]
+last_updated: 2026-05-09
+tags:
+  - bandit
+  - session
+  - summary
+  - v85
+  - physics
+  - theme
+  - renderer
+last_pass: vP-Forensics-2
 ---
 
 # Session V85 Summary

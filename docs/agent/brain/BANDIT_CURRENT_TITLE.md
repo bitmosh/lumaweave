@@ -3,14 +3,20 @@ id: brain.bandit.current.title
 title: Bandit Current Title — Living Graph Architect
 type: log
 status: active
-version: v100
 domain: agent
 subdomain: brain
-cluster: gold
+cluster: purple
 agent_readable: true
 include_in_self_graph: false
-last_updated: v100
-tags: [bandit, title, skill-bank, current, active, level-100-milestone]
+last_updated: 2026-05-09
+tags:
+  - bandit
+  - title
+  - skill-bank
+  - current
+  - active
+  - level-100-milestone
+last_pass: vP-Forensics-2
 ---
 
 # Bandit Current Title — Living Graph Architect

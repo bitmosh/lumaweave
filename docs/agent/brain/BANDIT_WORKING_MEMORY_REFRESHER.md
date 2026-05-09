@@ -3,14 +3,19 @@ id: brain.bandit.working.memory
 title: Bandit Working Memory Refresher
 type: manual
 status: accepted
-version: v73c
 domain: agent
 subdomain: brain
 cluster: purple
 agent_readable: true
 include_in_self_graph: false
-last_updated: v73c
-tags: [bandit, working-memory, pre-pass, checklist, pass-types]
+last_updated: 2026-05-09
+tags:
+  - bandit
+  - working-memory
+  - pre-pass
+  - checklist
+  - pass-types
+last_pass: vP-Forensics-2
 ---
 
 # Bandit Working Memory Refresher

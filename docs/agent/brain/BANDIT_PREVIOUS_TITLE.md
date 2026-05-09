@@ -3,14 +3,20 @@ id: brain.bandit.previous.title
 title: Bandit Previous Title — System Index Architect
 type: log
 status: historical
-version: v73c
 domain: agent
 subdomain: brain
-cluster: gray
+cluster: purple
 agent_readable: true
 include_in_self_graph: false
-last_updated: v73c
-tags: [bandit, title, previous, historical, registry, validator]
+last_updated: 2026-05-09
+tags:
+  - bandit
+  - title
+  - previous
+  - historical
+  - registry
+  - validator
+last_pass: vP-Forensics-2
 ---
 
 # Bandit Previous Title — System Index Architect

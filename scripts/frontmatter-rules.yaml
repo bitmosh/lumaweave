@@ -1,0 +1,414 @@
+# LumaWeave Documentation Frontmatter Rules
+#
+# Declarative schema config for normalizing YAML frontmatter across docs/.
+# Consumed by scripts/normalize-frontmatter.mjs.
+#
+# How matching works:
+#   1. The script walks docs/ recursively for .md files
+#   2. For each file, the path-relative-to-docs/ is matched against schemas
+#      in order (top to bottom)
+#   3. The FIRST schema whose `path_match` regex matches wins
+#   4. The schema's rules are applied
+#   5. Schemas with `path_match: null` are stub schemas — declared for
+#      future use, not yet active
+#
+# Schema rules apply transformations:
+#   - field_renames: rename old field name → new field name (preserves value)
+#   - field_removals: delete fields entirely
+#   - field_defaults: set field IF AND ONLY IF the field is currently absent
+#   - field_overrides: set field unconditionally to a fixed value
+#   - last_updated_today: if true, set last_updated to today's ISO date
+#
+# Validation rules describe what the doc SHOULD have after normalization:
+#   - required_fields: error if missing
+#   - status_options: error if status is not one of these values
+#
+# When validation fails, the script reports the issue in --dry-run output
+# but does NOT block writes. Allows progressive normalization.
+#
+# ────────────────────────────────────────────────────────────
+# Status vocabulary (locked v86a):
+#
+#   current       — actively maintained, reflects today's reality
+#   active        — actively in use / evolving (operational logs, ledgers)
+#   accepted      — frozen at acceptance, reference state
+#   complete      — finished work product (e.g. session summary)
+#   historical    — preserved for reference, NOT current state
+#   archived      — removed from active flow, kept for record
+#   design-locked — design intentionally frozen, no implementation yet
+#
+# Different doc types use different subsets. Each schema declares its
+# allowed status_options.
+# ────────────────────────────────────────────────────────────
+
+version: 1
+
+# Default values applied to ALL schemas unless overridden:
+defaults:
+  last_updated_today: true
+  field_renames:
+    related: references
+
+schemas:
+
+  # ============================================================
+  # Agent / Brain — Bandit's operating documents
+  # ============================================================
+  # Brain docs include indexes, ledgers, titles, summaries, snapshots —
+  # mix of evolving and frozen content. Wider status vocabulary needed.
+  agent_brain:
+    path_match: '^agent/brain/'
+    cluster: purple
+    status_options: [current, active, accepted, complete, historical, archived]
+    field_overrides:
+      cluster: purple
+      last_pass: 'vP-Forensics-2'
+    field_removals:
+      - version  # superseded by last_pass
+    field_defaults:
+      status: current
+      type: log
+      domain: agent
+      subdomain: brain
+      agent_readable: true
+      include_in_self_graph: false
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - subdomain
+      - last_updated
+      - last_pass
+
+  # ============================================================
+  # Agent / Leveling — XP, changelog, error log
+  # ============================================================
+  # Leveling docs are operational logs, mostly `active`.
+  agent_leveling:
+    path_match: '^agent/leveling/'
+    cluster: purple
+    status_options: [current, active, accepted, archived]
+    field_overrides:
+      cluster: purple
+      last_pass: 'vP-Forensics-2'
+    field_removals:
+      - version
+    field_defaults:
+      status: active
+      type: log
+      domain: agent
+      subdomain: leveling
+      agent_readable: true
+      include_in_self_graph: false
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - subdomain
+      - last_updated
+      - last_pass
+
+  # ============================================================
+  # Agent / Onboarding — guides for new agents
+  # ============================================================
+  agent_onboarding:
+    path_match: '^agent/onboarding/'
+    cluster: purple
+    status_options: [current, accepted, archived]
+    field_overrides:
+      cluster: purple
+      last_pass: 'vP-Forensics-2'
+    field_removals:
+      - version
+    field_defaults:
+      status: current
+      type: manual
+      domain: agent
+      subdomain: onboarding
+      agent_readable: true
+      include_in_self_graph: true
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - subdomain
+      - last_updated
+      - last_pass
+
+  # ============================================================
+  # Agent / Protocols — operating protocols
+  # ============================================================
+  # Protocols are mostly `accepted` (frozen rules), occasionally `current`.
+  agent_protocols:
+    path_match: '^agent/protocols/'
+    cluster: purple
+    status_options: [current, accepted, archived]
+    field_overrides:
+      cluster: purple
+      last_pass: 'vP-Forensics-2'
+    field_removals:
+      - version
+    field_defaults:
+      status: accepted
+      type: protocol
+      domain: agent
+      subdomain: protocols
+      agent_readable: true
+      include_in_self_graph: true
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - subdomain
+      - last_updated
+      - last_pass
+
+  # ============================================================
+  # Agent / Tooling — tool architecture, permissions, MCP
+  # ============================================================
+  agent_tooling:
+    path_match: '^agent/tooling/'
+    cluster: purple
+    status_options: [current, accepted, archived]
+    field_overrides:
+      cluster: purple
+      last_pass: 'vP-Forensics-2'
+    field_removals:
+      - version
+    field_defaults:
+      status: current
+      type: manual
+      domain: agent
+      subdomain: tooling
+      agent_readable: true
+      include_in_self_graph: true
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - subdomain
+      - last_updated
+      - last_pass
+
+  # ============================================================
+  # Stub schemas — declared for future use
+  # ============================================================
+  # These schemas are placeholders. path_match is null so they don't
+  # match any docs. When ready to normalize a cluster, set path_match
+  # to a regex that captures the cluster's docs and run with --dry-run
+  # to preview.
+
+  theme:
+    path_match: null  # ^theme/
+    cluster: gold
+    status_options: [current, accepted, archived]
+    field_overrides:
+      cluster: gold
+    field_defaults:
+      status: current
+      domain: theme
+      agent_readable: true
+      include_in_self_graph: true
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - last_updated
+
+  graph:
+    path_match: null  # ^graph/
+    cluster: blue
+    status_options: [current, accepted, archived]
+    field_overrides:
+      cluster: blue
+    field_defaults:
+      status: current
+      domain: graph
+      agent_readable: true
+      include_in_self_graph: true
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - last_updated
+
+  visual_grammar_engine:
+    path_match: null  # ^visual-grammar-engine/
+    cluster: teal
+    status_options: [design-locked, current, accepted, archived]
+    field_overrides:
+      cluster: teal
+    field_defaults:
+      status: design-locked
+      domain: visual-grammar-engine
+      agent_readable: true
+      include_in_self_graph: true
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - last_updated
+
+  handleset:
+    path_match: null  # ^handleset/
+    cluster: gold
+    status_options: [current, accepted, archived]
+    field_overrides:
+      cluster: gold
+    field_defaults:
+      status: current
+      domain: handleset
+      agent_readable: true
+      include_in_self_graph: true
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - last_updated
+
+  source_adapter:
+    path_match: null  # ^source-adapter/
+    cluster: green
+    status_options: [current, accepted, archived]
+    field_overrides:
+      cluster: green
+    field_defaults:
+      status: current
+      domain: source-adapter
+      agent_readable: true
+      include_in_self_graph: true
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - last_updated
+
+  control_plane:
+    path_match: null  # ^control-plane/
+    cluster: blue
+    status_options: [current, accepted, archived]
+    field_overrides:
+      cluster: blue
+    field_defaults:
+      status: current
+      domain: control-plane
+      agent_readable: true
+      include_in_self_graph: true
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - last_updated
+
+  registries:
+    path_match: null  # ^registries/
+    cluster: blue
+    status_options: [current, accepted, archived]
+    field_overrides:
+      cluster: blue
+    field_defaults:
+      status: current
+      domain: registries
+      agent_readable: true
+      include_in_self_graph: true
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - last_updated
+
+  operating_policies:
+    path_match: null  # ^operating-policies/
+    cluster: purple
+    status_options: [current, accepted, archived]
+    field_overrides:
+      cluster: purple
+    field_defaults:
+      status: current
+      domain: operating-policies
+      agent_readable: true
+      include_in_self_graph: true
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - last_updated
+
+  survival_manual:
+    path_match: null  # ^survival-manual/
+    cluster: purple
+    status_options: [current, accepted, archived]
+    field_overrides:
+      cluster: purple
+    field_defaults:
+      status: current
+      domain: survival-manual
+      agent_readable: true
+      include_in_self_graph: true
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - last_updated
+
+  layout:
+    path_match: null  # ^layout/
+    cluster: blue
+    status_options: [current, accepted, archived]
+    field_overrides:
+      cluster: blue
+    field_defaults:
+      status: current
+      domain: layout
+      agent_readable: true
+      include_in_self_graph: true
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - last_updated

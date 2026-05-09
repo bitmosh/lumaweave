@@ -3,14 +3,19 @@ id: brain.bandit.experience.ledger
 title: Bandit Experience Ledger
 type: log
 status: active
-version: v73c
 domain: agent
 subdomain: brain
 cluster: purple
 agent_readable: true
 include_in_self_graph: false
-last_updated: v73c
-tags: [bandit, experience, ledger, durable-lessons, cross-era]
+last_updated: 2026-05-09
+tags:
+  - bandit
+  - experience
+  - ledger
+  - durable-lessons
+  - cross-era
+last_pass: vP-Forensics-2
 ---
 
 # Bandit Experience Ledger

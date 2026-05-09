@@ -3,14 +3,19 @@ id: index.agent.learning
 title: Agent Learning Index
 type: index
 status: accepted
-version: v73c
 domain: agent
 subdomain: brain
 cluster: purple
 agent_readable: true
 include_in_self_graph: false
-last_updated: v73c
-tags: [bandit, brain, index, learning, self-management]
+last_updated: 2026-05-09
+tags:
+  - bandit
+  - brain
+  - index
+  - learning
+  - self-management
+last_pass: vP-Forensics-2
 ---
 
 # Bandit — Agent Learning Index
