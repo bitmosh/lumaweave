@@ -42,6 +42,59 @@
 # Different doc types use different subsets of this vocabulary. Each
 # schema declares its allowed `status_options`.
 # ────────────────────────────────────────────────────────────
+#
+# ────────────────────────────────────────────────────────────
+# FUTURE CAPABILITIES (not yet implemented — design recorded for future)
+# ────────────────────────────────────────────────────────────
+#
+# The current script normalizes existing frontmatter but does NOT generate
+# frontmatter for docs that lack it. Three additions would close that gap
+# without requiring human judgment on every field:
+#
+# 1. field_derivers — compute values from observable inputs
+#    Schema picks which named derivers to run. Library of derivers in
+#    the script:
+#      - first_h1: title := first H1 in body
+#      - path_to_dotpath: id := relative path slugified to dot-notation
+#                         (e.g. theme/THEME_SYSTEM_OVERVIEW.md
+#                         → theme.system.overview)
+#      - parent_dir: subdomain := parent folder name
+#    Example:
+#      agent_brain:
+#        field_derivers:
+#          title: first_h1
+#          id: path_to_dotpath
+#
+# 2. force_add_frontmatter: true (per-schema)
+#    Currently the script refuses to add frontmatter to docs without it
+#    (safety). With this flag, the script can generate frontmatter from
+#    field_defaults + field_derivers + field_overrides + last_updated.
+#    Schema controls per-domain whether generation is allowed.
+#
+# 3. Reasonable per-cluster defaults for type/tags
+#    Add to field_defaults so generation has sensible starting state:
+#      agent_brain:
+#        field_defaults:
+#          type: log
+#          tags: [agent, bandit, brain]
+#    'references' deliberately stays human-judgment (left as []).
+#
+# Field categories:
+#   Category 1 — fully derivable from path + schema (current capability):
+#     cluster, domain, subdomain, status, last_pass, last_updated,
+#     agent_readable, include_in_self_graph
+#   Category 2 — mechanically derivable from file content (future):
+#     title (first_h1), id (path_to_dotpath)
+#   Category 3 — genuinely human-judgment (always manual):
+#     references — body cross-refs require semantic understanding
+#     type — sometimes derivable from path, sometimes not; default OK
+#     tags — keyword judgment; default OK as starting point
+#
+# Add when needed: if we get a flood of new docs without frontmatter
+# (operator quick-drafts, agent outputs, etc.), implement these to keep
+# the cost of "starting a new doc" low. Until then, hand-crafted
+# frontmatter from rewrites is fine.
+# ────────────────────────────────────────────────────────────
 
 version: 1
 
@@ -208,6 +261,39 @@ schemas:
       - last_updated
       - last_pass
 
+# ============================================================
+  # Agent / Survival Manual — operating playbook
+  # ============================================================
+  # Sequential read-through playbook: troubleshooting, diagnostic
+  # routing, debugging lenses, stop conditions. Numbered prefixes
+  # preserved (01-08) for read order.
+  agent_survival_manual:
+    path_match: '^agent/survival-manual/'
+    cluster: purple
+    status_options: [current, accepted, archived]
+    field_overrides:
+      cluster: purple
+      last_pass: 'vP-Forensics-2'
+    field_removals:
+      - version
+    field_defaults:
+      status: current
+      type: manual
+      domain: agent
+      subdomain: survival-manual
+      agent_readable: true
+      include_in_self_graph: true
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - subdomain
+      - last_updated
+      - last_pass
+
   # ============================================================
   # Stub schemas — declared for future use
   # ============================================================
@@ -356,7 +442,7 @@ schemas:
       - last_updated
 
   operating_policies:
-    path_match: null  # ^operating-policies/
+    path_match: ^operating-policies/
     cluster: purple
     status_options: [current, accepted, archived]
     field_overrides:
