@@ -3,14 +3,18 @@ id: tooling.mcp.server.candidates
 title: MCP Server Candidates
 type: manual
 status: accepted
-version: v73c
 domain: agent
 subdomain: tooling
 cluster: purple
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-tags: [MCP, servers, candidates, tooling]
+last_updated: 2026-05-09
+tags:
+  - MCP
+  - servers
+  - candidates
+  - tooling
+last_pass: vP-Forensics-2
 ---
 
 # MCP Server Candidates

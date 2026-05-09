@@ -3,14 +3,19 @@ id: tooling.tool.permission.policy
 title: Tool Permission Policy
 type: policy
 status: accepted
-version: v73c
 domain: agent
 subdomain: tooling
 cluster: purple
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-tags: [tool, permission, policy, constraints, tooling]
+last_updated: 2026-05-09
+tags:
+  - tool
+  - permission
+  - policy
+  - constraints
+  - tooling
+last_pass: vP-Forensics-2
 ---
 
 # Tool Permission Policy

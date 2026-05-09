@@ -3,14 +3,19 @@ id: tooling.custom.skills.workflows
 title: Custom Skills and Workflows
 type: manual
 status: accepted
-version: v73c
 domain: agent
 subdomain: tooling
 cluster: purple
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-tags: [skills, workflows, tooling, agent, LumaWeave]
+last_updated: 2026-05-09
+tags:
+  - skills
+  - workflows
+  - tooling
+  - agent
+  - LumaWeave
+last_pass: vP-Forensics-2
 ---
 
 # Custom Skills and Workflows

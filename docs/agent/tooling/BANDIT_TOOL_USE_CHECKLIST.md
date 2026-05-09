@@ -3,14 +3,19 @@ id: tooling.tool.use.checklist
 title: Bandit Tool Use Checklist
 type: manual
 status: accepted
-version: v73c
 domain: agent
 subdomain: tooling
 cluster: purple
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-tags: [tool, checklist, agent, MCP, tooling]
+last_updated: 2026-05-09
+tags:
+  - tool
+  - checklist
+  - agent
+  - MCP
+  - tooling
+last_pass: vP-Forensics-2
 ---
 
 # Bandit Tool Use Checklist
