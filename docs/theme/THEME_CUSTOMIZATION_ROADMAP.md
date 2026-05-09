@@ -8,14 +8,19 @@ domain: theme
 cluster: gold
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-08
+last_updated: 2026-05-09
 references:
   - theme.system.overview
   - theme.preset.model
   - theme.override.storage.contract
   - theme.mapping.panel.entry.contract
   - theme.token.compatibility
-tags: [theme, customization, roadmap, future, v86a]
+tags:
+  - theme
+  - customization
+  - roadmap
+  - future
+  - v86a
 ---
 
 # Theme Customization Roadmap

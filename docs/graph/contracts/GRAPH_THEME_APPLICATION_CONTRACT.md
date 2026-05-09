@@ -6,16 +6,22 @@ status: accepted
 version: v55
 domain: graph
 subdomain: contracts
-cluster: blue
+cluster: azure
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 depends_on:
   - contract.graph.visual.theme.mapping
 governs:
   - src/graph/graphVisualThemeMappingRegistry.ts
   - src/themes/applyTheme.ts
-tags: [graph, theme, application, contract, accepted, v55]
+tags:
+  - graph
+  - theme
+  - application
+  - contract
+  - accepted
+  - v55
 ---
 
 # Graph Theme Application Contract

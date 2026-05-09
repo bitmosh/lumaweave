@@ -5,11 +5,16 @@ type: registry
 status: accepted
 version: v73c
 domain: handleset
-cluster: gold
+cluster: azure
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-tags: [handleset, planned, controls, future, architecture]
+last_updated: 2026-05-09
+tags:
+  - handleset
+  - planned
+  - controls
+  - future
+  - architecture
 ---
 
 # Planned Handles

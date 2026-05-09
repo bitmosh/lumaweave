@@ -6,17 +6,23 @@ status: accepted
 version: v72a
 domain: control-plane
 subdomain: contracts
-cluster: blue
+cluster: slate
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 governs:
   - src/control-plane/system-index/systemIndexRegistry.ts
   - src/control-plane/system-index/SystemIndexPanel.tsx
   - scripts/validate-system-index.mjs
 tested_by:
   - tests/e2e/system-index.spec.ts
-tags: [system, index, registry, contract, accepted, v72a]
+tags:
+  - system
+  - index
+  - registry
+  - contract
+  - accepted
+  - v72a
 ---
 
 # System Index Registry Contract

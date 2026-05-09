@@ -6,14 +6,21 @@ status: accepted
 version: v40
 domain: graph
 subdomain: contracts
-cluster: blue
+cluster: azure
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 governs:
   - src/graph/graphViewElementRegistry.ts
   - src/control-plane/graph/GraphVisualInventoryPanel.tsx
-tags: [graph, view, element, registry, contract, accepted, v40]
+tags:
+  - graph
+  - view
+  - element
+  - registry
+  - contract
+  - accepted
+  - v40
 ---
 
 # Graph View Element Registry Contract

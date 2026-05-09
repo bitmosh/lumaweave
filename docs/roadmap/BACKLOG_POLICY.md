@@ -5,11 +5,17 @@ type: policy
 status: accepted
 version: v74c
 domain: roadmap
-cluster: purple
+cluster: violet
 agent_readable: true
 include_in_self_graph: true
-last_updated: v74c
-tags: [backlog, policy, QA, roadmap, passes, accepted]
+last_updated: 2026-05-09
+tags:
+  - backlog
+  - policy
+  - QA
+  - roadmap
+  - passes
+  - accepted
 ---
 
 # QA Backlog Policy

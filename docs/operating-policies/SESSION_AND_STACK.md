@@ -1,143 +1,104 @@
 ---
-id: index.session.and.stack
-title: Session Handoff & Accepted Stack
-type: index
-status: accepted
-version: v73c
+id: policy.session.and.stack
+title: LumaWeave — Session Handoff & Accepted Stack
+type: policy
+status: current
+cluster: violet
 domain: operating-policies
-cluster: purple
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-tags: [session, handoff, stack, operating, agent]
+last_updated: 2026-05-09
+references:
+  - policy.source.of.truth
+  - policy.qa.and.playwright
+  - brain.bandit.current.title
+  - brain.bandit.working.memory.refresher
+  - brain.agent.learning.index
+  - log.bandit.changelog
+tags:
+  - policy
+  - session
+  - handoff
+  - stack
+  - v86a
+  - operational
 ---
 
-# LumaWeave / Lattica — Session Handoff & Accepted Stack
+# LumaWeave — Session Handoff & Accepted Stack
+
+Operational quickstart for fresh agents. Read this first, then check current repo state, then proceed.
 
 ## Project Identity
 
-**LumaWeave** is the graph visualization engine.
-**Lattica** is the broader platform family (future).
-**Panorama Atlas** is the flagship Atlas lens — not a product subtitle.
+**Product:** LumaWeave (current). Possible future rename: Lattica.
 
 ```
-LumaWeave  = current repo/product identity and graph engine name
-Lattica    = future broader platform identity
+LumaWeave = current repo/product identity and visual engine name
+Lattica   = possible broader platform identity (deferred)
 ```
 
-Tagline: **"Clarity in every connection."**
-
-Do not rename files, folders, packages, imports, or product strings unless the user explicitly initiates a rename pass.
+Do not rename files, folders, packages, imports, or product strings unless the operator explicitly initiates a rename pass.
 
 **Repo root:**
 ```
 /home/boop/Projects/lumaweave
 ```
+
 `/home/boop/Projects` is not the repo.
 
 ---
 
-## Tech Stack
+## Product Shape
+
+LumaWeave is a local-first, high-resolution code architecture visualization platform with a strong evidence/control-plane layer. Evolving toward broader experiential data visualization (see VGE design cluster).
 
 ```
-Graphology  = external graph data model/library
-Sigma       = external graph renderer (2D, WebGL)
-React       = UI framework
-Vite        = dev/build environment
-Playwright  = E2E evidence layer
-Tauri       = desktop app wrapper
-
-LumaWeave/Lattica = custom control plane, governance, safety,
-                    registry, theme, rendering layer, and
-                    graph-architecture OS layers
+Graphology = external graph data model/library
+Sigma      = external graph renderer
+React/Vite/Playwright = external app/test foundation
+LumaWeave  = custom control plane, governance, safety, registry, theme,
+             and graph-architecture OS layers
 ```
 
 ---
 
-## Current Accepted Version Spine
+## Current Accepted State (v86a era)
 
-```
-v36–v38   Command Deck + Perspective System read-only foundations
-v39–v46   Graph physics coverage, element registry, visual inventory,
-          runtime boundary/probe
-v47–v58   Graph runtime/theme mapping/application ladder
-v59–v60   Motion Safety / Epilepsy Guard contract + registry
-v61–v62   Audio Reactivity Contract + Synthetic Signal Preview
-v63–v64   Music Reactive Mapping Contract + Passive Inventory
-v65–v66   Audio Source System Contract + Passive Audio Source Registry
-v67–v68   Roadmap Realignment + Graph Control Plane Navigation Contract
-v70       QA Bundle Validator                         [ACCEPTED]
-v71a      Contract-to-Code Trace Matrix               [ACCEPTED]
-v71b      Contract Trace Validator                    [ACCEPTED]
-v72a      System Index Registry Contract              [ACCEPTED]
-v72b      Static System Index Registry                [ACCEPTED]
-v72c      System Index Validator v0                   [ACCEPTED]
-v72d.1    Safe Mount Point Discovery                  [ACCEPTED]
-v72d.2    AppShell / Route Pattern Discovery          [ACCEPTED]
-v72d.3    Passive SystemIndexPanel Mount + Playwright [ACCEPTED]
-v73a      Human / Evidence / Debug Mode Contract      [ACCEPTED]
-v73b      Mode Metadata Registry                      [ACCEPTED]
-v73c      Mode Registry Validator v0                  [CURRENT — verify committed]
-```
+**Accepted spine:** v74 Source Adapter OS → v75 Synthetic Data Fixtures → v85 series → v86a Foundations → v86b Visual Treatment (partial accept) → vP-Tests → vP-Forensics-1 → vP-Forensics-2 → vP-Registry-1 Phase X.
 
-**v69 (Collapsible Evidence Sections) — PAUSED.** Failed attempt due to
-mass-edit approach. Retry scheduled after v73c is accepted, using
-mode-aware additive overview grid only (v69a–v69d sliced approach).
+**For the full version history, see:**
+- `docs/agent/leveling/BANDIT_CHANGELOG.md` — operational event log, one entry per accepted pass
+- `docs/agent/brain/23_BANDIT_CURRENT_TITLE.md` — current title, level, and streak
+- `docs/updates/v86+_updates/(NEW-V86+)V86_BANDIT_MASTER_INDEX.md` — v86 sub-arc plan
 
-**Archive cutoff:** Anything before v65 is historical. Do not reference
-pre-v65 docs as current governance. They live in `docs/_archive/`.
+**Currently in progress:**
 
----
+- **vP-Registry-1 Phase Y** — link network documentation. Phase X (token census) complete; Phase Y (per-layer docs and gap analysis) paused for documentation rehaul. Partial output exists at `docs/registries/LINK_NETWORK_OVERVIEW.md`.
+- **Documentation rehaul** — cluster-by-cluster cleanup of stale docs, frontmatter normalization, codebase/PK alignment. Tracked in `docs/theme/REHAUL_LEDGER.md`.
 
-## Current Roadmap
+**Queued sub-arcs (after rehaul):**
 
-```
-v73c   Mode Registry Validator v0            ← verify committed, then done
-v74a   Source Adapter OS Foundation Contract ← next
-v74b   Source Adapter Base Registry + Validator
-v75a   Synthetic Data Fixtures v0 — Self-Graph Seed
-v75b   Self-Graph Passive Mount — First Demo Surface
-v76    Verified Download Button Boundary Contract
-v77a   Theme Workshop Security Model — Docs Pass
-v77b   Workshop Security Gate v0 — Schema + Provenance Layer
-v69r   v69 Retry — Overview Grid / Summary Cards (additive only)
-v78+   Visual Grammar Engine Bootstrap
-```
+- vP-Registry-2 — token conversion execution (Phase X output → real refactors)
+- v86c — Tile System (widget workspace)
+- v86d — Inspector Mini-Graph (radial inspector)
+- v86e — Cosmetic Polish
 
 ---
 
 ## LumaWeave-Owned Layers
 
 ```
-Command Deck
-Perspective System
-QA / advisory / backlog governance
-Graph View Element Registry
-Graph Visual Inventory
-Graph Theme Mapping Registry
-Graph Runtime Boundary / Probe
-Graph Theme Application ladder
-Motion Safety / Epilepsy Guard Registry
-Synthetic Audio Signal Preview
-Music Reactive Mapping Registry
-Audio Source Registry
-System Index Registry
-Human / Evidence / Debug Mode Registry
-Theme Workshop Security Packet
-Ghost Overlay / Grammar Lens (partial — in development)
-Bandit operating memory / skill bank
+Command Deck                          Three-tier Token Model (primitives/semantics/components)
+Perspective System                    Theme Target Registry
+QA / Advisory / Backlog governance    Theme Mapping Panel + Override Storage
+Graph View Element Registry           Motion Safety / Epilepsy Guard Registry
+Graph Visual Theme Mapping Registry   Synthetic Audio Signal Preview
+Graph Runtime Boundary / Probe        Music Reactive Mapping Registry
+Graph Theme Application ladder        Audio Source Registry
+Source Adapter OS (v74+)              System Index Registry
+Asset Bank (forward-compat empty)     Human / Evidence / Debug Mode Registry
+Inspector Spoke Registry (v86d)       Bandit operating memory / skill bank
 ```
-
----
-
-## Multi-Agent Context
-
-As of 2026-05-06, two agents may be active simultaneously:
-- **Bandit** (Claude) — primary governance agent
-- **DeepSeek V4** (Cascade) — secondary implementation agent
-
-Before starting any pass, confirm which agent is active and what the
-other agent's current scope is. See `docs/agent/onboarding/MULTI_AGENT_POLICY.md`.
 
 ---
 
@@ -145,20 +106,19 @@ other agent's current scope is. See `docs/agent/onboarding/MULTI_AGENT_POLICY.md
 
 Evidence before acceptance.
 
-A pass is not accepted until:
-- `npm run typecheck` passes with zero errors
-- `npm run qa:e2e` passes when runtime/QA/tests are touched
-- `grep -R "test.skip" -n tests/e2e || true` returns clean
-- Current QA key, QA registry, advisory registry, contract tests,
-  and backlog policy move in lockstep
+A pass is not accepted until the relevant evidence exists:
+
+- `npm run typecheck`
+- `npm run qa:e2e` when runtime/QA/tests are touched
+- `grep -R "test.skip" -n tests/e2e || true`
+- Current QA key, QA registry, advisory registry, contract tests, and backlog policy move in lockstep
 - No skipped tests
 - No manual DevTools JavaScript required for acceptance evidence
 - No dead active controls
 - No graph/Sigma mutation unless explicitly promoted by contract
 - No audio input/playback/reactivity unless explicitly promoted by contract
 
-See `docs/operating-policies/SOURCE_OF_TRUTH.md` for the full
-forbidden boundary list by system.
+See `SOURCE_OF_TRUTH.md` for the full forbidden boundary list by system.
 
 ---
 
@@ -167,16 +127,15 @@ forbidden boundary list by system.
 Bandit is currently in **Locked Terminal Mode**.
 
 - Bandit does not run commands.
-- User runs validation and git commands manually.
-- Bandit may edit explicitly assigned files, report changed files,
-  and provide validation commands.
-- If repo state or command output is needed, Bandit asks the user.
+- Operator runs validation and git commands manually.
+- Bandit may edit explicitly assigned files, report changed files, and provide validation commands.
+- If repo state or command output is needed, Bandit asks the operator for output.
 
 ---
 
 ## Session Start Checklist
 
-At the start of every new session, ask the user for:
+At the start of every new session:
 
 ```bash
 cd /home/boop/Projects/lumaweave || exit 1
@@ -185,105 +144,64 @@ git log --oneline -12
 ```
 
 Then:
-1. Verify v73c was committed if it was the last reported task.
+1. Verify the most recent expected commits are present.
 2. Check for any uncommitted work.
 3. Confirm current QA key matches the current accepted pass.
-4. Confirm no other agent is mid-pass on an overlapping scope.
-5. If clean, proceed with the next roadmap item.
+4. If clean, proceed with the next roadmap item or assigned task.
 
 ---
 
 ## Required Reading Order
 
-**Tier 0 — This packet (read every session):**
+**Tier 0 — Operating policies (this packet):**
 ```
-docs/operating-policies/SESSION_AND_STACK.md     ← this file
+docs/operating-policies/SESSION_AND_STACK.md       (this doc)
 docs/operating-policies/SOURCE_OF_TRUTH.md
 docs/operating-policies/QA_AND_PLAYWRIGHT.md
 ```
 
-**Tier 1 — Current repo state (ask user first):**
+**Tier 1 — Current repo state (from operator):**
 ```bash
 git status --short
 git log --oneline -12
 ```
-Then inspect:
-```
-docs/control-plane/qa/BACKLOG_POLICY.md
-docs/control-plane/contracts/GRAPH_CONTROL_PLANE_NAVIGATION_CONTRACT.md
-docs/roadmap/LATTICA_ROADMAP_REALIGNMENT_V67.md
-docs/graph/contracts/
-docs/audio/
-docs/accessibility/MOTION_SAFETY_AND_EPILEPSY_GUARD_CONTRACT.md
-docs/security/
-```
 
-**Tier 2 — QA / Control Plane runtime files:**
-```
-src/control-plane/qa/QaPanel.tsx
-src/control-plane/qa/qa-registry.ts
-src/control-plane/qa/advisory-registry.ts
-tests/e2e/contract-registry.spec.ts
-tests/e2e/helpers/qa.ts
-```
-
-**Tier 3 — Graph / Theme / Safety / Audio registries:**
-```
-src/graph/graphViewElementRegistry.ts
-src/graph/graphVisualThemeMappingRegistry.ts
-src/accessibility/motionSafetyRegistry.ts
-src/audio/syntheticAudioSignal.ts
-src/audio/musicReactiveMappingRegistry.ts
-src/audio/audioSourceRegistry.ts
-src/control-plane/graph/GraphVisualInventoryPanel.tsx
-src/modes/modeMetadataRegistry.ts
-```
-
-**Tier 4 — Bandit brain / working memory:**
+**Tier 2 — Active brain (current pass context):**
 ```
 docs/agent/brain/00_AGENT_LEARNING_INDEX.md
 docs/agent/brain/23_BANDIT_CURRENT_TITLE.md
 docs/agent/brain/24_BANDIT_WORKING_MEMORY_REFRESHER.md
-docs/agent/brain/25_BANDIT_SELF_MODEL_AND_GROWTH_PROTOCOL.md
+docs/agent/leveling/BANDIT_CHANGELOG.md
 ```
 
-**Tier 5 — Playwright / failure diagnosis:**
+**Tier 3 — Active source (only what the current task touches):**
+
+Read on demand based on task scope. Common entry points:
+
 ```
-docs/operating-policies/QA_AND_PLAYWRIGHT.md
-docs/quest/QUEST_TEMPLATE.md
-docs/survival-manual/02_DIAGNOSTIC_ROUTER.md
+src/control-plane/qa/QaPanel.tsx               (QA work)
+src/themes/themeTokenPaths.ts                   (theme work)
+src/graph/graphViewElementRegistry.ts           (graph work)
+src/control-plane/handles/handleset.registry.ts (handle work)
+tests/e2e/contract-registry.spec.ts             (test work)
 ```
+
+For deeper system docs (per-cluster contracts, registries, schemas), navigate via `SOURCE_OF_TRUTH.md` or the cluster-specific docs in `docs/<cluster>/`.
 
 ---
 
 ## Current Arc
 
-Old arc (superseded, pre-v65):
 ```
-Inspector stack → Theme Mapping shell → Visual handle/token citations
-→ Generated read-only controls
-```
-
-Current arc:
-```
-Graph control plane
-→ graph/theme registry governance
-→ runtime boundary probes
-→ motion safety
-→ synthetic audio signal preview
-→ passive music-reactive mapping
-→ passive audio source registry
-→ roadmap/navigation realignment
-→ system index registry
-→ human/evidence/debug mode contract + registry
-→ source adapter OS foundation
-→ synthetic data fixtures / self-graph
-→ collapsible evidence UX (v69 retry, pending)
-→ verified download / theme security
-→ rendering layer architecture
-→ Visual Grammar Engine bootstrap
-→ tile workspace + lens navigation system
-→ physics dialects + universal audio routing
+v86 sub-arc work
+  → token registry surfacing (vP-Registry-1 Phase X — done)
+  → link network documentation (Phase Y — paused, partial)
+  → documentation rehaul (in progress)
+  → resume Phase Y from clean foundation
+  → vP-Registry-2 (token conversion execution)
+  → v86c Tile System
+  → v86d Inspector Mini-Graph
+  → v86e Cosmetic Polish
 ```
 
 ---
@@ -291,13 +209,16 @@ Graph control plane
 ## Deferred Runtime Behavior
 
 Do not implement without explicit future contract:
+
 - Real audio input, microphone permission, local file decoding, audio playback
-- Music-reactive visuals, animation/pulse/shimmer/flash
-- Graph/Sigma mutation, node/edge/canvas styling, physics reactivity
+- Music-reactive visuals beyond passive metadata
+- Animation/pulse/shimmer/flash beyond what motion safety contract permits
+- Graph/Sigma mutation, node/edge/canvas styling, physics reactivity beyond shipping contracts
 - Command execution, theme pack installation/download execution
-- CSS variable writes or new token promotion
-- Grammar Lens edits applied to inactive rendering layers without
-  cross-layer override cache contract
-- VR implementation of any kind
-- Agent familiar system
-- 3D rendering layer
+- CSS variable writes outside the theme override storage layer
+- New canonical token promotion outside the promotion process
+- Workshop-style theme/asset imports (Lattica — v88+)
+
+---
+
+*Rewrite v86a: trimmed multi-year version spine to current operating context only (full history in BANDIT_CHANGELOG). Updated brain doc paths from `docs/lumaweave_bandit_brain_packet/` to current `docs/agent/`. Reading tiers reduced from 5 to 4. References to current shipping precursors added throughout.*

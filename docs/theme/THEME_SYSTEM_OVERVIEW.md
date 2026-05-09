@@ -8,7 +8,7 @@ domain: theme
 cluster: gold
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-08
+last_updated: 2026-05-09
 governs:
   - src/themes/
 references:
@@ -19,7 +19,12 @@ references:
   - link.network.overview
   - link.network.layer.3
   - graph.visual.theme.mapping.contract
-tags: [theme, system, overview, tier-model, v86a]
+tags:
+  - theme
+  - system
+  - overview
+  - tier-model
+  - v86a
 ---
 
 # Theme System Overview

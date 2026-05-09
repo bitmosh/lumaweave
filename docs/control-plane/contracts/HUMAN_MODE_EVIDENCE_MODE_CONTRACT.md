@@ -6,16 +6,23 @@ status: accepted
 version: v73a
 domain: control-plane
 subdomain: contracts
-cluster: blue
+cluster: slate
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 governs:
   - src/control-plane/modes/controlPlaneModeRegistry.ts
   - scripts/validate-control-plane-modes.mjs
 tested_by:
   - tests/e2e/system-index.spec.ts
-tags: [human, evidence, debug, mode, contract, accepted, v73a]
+tags:
+  - human
+  - evidence
+  - debug
+  - mode
+  - contract
+  - accepted
+  - v73a
 ---
 
 # Human / Evidence / Debug Mode Contract

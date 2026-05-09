@@ -2,13 +2,13 @@
 id: vge.roadmap
 title: Visual Grammar Engine — Implementation Roadmap
 type: roadmap
-status: design-locked
+status: concept
 version: v86a
 domain: visual-grammar-engine
 cluster: teal
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-08
+last_updated: 2026-05-09
 references:
   - vge.overview.and.terms
   - vge.grammar.handle.and.lens
@@ -19,7 +19,12 @@ references:
   - source.adapter.os.overview
   - graph.runtime.boundary.contract
   - motion.safety.contract
-tags: [vge, visual-grammar-engine, roadmap, future, docs-only]
+tags:
+  - vge
+  - visual-grammar-engine
+  - roadmap
+  - future
+  - docs-only
 ---
 
 # Visual Grammar Engine — Implementation Roadmap

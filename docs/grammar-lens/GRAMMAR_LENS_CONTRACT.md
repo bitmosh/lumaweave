@@ -5,19 +5,25 @@ type: contract
 status: accepted
 version: v75
 domain: grammar-lens
-cluster: blue
+cluster: teal
 agent_readable: true
 include_in_self_graph: true
-last_updated: v75
+last_updated: 2026-05-09
 depends_on:
   - architecture.rendering.layers
   - contract.cross.layer.override.cache
   - contract.graph.runtime.boundary
-related:
+tags:
+  - grammar-lens
+  - overlay
+  - ghost
+  - contract
+  - rendering
+  - cross-layer
+references:
   - contract.cursor.inspector
   - system.grammar.lens.current.state
   - policy.source.of.truth
-tags: [grammar-lens, overlay, ghost, contract, rendering, cross-layer]
 ---
 
 # Grammar Lens Contract

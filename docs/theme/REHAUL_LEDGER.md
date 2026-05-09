@@ -2,16 +2,21 @@
 id: docs.rehaul.ledger
 title: Documentation Rehaul Ledger
 type: ledger
-status: active
+status: current
 version: v86a
 domain: docs
-cluster: purple
+cluster: gold
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-08
+last_updated: 2026-05-09
 references:
   - docs.rehaul.audit
-tags: [docs, rehaul, ledger, tracking, v86a]
+tags:
+  - docs
+  - rehaul
+  - ledger
+  - tracking
+  - v86a
 ---
 
 # Documentation Rehaul Ledger

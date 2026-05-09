@@ -3,15 +3,6 @@
 # Declarative schema config for normalizing YAML frontmatter across docs/.
 # Consumed by scripts/normalize-frontmatter.mjs.
 #
-# How matching works:
-#   1. The script walks docs/ recursively for .md files
-#   2. For each file, the path-relative-to-docs/ is matched against schemas
-#      in order (top to bottom)
-#   3. The FIRST schema whose `path_match` regex matches wins
-#   4. The schema's rules are applied in order
-#   5. Schemas with `path_match: null` are stub schemas — declared for
-#      future use, not yet active
-#
 # Schema rules (applied in this order):
 #   1. field_renames    — rename old field name → new field name (preserves value)
 #   2. field_removals   — delete fields entirely
@@ -20,80 +11,40 @@
 #   5. field_overrides  — set field unconditionally to a fixed value
 #   6. last_updated_today — if true, set last_updated to today's ISO date
 #
-# Validation rules describe what the doc SHOULD have after normalization:
+# Validation rules:
 #   - required_fields: error if missing
 #   - status_options: error if status is not one of these values
 #
-# When validation fails, the script reports the issue but does NOT block
-# writes (unless --strict is set). This lets you progressively normalize.
+# ────────────────────────────────────────────────────────────
+# Status vocabulary (locked v86a, 5 values):
+#
+#   current   — actively maintained, reflects today's reality
+#   accepted  — frozen at acceptance, reference state
+#   complete  — finished work product (e.g. session summary, snapshot)
+#   concept   — design exists, no/limited implementation yet
+#   archived  — removed from active flow, kept for record
 #
 # ────────────────────────────────────────────────────────────
-# Status vocabulary (locked v86a, refined to 5 values):
+# Cluster color palette (locked v86a, 9 colors):
 #
-#   current       — actively maintained, reflects today's reality
-#                   (covers former 'active' usage too)
-#   accepted      — frozen at acceptance, reference state
-#   complete      — finished work product (e.g. session summary, snapshot)
-#   archived      — removed from active flow, kept for record
-#                   (covers former 'historical' usage too)
-#   design-locked — design intentionally frozen, no implementation yet
-#                   (VGE only)
+# Source of truth for hex values: docs/_meta/cluster-colors.json
 #
-# Different doc types use different subsets of this vocabulary. Each
-# schema declares its allowed `status_options`.
-# ────────────────────────────────────────────────────────────
+#   gold     — Theme / Visual System              #FFB347
+#   azure    — Graph / Rendering / Handles        #3D8BD8
+#   violet   — Agent / Brain / Operating          #8B5CF6
+#   teal     — Visual Grammar Engine              #14B8A6
+#   lime     — Source / Data Ingestion            #84CC16
+#   slate    — Control Plane / QA / Registries    #64748B
+#   stone    — Layout / UI Shell                  #A8A29E
+#   ember    — Audio / Reactive                   #D8541F
+#   crimson  — Accessibility / Safety             #DC2626
 #
 # ────────────────────────────────────────────────────────────
 # FUTURE CAPABILITIES (not yet implemented — design recorded for future)
-# ────────────────────────────────────────────────────────────
 #
-# The current script normalizes existing frontmatter but does NOT generate
-# frontmatter for docs that lack it. Three additions would close that gap
-# without requiring human judgment on every field:
-#
-# 1. field_derivers — compute values from observable inputs
-#    Schema picks which named derivers to run. Library of derivers in
-#    the script:
-#      - first_h1: title := first H1 in body
-#      - path_to_dotpath: id := relative path slugified to dot-notation
-#                         (e.g. theme/THEME_SYSTEM_OVERVIEW.md
-#                         → theme.system.overview)
-#      - parent_dir: subdomain := parent folder name
-#    Example:
-#      agent_brain:
-#        field_derivers:
-#          title: first_h1
-#          id: path_to_dotpath
-#
-# 2. force_add_frontmatter: true (per-schema)
-#    Currently the script refuses to add frontmatter to docs without it
-#    (safety). With this flag, the script can generate frontmatter from
-#    field_defaults + field_derivers + field_overrides + last_updated.
-#    Schema controls per-domain whether generation is allowed.
-#
+# 1. field_derivers — compute values from observable inputs (title from H1, id from path)
+# 2. force_add_frontmatter (per-schema) — generate frontmatter on docs that lack it
 # 3. Reasonable per-cluster defaults for type/tags
-#    Add to field_defaults so generation has sensible starting state:
-#      agent_brain:
-#        field_defaults:
-#          type: log
-#          tags: [agent, bandit, brain]
-#    'references' deliberately stays human-judgment (left as []).
-#
-# Field categories:
-#   Category 1 — fully derivable from path + schema (current capability):
-#     cluster, domain, subdomain, status, last_pass, last_updated,
-#     agent_readable, include_in_self_graph
-#   Category 2 — mechanically derivable from file content (future):
-#     title (first_h1), id (path_to_dotpath)
-#   Category 3 — genuinely human-judgment (always manual):
-#     references — body cross-refs require semantic understanding
-#     type — sometimes derivable from path, sometimes not; default OK
-#     tags — keyword judgment; default OK as starting point
-#
-# Add when needed: if we get a flood of new docs without frontmatter
-# (operator quick-drafts, agent outputs, etc.), implement these to keep
-# the cost of "starting a new doc" low. Until then, hand-crafted
-# frontmatter from rewrites is fine.
 # ────────────────────────────────────────────────────────────
 
 version: 1
@@ -103,26 +54,35 @@ defaults:
   last_updated_today: true
   field_renames:
     related: references
-  # Cleanup of legacy status vocabulary across all docs:
+  # Cleanup of legacy values across all docs:
   field_remaps:
     status:
       active: current
       historical: archived
+      design-locked: concept
+    cluster:
+      # Legacy color names → palette names (v86a migration)
+      purple: violet      # agent docs were tagged 'purple', now 'violet'
+      blue: azure         # graph docs were tagged 'blue', now 'azure'
+      green: lime         # source-adapter docs were tagged 'green', now 'lime'
+      red: crimson        # any 'red' brain docs caught earlier
+      gray: violet        # any 'gray' brain docs (changelog had this)
 
 schemas:
 
   # ============================================================
-  # Agent / Brain — Bandit's operating documents
+  # AGENT DOMAIN (violet)
   # ============================================================
+
   agent_brain:
     path_match: '^agent/brain/'
-    cluster: purple
+    cluster: violet
     status_options: [current, accepted, complete, archived]
     field_overrides:
-      cluster: purple
+      cluster: violet
       last_pass: 'vP-Forensics-2'
     field_removals:
-      - version  # superseded by last_pass
+      - version
     field_defaults:
       status: current
       type: log
@@ -141,15 +101,12 @@ schemas:
       - last_updated
       - last_pass
 
-  # ============================================================
-  # Agent / Leveling — XP, changelog, error log
-  # ============================================================
   agent_leveling:
     path_match: '^agent/leveling/'
-    cluster: purple
+    cluster: violet
     status_options: [current, accepted, archived]
     field_overrides:
-      cluster: purple
+      cluster: violet
       last_pass: 'vP-Forensics-2'
     field_removals:
       - version
@@ -171,15 +128,12 @@ schemas:
       - last_updated
       - last_pass
 
-  # ============================================================
-  # Agent / Onboarding — guides for new agents
-  # ============================================================
   agent_onboarding:
     path_match: '^agent/onboarding/'
-    cluster: purple
+    cluster: violet
     status_options: [current, accepted, archived]
     field_overrides:
-      cluster: purple
+      cluster: violet
       last_pass: 'vP-Forensics-2'
     field_removals:
       - version
@@ -201,15 +155,12 @@ schemas:
       - last_updated
       - last_pass
 
-  # ============================================================
-  # Agent / Protocols — operating protocols
-  # ============================================================
   agent_protocols:
     path_match: '^agent/protocols/'
-    cluster: purple
+    cluster: violet
     status_options: [current, accepted, archived]
     field_overrides:
-      cluster: purple
+      cluster: violet
       last_pass: 'vP-Forensics-2'
     field_removals:
       - version
@@ -231,15 +182,12 @@ schemas:
       - last_updated
       - last_pass
 
-  # ============================================================
-  # Agent / Tooling — tool architecture, permissions, MCP
-  # ============================================================
   agent_tooling:
     path_match: '^agent/tooling/'
-    cluster: purple
+    cluster: violet
     status_options: [current, accepted, archived]
     field_overrides:
-      cluster: purple
+      cluster: violet
       last_pass: 'vP-Forensics-2'
     field_removals:
       - version
@@ -261,18 +209,12 @@ schemas:
       - last_updated
       - last_pass
 
-# ============================================================
-  # Agent / Survival Manual — operating playbook
-  # ============================================================
-  # Sequential read-through playbook: troubleshooting, diagnostic
-  # routing, debugging lenses, stop conditions. Numbered prefixes
-  # preserved (01-08) for read order.
   agent_survival_manual:
     path_match: '^agent/survival-manual/'
-    cluster: purple
+    cluster: violet
     status_options: [current, accepted, archived]
     field_overrides:
-      cluster: purple
+      cluster: violet
       last_pass: 'vP-Forensics-2'
     field_removals:
       - version
@@ -295,14 +237,36 @@ schemas:
       - last_pass
 
   # ============================================================
-  # Stub schemas — declared for future use
+  # OPERATING POLICIES (violet — agent-domain governance)
   # ============================================================
-  # path_match is null so they don't match any docs. When ready to
-  # normalize a cluster, set path_match to a regex that captures the
-  # cluster's docs and run with --dry-run to preview.
+
+  operating_policies:
+    path_match: '^operating-policies/'
+    cluster: violet
+    status_options: [current, accepted, archived]
+    field_overrides:
+      cluster: violet
+    field_defaults:
+      status: current
+      type: policy
+      domain: operating-policies
+      agent_readable: true
+      include_in_self_graph: true
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - last_updated
+
+  # ============================================================
+  # THEME DOMAIN (gold)
+  # ============================================================
 
   theme:
-    path_match: null  # ^theme/
+    path_match: '^theme/'
     cluster: gold
     status_options: [current, accepted, archived]
     field_overrides:
@@ -321,12 +285,16 @@ schemas:
       - domain
       - last_updated
 
+  # ============================================================
+  # GRAPH DOMAIN (azure)
+  # ============================================================
+
   graph:
-    path_match: null  # ^graph/
-    cluster: blue
-    status_options: [current, accepted, archived]
+    path_match: '^graph/'
+    cluster: azure
+    status_options: [current, accepted, concept, archived]
     field_overrides:
-      cluster: blue
+      cluster: azure
     field_defaults:
       status: current
       domain: graph
@@ -341,32 +309,14 @@ schemas:
       - domain
       - last_updated
 
-  visual_grammar_engine:
-    path_match: null  # ^visual-grammar-engine/
-    cluster: teal
-    status_options: [design-locked, current, accepted, archived]
-    field_overrides:
-      cluster: teal
-    field_defaults:
-      status: design-locked
-      domain: visual-grammar-engine
-      agent_readable: true
-      include_in_self_graph: true
-    required_fields:
-      - id
-      - title
-      - type
-      - status
-      - cluster
-      - domain
-      - last_updated
-
+  # Handleset is graph-adjacent infrastructure (visual handles, theme handles
+  # → graph elements). Same cluster as graph for visual cohesion.
   handleset:
-    path_match: null  # ^handleset/
-    cluster: gold
-    status_options: [current, accepted, archived]
+    path_match: '^handleset/'
+    cluster: azure
+    status_options: [current, accepted, concept, archived]
     field_overrides:
-      cluster: gold
+      cluster: azure
     field_defaults:
       status: current
       domain: handleset
@@ -381,12 +331,62 @@ schemas:
       - domain
       - last_updated
 
+  # ============================================================
+  # VISUAL GRAMMAR ENGINE + GRAMMAR LENS (teal)
+  # ============================================================
+
+  visual_grammar_engine:
+    path_match: '^visual-grammar-engine/'
+    cluster: teal
+    status_options: [current, accepted, concept, archived]
+    field_overrides:
+      cluster: teal
+    field_defaults:
+      status: concept
+      domain: visual-grammar-engine
+      agent_readable: true
+      include_in_self_graph: true
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - last_updated
+
+  # Grammar Lens is the shipping precursor to VGE Grammar Lens.
+  # Same cluster as VGE for the family relationship.
+  grammar_lens:
+    path_match: '^grammar-lens/'
+    cluster: teal
+    status_options: [current, accepted, concept, archived, partial]
+    field_overrides:
+      cluster: teal
+    field_defaults:
+      status: current
+      domain: grammar-lens
+      agent_readable: true
+      include_in_self_graph: true
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - last_updated
+
+  # ============================================================
+  # SOURCE / DATA INGESTION (lime)
+  # ============================================================
+
   source_adapter:
-    path_match: null  # ^source-adapter/
-    cluster: green
+    path_match: '^source-adapter/'
+    cluster: lime
     status_options: [current, accepted, archived]
     field_overrides:
-      cluster: green
+      cluster: lime
     field_defaults:
       status: current
       domain: source-adapter
@@ -401,12 +401,16 @@ schemas:
       - domain
       - last_updated
 
+  # ============================================================
+  # CONTROL PLANE / QA / REGISTRIES (slate)
+  # ============================================================
+
   control_plane:
-    path_match: null  # ^control-plane/
-    cluster: blue
+    path_match: '^control-plane/'
+    cluster: slate
     status_options: [current, accepted, archived]
     field_overrides:
-      cluster: blue
+      cluster: slate
     field_defaults:
       status: current
       domain: control-plane
@@ -421,12 +425,14 @@ schemas:
       - domain
       - last_updated
 
+  # Registries (link network, layer registries) are control-plane-adjacent
+  # infrastructure. Same cluster as control-plane.
   registries:
-    path_match: null  # ^registries/
-    cluster: blue
+    path_match: '^registries/'
+    cluster: slate
     status_options: [current, accepted, archived]
     field_overrides:
-      cluster: blue
+      cluster: slate
     field_defaults:
       status: current
       domain: registries
@@ -441,57 +447,121 @@ schemas:
       - domain
       - last_updated
 
-  operating_policies:
-    path_match: ^operating-policies/
-    cluster: purple
-    status_options: [current, accepted, archived]
-    field_overrides:
-      cluster: purple
-    field_defaults:
-      status: current
-      domain: operating-policies
-      agent_readable: true
-      include_in_self_graph: true
-    required_fields:
-      - id
-      - title
-      - type
-      - status
-      - cluster
-      - domain
-      - last_updated
-
-  survival_manual:
-    path_match: null  # ^survival-manual/
-    cluster: purple
-    status_options: [current, accepted, archived]
-    field_overrides:
-      cluster: purple
-    field_defaults:
-      status: current
-      domain: survival-manual
-      agent_readable: true
-      include_in_self_graph: true
-    required_fields:
-      - id
-      - title
-      - type
-      - status
-      - cluster
-      - domain
-      - last_updated
+  # ============================================================
+  # LAYOUT / UI SHELL (stone)
+  # ============================================================
 
   layout:
-    path_match: null  # ^layout/
-    cluster: blue
-    status_options: [current, accepted, archived]
+    path_match: '^layout/'
+    cluster: stone
+    status_options: [current, accepted, concept, archived]
     field_overrides:
-      cluster: blue
+      cluster: stone
     field_defaults:
       status: current
       domain: layout
       agent_readable: true
       include_in_self_graph: true
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - last_updated
+
+  # ============================================================
+  # AUDIO / REACTIVE (ember)
+  # ============================================================
+
+  audio:
+    path_match: '^audio/'
+    cluster: ember
+    status_options: [current, accepted, archived]
+    field_overrides:
+      cluster: ember
+    field_defaults:
+      status: accepted
+      type: contract
+      domain: audio
+      agent_readable: true
+      include_in_self_graph: true
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - last_updated
+
+  # ============================================================
+  # ACCESSIBILITY / SAFETY (crimson)
+  # ============================================================
+
+  accessibility:
+    path_match: '^accessibility/'
+    cluster: crimson
+    status_options: [current, accepted, archived]
+    field_overrides:
+      cluster: crimson
+    field_defaults:
+      status: accepted
+      type: contract
+      domain: accessibility
+      agent_readable: true
+      include_in_self_graph: true
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - last_updated
+
+  # ============================================================
+  # ROADMAP (violet — meta/planning)
+  # ============================================================
+
+  roadmap:
+    path_match: '^roadmap/'
+    cluster: violet
+    status_options: [current, accepted, archived]
+    field_overrides:
+      cluster: violet
+    field_defaults:
+      status: current
+      domain: roadmap
+      agent_readable: true
+      include_in_self_graph: false
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - last_updated
+
+  # ============================================================
+  # DOCS-LEVEL META (violet — tooling/infrastructure)
+  # ============================================================
+  # Doc-system metadata files (_meta/, REHAUL_LEDGER, DOCS_INDEX, etc.)
+
+  docs_meta:
+    path_match: '^_meta/|^REHAUL_LEDGER\.md$|^DOCS_INDEX\.md$'
+    cluster: violet
+    status_options: [current, accepted, archived]
+    field_overrides:
+      cluster: violet
+    field_defaults:
+      status: current
+      domain: agent
+      subdomain: tooling
+      agent_readable: true
+      include_in_self_graph: false
     required_fields:
       - id
       - title

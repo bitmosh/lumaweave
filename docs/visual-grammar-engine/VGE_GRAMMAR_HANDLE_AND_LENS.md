@@ -2,13 +2,13 @@
 id: vge.grammar.handle.and.lens
 title: Visual Grammar Engine — Grammar Handle Model & Grammar Lens
 type: concept
-status: design-locked
+status: concept
 version: v86a
 domain: visual-grammar-engine
 cluster: teal
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-08
+last_updated: 2026-05-09
 references:
   - vge.overview.and.terms
   - vge.signal.loom
@@ -21,7 +21,13 @@ references:
   - theme.token.path.map
   - theme.token.compatibility
   - theme.override.storage.contract
-tags: [vge, grammar-handle, grammar-lens, cursor-inspector, future, docs-only]
+tags:
+  - vge
+  - grammar-handle
+  - grammar-lens
+  - cursor-inspector
+  - future
+  - docs-only
 ---
 
 # Visual Grammar Engine — Grammar Handle Model & Grammar Lens

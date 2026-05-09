@@ -6,13 +6,18 @@ status: accepted
 version: v38
 domain: control-plane
 subdomain: contracts
-cluster: blue
+cluster: slate
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 governs:
   - src/control-plane/perspectives/perspectiveRegistry.ts
-tags: [perspective, system, contract, accepted, v38]
+tags:
+  - perspective
+  - system
+  - contract
+  - accepted
+  - v38
 ---
 
 # Perspective System Contract

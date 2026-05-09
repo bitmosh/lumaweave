@@ -1,18 +1,37 @@
 ---
-id: index.source.of.truth
-title: Source of Truth Map
-type: index
-status: accepted
-version: v73c
+id: policy.source.of.truth
+title: LumaWeave — Source of Truth Map
+type: policy
+status: current
+cluster: violet
 domain: operating-policies
-cluster: purple
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-tags: [source-of-truth, forbidden, boundaries, operating, agent]
+last_updated: 2026-05-09
+references:
+  - policy.session.and.stack
+  - policy.qa.and.playwright
+  - theme.token.path.map
+  - theme.system.overview
+  - graph.runtime.boundary.contract
+  - motion.safety.contract
+  - audio.reactivity.contract
+  - audio.source.system.contract
+  - music.reactive.mapping.contract
+  - system.index.registry.contract
+  - human.mode.evidence.mode.contract
+  - command.deck.and.hotkey.registry.contract
+tags:
+  - policy
+  - source-of-truth
+  - governance
+  - forbidden-boundaries
+  - v86a
 ---
 
-# LumaWeave / Lattica — Source of Truth Map
+# LumaWeave — Source of Truth Map
+
+Authoritative file/contract locations and rules per system. When in doubt, this doc is what governs. Stale paths or duplicate content elsewhere lose to this.
 
 ## Repo Root
 
@@ -28,7 +47,7 @@ tags: [source-of-truth, forbidden, boundaries, operating, agent]
 
 Primary files:
 ```
-docs/control-plane/qa/BACKLOG_POLICY.md
+docs/roadmap/BACKLOG_POLICY.md
 src/control-plane/qa/QaPanel.tsx
 src/control-plane/qa/qa-registry.ts
 src/control-plane/qa/advisory-registry.ts
@@ -42,23 +61,22 @@ Rules:
 - Proposal IDs expected by tests must exist in the active advisory section.
 - Backlog tests require active advisory backlog rows.
 - Fallback advisory is not valid current-pass evidence.
-- No skipped tests. Ever.
-- `switchQaKey()` must not wait for Advisory tab content.
-- `waitForAdvisory()` belongs only after Advisory tab is explicitly opened.
+- No skipped tests.
 
 ---
 
 ## Graph / Sigma Boundary
 
-External foundations (not LumaWeave-owned):
+External foundations:
 ```
-Graphology  — graph data model/library
-Sigma       — graph renderer (2D WebGL)
+Graphology — graph data model/library
+Sigma      — graph renderer
 ```
 
 LumaWeave-owned graph governance:
 ```
-docs/graph/contracts/
+docs/graph/contracts/*
+docs/graph/intelligence/*
 src/graph/graphViewElementRegistry.ts
 src/graph/graphVisualThemeMappingRegistry.ts
 src/control-plane/graph/GraphVisualInventoryPanel.tsx
@@ -69,7 +87,6 @@ Rules:
 - DOM-wrapper evidence is not canvas/Sigma internals evidence.
 - Node/edge/canvas styling requires explicit future contract.
 - Physics/camera/filter behavior requires explicit future contract.
-- No Sigma API calls without a promoted runtime contract.
 
 ---
 
@@ -77,46 +94,23 @@ Rules:
 
 Primary:
 ```
+docs/theme/THEME_SYSTEM_OVERVIEW.md
 docs/theme/THEME_TOKEN_PATH_MAP.md
 src/themes/themeTokenPaths.ts
+src/themes/tokenPrimitives.ts
+src/themes/tokenSemantics.ts
+src/themes/tokenComponents.ts
+src/themes/themeTokenGovernance.ts
 src/graph/graphVisualThemeMappingRegistry.ts
 ```
 
 Rules:
 - Use canonical token paths only.
+- Three-tier model: primitives → semantics → components. Tier-walk validator hard-throws on violations.
 - Do not promote planned tokens without explicit pass.
 - Token path metadata precedes token value preview.
 - Token value preview precedes application.
-- CSS variable writes require explicit future contract.
-- No invented token paths. No parallel asset registries.
-
----
-
-## Ghost Overlay / Grammar Lens
-
-Primary:
-```
-docs/grammar-lens/GRAMMAR_LENS_CONTRACT.md
-docs/grammar-lens/CURSOR_INSPECTOR_CONTRACT.md
-docs/grammar-lens/GHOST_OVERLAY_CURRENT_STATE.md
-src/[overlay implementation — ask user for current path]
-```
-
-Rules:
-- Grammar Lens and Cursor Inspector contracts (v75) govern overlay behavior.
-- Overlay uses `data-lw-*` DOM attributes to identify clickable elements.
-- Overlay respects forbidden boundaries — it cannot expose or edit
-  contract truth, evidence status, or Sigma internals.
-- Changes apply only to the currently active rendering layer.
-- Inactive layer changes are queued in the cross-layer override cache.
-- Cross-layer cache flushes pending overrides when user switches layers,
-  passing each through the canonical token path validation and Motion
-  Safety gate before applying.
-- Grammar Lens popout shows per-element YAML/JSON slice only.
-- Cursor Inspector defines hold-key + click activation, popout behavior,
-  editable/read-only semantics, and scope model.
-- Global element type updates ("apply to all type:border") require the
-  GLOBAL_ELEMENT_UPDATE_CONTRACT before implementation.
+- CSS variable writes outside the override storage layer require explicit future contract.
 
 ---
 
@@ -129,13 +123,10 @@ src/accessibility/motionSafetyRegistry.ts
 ```
 
 Rules:
-- Reduce Motion is master authority over all visual reactivity.
+- Reduce Motion is master authority.
 - Visual effects must be classified before implementation.
 - Moderate/high effects disable under reduced motion.
-- No strobe, rapid flash, high-frequency flicker, camera shake,
-  or risky pulse without explicit contract and safety gate.
-- All audio-reactive visual effects must pass through Motion Safety gate.
-- Physics dialects bundle audio routing — both pass through the gate.
+- No strobe, rapid flash, high-frequency flicker, camera shake, or risky pulse without explicit contract and safety gate.
 
 ---
 
@@ -157,52 +148,7 @@ Rules:
 - Signal preview before visual reaction.
 - Mapping inventory before runtime reaction.
 - Audio source registry before microphone/file/audio playback.
-- No microphone, Web Audio input, file upload, decoding, playback,
-  music reactivity, or graph/Sigma mutation until explicitly promoted.
-- Audio reactivity is universal — any handle in any rendering layer
-  can subscribe to any signal channel via the Signal Loom.
-- All audio-reactive handles pass through Motion Safety gate.
-
----
-
-## Physics Dialects
-
-Primary:
-```
-docs/physics/PHYSICS_DIALECT_SYSTEM.md
-docs/physics/HELIX_CONSTELLATION_DIALECT.md
-docs/physics/CONSTELLATION_MODE_DIALECT.md
-docs/physics/GALAXY_MODE_DIALECT.md
-docs/physics/PHYSICS_AUDIO_ROUTING_CONTRACT.md
-```
-
-Rules:
-- Physics dialects bundle force layout config AND audio routing config.
-- Selecting a dialect sets both simultaneously.
-- All physics-audio effects pass through Motion Safety gate.
-- Galaxy mode requires stable per-cluster gravity wells and
-  inter-cluster repulsion walls — do not implement without explicit contract.
-- Physics changes apply only to the active rendering layer.
-
----
-
-## Rendering Layer System
-
-Primary:
-```
-docs/rendering/RENDERING_LAYER_ARCHITECTURE.md
-docs/rendering/CROSS_LAYER_OVERRIDE_CACHE_CONTRACT.md
-docs/rendering/SIGMA_2D_LAYER_CONTRACT.md
-```
-
-Rules:
-- Only the active rendering layer receives live changes.
-- Inactive layers receive pending override cache entries.
-- Cache stores canonical token path changes, not raw CSS values.
-- On layer switch: pending cache → token path validation → handle
-  resolver for target layer → Motion Safety gate → apply.
-- Themes preserve identity across layers via canonical token paths.
-- Do not implement 3D rendering layer without explicit contract.
+- No microphone, Web Audio input, file upload, decoding, playback, music reactivity, or graph/Sigma mutation until explicitly promoted.
 
 ---
 
@@ -211,18 +157,16 @@ Rules:
 Primary:
 ```
 docs/control-plane/contracts/SYSTEM_INDEX_REGISTRY_CONTRACT.md
+docs/control-plane/contracts/SYSTEM_INDEX_PANEL_MOUNT_CONTRACT.md
 src/system-index/systemIndexRegistry.ts
 src/control-plane/system-index/SystemIndexPanel.tsx
-scripts/validate-system-index.ts
-scripts/validate-mode-registry.ts
 ```
 
 Rules:
 - 16-field SystemIndexEntry type is canonical.
 - 10 categories, 10 kinds, 8 lifecycle statuses.
-- System Index Validator (v72c) must pass before new entries accepted.
-- Mode Registry Validator (v73c) must pass before mode-dependent UI added.
-- SystemIndexPanel is passive/read-only. No interactive edits without contract.
+- Validator (v72c) must pass before any new entry is accepted.
+- SystemIndexPanel is passive/read-only; no interactive edits without future contract.
 
 ---
 
@@ -237,12 +181,8 @@ scripts/validate-mode-registry.ts
 
 Rules:
 - Mode metadata registry (v73b) is the source of truth for mode definitions.
-- Mode Registry Validator (v73c) must pass before mode-dependent UI added.
-- Human Mode: summary/overview only.
-- Evidence Mode: full evidence panels. Default and QA-recommended.
-- Debug Mode: raw IDs, registry internals, validator outputs.
-- No runtime mode toggle without explicit contract.
-- No evidence hiding in any mode.
+- Mode Registry Validator (v73c) must pass before mode-dependent UI is added.
+- Human Mode: summary/overview only. Evidence Mode: full evidence panels. Debug Mode: raw IDs and registry internals.
 
 ---
 
@@ -250,36 +190,47 @@ Rules:
 
 Primary:
 ```
-src/control-plane/command-deck/
-src/control-plane/perspectives/
+src/control-plane/command-deck/*
+src/control-plane/perspectives/*
 docs/control-plane/contracts/COMMAND_DECK_AND_HOTKEY_REGISTRY_CONTRACT.md
 docs/control-plane/contracts/PERSPECTIVE_SYSTEM_CONTRACT.md
+docs/control-plane/contracts/GRAPH_CONTROL_PLANE_NAVIGATION_CONTRACT.md
 ```
 
 Rules:
 - Command Deck is read-only metadata unless explicitly promoted.
 - No command execution.
-- No new hotkeys without Hotkey Registry approval.
+- No new hotkeys without registry approval.
 - Perspective System is read-only metadata unless explicitly promoted.
-- No perspective save/load/switch without storage contract.
 
 ---
 
-## Theme Workshop Security
+## Theme Workshop Security (Lattica — deferred)
+
+The Lattica Theme Workshop security packet is **archived** at the operator level pending v88+ workshop work. No active codebase docs reference it. When workshop work resumes, the archived packet returns to `docs/security/`.
+
+Until then, **no theme-defined commands, scripts, postinstall hooks, remote URLs, executable assets, or arbitrary workshop downloads.**
+
+Only future Lattica-generated, signed, schema-valid, provenance-attested theme bundles will be permitted to enter the trusted installation path. Until that contract lands, all theme content stays locally authored.
+
+---
+
+## Visual Grammar Engine (design-locked)
 
 Primary:
 ```
-docs/security/
+docs/visual-grammar-engine/VGE_OVERVIEW_AND_TERMS.md
+docs/visual-grammar-engine/VGE_GRAMMAR_HANDLE_AND_LENS.md
+docs/visual-grammar-engine/VGE_SIGNAL_LOOM.md
+docs/visual-grammar-engine/VGE_ASSET_AND_TOKENS.md
+docs/visual-grammar-engine/VGE_DIALECT_AND_SAFETY.md
+docs/visual-grammar-engine/VGE_UI_AND_POSITIONING.md
+docs/visual-grammar-engine/VGE_ROADMAP.md
 ```
 
-Core rule:
-```
-Only Lattica-generated, signed, schema-valid, provenance-attested
-theme bundles may enter the trusted installation path.
-```
+Status: design-locked / docs-only. No runtime implementation authorized. Implementation gated on Source Adapter OS Reconnect Contract (v74), Synthetic Data Fixtures v0 (v75), and other prerequisites.
 
-No theme-defined commands, scripts, postinstall hooks, remote URLs,
-executable assets, or arbitrary workshop downloads.
+Shipping precursors exist for several VGE concepts: Grammar Lens (`docs/grammar-lens/`), Asset Bank (`src/themes/assetRegistry.ts` empty bank), Visual Handles (`docs/handleset/`), Theme Tokens (three-tier model in `docs/theme/`).
 
 ---
 
@@ -287,31 +238,35 @@ executable assets, or arbitrary workshop downloads.
 
 Primary:
 ```
-docs/source-adapter/
-src/source-adapter/         (v74b — not yet implemented)
-scripts/validate-source-adapters.ts  (v74b — not yet implemented)
+docs/source-adapter/SOURCE_ADAPTER_OS_CONTRACT.md
+docs/source-adapter/SOURCE_ADAPTER_OS_OVERVIEW.md
+docs/source-adapter/NORMALIZED_SOURCE_GRAPH_SCHEMA.md
+docs/source-adapter/INGESTION_SAFETY_AND_QA.md
+docs/source-adapter/SOURCE_ADAPTER_CATALOG.md
+docs/source-adapter/SOURCE_ADAPTER_ROADMAP.md
+docs/source-adapter/TRANSLATION_SET_MODEL.md
+docs/source-adapter/WEBSITE_URL_ADAPTER_V0.md
 ```
 
 Rules:
-- No runtime source ingestion without explicit contract.
-- Local-first operation. No unapproved network transmission.
-- No secret/token leakage. No parent-directory wandering.
+- Local-first operation, no unapproved network transmission.
+- No secret/token leakage.
+- User-controlled workspace scope.
+- No parent-directory wandering.
 - No auto-execution of project commands.
-- Audit logs required for all source ingestion.
-- SOURCE_ADAPTER_OS_CONTRACT.md (v74a) must be accepted before
-  any adapter implementation begins.
+- Audit logs for source ingestion.
+- Do not mutate the graph renderer directly from source events.
 
 ---
 
 ## Full Forbidden Boundary List
 
-The following require an explicit new contract before any implementation.
+The following capabilities require an explicit new contract before any implementation. No exceptions.
 
 **Graph / Renderer:**
 - Sigma/renderer mutation of any kind
-- Graph physics, camera, or filter behavior changes without contract
+- Graph physics, camera, or filter behavior changes
 - Node/edge/canvas styling
-- 3D rendering layer implementation
 
 **Audio:**
 - Microphone access or any Web Audio input
@@ -320,25 +275,19 @@ The following require an explicit new contract before any implementation.
 - Music-reactive visual behavior
 
 **Motion:**
-- Animation, pulse, shimmer, or flash (any frequency) without Safety gate
+- Animation, pulse, shimmer, or flash (any frequency)
 - Strobe or rapid flicker
 - Camera shake
 
 **Theme / Assets:**
-- CSS variable writes
-- New canonical token promotion
+- CSS variable writes outside the override storage layer
+- New canonical token promotion outside the promotion process
 - Theme pack installation or download execution
 - Executable theme assets of any kind
 
-**Grammar Lens / Overlay:**
-- Editing contract truth, evidence status, or QA state via overlay
-- Applying overlay changes to inactive rendering layers without
-  cross-layer override cache contract
-- Global element type updates without GLOBAL_ELEMENT_UPDATE_CONTRACT
-
 **System:**
 - Command execution
-- Storage/persistence beyond what is explicitly contracted
+- Storage/persistence (beyond what is explicitly contracted)
 - Remote imports or external URL loading
 - Arbitrary JavaScript injection
 
@@ -348,10 +297,6 @@ The following require an explicit new contract before any implementation.
 - Treating fallback advisory as current-pass evidence
 - Manual DevTools JavaScript as primary evidence
 
-**Future Concepts (no implementation without explicit contract):**
-- VR implementation of any kind
-- Agent familiar system
-- Memory Palace sidecar
-- Galaxy physics mode
-- Real audio input / microphone
-- Cross-layer active rendering
+---
+
+*Stale doc paths from pre-rehaul docs (`docs/theme-system/`, `docs/system-index/`, `docs/modes/`, `docs/control-plane/qa/BACKLOG_POLICY.md`, `docs/security/lattica_theme_workshop_security_packet/`) have been corrected to current locations. v86a-era docs added (Source Adapter OS, Visual Grammar Engine cluster, three-tier token model).*

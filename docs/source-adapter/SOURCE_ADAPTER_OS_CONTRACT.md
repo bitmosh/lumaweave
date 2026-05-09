@@ -5,15 +5,22 @@ type: contract
 status: accepted
 version: v74a
 domain: source-adapter
-cluster: green
+cluster: lime
 agent_readable: true
 include_in_self_graph: true
-last_updated: v74a
+last_updated: 2026-05-09
 depends_on:
   - policy.ingestion.safety.qa
   - schema.source.graph.normalized
   - policy.source.of.truth
-tags: [source-adapter, OS, contract, foundation, lifecycle, safety, accepted]
+tags:
+  - source-adapter
+  - OS
+  - contract
+  - foundation
+  - lifecycle
+  - safety
+  - accepted
 ---
 
 # Source Adapter OS Foundation Contract

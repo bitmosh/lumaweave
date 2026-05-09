@@ -5,14 +5,21 @@ type: manual
 status: accepted
 version: v73c
 domain: layout
-cluster: gold
+cluster: stone
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 governs:
   - src/app/AppShell.tsx
   - src/control-plane/panels/DockLayout.tsx
-tags: [layout, cockpit, overview, rails, viewport, topbar, accepted]
+tags:
+  - layout
+  - cockpit
+  - overview
+  - rails
+  - viewport
+  - topbar
+  - accepted
 ---
 
 # Cockpit Layout Overview

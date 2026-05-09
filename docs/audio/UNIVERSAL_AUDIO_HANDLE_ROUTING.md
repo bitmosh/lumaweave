@@ -5,20 +5,28 @@ type: contract
 status: accepted
 version: v73c
 domain: audio
-cluster: green
+cluster: ember
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 depends_on:
   - contract.audio.reactivity
   - contract.music.reactive.mapping
   - contract.audio.source.system
   - contract.motion.safety
-related:
+tags:
+  - audio
+  - reactivity
+  - handles
+  - signal-loom
+  - universal
+  - routing
+  - physics
+  - grammar
+references:
   - system.physics.dialects
   - architecture.rendering.layers
   - vge.signal.loom
-tags: [audio, reactivity, handles, signal-loom, universal, routing, physics, grammar]
 ---
 
 # Universal Audio Handle Routing

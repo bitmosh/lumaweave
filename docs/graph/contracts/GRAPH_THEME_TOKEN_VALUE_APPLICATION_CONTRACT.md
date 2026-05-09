@@ -6,16 +6,24 @@ status: accepted
 version: v57
 domain: graph
 subdomain: contracts
-cluster: blue
+cluster: azure
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 depends_on:
   - contract.graph.theme.application
 governs:
   - src/themes/themeTokenPaths.ts
   - src/themes/applyTheme.ts
-tags: [graph, theme, token, value, application, contract, accepted, v57]
+tags:
+  - graph
+  - theme
+  - token
+  - value
+  - application
+  - contract
+  - accepted
+  - v57
 ---
 
 # Graph Theme Token Value Application Contract

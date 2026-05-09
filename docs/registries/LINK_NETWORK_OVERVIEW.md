@@ -5,10 +5,10 @@ type: overview
 status: current
 version: v86a
 domain: registries
-cluster: blue
+cluster: slate
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-08
+last_updated: 2026-05-09
 governs:
   - src/control-plane/handles/handleset.registry.ts
   - src/control-plane/contracts/controlSurfaceContract.registry.ts
@@ -29,7 +29,13 @@ references:
   - link.network.layer.4.gaps
   - link.network.naming.drift
   - registry.inventory
-tags: [link-network, registries, four-layer, governance, v86a, vP-Registry-Y]
+tags:
+  - link-network
+  - registries
+  - four-layer
+  - governance
+  - v86a
+  - vP-Registry-Y
 ---
 
 # Link Network Overview

@@ -5,14 +5,21 @@ type: manual
 status: accepted
 version: v73c
 domain: source-adapter
-cluster: green
+cluster: lime
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 depends_on:
   - system.source.adapter.os
   - schema.source.graph.normalized
-tags: [source-adapter, website, URL, crawler, adapter, v0, accepted]
+tags:
+  - source-adapter
+  - website
+  - URL
+  - crawler
+  - adapter
+  - v0
+  - accepted
 ---
 
 # Website URL Adapter v0

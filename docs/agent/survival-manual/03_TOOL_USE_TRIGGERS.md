@@ -3,7 +3,7 @@ id: agent.survival.manual.tool.use.triggers
 title: Tool Use Triggers
 type: manual
 status: current
-cluster: purple
+cluster: violet
 domain: agent
 subdomain: survival-manual
 agent_readable: true
@@ -16,7 +16,14 @@ references:
   - agent.survival.manual.debugging.lenses
   - agent.tooling.tool.permission.policy
   - agent.tooling.bandit.toolbelt.architecture
-tags: [agent, survival-manual, tools, mcp, playwright, context7, sequential-thinking]
+tags:
+  - agent
+  - survival-manual
+  - tools
+  - mcp
+  - playwright
+  - context7
+  - sequential-thinking
 ---
 
 # Tool Use Triggers

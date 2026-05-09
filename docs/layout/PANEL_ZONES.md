@@ -5,13 +5,20 @@ type: manual
 status: accepted
 version: v73c
 domain: layout
-cluster: gold
+cluster: stone
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-related:
+last_updated: 2026-05-09
+tags:
+  - layout
+  - panels
+  - zones
+  - left-rail
+  - right-rail
+  - viewport
+  - accepted
+references:
   - layout.cockpit.overview
-tags: [layout, panels, zones, left-rail, right-rail, viewport, accepted]
 ---
 
 # Panel Zones

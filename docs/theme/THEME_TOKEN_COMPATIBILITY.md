@@ -8,7 +8,7 @@ domain: theme
 cluster: gold
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-08
+last_updated: 2026-05-09
 governs:
   - src/themes/themeTokenGovernance.ts
 references:
@@ -19,7 +19,13 @@ references:
   - theme.mapping.panel.entry.contract
   - asset.bank
   - visual.grammar.engine
-tags: [theme, tokens, compatibility, governance, invariants, v86a]
+tags:
+  - theme
+  - tokens
+  - compatibility
+  - governance
+  - invariants
+  - v86a
 ---
 
 # Theme Token Compatibility

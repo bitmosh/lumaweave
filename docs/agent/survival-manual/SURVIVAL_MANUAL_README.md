@@ -3,7 +3,7 @@ id: agent.survival.manual.readme
 title: LumaWeave Coding Survival Manual
 type: manual
 status: current
-cluster: purple
+cluster: violet
 domain: agent
 subdomain: survival-manual
 agent_readable: true
@@ -19,7 +19,11 @@ references:
   - agent.survival.manual.stop.conditions
   - agent.survival.manual.prompt.blocks
   - agent.survival.manual.operating.loop
-tags: [agent, survival-manual, readme, operating-playbook]
+tags:
+  - agent
+  - survival-manual
+  - readme
+  - operating-playbook
 ---
 
 # LumaWeave Coding Survival Manual

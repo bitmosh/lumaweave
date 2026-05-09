@@ -5,13 +5,19 @@ type: policy
 status: accepted
 version: v73c
 domain: source-adapter
-cluster: green
+cluster: lime
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 depends_on:
   - system.source.adapter.os
-tags: [source-adapter, ingestion, safety, QA, policy, accepted]
+tags:
+  - source-adapter
+  - ingestion
+  - safety
+  - QA
+  - policy
+  - accepted
 ---
 
 # Ingestion Safety and QA

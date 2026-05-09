@@ -2,13 +2,13 @@
 id: vge.signal.loom
 title: Visual Grammar Engine — Signal Loom Routing Model
 type: concept
-status: design-locked
+status: concept
 version: v86a
 domain: visual-grammar-engine
 cluster: teal
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-08
+last_updated: 2026-05-09
 references:
   - vge.overview.and.terms
   - vge.grammar.handle.and.lens
@@ -17,7 +17,13 @@ references:
   - music.reactive.mapping.contract
   - audio.source.system.contract
   - motion.safety.contract
-tags: [vge, signal-loom, routing, signals, future, docs-only]
+tags:
+  - vge
+  - signal-loom
+  - routing
+  - signals
+  - future
+  - docs-only
 ---
 
 # Visual Grammar Engine — Signal Loom Routing Model

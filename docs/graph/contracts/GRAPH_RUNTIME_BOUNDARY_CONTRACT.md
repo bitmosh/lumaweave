@@ -6,11 +6,18 @@ status: accepted
 version: v45
 domain: graph
 subdomain: contracts
-cluster: blue
+cluster: azure
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-tags: [graph, sigma, runtime, boundary, mutation, contract, accepted]
+last_updated: 2026-05-09
+tags:
+  - graph
+  - sigma
+  - runtime
+  - boundary
+  - mutation
+  - contract
+  - accepted
 ---
 
 # Graph Runtime Boundary Contract

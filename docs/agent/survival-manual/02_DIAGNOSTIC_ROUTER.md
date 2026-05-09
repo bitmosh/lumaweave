@@ -3,7 +3,7 @@ id: agent.survival.manual.diagnostic.router
 title: Diagnostic Router
 type: manual
 status: current
-cluster: purple
+cluster: violet
 domain: agent
 subdomain: survival-manual
 agent_readable: true
@@ -16,7 +16,12 @@ references:
   - agent.survival.manual.tool.use.triggers
   - agent.survival.manual.failure.report.template
   - agent.survival.manual.stop.conditions
-tags: [agent, survival-manual, diagnostics, routing, decision-tree]
+tags:
+  - agent
+  - survival-manual
+  - diagnostics
+  - routing
+  - decision-tree
 ---
 
 # Diagnostic Router

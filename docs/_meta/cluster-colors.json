@@ -1,0 +1,57 @@
+{
+  "$schema_version": 1,
+  "description": "Single source of truth for LumaWeave doc cluster color values. Frontmatter cluster: values reference these names; the hex values resolve to actual rendered colors in consumer surfaces (radial inspector, doc nav, future customization UI).",
+  "naming": "Color names are descriptive (gold, azure) not semantic (theme, graph). This decouples color choice from concept naming so renaming a domain does not require a color migration. The 'domain' field on each entry is informational only.",
+  "customization": {
+    "today": "Edit this file directly to change color values. Frontmatter does not change.",
+    "soon": "loadClusterColors() utility + CSS custom property bridge (--cluster-<name>).",
+    "later": "User-facing color picker UI; per-user overrides via theme override storage; per-theme cluster color variants."
+  },
+  "palette": {
+    "gold": {
+      "hex": "#FFB347",
+      "domain": "theme",
+      "description": "Visual identity, theme system, design tokens, presets, override storage"
+    },
+    "azure": {
+      "hex": "#3D8BD8",
+      "domain": "graph",
+      "description": "Graph rendering, Sigma, layouts, physics, graph contracts, handleset"
+    },
+    "violet": {
+      "hex": "#8B5CF6",
+      "domain": "agent",
+      "description": "Agent brain, protocols, leveling, tooling, survival manual, operating policies"
+    },
+    "teal": {
+      "hex": "#14B8A6",
+      "domain": "visual-grammar-engine",
+      "description": "Visual Grammar Engine, signal loom, grammar lens, dialect, asset bank"
+    },
+    "lime": {
+      "hex": "#84CC16",
+      "domain": "source-adapter",
+      "description": "Source adapters, data ingestion, normalized schemas, translation sets"
+    },
+    "slate": {
+      "hex": "#64748B",
+      "domain": "control-plane",
+      "description": "Mission Control, QA, advisory, command deck, system index, registries"
+    },
+    "stone": {
+      "hex": "#A8A29E",
+      "domain": "layout",
+      "description": "Cockpit shell, panels, tiles, lens navigation, top bar"
+    },
+    "ember": {
+      "hex": "#D8541F",
+      "domain": "audio",
+      "description": "Audio reactivity, music mapping, audio source system, universal audio routing"
+    },
+    "crimson": {
+      "hex": "#DC2626",
+      "domain": "accessibility",
+      "description": "Motion safety, epilepsy guard, sensory accessibility, future cognitive load"
+    }
+  }
+}

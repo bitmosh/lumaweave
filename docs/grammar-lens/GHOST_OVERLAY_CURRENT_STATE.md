@@ -5,19 +5,25 @@ type: manual
 status: partial
 version: v75
 domain: grammar-lens
-cluster: blue
+cluster: teal
 agent_readable: true
 include_in_self_graph: true
-last_updated: v75
+last_updated: 2026-05-09
 depends_on:
   - contract.graph.runtime.boundary
   - contract.grammar.lens
   - contract.cursor.inspector
-related:
-  - contract.cross.layer.override.cache
 governs:
   - src/[overlay implementation — confirm path with user]
-tags: [grammar-lens, overlay, ghost, current-state, partial, in-development]
+tags:
+  - grammar-lens
+  - overlay
+  - ghost
+  - current-state
+  - partial
+  - in-development
+references:
+  - contract.cross.layer.override.cache
 ---
 
 # Ghost Overlay — Current Implementation State

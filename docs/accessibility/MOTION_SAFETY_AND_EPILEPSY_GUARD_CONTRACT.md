@@ -5,13 +5,21 @@ type: contract
 status: accepted
 version: v59
 domain: accessibility
-cluster: green
+cluster: crimson
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 governs:
   - src/accessibility/motionSafetyRegistry.ts
-tags: [motion, safety, epilepsy, guard, accessibility, contract, accepted, v59]
+tags:
+  - motion
+  - safety
+  - epilepsy
+  - guard
+  - accessibility
+  - contract
+  - accepted
+  - v59
 ---
 
 # Motion Safety and Epilepsy Guard Contract

@@ -6,14 +6,21 @@ status: accepted
 version: v32
 domain: control-plane
 subdomain: contracts
-cluster: blue
+cluster: slate
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 governs:
   - src/control-plane/commands/command-registry.ts
   - src/control-plane/command-deck/CommandDeckPanel.tsx
-tags: [command, deck, hotkey, registry, contract, accepted, v32]
+tags:
+  - command
+  - deck
+  - hotkey
+  - registry
+  - contract
+  - accepted
+  - v32
 ---
 
 # Command Deck and Hotkey Registry Contract

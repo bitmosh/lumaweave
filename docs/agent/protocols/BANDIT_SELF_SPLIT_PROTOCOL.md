@@ -5,7 +5,7 @@ type: protocol
 status: accepted
 domain: agent
 subdomain: protocols
-cluster: purple
+cluster: violet
 agent_readable: true
 include_in_self_graph: true
 last_updated: 2026-05-09

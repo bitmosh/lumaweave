@@ -3,7 +3,7 @@ id: agent.survival.manual.failure.report.template
 title: Failure Report Template
 type: manual
 status: current
-cluster: purple
+cluster: violet
 domain: agent
 subdomain: survival-manual
 agent_readable: true
@@ -15,7 +15,12 @@ references:
   - agent.survival.manual.troubleshooting.decision.matrix
   - agent.survival.manual.diagnostic.router
   - agent.survival.manual.operating.loop
-tags: [agent, survival-manual, failure-report, template, evidence]
+tags:
+  - agent
+  - survival-manual
+  - failure-report
+  - template
+  - evidence
 ---
 
 # Failure Report Template

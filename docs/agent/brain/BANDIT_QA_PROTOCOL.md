@@ -5,7 +5,7 @@ type: protocol
 status: current
 domain: agent
 subdomain: qa
-cluster: purple
+cluster: violet
 agent_readable: true
 include_in_self_graph: false
 last_updated: 2026-05-09

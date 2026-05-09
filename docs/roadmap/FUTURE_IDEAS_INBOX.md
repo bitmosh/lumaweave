@@ -2,14 +2,19 @@
 id: inbox.future.ideas
 title: Future Ideas Inbox
 type: manual
-status: active
+status: current
 version: v73c
 domain: roadmap
-cluster: teal
+cluster: violet
 agent_readable: true
 include_in_self_graph: false
-last_updated: v73c
-tags: [future, ideas, inbox, backlog, concept]
+last_updated: 2026-05-09
+tags:
+  - future
+  - ideas
+  - inbox
+  - backlog
+  - concept
 ---
 
 # Future Ideas Inbox

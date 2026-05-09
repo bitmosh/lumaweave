@@ -6,11 +6,17 @@ status: accepted
 version: v68
 domain: control-plane
 subdomain: contracts
-cluster: blue
+cluster: slate
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-tags: [graph, control-plane, navigation, contract, accepted, v68]
+last_updated: 2026-05-09
+tags:
+  - graph
+  - control-plane
+  - navigation
+  - contract
+  - accepted
+  - v68
 ---
 
 # Graph Control Plane Navigation Contract

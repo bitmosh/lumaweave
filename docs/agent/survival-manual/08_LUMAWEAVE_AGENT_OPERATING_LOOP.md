@@ -3,7 +3,7 @@ id: agent.survival.manual.operating.loop
 title: LumaWeave Agent Operating Loop
 type: manual
 status: current
-cluster: purple
+cluster: violet
 domain: agent
 subdomain: survival-manual
 agent_readable: true
@@ -18,7 +18,12 @@ references:
   - agent.survival.manual.stop.conditions
   - policy.session.and.stack
   - policy.qa.and.playwright
-tags: [agent, survival-manual, operating-loop, behavior, evidence]
+tags:
+  - agent
+  - survival-manual
+  - operating-loop
+  - behavior
+  - evidence
 ---
 
 # LumaWeave Agent Operating Loop

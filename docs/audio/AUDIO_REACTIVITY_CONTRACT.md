@@ -5,15 +5,22 @@ type: contract
 status: accepted
 version: v61
 domain: audio
-cluster: green
+cluster: ember
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 depends_on:
   - contract.motion.safety
 governs:
   - src/audio/syntheticAudioSignal.ts
-tags: [audio, reactivity, synthetic, signal, contract, accepted, v61]
+tags:
+  - audio
+  - reactivity
+  - synthetic
+  - signal
+  - contract
+  - accepted
+  - v61
 ---
 
 # Audio Reactivity Contract

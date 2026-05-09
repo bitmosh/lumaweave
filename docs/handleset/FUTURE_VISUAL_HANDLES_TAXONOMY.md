@@ -5,13 +5,20 @@ type: manual
 status: concept
 version: v73c
 domain: handleset
-cluster: teal
+cluster: azure
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-related:
+last_updated: 2026-05-09
+tags:
+  - handleset
+  - visual
+  - handles
+  - taxonomy
+  - future
+  - concept
+  - VGE
+references:
   - vge.grammar.handle.and.lens
-tags: [handleset, visual, handles, taxonomy, future, concept, VGE]
 ---
 
 # Future Visual Handles Taxonomy

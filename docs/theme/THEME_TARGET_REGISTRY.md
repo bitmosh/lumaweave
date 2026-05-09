@@ -8,7 +8,7 @@ domain: theme
 cluster: gold
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-08
+last_updated: 2026-05-09
 governs:
   - src/themes/themeTargetRegistry.ts
 references:
@@ -18,7 +18,12 @@ references:
   - theme.token.compatibility
   - link.network.layer.2
   - link.network.layer.3
-tags: [theme, target, registry, surfaces, v86a]
+tags:
+  - theme
+  - target
+  - registry
+  - surfaces
+  - v86a
 ---
 
 # Theme Target Registry

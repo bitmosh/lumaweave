@@ -3,7 +3,7 @@ id: brain.pre.design.snapshot.v85e
 title: Pre-Design Snapshot — v85e
 type: snapshot
 status: complete
-cluster: purple
+cluster: violet
 domain: agent
 subdomain: brain
 agent_readable: true

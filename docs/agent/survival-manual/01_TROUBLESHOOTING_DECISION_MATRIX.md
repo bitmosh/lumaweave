@@ -3,7 +3,7 @@ id: agent.survival.manual.troubleshooting.decision.matrix
 title: Troubleshooting Decision Matrix
 type: manual
 status: current
-cluster: purple
+cluster: violet
 domain: agent
 subdomain: survival-manual
 agent_readable: true
@@ -18,7 +18,12 @@ references:
   - agent.survival.manual.failure.report.template
   - agent.survival.manual.stop.conditions
   - agent.survival.manual.operating.loop
-tags: [agent, survival-manual, troubleshooting, classification, failure-types]
+tags:
+  - agent
+  - survival-manual
+  - troubleshooting
+  - classification
+  - failure-types
 ---
 
 # Troubleshooting Decision Matrix

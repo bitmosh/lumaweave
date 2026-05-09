@@ -6,15 +6,21 @@ status: accepted
 version: v49
 domain: graph
 subdomain: contracts
-cluster: blue
+cluster: azure
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 depends_on:
   - contract.graph.first.runtime.mutation
 governs:
   - src/graph/graphVisualThemeMappingRegistry.ts
-tags: [graph, theme, mapping, contract, accepted, v49]
+tags:
+  - graph
+  - theme
+  - mapping
+  - contract
+  - accepted
+  - v49
 ---
 
 # Graph Visual Theme Mapping Contract

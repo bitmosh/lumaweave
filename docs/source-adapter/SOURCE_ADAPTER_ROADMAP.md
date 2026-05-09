@@ -5,11 +5,16 @@ type: roadmap
 status: accepted
 version: v73c
 domain: source-adapter
-cluster: green
+cluster: lime
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-tags: [source-adapter, roadmap, phases, v74, accepted]
+last_updated: 2026-05-09
+tags:
+  - source-adapter
+  - roadmap
+  - phases
+  - v74
+  - accepted
 ---
 
 # Source Adapter OS Roadmap

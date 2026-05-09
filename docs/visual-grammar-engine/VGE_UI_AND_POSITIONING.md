@@ -2,13 +2,13 @@
 id: vge.ui.and.positioning
 title: Visual Grammar Engine — UI Layout, Mode Presets & Product Positioning
 type: concept
-status: design-locked
+status: concept
 version: v86a
 domain: visual-grammar-engine
 cluster: teal
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-08
+last_updated: 2026-05-09
 references:
   - vge.overview.and.terms
   - vge.dialect.and.safety
@@ -18,7 +18,14 @@ references:
   - tile.workspace.system
   - human.mode.evidence.mode.contract
   - theme.preset.model
-tags: [vge, ui, layout, modes, positioning, future, docs-only]
+tags:
+  - vge
+  - ui
+  - layout
+  - modes
+  - positioning
+  - future
+  - docs-only
 ---
 
 # Visual Grammar Engine — UI Layout, Mode Presets & Product Positioning

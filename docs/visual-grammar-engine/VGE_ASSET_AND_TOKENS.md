@@ -2,13 +2,13 @@
 id: vge.asset.and.tokens
 title: Visual Grammar Engine — Asset Bank & Theme Token Compatibility
 type: concept
-status: design-locked
+status: concept
 version: v86a
 domain: visual-grammar-engine
 cluster: teal
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-08
+last_updated: 2026-05-09
 references:
   - vge.overview.and.terms
   - vge.grammar.handle.and.lens
@@ -19,7 +19,13 @@ references:
   - theme.system.overview
   - handleset.active
   - handleset.planned
-tags: [vge, asset-bank, tokens, compatibility, future, docs-only]
+tags:
+  - vge
+  - asset-bank
+  - tokens
+  - compatibility
+  - future
+  - docs-only
 ---
 
 # Visual Grammar Engine — Asset Bank & Theme Token Compatibility

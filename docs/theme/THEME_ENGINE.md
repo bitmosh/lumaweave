@@ -8,7 +8,7 @@ domain: theme
 cluster: gold
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-08
+last_updated: 2026-05-09
 governs:
   - src/themes/applyTheme.ts
   - src/themes/themeTokenGovernance.ts
@@ -18,7 +18,12 @@ references:
   - theme.preset.model
   - theme.token.compatibility
   - theme.override.storage.contract
-tags: [theme, engine, runtime, applyTheme, v86a]
+tags:
+  - theme
+  - engine
+  - runtime
+  - applyTheme
+  - v86a
 ---
 
 # Theme Engine

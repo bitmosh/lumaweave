@@ -2,13 +2,13 @@
 id: vge.overview.and.terms
 title: Visual Grammar Engine — Overview & Core Terms
 type: concept
-status: design-locked
+status: concept
 version: v86a
 domain: visual-grammar-engine
 cluster: teal
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-08
+last_updated: 2026-05-09
 references:
   - vge.grammar.handle.and.lens
   - vge.signal.loom
@@ -21,7 +21,13 @@ references:
   - grammar.lens.contract
   - cursor.inspector.contract
   - link.network.overview
-tags: [vge, visual-grammar-engine, overview, terms, future, docs-only]
+tags:
+  - vge
+  - visual-grammar-engine
+  - overview
+  - terms
+  - future
+  - docs-only
 ---
 
 # Visual Grammar Engine — Overview & Core Terms

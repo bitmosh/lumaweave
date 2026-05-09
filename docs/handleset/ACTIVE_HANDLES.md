@@ -5,14 +5,20 @@ type: registry
 status: accepted
 version: v73c
 domain: handleset
-cluster: gold
+cluster: azure
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 governs:
   - src/control-plane/contracts/controlSurfaceContract.registry.ts
   - src/control-plane/handles/handleset.registry.ts
-tags: [handleset, active, controls, handles, runtime, accepted]
+tags:
+  - handleset
+  - active
+  - controls
+  - handles
+  - runtime
+  - accepted
 ---
 
 # Active Handles

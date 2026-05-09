@@ -6,13 +6,20 @@ status: accepted
 version: v71a
 domain: control-plane
 subdomain: contracts
-cluster: blue
+cluster: slate
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 tested_by:
   - tests/e2e/contract-registry.spec.ts
-tags: [contract, code, trace, matrix, traceability, accepted, v71a]
+tags:
+  - contract
+  - code
+  - trace
+  - matrix
+  - traceability
+  - accepted
+  - v71a
 ---
 
 # Contract-to-Code Trace Matrix

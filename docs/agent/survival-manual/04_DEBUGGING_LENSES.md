@@ -3,7 +3,7 @@ id: agent.survival.manual.debugging.lenses
 title: Debugging Lenses
 type: manual
 status: current
-cluster: purple
+cluster: violet
 domain: agent
 subdomain: survival-manual
 agent_readable: true
@@ -15,7 +15,12 @@ references:
   - agent.survival.manual.troubleshooting.decision.matrix
   - agent.survival.manual.diagnostic.router
   - agent.survival.manual.tool.use.triggers
-tags: [agent, survival-manual, debugging, lenses, reasoning]
+tags:
+  - agent
+  - survival-manual
+  - debugging
+  - lenses
+  - reasoning
 ---
 
 # Debugging Lenses

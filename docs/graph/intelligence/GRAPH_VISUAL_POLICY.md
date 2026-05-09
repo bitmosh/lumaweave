@@ -6,10 +6,10 @@ status: accepted
 version: v73c
 domain: graph
 subdomain: intelligence
-cluster: blue
+cluster: azure
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 depends_on:
   - contract.graph.runtime.boundary
   - contract.graph.view.element.registry
@@ -17,7 +17,14 @@ governs:
   - src/graph/visual/graphStylePolicy.ts
   - src/graph/visual/graphLabelPolicy.ts
   - src/graph/visual/graphVisualTokens.ts
-tags: [graph, visual, policy, nodes, edges, labels, accepted]
+tags:
+  - graph
+  - visual
+  - policy
+  - nodes
+  - edges
+  - labels
+  - accepted
 ---
 
 # Graph Visual Policy

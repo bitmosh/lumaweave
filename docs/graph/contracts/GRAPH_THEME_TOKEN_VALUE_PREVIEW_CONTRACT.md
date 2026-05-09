@@ -6,13 +6,20 @@ status: accepted
 version: v53
 domain: graph
 subdomain: contracts
-cluster: blue
+cluster: azure
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 depends_on:
   - contract.graph.visual.theme.mapping
-tags: [graph, theme, token, preview, contract, accepted, v53]
+tags:
+  - graph
+  - theme
+  - token
+  - preview
+  - contract
+  - accepted
+  - v53
 ---
 
 # Graph Theme Token Value Preview Contract

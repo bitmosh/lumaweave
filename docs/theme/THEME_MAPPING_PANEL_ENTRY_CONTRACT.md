@@ -8,7 +8,7 @@ domain: theme
 cluster: gold
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-08
+last_updated: 2026-05-09
 references:
   - theme.system.overview
   - theme.target.registry
@@ -16,7 +16,15 @@ references:
   - theme.override.storage.contract
   - theme.token.compatibility
   - link.network.overview
-tags: [theme, mapping, panel, entry, contract, v28, v34b, v86a]
+tags:
+  - theme
+  - mapping
+  - panel
+  - entry
+  - contract
+  - v28
+  - v34b
+  - v86a
 ---
 
 # Theme Mapping Panel Entry Contract

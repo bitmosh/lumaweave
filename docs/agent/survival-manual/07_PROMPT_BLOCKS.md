@@ -3,7 +3,7 @@ id: agent.survival.manual.prompt.blocks
 title: Reusable Prompt Blocks
 type: manual
 status: current
-cluster: purple
+cluster: violet
 domain: agent
 subdomain: survival-manual
 agent_readable: true
@@ -16,7 +16,12 @@ references:
   - agent.survival.manual.tool.use.triggers
   - agent.survival.manual.stop.conditions
   - agent.survival.manual.failure.report.template
-tags: [agent, survival-manual, prompts, snippets, copy-paste]
+tags:
+  - agent
+  - survival-manual
+  - prompts
+  - snippets
+  - copy-paste
 ---
 
 # Reusable Prompt Blocks

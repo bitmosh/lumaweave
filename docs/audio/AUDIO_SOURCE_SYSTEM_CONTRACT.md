@@ -5,16 +5,22 @@ type: contract
 status: accepted
 version: v65
 domain: audio
-cluster: green
+cluster: ember
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 depends_on:
   - contract.audio.reactivity
   - contract.music.reactive.mapping
 governs:
   - src/audio/audioSourceRegistry.ts
-tags: [audio, source, system, contract, accepted, v65]
+tags:
+  - audio
+  - source
+  - system
+  - contract
+  - accepted
+  - v65
 ---
 
 # Audio Source System Contract

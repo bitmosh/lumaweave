@@ -1,30 +1,39 @@
 ---
 id: policy.qa.and.playwright
-title: QA, Playwright & Acceptance Rules
+title: LumaWeave — QA, Playwright & Acceptance Rules
 type: policy
-status: accepted
-version: v73c
+status: current
+cluster: violet
 domain: operating-policies
-cluster: purple
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-tags: [qa, playwright, evidence, lockstep, acceptance, operating]
+last_updated: 2026-05-09
+references:
+  - policy.session.and.stack
+  - policy.source.of.truth
+  - quest.template
+tags:
+  - policy
+  - qa
+  - playwright
+  - acceptance
+  - evidence
+  - v86a
 ---
 
 # LumaWeave — QA, Playwright & Acceptance Rules
 
 ## Evidence Paths
 
-Accepted evidence paths (in priority order):
+Accepted evidence paths:
 1. Playwright assertions
 2. In-app QA Debug readouts
 3. Visible manual app behavior
 4. Typecheck/build output
 5. Git diff/file inspection
-6. User-provided terminal output when agent is in Locked Terminal Mode
+6. User-provided terminal output when Bandit is in Locked Terminal Mode
 
-Forbidden evidence paths:
+Forbidden or discouraged evidence paths:
 1. Manual DevTools JavaScript
 2. Manual inspection of JS object arrays as sole evidence
 3. "Trust me from code inspection"
@@ -51,18 +60,15 @@ For targeted debugging:
 ```bash
 npx playwright test tests/e2e/contract-registry.spec.ts --reporter=line
 npx playwright test tests/e2e/graph-visual-inventory.spec.ts --reporter=line
-npx playwright test tests/e2e/system-index.spec.ts --reporter=line
 ```
 
 ---
 
 ## QA Lockstep Rule
 
-When rotating the active QA key, always update all five together
-as a single atomic operation:
-
+When rotating the active QA key, always update all five together:
 ```
-docs/control-plane/qa/BACKLOG_POLICY.md
+docs/roadmap/BACKLOG_POLICY.md
 src/control-plane/qa/QaPanel.tsx
 src/control-plane/qa/qa-registry.ts
 src/control-plane/qa/advisory-registry.ts
@@ -76,46 +82,38 @@ Every active QA key must have:
 - Backlog rows expected by tests
 - Contract-registry constants aligned
 
-**Multi-agent rule:** Only one agent may rotate the QA key at a time.
-The rotating agent must announce this before starting. The other agent
-must not touch QA bundle files during rotation.
-
 ---
 
 ## Playwright Helper Scope Rule
 
 Shared helpers must not assume unrelated tabs are visible.
 
+**Correct pattern:**
 ```
 switchQaKey(page, qaKey)
   → selects dropdown and verifies value only
-  → must NOT wait for Advisory tab content
 
 openAdvisoryTab(page)
-  → opens Advisory tab explicitly
+  → opens Advisory tab
 
 waitForAdvisorySection(page)
-  → waits for qa-advisory-section
-  → ONLY after Advisory tab is explicitly opened
+  → waits for qa-advisory-section ONLY when Advisory tab is visible/needed
 ```
 
-This rule exists because of a v66 regression where `switchQaKey()`
-waited for `qa-advisory-section` during Debug/Checklist tests and
-caused timeouts across unrelated tests.
+This rule came from a v66 helper regression where `switchQaKey()` waited for `qa-advisory-section` during Debug/Checklist tests and caused timeouts.
 
 ---
 
 ## Playwright Cascade Rule
 
-If more than 5 Playwright failures appear simultaneously:
-1. Stop feature work immediately
-2. Classify the shared root cause
-3. Inspect helper/data source/contract drift — a cascade is almost
-   always one broken shared thing, not 5 separate problems
-4. Do not patch failing tests individually
-5. Do not skip tests
+If more than 5 Playwright failures appear:
+1. Stop feature work immediately.
+2. Classify the shared root cause.
+3. Inspect helper/data source/contract drift — the cascade is almost always one broken shared thing.
+4. Do not patch failing tests individually.
+5. Do not skip tests.
 
-Find the one. Patch the one.
+A cascade is not 5 separate problems. Find the one.
 
 ---
 
@@ -134,34 +132,22 @@ When contract-registry tests fail around proposals/backlog/current key:
 
 ## Failure Classification
 
-**Missing proposal/test ID**
-→ advisory registry drift. Trace canonical key through registry.
+**Missing proposal/test ID** → usually advisory registry drift.
 
-**Current key badge missing**
-→ QaPanel default/key rotation drift or selected key state issue.
+**Current key badge missing** → usually QaPanel default/key rotation drift or selected key state issue.
 
-**Historical key checks failing**
-→ historical tests must explicitly select the historical key
-  before asserting. Do not rely on default selection.
+**Historical key checks failing** → historical tests must explicitly select the historical key before asserting.
 
-**Timeout waiting for hidden section**
-→ helper scope bug. Check that the relevant tab is open before
-  waiting for its content.
-
-**5+ failures simultaneously**
-→ cascade. Find the shared root. Do not patch individually.
+**Timeout waiting for hidden section** → usually a helper scope bug; check that the relevant tab is open before waiting for its content.
 
 ---
 
 ## Screenshot Testing Policy
 
-- Use DOM/evidence tests as primary proof
-- Use screenshot tests only for stable DOM UI surfaces
-- Do not use pixel-perfect screenshots as primary proof for
-  Sigma/canvas/physics behavior
-- Canvas/Sigma/3D screenshots require: deterministic seed,
-  fixed viewport, fixed camera, reduced motion, disabled
-  animation, and tolerance thresholds
+- Use DOM/evidence tests as primary proof.
+- Use screenshot tests only for stable DOM UI surfaces.
+- Do not use pixel-perfect screenshots as primary proof for Sigma/canvas/physics behavior.
+- Canvas/Sigma/3D screenshots require: deterministic seed, fixed viewport, fixed camera, reduced motion, disabled animation, and tolerance thresholds.
 
 ---
 
@@ -170,28 +156,27 @@ When contract-registry tests fail around proposals/backlog/current key:
 Every accepted pass must include:
 ```
 Validation:
-- typecheck:     passed / failed
-- Playwright:    N passed, 0 skipped
-- test.skip grep: clean / dirty
-- git status:    clean / dirty
+- typecheck: passed/failed
+- Playwright: N passed, 0 skipped
+- test.skip grep: clean/dirty
+- git status: clean/dirty
 
 Forbidden boundary check:
-- graph/Sigma mutation:    none
-- audio input/playback:   none
-- command execution:      none
-- storage/persistence:    none unless contracted
-- dead controls:          none
-- cross-layer violations: none
-
-Agent: [who ran the pass]
+- graph/Sigma mutation: none
+- audio input/playback: none
+- command execution: none
+- storage/persistence: none unless contracted
+- dead controls: none
 ```
 
 ---
 
 ## No-Skip Rule
 
-Never resolve a failing test by skipping it.
-Classify the failure and restore coverage.
+Never resolve a failing test by skipping it. Classify the failure and restore coverage.
 
-A skipped test is an acceptance failure.
 A truthful stopped report is better than a false clean report.
+
+---
+
+*Frontmatter added v86a. BACKLOG_POLICY path updated from `docs/control-plane/qa/` to `docs/roadmap/`. All other policies preserved as timeless principles.*

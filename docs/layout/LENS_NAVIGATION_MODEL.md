@@ -5,17 +5,26 @@ type: concept
 status: concept
 version: v73c
 domain: layout
-cluster: gold
+cluster: stone
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 depends_on:
   - system.tile.workspace
-related:
+tags:
+  - lenses
+  - navigation
+  - overview
+  - atlas
+  - evidence
+  - signal
+  - workshop
+  - mission
+  - layout
+references:
   - contract.cockpit.layout
   - system.physics.dialects
   - contract.human.evidence.debug.mode
-tags: [lenses, navigation, overview, atlas, evidence, signal, workshop, mission, layout]
 ---
 
 # Lens Navigation Model

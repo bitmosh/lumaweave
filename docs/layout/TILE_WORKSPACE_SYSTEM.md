@@ -5,16 +5,24 @@ type: concept
 status: concept
 version: v73c
 domain: layout
-cluster: gold
+cluster: stone
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 depends_on:
   - contract.cockpit.layout
-related:
+tags:
+  - tiles
+  - workspace
+  - layout
+  - movable
+  - snappable
+  - fullscreen
+  - panels
+  - widgets
+references:
   - contract.workspace.configuration
   - model.lens.navigation
-tags: [tiles, workspace, layout, movable, snappable, fullscreen, panels, widgets]
 ---
 
 # Tile Workspace System

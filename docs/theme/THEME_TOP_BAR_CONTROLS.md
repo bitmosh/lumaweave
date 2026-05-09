@@ -8,7 +8,7 @@ domain: theme
 cluster: gold
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-08
+last_updated: 2026-05-09
 governs:
   - src/app/AppShell.tsx
 references:
@@ -17,7 +17,12 @@ references:
   - theme.customization.roadmap
   - theme.override.storage.contract
   - link.network.layer.2
-tags: [theme, top-bar, controls, ui, v86a]
+tags:
+  - theme
+  - top-bar
+  - controls
+  - ui
+  - v86a
 ---
 
 # Theme Top Bar Controls

@@ -2,13 +2,13 @@
 id: vge.dialect.and.safety
 title: Visual Grammar Engine — Visual Dialect Presets & Safety/Schema Governance
 type: concept
-status: design-locked
+status: concept
 version: v86a
 domain: visual-grammar-engine
 cluster: teal
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-08
+last_updated: 2026-05-09
 references:
   - vge.overview.and.terms
   - vge.signal.loom
@@ -18,7 +18,14 @@ references:
   - audio.source.system.contract
   - theme.token.compatibility
   - graph.runtime.boundary.contract
-tags: [vge, dialect, safety, schema, governance, future, docs-only]
+tags:
+  - vge
+  - dialect
+  - safety
+  - schema
+  - governance
+  - future
+  - docs-only
 ---
 
 # Visual Grammar Engine — Visual Dialect Presets & Safety/Schema Governance

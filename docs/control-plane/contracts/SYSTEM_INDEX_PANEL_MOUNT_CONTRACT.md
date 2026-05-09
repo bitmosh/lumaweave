@@ -6,17 +6,24 @@ status: accepted
 version: v72d
 domain: control-plane
 subdomain: contracts
-cluster: blue
+cluster: slate
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 depends_on:
   - contract.system.index.registry
 governs:
   - src/control-plane/system-index/SystemIndexPanel.tsx
 tested_by:
   - tests/e2e/system-index.spec.ts
-tags: [system, index, panel, mount, contract, accepted, v72d]
+tags:
+  - system
+  - index
+  - panel
+  - mount
+  - contract
+  - accepted
+  - v72d
 ---
 
 # System Index Panel Mount Contract

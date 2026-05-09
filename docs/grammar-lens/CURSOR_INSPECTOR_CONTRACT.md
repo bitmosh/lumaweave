@@ -5,18 +5,24 @@ type: contract
 status: accepted
 version: v75
 domain: grammar-lens
-cluster: blue
+cluster: teal
 agent_readable: true
 include_in_self_graph: true
-last_updated: v75
+last_updated: 2026-05-09
 depends_on:
   - contract.grammar.lens
   - architecture.rendering.layers
   - contract.cross.layer.override.cache
-related:
+tags:
+  - grammar-lens
+  - cursor-inspector
+  - overlay
+  - ghost
+  - contract
+  - interaction
+references:
   - system.grammar.lens.current.state
   - policy.source.of.truth
-tags: [grammar-lens, cursor-inspector, overlay, ghost, contract, interaction]
 ---
 
 # Cursor Inspector Contract

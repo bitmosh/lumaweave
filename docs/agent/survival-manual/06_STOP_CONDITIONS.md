@@ -3,7 +3,7 @@ id: agent.survival.manual.stop.conditions
 title: Stop Conditions
 type: manual
 status: current
-cluster: purple
+cluster: violet
 domain: agent
 subdomain: survival-manual
 agent_readable: true
@@ -15,7 +15,12 @@ references:
   - agent.survival.manual.troubleshooting.decision.matrix
   - agent.survival.manual.diagnostic.router
   - agent.survival.manual.failure.report.template
-tags: [agent, survival-manual, stop-conditions, safety, scope-guard]
+tags:
+  - agent
+  - survival-manual
+  - stop-conditions
+  - safety
+  - scope-guard
 ---
 
 # Stop Conditions

@@ -5,13 +5,18 @@ type: registry
 status: accepted
 version: v73c
 domain: source-adapter
-cluster: green
+cluster: lime
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 depends_on:
   - system.source.adapter.os
-tags: [source-adapter, catalog, adapters, ingestion, accepted]
+tags:
+  - source-adapter
+  - catalog
+  - adapters
+  - ingestion
+  - accepted
 ---
 
 # Source Adapter Catalog

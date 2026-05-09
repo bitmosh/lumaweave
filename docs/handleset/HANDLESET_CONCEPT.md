@@ -5,14 +5,21 @@ type: manual
 status: accepted
 version: v73c
 domain: handleset
-cluster: gold
+cluster: azure
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 governs:
   - src/control-plane/handles/handleset.registry.ts
   - src/control-plane/contracts/controlSurfaceContract.registry.ts
-tags: [handleset, concept, controls, handles, active, planned, accepted]
+tags:
+  - handleset
+  - concept
+  - controls
+  - handles
+  - active
+  - planned
+  - accepted
 ---
 
 # Handleset Concept

@@ -8,7 +8,7 @@ domain: theme
 cluster: gold
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-08
+last_updated: 2026-05-09
 governs:
   - src/themes/themeOverrideStorage.ts
 references:
@@ -18,7 +18,16 @@ references:
   - theme.target.registry
   - theme.mapping.panel.entry.contract
   - link.network.overview
-tags: [theme, override, storage, contract, v33, v34a, v34b, v34c1, v86a]
+tags:
+  - theme
+  - override
+  - storage
+  - contract
+  - v33
+  - v34a
+  - v34b
+  - v34c1
+  - v86a
 ---
 
 # Theme Override / Storage Contract

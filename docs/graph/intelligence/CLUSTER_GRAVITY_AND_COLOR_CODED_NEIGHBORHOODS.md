@@ -6,11 +6,18 @@ status: concept
 version: v73c
 domain: graph
 subdomain: intelligence
-cluster: teal
+cluster: azure
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-tags: [cluster, gravity, neighborhoods, color, graph, intelligence, concept]
+last_updated: 2026-05-09
+tags:
+  - cluster
+  - gravity
+  - neighborhoods
+  - color
+  - graph
+  - intelligence
+  - concept
 ---
 
 # Cluster Gravity and Color-Coded Neighborhoods

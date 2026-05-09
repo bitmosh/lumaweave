@@ -5,16 +5,22 @@ type: contract
 status: accepted
 version: v63
 domain: audio
-cluster: green
+cluster: ember
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 depends_on:
   - contract.audio.reactivity
   - contract.motion.safety
 governs:
   - src/audio/musicReactiveMappingRegistry.ts
-tags: [music, reactive, mapping, contract, accepted, v63]
+tags:
+  - music
+  - reactive
+  - mapping
+  - contract
+  - accepted
+  - v63
 ---
 
 # Music Reactive Mapping Contract
