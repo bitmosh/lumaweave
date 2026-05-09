@@ -1,133 +1,171 @@
 ---
-id: system.theme.overview
+id: theme.system.overview
 title: Theme System Overview
-type: manual
-status: accepted
-version: v73c
+type: overview
+status: current
+version: v86a
 domain: theme
 cluster: gold
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-08
 governs:
-  - src/themes/themeTokens.ts
-  - src/themes/themePresets.ts
-  - src/themes/applyTheme.ts
-  - src/themes/themeTokenPaths.ts
-  - src/themes/themeTargetRegistry.ts
-tags: [theme, system, overview, presets, tokens, accepted]
+  - src/themes/
+references:
+  - theme.token.path.map
+  - theme.preset.model
+  - theme.token.compatibility
+  - theme.target.registry
+  - link.network.overview
+  - link.network.layer.3
+  - graph.visual.theme.mapping.contract
+tags: [theme, system, overview, tier-model, v86a]
 ---
 
 # Theme System Overview
 
----
+The LumaWeave theme system controls how visual elements look across the application — node colors, panel chrome, backdrops, typography, motion. It is built on a three-tier token architecture, six built-in theme presets, and a four-layer link network that connects user-facing controls to runtime visual rendering.
 
-## Current State (v73c)
-
-**What is implemented:**
-```
-6 built-in theme presets: Solar Plasma, Obsidian Aurora, Midnight Loom, Void Circuit, Agartha Dream, Agartha Dusk
-Theme preset selector in top bar (AppShell.tsx)
-Graph node/edge/label colors update on theme change
-Theme tokens defined in src/themes/themeTokens.ts
-Canonical token paths defined in src/themes/themeTokenPaths.ts
-Theme Target Registry (read-only, v20) — data-lw-theme-target attributes
-Ghost Overlay (partial — hold key + click for YAML popout)
-applyTheme.ts — applies token values via DOM CSS variables
-validateThemeTokens — dev-only runtime guardrail
-```
-
-**What is NOT yet implemented:**
-```
-Custom theme creation / save / rename / delete
-Import/export theme JSON
-Pop-out color picker
-Full app theme editor (only graph-level tokens are wired)
-Theme Mapping Panel (generates editable controls from registry)
-Theme override storage with persistence (v34a/b partial, pre-v65 — check archive)
-```
+This doc is the entry point for the theme cluster. It points outward to the docs that handle each topic in detail.
 
 ---
 
-## Architecture
+## What the theme system is
 
-### Theme Resolution Chain
-```
-User selects preset
-  → themePresets.ts (built-in presets with token values)
-  → applyTheme.ts (sets CSS custom properties on DOM)
-  → DOM cascade (Sigma reads colors via CSS where wired)
-  → graphVisualTokens.ts (explicit graph token values per preset)
-```
-
-### Token Groups
+A typed, governance-validated system where every visual value flows through a chain:
 
 ```
-app.*           Shell/background scaffolding
-panel.*         Mission Control + panel chrome
-text.*          Primary vs muted UI text
-accent.*        Highlight/accent color
-graph.node.*    Node fills, label color, hover, selected states
-graph.edge.*    Edge strokes, label color, hover, selected states
-effects.glow.*  Non-graph glow intensity
+user-selected preset
+    ↓
+Tier 1 primitives (raw colors, sizes, durations per theme)
+    ↓
+Tier 2 semantics (role assignments — surface.background.deep, text.primary)
+    ↓
+Tier 3 components (component slots — shell.background, panel.border)
+    ↓
+canonical token paths consumed by graph elements and UI surfaces
+    ↓
+runtime application via applyTheme.ts and CSS custom properties
 ```
 
-See `docs/theme/THEME_TOKEN_PATH_MAP.md` for the canonical vocabulary.
+The system is not just runtime styling — it's the **data layer** for the eventual radial inspector, which queries cross-references across docs and registries to surface "what controls affect this visual element" and "which tokens does this control consume."
 
-### Visual Handle Layer
-
-DOM elements use CSS classes: `.lw-panel`, `.lw-card`, etc.
-These classes inherit from CSS custom properties set by `applyTheme.ts`.
-Theme tokens eventually drive these via `lumaweave-visual-handles.css`.
+For the underlying architecture, see [Link Network Overview](link.network.overview).
 
 ---
 
-## 6 Built-in Presets
+## Three-tier token model
 
-```
-solar-plasma       Dark sci-fi with cyan and gold plasma
-obsidian-aurora    Dark crystalline aurora borealis
-midnight-loom      Dark warm gold candlelight
-void-circuit       Dark cyberpunk neon
-agartha-dream      Light pastel dreamy
-agartha-dusk       Dark pastel moonlit night
-```
+Established in v86a. Each tier has a single source-of-truth file.
 
-Presets are defined in `src/themes/themePresets.ts` and `src/themes/themeTokens.ts`.
-Built-in presets are `isBuiltIn: true` and cannot be deleted.
+**Tier 1 — Primitives.** Raw vocabulary per theme. Themes redefine these. Components never reference them directly.
+- File: `src/themes/tokenPrimitives.ts`
+- Examples: `color.gold.500`, `space.4`, `duration.base`
 
----
+**Tier 2 — Semantics.** Role assignments that resolve to primitives.
+- File: `src/themes/tokenSemantics.ts`
+- Examples: `surface.background.deep` → `{color.void.900}`, `text.primary` → `{color.cream.100}`
 
-## Theme Safety Rules
+**Tier 3 — Components.** Component-family slots that resolve to semantics. Theme-agnostic by design.
+- File: `src/themes/tokenComponents.ts`
+- Examples: `shell.background` → `{surface.background.deep}`, `panel.border` → `{surface.border.accent}`
 
-- Do not write CSS variables directly — go through canonical token paths
-- Do not apply token values that bypass `themeTokenPaths.ts` registry
-- Do not promote planned token paths without an explicit pass
-- Theme changes must not affect Sigma internals directly
-- All theme overrides are reversible (preview → commit or cancel model)
+Tier walking is enforced at boot via `assertThemeTokenGovernanceClean()` in `themeTokenGovernance.ts`. Inline values in Tier 2 or 3 throw. Tier-skip references throw.
+
+For tier governance details, see [Theme Token Compatibility](theme.token.compatibility).
 
 ---
 
-## Phase Roadmap
+## Six built-in themes
 
-```
-Phase 1A  Built-in presets + top bar selector        DONE
-Phase 2   Custom theme save/rename/delete            PLANNED
-Phase 3   Pop-out color picker                       PLANNED
-Phase 4   Full app theme editor                      PLANNED (after graph tokens stable)
-Phase 5   Theme Mapping Panel (from Target Registry) PLANNED (requires overlay contract)
-Phase 6   Community themes (after security pipeline) PLANNED (v77+)
-```
+| Preset ID | Display name | Style | Notes |
+|-----------|--------------|-------|-------|
+| `solar-plasma` | Solar Plasma | Dark sci-fi with cyan and gold plasma | Default LumaWeave theme |
+| `obsidian-aurora` | Obsidian Aurora | Dark crystalline aurora borealis | Inspired by northern lights over dark stone |
+| `midnight-loom` | Midnight Loom | Dark warm gold candlelight | Cozy candlelit workspace |
+| `void-circuit` | Void Circuit | Dark cyberpunk neon | High-contrast neon aesthetic |
+| `agartha-dream` | Agartha Dream | Light pastel dreamy | Gentle dreamlike workspace |
+| `agartha-dusk` | Agartha Dusk | Dark pastel moonlit night | Soft moonlit atmosphere |
+
+Each theme has its own primitives object in `tokenPrimitives.ts`. Solar Plasma is the most fully tuned at v86a; the other five share neutral defaults at the semantic and component tiers and will receive theme-specific tuning in v87.
+
+For preset structure, see [Theme Preset Model](theme.preset.model).
 
 ---
 
-## Relationship to Grammar Lens / Overlay
+## Canonical and planned token paths
 
-The Ghost Overlay (partially implemented) uses `data-lw-theme-target` DOM attributes
-to identify clickable elements. When an element is clicked in overlay mode, the
-YAML/JSON slice for that element is shown in the cursor popout.
+**40 canonical paths** are currently active across all six themes. Composed of 16 pre-v86a paths (app, panel, text, accent, graph nodes, graph edges, glow effects) plus 24 v86a-promoted paths (backdrop, node sphere, edge plasma, selection, bookmark, panel tile, inspector radial, typography).
 
-The overlay's ability to apply changes flows through the canonical token path system —
-not through raw CSS injection. This is the contract boundary.
+**12 planned paths** are declared but not yet promoted. Promotion requires all six themes to populate values; only then does a path move from `PLANNED_THEME_TOKEN_PATHS` to `CANONICAL_THEME_TOKEN_PATHS` with an entry in `PROMOTION_HISTORY`.
 
-See `docs/grammar-lens/GHOST_OVERLAY_CURRENT_STATE.md` for current overlay state.
+For the complete vocabulary and promotion protocol, see [Theme Token Path Map](theme.token.path.map).
+
+---
+
+## How tokens become visible
+
+The path from token declaration to rendered pixel goes through several layers, each with its own contract:
+
+1. **Theme preset selected** — User picks a preset via top bar dropdown. Setting persisted to `appearance.theme`.
+2. **Primitives loaded** — `themePrimitives[selectedThemeId]` becomes active.
+3. **Semantics resolve** — Tier 2 paths resolve their `{primitive.path}` references.
+4. **Components resolve** — Tier 3 paths resolve their `{semantic.path}` references.
+5. **applyTheme runs** — Tier values written to CSS custom properties (`--lw-*`).
+6. **CSS reads vars** — Stylesheets and components consume the custom properties.
+7. **Graph elements consume tokens** — Graph rendering reads canonical token paths via the mapping registry.
+
+For the runtime application contract chain, see [Graph Theme Application Contract](graph.theme.application.contract) and [Graph Visual Theme Mapping Contract](graph.visual.theme.mapping.contract).
+
+---
+
+## How user controls connect to visuals
+
+User-facing controls (theme selector, glitter toggle, reduce-motion toggle, label modes, physics sliders) are connected to runtime rendering through a four-layer metadata network:
+
+- **Layer 1 — Handle Registry** — Catalog of user-manipulable controls
+- **Layer 2 — Control Surface Contract Registry** — Where each control lives in the UI
+- **Layer 3 — Graph Visual Theme Mapping Registry** — Graph element → canonical token mapping
+- **Layer 4 — Graph View Element Registry** — Graph element identities
+
+Each layer has its own source-of-truth registry file in code and per-layer documentation. The four layers form the cross-reference network the radial inspector navigates.
+
+For the full architecture, see [Link Network Overview](link.network.overview).
+
+---
+
+## Source files
+
+| Concern | File |
+|---------|------|
+| Type definitions | `src/themes/theme.types.ts` |
+| Token paths (canonical + planned) | `src/themes/themeTokenPaths.ts` |
+| Tier 1 primitives (per theme) | `src/themes/tokenPrimitives.ts` |
+| Tier 2 semantics (per theme) | `src/themes/tokenSemantics.ts` |
+| Tier 3 components (theme-agnostic) | `src/themes/tokenComponents.ts` |
+| Theme preset registry | `src/themes/themePresets.ts` |
+| Per-theme runtime tokens | `src/themes/themeTokens.ts` |
+| Token governance / tier-walk validator | `src/themes/themeTokenGovernance.ts` |
+| Runtime application | `src/themes/applyTheme.ts` |
+| Theme target registry | `src/themes/themeTargetRegistry.ts` |
+| Override storage | `src/themes/themeOverrideStorage.ts` |
+| CSS custom property mirror | `src/styles/lumaweave-visual-handles.css` |
+
+---
+
+## What this doc does not cover
+
+- Specific token values per theme — see [Theme Preset Model](theme.preset.model)
+- Canonical path catalog — see [Theme Token Path Map](theme.token.path.map)
+- Cross-system invariants (asset bank, grammar lens, override boundaries) — see [Theme Token Compatibility](theme.token.compatibility)
+- Theme target registry contents — see [Theme Target Registry](theme.target.registry)
+- Top bar UI controls — see [Theme Top Bar Controls](theme.top.bar.controls)
+- User customization roadmap — see [Theme Customization Roadmap](theme.customization.roadmap)
+- Override storage governance — see [Theme Override Storage Contract](theme.override.storage.contract)
+- Theme Mapping Panel entry rules — see [Theme Mapping Panel Entry Contract](theme.mapping.panel.entry.contract)
+- Multi-renderer coordination (2D/3D/SVG) — planned for v86d/v86e
+- User-generated theme submissions (workshop, sandbox, signing) — planned for v88+ (Lattica)
+
+---
+
+*This overview replaces the v15-era Phase 1A overview. Anchored on v86a state.*
