@@ -1,20 +1,19 @@
 ---
-id: roadmap.source.adapter
+id: source.adapter.roadmap
 title: Source Adapter OS Roadmap
 type: roadmap
 status: accepted
 version: v73c
-domain: source-adapter
 cluster: lime
+domain: source-adapter
 agent_readable: true
 include_in_self_graph: true
 last_updated: 2026-05-09
-tags:
-  - source-adapter
-  - roadmap
-  - phases
-  - v74
-  - accepted
+references:
+  - source.adapter.os.overview
+  - source.adapter.os.contract
+  - source.adapter.catalog
+tags: [source-adapter, roadmap, phases, v74]
 ---
 
 # Source Adapter OS Roadmap

@@ -1,143 +1,619 @@
 ---
-id: catalog.source.adapters
+id: source.adapter.catalog
 title: Source Adapter Catalog
-type: registry
-status: accepted
-version: v73c
-domain: source-adapter
+type: catalog
+status: current
 cluster: lime
+domain: source-adapter
 agent_readable: true
 include_in_self_graph: true
 last_updated: 2026-05-09
-depends_on:
-  - system.source.adapter.os
-tags:
-  - source-adapter
-  - catalog
-  - adapters
-  - ingestion
-  - accepted
+references:
+  - source.adapter.os.overview
+  - source.adapter.translation.set.model
+  - source.adapter.website.url.v0
+tags: [source-adapter, catalog, adapters, codebase, website, database, infrastructure]
 ---
 
 # Source Adapter Catalog
 
-High-value future source adapters. Each adapter turns a relationship-rich source into a normalized LumaWeave graph. Listed in implementation priority order.
+## Summary
 
----
+This catalog lists high-value future source adapters for LumaWeave. Each adapter turns a relationship-rich source into a normalized graph.
 
 ## Priority Adapters
 
-### 1. Self-Graph / YAML Frontmatter (First — v75a)
-```
-Input:      LumaWeave docs/ folder with YAML frontmatter
-Nodes:      doc files, contracts, registries, concepts
-Edges:      depends_on, implements, governs, tested_by (from frontmatter)
-Confidence: observed (from explicit frontmatter fields)
-Use cases:  Self-graph fixture, LumaWeave visualizing itself
-Status:     v75a next
+### 1. Git / Codebase Adapter
+
+Nodes:
+
+```txt
+files
+folders
+functions
+classes
+components
+commits
+authors
+issues
+PRs
+tests
 ```
 
-### 2. Git / Codebase Adapter
-```
-Input:      Git repository
-Nodes:      files, folders, functions, classes, components, commits, authors
-Edges:      imports, calls, defines, exports, tests, modified_by, reviewed_by
-Use cases:  Architecture map, impact analysis, ownership graph, hotspot map
-Status:     planned
+Edges:
+
+```txt
+imports
+calls
+defines
+exports
+tests
+modified_by
+reviewed_by
+fixes_issue
+changed_with
 ```
 
-### 3. Website / URL Adapter
-```
-Input:      URL or site
-Nodes:      pages, headings, assets, topics, domains, forms
-Edges:      links_to, has_heading, mentions_topic, embeds_asset, canonicalizes_to
-Use cases:  Site map, SEO architecture, content audit, topic cluster map
-Status:     planned (see WEBSITE_URL_ADAPTER_V0.md for detailed spec)
+Use cases:
+
+```txt
+architecture map
+impact analysis
+ownership graph
+hotspot map
+test coverage map
+technical debt graph
 ```
 
-### 4. Markdown / Obsidian Adapter
-```
-Input:      Markdown folder or Obsidian vault
-Nodes:      notes, headings, tags, concepts, attachments
-Edges:      links_to, backlinks_to, tagged_as, mentions, embeds
-Use cases:  Knowledge graph, research map, worldbuilding graph
-Status:     planned
+### 2. Website / URL Adapter
+
+Nodes:
+
+```txt
+pages
+headings
+assets
+topics
+domains
+forms
 ```
 
-### 5. OpenAPI / API Spec Adapter
-```
-Input:      OpenAPI YAML/JSON spec
-Nodes:      endpoints, methods, schemas, request bodies, responses, security schemes
-Edges:      uses_schema, returns_schema, requires_auth, tagged_as
-Use cases:  API surface map, breaking-change analysis, service contract review
-Status:     planned
+Edges:
+
+```txt
+links_to
+has_heading
+mentions_topic
+embeds_asset
+canonicalizes_to
+belongs_to_domain
 ```
 
-### 6. Database Schema Adapter
-```
-Input:      SQL schema, Prisma schema, or introspection output
-Nodes:      tables, columns, indexes, constraints, views, enums
-Edges:      has_column, foreign_key_to, indexed_by, derived_from
-Use cases:  Data architecture, migration impact, lineage, schema review
-Status:     planned
+Use cases:
+
+```txt
+site map
+SEO architecture
+content audit
+documentation graph
+topic cluster map
 ```
 
-### 7. Package Dependency Adapter
-```
-Input:      package.json, Cargo.toml, pyproject.toml, etc.
-Nodes:      packages, versions, licenses, maintainers, vulnerabilities
-Edges:      depends_on, dev_depends_on, transitive_depends_on, conflicts_with
-Use cases:  Supply chain risk, upgrade planning, license review
-Status:     planned
+### 3. Markdown / Obsidian Adapter
+
+Nodes:
+
+```txt
+notes
+headings
+tags
+concepts
+attachments
 ```
 
-### 8. Cloud Infrastructure Adapter
-```
-Input:      Terraform, CloudFormation, AWS/GCP/Azure resource graph
-Nodes:      services, containers, clusters, buckets, queues, secrets, networks, IAM roles
-Edges:      depends_on, connects_to, reads_from, writes_to, exposes, assumes_role
-Use cases:  Infra architecture, security review, incident response
-Status:     planned
-```
+Edges:
 
-### 9. Issue Tracker / Project Management Adapter
-```
-Input:      GitHub Issues, Linear, Jira
-Nodes:      issues, epics, milestones, owners, labels, PRs, commits
-Edges:      blocks, duplicates, depends_on, assigned_to, fixed_by
-Use cases:  Roadmap graph, blocker map, team ownership, risk tracking
-Status:     planned
+```txt
+links_to
+backlinks_to
+tagged_as
+mentions
+embeds
+supports
+contradicts
 ```
 
----
+Use cases:
 
-## Future Adapters (Backlog)
-
-```
-PDF / Document corpus    → sections, paragraphs, citations, references
-Research papers          → papers, authors, citations, claims, methods
-Legal / Compliance       → clauses, obligations, references, risks
-Game / Worldbuilding     → entities, locations, events, relationships
-Cybersecurity feeds      → CVEs, packages, patch status, risk chains
-Chat archives            → threads, mentions, decisions, links
+```txt
+knowledge graph
+research map
+project planning map
+worldbuilding graph
+documentation ecosystem
 ```
 
----
+### 4. OpenAPI / API Spec Adapter
 
-## Implementation Strategy
+Nodes:
 
-Build one adapter at a time as a vertical slice:
-```
-detection
-→ extraction
-→ translation set
-→ normalized graph
-→ validation report
-→ renderer proof
-→ Playwright evidence
-→ acceptance
+```txt
+endpoints
+methods
+schemas
+request bodies
+responses
+security schemes
+tags
 ```
 
-Never implement multiple adapters simultaneously.
-First adapter: Self-Graph / YAML Frontmatter (lowest risk, proves the schema).
-First impressive external adapter: Website URL Adapter (wow-factor).
+Edges:
+
+```txt
+uses_schema
+returns_schema
+requires_auth
+tagged_as
+accepts_body
+```
+
+Use cases:
+
+```txt
+API surface map
+breaking-change analysis
+schema dependency graph
+service contract review
+```
+
+### 5. Database Schema Adapter
+
+Nodes:
+
+```txt
+tables
+columns
+indexes
+constraints
+views
+enums
+stored procedures
+```
+
+Edges:
+
+```txt
+has_column
+foreign_key_to
+indexed_by
+derived_from
+uses_enum
+```
+
+Use cases:
+
+```txt
+data architecture
+migration impact analysis
+data lineage
+query planning
+schema review
+```
+
+### 6. Package Dependency Adapter
+
+Nodes:
+
+```txt
+packages
+versions
+licenses
+maintainers
+vulnerabilities
+```
+
+Edges:
+
+```txt
+depends_on
+dev_depends_on
+transitive_depends_on
+conflicts_with
+vulnerable_to
+```
+
+Use cases:
+
+```txt
+supply chain risk
+upgrade planning
+license review
+dependency cleanup
+```
+
+### 7. Cloud Infrastructure Adapter
+
+Nodes:
+
+```txt
+services
+containers
+clusters
+buckets
+queues
+secrets
+networks
+IAM roles
+volumes
+```
+
+Edges:
+
+```txt
+depends_on
+connects_to
+reads_from
+writes_to
+exposes
+mounts
+assumes_role
+```
+
+Use cases:
+
+```txt
+infra architecture
+security review
+incident response
+cost/ownership analysis
+```
+
+### 8. Issue Tracker / Project Management Adapter
+
+Nodes:
+
+```txt
+issues
+epics
+milestones
+owners
+labels
+PRs
+commits
+```
+
+Edges:
+
+```txt
+blocks
+duplicates
+depends_on
+assigned_to
+fixed_by
+relates_to
+```
+
+Use cases:
+
+```txt
+roadmap graph
+blocker map
+team ownership
+release planning
+risk tracking
+```
+
+### 9. PDF / Document Corpus Adapter
+
+Nodes:
+
+```txt
+documents
+sections
+citations
+claims
+entities
+tables
+figures
+```
+
+Edges:
+
+```txt
+cites
+mentions
+supports
+contradicts
+defines
+same_entity
+```
+
+Use cases:
+
+```txt
+research literature map
+contract analysis
+policy comparison
+business intelligence
+```
+
+## Industry-Specific Adapters
+
+### Healthcare / Biology
+
+Nodes:
+
+```txt
+genes
+proteins
+diseases
+drugs
+symptoms
+studies
+pathways
+```
+
+Edges:
+
+```txt
+interacts_with
+treats
+causes
+associated_with
+inhibits
+activates
+```
+
+### Legal / Compliance
+
+Nodes:
+
+```txt
+contracts
+clauses
+obligations
+laws
+cases
+parties
+risks
+```
+
+Edges:
+
+```txt
+references
+conflicts_with
+requires
+prohibits
+supersedes
+assigns_obligation
+```
+
+### Finance / Business Intelligence
+
+Nodes:
+
+```txt
+companies
+accounts
+transactions
+vendors
+products
+KPIs
+risks
+```
+
+Edges:
+
+```txt
+owns
+pays
+depends_on
+correlates_with
+supplies
+competes_with
+```
+
+### Cybersecurity
+
+Nodes:
+
+```txt
+hosts
+users
+IPs
+domains
+vulnerabilities
+alerts
+processes
+permissions
+```
+
+Edges:
+
+```txt
+connects_to
+authenticates_as
+exploits
+alerts_on
+owns
+lateral_moves_to
+```
+
+### Education / Learning
+
+Nodes:
+
+```txt
+concepts
+lessons
+prerequisites
+quizzes
+skills
+sources
+```
+
+Edges:
+
+```txt
+requires
+teaches
+reinforces
+confuses_with
+assesses
+```
+
+### Game Development / Worldbuilding
+
+Nodes:
+
+```txt
+characters
+locations
+quests
+factions
+items
+mechanics
+scenes
+```
+
+Edges:
+
+```txt
+belongs_to
+conflicts_with
+unlocks
+requires
+appears_in
+influences
+```
+
+### Manufacturing / Supply Chain
+
+Nodes:
+
+```txt
+parts
+suppliers
+factories
+shipments
+SKUs
+machines
+defects
+```
+
+Edges:
+
+```txt
+supplies
+depends_on
+assembled_into
+shipped_to
+failed_at
+```
+
+## Creative Adapters
+
+### Music Project Adapter
+
+Nodes:
+
+```txt
+tracks
+clips
+samples
+effects
+automation lanes
+MIDI mappings
+```
+
+Edges:
+
+```txt
+routes_to
+modulates
+samples
+sidechains
+triggers
+```
+
+### Blender / 3D Scene Adapter
+
+Nodes:
+
+```txt
+objects
+materials
+lights
+cameras
+modifiers
+collections
+```
+
+Edges:
+
+```txt
+uses_material
+parented_to
+constrained_by
+instanced_by
+```
+
+### Unity / Unreal Project Adapter
+
+Nodes:
+
+```txt
+scenes
+prefabs
+blueprints
+scripts
+assets
+materials
+animations
+```
+
+Edges:
+
+```txt
+references
+uses
+spawns
+inherits
+depends_on
+```
+
+## High-Value Initial Adapter Set
+
+Recommended order:
+
+```txt
+1. Graphify / local JSON adapter
+2. Markdown / Obsidian adapter
+3. Website URL adapter v0
+4. OpenAPI adapter
+5. Database schema adapter
+6. Package dependency adapter
+7. Issue tracker adapter
+8. Cloud infra adapter
+```
+
+## Multi-Source Fusion
+
+The eventual killer feature is multi-source fusion:
+
+```txt
+repo + tests + docs + issues + website + package dependencies
+= complete project intelligence graph
+```
+
+Questions LumaWeave could answer visually:
+
+```txt
+Which files support this feature?
+Which tests validate it?
+Which issues requested it?
+Which docs explain it?
+Which packages affect it?
+Which UI controls expose it?
+```

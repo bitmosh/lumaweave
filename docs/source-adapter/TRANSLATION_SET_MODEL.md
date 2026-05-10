@@ -1,110 +1,339 @@
 ---
-id: model.translation.set
+id: source.adapter.translation.set.model
 title: Translation Set Model
-type: manual
-status: accepted
-version: v73c
-domain: source-adapter
+type: concept
+status: current
 cluster: lime
+domain: source-adapter
 agent_readable: true
 include_in_self_graph: true
 last_updated: 2026-05-09
-depends_on:
-  - schema.source.graph.normalized
-tags:
-  - source-adapter
-  - translation
-  - set
-  - model
-  - mapping
-  - accepted
+references:
+  - source.adapter.os.overview
+  - source.adapter.normalized.source.graph.schema
+  - source.adapter.catalog
+tags: [source-adapter, translation, mapping, vocabulary, observed, inferred]
 ---
 
 # Translation Set Model
 
-A **translation set** defines how a source adapter converts source-specific entities and relationships into normalized LumaWeave graph nodes and edges. Adapters extract raw facts; translation sets map those facts into graph structure.
+## Summary
 
-```
+A **translation set** defines how a source adapter converts source-specific entities and relationships into normalized LumaWeave graph nodes and edges.
+
+Adapters extract raw facts. Translation sets map those facts into graph structure.
+
+```txt
 raw extracted facts
 → translation set
 → normalized LumaWeave graph
 ```
 
----
-
 ## Why Translation Sets Matter
 
-Without translation sets, every adapter would invent its own graph shape. Translation sets give each adapter a repeatable vocabulary: source entity → node type, source relationship → edge type, source proof → evidence, source confidence → observed/inferred/ai-inferred.
+Without translation sets, every adapter would invent its own graph shape. That would make rendering, QA, filtering, and inspection inconsistent.
 
----
+Translation sets give each adapter a repeatable vocabulary:
 
-## Translation Set Type
+```txt
+source entity → node type
+source relationship → edge type
+source proof → evidence
+source confidence → observed/inferred/ai-inferred
+```
 
-```typescript
+## Translation Set Type Sketch
+
+```ts
 type TranslationSet = {
-  sourceType: string;           // "website" | "codebase" | "openapi" | ...
+  sourceType: string;
   nodeMappings: Record<string, NodeMapping>;
   edgeMappings: Record<string, EdgeMapping>;
 };
 
 type NodeMapping = {
-  nodeType: string;             // e.g. "website.page"
-  labelField: string;           // which source field becomes the label
-  idStrategy: string;           // how to generate stable IDs
-  metadataFields?: string[];    // additional fields to include
+  nodeType: string;
+  labelField: string;
+  idStrategy: string;
+  metadataFields?: string[];
 };
 
 type EdgeMapping = {
-  edgeType: string;             // e.g. "links_to"
-  sourceField: string;          // source entity field pointing to origin
-  targetField: string;          // source entity field pointing to target
+  edgeType: string;
+  sourceField: string;
+  targetField: string;
   labelField?: string;
   weightField?: string;
-  confidenceClass: "observed" | "inferred" | "ai-inferred";
-  evidenceStrategy: string;     // how to generate evidence entries
+  confidence: "observed" | "inferred" | "ai-inferred";
+  evidenceStrategy: string;
 };
 ```
 
----
+## Website Translation Set
 
-## Website Adapter Translation Set Example
+Source entities:
 
-```typescript
-{
+```txt
+page
+heading
+link
+image
+script
+stylesheet
+topic
+external_domain
+```
+
+Luma node types:
+
+```txt
+website.page
+website.heading
+website.asset
+website.topic
+website.domain
+```
+
+Luma edge types:
+
+```txt
+links_to
+has_heading
+mentions_topic
+embeds_asset
+belongs_to_domain
+canonicalizes_to
+```
+
+Example:
+
+```ts
+const websiteTranslationSet: TranslationSet = {
   sourceType: "website",
   nodeMappings: {
-    "html-page": {
+    page: {
       nodeType: "website.page",
       labelField: "title",
-      idStrategy: "url-normalized",
-      metadataFields: ["url", "statusCode", "wordCount"]
+      idStrategy: "canonical-url",
     },
-    "html-heading": {
+    heading: {
       nodeType: "website.heading",
       labelField: "text",
-      idStrategy: "url-plus-anchor"
-    }
+      idStrategy: "url-heading-slug",
+    },
   },
   edgeMappings: {
-    "html-link": {
+    link: {
       edgeType: "links_to",
       sourceField: "fromUrl",
       targetField: "toUrl",
-      confidenceClass: "observed",
-      evidenceStrategy: "html-anchor"
-    }
-  }
-}
+      confidence: "observed",
+      evidenceStrategy: "anchor-selector",
+    },
+  },
+};
 ```
 
----
+## Markdown / Obsidian Translation Set
 
-## Translation Set Guardrails
+Source entities:
 
+```txt
+note
+heading
+tag
+backlink
+attachment
+concept
 ```
-Never mix confidence classes in one mapping without clear labeling
-ID strategy must produce stable IDs across re-ingestion
-Evidence strategy must point to a real source artifact
-Translation sets are static definitions — no runtime logic
-One translation set per adapter type (not per source instance)
+
+Luma nodes:
+
+```txt
+markdown.note
+markdown.heading
+markdown.tag
+markdown.concept
+markdown.asset
+```
+
+Luma edges:
+
+```txt
+links_to
+has_heading
+tagged_as
+mentions
+embeds
+supports
+contradicts
+```
+
+## Codebase Translation Set
+
+Source entities:
+
+```txt
+file
+folder
+function
+class
+component
+import
+test
+package
+```
+
+Luma nodes:
+
+```txt
+code.file
+code.symbol
+code.component
+code.package
+code.test
+```
+
+Luma edges:
+
+```txt
+imports
+calls
+defines
+exports
+tests
+depends_on
+changed_with
+```
+
+## OpenAPI Translation Set
+
+Source entities:
+
+```txt
+endpoint
+method
+schema
+requestBody
+response
+securityScheme
+tag
+```
+
+Luma nodes:
+
+```txt
+api.endpoint
+api.schema
+api.tag
+api.security
+```
+
+Luma edges:
+
+```txt
+uses_schema
+returns_schema
+requires_auth
+tagged_as
+accepts_body
+```
+
+## Database Translation Set
+
+Source entities:
+
+```txt
+table
+column
+index
+foreign_key
+view
+enum
+```
+
+Luma nodes:
+
+```txt
+db.table
+db.column
+db.index
+db.view
+db.enum
+```
+
+Luma edges:
+
+```txt
+has_column
+foreign_key_to
+indexed_by
+derived_from
+uses_enum
+```
+
+## Cloud Infrastructure Translation Set
+
+Source entities:
+
+```txt
+service
+container
+network
+volume
+secret
+queue
+bucket
+role
+```
+
+Luma nodes:
+
+```txt
+infra.service
+infra.container
+infra.network
+infra.secret
+infra.storage
+infra.role
+```
+
+Luma edges:
+
+```txt
+depends_on
+connects_to
+mounts
+reads_from
+writes_to
+exposes
+assumes_role
+```
+
+## Translation Set Validation
+
+Each translation set should be validated for:
+
+```txt
+node mappings have nodeType and id strategy
+edge mappings have source/target fields
+edge confidence is explicit
+evidence strategy is explicit
+no edge type is unlabeled
+no AI-inferred relationship is mislabeled as observed
+```
+
+## Future UI Use
+
+Mission Control can eventually show:
+
+```txt
+Adapter: Website
+Translation Set: website-v0
+Node mappings: 5
+Edge mappings: 6
+Observed edges: 234
+Inferred edges: 41
+AI-inferred edges: 0
+Warnings: 3
 ```

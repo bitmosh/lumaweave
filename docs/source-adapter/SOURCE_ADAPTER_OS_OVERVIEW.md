@@ -1,45 +1,35 @@
 ---
-id: system.source.adapter.os
+id: source.adapter.os.overview
 title: Source Adapter OS Overview
-type: manual
-status: accepted
-version: v73c
-domain: source-adapter
+type: concept
+status: current
 cluster: lime
+domain: source-adapter
 agent_readable: true
 include_in_self_graph: true
 last_updated: 2026-05-09
-tags:
-  - source-adapter
-  - OS
-  - overview
-  - ingestion
-  - pipeline
-  - accepted
 references:
-  - schema.source.graph.normalized
-  - model.translation.set
-  - catalog.source.adapters
+  - source.adapter.os.contract
+  - source.adapter.os.normalized.source.graph.schema
+  - source.adapter.translation.set.model
+  - source.adapter.catalog
+  - source.adapter.website.url.v0
+  - source.adapter.ingestion.safety.qa
+  - source.adapter.roadmap
+tags: [source-adapter, overview, ingestion, normalization, evidence, confidence]
 ---
 
 # Source Adapter OS Overview
 
-**Status:** Docs-only architecture. No runtime ingestion implemented.
-**Next implementation pass:** v74a (Foundation Contract) → v74b (Base Registry + Validator)
-
----
-
 ## Summary
 
-The Source Adapter OS is a future ingestion and conversion layer for LumaWeave. It allows different source types — codebases, websites, Markdown vaults, API specs, databases, cloud infrastructure, issue trackers, document corpora — to be translated into a shared LumaWeave graph format.
+The **Source Adapter OS** is a future ingestion and conversion layer for LumaWeave. It allows different source types—codebases, websites, Markdown vaults, API specs, databases, cloud infrastructure, issue trackers, document corpora, and more—to be translated into a shared LumaWeave graph format.
 
-This evolves LumaWeave from a code architecture viewer into a general relationship cartography platform.
-
----
+This would evolve LumaWeave from a code architecture viewer into a general relationship cartography platform.
 
 ## Core Pipeline
 
-```
+```txt
 Input
 → Source detection
 → Adapter selection
@@ -52,30 +42,28 @@ Input
 → LumaWeave renderer
 ```
 
----
-
 ## Why This Matters
 
-Different data shapes become different graph types:
-```
-codebases          → files, symbols, imports, tests, ownership
-websites           → pages, links, topics, assets
-databases          → tables, columns, keys, indexes, lineage
-cloud infra        → services, networks, secrets, roles, dependencies
-legal corpora      → clauses, obligations, references, risks
-research corpora   → papers, citations, claims, methods, entities
-```
+Different industries produce different relationship-rich artifacts:
 
-All of these can become inspectable, visual, explorable graphs.
+- websites have pages, links, topics, and assets
+- codebases have files, symbols, imports, tests, and ownership
+- databases have tables, columns, keys, indexes, and lineage
+- cloud infrastructure has services, networks, secrets, roles, and dependencies
+- legal corpora have clauses, obligations, references, and risks
+- research corpora have papers, citations, claims, methods, and entities
 
----
+The Source Adapter OS lets all of these become inspectable, visual, explorable graphs.
 
 ## Key Design Rule
 
-Do NOT build one giant universal parser. Build small adapters that all output the same normalized graph model.
+Do **not** build one giant universal parser.
 
-Each adapter defines:
-```
+Build small adapters that all output the same normalized graph model.
+
+Each adapter should define:
+
+```txt
 accepted input types
 detection rules
 source-specific extraction logic
@@ -85,12 +73,11 @@ validation rules
 QA report format
 ```
 
----
-
 ## Adapter Responsibilities
 
 Each adapter answers:
-```
+
+```txt
 What are the nodes?
 What are the edges?
 What is the evidence for each edge?
@@ -100,54 +87,98 @@ What was skipped?
 What warnings should Mission Control surface?
 ```
 
----
-
 ## Confidence Layers
 
-```
-observed      directly present in source
-              → Page A links to Page B. File A imports File B.
+LumaWeave should preserve confidence classes:
 
-inferred      deterministic/local inference from observed facts
-              → Pages share repeated keywords. Files often change together.
-
-ai-inferred   model-generated or semantic inference
-              → A model says two pages cover the same concept.
+```txt
+observed      = directly present in source
+inferred      = deterministic/local inference from observed facts
+ai-inferred   = model-generated or semantic inference
 ```
 
-Observed facts must never be mixed with AI inference without visible labels.
+Examples:
 
----
+```txt
+Observed: Page A links to Page B.
+Observed: File A imports File B.
+Observed: Table orders has a foreign key to customers.
 
-## Safety Requirements
+Inferred: Pages A and B share repeated keywords.
+Inferred: Files A and B often change together.
 
-```
-Local-first operation — no unapproved network transmission
-No secret/token leakage
-User-controlled workspace scope
-No parent-directory wandering
-No auto-execution of project commands
-Audit logs for all source ingestion
-Read-only source access
+AI-inferred: A model says Page A and Page B cover the same concept.
 ```
 
----
+Observed facts must never be mixed with AI inference without labels.
 
 ## Source Detection
 
-The ingestion system classifies input before extraction:
+The ingestion system should classify input before extraction.
+
+Example detection rules:
+
+```txt
+https://...                         → website adapter
+folder with package.json            → codebase/package adapter
+folder with .obsidian or many .md    → Markdown/Obsidian adapter
+openapi.yaml / swagger.json          → OpenAPI adapter
+schema.sql / prisma.schema           → database adapter
+docker-compose.yml / *.tf / k8s yaml → cloud infra adapter
+package-lock.json / Cargo.lock       → package dependency adapter
 ```
-file extension      → code, markdown, JSON, YAML, CSV
-URL pattern         → website, API endpoint, documentation
-manifest presence   → package.json, Cargo.toml, pyproject.toml
-directory structure → monorepo, flat, docs-only
-schema file         → OpenAPI, GraphQL, database schema
+
+Detection should produce:
+
+```ts
+type SourceDetectionResult = {
+  adapterId: string;
+  confidence: number;
+  reason: string;
+};
 ```
 
----
+## Ingestion Plans
 
-## Relationship to Self-Graph Fixture
+Before ingestion, each adapter should produce an ingestion plan.
 
-The self-graph fixture (v75a) is the first real use of Source Adapter OS patterns — LumaWeave ingesting its own docs structure via YAML frontmatter to build the graph. This is the simplest possible adapter and the best first test.
+```ts
+type IngestionPlan = {
+  adapterId: string;
+  inputSummary: string;
+  detectedType: string;
+  estimatedScope: {
+    maxFiles?: number;
+    maxPages?: number;
+    maxDepth?: number;
+  };
+  extractionLayers: Array<"observed" | "inferred" | "ai-inferred">;
+  risks: string[];
+  limits: Record<string, unknown>;
+};
+```
 
-The self-graph fixture validates the normalized schema before any external adapters are built.
+Mission Control can later display this plan before running large or risky ingestion.
+
+## Non-Goals For Initial Work
+
+Do not implement all adapters at once.
+Do not add AI inference before observed extraction is trustworthy.
+Do not allow website crawlers to run unbounded.
+Do not mutate source systems.
+Do not generate arbitrary runtime code.
+Do not mix source evidence with hallucinated relationships.
+
+## First Safe Implementation Path
+
+Recommended first implementation sequence:
+
+```txt
+Source Adapter OS Backlog Architecture
+→ Normalized Source Graph Schema
+→ Local JSON / Graphify Adapter
+→ Markdown/Obsidian Adapter
+→ Website URL Adapter v0
+```
+
+The first adapter should be boring and safe. The second or third can be magical.

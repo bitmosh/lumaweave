@@ -1,146 +1,188 @@
 ---
-id: policy.ingestion.safety.qa
+id: source.adapter.ingestion.safety.qa
 title: Ingestion Safety and QA
 type: policy
-status: accepted
-version: v73c
-domain: source-adapter
+status: current
 cluster: lime
+domain: source-adapter
 agent_readable: true
 include_in_self_graph: true
 last_updated: 2026-05-09
-depends_on:
-  - system.source.adapter.os
-tags:
-  - source-adapter
-  - ingestion
-  - safety
-  - QA
-  - policy
-  - accepted
+references:
+  - source.adapter.os.overview
+  - source.adapter.os.contract
+  - source.adapter.website.url.v0
+  - accessibility.motion.safety.contract
+tags: [source-adapter, ingestion, safety, qa, evidence, confidence, validation]
 ---
 
 # Ingestion Safety and QA
 
----
+## Summary
 
-## Safety Principles
+Source ingestion can become risky if adapters crawl too broadly, infer too aggressively, or mix observed evidence with AI guesses. LumaWeave should enforce safety limits, source evidence, and ingestion QA reports for every adapter.
 
-All source adapters must follow these safety principles without exception:
+## Universal Safety Rules
 
-### Local-First
-```
-No unapproved network transmission of source data
-No storing source content beyond the current session unless explicitly contracted
-User explicitly approves each source before ingestion begins
-```
+All adapters should be:
 
-### Read-Only
-```
-Adapters read source data only — they never write to, modify, or execute source files
-No project command auto-execution
-No script execution from ingested source
+```txt
+read-only by default
+bounded by size/depth limits
+evidence-preserving
+confidence-labeled
+validated before rendering
+reported through Mission Control
 ```
 
-### Scope Isolation
-```
-No parent-directory wandering (e.g. if user grants access to ~/project, do not read ~/project/..)
-No access to secrets, credentials, or private keys
-No access to .env files unless explicitly granted
-Respect .gitignore and .lumaweave-ignore patterns
-```
+## Website Safety Rules
 
-### Audit Trail
-```
-Every ingestion session produces a QA report
-QA report includes: what was read, what was skipped, limits applied, warnings, confidence breakdown
-QA report feeds Mission Control ingestion summary panel
-```
-
----
-
-## Confidence Class Rules
-
-```
-observed     → must have explicit source evidence (file path, URL, line range, selector)
-               never produce observed edges without evidence
-
-inferred     → must document the inference rule (e.g. "files changed together > 3 times in last 30 days")
-               must be visually distinguishable from observed in the graph
-               never promote inferred to observed without new direct evidence
-
-ai-inferred  → must be clearly labeled in both graph metadata and UI
-               must require explicit user opt-in to show in graph
-               never mix with observed without a confidence label
-               never display as fact — always as "model suggestion"
+```txt
+respect robots.txt
+same-domain by default
+GET/HEAD only
+no form submission
+no auth/logout/payment paths
+max depth
+max pages
+crawl delay
+skip large/binary files
+record redirects
 ```
 
----
+## Local File Safety Rules
 
-## Ingestion QA Report Format
-
-```typescript
-interface IngestionQAReport {
-  adapterId: string;
-  sourceDescription: string;
-  startedAt: string;
-  completedAt: string;
-  
-  counts: {
-    nodesExtracted: number;
-    edgesExtracted: number;
-    observed: number;
-    inferred: number;
-    aiInferred: number;
-  };
-  
-  limits: {
-    applied: string[];    // e.g. ["50 page limit", "depth 1 only"]
-    hit: string[];        // which limits were actually reached
-  };
-  
-  skipped: Array<{
-    item: string;         // what was skipped
-    reason: string;       // why it was skipped
-  }>;
-  
-  warnings: string[];     // general warnings
-  errors: string[];       // non-fatal errors
-  
-  safety: {
-    parentDirAccess: boolean;  // must be false
-    secretsAccess: boolean;    // must be false
-    networkRequests: number;   // count (0 for local adapters)
-    externalDomains: string[]; // [] for local adapters
-  };
-}
+```txt
+respect ignore files
+skip binary files
+max file size
+no hidden/secrets by default
+no writes
+no destructive operations
+source paths recorded
 ```
 
----
+## AI Inference Safety Rules
 
-## Validator Requirements (v74b)
-
-The Source Adapter Base Validator must check:
-```
-□ Every adapter has a registered translation set
-□ Every adapter produces a valid LumaSourceGraph schema
-□ Every observed edge has at least one SourceEvidence entry
-□ Confidence values are one of: observed | inferred | ai-inferred
-□ Ingestion QA report is produced for every session
-□ Safety flags (parentDirAccess, secretsAccess) are always false
-□ Adapter does not access files outside the user-granted scope
+```txt
+AI cannot create observed edges
+AI-inferred edges must be labeled
+AI outputs require source excerpts when possible
+confidence scores required
+AI layer toggleable in renderer
 ```
 
----
+## Confidence Separation
 
-## Forbidden Adapter Behaviors
+Graph filters should support:
 
+```txt
+Observed only
+Observed + inferred
+Observed + inferred + AI-inferred
 ```
-Executing any code from the source (scripts, postinstall hooks, etc.)
-Making network requests without user authorization
-Writing to the source directory
-Accessing credentials or secrets without explicit grant
-Auto-ingesting without user trigger
-Returning results from outside user-granted scope
-Modifying graph data after ingestion without re-running the adapter
+
+Mission Control should report counts:
+
+```txt
+observed edges:
+inferred edges:
+ai-inferred edges:
+```
+
+## Ingestion QA Report Template
+
+```md
+# Ingestion QA Report
+
+## Source
+
+- Adapter:
+- Input:
+- Detected type:
+- Detection confidence:
+
+## Scope
+
+- Max files:
+- Max pages:
+- Max depth:
+- Extraction layers:
+- Limits hit:
+
+## Output
+
+- Nodes:
+- Edges:
+- Observed edges:
+- Inferred edges:
+- AI-inferred edges:
+
+## Evidence
+
+- Edges with evidence:
+- Edges missing evidence:
+- Source URIs recorded:
+
+## Warnings
+
+- ...
+
+## Errors
+
+- ...
+
+## Validation
+
+- Node IDs unique:
+- Edge IDs unique:
+- Edge endpoints valid:
+- Confidence labels valid:
+- Evidence requirements satisfied:
+
+## Decision
+
+ACCEPT / ACCEPT WITH WARNINGS / INCOMPLETE / REJECT
+```
+
+## Adapter Validation Rules
+
+A graph should be rejected or marked incomplete if:
+
+```txt
+edge endpoints do not exist
+observed edges lack evidence
+node ids collide
+adapter id is missing
+confidence labels are invalid
+limits were exceeded without warning
+AI-inferred edges are mislabeled
+```
+
+## Mission Control Integration
+
+Future Mission Control should show:
+
+```txt
+Adapter used
+Detection confidence
+Ingestion plan
+Node/edge counts
+Confidence breakdown
+Skipped sources
+Warnings/errors
+Validation decision
+```
+
+## Stop Conditions
+
+Adapter should stop and report rather than continue if:
+
+```txt
+input type is uncertain
+source exceeds configured limits
+crawler hits forbidden paths
+parser throws repeated errors
+edge evidence cannot be produced
+AI inference is requested before observed layer is stable
 ```

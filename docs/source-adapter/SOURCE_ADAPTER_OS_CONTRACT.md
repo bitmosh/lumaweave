@@ -1,26 +1,21 @@
 ---
-id: contract.source.adapter.os
+id: source.adapter.os.contract
 title: Source Adapter OS Foundation Contract
 type: contract
 status: accepted
 version: v74a
-domain: source-adapter
 cluster: lime
+domain: source-adapter
 agent_readable: true
 include_in_self_graph: true
 last_updated: 2026-05-09
-depends_on:
-  - policy.ingestion.safety.qa
-  - schema.source.graph.normalized
+references:
+  - source.adapter.os.overview
+  - source.adapter.normalized.source.graph.schema
+  - source.adapter.ingestion.safety.qa
+  - source.adapter.roadmap
   - policy.source.of.truth
-tags:
-  - source-adapter
-  - OS
-  - contract
-  - foundation
-  - lifecycle
-  - safety
-  - accepted
+tags: [source-adapter, OS, contract, foundation, lifecycle, safety, v74a]
 ---
 
 # Source Adapter OS Foundation Contract
