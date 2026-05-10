@@ -3828,7 +3828,7 @@
   ],
   "metadata": {
     "adapterId": "yaml-frontmatter-parser",
-    "createdAt": "2026-05-10T06:59:28.747Z",
+    "createdAt": "2026-05-10T07:42:27.550Z",
     "inputSummary": "147 nodes from docs/ YAML frontmatter",
     "nodeCount": 147,
     "edgeCount": 144,

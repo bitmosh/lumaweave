@@ -8,14 +8,14 @@ subdomain: leveling
 cluster: violet
 agent_readable: true
 include_in_self_graph: false
-last_updated: 2026-05-09
+last_updated: 2026-05-10
 tags:
   - changelog
   - log
   - bandit
   - agent
   - operational
-last_pass: vP-Forensics-2
+last_pass: v86c-tile-system
 ---
 
 # Bandit Changelog
@@ -33,6 +33,7 @@ Updated by the agent that ran the pass before XP is awarded.
 ---
 ## 2026-05-10
 
+| 2026-05-10 | v86c-tile-system | feature | ACCEPTED — Tile system core infrastructure: tile.types.ts, tileSectionRegistry.ts (7 entries), tileUtils.ts (snap/edge magnetism/group computation/pointer capture), TileableSection.tsx, FloatingTile.tsx, TileProvider.tsx, TileLayer.tsx. LeftTabPanel/AppShell deprecated props removed. ThemeTargetInspectorOverlay override indicator added. 5 infrastructure tests. Suite: 361 passed, 6 skipped, 0 failing P1·S11 Level 143.5 — Cascade |
 | 2026-05-10 | vP-Registry-1 Phase Y | docs | ACCEPTED — Link network 4-layer documentation complete: 5 per-layer + inventory + 4 gap/drift docs (9 total). Validate-contract-trace path fix (docs/control-plane/ → contracts/). 14-occurrence stale path fix in controlSurfaceContract.registry.ts post-rehaul rename. Forensics-on-detached-HEAD recovery completed. Suite: 361 passed, 6 skipped, 0 failing P1·S10 Level 143.25 — Bandit |
 
 ## 2026-05-08
@@ -334,6 +335,7 @@ If multiple things happened in one session, use multiple lines:
 | Agent  | Accepted Passes | Last Pass | Current Streak |
 |--------|----------------|-----------|----------------|
 | Bandit | 19 (degree-centrality-v1, theme-docs-update, noverlap-v1, lw-visual-accent-fix, theme-family-redesign, yaml-graph-parser, debounce-graph-rebuild, v74b, grammar-lens-contract, v75a, v75b, repair-pass-v75b, physics-wiring-v1, node-drag-v1, helix-dialect-v1, cluster-color-fix, helix-fix+slider-colors, visual-polish-v1, left-panel-ux-v2) | degree-centrality-v1 | 7 |
+| Cascade | 1 (v86c-tile-system) | v86c-tile-system | 1 |
 | DeepSeek | 0            | —         | 0              |
 
 *Update this table after each accepted pass.*

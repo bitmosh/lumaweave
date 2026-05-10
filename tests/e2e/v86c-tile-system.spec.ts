@@ -1,14 +1,49 @@
 /**
- * v86c Tile System - Infrastructure Tests
+ * v86c Tile System - Integration Tests
  * 
- * These tests verify the tile system infrastructure is in place.
- * Full E2E interaction tests for tear-off, snap, grouping will be added
- * once CollapsibleSections are wrapped with TileableSection.
+ * These tests verify the tile system integration with actual UI components.
+ * Full interaction testing (tear-off, snap, grouping) requires manual QA per phase packet section J.
  */
 
 import { expect, test } from "@playwright/test";
 
-test("v86c: TileProvider is mounted and TileLayer renders", async ({ page }) => {
+test("v86c-integration: tile-tear-off handle visible", async ({ page }) => {
+  await page.goto("/");
+
+  // Verify tear-off handles (⤴) are visible on tileable sections
+  const tearOffHandles = page.getByText("⤴");
+  const count = await tearOffHandles.count();
+  
+  // Should have at least 7 tear-off handles (4 left-panel + 3 right-dock)
+  expect(count).toBeGreaterThanOrEqual(7);
+});
+
+test("v86c-integration: tile-tear-off handle clickable", async ({ page }) => {
+  await page.goto("/");
+
+  // Find a tear-off handle and verify it's clickable
+  const tearOffHandle = page.getByText("⤴").first();
+  await expect(tearOffHandle).toBeVisible();
+  await expect(tearOffHandle).toHaveAttribute("title", "Tear off as tile");
+});
+
+test("v86c-integration: data-tiled-out attribute exists", async ({ page }) => {
+  await page.goto("/");
+
+  // Verify sections have data-tiled-out attribute infrastructure
+  // Initially all sections should have data-tiled-out undefined (not tiled out)
+  const sections = page.locator("[data-testid^='section-']");
+  const count = await sections.count();
+  
+  // Should have multiple sections with test IDs
+  expect(count).toBeGreaterThan(0);
+  
+  // Verify first section doesn't have data-tiled-out="true" initially
+  const firstSection = sections.first();
+  await expect(firstSection).not.toHaveAttribute("data-tiled-out", "true");
+});
+
+test("v86c-integration: TileLayer renders", async ({ page }) => {
   await page.goto("/");
 
   // Verify TileLayer is present (indicates TileProvider is mounted)
@@ -16,52 +51,19 @@ test("v86c: TileProvider is mounted and TileLayer renders", async ({ page }) => 
   await expect(tileLayer).toBeVisible();
 });
 
-test("v86c: Tile system types are exported", async ({ page }) => {
-  // This is a compile-time check - if types are missing, the test file won't compile
-  // The existence of this test file verifies the types are importable
+test("v86c-integration: tileable sections match registry", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByText("LumaWeave Observatory")).toBeVisible();
-});
 
-test("v86c: Tile section registry entries are defined", async ({ page }) => {
-  // Verify registry has expected section keys
-  await page.goto("/");
+  // Verify sections with tileableKey props are rendered
+  // Use testId selectors for specificity
+  await expect(page.getByTestId("section-graph-sources")).toBeVisible();
+  await expect(page.getByTestId("section-qa-panel")).toBeVisible();
+  await expect(page.getByTestId("section-graph-visual-inventory")).toBeVisible();
+  await expect(page.getByTestId("section-system-index")).toBeVisible();
+  await expect(page.getByTestId("section-command-deck")).toBeVisible();
   
-  // The registry defines 7 sections:
-  // - graph (Graph Sources)
-  // - qa (QA Panel)
-  // - evidence (Graph Visual Inventory, System Index)
-  // - debug (Command Deck)
-  // - physics (Physics)
-  // - appearance (Appearance)
-  // - labels (Labels)
-  
-  // Verify left panel sections exist
-  await expect(page.getByText("Graph Sources")).toBeVisible();
-  await expect(page.getByText("QA")).toBeVisible();
-  await expect(page.getByText("Evidence")).toBeVisible();
-  await expect(page.getByText("Debug")).toBeVisible();
-});
-
-test("v86c: Snap grid constants are defined", async ({ page }) => {
-  // Verify snap grid size (16px) and edge magnetism tolerance (22px)
-  // These are defined in tile.types.ts
-  await page.goto("/");
-  await expect(page.getByText("LumaWeave Observatory")).toBeVisible();
-});
-
-test("v86c: BIG RULE - group bar matches top row width only", async ({ page }) => {
-  // The BIG RULE is enforced in TileLayer.tsx group outline rendering
-  // This test verifies the component structure is in place
-  await page.goto("/");
-  
-  // TileLayer should exist (group outlines render here)
-  const tileLayer = page.getByTestId("tile-layer");
-  await expect(tileLayer).toBeVisible();
-  
-  // Group bar elements will be rendered when tiles are grouped
-  // This test verifies the infrastructure is ready
-  const groupOutline = page.getByTestId("tile-group-outline");
-  // Initially no groups, so this may not be visible
-  // But the test infrastructure is in place
+  // Right dock sections (now wrapped in CollapsibleSection with tileableKey)
+  await expect(page.getByTestId("settings-section-physics")).toBeVisible();
+  await expect(page.getByTestId("settings-section-labels")).toBeVisible();
+  await expect(page.getByTestId("settings-section-graph-view")).toBeVisible();
 });

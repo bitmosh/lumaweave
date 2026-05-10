@@ -945,6 +945,20 @@ Learned: v86b-visual-treatment P1·S7
 When a diagnostic produces a null result (no log output, no error, nothing), verify the diagnostic itself works before drawing conclusions from absence of signal. Playwright browser console does not pipe to test runner stdout without page.on('console'). A passing test with no log output does not mean the logged code didn't run — it means the log wasn't captured. Validate the measurement before trusting the measurement.
 Learned: v86b-visual-treatment P1·S7
 
+### Scar: Forensics-on-detached-HEAD trap
+
+Forensics ran against `git checkout 33e23ec` instead of `main`. Reported
+  "normalize-frontmatter.mjs doesn't exist" — true at 33e23ec, false on
+  main. Reported "qa:e2e failed pre-existing" without git-bisecting to
+  verify. Lesson: `git status` before forensics. Verify HEAD before
+  asserting file existence. The "pre-existing" claim requires evidence,
+  not assertion.
+
+### Scar: Scaffold-Without-Integration Trap
+
+v86c initially scaffolded the full tile system infrastructure (TileProvider, FloatingTile, TileLayer, tileSectionRegistry, tileUtils) but did not integrate it into the UI. CollapsibleSection was not extended with the tileableKey prop, and no sections in the running UI received tear-off handles. The phase packet explicitly required extending CollapsibleSection.tsx with tileableKey and passing it to 7 sections (4 left-panel + 3 right-dock). The feedback was PARTIAL ACCEPT because the infrastructure existed but was not wired to the UI. Fix: when a phase requires integration, the integration is not deferred work — it is the pass. Infrastructure without integration is incomplete.
+Learned: v86c-integration 2026-05-09
+
 ---
 
 ## Boss Fights

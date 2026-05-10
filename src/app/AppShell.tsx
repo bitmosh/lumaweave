@@ -476,6 +476,7 @@ export function AppShell() {
                   testId="section-graph-sources"
                   accentColor={themeTokens.app.accent}
                   borderColor={themeTokens.app.panelBorder}
+                  tileableKey="graph-section"
                 >
                   <div
                     className="rounded-xl p-4"
@@ -656,6 +657,7 @@ export function AppShell() {
                 testId="section-qa-panel"
                 accentColor={themeTokens.app.accent}
                 borderColor={themeTokens.app.panelBorder}
+                tileableKey="qa-section"
               >
                 <div
                   className="rounded-xl p-4"
@@ -695,6 +697,7 @@ export function AppShell() {
                   testId="section-graph-visual-inventory"
                   accentColor={themeTokens.app.accent}
                   borderColor={themeTokens.app.panelBorder}
+                  tileableKey="evidence-section"
                 >
                   <div
                     className="rounded-xl p-4"
@@ -725,6 +728,7 @@ export function AppShell() {
                   testId="section-system-index"
                   accentColor={themeTokens.app.accent}
                   borderColor={themeTokens.app.panelBorder}
+                  tileableKey="evidence-section"
                 >
                   <div
                     className="rounded-xl p-4"
@@ -758,6 +762,7 @@ export function AppShell() {
                 testId="section-command-deck"
                 accentColor={themeTokens.app.accent}
                 borderColor={themeTokens.app.panelBorder}
+                tileableKey="debug-section"
               >
                 <div
                   className="rounded-xl p-4"
