@@ -1,23 +1,19 @@
 ---
-id: session.v85.summary
+id: agent.brain.session.v85.summary
 title: Session V85 Summary
 type: session
-status: complete
+status: archived
+version: v85b
+cluster: violet
 domain: agent
 subdomain: brain
-cluster: violet
 agent_readable: true
 include_in_self_graph: false
 last_updated: 2026-05-09
-tags:
-  - bandit
-  - session
-  - summary
-  - v85
-  - physics
-  - theme
-  - renderer
-last_pass: vP-Forensics-2
+references:
+  - agent.brain.experience.ledger
+  - agent.brain.current.title
+tags: [bandit, session, summary, v85, physics, theme, renderer]
 ---
 
 # Session V85 Summary

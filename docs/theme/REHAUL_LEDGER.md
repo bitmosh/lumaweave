@@ -340,4 +340,51 @@ When ready to clear working tree:
 
 ---
 
+## Final Status — 2026-05-09
+
+All 16 clusters complete. Numbering gaps (2, 17) preserved as artifacts
+of process — final taxonomy doesn't require contiguous numbering.
+
+✅ Cluster 1   — Theme
+✅ Cluster 3   — Handleset
+✅ Cluster 4   — VGE
+✅ Cluster 5   — Lattica (archived)
+✅ Cluster 6   — Arena (archived)
+✅ Cluster 7   — Bandit Brain
+✅ Cluster 8   — Operating Policies
+✅ Cluster 9   — Survival Manual
+✅ Cluster 10  — Phase Architecture (largely retired; remaining
+                 normalized into platform/rendering/vr clusters)
+✅ Cluster 11  — Layout (incl. TOP_BAR refresh, Animation rename,
+                 Reduce Motion slider planned)
+✅ Cluster 12  — Source Adapter
+✅ Cluster 13  — Mission Control / QA
+✅ Cluster 14  — Audio
+✅ Cluster 15  — System Index / Perspective
+✅ Cluster 16  — Roadmap
+✅ Cluster 18  — Test Forensics (archived)
+✅ Cluster 19-20 — Stragglers + closeout
+
+Outcomes:
+- 9-color cluster palette locked: gold, azure, violet, teal, lime,
+  slate, stone, ember, crimson, plus 10th color indigo for platform/VR
+- 5-value status vocabulary locked: current, accepted, complete,
+  concept, archived (+partial as grammar_lens-only exception)
+- Single source of truth for cluster colors at
+  docs/_meta/cluster-colors.json
+- normalize-frontmatter.mjs script + frontmatter-rules.yaml schemas
+  cover all active doc folders with path_match regex
+- 41 dead docs cleaned from PK during cleanup phases
+- ~150 active docs across the cluster taxonomy
+- All commits use heredoc syntax going forward to avoid terminal
+  paste mangling
+
+Customizability path documented in docs/_meta/README.md. Cluster
+colors flow through existing theme override storage when ready.
+
+LumaWeave doc graph is now in a state that can support the
+radial inspector, link network registry, and source adapter
+graphing without further taxonomy churn.
+
+---
 *This ledger is the single source of truth for rehaul progress. Update on every state change.*

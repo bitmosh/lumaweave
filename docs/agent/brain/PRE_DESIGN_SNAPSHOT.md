@@ -1,20 +1,19 @@
 ---
-id: brain.pre.design.snapshot.v85e
+id: pre.design.snapshot.v85e
 title: Pre-Design Snapshot — v85e
 type: snapshot
-status: complete
+status: archived
+version: v85e
 cluster: violet
 domain: agent
 subdomain: brain
 agent_readable: true
 include_in_self_graph: false
 last_updated: 2026-05-09
-last_pass: vP-Forensics-2
-tags:
-  - pre-design
-  - snapshot
-  - v85e
-  - frozen
+references:
+  - agent.brain.experience.ledger
+  - agent.brain.current.title
+tags: [snapshot, v85e, pre-v86, archive, theme, renderer, settings]
 ---
 
 

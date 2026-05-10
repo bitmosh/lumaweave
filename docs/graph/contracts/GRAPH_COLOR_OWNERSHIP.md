@@ -1,23 +1,20 @@
 ---
-id: contract.graph.color.ownership
+id: graph.color.ownership.contract
 title: Graph Color Ownership Contract
 type: contract
-status: current
+status: accepted
+version: v1
+cluster: azure
 domain: graph
 subdomain: color
-cluster: violet
 agent_readable: true
-include_in_self_graph: false
+include_in_self_graph: true
 last_updated: 2026-05-09
-tags:
-  - bandit
-  - contract
-  - color
-  - ownership
-  - graph
-  - sigma
-  - style-policy
-last_pass: vP-Forensics-2
+references:
+  - graph.runtime.boundary.contract
+  - graph.theme.application.contract
+  - graph.visual.theme.mapping.contract
+tags: [contract, color, ownership, graph, sigma, style-policy, regression-prevention]
 ---
 
 # Graph Color Ownership Contract
