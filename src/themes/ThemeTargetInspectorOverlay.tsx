@@ -696,6 +696,33 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
                   ) : (
                     <div style={{ marginTop: "0.35rem", color: "#fbbf24" }}>No token bindings recorded</div>
                   )}
+                  
+                  {/* Override visibility indicator - shows when target has token bindings */}
+                  {displayEntity.kind === "registered" && hasTokenBindings && (
+                    <div
+                      style={{
+                        marginTop: "0.5rem",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                        padding: "0.25rem 0.5rem",
+                        borderRadius: "4px",
+                        backgroundColor: "rgba(251, 191, 36, 0.15)",
+                        border: "1px solid rgba(251, 191, 36, 0.3)",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "8px",
+                          height: "8px",
+                          borderRadius: "50%",
+                          backgroundColor: "#fbbf24",
+                          boxShadow: "0 0 8px rgba(251, 191, 36, 0.6)",
+                        }}
+                      />
+                      <span style={{ fontSize: "0.7rem", color: "#fbbf24" }}>Has overrides</span>
+                    </div>
+                  )}
                 </dl>
               ) : (
                 <div style={{ fontSize: "0.75rem", lineHeight: 1.6 }}>

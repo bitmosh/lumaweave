@@ -2044,6 +2044,32 @@
       }
     },
     {
+      "id": "docs.file.roadmap.dev.v86.through.v92",
+      "label": "Dev Roadmap — vP-Registry-1 → v86 → v92",
+      "type": "docs.roadmap",
+      "cluster": "slate",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/roadmap/DEV_ROADMAP_v86_through_v92.md",
+        "status": "current",
+        "domain": "roadmap",
+        "tags": [
+          "roadmap",
+          "dev",
+          "v86",
+          "v87",
+          "v88",
+          "v89",
+          "v90",
+          "v91",
+          "v92",
+          "vp-registry",
+          "fluff-dates",
+          "scaffolding"
+        ]
+      }
+    },
+    {
       "id": "docs.folder.source-adapter",
       "label": "source-adapter",
       "type": "docs.folder",
@@ -3520,6 +3546,14 @@
       "metadata": {}
     },
     {
+      "id": "edge.contains.docs.file.roadmap.dev.v86.through.v92",
+      "source": "docs.folder.roadmap",
+      "target": "docs.file.roadmap.dev.v86.through.v92",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
       "id": "edge.contains.docs.file.source.adapter.ingestion.safety.qa",
       "source": "docs.folder.source-adapter",
       "target": "docs.file.source.adapter.ingestion.safety.qa",
@@ -3794,10 +3828,10 @@
   ],
   "metadata": {
     "adapterId": "yaml-frontmatter-parser",
-    "createdAt": "2026-05-10T06:43:06.407Z",
-    "inputSummary": "146 nodes from docs/ YAML frontmatter",
-    "nodeCount": 146,
-    "edgeCount": 143,
+    "createdAt": "2026-05-10T06:59:28.747Z",
+    "inputSummary": "147 nodes from docs/ YAML frontmatter",
+    "nodeCount": 147,
+    "edgeCount": 144,
     "warnings": []
   }
 }

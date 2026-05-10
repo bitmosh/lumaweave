@@ -10,7 +10,8 @@ import { SystemIndexPanel } from "../control-plane/system-index/SystemIndexPanel
 import { SourceAdapterPanel } from "../source-adapter/SourceAdapterPanel";
 import { LeftTabPanel } from "../control-plane/panels/LeftTabPanel";
 import { ControlDock } from "../control-plane/panels/ControlDock";
-// v86a: Tile removed - tile system is v86c
+import { TileProvider } from "../control-plane/panels/TileProvider";
+import { TileLayer } from "../control-plane/panels/TileLayer";
 import { useSettingsStore, settingsStore } from "../control-plane/settings/settings.store";
 import { useGraphSourceSummary } from "../graph/ingest/useGraphSourceSummary";
 import { SigmaGraphView } from "../graph/renderers/sigma2d/SigmaGraphView";
@@ -318,7 +319,8 @@ export function AppShell() {
       };
 
   return (
-    <main 
+    <TileProvider>
+      <main 
       className="h-screen overflow-hidden text-slate-100"
       style={{
         "--lw-app-bg": themeTokens.app.background,
@@ -459,9 +461,6 @@ export function AppShell() {
                 [sectionKey]: { ...sections, [section]: !sections[section] },
               });
             }}
-            // v86a: tiledTabs deprecated - not used in UI yet
-            tiledTabs={[]}
-            onTileOut={() => {}}
             graphTabContent={
               <>
                 <CollapsibleSection
@@ -1040,6 +1039,8 @@ export function AppShell() {
         enabled={themeInspectorEnabled}
         onEnabledChange={setThemeInspectorEnabled}
       />
+      <TileLayer />
     </main>
-  );
+  </TileProvider>
+);
 }

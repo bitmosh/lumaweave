@@ -1,0 +1,96 @@
+/**
+ * v86c Tile System Type Definitions
+ */
+
+import type { RegistryContract } from "../../themes/registryContract.types";
+
+/**
+ * Tile section registry entry
+ * Defines a section that can be torn off into a floating tile
+ */
+export interface TileSectionEntry {
+  /** Unique identifier for the section */
+  id: string;
+  /** Display label for the section */
+  label: string;
+  /** Category for grouping/filtering */
+  category: "left-panel" | "control-dock";
+  /** Default width when torn off */
+  defaultWidth: number;
+  /** Default height when torn off */
+  defaultHeight: number;
+  /** Whether the section is collapsible */
+  collapsible: boolean;
+}
+
+/**
+ * Tile group (runtime-computed, not persisted)
+ * Represents a group of snapped-together tiles
+ */
+export interface TileGroup {
+  /** Array of tile IDs in this group */
+  tileIds: string[];
+  /** Bounding box of the entire group (rectilinear hull) */
+  bbox: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+  /** Width of the top row only (for THE BIG RULE) */
+  topRowWidth: number;
+}
+
+/**
+ * Tile context state
+ */
+export interface TileContextState {
+  /** Map of tile ID to tile layout entry */
+  tiles: Map<string, TileLayoutEntry>;
+  /** Current z-index counter for bring-to-front */
+  maxZ: number;
+  /** Computed groups (runtime only) */
+  groups: TileGroup[];
+}
+
+/**
+ * Tile context actions
+ */
+export interface TileContextActions {
+  /** Tear off a section into a floating tile */
+  tearOff: (sectionKey: string, initialX: number, initialY: number) => void;
+  /** Close a tile (return to original slot) */
+  closeTile: (tileId: string) => void;
+  /** Update tile position/size during drag */
+  updateTile: (tileId: string, updates: Partial<TileLayoutEntry>) => void;
+  /** Bring a tile to front */
+  bringToFront: (tileId: string) => void;
+  /** Toggle tile collapsed state */
+  toggleCollapsed: (tileId: string) => void;
+}
+
+/**
+ * Tile layout entry (persisted in settings)
+ * This is already defined in settings.schema.ts but re-exported here for convenience
+ */
+export interface TileLayoutEntry {
+  id: string;
+  sectionKey: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  collapsed: boolean;
+  z: number;
+}
+
+/**
+ * Tile section registry type
+ */
+export type TileSectionRegistry = RegistryContract<TileSectionEntry, Partial<TileSectionEntry>>;
+
+/**
+ * Snap constants
+ */
+export const SNAP_GRID_SIZE = 16; // px
+export const EDGE_MAGNETISM_TOLERANCE = 22; // px

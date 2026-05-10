@@ -4,7 +4,7 @@ interface LeftTabPanelProps {
   collapsed: boolean;
   panelWidth: number;
   onWidthChange: (width: number) => void;
-  activeTab: "graph" | "qa" | "evidence" | "debug"; // v86a: settings removed
+  activeTab: "graph" | "qa" | "evidence" | "debug";
   onTabChange: (tab: string) => void;
   onCollapse: () => void;
   // Section states
@@ -20,16 +20,12 @@ interface LeftTabPanelProps {
     debugInfo: boolean;
     performanceSettings: boolean;
   };
-  // v86a: settingsTabSections removed
   onSectionToggle: (tab: string, section: string) => void;
-  tiledTabs: never[]; // v86a: deprecated - tile system is v86c
-  onTileOut: (tab: string) => void; // v86a: deprecated - tile system is v86c
   // Panel components passed as render props
   graphTabContent: ReactNode;
   qaTabContent: ReactNode;
   evidenceTabContent: ReactNode;
   debugTabContent: ReactNode;
-  // v86a: settingsTabContent removed
 }
 
 export function LeftTabPanel({
@@ -43,15 +39,11 @@ export function LeftTabPanel({
   qaTabSections: _qaTabSections,
   evidenceTabSections: _evidenceTabSections,
   debugTabSections: _debugTabSections,
-  // v86a: settingsTabSections removed
   onSectionToggle: _onSectionToggle,
-  tiledTabs,
-  onTileOut,
   graphTabContent,
   qaTabContent,
   evidenceTabContent,
   debugTabContent,
-  // v86a: settingsTabContent removed
 }: LeftTabPanelProps) {
   const TAB_ICONS: Record<string, string> = {
     graph: "⬡",
@@ -65,10 +57,7 @@ export function LeftTabPanel({
     { id: "qa" as const, label: "QA" },
     { id: "evidence" as const, label: "Evidence" },
     { id: "debug" as const, label: "Debug" },
-    // v86a: settings removed
   ] as const;
-
-  const isTiled = (tabId: string) => tiledTabs.includes(tabId as never);
 
   // Collapsed state - narrow strip with tab icons
   if (collapsed) {
@@ -192,7 +181,6 @@ export function LeftTabPanel({
               onTabChange(tab.id);
               document.getElementById(`tab-section-${tab.id}`)?.scrollIntoView({ behavior: "instant" });
             }}
-            disabled={isTiled(tab.id)}
             style={{
               flex: "0 0 auto",
               padding: "0.75rem 0.75rem",
@@ -200,7 +188,7 @@ export function LeftTabPanel({
               border: "none",
               borderBottom: activeTab === tab.id ? "2px solid #3b82f6" : "2px solid transparent",
               color: activeTab === tab.id ? "#e2e8f0" : "#64748b",
-              cursor: isTiled(tab.id) ? "not-allowed" : "pointer",
+              cursor: "pointer",
               fontSize: "0.7rem",
               fontWeight: activeTab === tab.id ? 600 : 400,
               textTransform: "uppercase",
@@ -210,44 +198,20 @@ export function LeftTabPanel({
               alignItems: "center",
               justifyContent: "center",
               gap: "0.25rem",
-              opacity: isTiled(tab.id) ? 0.5 : 1,
               minWidth: "fit-content",
             }}
             onMouseEnter={(e) => {
-              if (!isTiled(tab.id) && activeTab !== tab.id) {
+              if (activeTab !== tab.id) {
                 e.currentTarget.style.backgroundColor = "#1e293b50";
               }
             }}
             onMouseLeave={(e) => {
-              if (!isTiled(tab.id) && activeTab !== tab.id) {
+              if (activeTab !== tab.id) {
                 e.currentTarget.style.backgroundColor = "transparent";
               }
             }}
           >
             {tab.label}
-            {!isTiled(tab.id) && (
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onTileOut(tab.id);
-                }}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  color: "#64748b",
-                  cursor: "pointer",
-                  fontSize: "0.7rem",
-                  padding: "0.25rem",
-                  borderRadius: "0.25rem",
-                  lineHeight: 1,
-                }}
-                title="Pop out as tile"
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#94a3b8")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "#64748b")}
-              >
-                ⬚
-              </div>
-            )}
           </button>
         ))}
       </div>
