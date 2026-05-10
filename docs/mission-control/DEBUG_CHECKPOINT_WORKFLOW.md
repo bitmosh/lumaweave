@@ -1,17 +1,19 @@
 ---
-id: workflow.debug.checkpoint
+id: mission.control.debug.checkpoint.workflow
 title: Debug Checkpoint Workflow
 type: manual
 status: accepted
 version: v73c
+cluster: slate
 domain: mission-control
-cluster: gold
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-related:
-  - system.mission.control.overview
-tags: [debug, checkpoint, workflow, QA, mission-control, accepted]
+last_updated: 2026-05-09
+references:
+  - mission.control.overview
+  - mission.control.qa.advisory.protocol
+  - layout.top.bar.control.plan
+tags: [debug, checkpoint, workflow, QA, mission-control]
 ---
 
 # Debug Checkpoint Workflow
@@ -33,8 +35,8 @@ Active checklist name and pass/fail counts
 Last submitted report summary
 Current graph state (nodes loaded, edges loaded, renderer status)
 Active theme preset
-Reduce motion: on/off
-Glitter: on/off
+Reduce motion level: 0 / 25 / 50 / 75 / 100
+Animation: on/off
 Any active advisory proposals or backlog items
 Any known open issues or uncommitted work
 git status --short (user-provided)
@@ -87,8 +89,8 @@ Graph state:
   Theme:              Solar Plasma
 
 System:
-  Reduce motion:      off
-  Glitter:            on
+  Reduce motion level: 0 / 25 / 50 / 75 / 100
+  Animation:            on
   Ghost overlay:      off
 
 Open work:

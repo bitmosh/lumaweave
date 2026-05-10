@@ -1,19 +1,24 @@
 ---
-id: system.mission.control.overview
+id: mission.control.overview
 title: Mission Control Overview
 type: manual
 status: accepted
 version: v73c
+cluster: slate
 domain: mission-control
-cluster: gold
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
+last_updated: 2026-05-09
 governs:
   - src/control-plane/qa/QaPanel.tsx
   - src/control-plane/qa/qa-registry.ts
   - src/control-plane/qa/advisory-registry.ts
-tags: [mission-control, QA, panel, overview, agent-chat, evolution, accepted]
+references:
+  - mission.control.qa.advisory.protocol
+  - mission.control.debug.checkpoint.workflow
+  - mission.control.qa.panel.agent.chat.evolution
+  - vr.agent.familiar.system
+tags: [mission-control, QA, panel, overview, agent-chat, evolution]
 ---
 
 # Mission Control Overview

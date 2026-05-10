@@ -1,18 +1,19 @@
 ---
-id: protocol.qa.advisory
+id: mission.control.qa.advisory.protocol
 title: QA Advisory Protocol
 type: protocol
 status: accepted
 version: v73c
+cluster: slate
 domain: mission-control
-cluster: gold
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-related:
-  - protocol.advisory.state.model
-  - protocol.qa.key.lifecycle
-tags: [QA, advisory, protocol, questions, proposals, backlog, accepted]
+last_updated: 2026-05-09
+references:
+  - mission.control.overview
+  - agent.protocols.advisory.state.model
+  - agent.protocols.qa.key.lifecycle
+tags: [QA, advisory, protocol, questions, proposals, backlog]
 ---
 
 # QA Advisory Protocol

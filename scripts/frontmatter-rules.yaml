@@ -449,6 +449,34 @@ schemas:
       - last_updated
 
   # ============================================================
+  # MISSION CONTROL / QA OPERATIONAL (slate — control-plane family)
+  # ============================================================
+  # Mission Control workflow docs (different from control-plane/contracts/
+  # which contain formal governance specs). Same cluster (slate) reflects
+  # the family relationship; separate schema allows different defaults.
+
+  mission_control:
+    path_match: '^mission-control/'
+    cluster: slate
+    status_options: [current, accepted, archived]
+    field_overrides:
+      cluster: slate
+    field_defaults:
+      status: current
+      type: manual
+      domain: mission-control
+      agent_readable: true
+      include_in_self_graph: true
+    required_fields:
+      - id
+      - title
+      - type
+      - status
+      - cluster
+      - domain
+      - last_updated
+
+  # ============================================================
   # LAYOUT / UI SHELL (stone)
   # ============================================================
 

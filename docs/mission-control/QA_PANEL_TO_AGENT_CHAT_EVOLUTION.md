@@ -1,17 +1,19 @@
 ---
-id: evolution.qa.panel.agent.chat
+id: mission.control.qa.panel.agent.chat.evolution
 title: QA Panel to Agent Chat Evolution
 type: manual
 status: accepted
 version: v73c
+cluster: slate
 domain: mission-control
-cluster: gold
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-related:
-  - system.mission.control.overview
-tags: [mission-control, QA, agent-chat, evolution, phases, accepted]
+last_updated: 2026-05-09
+references:
+  - mission.control.overview
+  - mission.control.qa.advisory.protocol
+  - vr.agent.familiar.system
+tags: [mission-control, QA, agent-chat, evolution, phases]
 ---
 
 # QA Panel to Agent Chat Evolution
