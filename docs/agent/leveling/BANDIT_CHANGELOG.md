@@ -31,6 +31,9 @@ Updated by the agent that ran the pass before XP is awarded.
 **Pass types:** contract · registry · validator · passive-ui · playwright · runtime · docs · multi-agent
 
 ---
+## 2026-05-10
+
+| 2026-05-10 | vP-Registry-1 Phase Y | docs | ACCEPTED — Link network 4-layer documentation complete: 5 per-layer + inventory + 4 gap/drift docs (9 total). Validate-contract-trace path fix (docs/control-plane/ → contracts/). 14-occurrence stale path fix in controlSurfaceContract.registry.ts post-rehaul rename. Forensics-on-detached-HEAD recovery completed. Suite: 361 passed, 6 skipped, 0 failing P1·S10 Level 143.25 — Bandit |
 
 ## 2026-05-08
 

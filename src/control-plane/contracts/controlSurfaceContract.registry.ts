@@ -35,7 +35,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
         hasCoverage: true,
       },
       docs: {
-        location: "docs/handleset/01_ACTIVE_HANDLES.md",
+        location: "docs/handleset/ACTIVE_HANDLES.md",
         hasDocs: true,
       },
       status: "active",
@@ -63,7 +63,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
         hasCoverage: true,
       },
       docs: {
-        location: "docs/handleset/01_ACTIVE_HANDLES.md",
+        location: "docs/handleset/ACTIVE_HANDLES.md",
         hasDocs: true,
       },
       status: "active",
@@ -91,7 +91,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
         hasCoverage: true,
       },
       docs: {
-        location: "docs/handleset/01_ACTIVE_HANDLES.md",
+        location: "docs/handleset/ACTIVE_HANDLES.md",
         hasDocs: true,
       },
       status: "active",
@@ -121,7 +121,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
         hasCoverage: true,
       },
       docs: {
-        location: "docs/handleset/01_ACTIVE_HANDLES.md",
+        location: "docs/handleset/ACTIVE_HANDLES.md",
         hasDocs: true,
       },
       status: "active",
@@ -149,7 +149,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
         hasCoverage: true,
       },
       docs: {
-        location: "docs/handleset/01_ACTIVE_HANDLES.md",
+        location: "docs/handleset/ACTIVE_HANDLES.md",
         hasDocs: true,
       },
       status: "active",
@@ -177,7 +177,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
         hasCoverage: true,
       },
       docs: {
-        location: "docs/handleset/01_ACTIVE_HANDLES.md",
+        location: "docs/handleset/ACTIVE_HANDLES.md",
         hasDocs: true,
       },
       status: "active",
@@ -205,7 +205,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
         hasCoverage: true,
       },
       docs: {
-        location: "docs/handleset/01_ACTIVE_HANDLES.md",
+        location: "docs/handleset/ACTIVE_HANDLES.md",
         hasDocs: true,
       },
       status: "active",
@@ -233,7 +233,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
         hasCoverage: true,
       },
       docs: {
-        location: "docs/handleset/01_ACTIVE_HANDLES.md",
+        location: "docs/handleset/ACTIVE_HANDLES.md",
         hasDocs: true,
       },
       status: "active",
@@ -260,7 +260,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
         hasCoverage: true,
       },
       docs: {
-        location: "docs/handleset/01_ACTIVE_HANDLES.md",
+        location: "docs/handleset/ACTIVE_HANDLES.md",
         hasDocs: true,
       },
       status: "active",
@@ -287,7 +287,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
         hasCoverage: false,
       },
       docs: {
-        location: "docs/handleset/01_ACTIVE_HANDLES.md",
+        location: "docs/handleset/ACTIVE_HANDLES.md",
         hasDocs: true,
       },
       status: "active",
@@ -315,7 +315,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
         hasCoverage: false,
       },
       docs: {
-        location: "docs/handleset/01_ACTIVE_HANDLES.md",
+        location: "docs/handleset/ACTIVE_HANDLES.md",
         hasDocs: true,
       },
       status: "active",
@@ -342,7 +342,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
         hasCoverage: false,
       },
       docs: {
-        location: "docs/handleset/01_ACTIVE_HANDLES.md",
+        location: "docs/handleset/ACTIVE_HANDLES.md",
         hasDocs: true,
       },
       status: "active",
@@ -369,7 +369,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
         hasCoverage: false,
       },
       docs: {
-        location: "docs/handleset/01_ACTIVE_HANDLES.md",
+        location: "docs/handleset/ACTIVE_HANDLES.md",
         hasDocs: true,
       },
       status: "active",
@@ -396,7 +396,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
         hasCoverage: false,
       },
       docs: {
-        location: "docs/handleset/01_ACTIVE_HANDLES.md",
+        location: "docs/handleset/ACTIVE_HANDLES.md",
         hasDocs: true,
       },
       status: "active",

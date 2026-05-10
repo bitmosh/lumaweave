@@ -81,10 +81,39 @@
       }
     },
     {
+      "id": "docs.folder.docs",
+      "label": "docs",
+      "type": "docs.folder",
+      "cluster": "gold",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/docs"
+      }
+    },
+    {
+      "id": "docs.file.docs.rehaul.ledger",
+      "label": "Documentation Rehaul Ledger",
+      "type": "docs.ledger",
+      "cluster": "gold",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/_meta/REHAUL_LEDGER.md",
+        "status": "current",
+        "domain": "docs",
+        "tags": [
+          "docs",
+          "rehaul",
+          "ledger",
+          "tracking",
+          "v86a"
+        ]
+      }
+    },
+    {
       "id": "docs.folder.accessibility",
       "label": "accessibility",
       "type": "docs.folder",
-      "cluster": "green",
+      "cluster": "crimson",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/accessibility"
@@ -94,7 +123,7 @@
       "id": "docs.file.contract.motion.safety",
       "label": "Motion Safety and Epilepsy Guard Contract",
       "type": "docs.contract",
-      "cluster": "green",
+      "cluster": "crimson",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/accessibility/MOTION_SAFETY_AND_EPILEPSY_GUARD_CONTRACT.md",
@@ -116,7 +145,7 @@
       "id": "docs.folder.agent",
       "label": "agent",
       "type": "docs.folder",
-      "cluster": "purple",
+      "cluster": "violet",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/agent"
@@ -126,7 +155,7 @@
       "id": "docs.file.policy.multi.agent",
       "label": "Multi-Agent Operating Policy",
       "type": "docs.policy",
-      "cluster": "purple",
+      "cluster": "violet",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/agent/onboarding/MULTI_AGENT_POLICY.md",
@@ -146,7 +175,7 @@
       "id": "docs.file.guide.new.agent.onboarding",
       "label": "New Agent Onboarding Guide",
       "type": "docs.manual",
-      "cluster": "purple",
+      "cluster": "violet",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/agent/onboarding/NEW_AGENT_ONBOARDING.md",
@@ -167,7 +196,7 @@
       "id": "docs.file.protocol.advisory.state.model",
       "label": "Advisory State Model",
       "type": "docs.protocol",
-      "cluster": "purple",
+      "cluster": "violet",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/agent/protocols/ADVISORY_STATE_MODEL.md",
@@ -186,7 +215,7 @@
       "id": "docs.file.protocol.bandit.operating",
       "label": "Bandit Protocol — Operating Rules & Brain Maintenance",
       "type": "docs.protocol",
-      "cluster": "purple",
+      "cluster": "violet",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/agent/protocols/BANDIT_PROTOCOL.md",
@@ -207,7 +236,7 @@
       "id": "docs.file.protocol.bandit.self.split",
       "label": "Bandit Self-Split Protocol",
       "type": "docs.protocol",
-      "cluster": "purple",
+      "cluster": "violet",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/agent/protocols/BANDIT_SELF_SPLIT_PROTOCOL.md",
@@ -227,7 +256,7 @@
       "id": "docs.file.protocol.pass.transition",
       "label": "Pass Transition Protocol",
       "type": "docs.protocol",
-      "cluster": "purple",
+      "cluster": "violet",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/agent/protocols/PASS_TRANSITION_PROTOCOL.md",
@@ -247,7 +276,7 @@
       "id": "docs.file.protocol.qa.key.lifecycle",
       "label": "QA Key Lifecycle",
       "type": "docs.protocol",
-      "cluster": "purple",
+      "cluster": "violet",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/agent/protocols/QA_KEY_LIFECYCLE.md",
@@ -266,7 +295,7 @@
       "id": "docs.file.protocol.registry.contract.patterns",
       "label": "Registry and Contract Patterns",
       "type": "docs.protocol",
-      "cluster": "purple",
+      "cluster": "violet",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/agent/protocols/REGISTRY_CONTRACT_PATTERNS.md",
@@ -282,10 +311,182 @@
       }
     },
     {
+      "id": "docs.file.agent.survival.manual.troubleshooting.decision.matrix",
+      "label": "Troubleshooting Decision Matrix",
+      "type": "docs.manual",
+      "cluster": "violet",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/agent/survival-manual/01_TROUBLESHOOTING_DECISION_MATRIX.md",
+        "status": "current",
+        "domain": "agent",
+        "tags": [
+          "agent",
+          "survival-manual",
+          "troubleshooting",
+          "classification",
+          "failure-types"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.agent.survival.manual.diagnostic.router",
+      "label": "Diagnostic Router",
+      "type": "docs.manual",
+      "cluster": "violet",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/agent/survival-manual/02_DIAGNOSTIC_ROUTER.md",
+        "status": "current",
+        "domain": "agent",
+        "tags": [
+          "agent",
+          "survival-manual",
+          "diagnostics",
+          "routing",
+          "decision-tree"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.agent.survival.manual.tool.use.triggers",
+      "label": "Tool Use Triggers",
+      "type": "docs.manual",
+      "cluster": "violet",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/agent/survival-manual/03_TOOL_USE_TRIGGERS.md",
+        "status": "current",
+        "domain": "agent",
+        "tags": [
+          "agent",
+          "survival-manual",
+          "tools",
+          "mcp",
+          "playwright",
+          "context7",
+          "sequential-thinking"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.agent.survival.manual.debugging.lenses",
+      "label": "Debugging Lenses",
+      "type": "docs.manual",
+      "cluster": "violet",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/agent/survival-manual/04_DEBUGGING_LENSES.md",
+        "status": "current",
+        "domain": "agent",
+        "tags": [
+          "agent",
+          "survival-manual",
+          "debugging",
+          "lenses",
+          "reasoning"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.agent.survival.manual.failure.report.template",
+      "label": "Failure Report Template",
+      "type": "docs.manual",
+      "cluster": "violet",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/agent/survival-manual/05_FAILURE_REPORT_TEMPLATE.md",
+        "status": "current",
+        "domain": "agent",
+        "tags": [
+          "agent",
+          "survival-manual",
+          "failure-report",
+          "template",
+          "evidence"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.agent.survival.manual.stop.conditions",
+      "label": "Stop Conditions",
+      "type": "docs.manual",
+      "cluster": "violet",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/agent/survival-manual/06_STOP_CONDITIONS.md",
+        "status": "current",
+        "domain": "agent",
+        "tags": [
+          "agent",
+          "survival-manual",
+          "stop-conditions",
+          "safety",
+          "scope-guard"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.agent.survival.manual.prompt.blocks",
+      "label": "Reusable Prompt Blocks",
+      "type": "docs.manual",
+      "cluster": "violet",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/agent/survival-manual/07_PROMPT_BLOCKS.md",
+        "status": "current",
+        "domain": "agent",
+        "tags": [
+          "agent",
+          "survival-manual",
+          "prompts",
+          "snippets",
+          "copy-paste"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.agent.survival.manual.operating.loop",
+      "label": "LumaWeave Agent Operating Loop",
+      "type": "docs.manual",
+      "cluster": "violet",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/agent/survival-manual/08_LUMAWEAVE_AGENT_OPERATING_LOOP.md",
+        "status": "current",
+        "domain": "agent",
+        "tags": [
+          "agent",
+          "survival-manual",
+          "operating-loop",
+          "behavior",
+          "evidence"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.agent.survival.manual.readme",
+      "label": "LumaWeave Coding Survival Manual",
+      "type": "docs.manual",
+      "cluster": "violet",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/agent/survival-manual/SURVIVAL_MANUAL_README.md",
+        "status": "current",
+        "domain": "agent",
+        "tags": [
+          "agent",
+          "survival-manual",
+          "readme",
+          "operating-playbook"
+        ]
+      }
+    },
+    {
       "id": "docs.file.tooling.bandit.toolbelt.architecture",
       "label": "Bandit Toolbelt Architecture",
       "type": "docs.manual",
-      "cluster": "purple",
+      "cluster": "violet",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/agent/tooling/BANDIT_TOOLBELT_ARCHITECTURE.md",
@@ -304,7 +505,7 @@
       "id": "docs.file.tooling.tool.use.checklist",
       "label": "Bandit Tool Use Checklist",
       "type": "docs.manual",
-      "cluster": "purple",
+      "cluster": "violet",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/agent/tooling/BANDIT_TOOL_USE_CHECKLIST.md",
@@ -323,7 +524,7 @@
       "id": "docs.file.tooling.custom.skills.workflows",
       "label": "Custom Skills and Workflows",
       "type": "docs.manual",
-      "cluster": "purple",
+      "cluster": "violet",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/agent/tooling/CUSTOM_SKILLS_AND_WORKFLOWS.md",
@@ -342,7 +543,7 @@
       "id": "docs.file.tooling.mcp.server.candidates",
       "label": "MCP Server Candidates",
       "type": "docs.manual",
-      "cluster": "purple",
+      "cluster": "violet",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/agent/tooling/MCP_SERVER_CANDIDATES.md",
@@ -360,7 +561,7 @@
       "id": "docs.file.tooling.tool.permission.policy",
       "label": "Tool Permission Policy",
       "type": "docs.policy",
-      "cluster": "purple",
+      "cluster": "violet",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/agent/tooling/TOOL_PERMISSION_POLICY.md",
@@ -379,17 +580,17 @@
       "id": "docs.folder.audio",
       "label": "audio",
       "type": "docs.folder",
-      "cluster": "green",
+      "cluster": "ember",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/audio"
       }
     },
     {
-      "id": "docs.file.contract.audio.reactivity",
+      "id": "docs.file.audio.reactivity.contract",
       "label": "Audio Reactivity Contract",
       "type": "docs.contract",
-      "cluster": "green",
+      "cluster": "ember",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/audio/AUDIO_REACTIVITY_CONTRACT.md",
@@ -398,19 +599,18 @@
         "tags": [
           "audio",
           "reactivity",
-          "synthetic",
-          "signal",
           "contract",
-          "accepted",
-          "v61"
+          "v61",
+          "motion-safety",
+          "synthetic-signal"
         ]
       }
     },
     {
-      "id": "docs.file.contract.audio.source.system",
+      "id": "docs.file.audio.source.system.contract",
       "label": "Audio Source System Contract",
       "type": "docs.contract",
-      "cluster": "green",
+      "cluster": "ember",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/audio/AUDIO_SOURCE_SYSTEM_CONTRACT.md",
@@ -418,39 +618,40 @@
         "domain": "audio",
         "tags": [
           "audio",
-          "source",
-          "system",
+          "source-system",
           "contract",
-          "accepted",
-          "v65"
+          "v65",
+          "permission",
+          "privacy",
+          "security"
         ]
       }
     },
     {
-      "id": "docs.file.contract.music.reactive.mapping",
+      "id": "docs.file.audio.music.reactive.mapping.contract",
       "label": "Music Reactive Mapping Contract",
       "type": "docs.contract",
-      "cluster": "green",
+      "cluster": "ember",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/audio/MUSIC_REACTIVE_MAPPING_CONTRACT.md",
         "status": "accepted",
         "domain": "audio",
         "tags": [
-          "music",
-          "reactive",
+          "audio",
+          "music-reactive",
           "mapping",
           "contract",
-          "accepted",
-          "v63"
+          "v63",
+          "motion-safety"
         ]
       }
     },
     {
-      "id": "docs.file.contract.universal.audio.handle.routing",
+      "id": "docs.file.audio.universal.handle.routing",
       "label": "Universal Audio Handle Routing",
       "type": "docs.contract",
-      "cluster": "green",
+      "cluster": "ember",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/audio/UNIVERSAL_AUDIO_HANDLE_ROUTING.md",
@@ -472,71 +673,73 @@
       "id": "docs.folder.control-plane",
       "label": "control-plane",
       "type": "docs.folder",
-      "cluster": "blue",
+      "cluster": "slate",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/control-plane"
       }
     },
     {
-      "id": "docs.file.contract.command.deck.hotkey.registry",
+      "id": "docs.file.control.plane.command.deck.hotkey.registry.contract",
       "label": "Command Deck and Hotkey Registry Contract",
       "type": "docs.contract",
-      "cluster": "blue",
+      "cluster": "slate",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/control-plane/contracts/COMMAND_DECK_AND_HOTKEY_REGISTRY_CONTRACT.md",
         "status": "accepted",
         "domain": "control-plane",
         "tags": [
-          "command",
-          "deck",
+          "control-plane",
+          "command-deck",
           "hotkey",
           "registry",
           "contract",
-          "accepted",
-          "v32"
+          "v35",
+          "governance"
         ]
       }
     },
     {
-      "id": "docs.file.matrix.contract.to.code.trace",
+      "id": "docs.file.control.plane.contract.to.code.trace.matrix",
       "label": "Contract-to-Code Trace Matrix",
-      "type": "docs.registry",
-      "cluster": "blue",
+      "type": "docs.matrix",
+      "cluster": "slate",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/control-plane/contracts/CONTRACT_TO_CODE_TRACE_MATRIX.md",
         "status": "accepted",
         "domain": "control-plane",
         "tags": [
-          "contract",
-          "code",
-          "trace",
-          "matrix",
+          "control-plane",
           "traceability",
-          "accepted",
+          "matrix",
+          "contracts",
+          "code",
+          "qa",
+          "evidence",
           "v71a"
         ]
       }
     },
     {
-      "id": "docs.file.contract.graph.control.plane.navigation",
+      "id": "docs.file.control.plane.graph.navigation.contract",
       "label": "Graph Control Plane Navigation Contract",
       "type": "docs.contract",
-      "cluster": "blue",
+      "cluster": "slate",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/control-plane/contracts/GRAPH_CONTROL_PLANE_NAVIGATION_CONTRACT.md",
         "status": "accepted",
         "domain": "control-plane",
         "tags": [
-          "graph",
           "control-plane",
+          "graph",
           "navigation",
+          "command-deck",
           "contract",
-          "accepted",
-          "v68"
+          "v68",
+          "ux"
         ]
       }
     },
@@ -544,7 +747,7 @@
       "id": "docs.file.contract.human.evidence.debug.mode",
       "label": "Human / Evidence / Debug Mode Contract",
       "type": "docs.contract",
-      "cluster": "blue",
+      "cluster": "slate",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/control-plane/contracts/HUMAN_MODE_EVIDENCE_MODE_CONTRACT.md",
@@ -562,62 +765,83 @@
       }
     },
     {
-      "id": "docs.file.contract.perspective.system",
+      "id": "docs.file.control.plane.perspective.system.contract",
       "label": "Perspective System Contract",
       "type": "docs.contract",
-      "cluster": "blue",
+      "cluster": "slate",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/control-plane/contracts/PERSPECTIVE_SYSTEM_CONTRACT.md",
         "status": "accepted",
         "domain": "control-plane",
         "tags": [
+          "control-plane",
           "perspective",
-          "system",
           "contract",
-          "accepted",
-          "v38"
+          "v37",
+          "registry",
+          "governance"
         ]
       }
     },
     {
-      "id": "docs.file.contract.system.index.panel.mount",
+      "id": "docs.file.control.plane.system.index.panel.mount.contract",
       "label": "System Index Panel Mount Contract",
       "type": "docs.contract",
-      "cluster": "blue",
+      "cluster": "slate",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/control-plane/contracts/SYSTEM_INDEX_PANEL_MOUNT_CONTRACT.md",
         "status": "accepted",
         "domain": "control-plane",
         "tags": [
-          "system",
-          "index",
+          "control-plane",
+          "system-index",
           "panel",
           "mount",
           "contract",
-          "accepted",
           "v72d"
         ]
       }
     },
     {
-      "id": "docs.file.contract.system.index.registry",
+      "id": "docs.file.control.plane.system.index.panel.route.discovery",
+      "label": "System Index Panel Route Discovery",
+      "type": "docs.audit",
+      "cluster": "slate",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/control-plane/contracts/SYSTEM_INDEX_PANEL_ROUTE_DISCOVERY.md",
+        "status": "accepted",
+        "domain": "control-plane",
+        "tags": [
+          "control-plane",
+          "system-index",
+          "route-discovery",
+          "audit",
+          "mount",
+          "v72d"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.control.plane.system.index.registry.contract",
       "label": "System Index Registry Contract",
       "type": "docs.contract",
-      "cluster": "blue",
+      "cluster": "slate",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/control-plane/contracts/SYSTEM_INDEX_REGISTRY_CONTRACT.md",
         "status": "accepted",
         "domain": "control-plane",
         "tags": [
-          "system",
-          "index",
+          "control-plane",
+          "system-index",
           "registry",
           "contract",
-          "accepted",
-          "v72a"
+          "v72a",
+          "taxonomy",
+          "navigation"
         ]
       }
     },
@@ -625,7 +849,7 @@
       "id": "docs.folder.grammar-lens",
       "label": "grammar-lens",
       "type": "docs.folder",
-      "cluster": "blue",
+      "cluster": "teal",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/grammar-lens"
@@ -635,7 +859,7 @@
       "id": "docs.file.contract.cursor.inspector",
       "label": "Cursor Inspector Contract",
       "type": "docs.contract",
-      "cluster": "blue",
+      "cluster": "teal",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/grammar-lens/CURSOR_INSPECTOR_CONTRACT.md",
@@ -655,7 +879,7 @@
       "id": "docs.file.system.grammar.lens.current.state",
       "label": "Ghost Overlay — Current Implementation State",
       "type": "docs.manual",
-      "cluster": "blue",
+      "cluster": "teal",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/grammar-lens/GHOST_OVERLAY_CURRENT_STATE.md",
@@ -675,7 +899,7 @@
       "id": "docs.file.contract.grammar.lens",
       "label": "Grammar Lens Contract",
       "type": "docs.contract",
-      "cluster": "blue",
+      "cluster": "teal",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/grammar-lens/GRAMMAR_LENS_CONTRACT.md",
@@ -695,7 +919,7 @@
       "id": "docs.folder.graph",
       "label": "graph",
       "type": "docs.folder",
-      "cluster": "blue",
+      "cluster": "azure",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/graph"
@@ -705,7 +929,7 @@
       "id": "docs.file.contract.graph.first.runtime.mutation",
       "label": "First Graph Runtime Mutation Contract",
       "type": "docs.contract",
-      "cluster": "blue",
+      "cluster": "azure",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/graph/contracts/FIRST_GRAPH_RUNTIME_MUTATION_CONTRACT.md",
@@ -722,10 +946,31 @@
       }
     },
     {
+      "id": "docs.file.graph.color.ownership.contract",
+      "label": "Graph Color Ownership Contract",
+      "type": "docs.contract",
+      "cluster": "azure",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/graph/contracts/GRAPH_COLOR_OWNERSHIP.md",
+        "status": "accepted",
+        "domain": "graph",
+        "tags": [
+          "contract",
+          "color",
+          "ownership",
+          "graph",
+          "sigma",
+          "style-policy",
+          "regression-prevention"
+        ]
+      }
+    },
+    {
       "id": "docs.file.contract.graph.runtime.boundary",
       "label": "Graph Runtime Boundary Contract",
       "type": "docs.contract",
-      "cluster": "blue",
+      "cluster": "azure",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/graph/contracts/GRAPH_RUNTIME_BOUNDARY_CONTRACT.md",
@@ -746,7 +991,7 @@
       "id": "docs.file.contract.graph.theme.application",
       "label": "Graph Theme Application Contract",
       "type": "docs.contract",
-      "cluster": "blue",
+      "cluster": "azure",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/graph/contracts/GRAPH_THEME_APPLICATION_CONTRACT.md",
@@ -766,7 +1011,7 @@
       "id": "docs.file.contract.graph.theme.runtime.application",
       "label": "Graph Theme Runtime Application Contract",
       "type": "docs.contract",
-      "cluster": "blue",
+      "cluster": "azure",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/graph/contracts/GRAPH_THEME_RUNTIME_APPLICATION_CONTRACT.md",
@@ -787,7 +1032,7 @@
       "id": "docs.file.contract.graph.theme.token.value.application.standalone",
       "label": "Graph Theme Token Value Application Contract",
       "type": "docs.contract",
-      "cluster": "blue",
+      "cluster": "azure",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/graph/contracts/GRAPH_THEME_TOKEN_VALUE_APPLICATION_CONTRACT.md",
@@ -809,7 +1054,7 @@
       "id": "docs.file.contract.graph.theme.token.value.preview.standalone",
       "label": "Graph Theme Token Value Preview Contract",
       "type": "docs.contract",
-      "cluster": "blue",
+      "cluster": "azure",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/graph/contracts/GRAPH_THEME_TOKEN_VALUE_PREVIEW_CONTRACT.md",
@@ -830,7 +1075,7 @@
       "id": "docs.file.contract.graph.view.element.registry",
       "label": "Graph View Element Registry Contract",
       "type": "docs.contract",
-      "cluster": "blue",
+      "cluster": "azure",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/graph/contracts/GRAPH_VIEW_ELEMENT_REGISTRY_CONTRACT.md",
@@ -851,7 +1096,7 @@
       "id": "docs.file.contract.graph.visual.theme.mapping",
       "label": "Graph Visual Theme Mapping Contract",
       "type": "docs.contract",
-      "cluster": "blue",
+      "cluster": "azure",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/graph/contracts/GRAPH_VISUAL_THEME_MAPPING_CONTRACT.md",
@@ -871,7 +1116,7 @@
       "id": "docs.file.concept.graph.cluster.gravity",
       "label": "Cluster Gravity and Color-Coded Neighborhoods",
       "type": "docs.concept",
-      "cluster": "teal",
+      "cluster": "azure",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/graph/intelligence/CLUSTER_GRAVITY_AND_COLOR_CODED_NEIGHBORHOODS.md",
@@ -889,10 +1134,31 @@
       }
     },
     {
+      "id": "docs.file.graph.depth.slider",
+      "label": "Progressive Neighborhood Depth Slider",
+      "type": "docs.concept",
+      "cluster": "azure",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/graph/intelligence/DEPTH_SLIDER.md",
+        "status": "concept",
+        "domain": "graph",
+        "tags": [
+          "graph",
+          "depth",
+          "slider",
+          "neighborhood",
+          "traversal",
+          "future",
+          "concept"
+        ]
+      }
+    },
+    {
       "id": "docs.file.policy.graph.visual",
       "label": "Graph Visual Policy",
       "type": "docs.policy",
-      "cluster": "blue",
+      "cluster": "azure",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/graph/intelligence/GRAPH_VISUAL_POLICY.md",
@@ -913,7 +1179,7 @@
       "id": "docs.folder.handleset",
       "label": "handleset",
       "type": "docs.folder",
-      "cluster": "gold",
+      "cluster": "azure",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/handleset"
@@ -923,7 +1189,7 @@
       "id": "docs.file.handleset.active",
       "label": "Active Handles",
       "type": "docs.registry",
-      "cluster": "gold",
+      "cluster": "azure",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/handleset/ACTIVE_HANDLES.md",
@@ -943,7 +1209,7 @@
       "id": "docs.file.handleset.future.visual.taxonomy",
       "label": "Future Visual Handles Taxonomy",
       "type": "docs.manual",
-      "cluster": "teal",
+      "cluster": "azure",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/handleset/FUTURE_VISUAL_HANDLES_TAXONOMY.md",
@@ -964,7 +1230,7 @@
       "id": "docs.file.handleset.concept",
       "label": "Handleset Concept",
       "type": "docs.manual",
-      "cluster": "gold",
+      "cluster": "azure",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/handleset/HANDLESET_CONCEPT.md",
@@ -985,7 +1251,7 @@
       "id": "docs.file.handleset.planned",
       "label": "Planned Handles",
       "type": "docs.registry",
-      "cluster": "gold",
+      "cluster": "azure",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/handleset/PLANNED_HANDLES.md",
@@ -1004,7 +1270,7 @@
       "id": "docs.folder.layout",
       "label": "layout",
       "type": "docs.folder",
-      "cluster": "gold",
+      "cluster": "stone",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/layout"
@@ -1013,29 +1279,29 @@
     {
       "id": "docs.file.layout.cockpit.overview",
       "label": "Cockpit Layout Overview",
-      "type": "docs.manual",
-      "cluster": "gold",
+      "type": "docs.contract",
+      "cluster": "stone",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/layout/COCKPIT_LAYOUT_OVERVIEW.md",
-        "status": "accepted",
+        "status": "current",
         "domain": "layout",
         "tags": [
           "layout",
           "cockpit",
-          "overview",
+          "panels",
           "rails",
           "viewport",
-          "topbar",
-          "accepted"
+          "presets",
+          "responsive"
         ]
       }
     },
     {
-      "id": "docs.file.model.lens.navigation",
+      "id": "docs.file.layout.lens.navigation",
       "label": "Lens Navigation Model",
       "type": "docs.concept",
-      "cluster": "gold",
+      "cluster": "stone",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/layout/LENS_NAVIGATION_MODEL.md",
@@ -1057,29 +1323,28 @@
     {
       "id": "docs.file.layout.panel.zones",
       "label": "Panel Zones",
-      "type": "docs.manual",
-      "cluster": "gold",
+      "type": "docs.contract",
+      "cluster": "stone",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/layout/PANEL_ZONES.md",
-        "status": "accepted",
+        "status": "current",
         "domain": "layout",
         "tags": [
           "layout",
           "panels",
           "zones",
-          "left-rail",
-          "right-rail",
-          "viewport",
-          "accepted"
+          "rails",
+          "handles",
+          "controls"
         ]
       }
     },
     {
-      "id": "docs.file.system.tile.workspace",
+      "id": "docs.file.layout.tile.workspace.system",
       "label": "Tile Workspace System",
       "type": "docs.concept",
-      "cluster": "gold",
+      "cluster": "stone",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/layout/TILE_WORKSPACE_SYSTEM.md",
@@ -1100,21 +1365,21 @@
     {
       "id": "docs.file.layout.top.bar.control.plan",
       "label": "Top Bar Control Plan",
-      "type": "docs.manual",
-      "cluster": "gold",
+      "type": "docs.contract",
+      "cluster": "stone",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/layout/TOP_BAR_CONTROL_PLAN.md",
-        "status": "accepted",
+        "status": "current",
         "domain": "layout",
         "tags": [
           "layout",
           "top-bar",
           "controls",
           "theme",
-          "glitter",
+          "animation",
           "reduce-motion",
-          "accepted"
+          "current"
         ]
       }
     },
@@ -1122,17 +1387,17 @@
       "id": "docs.folder.mission-control",
       "label": "mission-control",
       "type": "docs.folder",
-      "cluster": "gold",
+      "cluster": "slate",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/mission-control"
       }
     },
     {
-      "id": "docs.file.workflow.debug.checkpoint",
+      "id": "docs.file.mission.control.debug.checkpoint.workflow",
       "label": "Debug Checkpoint Workflow",
       "type": "docs.manual",
-      "cluster": "gold",
+      "cluster": "slate",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/mission-control/DEBUG_CHECKPOINT_WORKFLOW.md",
@@ -1143,16 +1408,15 @@
           "checkpoint",
           "workflow",
           "QA",
-          "mission-control",
-          "accepted"
+          "mission-control"
         ]
       }
     },
     {
-      "id": "docs.file.system.mission.control.overview",
+      "id": "docs.file.mission.control.overview",
       "label": "Mission Control Overview",
       "type": "docs.manual",
-      "cluster": "gold",
+      "cluster": "slate",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/mission-control/MISSION_CONTROL_OVERVIEW.md",
@@ -1164,16 +1428,15 @@
           "panel",
           "overview",
           "agent-chat",
-          "evolution",
-          "accepted"
+          "evolution"
         ]
       }
     },
     {
-      "id": "docs.file.protocol.qa.advisory",
+      "id": "docs.file.mission.control.qa.advisory.protocol",
       "label": "QA Advisory Protocol",
       "type": "docs.protocol",
-      "cluster": "gold",
+      "cluster": "slate",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/mission-control/QA_ADVISORY_PROTOCOL.md",
@@ -1185,16 +1448,15 @@
           "protocol",
           "questions",
           "proposals",
-          "backlog",
-          "accepted"
+          "backlog"
         ]
       }
     },
     {
-      "id": "docs.file.evolution.qa.panel.agent.chat",
+      "id": "docs.file.mission.control.qa.panel.agent.chat.evolution",
       "label": "QA Panel to Agent Chat Evolution",
       "type": "docs.manual",
-      "cluster": "gold",
+      "cluster": "slate",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/mission-control/QA_PANEL_TO_AGENT_CHAT_EVOLUTION.md",
@@ -1205,8 +1467,7 @@
           "QA",
           "agent-chat",
           "evolution",
-          "phases",
-          "accepted"
+          "phases"
         ]
       }
     },
@@ -1214,7 +1475,7 @@
       "id": "docs.folder.operating-policies",
       "label": "operating-policies",
       "type": "docs.folder",
-      "cluster": "purple",
+      "cluster": "violet",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/operating-policies"
@@ -1222,59 +1483,60 @@
     },
     {
       "id": "docs.file.policy.qa.and.playwright",
-      "label": "QA, Playwright & Acceptance Rules",
+      "label": "LumaWeave — QA, Playwright & Acceptance Rules",
       "type": "docs.policy",
-      "cluster": "purple",
+      "cluster": "violet",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/operating-policies/QA_AND_PLAYWRIGHT.md",
-        "status": "accepted",
+        "status": "current",
         "domain": "operating-policies",
         "tags": [
+          "policy",
           "qa",
           "playwright",
-          "evidence",
-          "lockstep",
           "acceptance",
-          "operating"
+          "evidence",
+          "v86a"
         ]
       }
     },
     {
-      "id": "docs.file.index.session.and.stack",
-      "label": "Session Handoff & Accepted Stack",
-      "type": "docs.index",
-      "cluster": "purple",
+      "id": "docs.file.policy.session.and.stack",
+      "label": "LumaWeave — Session Handoff & Accepted Stack",
+      "type": "docs.policy",
+      "cluster": "violet",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/operating-policies/SESSION_AND_STACK.md",
-        "status": "accepted",
+        "status": "current",
         "domain": "operating-policies",
         "tags": [
+          "policy",
           "session",
           "handoff",
           "stack",
-          "operating",
-          "agent"
+          "v86a",
+          "operational"
         ]
       }
     },
     {
-      "id": "docs.file.index.source.of.truth",
-      "label": "Source of Truth Map",
-      "type": "docs.index",
-      "cluster": "purple",
+      "id": "docs.file.policy.source.of.truth",
+      "label": "LumaWeave — Source of Truth Map",
+      "type": "docs.policy",
+      "cluster": "violet",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/operating-policies/SOURCE_OF_TRUTH.md",
-        "status": "accepted",
+        "status": "current",
         "domain": "operating-policies",
         "tags": [
+          "policy",
           "source-of-truth",
-          "forbidden",
-          "boundaries",
-          "operating",
-          "agent"
+          "governance",
+          "forbidden-boundaries",
+          "v86a"
         ]
       }
     },
@@ -1409,17 +1671,17 @@
       "id": "docs.folder.platform",
       "label": "platform",
       "type": "docs.folder",
-      "cluster": "teal",
+      "cluster": "indigo",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/platform"
       }
     },
     {
-      "id": "docs.file.vision.creative.pipeline",
+      "id": "docs.file.platform.creative.pipeline",
       "label": "Creative Pipeline Concept",
       "type": "docs.concept",
-      "cluster": "teal",
+      "cluster": "indigo",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/platform/CREATIVE_PIPELINE_CONCEPT.md",
@@ -1437,19 +1699,19 @@
       }
     },
     {
-      "id": "docs.file.vision.platform",
-      "label": "Lattica Platform Vision",
+      "id": "docs.file.platform.vision",
+      "label": "LumaWeave Platform Vision",
       "type": "docs.concept",
-      "cluster": "teal",
+      "cluster": "indigo",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/platform/PLATFORM_VISION.md",
-        "status": "accepted",
+        "status": "concept",
         "domain": "platform",
         "tags": [
           "platform",
-          "lattica",
           "lumaweave",
+          "lattica",
           "memory-palace",
           "vision",
           "product-family"
@@ -1486,20 +1748,233 @@
       }
     },
     {
+      "id": "docs.folder.registries",
+      "label": "registries",
+      "type": "docs.folder",
+      "cluster": "azure",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/registries"
+      }
+    },
+    {
+      "id": "docs.file.link.network.layer.1",
+      "label": "Layer 1 — Handle Registry",
+      "type": "docs.registry",
+      "cluster": "azure",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/registries/LAYER_1_HANDLE_REGISTRY.md",
+        "status": "current",
+        "domain": "registries",
+        "tags": [
+          "link-network",
+          "layer-1",
+          "handles",
+          "controls",
+          "registry",
+          "v86a",
+          "vP-Registry-Y"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.link.network.layer.2",
+      "label": "Layer 2 — Control Surface Contract Registry",
+      "type": "docs.registry",
+      "cluster": "slate",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/registries/LAYER_2_CONTROL_SURFACE_CONTRACT.md",
+        "status": "current",
+        "domain": "registries",
+        "tags": [
+          "link-network",
+          "layer-2",
+          "contracts",
+          "control-surface",
+          "registry",
+          "v86a",
+          "vP-Registry-Y"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.link.network.layer.2.overlay.question",
+      "label": "Layer 2 Overlay Surface Question",
+      "type": "docs.decision-point",
+      "cluster": "slate",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/registries/LAYER_2_OVERLAY_SURFACE_QUESTION.md",
+        "status": "current",
+        "domain": "registries",
+        "tags": [
+          "link-network",
+          "layer-2",
+          "decision-point",
+          "overlays",
+          "v86a",
+          "vP-Registry-Y"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.link.network.layer.3",
+      "label": "Layer 3 — Graph Visual Theme Mapping Registry",
+      "type": "docs.registry",
+      "cluster": "azure",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/registries/LAYER_3_GRAPH_VISUAL_THEME_MAPPING.md",
+        "status": "current",
+        "domain": "registries",
+        "tags": [
+          "link-network",
+          "layer-3",
+          "theme-mapping",
+          "graph",
+          "registry",
+          "v86a",
+          "vP-Registry-Y"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.link.network.layer.3.gaps",
+      "label": "Layer 3 Token Coverage Gap",
+      "type": "docs.gap-analysis",
+      "cluster": "slate",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/registries/LAYER_3_TOKEN_COVERAGE_GAP.md",
+        "status": "current",
+        "domain": "registries",
+        "tags": [
+          "link-network",
+          "layer-3",
+          "gap-analysis",
+          "tokens",
+          "v86a",
+          "vP-Registry-Y"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.link.network.layer.4",
+      "label": "Layer 4 — Graph View Element Registry",
+      "type": "docs.registry",
+      "cluster": "azure",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/registries/LAYER_4_GRAPH_VIEW_ELEMENT.md",
+        "status": "current",
+        "domain": "registries",
+        "tags": [
+          "link-network",
+          "layer-4",
+          "graph-elements",
+          "graph",
+          "registry",
+          "v86a",
+          "vP-Registry-Y"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.link.network.layer.4.gaps",
+      "label": "Layer 4 Overlay Element Gap",
+      "type": "docs.gap-analysis",
+      "cluster": "azure",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/registries/LAYER_4_OVERLAY_ELEMENT_GAP.md",
+        "status": "current",
+        "domain": "registries",
+        "tags": [
+          "link-network",
+          "layer-4",
+          "gap-analysis",
+          "overlays",
+          "v86a",
+          "vP-Registry-Y"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.link.network.overview",
+      "label": "Link Network Overview",
+      "type": "docs.overview",
+      "cluster": "slate",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/registries/LINK_NETWORK_OVERVIEW.md",
+        "status": "current",
+        "domain": "registries",
+        "tags": [
+          "link-network",
+          "registries",
+          "four-layer",
+          "governance",
+          "v86a",
+          "vP-Registry-Y"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.link.network.naming.drift",
+      "label": "Naming Convention Drift",
+      "type": "docs.drift-analysis",
+      "cluster": "slate",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/registries/NAMING_CONVENTION_DRIFT.md",
+        "status": "current",
+        "domain": "registries",
+        "tags": [
+          "link-network",
+          "naming-drift",
+          "conventions",
+          "v86a",
+          "vP-Registry-Y"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.registry.inventory",
+      "label": "Registry Inventory",
+      "type": "docs.inventory",
+      "cluster": "slate",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/registries/REGISTRY_INVENTORY.md",
+        "status": "current",
+        "domain": "registries",
+        "tags": [
+          "registry",
+          "inventory",
+          "link-network",
+          "orthogonal",
+          "v86a",
+          "vP-Registry-Y"
+        ]
+      }
+    },
+    {
       "id": "docs.folder.rendering",
       "label": "rendering",
       "type": "docs.folder",
-      "cluster": "blue",
+      "cluster": "azure",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/rendering"
       }
     },
     {
-      "id": "docs.file.contract.cross.layer.override.cache",
+      "id": "docs.file.rendering.cross.layer.override.cache",
       "label": "Cross-Layer Override Cache Contract",
       "type": "docs.contract",
-      "cluster": "blue",
+      "cluster": "azure",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/rendering/CROSS_LAYER_OVERRIDE_CACHE_CONTRACT.md",
@@ -1517,10 +1992,10 @@
       }
     },
     {
-      "id": "docs.file.architecture.rendering.layers",
+      "id": "docs.file.rendering.layer.architecture",
       "label": "Rendering Layer Architecture",
       "type": "docs.contract",
-      "cluster": "blue",
+      "cluster": "azure",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/rendering/RENDERING_LAYER_ARCHITECTURE.md",
@@ -1542,7 +2017,7 @@
       "id": "docs.folder.roadmap",
       "label": "roadmap",
       "type": "docs.folder",
-      "cluster": "purple",
+      "cluster": "violet",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/roadmap"
@@ -1552,7 +2027,7 @@
       "id": "docs.file.policy.backlog",
       "label": "QA Backlog Policy",
       "type": "docs.policy",
-      "cluster": "purple",
+      "cluster": "violet",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/roadmap/BACKLOG_POLICY.md",
@@ -1572,78 +2047,80 @@
       "id": "docs.folder.source-adapter",
       "label": "source-adapter",
       "type": "docs.folder",
-      "cluster": "green",
+      "cluster": "lime",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/source-adapter"
       }
     },
     {
-      "id": "docs.file.policy.ingestion.safety.qa",
+      "id": "docs.file.source.adapter.ingestion.safety.qa",
       "label": "Ingestion Safety and QA",
       "type": "docs.policy",
-      "cluster": "green",
+      "cluster": "lime",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/source-adapter/INGESTION_SAFETY_AND_QA.md",
-        "status": "accepted",
+        "status": "current",
         "domain": "source-adapter",
         "tags": [
           "source-adapter",
           "ingestion",
           "safety",
-          "QA",
-          "policy",
-          "accepted"
+          "qa",
+          "evidence",
+          "confidence",
+          "validation"
         ]
       }
     },
     {
-      "id": "docs.file.schema.source.graph.normalized",
+      "id": "docs.file.source.adapter.normalized.source.graph.schema",
       "label": "Normalized Source Graph Schema",
-      "type": "docs.registry",
-      "cluster": "green",
+      "type": "docs.contract",
+      "cluster": "lime",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/source-adapter/NORMALIZED_SOURCE_GRAPH_SCHEMA.md",
-        "status": "accepted",
+        "status": "current",
         "domain": "source-adapter",
         "tags": [
           "source-adapter",
           "schema",
-          "normalized",
           "graph",
+          "normalization",
           "nodes",
           "edges",
-          "evidence",
-          "accepted"
+          "evidence"
         ]
       }
     },
     {
-      "id": "docs.file.catalog.source.adapters",
+      "id": "docs.file.source.adapter.catalog",
       "label": "Source Adapter Catalog",
-      "type": "docs.registry",
-      "cluster": "green",
+      "type": "docs.catalog",
+      "cluster": "lime",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/source-adapter/SOURCE_ADAPTER_CATALOG.md",
-        "status": "accepted",
+        "status": "current",
         "domain": "source-adapter",
         "tags": [
           "source-adapter",
           "catalog",
           "adapters",
-          "ingestion",
-          "accepted"
+          "codebase",
+          "website",
+          "database",
+          "infrastructure"
         ]
       }
     },
     {
-      "id": "docs.file.contract.source.adapter.os",
+      "id": "docs.file.source.adapter.os.contract",
       "label": "Source Adapter OS Foundation Contract",
       "type": "docs.contract",
-      "cluster": "green",
+      "cluster": "lime",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/source-adapter/SOURCE_ADAPTER_OS_CONTRACT.md",
@@ -1656,35 +2133,52 @@
           "foundation",
           "lifecycle",
           "safety",
-          "accepted"
+          "v74a"
         ]
       }
     },
     {
-      "id": "docs.file.system.source.adapter.os",
+      "id": "docs.file.source.adapter.os.overview",
       "label": "Source Adapter OS Overview",
-      "type": "docs.manual",
-      "cluster": "green",
+      "type": "docs.concept",
+      "cluster": "lime",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/source-adapter/SOURCE_ADAPTER_OS_OVERVIEW.md",
-        "status": "accepted",
+        "status": "current",
         "domain": "source-adapter",
         "tags": [
           "source-adapter",
-          "OS",
           "overview",
           "ingestion",
-          "pipeline",
-          "accepted"
+          "normalization",
+          "evidence",
+          "confidence"
         ]
       }
     },
     {
-      "id": "docs.file.roadmap.source.adapter",
+      "id": "docs.file.source.adapter.readme",
+      "label": "LumaWeave Source Adapter Cluster",
+      "type": "docs.readme",
+      "cluster": "lime",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/source-adapter/SOURCE_ADAPTER_README.md",
+        "status": "current",
+        "domain": "source-adapter",
+        "tags": [
+          "source-adapter",
+          "readme",
+          "cluster-index"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.source.adapter.roadmap",
       "label": "Source Adapter OS Roadmap",
       "type": "docs.roadmap",
-      "cluster": "green",
+      "cluster": "lime",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/source-adapter/SOURCE_ADAPTER_ROADMAP.md",
@@ -1694,226 +2188,48 @@
           "source-adapter",
           "roadmap",
           "phases",
-          "v74",
-          "accepted"
+          "v74"
         ]
       }
     },
     {
-      "id": "docs.file.model.translation.set",
+      "id": "docs.file.source.adapter.translation.set.model",
       "label": "Translation Set Model",
-      "type": "docs.manual",
-      "cluster": "green",
+      "type": "docs.concept",
+      "cluster": "lime",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/source-adapter/TRANSLATION_SET_MODEL.md",
-        "status": "accepted",
+        "status": "current",
         "domain": "source-adapter",
         "tags": [
           "source-adapter",
           "translation",
-          "set",
-          "model",
           "mapping",
-          "accepted"
+          "vocabulary",
+          "observed",
+          "inferred"
         ]
       }
     },
     {
-      "id": "docs.file.adapter.website.url.v0",
+      "id": "docs.file.source.adapter.website.url.v0",
       "label": "Website URL Adapter v0",
-      "type": "docs.manual",
-      "cluster": "green",
+      "type": "docs.concept",
+      "cluster": "lime",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/source-adapter/WEBSITE_URL_ADAPTER_V0.md",
-        "status": "accepted",
+        "status": "current",
         "domain": "source-adapter",
         "tags": [
           "source-adapter",
           "website",
-          "URL",
-          "crawler",
+          "url",
           "adapter",
           "v0",
-          "accepted"
-        ]
-      }
-    },
-    {
-      "id": "docs.folder.survival-manual",
-      "label": "survival-manual",
-      "type": "docs.folder",
-      "cluster": "gold",
-      "sourceAdapter": "yaml-frontmatter-parser",
-      "metadata": {
-        "path": "docs/survival-manual"
-      }
-    },
-    {
-      "id": "docs.file.manual.troubleshooting.matrix",
-      "label": "Troubleshooting Decision Matrix",
-      "type": "docs.manual",
-      "cluster": "gold",
-      "sourceAdapter": "yaml-frontmatter-parser",
-      "metadata": {
-        "path": "docs/survival-manual/01_TROUBLESHOOTING_DECISION_MATRIX.md",
-        "status": "accepted",
-        "domain": "survival-manual",
-        "tags": [
-          "troubleshooting",
-          "decision",
-          "matrix",
-          "failures",
-          "survival"
-        ]
-      }
-    },
-    {
-      "id": "docs.file.manual.diagnostic.router",
-      "label": "Diagnostic Router",
-      "type": "docs.manual",
-      "cluster": "gold",
-      "sourceAdapter": "yaml-frontmatter-parser",
-      "metadata": {
-        "path": "docs/survival-manual/02_DIAGNOSTIC_ROUTER.md",
-        "status": "accepted",
-        "domain": "survival-manual",
-        "tags": [
-          "diagnostic",
-          "router",
-          "classification",
-          "failures",
-          "survival"
-        ]
-      }
-    },
-    {
-      "id": "docs.file.manual.tool.use.triggers",
-      "label": "Tool Use Triggers",
-      "type": "docs.manual",
-      "cluster": "gold",
-      "sourceAdapter": "yaml-frontmatter-parser",
-      "metadata": {
-        "path": "docs/survival-manual/03_TOOL_USE_TRIGGERS.md",
-        "status": "accepted",
-        "domain": "survival-manual",
-        "tags": [
-          "tools",
-          "playwright",
-          "context7",
-          "sequential-thinking",
-          "survival"
-        ]
-      }
-    },
-    {
-      "id": "docs.file.manual.debugging.lenses",
-      "label": "Debugging Lenses",
-      "type": "docs.manual",
-      "cluster": "gold",
-      "sourceAdapter": "yaml-frontmatter-parser",
-      "metadata": {
-        "path": "docs/survival-manual/04_DEBUGGING_LENSES.md",
-        "status": "accepted",
-        "domain": "survival-manual",
-        "tags": [
-          "debugging",
-          "lenses",
-          "reasoning",
-          "survival"
-        ]
-      }
-    },
-    {
-      "id": "docs.file.manual.failure.report.template",
-      "label": "Failure Report Template",
-      "type": "docs.manual",
-      "cluster": "gold",
-      "sourceAdapter": "yaml-frontmatter-parser",
-      "metadata": {
-        "path": "docs/survival-manual/05_FAILURE_REPORT_TEMPLATE.md",
-        "status": "accepted",
-        "domain": "survival-manual",
-        "tags": [
-          "failure",
-          "report",
-          "template",
-          "survival"
-        ]
-      }
-    },
-    {
-      "id": "docs.file.manual.stop.conditions",
-      "label": "Stop Conditions",
-      "type": "docs.manual",
-      "cluster": "gold",
-      "sourceAdapter": "yaml-frontmatter-parser",
-      "metadata": {
-        "path": "docs/survival-manual/06_STOP_CONDITIONS.md",
-        "status": "accepted",
-        "domain": "survival-manual",
-        "tags": [
-          "stop",
-          "conditions",
-          "self-split",
-          "survival"
-        ]
-      }
-    },
-    {
-      "id": "docs.file.manual.prompt.blocks",
-      "label": "Reusable Prompt Blocks",
-      "type": "docs.manual",
-      "cluster": "gold",
-      "sourceAdapter": "yaml-frontmatter-parser",
-      "metadata": {
-        "path": "docs/survival-manual/07_PROMPT_BLOCKS.md",
-        "status": "accepted",
-        "domain": "survival-manual",
-        "tags": [
-          "prompts",
-          "blocks",
-          "templates",
-          "survival"
-        ]
-      }
-    },
-    {
-      "id": "docs.file.manual.agent.operating.loop",
-      "label": "LumaWeave Agent Operating Loop",
-      "type": "docs.manual",
-      "cluster": "gold",
-      "sourceAdapter": "yaml-frontmatter-parser",
-      "metadata": {
-        "path": "docs/survival-manual/08_LUMAWEAVE_AGENT_OPERATING_LOOP.md",
-        "status": "accepted",
-        "domain": "survival-manual",
-        "tags": [
-          "agent",
-          "operating",
-          "loop",
-          "behavior",
-          "survival"
-        ]
-      }
-    },
-    {
-      "id": "docs.file.manual.survival.readme",
-      "label": "LumaWeave Coding Survival Manual",
-      "type": "docs.manual",
-      "cluster": "gold",
-      "sourceAdapter": "yaml-frontmatter-parser",
-      "metadata": {
-        "path": "docs/survival-manual/README.md",
-        "status": "accepted",
-        "domain": "survival-manual",
-        "tags": [
-          "survival",
-          "manual",
-          "troubleshooting",
-          "agent",
-          "operating"
+          "observed",
+          "crawl-bounded"
         ]
       }
     },
@@ -1928,23 +2244,85 @@
       }
     },
     {
-      "id": "docs.file.backlog.theme.mapping.system",
-      "label": "Theme Mapping System Backlog",
-      "type": "docs.manual",
+      "id": "docs.file.theme.customization.roadmap",
+      "label": "Theme Customization Roadmap",
+      "type": "docs.roadmap",
       "cluster": "gold",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
-        "path": "docs/theme/THEME_MAPPING_SYSTEM_BACKLOG.md",
-        "status": "accepted",
+        "path": "docs/theme/THEME_CUSTOMIZATION_ROADMAP.md",
+        "status": "current",
+        "domain": "theme",
+        "tags": [
+          "theme",
+          "customization",
+          "roadmap",
+          "future",
+          "v86a"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.theme.engine",
+      "label": "Theme Engine",
+      "type": "docs.guide",
+      "cluster": "gold",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/theme/THEME_ENGINE.md",
+        "status": "current",
+        "domain": "theme",
+        "tags": [
+          "theme",
+          "engine",
+          "runtime",
+          "applyTheme",
+          "v86a"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.theme.mapping.panel.entry.contract",
+      "label": "Theme Mapping Panel Entry Contract",
+      "type": "docs.contract",
+      "cluster": "gold",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/theme/THEME_MAPPING_PANEL_ENTRY_CONTRACT.md",
+        "status": "current",
         "domain": "theme",
         "tags": [
           "theme",
           "mapping",
-          "backlog",
-          "v18a",
-          "inspector",
-          "overlay",
-          "architecture"
+          "panel",
+          "entry",
+          "contract",
+          "v28",
+          "v34b",
+          "v86a"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.theme.override.storage.contract",
+      "label": "Theme Override / Storage Contract",
+      "type": "docs.contract",
+      "cluster": "gold",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/theme/THEME_OVERRIDE_STORAGE_CONTRACT.md",
+        "status": "current",
+        "domain": "theme",
+        "tags": [
+          "theme",
+          "override",
+          "storage",
+          "contract",
+          "v33",
+          "v34a",
+          "v34b",
+          "v34c1",
+          "v86a"
         ]
       }
     },
@@ -2046,6 +2424,25 @@
       }
     },
     {
+      "id": "docs.file.theme.top.bar.controls",
+      "label": "Theme Top Bar Controls",
+      "type": "docs.guide",
+      "cluster": "gold",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/theme/THEME_TOP_BAR_CONTROLS.md",
+        "status": "current",
+        "domain": "theme",
+        "tags": [
+          "theme",
+          "top-bar",
+          "controls",
+          "ui",
+          "v86a"
+        ]
+      }
+    },
+    {
       "id": "docs.folder.visual-grammar-engine",
       "label": "visual-grammar-engine",
       "type": "docs.folder",
@@ -2056,8 +2453,8 @@
       }
     },
     {
-      "id": "docs.file.vge.PLACEHOLDER",
-      "label": "Visual Grammar Engine — PLACEHOLDER",
+      "id": "docs.file.vge.asset.and.tokens",
+      "label": "Visual Grammar Engine — Asset Bank & Theme Token Compatibility",
       "type": "docs.concept",
       "cluster": "teal",
       "sourceAdapter": "yaml-frontmatter-parser",
@@ -2067,8 +2464,130 @@
         "domain": "visual-grammar-engine",
         "tags": [
           "vge",
+          "asset-bank",
+          "tokens",
+          "compatibility",
+          "future",
+          "docs-only"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.vge.dialect.and.safety",
+      "label": "Visual Grammar Engine — Visual Dialect Presets & Safety/Schema Governance",
+      "type": "docs.concept",
+      "cluster": "teal",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/visual-grammar-engine/VGE_DIALECT_AND_SAFETY.md",
+        "status": "concept",
+        "domain": "visual-grammar-engine",
+        "tags": [
+          "vge",
+          "dialect",
+          "safety",
+          "schema",
+          "governance",
+          "future",
+          "docs-only"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.vge.grammar.handle.and.lens",
+      "label": "Visual Grammar Engine — Grammar Handle Model & Grammar Lens",
+      "type": "docs.concept",
+      "cluster": "teal",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/visual-grammar-engine/VGE_GRAMMAR_HANDLE_AND_LENS.md",
+        "status": "concept",
+        "domain": "visual-grammar-engine",
+        "tags": [
+          "vge",
+          "grammar-handle",
+          "grammar-lens",
+          "cursor-inspector",
+          "future",
+          "docs-only"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.vge.overview.and.terms",
+      "label": "Visual Grammar Engine — Overview & Core Terms",
+      "type": "docs.concept",
+      "cluster": "teal",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/visual-grammar-engine/VGE_OVERVIEW_AND_TERMS.md",
+        "status": "concept",
+        "domain": "visual-grammar-engine",
+        "tags": [
+          "vge",
           "visual-grammar-engine",
-          "concept",
+          "overview",
+          "terms",
+          "future",
+          "docs-only"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.vge.roadmap",
+      "label": "Visual Grammar Engine — Implementation Roadmap",
+      "type": "docs.roadmap",
+      "cluster": "teal",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/visual-grammar-engine/VGE_ROADMAP.md",
+        "status": "concept",
+        "domain": "visual-grammar-engine",
+        "tags": [
+          "vge",
+          "visual-grammar-engine",
+          "roadmap",
+          "future",
+          "docs-only"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.vge.signal.loom",
+      "label": "Visual Grammar Engine — Signal Loom Routing Model",
+      "type": "docs.concept",
+      "cluster": "teal",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/visual-grammar-engine/VGE_SIGNAL_LOOM.md",
+        "status": "concept",
+        "domain": "visual-grammar-engine",
+        "tags": [
+          "vge",
+          "signal-loom",
+          "routing",
+          "signals",
+          "future",
+          "docs-only"
+        ]
+      }
+    },
+    {
+      "id": "docs.file.vge.ui.and.positioning",
+      "label": "Visual Grammar Engine — UI Layout, Mode Presets & Product Positioning",
+      "type": "docs.concept",
+      "cluster": "teal",
+      "sourceAdapter": "yaml-frontmatter-parser",
+      "metadata": {
+        "path": "docs/visual-grammar-engine/VGE_UI_AND_POSITIONING.md",
+        "status": "concept",
+        "domain": "visual-grammar-engine",
+        "tags": [
+          "vge",
+          "ui",
+          "layout",
+          "modes",
+          "positioning",
           "future",
           "docs-only"
         ]
@@ -2078,17 +2597,17 @@
       "id": "docs.folder.vr",
       "label": "vr",
       "type": "docs.folder",
-      "cluster": "teal",
+      "cluster": "indigo",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/vr"
       }
     },
     {
-      "id": "docs.file.concept.agent.familiar.system",
+      "id": "docs.file.vr.agent.familiar.system",
       "label": "Agent Familiar System",
       "type": "docs.concept",
-      "cluster": "teal",
+      "cluster": "indigo",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/vr/AGENT_FAMILIAR_SYSTEM.md",
@@ -2106,10 +2625,10 @@
       }
     },
     {
-      "id": "docs.file.concept.vr.compatibility",
+      "id": "docs.file.vr.compatibility.concept",
       "label": "VR Compatibility Concept",
       "type": "docs.concept",
-      "cluster": "teal",
+      "cluster": "indigo",
       "sourceAdapter": "yaml-frontmatter-parser",
       "metadata": {
         "path": "docs/vr/VR_COMPATIBILITY_CONCEPT.md",
@@ -2128,6 +2647,14 @@
     }
   ],
   "edges": [
+    {
+      "id": "edge.contains.docs.file.docs.rehaul.ledger",
+      "source": "docs.folder.docs",
+      "target": "docs.file.docs.rehaul.ledger",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
     {
       "id": "edge.contains.docs.file.contract.motion.safety",
       "source": "docs.folder.accessibility",
@@ -2209,6 +2736,78 @@
       "metadata": {}
     },
     {
+      "id": "edge.contains.docs.file.agent.survival.manual.troubleshooting.decision.matrix",
+      "source": "docs.folder.agent",
+      "target": "docs.file.agent.survival.manual.troubleshooting.decision.matrix",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.agent.survival.manual.diagnostic.router",
+      "source": "docs.folder.agent",
+      "target": "docs.file.agent.survival.manual.diagnostic.router",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.agent.survival.manual.tool.use.triggers",
+      "source": "docs.folder.agent",
+      "target": "docs.file.agent.survival.manual.tool.use.triggers",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.agent.survival.manual.debugging.lenses",
+      "source": "docs.folder.agent",
+      "target": "docs.file.agent.survival.manual.debugging.lenses",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.agent.survival.manual.failure.report.template",
+      "source": "docs.folder.agent",
+      "target": "docs.file.agent.survival.manual.failure.report.template",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.agent.survival.manual.stop.conditions",
+      "source": "docs.folder.agent",
+      "target": "docs.file.agent.survival.manual.stop.conditions",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.agent.survival.manual.prompt.blocks",
+      "source": "docs.folder.agent",
+      "target": "docs.file.agent.survival.manual.prompt.blocks",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.agent.survival.manual.operating.loop",
+      "source": "docs.folder.agent",
+      "target": "docs.file.agent.survival.manual.operating.loop",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.agent.survival.manual.readme",
+      "source": "docs.folder.agent",
+      "target": "docs.file.agent.survival.manual.readme",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
       "id": "edge.contains.docs.file.tooling.bandit.toolbelt.architecture",
       "source": "docs.folder.agent",
       "target": "docs.file.tooling.bandit.toolbelt.architecture",
@@ -2249,104 +2848,104 @@
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.contract.audio.reactivity",
+      "id": "edge.contains.docs.file.audio.reactivity.contract",
       "source": "docs.folder.audio",
-      "target": "docs.file.contract.audio.reactivity",
+      "target": "docs.file.audio.reactivity.contract",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.governs.docs.file.contract.audio.reactivity",
-      "source": "docs.file.contract.audio.reactivity",
+      "id": "edge.governs.docs.file.audio.reactivity.contract",
+      "source": "docs.file.audio.reactivity.contract",
       "target": "code.system.audio",
       "type": "governs",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.contract.audio.source.system",
+      "id": "edge.contains.docs.file.audio.source.system.contract",
       "source": "docs.folder.audio",
-      "target": "docs.file.contract.audio.source.system",
+      "target": "docs.file.audio.source.system.contract",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.governs.docs.file.contract.audio.source.system",
-      "source": "docs.file.contract.audio.source.system",
+      "id": "edge.governs.docs.file.audio.source.system.contract",
+      "source": "docs.file.audio.source.system.contract",
       "target": "code.system.audio",
       "type": "governs",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.contract.music.reactive.mapping",
+      "id": "edge.contains.docs.file.audio.music.reactive.mapping.contract",
       "source": "docs.folder.audio",
-      "target": "docs.file.contract.music.reactive.mapping",
+      "target": "docs.file.audio.music.reactive.mapping.contract",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.governs.docs.file.contract.music.reactive.mapping",
-      "source": "docs.file.contract.music.reactive.mapping",
+      "id": "edge.governs.docs.file.audio.music.reactive.mapping.contract",
+      "source": "docs.file.audio.music.reactive.mapping.contract",
       "target": "code.system.audio",
       "type": "governs",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.contract.universal.audio.handle.routing",
+      "id": "edge.contains.docs.file.audio.universal.handle.routing",
       "source": "docs.folder.audio",
-      "target": "docs.file.contract.universal.audio.handle.routing",
+      "target": "docs.file.audio.universal.handle.routing",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.governs.docs.file.contract.universal.audio.handle.routing",
-      "source": "docs.file.contract.universal.audio.handle.routing",
+      "id": "edge.governs.docs.file.audio.universal.handle.routing",
+      "source": "docs.file.audio.universal.handle.routing",
       "target": "code.system.audio",
       "type": "governs",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.contract.command.deck.hotkey.registry",
+      "id": "edge.contains.docs.file.control.plane.command.deck.hotkey.registry.contract",
       "source": "docs.folder.control-plane",
-      "target": "docs.file.contract.command.deck.hotkey.registry",
+      "target": "docs.file.control.plane.command.deck.hotkey.registry.contract",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.governs.docs.file.contract.command.deck.hotkey.registry",
-      "source": "docs.file.contract.command.deck.hotkey.registry",
+      "id": "edge.governs.docs.file.control.plane.command.deck.hotkey.registry.contract",
+      "source": "docs.file.control.plane.command.deck.hotkey.registry.contract",
       "target": "code.system.control-plane",
       "type": "governs",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.matrix.contract.to.code.trace",
+      "id": "edge.contains.docs.file.control.plane.contract.to.code.trace.matrix",
       "source": "docs.folder.control-plane",
-      "target": "docs.file.matrix.contract.to.code.trace",
+      "target": "docs.file.control.plane.contract.to.code.trace.matrix",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.contract.graph.control.plane.navigation",
+      "id": "edge.contains.docs.file.control.plane.graph.navigation.contract",
       "source": "docs.folder.control-plane",
-      "target": "docs.file.contract.graph.control.plane.navigation",
+      "target": "docs.file.control.plane.graph.navigation.contract",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.governs.docs.file.contract.graph.control.plane.navigation",
-      "source": "docs.file.contract.graph.control.plane.navigation",
+      "id": "edge.governs.docs.file.control.plane.graph.navigation.contract",
+      "source": "docs.file.control.plane.graph.navigation.contract",
       "target": "code.system.control-plane",
       "type": "governs",
       "confidence": "observed",
@@ -2369,48 +2968,56 @@
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.contract.perspective.system",
+      "id": "edge.contains.docs.file.control.plane.perspective.system.contract",
       "source": "docs.folder.control-plane",
-      "target": "docs.file.contract.perspective.system",
+      "target": "docs.file.control.plane.perspective.system.contract",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.governs.docs.file.contract.perspective.system",
-      "source": "docs.file.contract.perspective.system",
+      "id": "edge.governs.docs.file.control.plane.perspective.system.contract",
+      "source": "docs.file.control.plane.perspective.system.contract",
       "target": "code.system.control-plane",
       "type": "governs",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.contract.system.index.panel.mount",
+      "id": "edge.contains.docs.file.control.plane.system.index.panel.mount.contract",
       "source": "docs.folder.control-plane",
-      "target": "docs.file.contract.system.index.panel.mount",
+      "target": "docs.file.control.plane.system.index.panel.mount.contract",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.governs.docs.file.contract.system.index.panel.mount",
-      "source": "docs.file.contract.system.index.panel.mount",
+      "id": "edge.governs.docs.file.control.plane.system.index.panel.mount.contract",
+      "source": "docs.file.control.plane.system.index.panel.mount.contract",
       "target": "code.system.control-plane",
       "type": "governs",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.contract.system.index.registry",
+      "id": "edge.contains.docs.file.control.plane.system.index.panel.route.discovery",
       "source": "docs.folder.control-plane",
-      "target": "docs.file.contract.system.index.registry",
+      "target": "docs.file.control.plane.system.index.panel.route.discovery",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.governs.docs.file.contract.system.index.registry",
-      "source": "docs.file.contract.system.index.registry",
+      "id": "edge.contains.docs.file.control.plane.system.index.registry.contract",
+      "source": "docs.folder.control-plane",
+      "target": "docs.file.control.plane.system.index.registry.contract",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.governs.docs.file.control.plane.system.index.registry.contract",
+      "source": "docs.file.control.plane.system.index.registry.contract",
       "target": "code.system.control-plane",
       "type": "governs",
       "confidence": "observed",
@@ -2451,6 +3058,22 @@
     {
       "id": "edge.governs.docs.file.contract.graph.first.runtime.mutation",
       "source": "docs.file.contract.graph.first.runtime.mutation",
+      "target": "code.system.graph",
+      "type": "governs",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.graph.color.ownership.contract",
+      "source": "docs.folder.graph",
+      "target": "docs.file.graph.color.ownership.contract",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.governs.docs.file.graph.color.ownership.contract",
+      "source": "docs.file.graph.color.ownership.contract",
       "target": "code.system.graph",
       "type": "governs",
       "confidence": "observed",
@@ -2577,6 +3200,14 @@
       "metadata": {}
     },
     {
+      "id": "edge.contains.docs.file.graph.depth.slider",
+      "source": "docs.folder.graph",
+      "target": "docs.file.graph.depth.slider",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
       "id": "edge.contains.docs.file.policy.graph.visual",
       "source": "docs.folder.graph",
       "target": "docs.file.policy.graph.visual",
@@ -2633,9 +3264,9 @@
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.model.lens.navigation",
+      "id": "edge.contains.docs.file.layout.lens.navigation",
       "source": "docs.folder.layout",
-      "target": "docs.file.model.lens.navigation",
+      "target": "docs.file.layout.lens.navigation",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
@@ -2649,9 +3280,9 @@
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.system.tile.workspace",
+      "id": "edge.contains.docs.file.layout.tile.workspace.system",
       "source": "docs.folder.layout",
-      "target": "docs.file.system.tile.workspace",
+      "target": "docs.file.layout.tile.workspace.system",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
@@ -2665,33 +3296,33 @@
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.workflow.debug.checkpoint",
+      "id": "edge.contains.docs.file.mission.control.debug.checkpoint.workflow",
       "source": "docs.folder.mission-control",
-      "target": "docs.file.workflow.debug.checkpoint",
+      "target": "docs.file.mission.control.debug.checkpoint.workflow",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.system.mission.control.overview",
+      "id": "edge.contains.docs.file.mission.control.overview",
       "source": "docs.folder.mission-control",
-      "target": "docs.file.system.mission.control.overview",
+      "target": "docs.file.mission.control.overview",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.protocol.qa.advisory",
+      "id": "edge.contains.docs.file.mission.control.qa.advisory.protocol",
       "source": "docs.folder.mission-control",
-      "target": "docs.file.protocol.qa.advisory",
+      "target": "docs.file.mission.control.qa.advisory.protocol",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.evolution.qa.panel.agent.chat",
+      "id": "edge.contains.docs.file.mission.control.qa.panel.agent.chat.evolution",
       "source": "docs.folder.mission-control",
-      "target": "docs.file.evolution.qa.panel.agent.chat",
+      "target": "docs.file.mission.control.qa.panel.agent.chat.evolution",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
@@ -2705,17 +3336,17 @@
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.index.session.and.stack",
+      "id": "edge.contains.docs.file.policy.session.and.stack",
       "source": "docs.folder.operating-policies",
-      "target": "docs.file.index.session.and.stack",
+      "target": "docs.file.policy.session.and.stack",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.index.source.of.truth",
+      "id": "edge.contains.docs.file.policy.source.of.truth",
       "source": "docs.folder.operating-policies",
-      "target": "docs.file.index.source.of.truth",
+      "target": "docs.file.policy.source.of.truth",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
@@ -2761,17 +3392,17 @@
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.vision.creative.pipeline",
+      "id": "edge.contains.docs.file.platform.creative.pipeline",
       "source": "docs.folder.platform",
-      "target": "docs.file.vision.creative.pipeline",
+      "target": "docs.file.platform.creative.pipeline",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.vision.platform",
+      "id": "edge.contains.docs.file.platform.vision",
       "source": "docs.folder.platform",
-      "target": "docs.file.vision.platform",
+      "target": "docs.file.platform.vision",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
@@ -2785,17 +3416,97 @@
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.contract.cross.layer.override.cache",
-      "source": "docs.folder.rendering",
-      "target": "docs.file.contract.cross.layer.override.cache",
+      "id": "edge.contains.docs.file.link.network.layer.1",
+      "source": "docs.folder.registries",
+      "target": "docs.file.link.network.layer.1",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.architecture.rendering.layers",
+      "id": "edge.contains.docs.file.link.network.layer.2",
+      "source": "docs.folder.registries",
+      "target": "docs.file.link.network.layer.2",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.link.network.layer.2.overlay.question",
+      "source": "docs.folder.registries",
+      "target": "docs.file.link.network.layer.2.overlay.question",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.link.network.layer.3",
+      "source": "docs.folder.registries",
+      "target": "docs.file.link.network.layer.3",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.link.network.layer.3.gaps",
+      "source": "docs.folder.registries",
+      "target": "docs.file.link.network.layer.3.gaps",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.link.network.layer.4",
+      "source": "docs.folder.registries",
+      "target": "docs.file.link.network.layer.4",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.link.network.layer.4.gaps",
+      "source": "docs.folder.registries",
+      "target": "docs.file.link.network.layer.4.gaps",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.link.network.overview",
+      "source": "docs.folder.registries",
+      "target": "docs.file.link.network.overview",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.link.network.naming.drift",
+      "source": "docs.folder.registries",
+      "target": "docs.file.link.network.naming.drift",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.registry.inventory",
+      "source": "docs.folder.registries",
+      "target": "docs.file.registry.inventory",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.rendering.cross.layer.override.cache",
       "source": "docs.folder.rendering",
-      "target": "docs.file.architecture.rendering.layers",
+      "target": "docs.file.rendering.cross.layer.override.cache",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.rendering.layer.architecture",
+      "source": "docs.folder.rendering",
+      "target": "docs.file.rendering.layer.architecture",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
@@ -2809,162 +3520,146 @@
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.policy.ingestion.safety.qa",
+      "id": "edge.contains.docs.file.source.adapter.ingestion.safety.qa",
       "source": "docs.folder.source-adapter",
-      "target": "docs.file.policy.ingestion.safety.qa",
+      "target": "docs.file.source.adapter.ingestion.safety.qa",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.governs.docs.file.policy.ingestion.safety.qa",
-      "source": "docs.file.policy.ingestion.safety.qa",
+      "id": "edge.governs.docs.file.source.adapter.ingestion.safety.qa",
+      "source": "docs.file.source.adapter.ingestion.safety.qa",
       "target": "code.system.source-adapter",
       "type": "governs",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.schema.source.graph.normalized",
+      "id": "edge.contains.docs.file.source.adapter.normalized.source.graph.schema",
       "source": "docs.folder.source-adapter",
-      "target": "docs.file.schema.source.graph.normalized",
+      "target": "docs.file.source.adapter.normalized.source.graph.schema",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.catalog.source.adapters",
-      "source": "docs.folder.source-adapter",
-      "target": "docs.file.catalog.source.adapters",
-      "type": "contains",
-      "confidence": "observed",
-      "metadata": {}
-    },
-    {
-      "id": "edge.contains.docs.file.contract.source.adapter.os",
-      "source": "docs.folder.source-adapter",
-      "target": "docs.file.contract.source.adapter.os",
-      "type": "contains",
-      "confidence": "observed",
-      "metadata": {}
-    },
-    {
-      "id": "edge.governs.docs.file.contract.source.adapter.os",
-      "source": "docs.file.contract.source.adapter.os",
+      "id": "edge.governs.docs.file.source.adapter.normalized.source.graph.schema",
+      "source": "docs.file.source.adapter.normalized.source.graph.schema",
       "target": "code.system.source-adapter",
       "type": "governs",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.system.source.adapter.os",
+      "id": "edge.contains.docs.file.source.adapter.catalog",
       "source": "docs.folder.source-adapter",
-      "target": "docs.file.system.source.adapter.os",
+      "target": "docs.file.source.adapter.catalog",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.roadmap.source.adapter",
+      "id": "edge.contains.docs.file.source.adapter.os.contract",
       "source": "docs.folder.source-adapter",
-      "target": "docs.file.roadmap.source.adapter",
+      "target": "docs.file.source.adapter.os.contract",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.model.translation.set",
+      "id": "edge.governs.docs.file.source.adapter.os.contract",
+      "source": "docs.file.source.adapter.os.contract",
+      "target": "code.system.source-adapter",
+      "type": "governs",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.source.adapter.os.overview",
       "source": "docs.folder.source-adapter",
-      "target": "docs.file.model.translation.set",
+      "target": "docs.file.source.adapter.os.overview",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.adapter.website.url.v0",
+      "id": "edge.contains.docs.file.source.adapter.readme",
       "source": "docs.folder.source-adapter",
-      "target": "docs.file.adapter.website.url.v0",
+      "target": "docs.file.source.adapter.readme",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.manual.troubleshooting.matrix",
-      "source": "docs.folder.survival-manual",
-      "target": "docs.file.manual.troubleshooting.matrix",
+      "id": "edge.contains.docs.file.source.adapter.roadmap",
+      "source": "docs.folder.source-adapter",
+      "target": "docs.file.source.adapter.roadmap",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.manual.diagnostic.router",
-      "source": "docs.folder.survival-manual",
-      "target": "docs.file.manual.diagnostic.router",
+      "id": "edge.contains.docs.file.source.adapter.translation.set.model",
+      "source": "docs.folder.source-adapter",
+      "target": "docs.file.source.adapter.translation.set.model",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.manual.tool.use.triggers",
-      "source": "docs.folder.survival-manual",
-      "target": "docs.file.manual.tool.use.triggers",
+      "id": "edge.contains.docs.file.source.adapter.website.url.v0",
+      "source": "docs.folder.source-adapter",
+      "target": "docs.file.source.adapter.website.url.v0",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.manual.debugging.lenses",
-      "source": "docs.folder.survival-manual",
-      "target": "docs.file.manual.debugging.lenses",
-      "type": "contains",
-      "confidence": "observed",
-      "metadata": {}
-    },
-    {
-      "id": "edge.contains.docs.file.manual.failure.report.template",
-      "source": "docs.folder.survival-manual",
-      "target": "docs.file.manual.failure.report.template",
-      "type": "contains",
-      "confidence": "observed",
-      "metadata": {}
-    },
-    {
-      "id": "edge.contains.docs.file.manual.stop.conditions",
-      "source": "docs.folder.survival-manual",
-      "target": "docs.file.manual.stop.conditions",
-      "type": "contains",
-      "confidence": "observed",
-      "metadata": {}
-    },
-    {
-      "id": "edge.contains.docs.file.manual.prompt.blocks",
-      "source": "docs.folder.survival-manual",
-      "target": "docs.file.manual.prompt.blocks",
-      "type": "contains",
-      "confidence": "observed",
-      "metadata": {}
-    },
-    {
-      "id": "edge.contains.docs.file.manual.agent.operating.loop",
-      "source": "docs.folder.survival-manual",
-      "target": "docs.file.manual.agent.operating.loop",
-      "type": "contains",
-      "confidence": "observed",
-      "metadata": {}
-    },
-    {
-      "id": "edge.contains.docs.file.manual.survival.readme",
-      "source": "docs.folder.survival-manual",
-      "target": "docs.file.manual.survival.readme",
-      "type": "contains",
-      "confidence": "observed",
-      "metadata": {}
-    },
-    {
-      "id": "edge.contains.docs.file.backlog.theme.mapping.system",
+      "id": "edge.contains.docs.file.theme.customization.roadmap",
       "source": "docs.folder.theme",
-      "target": "docs.file.backlog.theme.mapping.system",
+      "target": "docs.file.theme.customization.roadmap",
       "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.theme.engine",
+      "source": "docs.folder.theme",
+      "target": "docs.file.theme.engine",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.theme.mapping.panel.entry.contract",
+      "source": "docs.folder.theme",
+      "target": "docs.file.theme.mapping.panel.entry.contract",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.governs.docs.file.theme.mapping.panel.entry.contract",
+      "source": "docs.file.theme.mapping.panel.entry.contract",
+      "target": "code.system.theme",
+      "type": "governs",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.theme.override.storage.contract",
+      "source": "docs.folder.theme",
+      "target": "docs.file.theme.override.storage.contract",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.governs.docs.file.theme.override.storage.contract",
+      "source": "docs.file.theme.override.storage.contract",
+      "target": "code.system.theme",
+      "type": "governs",
       "confidence": "observed",
       "metadata": {}
     },
@@ -3017,25 +3712,81 @@
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.vge.PLACEHOLDER",
+      "id": "edge.contains.docs.file.theme.top.bar.controls",
+      "source": "docs.folder.theme",
+      "target": "docs.file.theme.top.bar.controls",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.vge.asset.and.tokens",
       "source": "docs.folder.visual-grammar-engine",
-      "target": "docs.file.vge.PLACEHOLDER",
+      "target": "docs.file.vge.asset.and.tokens",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.concept.agent.familiar.system",
-      "source": "docs.folder.vr",
-      "target": "docs.file.concept.agent.familiar.system",
+      "id": "edge.contains.docs.file.vge.dialect.and.safety",
+      "source": "docs.folder.visual-grammar-engine",
+      "target": "docs.file.vge.dialect.and.safety",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
     },
     {
-      "id": "edge.contains.docs.file.concept.vr.compatibility",
+      "id": "edge.contains.docs.file.vge.grammar.handle.and.lens",
+      "source": "docs.folder.visual-grammar-engine",
+      "target": "docs.file.vge.grammar.handle.and.lens",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.vge.overview.and.terms",
+      "source": "docs.folder.visual-grammar-engine",
+      "target": "docs.file.vge.overview.and.terms",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.vge.roadmap",
+      "source": "docs.folder.visual-grammar-engine",
+      "target": "docs.file.vge.roadmap",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.vge.signal.loom",
+      "source": "docs.folder.visual-grammar-engine",
+      "target": "docs.file.vge.signal.loom",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.vge.ui.and.positioning",
+      "source": "docs.folder.visual-grammar-engine",
+      "target": "docs.file.vge.ui.and.positioning",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.vr.agent.familiar.system",
       "source": "docs.folder.vr",
-      "target": "docs.file.concept.vr.compatibility",
+      "target": "docs.file.vr.agent.familiar.system",
+      "type": "contains",
+      "confidence": "observed",
+      "metadata": {}
+    },
+    {
+      "id": "edge.contains.docs.file.vr.compatibility.concept",
+      "source": "docs.folder.vr",
+      "target": "docs.file.vr.compatibility.concept",
       "type": "contains",
       "confidence": "observed",
       "metadata": {}
@@ -3043,10 +3794,10 @@
   ],
   "metadata": {
     "adapterId": "yaml-frontmatter-parser",
-    "createdAt": "2026-05-09T02:29:00.551Z",
-    "inputSummary": "120 nodes from docs/ YAML frontmatter",
-    "nodeCount": 120,
-    "edgeCount": 114,
+    "createdAt": "2026-05-10T06:43:06.407Z",
+    "inputSummary": "146 nodes from docs/ YAML frontmatter",
+    "nodeCount": 146,
+    "edgeCount": 143,
     "warnings": []
   }
 }
