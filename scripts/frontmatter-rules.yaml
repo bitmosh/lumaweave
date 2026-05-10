@@ -655,7 +655,7 @@ schemas:
   # Doc-system metadata files (_meta/, REHAUL_LEDGER, DOCS_INDEX, etc.)
 
   docs_meta:
-    path_match: '^_meta/|^REHAUL_LEDGER\.md$|^DOCS_INDEX\.md$'
+    path_match: '^_meta/|^DOCS_INDEX\.md$'
     cluster: violet
     status_options: [current, accepted, archived]
     field_overrides:

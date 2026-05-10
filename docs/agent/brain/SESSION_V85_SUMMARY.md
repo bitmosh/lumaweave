@@ -10,6 +10,7 @@ subdomain: brain
 agent_readable: true
 include_in_self_graph: false
 last_updated: 2026-05-09
+last_pass: v85b
 references:
   - agent.brain.experience.ledger
   - agent.brain.current.title
