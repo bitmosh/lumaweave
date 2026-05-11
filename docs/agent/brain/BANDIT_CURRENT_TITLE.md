@@ -959,6 +959,11 @@ Forensics ran against `git checkout 33e23ec` instead of `main`. Reported
 v86c initially scaffolded the full tile system infrastructure (TileProvider, FloatingTile, TileLayer, tileSectionRegistry, tileUtils) but did not integrate it into the UI. CollapsibleSection was not extended with the tileableKey prop, and no sections in the running UI received tear-off handles. The phase packet explicitly required extending CollapsibleSection.tsx with tileableKey and passing it to 7 sections (4 left-panel + 3 right-dock). The feedback was PARTIAL ACCEPT because the infrastructure existed but was not wired to the UI. Fix: when a phase requires integration, the integration is not deferred work — it is the pass. Infrastructure without integration is incomplete.
 Learned: v86c-integration 2026-05-09
 
+### Scar: Reported "complete" without performing manual QA
+
+v86c-integration claimed all 7 sections wired with working tear-off, but operator manual QA showed 10 of 11 phase packet section J steps non-functional. Only the visible affordance (the ⤴ handle) shipped; behavior behind it did not. Steps that failed: cannot drag floating tiles, cannot resize tiles (mouse capture stuck — no Esc release), cannot collapse tiles, cannot close tiles → cannot return them to source panels, "Tiled out" pulse missing (only static dashed border), cannot snap tiles together, no groups can form, no group bar, no group outline, layout does not persist on reload. Operator was locked in a stuck mouse-capture state during testing. Pointer capture without Escape-key release or pointercancel handler is a footgun. Lesson: "complete" requires performing the phase packet's manual QA yourself in a running browser before reporting. If you cannot perform it (no headed browser available), say so and flag the gap explicitly. Never report "complete" on behavior you have not exercised.
+Learned: v86c-integration rejection 2026-05-10
+
 ---
 
 ## Boss Fights

@@ -1,205 +1,83 @@
 /**
- * v86c Tile System Utilities
- * Snap algorithm, group computation, pointer capture helpers
+ * v86c Tile Utilities
+ * Reference: (NEW)tile-system.jsx lines 134-204
  */
 
 import type { TileLayoutEntry, TileGroup } from "./tile.types";
-import { SNAP_GRID_SIZE, EDGE_MAGNETISM_TOLERANCE } from "./tile.types";
 
-/**
- * Snap a coordinate to the nearest grid point
- */
-export function snapToGrid(value: number): number {
-  return Math.round(value / SNAP_GRID_SIZE) * SNAP_GRID_SIZE;
-}
+const SNAP_TOLERANCE = 22;
+const COLLAPSED_H = 30;
 
-/**
- * Apply edge magnetism to a position
- * Snaps to nearby tile edges within tolerance
- */
-export function applyEdgeMagnetism(
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  otherTiles: TileLayoutEntry[]
-): { x: number; y: number } {
-  let snappedX = x;
-  let snappedY = y;
-
-  for (const tile of otherTiles) {
-    // Check horizontal edge snapping
-    if (Math.abs(x - (tile.x + tile.w)) < EDGE_MAGNETISM_TOLERANCE) {
-      snappedX = tile.x + tile.w;
-    } else if (Math.abs((x + w) - tile.x) < EDGE_MAGNETISM_TOLERANCE) {
-      snappedX = tile.x - w;
-    } else if (Math.abs(x - tile.x) < EDGE_MAGNETISM_TOLERANCE) {
-      snappedX = tile.x;
-    }
-
-    // Check vertical edge snapping
-    if (Math.abs(y - (tile.y + tile.h)) < EDGE_MAGNETISM_TOLERANCE) {
-      snappedY = tile.y + tile.h;
-    } else if (Math.abs((y + h) - tile.y) < EDGE_MAGNETISM_TOLERANCE) {
-      snappedY = tile.y - h;
-    } else if (Math.abs(y - tile.y) < EDGE_MAGNETISM_TOLERANCE) {
-      snappedY = tile.y;
+// --- Group computation: tiles snapped edge-to-edge form a group ----
+// BIG RULE: topRow width is computed from CONTIGUOUS top-row tiles, NOT bbox
+// Reference: (NEW)tile-system.jsx lines 134-184
+export function computeGroups(tiles: TileLayoutEntry[]): { groups: TileGroup[]; tileToGroup: Record<string, string> } {
+  // skip collapsed-state — group the bbox you SEE
+  const rect = (t: TileLayoutEntry) => ({ x: t.x, y: t.y, w: t.w, h: t.collapsed ? COLLAPSED_H : t.h });
+  const adj = (a: TileLayoutEntry, b: TileLayoutEntry) => {
+    const ar = rect(a), br = rect(b);
+    const horizontalTouch = Math.abs((ar.x + ar.w) - br.x) < 2 || Math.abs((br.x + br.w) - ar.x) < 2;
+    const verticalTouch = Math.abs((ar.y + ar.h) - br.y) < 2 || Math.abs((br.y + br.h) - ar.y) < 2;
+    const yOverlap = ar.y < br.y + br.h && br.y < ar.y + ar.h;
+    const xOverlap = ar.x < br.x + br.w && br.x < ar.x + ar.w;
+    return (horizontalTouch && yOverlap) || (verticalTouch && xOverlap);
+  };
+  // union-find
+  const parent: Record<string, string> = {};
+  const find = (x: string): string => parent[x] === x ? x : parent[x] = find(parent[x]);
+  const union = (a: string, b: string) => { parent[find(a)] = find(b); };
+  tiles.forEach(t => parent[t.id] = t.id);
+  for (let i = 0; i < tiles.length; i++) {
+    for (let j = i + 1; j < tiles.length; j++) {
+      if (adj(tiles[i], tiles[j])) union(tiles[i].id, tiles[j].id);
     }
   }
-
-  return { x: snappedX, y: snappedY };
-}
-
-/**
- * Check if two tiles are adjacent (touching or overlapping)
- */
-function areAdjacent(a: TileLayoutEntry, b: TileLayoutEntry): boolean {
-  const tolerance = EDGE_MAGNETISM_TOLERANCE;
-  
-  // Check if tiles touch or overlap
-  const horizontalOverlap =
-    a.x < b.x + b.w + tolerance &&
-    a.x + a.w + tolerance > b.x;
-  
-  const verticalOverlap =
-    a.y < b.y + b.h + tolerance &&
-    a.y + a.h + tolerance > b.y;
-  
-  return horizontalOverlap && verticalOverlap;
-}
-
-/**
- * Compute connected components of tiles (groups)
- * Uses O(n²) algorithm - acceptable for ~20 tiles
- */
-export function computeGroups(tiles: TileLayoutEntry[]): TileGroup[] {
-  if (tiles.length === 0) {
-    return [];
-  }
-
-  const visited = new Set<string>();
+  const buckets: Record<string, TileLayoutEntry[]> = {};
+  tiles.forEach(t => {
+    const r = find(t.id);
+    (buckets[r] ||= []).push(t);
+  });
   const groups: TileGroup[] = [];
+  const tileToGroup: Record<string, string> = {};
+  Object.entries(buckets).forEach(([, ts]) => {
+    if (ts.length < 2) return; // single tile → no group bar
+    const minY = Math.min(...ts.map(t => t.y));
+    // top row = tiles whose y is at minY (within 2px)
+    const topRow = ts.filter(t => Math.abs(t.y - minY) < 3).sort((a, b) => a.x - b.x);
+    // top row bar spans from leftmost x to rightmost x+w of CONTIGUOUS top-row tiles
+    const topX = Math.min(...topRow.map(t => t.x));
+    const topW = Math.max(...topRow.map(t => t.x + t.w)) - topX;
+    const bbox = {
+      x: Math.min(...ts.map(t => t.x)),
+      y: Math.min(...ts.map(t => t.y)),
+      x2: Math.max(...ts.map(t => t.x + t.w)),
+      y2: Math.max(...ts.map(t => t.y + (t.collapsed ? COLLAPSED_H : t.h))),
+    };
+    groups.push({ tileIds: ts.map(t => t.id), topRow: topRow.map(t => t.id),
+                  topX, topW, topY: minY, bbox });
+    ts.forEach(t => tileToGroup[t.id] = groups[groups.length - 1].tileIds[0]);
+  });
+  return { groups, tileToGroup };
+}
 
-  for (const tile of tiles) {
-    if (visited.has(tile.id)) {
-      continue;
-    }
-
-    // BFS to find all connected tiles
-    const groupTiles: TileLayoutEntry[] = [];
-    const queue: TileLayoutEntry[] = [tile];
-    visited.add(tile.id);
-
-    while (queue.length > 0) {
-      const current = queue.shift()!;
-      groupTiles.push(current);
-
-      for (const other of tiles) {
-        if (!visited.has(other.id) && areAdjacent(current, other)) {
-          visited.add(other.id);
-          queue.push(other);
-        }
-      }
-    }
-
-    // Compute rectilinear hull (bounding box)
-    let minX = Infinity;
-    let minY = Infinity;
-    let maxX = -Infinity;
-    let maxY = -Infinity;
-
-    for (const t of groupTiles) {
-      minX = Math.min(minX, t.x);
-      minY = Math.min(minY, t.y);
-      maxX = Math.max(maxX, t.x + t.w);
-      maxY = Math.max(maxY, t.y + t.h);
-    }
-
-    // Compute top row width (THE BIG RULE)
-    // Sort tiles by y, then group by y-coordinate
-    const sortedByY = [...groupTiles].sort((a, b) => a.y - b.y);
-    const topY = sortedByY[0].y;
-    const topRowTiles = sortedByY.filter((t) => Math.abs(t.y - topY) < EDGE_MAGNETISM_TOLERANCE);
-    
-    // Find min and max x of top row
-    let topRowMinX = Infinity;
-    let topRowMaxX = -Infinity;
-    for (const t of topRowTiles) {
-      topRowMinX = Math.min(topRowMinX, t.x);
-      topRowMaxX = Math.max(topRowMaxX, t.x + t.w);
-    }
-    const topRowWidth = topRowMaxX - topRowMinX;
-
-    groups.push({
-      tileIds: groupTiles.map((t) => t.id),
-      bbox: {
-        x: minX,
-        y: minY,
-        width: maxX - minX,
-        height: maxY - minY,
-      },
-      topRowWidth,
+// --- Find nearest snap target during drag ----
+// Reference: (NEW)tile-system.jsx lines 186-204
+export function findSnap(movingTile: TileLayoutEntry, others: TileLayoutEntry[]): { x: number; y: number } | null {
+  const snapCandidates: { x: number; y: number; d: number }[] = [];
+  const r = { x: movingTile.x, y: movingTile.y, w: movingTile.w, h: movingTile.collapsed ? COLLAPSED_H : movingTile.h };
+  others.forEach(o => {
+    const or = { x: o.x, y: o.y, w: o.w, h: o.collapsed ? COLLAPSED_H : o.h };
+    // check 4 sides, snap edge-to-edge if close
+    const tryL = { x: or.x - r.w, y: or.y };
+    const tryR = { x: or.x + or.w, y: or.y };
+    const tryT = { x: or.x, y: or.y - r.h };
+    const tryB = { x: or.x, y: or.y + or.h };
+    [tryL, tryR, tryT, tryB].forEach(p => {
+      const d = Math.hypot(p.x - r.x, p.y - r.y);
+      if (d < SNAP_TOLERANCE) snapCandidates.push({ ...p, d });
     });
-  }
-
-  return groups;
-}
-
-/**
- * Set pointer capture on an element
- * Ensures continuous event firing during drag
- */
-export function setPointerCaptureSafe(element: HTMLElement): void {
-  try {
-    if (element.setPointerCapture) {
-      element.setPointerCapture((element as any).pointerId || 0);
-    }
-  } catch (e) {
-    // Gracefully handle if capture fails
-    console.warn("Failed to set pointer capture:", e);
-  }
-}
-
-/**
- * Release pointer capture on an element
- */
-export function releasePointerCaptureSafe(element: HTMLElement): void {
-  try {
-    if (element.releasePointerCapture) {
-      element.releasePointerCapture((element as any).pointerId || 0);
-    }
-  } catch (e) {
-    // Gracefully handle if release fails
-    console.warn("Failed to release pointer capture:", e);
-  }
-}
-
-/**
- * Generate a unique tile ID
- */
-export function generateTileId(sectionKey: string): string {
-  return `tile_${sectionKey}_${Math.random().toString(36).substr(2, 9)}`;
-}
-
-/**
- * Check if a point is within a tile's unsnap grip area
- * Grip is in the top-right corner, 20x20px
- */
-export function isInUnsnapGrip(
-  tileX: number,
-  tileY: number,
-  tileW: number,
-  pointX: number,
-  pointY: number
-): boolean {
-  const gripSize = 20;
-  const gripX = tileX + tileW - gripSize;
-  const gripY = tileY;
-  
-  return (
-    pointX >= gripX &&
-    pointX <= gripX + gripSize &&
-    pointY >= gripY &&
-    pointY <= gripY + gripSize
-  );
+  });
+  if (snapCandidates.length === 0) return null;
+  const best = snapCandidates.reduce((a, b) => a.d < b.d ? a : b);
+  return { x: best.x, y: best.y };
 }

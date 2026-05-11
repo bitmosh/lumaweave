@@ -26,19 +26,26 @@ export interface TileSectionEntry {
 /**
  * Tile group (runtime-computed, not persisted)
  * Represents a group of snapped-together tiles
+ * Reference: (NEW)tile-system.jsx lines 134-184
  */
 export interface TileGroup {
   /** Array of tile IDs in this group */
   tileIds: string[];
+  /** Array of tile IDs in the top row (for THE BIG RULE) */
+  topRow: string[];
+  /** X position of the top row bar */
+  topX: number;
+  /** Width of the top row bar (CONTIGUOUS top-row tiles, NOT bbox) */
+  topW: number;
+  /** Y position of the top row */
+  topY: number;
   /** Bounding box of the entire group (rectilinear hull) */
   bbox: {
     x: number;
     y: number;
-    width: number;
-    height: number;
+    x2: number;
+    y2: number;
   };
-  /** Width of the top row only (for THE BIG RULE) */
-  topRowWidth: number;
 }
 
 /**
@@ -55,18 +62,25 @@ export interface TileContextState {
 
 /**
  * Tile context actions
+ * Reference: (NEW)tile-system.jsx lines 40-43
  */
 export interface TileContextActions {
-  /** Tear off a section into a floating tile */
-  tearOff: (sectionKey: string, initialX: number, initialY: number) => void;
+  /** Tile out: convert a section into a floating tile. Returns tile ID if added, null otherwise. */
+  tileOut: (sectionKey: string, atPos?: { x: number; y: number }) => string | null;
   /** Close a tile (return to original slot) */
   closeTile: (tileId: string) => void;
+  /** Close a group of tiles */
+  closeGroup: (groupIds: string[]) => void;
   /** Update tile position/size during drag */
   updateTile: (tileId: string, updates: Partial<TileLayoutEntry>) => void;
   /** Bring a tile to front */
   bringToFront: (tileId: string) => void;
   /** Toggle tile collapsed state */
   toggleCollapsed: (tileId: string) => void;
+  /** Check if a section is currently tiled out */
+  isTiledOut: (sectionKey: string) => boolean;
+  /** Legacy alias for tileOut (for backward compatibility) */
+  tearOff?: (sectionKey: string, initialX: number, initialY: number) => void;
 }
 
 /**

@@ -129,35 +129,29 @@ export default class NodeSphereProgram<
     u_glowStrength: 1.0,
   };
 
-  // Cached uniform locations for GL calls
-  private uTimeLocation: WebGLUniformLocation | null = null;
-  private uHumLocation: WebGLUniformLocation | null = null;
-  private uFlowSpeedLocation: WebGLUniformLocation | null = null;
-  private uGlowStrengthLocation: WebGLUniformLocation | null = null;
-
   setUniform(name: string, value: number): void {
     if (name in this.uniformValues) {
       (this.uniformValues as any)[name] = value;
     }
   }
 
-  // v86b: Override setUniforms to set GL uniforms per frame
-  // Sigma calls this each frame with the rendering context
+  // v86b: Override setUniforms to set GL uniforms per frame.
+  // Uniform locations MUST be fetched per call — they are tied to
+  // the specific shader program currently bound. Caching them
+  // across calls causes "UniformLocation is not from the current
+  // active Program" errors and eventual context loss.
   setUniforms(params: any, programInfo: any): void {
     super.setUniforms(params, programInfo);
 
-    const { gl } = programInfo;
+    const { gl, program } = programInfo;
 
-    // Cache uniform locations on first call
-    if (!this.uTimeLocation) {
-      this.uTimeLocation = gl.getUniformLocation(programInfo.program, "u_time");
-      this.uHumLocation = gl.getUniformLocation(programInfo.program, "u_hum");
-      this.uFlowSpeedLocation = gl.getUniformLocation(programInfo.program, "u_flowSpeed");
-      this.uGlowStrengthLocation = gl.getUniformLocation(programInfo.program, "u_glowStrength");
-    }
+    // Fetch fresh uniform locations every call
+    const uTime = gl.getUniformLocation(program, "u_time");
+    const uHum = gl.getUniformLocation(program, "u_hum");
+    const uFlowSpeed = gl.getUniformLocation(program, "u_flowSpeed");
+    const uGlowStrength = gl.getUniformLocation(program, "u_glowStrength");
 
-    // Read animation state from Sigma settings (set by rAF loop in SigmaGraphView)
-    // Fallback to default values if setting not yet initialized
+    // Read animation state from Sigma settings
     const v86bUniforms = (this.renderer as any).getSetting?.("v86bUniforms") ?? {
       time: 0,
       hum: this.uniformValues.u_hum,
@@ -165,11 +159,11 @@ export default class NodeSphereProgram<
       glowStrength: this.uniformValues.u_glowStrength,
     };
 
-    // Set GL uniforms
-    if (this.uTimeLocation) gl.uniform1f(this.uTimeLocation, v86bUniforms.time);
-    if (this.uHumLocation) gl.uniform1f(this.uHumLocation, v86bUniforms.hum);
-    if (this.uFlowSpeedLocation) gl.uniform1f(this.uFlowSpeedLocation, v86bUniforms.flowSpeed);
-    if (this.uGlowStrengthLocation) gl.uniform1f(this.uGlowStrengthLocation, v86bUniforms.glowStrength);
+    // Only set if location exists in current program
+    if (uTime !== null) gl.uniform1f(uTime, v86bUniforms.time);
+    if (uHum !== null) gl.uniform1f(uHum, v86bUniforms.hum);
+    if (uFlowSpeed !== null) gl.uniform1f(uFlowSpeed, v86bUniforms.flowSpeed);
+    if (uGlowStrength !== null) gl.uniform1f(uGlowStrength, v86bUniforms.glowStrength);
   }
 
   getDefinition() {

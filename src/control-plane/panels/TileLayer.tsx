@@ -1,94 +1,130 @@
 /**
  * v86c Tile Layer
- * Renders floating tiles, group outlines, and group bars
+ * Reference: (NEW)tile-system.jsx lines 474-495
+ * Renders floating tiles, group bars, and group outlines
  */
 
+import { useMemo } from "react";
 import { useTileContext } from "./TileProvider";
 import { FloatingTile } from "./FloatingTile";
+import { computeGroups } from "./tileUtils";
 import type { TileGroup } from "./tile.types";
 
 export function TileLayer() {
-  const { tiles, groups } = useTileContext();
-
-  const tileArray = Array.from(tiles.values());
+  const ctx = useTileContext();
+  const tilesArray = Array.from(ctx.tiles.values());
+  const { groups, tileToGroup } = useMemo(() => computeGroups(tilesArray), [tilesArray]);
 
   return (
-    <div
-      data-testid="tile-layer"
-      style={{
-        position: "fixed",
-        inset: 0,
-        pointerEvents: "none",
-        zIndex: 1000,
-      }}
-    >
-      {/* Render group outlines */}
-      {groups.map((group) => (
-        <GroupOutline key={group.tileIds.join("-")} group={group} />
-      ))}
-
-      {/* Render floating tiles */}
-      {tileArray.map((tile) => (
-        <div key={tile.id} style={{ pointerEvents: "auto" }}>
-          <FloatingTile
-            tile={tile}
-            otherTiles={tileArray.filter((t) => t.id !== tile.id)}
-            onClose={() => {
-              const { closeTile } = useTileContext();
-              closeTile(tile.id);
-            }}
-            onUpdate={(updates) => {
-              const { updateTile } = useTileContext();
-              updateTile(tile.id, updates);
-            }}
-            onBringToFront={() => {
-              const { bringToFront } = useTileContext();
-              bringToFront(tile.id);
-            }}
-          >
-            {/* Tile content will be rendered by the section renderer */}
-            <div data-tile-content={tile.sectionKey}>
-              {/* Content is injected by the section component */}
-            </div>
-          </FloatingTile>
+    <div className="tile-layer">
+      {/* Render groups */}
+      {groups.map(group => (
+        <div key={group.tileIds.join("-")}>
+          <GroupBar group={group} />
+          <GroupOutline group={group} />
         </div>
       ))}
+
+      {/* Render tiles */}
+      {tilesArray.map(tile => {
+        const group = tileToGroup[tile.id] ? groups.find(g => g.tileIds.includes(tileToGroup[tile.id])) : null;
+        return (
+          <FloatingTile key={tile.id} tile={tile} group={group || null} />
+        );
+      })}
     </div>
   );
 }
 
-interface GroupOutlineProps {
-  group: TileGroup;
-}
+// --- Group bar: horizontal bar above top row of a group ----
+// Reference: (NEW)tile-system.jsx lines 377-395
+function GroupBar({ group }: { group: TileGroup }) {
+  const ctx = useTileContext();
+  const onClose = () => ctx.closeGroup(group.tileIds);
 
-function GroupOutline({ group }: GroupOutlineProps) {
+  // Only render if group has 2+ tiles
+  if (group.tileIds.length < 2) return null;
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const startX = e.clientX, startY = e.clientY;
+    const tilesArray = Array.from(ctx.tiles.values());
+    const groupTiles = tilesArray.filter(t => group.tileIds.includes(t.id));
+    const startPositions = groupTiles.map(t => ({ id: t.id, x: t.x, y: t.y }));
+
+    const onMove = (ev: MouseEvent) => {
+      const dx = ev.clientX - startX, dy = ev.clientY - startY;
+      const TILE_GRID = 16;
+      const snap = (v: number) => Math.round(v / TILE_GRID) * TILE_GRID;
+      
+      startPositions.forEach(pos => {
+        const nx = snap(pos.x + dx);
+        const ny = snap(pos.y + dy);
+        ctx.updateTile(pos.id, { x: nx, y: ny });
+      });
+    };
+
+    const onUp = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("pointercancel", onPointerCancel);
+    };
+
+    const onKeyDown = (ev: KeyboardEvent) => {
+      if (ev.key === "Escape") onUp();
+    };
+
+    const onPointerCancel = () => {
+      onUp();
+    };
+
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("pointercancel", onPointerCancel);
+  };
+
   return (
     <div
-      data-testid="tile-group-outline"
-      style={{
-        position: "absolute",
-        left: `${group.bbox.x}px`,
-        top: `${group.bbox.y}px`,
-        width: `${group.bbox.width}px`,
-        height: `${group.bbox.height}px`,
-        border: "2px dashed rgba(14, 165, 233, 0.4)",
-        borderRadius: "8px",
-        pointerEvents: "none",
-      }}
+      className="group-bar"
+      style={{ left: group.topX, top: group.topY - 8, width: group.topW, cursor: "grab" }}
+      onMouseDown={handleMouseDown}
     >
-      {/* THE BIG RULE: Group bar matches top-row width only */}
-      <div
-        data-testid="tile-group-bar"
-        style={{
-          position: "absolute",
-          top: "-8px",
-          left: `${(group.bbox.width - group.topRowWidth) / 2}px`,
-          width: `${group.topRowWidth}px`,
-          height: "4px",
-          backgroundColor: "rgba(14, 165, 233, 0.6)",
-          borderRadius: "2px",
-        }}
-      />
+      <button className="group-close" onClick={onClose}>×</button>
     </div>
+  );
+}
+
+// --- Group outline: per-tile outlines that merge at seams ----
+// Reference: (NEW)tile-system.jsx lines 448-472
+function GroupOutline({ group }: { group: TileGroup }) {
+  const ctx = useTileContext();
+  const tilesArray = Array.from(ctx.tiles.values());
+  const groupTiles = tilesArray.filter(t => group.tileIds.includes(t.id));
+  const COLLAPSED_H = 30;
+
+  return (
+    <>
+      {groupTiles.map(tile => (
+        <div
+          key={`outline-${tile.id}`}
+          className="group-outline-tile"
+          style={{
+            left: tile.x - 2,
+            top: tile.y - 2,
+            width: tile.w + 4,
+            height: (tile.collapsed ? COLLAPSED_H : tile.h) + 4,
+            border: "1px solid var(--lw-flare-gold, #f59e0b)",
+            borderRadius: "10px",
+            opacity: 0.55,
+            pointerEvents: "none",
+            zIndex: tile.z - 1,
+            position: "absolute",
+          }}
+        />
+      ))}
+    </>
   );
 }

@@ -1,254 +1,179 @@
 /**
  * v86c Floating Tile
- * Floating tile with snap-to-grid and edge magnetism
+ * Reference: (NEW)tile-system.jsx lines 206-375
+ * Uses window.addEventListener for mousemove/mouseup instead of setPointerCapture
  */
 
-import { ReactNode, useRef, useState, useEffect } from "react";
-import type { TileLayoutEntry } from "./tile.types";
-import {
-  snapToGrid,
-  applyEdgeMagnetism,
-  setPointerCaptureSafe,
-  releasePointerCaptureSafe,
-  isInUnsnapGrip,
-} from "./tileUtils";
+import type { TileLayoutEntry, TileGroup } from "./tile.types";
+import { useTileContext } from "./TileProvider";
+
+const TILE_GRID = 16;
+const SNAP_TOLERANCE = 22;
+const COLLAPSED_H = 30;
+const MIN_W = 200, MIN_H = 110;
+
+const snap = (v: number) => Math.round(v / TILE_GRID) * TILE_GRID;
 
 interface FloatingTileProps {
   tile: TileLayoutEntry;
-  otherTiles: TileLayoutEntry[];
-  onClose: () => void;
-  onUpdate: (updates: Partial<TileLayoutEntry>) => void;
-  onBringToFront: () => void;
-  children: ReactNode;
+  group?: TileGroup | null;
 }
 
-export function FloatingTile({
-  tile,
-  otherTiles,
-  onClose,
-  onUpdate,
-  onBringToFront,
-  children,
-}: FloatingTileProps) {
-  const [isDragging, setIsDragging] = useState(false);
-  const [isResizing, setIsResizing] = useState(false);
-  const [position, setPosition] = useState({ x: tile.x, y: tile.y });
-  const [size, setSize] = useState({ w: tile.w, h: tile.h });
-  const dragOffset = useRef({ x: 0, y: 0 });
-  const resizeOffset = useRef({ x: 0, y: 0 });
-  const tileRef = useRef<HTMLDivElement>(null);
+export function FloatingTile({ tile, group }: FloatingTileProps) {
+  const ctx = useTileContext();
+  const reg = ctx.tiles.get(tile.id);
+  if (!reg) return null;
 
-  // Sync with tile prop changes (e.g., from external updates)
-  useEffect(() => {
-    if (!isDragging && !isResizing) {
-      setPosition({ x: tile.x, y: tile.y });
-      setSize({ w: tile.w, h: tile.h });
-    }
-  }, [tile.x, tile.y, tile.w, tile.h, isDragging, isResizing]);
-
-  const handlePointerDown = (e: React.PointerEvent) => {
-    const target = e.target as HTMLElement;
-    
-    // Check if clicking on unsnap grip (top-right corner)
-    if (isInUnsnapGrip(position.x, position.y, size.w, e.clientX, e.clientY)) {
-      e.stopPropagation();
-      onClose();
-      return;
-    }
-
-    // Check if clicking on close button
-    if (target.closest('[data-tile-close]')) {
-      return;
-    }
-
-    // Check if clicking on resize handle (bottom-right corner)
-    if (target.closest('[data-tile-resize]')) {
-      e.stopPropagation();
-      setIsResizing(true);
-      resizeOffset.current = {
-        x: e.clientX - size.w,
-        y: e.clientY - size.h,
-      };
-      setPointerCaptureSafe(e.currentTarget as HTMLElement);
-      return;
-    }
-
-    // Start drag
+  const startTileDrag = (e: React.MouseEvent, { ungroup = false } = {}) => {
+    if ((e.target as HTMLElement).closest(".tile-btn")) return;
+    e.preventDefault();
     e.stopPropagation();
-    onBringToFront();
-    setIsDragging(true);
-    dragOffset.current = {
-      x: e.clientX - position.x,
-      y: e.clientY - position.y,
-    };
-    setPointerCaptureSafe(e.currentTarget as HTMLElement);
-  };
+    ctx.bringToFront(tile.id);
+    const startX = e.clientX, startY = e.clientY;
+    const startTilePos = { x: tile.x, y: tile.y };
+    let detached = ungroup;
+    const others = Array.from(ctx.tiles.values()).filter(t => t.id !== tile.id);
+    const groupIds = (group && !ungroup) ? group.tileIds : [tile.id];
+    const groupTiles = Array.from(ctx.tiles.values()).filter(t => groupIds.includes(t.id));
+    const offsets = groupTiles.map(t => ({ id: t.id, dx: t.x - startTilePos.x, dy: t.y - startTilePos.y }));
 
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (isDragging) {
-      const newX = e.clientX - dragOffset.current.x;
-      const newY = e.clientY - dragOffset.current.y;
-      setPosition({ x: newX, y: newY });
-    } else if (isResizing) {
-      const newW = e.clientX - resizeOffset.current.x;
-      const newH = e.clientY - resizeOffset.current.y;
-      setSize({
-        w: Math.max(200, newW),
-        h: Math.max(150, newH),
+    const onMove = (ev: MouseEvent) => {
+      let nx = snap(startTilePos.x + (ev.clientX - startX));
+      let ny = snap(startTilePos.y + (ev.clientY - startY));
+      nx = Math.max(8, Math.min(window.innerWidth - tile.w - 8, nx));
+      ny = Math.max(60, Math.min(window.innerHeight - 80, ny));
+      if (detached) {
+        // first move after ungroup: pull away so we don't immediately re-snap to neighbors
+        nx += 28;
+        ny += 8;
+        detached = false;
+      }
+      if (groupTiles.length === 1) {
+        const movingPreview = { ...tile, x: nx, y: ny };
+        const snapTo = findSnap(movingPreview, others);
+        if (snapTo) {
+          nx = snapTo.x;
+          ny = snapTo.y;
+        }
+      }
+      const dx = nx - startTilePos.x, dy = ny - startTilePos.y;
+      offsets.forEach(o => {
+        ctx.updateTile(o.id, { x: snap(startTilePos.x + o.dx + dx), y: snap(startTilePos.y + o.dy + dy) });
       });
-    }
+    };
+    const onUp = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("pointercancel", onPointerCancel);
+    };
+    const onKeyDown = (ev: KeyboardEvent) => {
+      if (ev.key === "Escape") onUp();
+    };
+    const onPointerCancel = () => {
+      onUp();
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("pointercancel", onPointerCancel);
+  };
+  const onHeaderDown = (e: React.MouseEvent) => startTileDrag(e);
+  const onUngroupDown = (e: React.MouseEvent) => startTileDrag(e, { ungroup: true });
+
+  const onResizeDown = (e: React.MouseEvent) => {
+    e.preventDefault(); e.stopPropagation();
+    if (tile.collapsed) return;
+    const startX = e.clientX, startY = e.clientY;
+    const startW = tile.w, startH = tile.h;
+    const onMove = (ev: MouseEvent) => {
+      const w = Math.max(MIN_W, snap(startW + (ev.clientX - startX)));
+      const h = Math.max(MIN_H, snap(startH + (ev.clientY - startY)));
+      ctx.updateTile(tile.id, { w, h });
+    };
+    const onUp = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("pointercancel", onPointerCancel);
+    };
+    const onKeyDown = (ev: KeyboardEvent) => {
+      if (ev.key === "Escape") onUp();
+    };
+    const onPointerCancel = () => {
+      onUp();
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("pointercancel", onPointerCancel);
   };
 
-  const handlePointerUp = (e: React.PointerEvent) => {
-    if (isDragging) {
-      // Apply edge magnetism
-      const magnetized = applyEdgeMagnetism(
-        position.x,
-        position.y,
-        size.w,
-        size.h,
-        otherTiles
-      );
-      
-      // Snap to grid
-      const snappedX = snapToGrid(magnetized.x);
-      const snappedY = snapToGrid(magnetized.y);
-      
-      setPosition({ x: snappedX, y: snappedY });
-      onUpdate({ x: snappedX, y: snappedY });
-    } else if (isResizing) {
-      // Snap size to grid
-      const snappedW = snapToGrid(size.w);
-      const snappedH = snapToGrid(size.h);
-      setSize({ w: snappedW, h: snappedH });
-      onUpdate({ w: snappedW, h: snappedH });
-    }
+  const inGroup = !!group;
+  // when in a group, hide own header for tiles that are NOT the leftmost top-row tile
+  // (that one shares the group bar). Other tiles still get a slim per-tile collapse/close strip.
+  const showHeader = !inGroup;
+  const showSlimStrip = inGroup;
 
-    setIsDragging(false);
-    setIsResizing(false);
-    releasePointerCaptureSafe(e.currentTarget as HTMLElement);
-  };
+  const realH = tile.collapsed ? COLLAPSED_H : tile.h;
 
   return (
     <div
-      ref={tileRef}
-      data-tile-id={tile.id}
-      style={{
-        position: "absolute",
-        left: `${position.x}px`,
-        top: `${position.y}px`,
-        width: `${size.w}px`,
-        height: `${size.h}px`,
-        backgroundColor: "rgba(15, 23, 42, 0.95)",
-        border: "1px solid rgba(148, 163, 184, 0.3)",
-        borderRadius: "8px",
-        boxShadow: "0 10px 40px rgba(0, 0, 0, 0.5)",
-        zIndex: tile.z,
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-        cursor: isDragging ? "grabbing" : "default",
-      }}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
+      className={`tile ${tile.collapsed ? "collapsed" : ""} ${inGroup ? "ingroup" : ""}`}
+      style={{ left: tile.x, top: tile.y, width: tile.w, height: realH, zIndex: tile.z }}
+      onMouseDown={() => ctx.bringToFront(tile.id)}
     >
-      {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "8px 12px",
-          backgroundColor: "rgba(30, 41, 59, 0.8)",
-          borderBottom: "1px solid rgba(148, 163, 184, 0.2)",
-          cursor: "grab",
-          userSelect: "none",
-        }}
-      >
-        <span
-          style={{
-            fontSize: "13px",
-            fontWeight: 600,
-            color: "#e2e8f0",
-          }}
-        >
-          {tile.sectionKey}
-        </span>
-        <div style={{ display: "flex", gap: "4px" }}>
-          {/* Unsnap grip (top-right corner) */}
-          <div
-            data-tile-unsnap
-            style={{
-              width: "16px",
-              height: "16px",
-              borderRadius: "2px",
-              backgroundColor: "rgba(148, 163, 184, 0.2)",
-              border: "1px solid rgba(148, 163, 184, 0.3)",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "10px",
-              color: "#94a3b8",
-            }}
-            title="Return to panel"
-          >
-            ⊗
-          </div>
-          {/* Close button */}
-          <button
-            data-tile-close
-            onClick={(e) => {
-              e.stopPropagation();
-              onClose();
-            }}
-            style={{
-              width: "16px",
-              height: "16px",
-              borderRadius: "2px",
-              border: "1px solid rgba(148, 163, 184, 0.3)",
-              backgroundColor: "rgba(148, 163, 184, 0.1)",
-              color: "#94a3b8",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "12px",
-              padding: 0,
-            }}
-            title="Close"
-          >
-            ×
+      {showHeader && (
+        <div className="tile-head" onMouseDown={onHeaderDown}>
+          <span className="tile-grip">⠿</span>
+          <span className="tile-title">{tile.sectionKey}</span>
+          <span className="tile-spacer"/>
+          <button className="tile-btn" title={tile.collapsed ? "Expand" : "Collapse"}
+                  onClick={() => ctx.updateTile(tile.id, { collapsed: !tile.collapsed })}>
+            {tile.collapsed ? "▾" : "─"}
           </button>
+          <button className="tile-btn" title="Close" onClick={() => ctx.closeTile(tile.id)}>×</button>
         </div>
-      </div>
-
-      {/* Content */}
-      <div
-        style={{
-          flex: 1,
-          overflow: "auto",
-          padding: "12px",
-        }}
-      >
-        {children}
-      </div>
-
-      {/* Resize handle */}
-      <div
-        data-tile-resize
-        style={{
-          position: "absolute",
-          bottom: "0",
-          right: "0",
-          width: "16px",
-          height: "16px",
-          cursor: "nwse-resize",
-          background: "linear-gradient(135deg, transparent 50%, rgba(148, 163, 184, 0.4) 50%)",
-          borderTopLeftRadius: "4px",
-        }}
-      />
+      )}
+      {showSlimStrip && (
+        <div className="tile-slim">
+          <span className="tile-ungrip" title="Drag to ungroup" onMouseDown={onUngroupDown}>⤴</span>
+          <span className="tile-slim-title">{tile.sectionKey}</span>
+          <span className="tile-spacer"/>
+          <button className="tile-btn slim" title={tile.collapsed ? "Expand" : "Collapse"}
+                  onClick={() => ctx.updateTile(tile.id, { collapsed: !tile.collapsed })}>
+            {tile.collapsed ? "▾" : "─"}
+          </button>
+          <button className="tile-btn slim" title="Close" onClick={() => ctx.closeTile(tile.id)}>×</button>
+        </div>
+      )}
+      {!tile.collapsed && (
+        <div className="tile-body">
+          {/* Content will be rendered by TileLayer */}
+        </div>
+      )}
+      {!tile.collapsed && <div className="tile-resize" onMouseDown={onResizeDown}/>}
     </div>
   );
+}
+
+// --- Find nearest snap target during drag ----
+function findSnap(movingTile: TileLayoutEntry, others: TileLayoutEntry[]): { x: number; y: number } | null {
+  const snapCandidates: { x: number; y: number; d: number }[] = [];
+  const r = { x: movingTile.x, y: movingTile.y, w: movingTile.w, h: movingTile.collapsed ? COLLAPSED_H : movingTile.h };
+  others.forEach(o => {
+    const or = { x: o.x, y: o.y, w: o.w, h: o.collapsed ? COLLAPSED_H : o.h };
+    // check 4 sides, snap edge-to-edge if close
+    const tryL = { x: or.x - r.w, y: or.y };
+    const tryR = { x: or.x + or.w, y: or.y };
+    const tryT = { x: or.x, y: or.y - r.h };
+    const tryB = { x: or.x, y: or.y + or.h };
+    [tryL, tryR, tryT, tryB].forEach(p => {
+      const d = Math.hypot(p.x - r.x, p.y - r.y);
+      if (d < SNAP_TOLERANCE) snapCandidates.push({ ...p, d });
+    });
+  });
+  if (snapCandidates.length === 0) return null;
+  const best = snapCandidates.reduce((a, b) => a.d < b.d ? a : b);
+  return { x: best.x, y: best.y };
 }

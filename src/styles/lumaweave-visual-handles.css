@@ -236,3 +236,243 @@ input[type="range"]::-webkit-slider-thumb {
 input[type="range"]:focus {
   outline: none;
 }
+
+/* ========================================
+   v86c Tile System
+   Reference: (NEW)tile-system.jsx
+   ======================================== */
+
+.tile-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.tile {
+  position: absolute;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.tile.ingroup {
+  border-radius: 0 8px 8px 0;
+}
+
+.tile.collapsed {
+  height: 30px;
+}
+
+.tile-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(30, 41, 59, 0.8);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  cursor: grab;
+  user-select: none;
+  height: 28px;
+}
+
+.tile-grip {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.tile-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.tile-spacer {
+  flex: 1;
+}
+
+.tile-btn {
+  background: transparent;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  color: #94a3b8;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  margin-left: 4px;
+}
+
+.tile-btn:hover {
+  background: rgba(148, 163, 184, 0.2);
+  color: #e2e8f0;
+}
+
+.tile-btn.slim {
+  padding: 1px 4px;
+  font-size: 10px;
+}
+
+.tile-slim {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  background: rgba(30, 41, 59, 0.6);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  cursor: grab;
+  user-select: none;
+  height: 24px;
+}
+
+.tile-ungroup {
+  font-size: 11px;
+  color: #94a3b8;
+  cursor: pointer;
+  margin-right: 6px;
+}
+
+.tile-ungroup:hover {
+  color: #e2e8f0;
+}
+
+.tile-slim-title {
+  font-size: 11px;
+  font-weight: 500;
+  color: #cbd5e1;
+}
+
+.tile-body {
+  flex: 1;
+  overflow: auto;
+  padding: 12px;
+}
+
+.tile-resize {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  cursor: nwse-resize;
+  background: linear-gradient(135deg, transparent 50%, rgba(148, 163, 184, 0.4) 50%);
+  border-top-left-radius: 4px;
+}
+
+.group-bar {
+  position: absolute;
+  height: 4px;
+  background: rgba(14, 165, 233, 0.6);
+  border-radius: 2px;
+  pointer-events: auto;
+  z-index: 1001;
+}
+
+.group-close {
+  position: absolute;
+  right: -8px;
+  top: -4px;
+  width: 16px;
+  height: 16px;
+  background: rgba(14, 165, 233, 0.8);
+  border: 1px solid rgba(14, 165, 233, 1);
+  color: white;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.group-close:hover {
+  background: rgba(14, 165, 233, 1);
+}
+
+.group-outline {
+  position: absolute;
+  border: 2px dashed rgba(14, 165, 233, 0.4);
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* Tile ghost indicator for "Tiled out" sections */
+.tile-ghost-indicator {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  pointer-events: none;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--lw-flare-gold, #f59e0b);
+  opacity: 0.55;
+}
+
+.tile-ghost-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--lw-flare-gold, #f59e0b);
+  animation: tileGhostPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes tileGhostPulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1.0;
+    transform: scale(1.15);
+  }
+}
+
+/* Pulse animation for tiled-out sections */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+[data-tiled-out="true"] {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+[data-tiled-out="true"]::after {
+  content: "Tiled out";
+  animation: tiledOutPulse 1.5s ease-in-out infinite;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 11px;
+  opacity: 0.6;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+@keyframes tiledOutPulse {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
