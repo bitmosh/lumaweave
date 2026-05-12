@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 /**
- * LumaWeave Self-Graph Generator
- * Reads docs/ YAML frontmatter and generates
- * src/fixtures/self-graph-generated.json
+ * LumaWeave Self-Graph Generator v2
+ * Generates self-graph conforming to SELF_GRAPH_SCHEMA.md v1
  * Run: node scripts/generate-self-graph.mjs
  */
 
@@ -10,220 +9,862 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import matter from "gray-matter";
+import { glob } from "glob";
 
-const __dirname = path.dirname(
-  fileURLToPath(import.meta.url)
-);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
-const docsDir = path.join(repoRoot, "docs");
-const outputFile = path.join(
-  repoRoot,
-  "src/fixtures/self-graph-generated.json"
-);
 
-// Brand cluster colors
-const CLUSTER_COLORS = {
-  blue:   "#4fa3e0",
-  purple: "#a67de8",
-  gold:   "#e0a84f",
-  teal:   "#4fd9c8",
-  green:  "#64d9a4",
-  gray:   "#6a7485",
+// Output paths
+const graphOutputFile = path.join(repoRoot, "src/fixtures/self-graph-generated.json");
+const manifestOutputFile = path.join(repoRoot, "src/fixtures/self-graph-manifest.json");
+const reportOutputFile = path.join(repoRoot, "src/fixtures/GRAPH_REPORT.md");
+
+// Cluster taxonomy
+const CLUSTER_MAP = {
+  "src/themes/*": "gold",
+  "src/graph/*": "azure",
+  "src/control-plane/*": "teal",
+  "src/audio/*": "purple",
+  "src/accessibility/*": "green",
 };
 
-// Node type → base size
-const TYPE_SIZES = {
-  "docs.contract":  14,
-  "docs.policy":    12,
-  "docs.manual":    10,
-  "docs.registry":  10,
-  "docs.roadmap":   10,
-  "docs.folder":    12,
-  "docs.file":       8,
-  "code.system":    18,
-  "code.file":       8,
-  "code.test":       6,
-  "code.script":     6,
+// Config files to include (v1 hard-coded list)
+const CONFIG_FILES = [
+  "package.json",
+  "tsconfig.json",
+  "tsconfig.node.json",
+  "vite.config.ts",
+  "playwright.config.ts",
+];
+
+// Tag stopwords for tag-overlap filtering (v1.1: expanded with directory-derived tags)
+const TAG_STOPWORDS = [
+  "accessibility", "app", "assets", "audio", "code",
+  "control-plane", "current", "doc", "docs", "fixtures",
+  "graph", "registry", "renderers", "source-adapter",
+  "src", "styles", "themes", "ui", "v86", "v87"
+];
+
+// Health tracking
+const health = {
+  nodesWithoutCluster: 0,
+  nodesWithoutStatus: 0,
+  orphanedNodes: 0,
+  brokenReferences: [],
 };
 
-function clusterColor(cluster) {
-  return CLUSTER_COLORS[cluster] ?? "#6a7485";
+// Slug utility: kebab-case path with extension removed
+function slug(filePath) {
+  const relPath = path.relative(repoRoot, filePath).replace(/\\/g, "/");
+  return relPath
+    .replace(/\.[^.]+$/, "") // remove extension
+    .replace(/[\/\\]/g, ".")  // slashes to dots
+    .replace(/[^a-z0-9.-]/gi, "-") // sanitize
+    .toLowerCase();
 }
 
-function typeSize(type) {
-  return TYPE_SIZES[type] ?? 8;
+// Infer cluster from src/ subdirectory
+function inferClusterFromPath(filePath) {
+  const relPath = path.relative(repoRoot, filePath).replace(/\\/g, "/");
+  for (const [pattern, cluster] of Object.entries(CLUSTER_MAP)) {
+    const regex = new RegExp("^" + pattern.replace("*", ".*"));
+    if (regex.test(relPath)) {
+      return cluster;
+    }
+  }
+  return null;
 }
 
-// Recursively find all .md files
+// Extract tags from code path: [top-level dir, second-level dir]
+function extractCodeTags(filePath) {
+  const relPath = path.relative(repoRoot, filePath).replace(/\\/g, "/");
+  const parts = relPath.split("/");
+  if (parts[0] === "src" && parts.length >= 2) {
+    return [parts[0], parts[1]];
+  }
+  return [];
+}
+
+// Line count utility
+function countLines(filePath) {
+  try {
+    const content = fs.readFileSync(filePath, "utf-8");
+    return content.split("\n").length;
+  } catch {
+    return 0;
+  }
+}
+
+// Get git commit if available
+function getGitCommit() {
+  try {
+    const { execSync } = require("child_process");
+    return execSync("git rev-parse HEAD", { encoding: "utf-8" }).trim();
+  } catch {
+    return undefined;
+  }
+}
+
+// ============================================================================
+// SECTION 1: NODE EXTRACTION
+// ============================================================================
+
+const nodes = [];
+const nodeMap = new Map(); // id -> node for edge resolution
+
+// --- DOCS ---
+
 function findMdFiles(dir) {
   const results = [];
-  for (const entry of fs.readdirSync(dir)) {
-    const full = path.join(dir, entry);
-    const stat = fs.statSync(full);
-    if (stat.isDirectory()) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
       results.push(...findMdFiles(full));
-    } else if (entry.endsWith(".md")) {
+    } else if (entry.name.endsWith(".md")) {
       results.push(full);
     }
   }
   return results;
 }
 
+const docsDir = path.join(repoRoot, "docs");
 const mdFiles = findMdFiles(docsDir);
-const nodes = [];
-const edges = [];
-const foldersSeen = new Set();
 
-// Code spine nodes
-const CODE_SPINES = [
-  { id: "code.system.core",           label: "core",           cluster: "blue",   path: "src/app" },
-  { id: "code.system.graph",          label: "graph",          cluster: "blue",   path: "src/graph" },
-  { id: "code.system.theme",          label: "theme",          cluster: "gold",   path: "src/themes" },
-  { id: "code.system.audio",          label: "audio",          cluster: "green",  path: "src/audio" },
-  { id: "code.system.accessibility",  label: "accessibility",  cluster: "green",  path: "src/accessibility" },
-  { id: "code.system.source-adapter", label: "source-adapter", cluster: "green",  path: "src/source-adapter" },
-  { id: "code.system.control-plane",  label: "control-plane",  cluster: "purple", path: "src/control-plane" },
-  { id: "code.system.modes",          label: "modes",          cluster: "teal",   path: "src/control-plane/modes" },
-];
-
-for (const spine of CODE_SPINES) {
-  nodes.push({
-    id: spine.id,
-    label: spine.label,
-    type: "code.system",
-    cluster: spine.cluster,
-    sourceAdapter: "yaml-frontmatter-parser",
-    metadata: {
-      path: spine.path,
-    },
-  });
-}
-
-const DOMAIN_TO_SPINE = {
-  "graph":          "code.system.graph",
-  "theme":          "code.system.theme",
-  "audio":          "code.system.audio",
-  "accessibility":  "code.system.accessibility",
-  "source-adapter": "code.system.source-adapter",
-  "control-plane":  "code.system.control-plane",
-};
-
-// Process each markdown file
 for (const filePath of mdFiles) {
   const content = fs.readFileSync(filePath, "utf-8");
-  const { data: fm } = matter(content);
+  const { data: fm, content: body } = matter(content);
 
-  if (!fm.include_in_self_graph) continue;
-  if (!fm.id || !fm.domain) continue;
+  if (fm.include_in_self_graph === false) continue;
 
-  const cluster = fm.cluster ?? "gray";
-  const domain = fm.domain;
-  const nodeType = `docs.${fm.type ?? "file"}`;
-  const relPath = path.relative(repoRoot, filePath)
-    .replace(/\\/g, "/");
+  const relPath = path.relative(repoRoot, filePath).replace(/\\/g, "/");
+  const id = fm.id || slug(filePath);
+  const stat = fs.statSync(filePath);
 
-  // Ensure folder node
-  const folderId = `docs.folder.${domain}`;
-  if (!foldersSeen.has(folderId)) {
-    foldersSeen.add(folderId);
-    nodes.push({
-      id: folderId,
-      label: domain,
-      type: "docs.folder",
-      cluster,
-      sourceAdapter: "yaml-frontmatter-parser",
-      metadata: {
-        path: `docs/${domain}`,
-      },
-    });
-  }
-
-  // Doc file node
-  const nodeId = `docs.file.${fm.id}`;
   nodes.push({
-    id: nodeId,
-    label: fm.title ?? fm.id,
-    type: nodeType,
+    id,
+    type: "doc",
+    label: path.basename(filePath, ".md"),
+    fullLabel: fm.title || path.basename(filePath, ".md"),
+    path: relPath,
+    cluster: fm.cluster || null,
+    status: fm.status || null,
+    tags: fm.tags || [],
+    size: countLines(filePath),
+    lastModified: stat.mtime.toISOString(),
+    raw: {},
+    _body: body, // store for edge extraction
+    _frontmatter: fm, // store for edge extraction
+  });
+
+  // Health tracking
+  if (!fm.cluster) health.nodesWithoutCluster++;
+  if (!fm.status) health.nodesWithoutStatus++;
+}
+
+// --- CODE ---
+
+const codePatterns = [
+  "src/**/*.ts",
+  "src/**/*.tsx",
+  "src/**/*.mjs",
+  "src/**/*.js",
+];
+
+const codeFiles = glob.sync(codePatterns, {
+  cwd: repoRoot,
+  ignore: [
+    "**/__tests__/**",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.d.ts",
+    "**/node_modules/**",
+  ],
+});
+
+for (const filePath of codeFiles) {
+  const relPath = path.relative(repoRoot, filePath).replace(/\\/g, "/");
+  const id = slug(filePath);
+  const stat = fs.statSync(filePath);
+  const cluster = inferClusterFromPath(filePath) || null;
+  const tags = extractCodeTags(filePath);
+
+  nodes.push({
+    id,
+    type: "code",
+    label: path.basename(filePath, path.extname(filePath)),
+    fullLabel: path.basename(filePath),
+    path: relPath,
     cluster,
-    sourceAdapter: "yaml-frontmatter-parser",
-    metadata: {
-      path: relPath,
-      status: fm.status,
-      domain,
-      tags: fm.tags ?? [],
+    status: null,
+    tags,
+    size: countLines(filePath),
+    lastModified: stat.mtime.toISOString(),
+    raw: {
+      color: "#5a6678",
+      dimFactor: 0.55,
+    },
+    _body: fs.readFileSync(filePath, "utf-8"), // store for import parsing
+  });
+
+  if (!cluster) health.nodesWithoutCluster++;
+}
+
+// --- CONFIG ---
+
+for (const configName of CONFIG_FILES) {
+  const filePath = path.join(repoRoot, configName);
+  if (!fs.existsSync(filePath)) continue;
+
+  const relPath = path.relative(repoRoot, filePath).replace(/\\/g, "/");
+  const id = slug(filePath);
+  const stat = fs.statSync(filePath);
+
+  nodes.push({
+    id,
+    type: "config",
+    label: configName,
+    fullLabel: configName,
+    path: relPath,
+    cluster: "slate",
+    status: null,
+    tags: [],
+    size: countLines(filePath),
+    lastModified: stat.mtime.toISOString(),
+    raw: {
+      color: "#6b7280",
+      dimFactor: 0.45,
     },
   });
+}
 
-  // contains edge: folder → file
-  edges.push({
-    id: `edge.contains.${nodeId}`,
-    source: folderId,
-    target: nodeId,
-    type: "contains",
-    confidence: "observed",
-    metadata: {},
+// --- FIXTURE ---
+
+const fixturePatterns = ["src/fixtures/*.json"];
+const fixtureFiles = glob.sync(fixturePatterns.join("\n"), {
+  cwd: repoRoot,
+  ignore: [
+    "src/fixtures/self-graph-generated.json",
+    "src/fixtures/self-graph-manifest.json",
+  ],
+});
+
+for (const filePath of fixtureFiles) {
+  const relPath = path.relative(repoRoot, filePath).replace(/\\/g, "/");
+  const id = slug(filePath);
+  const stat = fs.statSync(filePath);
+
+  nodes.push({
+    id,
+    type: "fixture",
+    label: path.basename(filePath),
+    fullLabel: path.basename(filePath),
+    path: relPath,
+    cluster: "slate",
+    status: null,
+    tags: [],
+    size: countLines(filePath),
+    lastModified: stat.mtime.toISOString(),
+    raw: {
+      color: "#5a6678",
+      dimFactor: 0.45,
+    },
   });
+}
 
-  // governs edge: contract/policy → code spine
-  if (
-    (fm.type === "contract" || fm.type === "policy") &&
-    DOMAIN_TO_SPINE[domain]
-  ) {
-    edges.push({
-      id: `edge.governs.${nodeId}`,
-      source: nodeId,
-      target: DOMAIN_TO_SPINE[domain],
-      type: "governs",
-      confidence: "observed",
-      metadata: {},
-    });
+// --- SPINE (synthetic subsystem nodes) ---
+
+const SPINE_NODES = [
+  { id: "spine.graph", label: "graph", path: "src/graph" },
+  { id: "spine.themes", label: "themes", path: "src/themes" },
+  { id: "spine.control-plane", label: "control-plane", path: "src/control-plane" },
+  { id: "spine.audio", label: "audio", path: "src/audio" },
+  { id: "spine.accessibility", label: "accessibility", path: "src/accessibility" },
+];
+
+for (const spine of SPINE_NODES) {
+  nodes.push({
+    id: spine.id,
+    type: "spine",
+    label: spine.label,
+    fullLabel: spine.label,
+    path: spine.path,
+    cluster: null,
+    status: null,
+    tags: [],
+    size: 0,
+    lastModified: new Date().toISOString(),
+    raw: {
+      color: "#9ca3af",
+      dimFactor: 0.8,
+    },
+  });
+}
+
+// Build node map for edge resolution
+for (const node of nodes) {
+  nodeMap.set(node.id, node);
+}
+
+// ============================================================================
+// SECTION 2: EDGE EXTRACTION
+// ============================================================================
+
+const edges = [];
+const edgeSet = new Set(); // for deduplication
+
+function addEdge(source, target, type, weight, bidirectional, provenance) {
+  const edgeId = `edge-${source}-${target}-${type}`;
+  if (edgeSet.has(edgeId)) return;
+  edgeSet.add(edgeId);
+
+  edges.push({
+    id: edgeId,
+    source,
+    target,
+    type,
+    weight,
+    bidirectional,
+    provenance,
+  });
+}
+
+// --- Type "contains" (parent directory → child file) ---
+
+for (const node of nodes) {
+  if (node.type === "spine") continue; // spines don't have directory parents
+  
+  const dirPath = path.dirname(node.path);
+  const parentId = slug(dirPath);
+  
+  // Only create edge if parent exists as a node
+  if (nodeMap.has(parentId)) {
+    addEdge(
+      parentId,
+      node.id,
+      "contains",
+      0.5,
+      false,
+      { source: "directory-walk" }
+    );
   }
 }
 
-// Output
-// Deduplicate nodes by ID (keep first occurrence)
-const seenNodeIds = new Set();
-const deduplicatedNodes = nodes.filter(node => {
-  if (seenNodeIds.has(node.id)) {
-    console.warn(`[DEDUP] Skipping duplicate node: ${node.id}`);
-    return false;
-  }
-  seenNodeIds.add(node.id);
-  return true;
-});
+// --- Type "governs" (contract/policy → spine) ---
 
-// Deduplicate edges by ID
-const seenEdgeIds = new Set();
-const deduplicatedEdges = edges.filter(edge => {
-  if (seenEdgeIds.has(edge.id)) {
-    return false;
+for (const node of nodes) {
+  if (node.type !== "doc") continue;
+  if (!node._frontmatter) continue;
+  
+  const fm = node._frontmatter;
+  if (fm.type !== "contract" && fm.type !== "policy") continue;
+  
+  const domain = fm.domain;
+  const spineId = `spine.${domain}`;
+  
+  if (nodeMap.has(spineId)) {
+    addEdge(
+      node.id,
+      spineId,
+      "governs",
+      0.7,
+      false,
+      { source: "frontmatter", detail: "governs" }
+    );
   }
-  seenEdgeIds.add(edge.id);
-  return true;
-});
+}
 
-// Filter edges whose source/target no longer exist
-const validNodeIds = new Set(deduplicatedNodes.map(n => n.id));
-const validEdges = deduplicatedEdges.filter(edge =>
-  validNodeIds.has(edge.source) &&
-  validNodeIds.has(edge.target)
+// --- Type "explicit-reference" (from frontmatter references:) ---
+
+for (const node of nodes) {
+  if (node.type !== "doc") continue;
+  if (!node._frontmatter) continue;
+  
+  const fm = node._frontmatter;
+  const refs = fm.references || [];
+  
+  for (const refId of refs) {
+    if (nodeMap.has(refId)) {
+      addEdge(
+        node.id,
+        refId,
+        "explicit-reference",
+        1.0,
+        false,
+        { source: "frontmatter", detail: "references" }
+      );
+    } else {
+      health.brokenReferences.push({ source: node.id, target: refId });
+    }
+  }
+}
+
+// --- Type "wiki-link" ([[xxx]] in markdown body) ---
+
+const wikiLinkRegex = /\[\[([^\]]+)\]\]/g;
+
+for (const node of nodes) {
+  if (node.type !== "doc" || !node._body) continue;
+  
+  const body = node._body;
+  let match;
+  
+  while ((match = wikiLinkRegex.exec(body)) !== null) {
+    const targetText = match[1];
+    // Try to resolve by id first, then by slug
+    let targetId = null;
+    
+    // Direct id match
+    if (nodeMap.has(targetText)) {
+      targetId = targetText;
+    } else {
+      // Try slug conversion
+      const slugTarget = targetText
+        .toLowerCase()
+        .replace(/[^a-z0-9.-]/gi, "-")
+        .replace(/\s+/g, "-");
+      
+      for (const [id, n] of nodeMap) {
+        if (id === slugTarget || n.label.toLowerCase() === slugTarget) {
+          targetId = id;
+          break;
+        }
+      }
+    }
+    
+    if (targetId) {
+      addEdge(
+        node.id,
+        targetId,
+        "wiki-link",
+        0.7,
+        false,
+        { source: "body-parse", detail: "wikilink" }
+      );
+    }
+  }
+}
+
+// --- Type "markdown-link" ([text](path.md)) ---
+
+const mdLinkRegex = /\[([^\]]+)\]\(([^)]+\.md)\)/g;
+
+for (const node of nodes) {
+  if (node.type !== "doc" || !node._body) continue;
+  
+  const body = node._body;
+  let match;
+  
+  while ((match = mdLinkRegex.exec(body)) !== null) {
+    const linkPath = match[2];
+    // Resolve relative to doc location
+    const docDir = path.dirname(node.path);
+    const targetPath = path.resolve(repoRoot, docDir, linkPath);
+    const targetRel = path.relative(repoRoot, targetPath).replace(/\\/g, "/");
+    const targetId = slug(targetPath);
+    
+    if (nodeMap.has(targetId)) {
+      addEdge(
+        node.id,
+        targetId,
+        "markdown-link",
+        0.65,
+        false,
+        { source: "body-parse", detail: "markdown-link" }
+      );
+    }
+  }
+}
+
+// --- Type "code-import" (import statements) ---
+
+const importRegex = /^import .* from ["']([^"']+)["']/gm;
+const sideEffectImportRegex = /^import ["']([^"']+)["']/gm;
+
+for (const node of nodes) {
+  if (node.type !== "code" || !node._body) continue;
+  
+  const body = node._body;
+  const imports = [];
+  
+  // Regular imports
+  let match;
+  while ((match = importRegex.exec(body)) !== null) {
+    imports.push(match[1]);
+  }
+  
+  // Side-effect imports
+  importRegex.lastIndex = 0; // reset
+  while ((match = sideEffectImportRegex.exec(body)) !== null) {
+    imports.push(match[1]);
+  }
+  
+  const codeDir = path.dirname(node.path);
+  
+  for (const importPath of imports) {
+    // Skip node_modules imports
+    if (!importPath.startsWith(".") && !importPath.startsWith("/")) continue;
+    
+    // Resolve relative path
+    const targetPath = path.resolve(repoRoot, codeDir, importPath);
+    
+    // Try with .ts, .tsx, .js, .mjs extensions
+    const extensions = [".ts", ".tsx", ".js", ".mjs"];
+    let resolvedTarget = null;
+    
+    for (const ext of extensions) {
+      const tryPath = targetPath + ext;
+      if (fs.existsSync(tryPath)) {
+        resolvedTarget = tryPath;
+        break;
+      }
+    }
+    
+    // Try index files
+    if (!resolvedTarget) {
+      for (const ext of extensions) {
+        const tryPath = path.join(targetPath, `index${ext}`);
+        if (fs.existsSync(tryPath)) {
+          resolvedTarget = tryPath;
+          break;
+        }
+      }
+    }
+    
+    if (resolvedTarget) {
+      const targetRel = path.relative(repoRoot, resolvedTarget).replace(/\\/g, "/");
+      const targetId = slug(resolvedTarget);
+      
+      if (nodeMap.has(targetId)) {
+        addEdge(
+          node.id,
+          targetId,
+          "code-import",
+          0.85,
+          false,
+          { source: "body-parse", detail: "import" }
+        );
+      }
+    }
+  }
+}
+
+// --- Type "tag-overlap" (shared tags) ---
+
+for (let i = 0; i < nodes.length; i++) {
+  for (let j = i + 1; j < nodes.length; j++) {
+    const a = nodes[i];
+    const b = nodes[j];
+
+    if (!a.tags.length || !b.tags.length) continue;
+
+    const sharedTags = a.tags.filter(tag => b.tags.includes(tag));
+
+    // Remove stopwords
+    const filteredSharedTags = sharedTags.filter(
+      tag => !TAG_STOPWORDS.includes(tag)
+    );
+
+    if (filteredSharedTags.length >= 2) {
+      const weight = Math.min(0.6, filteredSharedTags.length / 4);
+      const sortedIds = [a.id, b.id].sort();
+      const edgeId = `edge-${sortedIds[0]}-${sortedIds[1]}-tag-overlap`;
+
+      if (!edgeSet.has(edgeId)) {
+        addEdge(
+          a.id,
+          b.id,
+          "tag-overlap",
+          weight,
+          true,
+          {
+            source: "frontmatter",
+            detail: "shared tags: " + filteredSharedTags.join(", "),
+          }
+        );
+      }
+    }
+  }
+}
+
+// --- Per-node tag-overlap edge cap (max 5 per node, prioritized by weight) ---
+
+const tagOverlapEdges = edges.filter(e => e.type === "tag-overlap");
+const nonTagOverlapEdges = edges.filter(e => e.type !== "tag-overlap");
+
+// Iteratively enforce cap: remove lowest-weight edges from nodes exceeding 5
+let currentTagOverlapEdges = [...tagOverlapEdges];
+let iteration = 0;
+const maxIterations = 100;
+
+while (iteration < maxIterations) {
+  // Count tag-overlap edges per node
+  const edgeCountByNode = new Map();
+  for (const edge of currentTagOverlapEdges) {
+    for (const nodeId of [edge.source, edge.target]) {
+      edgeCountByNode.set(nodeId, (edgeCountByNode.get(nodeId) || 0) + 1);
+    }
+  }
+
+  // Find nodes exceeding cap
+  const nodesOverCap = [];
+  for (const [nodeId, count] of edgeCountByNode) {
+    if (count > 5) {
+      nodesOverCap.push({ nodeId, count });
+    }
+  }
+
+  if (nodesOverCap.length === 0) {
+    break; // All nodes within cap
+  }
+
+  // For each node over cap, remove its lowest-weight tag-overlap edges
+  const edgesToRemove = new Set();
+  for (const { nodeId } of nodesOverCap) {
+    const nodeEdges = currentTagOverlapEdges.filter(
+      e => e.source === nodeId || e.target === nodeId
+    );
+    // Sort by weight ascending (lowest first)
+    nodeEdges.sort((a, b) => a.weight - b.weight);
+    // Remove edges until node is at cap (remove lowest-weight first)
+    const excess = edgeCountByNode.get(nodeId) - 5;
+    for (let i = 0; i < excess && i < nodeEdges.length; i++) {
+      edgesToRemove.add(nodeEdges[i].id);
+    }
+  }
+
+  // Filter out removed edges
+  currentTagOverlapEdges = currentTagOverlapEdges.filter(e => !edgesToRemove.has(e.id));
+  iteration++;
+}
+
+if (iteration >= maxIterations) {
+  console.warn("Tag-overlap cap enforcement did not converge within max iterations");
+}
+
+console.log(`Tag-overlap cap enforced in ${iteration} iterations`);
+
+// Replace edges array with non-tag-overlap edges + capped tag-overlap edges
+edges.length = 0;
+edges.push(...nonTagOverlapEdges, ...currentTagOverlapEdges);
+
+// --- Type "describes" (doc mentions code path) ---
+
+const codeNodePaths = new Set(
+  nodes.filter(n => n.type === "code").map(n => n.path)
 );
 
-const graph = {
-  nodes: deduplicatedNodes,
-  edges: validEdges,
-  metadata: {
-    adapterId: "yaml-frontmatter-parser",
-    createdAt: new Date().toISOString(),
-    inputSummary: `${deduplicatedNodes.length} nodes from docs/ YAML frontmatter`,
-    nodeCount: deduplicatedNodes.length,
+for (const node of nodes) {
+  if (node.type !== "doc" || !node._body) continue;
+  
+  const body = node._body;
+  
+  for (const codePath of codeNodePaths) {
+    // Check if doc body mentions the code path
+    if (body.includes(codePath)) {
+      // Find the code node id
+      const codeNode = nodes.find(n => n.path === codePath);
+      if (codeNode) {
+        addEdge(
+          node.id,
+          codeNode.id,
+          "describes",
+          0.6,
+          false,
+          { source: "heuristic", detail: "doc mentions code path" }
+        );
+      }
+    }
+  }
+}
+
+// ============================================================================
+// SECTION 3: CLEANUP
+// ============================================================================
+
+// Remove _body and _frontmatter from nodes (not part of schema)
+for (const node of nodes) {
+  delete node._body;
+  delete node._frontmatter;
+}
+
+// Filter edges to only those with valid source/target
+const validNodeIds = new Set(nodes.map(n => n.id));
+const validEdges = edges.filter(
+  e => validNodeIds.has(e.source) && validNodeIds.has(e.target)
+);
+
+// Count orphaned nodes
+const nodeDegree = new Map();
+for (const edge of validEdges) {
+  nodeDegree.set(edge.source, (nodeDegree.get(edge.source) || 0) + 1);
+  nodeDegree.set(edge.target, (nodeDegree.get(edge.target) || 0) + 1);
+}
+
+for (const node of nodes) {
+  if (!nodeDegree.has(node.id)) {
+    health.orphanedNodes++;
+  }
+}
+
+// ============================================================================
+// SECTION 4: METADATA BLOCK
+// ============================================================================
+
+const nodesByType = {
+  doc: nodes.filter(n => n.type === "doc").length,
+  code: nodes.filter(n => n.type === "code").length,
+  config: nodes.filter(n => n.type === "config").length,
+  fixture: nodes.filter(n => n.type === "fixture").length,
+  spine: nodes.filter(n => n.type === "spine").length,
+};
+
+const edgesByType = {};
+for (const edge of validEdges) {
+  edgesByType[edge.type] = (edgesByType[edge.type] || 0) + 1;
+}
+
+const metadata = {
+  schemaVersion: "lumaweave-self-graph/v1",
+  generatedAt: new Date().toISOString(),
+  generator: "generate-self-graph@v2",
+  sourceCommit: getGitCommit(),
+  sourceTree: "./",
+  stats: {
+    nodeCount: nodes.length,
     edgeCount: validEdges.length,
-    warnings: [],
+    nodesByType,
+    edgesByType,
   },
 };
 
-fs.writeFileSync(outputFile, JSON.stringify(graph, null, 2));
-console.log(
-  `✅ Self-graph generated: ${deduplicatedNodes.length} nodes, ` +
-  `${validEdges.length} edges → ${outputFile}`
-);
+// ============================================================================
+// SECTION 5: OUTPUT FILES
+// ============================================================================
+
+// Main graph file
+const graph = {
+  schemaVersion: "lumaweave-self-graph/v1",
+  metadata,
+  nodes,
+  edges: validEdges,
+};
+
+fs.writeFileSync(graphOutputFile, JSON.stringify(graph, null, 2));
+console.log(`✅ Graph written: ${nodes.length} nodes, ${validEdges.length} edges → ${graphOutputFile}`);
+
+// Manifest file
+const manifest = {
+  schemaVersion: "lumaweave-self-graph/v1",
+  graphFile: "self-graph-generated.json",
+  reportFile: "GRAPH_REPORT.md",
+  generatedAt: metadata.generatedAt,
+  sourceCommit: metadata.sourceCommit,
+  health: {
+    nodesWithoutCluster: health.nodesWithoutCluster,
+    nodesWithoutStatus: health.nodesWithoutStatus,
+    orphanedNodes: health.orphanedNodes,
+    brokenReferences: health.brokenReferences.length,
+  },
+};
+
+fs.writeFileSync(manifestOutputFile, JSON.stringify(manifest, null, 2));
+console.log(`✅ Manifest written → ${manifestOutputFile}`);
+
+// Report file
+function generateReport() {
+  const lines = [];
+  
+  lines.push("# Self-Graph Report");
+  lines.push("");
+  lines.push(`Generated: ${metadata.generatedAt}`);
+  lines.push(metadata.sourceCommit ? `Source commit: ${metadata.sourceCommit}` : "Source commit: N/A");
+  lines.push(`Schema: ${metadata.schemaVersion}`);
+  lines.push("");
+  lines.push("## Summary");
+  lines.push("");
+  lines.push(`- Total nodes: ${metadata.stats.nodeCount}`);
+  lines.push(`- Total edges: ${metadata.stats.edgeCount}`);
+  lines.push("");
+  lines.push("### Nodes by type");
+  for (const [type, count] of Object.entries(metadata.stats.nodesByType)) {
+    lines.push(`- ${type}: ${count}`);
+  }
+  lines.push("");
+  lines.push("### Edges by type");
+  for (const [type, count] of Object.entries(metadata.stats.edgesByType)) {
+    lines.push(`- ${type}: ${count}`);
+  }
+  
+  // Top 10 by in-degree
+  const inDegree = new Map();
+  for (const edge of validEdges) {
+    inDegree.set(edge.target, (inDegree.get(edge.target) || 0) + 1);
+  }
+  const topInDegree = [...inDegree.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10);
+  
+  lines.push("");
+  lines.push("## Top 10 by in-degree");
+  for (const [id, degree] of topInDegree) {
+    const node = nodeMap.get(id);
+    lines.push(`- ${id} (${node?.type || "?"}): ${degree}`);
+  }
+  
+  // Top 10 by out-degree
+  const outDegree = new Map();
+  for (const edge of validEdges) {
+    outDegree.set(edge.source, (outDegree.get(edge.source) || 0) + 1);
+  }
+  const topOutDegree = [...outDegree.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10);
+  
+  lines.push("");
+  lines.push("## Top 10 by out-degree");
+  for (const [id, degree] of topOutDegree) {
+    const node = nodeMap.get(id);
+    lines.push(`- ${id} (${node?.type || "?"}): ${degree}`);
+  }
+  
+  // Orphaned nodes
+  const orphans = nodes.filter(n => !nodeDegree.has(n.id));
+  lines.push("");
+  lines.push(`## Orphaned nodes (degree = 0) [${orphans.length}]`);
+  for (const node of orphans) {
+    lines.push(`- ${node.id} (${node.type})`);
+  }
+  
+  // Broken references
+  lines.push("");
+  lines.push(`## Broken references [${health.brokenReferences.length}]`);
+  if (health.brokenReferences.length > 0) {
+    lines.push("Frontmatter references targeting unknown ids:");
+    for (const { source, target } of health.brokenReferences) {
+      lines.push(`- ${source} references ${target} (not found)`);
+    }
+  } else {
+    lines.push("None.");
+  }
+  
+  // Cluster breakdown
+  const clusterCounts = new Map();
+  for (const node of nodes) {
+    if (node.cluster) {
+      clusterCounts.set(node.cluster, (clusterCounts.get(node.cluster) || 0) + 1);
+    }
+  }
+  
+  lines.push("");
+  lines.push("## Cluster breakdown");
+  lines.push("| Cluster | Node count |");
+  lines.push("|---------|------------|");
+  for (const [cluster, count] of [...clusterCounts.entries()].sort()) {
+    lines.push(`| ${cluster} | ${count} |`);
+  }
+  
+  return lines.join("\n");
+}
+
+fs.writeFileSync(reportOutputFile, generateReport());
+console.log(`✅ Report written → ${reportOutputFile}`);

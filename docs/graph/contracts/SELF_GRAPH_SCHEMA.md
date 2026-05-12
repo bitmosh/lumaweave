@@ -230,9 +230,19 @@ type ProvenanceSource =
 
 Two nodes share an implicit `tag-overlap` edge if **both** conditions:
 - They share ≥2 tags
-- At least one of the shared tags is "narrow" (not a stopword tag like
-  "v86" or "registry"). For v1, use a stopword list of:
-  `["v86", "v87", "registry", "doc", "code", "current"]`. Refine later.
+- At least one of the shared tags is "narrow" (not a stopword tag)
+
+**Stopword list (v1.1):**
+```
+["accessibility", "app", "assets", "audio", "code",
+ "control-plane", "current", "doc", "docs", "fixtures",
+ "graph", "registry", "renderers", "source-adapter",
+ "src", "styles", "themes", "ui", "v86", "v87"]
+```
+
+**Note:** Directory-derived tags (src, control-plane, graph, etc.) are added to nodes for filter UI purposes but do not represent semantic similarity. They are stopworded for tag-overlap edge generation to prevent directory siblings from being treated as semantically related.
+
+**Per-node cap:** Each node may have at most 5 tag-overlap edges. When a node exceeds this cap, edges are kept in descending order by weight (highest-weight edges are prioritized). This prevents densely-tagged nodes from creating excessive tag-overlap noise.
 
 Tag-overlap edges weighted at 0..0.6 max so they don't dominate the layout.
 

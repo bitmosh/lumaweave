@@ -298,8 +298,8 @@ export function AppShell() {
   const graphSummary = useFixture
     ? {
         source: "Self-Graph (LumaWeave docs)",
-        rawNodeCount: generatedGraph.metadata.nodeCount,
-        rawEdgeCount: generatedGraph.metadata.edgeCount,
+        rawNodeCount: generatedGraph.metadata.stats.nodeCount,
+        rawEdgeCount: generatedGraph.metadata.stats.edgeCount,
         normalizedNodeCount: adaptedFixture.nodes.length,
         normalizedEdgeCount: adaptedFixture.edges.length,
         renderer: "sigma2d",
