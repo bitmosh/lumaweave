@@ -877,11 +877,15 @@ useEffect(() => {
 useEffect(() => {
   if (!containerRef.current) return;
   
-  const resizeObserver = new ResizeObserver(() => {
-    if (sigmaRef.current) {
-      sigmaRef.current.resize();
-      sigmaRef.current.refresh(); // Ensure graph renders after container resize
-    }
+  const resizeObserver = new ResizeObserver((entries) => {
+    const sigma = sigmaRef.current;
+    if (!sigma) return;
+    const entry = entries[0];
+    if (!entry) return;
+    const { width, height } = entry.contentRect;
+    if (width === 0 || height === 0) return;  // GUARD — prevents "Container has no width" error during React remounts.
+    sigma.resize();
+    sigma.refresh(); // Ensure graph renders after container resize
   });
   resizeObserver.observe(containerRef.current);
 
