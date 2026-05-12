@@ -5,7 +5,7 @@
  * This component applies graph visual policies to determine label visibility and styling.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, memo } from "react";
 import Sigma from "sigma";
 import FA2Layout from "graphology-layout-forceatlas2/worker";
 import { bidirectional } from "graphology-shortest-path";
@@ -136,7 +136,7 @@ interface SigmaGraphViewProps {
   onClearSelection: () => void;
 }
 
-export function SigmaGraphView({
+function SigmaGraphViewComponent({
   nodes,
   edges,
   nodeSize,
@@ -1063,6 +1063,55 @@ useEffect(() => {
     </div>
   );
 }
+
+// v86c: React.memo with custom comparison to prevent remount on settings changes
+// Returns true if props are equal (skip render), false if props differ (re-render)
+const arePropsEqual = (prev: SigmaGraphViewProps, next: SigmaGraphViewProps) => {
+  // Identity checks for memoized objects - these are stable across unrelated settings changes
+  if (prev.nodes !== next.nodes) return false;
+  if (prev.edges !== next.edges) return false;
+  if (prev.resolvedTokens !== next.resolvedTokens) return false;
+
+  // Value checks for selection state - these should trigger re-render
+  if (prev.selectedNodeId !== next.selectedNodeId) return false;
+  if (prev.selectedEdgeId !== next.selectedEdgeId) return false;
+  if (prev.pathTargetId !== next.pathTargetId) return false;
+  if (prev.neighborhoodDepth !== next.neighborhoodDepth) return false;
+
+  // Value checks for physics props - these should trigger re-render
+  if (prev.nodeSize !== next.nodeSize) return false;
+  if (prev.linkDistance !== next.linkDistance) return false;
+  if (prev.repelForce !== next.repelForce) return false;
+  if (prev.centerForce !== next.centerForce) return false;
+  if (prev.physicsPreset !== next.physicsPreset) return false;
+  if (prev.physicsDialect !== next.physicsDialect) return false;
+  if (prev.strongGravityMode !== next.strongGravityMode) return false;
+  if (prev.linLogMode !== next.linLogMode) return false;
+  if (prev.adjustSizes !== next.adjustSizes) return false;
+  if (prev.barnesHutTheta !== next.barnesHutTheta) return false;
+  if (prev.communityGravity !== next.communityGravity) return false;
+
+  // Value checks for label props - these should trigger re-render
+  if (prev.nodeLabelMode !== next.nodeLabelMode) return false;
+  if (prev.edgeLabelMode !== next.edgeLabelMode) return false;
+  if (prev.maxEdgeLabelLength !== next.maxEdgeLabelLength) return false;
+  if (prev.showLabelsOnHover !== next.showLabelsOnHover) return false;
+  if (prev.zoomLabelThreshold !== next.zoomLabelThreshold) return false;
+  if (prev.edgeLabelFontSize !== next.edgeLabelFontSize) return false;
+  if (prev.nodeLabelFontSize !== next.nodeLabelFontSize) return false;
+  if (prev.hoverNodeColor !== next.hoverNodeColor) return false;
+
+  // Value checks for appearance props - these should trigger re-render
+  if (prev.nodeHum !== next.nodeHum) return false;
+  if (prev.nodeFlowSpeed !== next.nodeFlowSpeed) return false;
+  if (prev.nodeGlow !== next.nodeGlow) return false;
+  if (prev.reduceMotion !== next.reduceMotion) return false;
+
+  // All props equal - skip re-render
+  return true;
+};
+
+export const SigmaGraphView = memo(SigmaGraphViewComponent, arePropsEqual);
 
 function DebugRow({
   label,

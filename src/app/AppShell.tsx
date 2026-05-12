@@ -196,12 +196,20 @@ export function AppShell() {
     settings.appearance.backdropMotion,
   ]);
 
-  const themeTokens = getThemeRuntimeTokens(settings.appearance.theme);
+  // v86c: Memoize theme tokens to prevent identity churn on unrelated settings changes
+  const themeTokens = useMemo(
+    () => getThemeRuntimeTokens(settings.appearance.theme),
+    [settings.appearance.theme]
+  );
 
   // Resolve graph visual tokens from theme tokens with settings overrides
-  const resolvedGraphTokens = resolveGraphVisualTokens(themeTokens.graph, {
-    hoverNodeColor: settings.graphView.hoverNodeColor,
-  });
+  // v86c: Memoize to prevent identity churn on unrelated settings changes
+  const resolvedGraphTokens = useMemo(
+    () => resolveGraphVisualTokens(themeTokens.graph, {
+      hoverNodeColor: settings.graphView.hoverNodeColor,
+    }),
+    [themeTokens, settings.graphView.hoverNodeColor]
+  );
 
   const neighborhoodDepth = Math.floor(
     settings.graphView.neighborhoodDepth ?? 2
@@ -805,59 +813,59 @@ export function AppShell() {
               {graphNodes &&
               graphEdges &&
               graphNodes.length > 0 ? (
-                (() => {
-                  return (
-                    <>
-                      <SigmaGraphView
-                        nodes={graphNodes}
-                        edges={graphEdges}
-                        nodeSize={settings.physics.nodeSize}
-                        linkDistance={settings.physics.linkDistance}
-                        repelForce={settings.physics.repelForce}
-                        centerForce={settings.physics.centerForce}
-                        physicsPreset={settings.physics.physicsPreset}
-                        physicsDialect={settings.physics.physicsDialect}
-                        strongGravityMode={settings.physics.strongGravityMode}
-                        linLogMode={settings.physics.linLogMode}
-                        adjustSizes={settings.physics.adjustSizes}
-                        barnesHutTheta={settings.physics.barnesHutTheta}
-                        communityGravity={settings.physics.communityGravity}
-                        selectedNodeId={selectedNodeId}
-                        selectedEdgeId={selectedEdgeId}
-                        pathTargetId={pathTargetId}
-                        neighborhoodDepth={neighborhoodDepth}
-                        nodeLabelMode={settings.labels.nodeLabelMode}
-                        edgeLabelMode={settings.labels.edgeLabelMode}
-                        maxEdgeLabelLength={settings.labels.maxEdgeLabelLength}
-                        showLabelsOnHover={settings.labels.showLabelsOnHover}
-                        zoomLabelThreshold={settings.labels.zoomLabelThreshold}
-                        edgeLabelFontSize={settings.labels.edgeLabelFontSize}
-                        nodeLabelFontSize={settings.labels.nodeLabelFontSize}
-                        hoverNodeColor={settings.graphView.hoverNodeColor}
-                        resolvedTokens={resolvedGraphTokens}
-                        nodeHum={settings.appearance.nodeHum}
-                        nodeFlowSpeed={settings.appearance.nodeFlowSpeed}
-                        nodeGlow={settings.appearance.nodeGlow}
-                        reduceMotion={settings.appearance.reduceMotion}
-                        onSelectNode={(nodeId) => {
-                          setSelectedNodeId(nodeId);
-                          setSelectedEdgeId(null);
-                          setInspectorExpanded(true);
-                        }}
-                        onSetPathTarget={(nodeId) => {
-                          setPathTargetId(nodeId);
-                        }}
-                        onSelectEdge={(edgeId) => {
-                          setSelectedEdgeId(edgeId);
-                          setSelectedNodeId(null);
-                          setInspectorExpanded(true);
-                        }}
-                        onClearSelection={() => {
-                          setSelectedNodeId(null);
-                          setSelectedEdgeId(null);
-                          setPathTargetId(null);
-                        }}
-                      />
+                <>
+                  {/* v86c: Stable key prop prevents remount on settings changes */}
+                  <SigmaGraphView
+                    key={graphSummary.source}
+                    nodes={graphNodes}
+                    edges={graphEdges}
+                    nodeSize={settings.physics.nodeSize}
+                    linkDistance={settings.physics.linkDistance}
+                    repelForce={settings.physics.repelForce}
+                    centerForce={settings.physics.centerForce}
+                    physicsPreset={settings.physics.physicsPreset}
+                    physicsDialect={settings.physics.physicsDialect}
+                    strongGravityMode={settings.physics.strongGravityMode}
+                    linLogMode={settings.physics.linLogMode}
+                    adjustSizes={settings.physics.adjustSizes}
+                    barnesHutTheta={settings.physics.barnesHutTheta}
+                    communityGravity={settings.physics.communityGravity}
+                    selectedNodeId={selectedNodeId}
+                    selectedEdgeId={selectedEdgeId}
+                    pathTargetId={pathTargetId}
+                    neighborhoodDepth={neighborhoodDepth}
+                    nodeLabelMode={settings.labels.nodeLabelMode}
+                    edgeLabelMode={settings.labels.edgeLabelMode}
+                    maxEdgeLabelLength={settings.labels.maxEdgeLabelLength}
+                    showLabelsOnHover={settings.labels.showLabelsOnHover}
+                    zoomLabelThreshold={settings.labels.zoomLabelThreshold}
+                    edgeLabelFontSize={settings.labels.edgeLabelFontSize}
+                    nodeLabelFontSize={settings.labels.nodeLabelFontSize}
+                    hoverNodeColor={settings.graphView.hoverNodeColor}
+                    resolvedTokens={resolvedGraphTokens}
+                    nodeHum={settings.appearance.nodeHum}
+                    nodeFlowSpeed={settings.appearance.nodeFlowSpeed}
+                    nodeGlow={settings.appearance.nodeGlow}
+                    reduceMotion={settings.appearance.reduceMotion}
+                    onSelectNode={(nodeId) => {
+                      setSelectedNodeId(nodeId);
+                      setSelectedEdgeId(null);
+                      setInspectorExpanded(true);
+                    }}
+                    onSetPathTarget={(nodeId) => {
+                      setPathTargetId(nodeId);
+                    }}
+                    onSelectEdge={(edgeId) => {
+                      setSelectedEdgeId(edgeId);
+                      setSelectedNodeId(null);
+                      setInspectorExpanded(true);
+                    }}
+                    onClearSelection={() => {
+                      setSelectedNodeId(null);
+                      setSelectedEdgeId(null);
+                      setPathTargetId(null);
+                    }}
+                  />
 
                       {/* v86b: Plasma overlay for animated edge flow */}
                       {(window as any).__lwSigma ? (
@@ -891,9 +899,7 @@ export function AppShell() {
                         </CollapsiblePanel>
                       </div>
                     </>
-                  );
-                })()
-              ) : (
+                  ) : (
                 <div className="flex h-full items-center justify-center">
                   <div 
                     className="rounded-3xl p-8 text-center"
