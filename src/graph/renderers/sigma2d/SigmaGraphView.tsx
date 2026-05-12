@@ -187,49 +187,50 @@ export function SigmaGraphView({
   const communityGravityRef = useRef<(() => void) | null>(null);
   const solarOrbitRef = useRef<(() => void) | null>(null);
 
+  // v86b: Ref-based uniform pipeline - animation loop updates this ref directly
+  // NodeSphereProgram reads from this ref on its natural render cycle
+  const uniformsRef = useRef<{
+    time: number;
+    hum: number;
+    flowSpeed: number;
+    glowStrength: number;
+  }>({
+    time: 0,
+    hum: nodeHum ?? 0.7,
+    flowSpeed: nodeFlowSpeed ?? 0.55,
+    glowStrength: nodeGlow ?? 1.0,
+  });
+
   // Sync resolvedTokens ref on every render
   useEffect(() => {
     resolvedTokensRef.current = resolvedTokens;
   });
 
-  // v86b: Uniform wiring for NodeSphereProgram - rAF loop updates v86bUniforms per frame
-  // Sigma's NodeSphereProgram.setUniforms reads these values and sets GL uniforms
+  // v86b: Ref-based uniform pipeline - rAF loop updates uniformsRef directly
+  // NodeSphereProgram reads from uniformsRef on its natural render cycle
+  // No sigma.setSetting or sigma.refresh calls per frame
   useEffect(() => {
-    const sigma = sigmaRef.current;
-    if (!sigma) return;
-
     // Contract #1: reduceMotion halts uniforms at 0.0 (except glowStrength)
     if (reduceMotion) {
-      const uniforms = {
-        time: 0,
-        hum: 0,
-        flowSpeed: 0,
-        glowStrength: nodeGlow ?? 1.0,
-      };
-      (sigma as any).setSetting("v86bUniforms", uniforms);
-      (sigma as any).__settings["v86bUniforms"] = uniforms;
-      sigma.refresh();
+      uniformsRef.current.time = 0;
+      uniformsRef.current.hum = 0;
+      uniformsRef.current.flowSpeed = 0;
+      uniformsRef.current.glowStrength = nodeGlow ?? 1.0;
       return;
     }
 
     // Normal mode: animate uniforms with rAF loop
-    let raf = 0;
-    const start = performance.now();
+    let raf: number;
     const tick = (now: number) => {
-      const uniforms = {
-        time: (now - start) / 1000,
-        hum: nodeHum ?? 0.7,
-        flowSpeed: nodeFlowSpeed ?? 0.55,
-        glowStrength: nodeGlow ?? 1.0,
-      };
-      (sigma as any).setSetting("v86bUniforms", uniforms);
-      (sigma as any).__settings["v86bUniforms"] = uniforms;
-      sigma.refresh();
+      uniformsRef.current.time = now * 0.001;
+      uniformsRef.current.hum = nodeHum ?? 0.7;
+      uniformsRef.current.flowSpeed = nodeFlowSpeed ?? 0.55;
+      uniformsRef.current.glowStrength = nodeGlow ?? 1.0;
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [nodeHum, nodeFlowSpeed, nodeGlow, reduceMotion]);
+  }, [reduceMotion, nodeHum, nodeFlowSpeed, nodeGlow]);
 
   // Separate useEffect for communityGravity centroid force
   useEffect(() => {
@@ -564,6 +565,9 @@ export function SigmaGraphView({
 
     sigmaRef.current = sigma;
 
+    // v86b: Attach uniformsRef to Sigma instance for NodeSphereProgram to read
+    (sigma as any).__uniformsRef = uniformsRef;
+
     // v86b: Attach camera controller for eased transitions and state preservation
     cameraControllerRef.current = attachCameraController(sigma, {
       reduceMotion: reduceMotion ?? false,
@@ -572,24 +576,6 @@ export function SigmaGraphView({
     // Expose Sigma instance and camera controller for Playwright tests
     (window as any).__lwSigma = sigma;
     (window as any).__lwCameraController = cameraControllerRef.current;
-    
-    // v86b: Override Sigma's getSetting to read from __settings for custom settings like v86bUniforms
-    (sigma as any).getSetting = (key: string) => {
-      return (sigma as any).__settings?.[key];
-    };
-    
-    if (!(sigma as any).__settings) {
-      (sigma as any).__settings = {};
-    }
-
-    // v86b: Initialize v86bUniforms with current prop values
-    const initialUniforms = {
-      time: 0,
-      hum: reduceMotion ? 0 : (nodeHum ?? 0.7),
-      flowSpeed: reduceMotion ? 0 : (nodeFlowSpeed ?? 0.55),
-      glowStrength: nodeGlow ?? 1.0,
-    };
-    (sigma as any).__settings["v86bUniforms"] = initialUniforms;
 
   // Start continuous FA2 supervisor
   // Stop any existing supervisor

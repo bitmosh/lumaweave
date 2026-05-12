@@ -151,8 +151,8 @@ export default class NodeSphereProgram<
     const uFlowSpeed = gl.getUniformLocation(program, "u_flowSpeed");
     const uGlowStrength = gl.getUniformLocation(program, "u_glowStrength");
 
-    // Read animation state from Sigma settings
-    const v86bUniforms = (this.renderer as any).getSetting?.("v86bUniforms") ?? {
+    // Read uniforms from ref (replaces previous getSetting path)
+    const uniforms = (this.renderer as any).__uniformsRef?.current ?? {
       time: 0,
       hum: this.uniformValues.u_hum,
       flowSpeed: this.uniformValues.u_flowSpeed,
@@ -160,10 +160,10 @@ export default class NodeSphereProgram<
     };
 
     // Only set if location exists in current program
-    if (uTime !== null) gl.uniform1f(uTime, v86bUniforms.time);
-    if (uHum !== null) gl.uniform1f(uHum, v86bUniforms.hum);
-    if (uFlowSpeed !== null) gl.uniform1f(uFlowSpeed, v86bUniforms.flowSpeed);
-    if (uGlowStrength !== null) gl.uniform1f(uGlowStrength, v86bUniforms.glowStrength);
+    if (uTime !== null) gl.uniform1f(uTime, uniforms.time);
+    if (uHum !== null) gl.uniform1f(uHum, uniforms.hum);
+    if (uFlowSpeed !== null) gl.uniform1f(uFlowSpeed, uniforms.flowSpeed);
+    if (uGlowStrength !== null) gl.uniform1f(uGlowStrength, uniforms.glowStrength);
   }
 
   getDefinition() {
