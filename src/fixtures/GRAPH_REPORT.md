@@ -1,16 +1,16 @@
 # Self-Graph Report
 
-Generated: 2026-05-12T01:57:30.863Z
+Generated: 2026-05-12T03:28:08.800Z
 Source commit: N/A
 Schema: lumaweave-self-graph/v1
 
 ## Summary
 
-- Total nodes: 273
-- Total edges: 841
+- Total nodes: 276
+- Total edges: 846
 
 ### Nodes by type
-- doc: 160
+- doc: 163
 - code: 103
 - config: 5
 - fixture: 0
@@ -22,7 +22,7 @@ Schema: lumaweave-self-graph/v1
 - explicit-reference: 340
 - code-import: 117
 - tag-overlap: 144
-- describes: 216
+- describes: 221
 
 ## Top 10 by in-degree
 - src.themes.themetokenpaths (code): 19
@@ -30,8 +30,8 @@ Schema: lumaweave-self-graph/v1
 - theme.system.overview (doc): 16
 - link.network.overview (doc): 16
 - theme.token.compatibility (doc): 14
+- src.app.appshell (code): 13
 - agent.survival.manual.readme (doc): 13
-- src.app.appshell (code): 12
 - spine.graph (spine): 12
 - source.adapter.os.overview (doc): 12
 - src.control-plane.settings.settings.schema (code): 12

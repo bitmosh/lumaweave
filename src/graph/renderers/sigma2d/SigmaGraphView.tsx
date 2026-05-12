@@ -735,7 +735,7 @@ function SigmaGraphViewComponent({
       hasInitialCameraResetRef.current = false;
     }
   }
-}, [nodes, edges, linkDistance, repelForce, centerForce, physicsDialect, resolvedTokens]);
+}, [nodes, edges]);
 
 // Live slider updates for FA2 settings without graph rebuild
 useEffect(() => {
@@ -960,7 +960,7 @@ useEffect(() => {
     }
 
     sigma.refresh();
-  }, [selectedNodeId, selectedEdgeId, neighborhoodDepth, hoveredNodeId, hoveredEdgeId, hoverNodeColor, edgeLabelFontSize]);
+  }, [selectedNodeId, selectedEdgeId, neighborhoodDepth, hoveredNodeId, hoveredEdgeId, hoverNodeColor, edgeLabelFontSize, resolvedTokens]);
 
   // Edge label font size live update effect
   useEffect(() => {

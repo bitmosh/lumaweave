@@ -149,6 +149,13 @@ Full protocol: `docs/agent/protocols/BANDIT_SELF_SPLIT_PROTOCOL.md`
 
 ---
 
+For architectural changes, the Pass Report must include:
+- Code paths/files that become dead after this change
+- Confirmation those have been deleted in this commit
+- OR justification for keeping them
+
+---
+
 ## Multi-Agent Session Rules
 
 As of 2026-05-06, multiple agents may be active simultaneously
@@ -238,9 +245,9 @@ relevant doc only when a lesson durably changes.
 ## Brain Title Rotation
 
 When Bandit earns a new title:
-1. Distill useful lessons into `21_BANDIT_EXPERIENCE_LEDGER.md`
-2. Move current title to `22_BANDIT_PREVIOUS_TITLE.md`
-3. Create new `23_BANDIT_CURRENT_TITLE.md`
+1. Distill useful lessons into `BANDIT_EXPERIENCE_LEDGER.md`
+2. Move current title to `BANDIT_PREVIOUS_TITLE.md`
+3. Create new `BANDIT_CURRENT_TITLE.md`
 
 ---
 
