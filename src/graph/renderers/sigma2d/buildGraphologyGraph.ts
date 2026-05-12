@@ -220,7 +220,7 @@ export function buildGraphologyGraph(
   edges: LumaWeaveEdgeDraft[],
   settings: LayoutSettings,
 ): GraphBuildResult {
-  const graph = new Graph();
+  const graph = new Graph({ multi: true });
 
   const layoutScale =
     18 + settings.linkDistance * 0.2 + settings.repelForce * 0.08;
