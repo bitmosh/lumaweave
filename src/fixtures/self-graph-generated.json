@@ -2,26 +2,26 @@
   "schemaVersion": "lumaweave-self-graph/v1",
   "metadata": {
     "schemaVersion": "lumaweave-self-graph/v1",
-    "generatedAt": "2026-05-15T01:33:02.508Z",
+    "generatedAt": "2026-05-15T22:58:07.449Z",
     "generator": "generate-self-graph@v2",
     "sourceTree": "./",
     "stats": {
-      "nodeCount": 366,
-      "edgeCount": 1288,
+      "nodeCount": 378,
+      "edgeCount": 1358,
       "nodesByType": {
-        "doc": 190,
-        "code": 106,
+        "doc": 200,
+        "code": 108,
         "config": 5,
         "fixture": 0,
         "spine": 65
       },
       "edgesByType": {
-        "contains": 359,
+        "contains": 370,
         "governs": 29,
-        "explicit-reference": 340,
-        "code-import": 125,
-        "tag-overlap": 150,
-        "describes": 285
+        "explicit-reference": 371,
+        "code-import": 126,
+        "tag-overlap": 163,
+        "describes": 299
       }
     }
   },
@@ -911,10 +911,10 @@
         "code",
         "qa",
         "evidence",
-        "v71a"
+        "v71b"
       ],
-      "size": 127,
-      "lastModified": "2026-05-10T06:04:51.584Z",
+      "size": 130,
+      "lastModified": "2026-05-15T22:47:04.836Z",
       "raw": {}
     },
     {
@@ -1374,8 +1374,8 @@
         "render-pipeline",
         "performance"
       ],
-      "size": 695,
-      "lastModified": "2026-05-12T01:26:44.845Z",
+      "size": 716,
+      "lastModified": "2026-05-15T22:49:26.715Z",
       "raw": {}
     },
     {
@@ -1395,8 +1395,8 @@
         "intelligence",
         "concept"
       ],
-      "size": 85,
-      "lastModified": "2026-05-10T06:04:51.587Z",
+      "size": 167,
+      "lastModified": "2026-05-15T22:55:29.196Z",
       "raw": {}
     },
     {
@@ -1812,10 +1812,11 @@
         "source-of-truth",
         "governance",
         "forbidden-boundaries",
-        "v86a"
+        "v86a",
+        "gwells"
       ],
-      "size": 303,
-      "lastModified": "2026-05-10T06:04:51.592Z",
+      "size": 365,
+      "lastModified": "2026-05-15T21:36:48.486Z",
       "raw": {}
     },
     {
@@ -1845,7 +1846,7 @@
       "label": "CONSTELLATION_MODE_DIALECT",
       "fullLabel": "Constellation Mode Physics Dialect",
       "path": "docs/physics/CONSTELLATION_MODE_DIALECT.md",
-      "cluster": "teal",
+      "cluster": "azure",
       "status": "concept",
       "tags": [
         "physics",
@@ -1855,8 +1856,8 @@
         "audio",
         "layout"
       ],
-      "size": 107,
-      "lastModified": "2026-05-06T08:33:03.000Z",
+      "size": 118,
+      "lastModified": "2026-05-15T21:55:28.733Z",
       "raw": {}
     },
     {
@@ -1865,7 +1866,7 @@
       "label": "GALAXY_MODE_DIALECT",
       "fullLabel": "Galaxy Mode Physics Dialect",
       "path": "docs/physics/GALAXY_MODE_DIALECT.md",
-      "cluster": "teal",
+      "cluster": "azure",
       "status": "concept",
       "tags": [
         "physics",
@@ -1877,8 +1878,60 @@
         "layout",
         "complex"
       ],
-      "size": 227,
-      "lastModified": "2026-05-06T08:33:03.000Z",
+      "size": 242,
+      "lastModified": "2026-05-15T21:56:16.404Z",
+      "raw": {}
+    },
+    {
+      "id": "physics.gwells.contract",
+      "type": "doc",
+      "label": "GRAVITY_WELL_SYSTEM_CONTRACT",
+      "fullLabel": "Gravity Well System Contract (gwells)",
+      "path": "docs/physics/GRAVITY_WELL_SYSTEM_CONTRACT.md",
+      "cluster": "azure",
+      "status": "current",
+      "tags": [
+        "physics",
+        "gwells",
+        "gravity-wells",
+        "contract",
+        "v0",
+        "layout"
+      ],
+      "size": 690,
+      "lastModified": "2026-05-15T22:52:32.484Z",
+      "raw": {}
+    },
+    {
+      "id": "physics.gwells.readme",
+      "type": "doc",
+      "label": "GWELLS_README",
+      "fullLabel": "Gwells Module README",
+      "path": "docs/physics/GWELLS_README.md",
+      "cluster": "azure",
+      "status": "current",
+      "tags": [
+        "physics",
+        "gwells",
+        "readme",
+        "orientation",
+        "v0"
+      ],
+      "size": 294,
+      "lastModified": "2026-05-15T22:55:25.352Z",
+      "raw": {}
+    },
+    {
+      "id": "docs.physics.gwells-registry-patterns",
+      "type": "doc",
+      "label": "GWELLS_REGISTRY_PATTERNS",
+      "fullLabel": "GWELLS_REGISTRY_PATTERNS",
+      "path": "docs/physics/GWELLS_REGISTRY_PATTERNS.md",
+      "cluster": null,
+      "status": null,
+      "tags": [],
+      "size": 357,
+      "lastModified": "2026-05-15T22:58:07.308Z",
       "raw": {}
     },
     {
@@ -1887,7 +1940,7 @@
       "label": "HELIX_CONSTELLATION_DIALECT",
       "fullLabel": "Helix / DNA Constellation Physics Dialect",
       "path": "docs/physics/HELIX_CONSTELLATION_DIALECT.md",
-      "cluster": "blue",
+      "cluster": "azure",
       "status": "concept",
       "tags": [
         "physics",
@@ -1899,8 +1952,8 @@
         "audio",
         "layout"
       ],
-      "size": 213,
-      "lastModified": "2026-05-06T08:33:03.000Z",
+      "size": 224,
+      "lastModified": "2026-05-15T21:54:13.046Z",
       "raw": {}
     },
     {
@@ -1909,7 +1962,7 @@
       "label": "PHYSICS_DIALECT_SYSTEM",
       "fullLabel": "Physics Dialect System",
       "path": "docs/physics/PHYSICS_DIALECT_SYSTEM.md",
-      "cluster": "blue",
+      "cluster": "azure",
       "status": "accepted",
       "tags": [
         "physics",
@@ -1921,8 +1974,8 @@
         "galaxy",
         "signal-loom"
       ],
-      "size": 224,
-      "lastModified": "2026-05-06T08:33:03.000Z",
+      "size": 236,
+      "lastModified": "2026-05-15T22:48:41.576Z",
       "raw": {}
     },
     {
@@ -3112,6 +3165,105 @@
       "raw": {}
     },
     {
+      "id": "vP-backbone-spacing",
+      "type": "doc",
+      "label": "vP-backbone-spacing-investigation",
+      "fullLabel": "vP-Backbone-Spacing — BACKBONE_CONFIG Investigation",
+      "path": "docs/vP-backbone-spacing-investigation.md",
+      "cluster": "azure",
+      "status": "investigation",
+      "tags": [
+        "graph",
+        "physics",
+        "backbone",
+        "spacing",
+        "config",
+        "investigation"
+      ],
+      "size": 60,
+      "lastModified": "2026-05-15T01:59:14.288Z",
+      "raw": {}
+    },
+    {
+      "id": "vP-backbone-spacing",
+      "type": "doc",
+      "label": "vP-backbone-spacing-report",
+      "fullLabel": "vP-Backbone-Spacing — BACKBONE_CONFIG Tuning Report",
+      "path": "docs/vP-backbone-spacing-report.md",
+      "cluster": "azure",
+      "status": "completed",
+      "tags": [
+        "graph",
+        "physics",
+        "backbone",
+        "spacing",
+        "config",
+        "tuning"
+      ],
+      "size": 121,
+      "lastModified": "2026-05-15T02:10:50.302Z",
+      "raw": {}
+    },
+    {
+      "id": "vP-cluster-aware-physics-rebuild",
+      "type": "doc",
+      "label": "vP-cluster-aware-physics-rebuild-report",
+      "fullLabel": "vP-ClusterAware-Physics-Rebuild — Custom Force Loop Implementation",
+      "path": "docs/vP-cluster-aware-physics-rebuild-report.md",
+      "cluster": "azure",
+      "status": "completed",
+      "tags": [
+        "graph",
+        "physics",
+        "cluster-aware",
+        "force-loop",
+        "fa2-replacement",
+        "custom-physics"
+      ],
+      "size": 222,
+      "lastModified": "2026-05-15T03:56:37.468Z",
+      "raw": {}
+    },
+    {
+      "id": "vP-noverlap-dependency-check",
+      "type": "doc",
+      "label": "vP-noverlap-dependency-check",
+      "fullLabel": "vP-Noverlap-Restoration — Dependency Check",
+      "path": "docs/vP-noverlap-dependency-check.md",
+      "cluster": "azure",
+      "status": "investigation",
+      "tags": [
+        "graph",
+        "physics",
+        "noverlap",
+        "dependency",
+        "investigation"
+      ],
+      "size": 88,
+      "lastModified": "2026-05-15T03:20:22.977Z",
+      "raw": {}
+    },
+    {
+      "id": "vP-noverlap-restoration",
+      "type": "doc",
+      "label": "vP-noverlap-restoration-report",
+      "fullLabel": "vP-Noverlap-Restoration — One-Shot Anti-Collision Pass",
+      "path": "docs/vP-noverlap-restoration-report.md",
+      "cluster": "azure",
+      "status": "completed",
+      "tags": [
+        "graph",
+        "physics",
+        "noverlap",
+        "anti-collision",
+        "pass",
+        "restoration"
+      ],
+      "size": 162,
+      "lastModified": "2026-05-15T03:31:28.882Z",
+      "raw": {}
+    },
+    {
       "id": "vP-physics-backbone-seed-fix",
       "type": "doc",
       "label": "vP-physics-backbone-seed-fix-report",
@@ -3200,6 +3352,46 @@
       "tags": [],
       "size": 246,
       "lastModified": "2026-05-14T23:17:25.509Z",
+      "raw": {}
+    },
+    {
+      "id": "vP-physics-sizing-fix",
+      "type": "doc",
+      "label": "vP-physics-sizing-fix-report",
+      "fullLabel": "vP-Physics-Sizing-Fix — Sizing Formula Fix",
+      "path": "docs/vP-physics-sizing-fix-report.md",
+      "cluster": "azure",
+      "status": "completed",
+      "tags": [
+        "graph",
+        "physics",
+        "sizing",
+        "fix",
+        "baseline"
+      ],
+      "size": 131,
+      "lastModified": "2026-05-15T01:49:15.015Z",
+      "raw": {}
+    },
+    {
+      "id": "vP-seeder-side-direction-fix",
+      "type": "doc",
+      "label": "vP-seeder-side-direction-fix-report",
+      "fullLabel": "vP-Seeder-Side-Direction-Fix — File Orbit Direction Fix",
+      "path": "docs/vP-seeder-side-direction-fix-report.md",
+      "cluster": "azure",
+      "status": "completed",
+      "tags": [
+        "graph",
+        "physics",
+        "seeder",
+        "backbone",
+        "orbit",
+        "direction",
+        "fix"
+      ],
+      "size": 170,
+      "lastModified": "2026-05-15T03:12:38.511Z",
       "raw": {}
     },
     {
@@ -4043,8 +4235,8 @@
         "src",
         "graph"
       ],
-      "size": 282,
-      "lastModified": "2026-05-15T00:26:08.243Z",
+      "size": 283,
+      "lastModified": "2026-05-15T01:45:41.609Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4062,8 +4254,8 @@
         "src",
         "graph"
       ],
-      "size": 1187,
-      "lastModified": "2026-05-15T00:15:15.158Z",
+      "size": 1199,
+      "lastModified": "2026-05-15T03:52:35.024Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4108,6 +4300,25 @@
       }
     },
     {
+      "id": "src.graph.physics.noverlappass",
+      "type": "code",
+      "label": "noverlapPass",
+      "fullLabel": "noverlapPass.ts",
+      "path": "src/graph/physics/noverlapPass.ts",
+      "cluster": "azure",
+      "status": null,
+      "tags": [
+        "src",
+        "graph"
+      ],
+      "size": 67,
+      "lastModified": "2026-05-15T03:27:38.189Z",
+      "raw": {
+        "color": "#5a6678",
+        "dimFactor": 0.55
+      }
+    },
+    {
       "id": "src.graph.physics.edgetypephysicsregistry",
       "type": "code",
       "label": "edgeTypePhysicsRegistry",
@@ -4138,8 +4349,27 @@
         "src",
         "graph"
       ],
-      "size": 233,
-      "lastModified": "2026-05-15T00:13:06.977Z",
+      "size": 229,
+      "lastModified": "2026-05-15T03:09:07.808Z",
+      "raw": {
+        "color": "#5a6678",
+        "dimFactor": 0.55
+      }
+    },
+    {
+      "id": "src.graph.physics.clusterawareforceloop",
+      "type": "code",
+      "label": "clusterAwareForceLoop",
+      "fullLabel": "clusterAwareForceLoop.ts",
+      "path": "src/graph/physics/clusterAwareForceLoop.ts",
+      "cluster": "azure",
+      "status": null,
+      "tags": [
+        "src",
+        "graph"
+      ],
+      "size": 204,
+      "lastModified": "2026-05-15T03:52:16.051Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4557,7 +4787,7 @@
         "control-plane"
       ],
       "size": 128,
-      "lastModified": "2026-05-15T00:27:07.126Z",
+      "lastModified": "2026-05-15T01:45:52.315Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -5489,7 +5719,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-15T01:17:18.001Z",
+      "lastModified": "2026-05-15T18:16:49.083Z",
       "raw": {
         "color": "#9ca3af",
         "dimFactor": 0.8
@@ -5873,7 +6103,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-06T08:33:03.000Z",
+      "lastModified": "2026-05-15T22:57:38.592Z",
       "raw": {
         "color": "#9ca3af",
         "dimFactor": 0.8
@@ -6417,7 +6647,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-15T00:11:41.595Z",
+      "lastModified": "2026-05-15T03:50:20.347Z",
       "raw": {
         "color": "#9ca3af",
         "dimFactor": 0.8
@@ -7655,6 +7885,39 @@
       }
     },
     {
+      "id": "edge-docs.physics-physics.gwells.contract-contains",
+      "source": "docs.physics",
+      "target": "physics.gwells.contract",
+      "type": "contains",
+      "weight": 0.5,
+      "bidirectional": false,
+      "provenance": {
+        "source": "directory-walk"
+      }
+    },
+    {
+      "id": "edge-docs.physics-physics.gwells.readme-contains",
+      "source": "docs.physics",
+      "target": "physics.gwells.readme",
+      "type": "contains",
+      "weight": 0.5,
+      "bidirectional": false,
+      "provenance": {
+        "source": "directory-walk"
+      }
+    },
+    {
+      "id": "edge-docs.physics-docs.physics.gwells-registry-patterns-contains",
+      "source": "docs.physics",
+      "target": "docs.physics.gwells-registry-patterns",
+      "type": "contains",
+      "weight": 0.5,
+      "bidirectional": false,
+      "provenance": {
+        "source": "directory-walk"
+      }
+    },
+    {
       "id": "edge-docs.physics-dialect.physics.helix-contains",
       "source": "docs.physics",
       "target": "dialect.physics.helix",
@@ -8458,6 +8721,50 @@
       }
     },
     {
+      "id": "edge-docs-vP-backbone-spacing-contains",
+      "source": "docs",
+      "target": "vP-backbone-spacing",
+      "type": "contains",
+      "weight": 0.5,
+      "bidirectional": false,
+      "provenance": {
+        "source": "directory-walk"
+      }
+    },
+    {
+      "id": "edge-docs-vP-cluster-aware-physics-rebuild-contains",
+      "source": "docs",
+      "target": "vP-cluster-aware-physics-rebuild",
+      "type": "contains",
+      "weight": 0.5,
+      "bidirectional": false,
+      "provenance": {
+        "source": "directory-walk"
+      }
+    },
+    {
+      "id": "edge-docs-vP-noverlap-dependency-check-contains",
+      "source": "docs",
+      "target": "vP-noverlap-dependency-check",
+      "type": "contains",
+      "weight": 0.5,
+      "bidirectional": false,
+      "provenance": {
+        "source": "directory-walk"
+      }
+    },
+    {
+      "id": "edge-docs-vP-noverlap-restoration-contains",
+      "source": "docs",
+      "target": "vP-noverlap-restoration",
+      "type": "contains",
+      "weight": 0.5,
+      "bidirectional": false,
+      "provenance": {
+        "source": "directory-walk"
+      }
+    },
+    {
       "id": "edge-docs-vP-physics-backbone-seed-fix-contains",
       "source": "docs",
       "target": "vP-physics-backbone-seed-fix",
@@ -8505,6 +8812,28 @@
       "id": "edge-docs-docs.vp-physics-directory-mirror-report-contains",
       "source": "docs",
       "target": "docs.vp-physics-directory-mirror-report",
+      "type": "contains",
+      "weight": 0.5,
+      "bidirectional": false,
+      "provenance": {
+        "source": "directory-walk"
+      }
+    },
+    {
+      "id": "edge-docs-vP-physics-sizing-fix-contains",
+      "source": "docs",
+      "target": "vP-physics-sizing-fix",
+      "type": "contains",
+      "weight": 0.5,
+      "bidirectional": false,
+      "provenance": {
+        "source": "directory-walk"
+      }
+    },
+    {
+      "id": "edge-docs-vP-seeder-side-direction-fix-contains",
+      "source": "docs",
+      "target": "vP-seeder-side-direction-fix",
       "type": "contains",
       "weight": 0.5,
       "bidirectional": false,
@@ -9030,6 +9359,17 @@
       }
     },
     {
+      "id": "edge-src.graph.physics-src.graph.physics.noverlappass-contains",
+      "source": "src.graph.physics",
+      "target": "src.graph.physics.noverlappass",
+      "type": "contains",
+      "weight": 0.5,
+      "bidirectional": false,
+      "provenance": {
+        "source": "directory-walk"
+      }
+    },
+    {
       "id": "edge-src.graph.physics-src.graph.physics.edgetypephysicsregistry-contains",
       "source": "src.graph.physics",
       "target": "src.graph.physics.edgetypephysicsregistry",
@@ -9044,6 +9384,17 @@
       "id": "edge-src.graph.physics-src.graph.physics.directorybackboneseeder-contains",
       "source": "src.graph.physics",
       "target": "src.graph.physics.directorybackboneseeder",
+      "type": "contains",
+      "weight": 0.5,
+      "bidirectional": false,
+      "provenance": {
+        "source": "directory-walk"
+      }
+    },
+    {
+      "id": "edge-src.graph.physics-src.graph.physics.clusterawareforceloop-contains",
+      "source": "src.graph.physics",
+      "target": "src.graph.physics.clusterawareforceloop",
       "type": "contains",
       "weight": 0.5,
       "bidirectional": false,
@@ -11731,6 +12082,18 @@
       }
     },
     {
+      "id": "edge-control.plane.contract.to.code.trace.matrix-physics.gwells.contract-explicit-reference",
+      "source": "control.plane.contract.to.code.trace.matrix",
+      "target": "physics.gwells.contract",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
       "id": "edge-control.plane.graph.navigation.contract-control.plane.command.deck.hotkey.registry.contract-explicit-reference",
       "source": "control.plane.graph.navigation.contract",
       "target": "control.plane.command.deck.hotkey.registry.contract",
@@ -11971,9 +12334,105 @@
       }
     },
     {
+      "id": "edge-graph.contracts.sigma.lifecycle-contract.graph.first.runtime.mutation-explicit-reference",
+      "source": "graph.contracts.sigma.lifecycle",
+      "target": "contract.graph.first.runtime.mutation",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-graph.contracts.sigma.lifecycle-contract.graph.runtime.boundary-explicit-reference",
+      "source": "graph.contracts.sigma.lifecycle",
+      "target": "contract.graph.runtime.boundary",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
       "id": "edge-graph.contracts.sigma.lifecycle-graph.self.schema.v1-explicit-reference",
       "source": "graph.contracts.sigma.lifecycle",
       "target": "graph.self.schema.v1",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-graph.contracts.sigma.lifecycle-physics.gwells.contract-explicit-reference",
+      "source": "graph.contracts.sigma.lifecycle",
+      "target": "physics.gwells.contract",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-concept.graph.cluster.gravity-physics.gwells.contract-explicit-reference",
+      "source": "concept.graph.cluster.gravity",
+      "target": "physics.gwells.contract",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-concept.graph.cluster.gravity-dialect.physics.galaxy-explicit-reference",
+      "source": "concept.graph.cluster.gravity",
+      "target": "dialect.physics.galaxy",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-concept.graph.cluster.gravity-policy.graph.visual-explicit-reference",
+      "source": "concept.graph.cluster.gravity",
+      "target": "policy.graph.visual",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-concept.graph.cluster.gravity-handleset.concept-explicit-reference",
+      "source": "concept.graph.cluster.gravity",
+      "target": "handleset.concept",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-concept.graph.cluster.gravity-theme.system.overview-explicit-reference",
+      "source": "concept.graph.cluster.gravity",
+      "target": "theme.system.overview",
       "type": "explicit-reference",
       "weight": 1,
       "bidirectional": false,
@@ -12526,6 +12985,270 @@
       "id": "edge-policy.source.of.truth-audio.source.system.contract-explicit-reference",
       "source": "policy.source.of.truth",
       "target": "audio.source.system.contract",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-policy.source.of.truth-physics.gwells.contract-explicit-reference",
+      "source": "policy.source.of.truth",
+      "target": "physics.gwells.contract",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-dialect.physics.constellation-system.physics.dialects-explicit-reference",
+      "source": "dialect.physics.constellation",
+      "target": "system.physics.dialects",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-dialect.physics.constellation-contract.motion.safety-explicit-reference",
+      "source": "dialect.physics.constellation",
+      "target": "contract.motion.safety",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-dialect.physics.constellation-physics.gwells.contract-explicit-reference",
+      "source": "dialect.physics.constellation",
+      "target": "physics.gwells.contract",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-dialect.physics.galaxy-system.physics.dialects-explicit-reference",
+      "source": "dialect.physics.galaxy",
+      "target": "system.physics.dialects",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-dialect.physics.galaxy-contract.motion.safety-explicit-reference",
+      "source": "dialect.physics.galaxy",
+      "target": "contract.motion.safety",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-dialect.physics.galaxy-physics.gwells.contract-explicit-reference",
+      "source": "dialect.physics.galaxy",
+      "target": "physics.gwells.contract",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-physics.gwells.contract-graph.contracts.sigma.lifecycle-explicit-reference",
+      "source": "physics.gwells.contract",
+      "target": "graph.contracts.sigma.lifecycle",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-physics.gwells.contract-contract.graph.first.runtime.mutation-explicit-reference",
+      "source": "physics.gwells.contract",
+      "target": "contract.graph.first.runtime.mutation",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-physics.gwells.contract-contract.graph.runtime.boundary-explicit-reference",
+      "source": "physics.gwells.contract",
+      "target": "contract.graph.runtime.boundary",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-physics.gwells.contract-graph.self.schema.v1-explicit-reference",
+      "source": "physics.gwells.contract",
+      "target": "graph.self.schema.v1",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-physics.gwells.contract-system.physics.dialects-explicit-reference",
+      "source": "physics.gwells.contract",
+      "target": "system.physics.dialects",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-physics.gwells.contract-concept.graph.cluster.gravity-explicit-reference",
+      "source": "physics.gwells.contract",
+      "target": "concept.graph.cluster.gravity",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-physics.gwells.contract-physics.gwells.readme-explicit-reference",
+      "source": "physics.gwells.contract",
+      "target": "physics.gwells.readme",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-physics.gwells.readme-physics.gwells.contract-explicit-reference",
+      "source": "physics.gwells.readme",
+      "target": "physics.gwells.contract",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-physics.gwells.readme-graph.contracts.sigma.lifecycle-explicit-reference",
+      "source": "physics.gwells.readme",
+      "target": "graph.contracts.sigma.lifecycle",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-physics.gwells.readme-protocol.registry.contract.patterns-explicit-reference",
+      "source": "physics.gwells.readme",
+      "target": "protocol.registry.contract.patterns",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-dialect.physics.helix-system.physics.dialects-explicit-reference",
+      "source": "dialect.physics.helix",
+      "target": "system.physics.dialects",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-dialect.physics.helix-contract.motion.safety-explicit-reference",
+      "source": "dialect.physics.helix",
+      "target": "contract.motion.safety",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-dialect.physics.helix-physics.gwells.contract-explicit-reference",
+      "source": "dialect.physics.helix",
+      "target": "physics.gwells.contract",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-system.physics.dialects-contract.graph.runtime.boundary-explicit-reference",
+      "source": "system.physics.dialects",
+      "target": "contract.graph.runtime.boundary",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-system.physics.dialects-contract.motion.safety-explicit-reference",
+      "source": "system.physics.dialects",
+      "target": "contract.motion.safety",
       "type": "explicit-reference",
       "weight": 1,
       "bidirectional": false,
@@ -15355,6 +16078,18 @@
       }
     },
     {
+      "id": "edge-src.graph.renderers.sigma2d.sigmagraphview-src.graph.physics.clusterawareforceloop-code-import",
+      "source": "src.graph.renderers.sigma2d.sigmagraphview",
+      "target": "src.graph.physics.clusterawareforceloop",
+      "type": "code-import",
+      "weight": 0.85,
+      "bidirectional": false,
+      "provenance": {
+        "source": "body-parse",
+        "detail": "import"
+      }
+    },
+    {
       "id": "edge-src.graph.overlay.floatingbookmark-src.graph.overlay.bookmarkregistry-code-import",
       "source": "src.graph.overlay.floatingbookmark",
       "target": "src.graph.overlay.bookmarkregistry",
@@ -16795,18 +17530,6 @@
       }
     },
     {
-      "id": "edge-audio.universal.handle.routing-system.physics.dialects-tag-overlap",
-      "source": "audio.universal.handle.routing",
-      "target": "system.physics.dialects",
-      "type": "tag-overlap",
-      "weight": 0.5,
-      "bidirectional": true,
-      "provenance": {
-        "source": "frontmatter",
-        "detail": "shared tags: signal-loom, physics"
-      }
-    },
-    {
       "id": "edge-control.plane.command.deck.hotkey.registry.contract-control.plane.graph.navigation.contract-tag-overlap",
       "source": "control.plane.command.deck.hotkey.registry.contract",
       "target": "control.plane.graph.navigation.contract",
@@ -17503,9 +18226,9 @@
       }
     },
     {
-      "id": "edge-dialect.physics.constellation-vP-physics-backbone-seed-tag-overlap",
-      "source": "dialect.physics.constellation",
-      "target": "vP-physics-backbone-seed",
+      "id": "edge-dialect.physics.galaxy-physics.gwells.contract-tag-overlap",
+      "source": "dialect.physics.galaxy",
+      "target": "physics.gwells.contract",
       "type": "tag-overlap",
       "weight": 0.5,
       "bidirectional": true,
@@ -17539,9 +18262,33 @@
       }
     },
     {
-      "id": "edge-dialect.physics.galaxy-vP-physics-backbone-seed-tag-overlap",
-      "source": "dialect.physics.galaxy",
-      "target": "vP-physics-backbone-seed",
+      "id": "edge-physics.gwells.contract-physics.gwells.readme-tag-overlap",
+      "source": "physics.gwells.contract",
+      "target": "physics.gwells.readme",
+      "type": "tag-overlap",
+      "weight": 0.6,
+      "bidirectional": true,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "shared tags: physics, gwells, v0"
+      }
+    },
+    {
+      "id": "edge-physics.gwells.contract-dialect.physics.helix-tag-overlap",
+      "source": "physics.gwells.contract",
+      "target": "dialect.physics.helix",
+      "type": "tag-overlap",
+      "weight": 0.5,
+      "bidirectional": true,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "shared tags: physics, layout"
+      }
+    },
+    {
+      "id": "edge-physics.gwells.contract-system.physics.dialects-tag-overlap",
+      "source": "physics.gwells.contract",
+      "target": "system.physics.dialects",
       "type": "tag-overlap",
       "weight": 0.5,
       "bidirectional": true,
@@ -17983,6 +18730,90 @@
       }
     },
     {
+      "id": "edge-vP-backbone-spacing-vP-backbone-spacing-tag-overlap",
+      "source": "vP-backbone-spacing",
+      "target": "vP-backbone-spacing",
+      "type": "tag-overlap",
+      "weight": 0.6,
+      "bidirectional": true,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "shared tags: physics, backbone, spacing, config"
+      }
+    },
+    {
+      "id": "edge-vP-backbone-spacing-vP-physics-baseline-reset-tag-overlap",
+      "source": "vP-backbone-spacing",
+      "target": "vP-physics-baseline-reset",
+      "type": "tag-overlap",
+      "weight": 0.5,
+      "bidirectional": true,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "shared tags: physics, investigation"
+      }
+    },
+    {
+      "id": "edge-vP-backbone-spacing-vP-physics-code-audit-tag-overlap",
+      "source": "vP-backbone-spacing",
+      "target": "vP-physics-code-audit",
+      "type": "tag-overlap",
+      "weight": 0.5,
+      "bidirectional": true,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "shared tags: physics, investigation"
+      }
+    },
+    {
+      "id": "edge-vP-backbone-spacing-vP-seeder-side-direction-fix-tag-overlap",
+      "source": "vP-backbone-spacing",
+      "target": "vP-seeder-side-direction-fix",
+      "type": "tag-overlap",
+      "weight": 0.5,
+      "bidirectional": true,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "shared tags: physics, backbone"
+      }
+    },
+    {
+      "id": "edge-vP-noverlap-dependency-check-vP-noverlap-restoration-tag-overlap",
+      "source": "vP-noverlap-dependency-check",
+      "target": "vP-noverlap-restoration",
+      "type": "tag-overlap",
+      "weight": 0.5,
+      "bidirectional": true,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "shared tags: physics, noverlap"
+      }
+    },
+    {
+      "id": "edge-vP-noverlap-dependency-check-vP-physics-baseline-reset-tag-overlap",
+      "source": "vP-noverlap-dependency-check",
+      "target": "vP-physics-baseline-reset",
+      "type": "tag-overlap",
+      "weight": 0.5,
+      "bidirectional": true,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "shared tags: physics, investigation"
+      }
+    },
+    {
+      "id": "edge-vP-noverlap-dependency-check-vP-physics-code-audit-tag-overlap",
+      "source": "vP-noverlap-dependency-check",
+      "target": "vP-physics-code-audit",
+      "type": "tag-overlap",
+      "weight": 0.5,
+      "bidirectional": true,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "shared tags: physics, investigation"
+      }
+    },
+    {
       "id": "edge-vP-physics-backbone-seed-fix-vP-physics-backbone-seed-tag-overlap",
       "source": "vP-physics-backbone-seed-fix",
       "target": "vP-physics-backbone-seed",
@@ -17995,6 +18826,42 @@
       }
     },
     {
+      "id": "edge-vP-physics-backbone-seed-fix-vP-physics-sizing-fix-tag-overlap",
+      "source": "vP-physics-backbone-seed-fix",
+      "target": "vP-physics-sizing-fix",
+      "type": "tag-overlap",
+      "weight": 0.5,
+      "bidirectional": true,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "shared tags: physics, fix"
+      }
+    },
+    {
+      "id": "edge-vP-physics-backbone-seed-fix-vP-seeder-side-direction-fix-tag-overlap",
+      "source": "vP-physics-backbone-seed-fix",
+      "target": "vP-seeder-side-direction-fix",
+      "type": "tag-overlap",
+      "weight": 0.6,
+      "bidirectional": true,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "shared tags: physics, backbone, fix"
+      }
+    },
+    {
+      "id": "edge-vP-physics-backbone-seed-vP-seeder-side-direction-fix-tag-overlap",
+      "source": "vP-physics-backbone-seed",
+      "target": "vP-seeder-side-direction-fix",
+      "type": "tag-overlap",
+      "weight": 0.5,
+      "bidirectional": true,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "shared tags: physics, backbone"
+      }
+    },
+    {
       "id": "edge-vP-physics-baseline-reset-vP-physics-code-audit-tag-overlap",
       "source": "vP-physics-baseline-reset",
       "target": "vP-physics-code-audit",
@@ -18004,6 +18871,30 @@
       "provenance": {
         "source": "frontmatter",
         "detail": "shared tags: physics, investigation"
+      }
+    },
+    {
+      "id": "edge-vP-physics-baseline-reset-vP-physics-sizing-fix-tag-overlap",
+      "source": "vP-physics-baseline-reset",
+      "target": "vP-physics-sizing-fix",
+      "type": "tag-overlap",
+      "weight": 0.5,
+      "bidirectional": true,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "shared tags: physics, baseline"
+      }
+    },
+    {
+      "id": "edge-vP-physics-sizing-fix-vP-seeder-side-direction-fix-tag-overlap",
+      "source": "vP-physics-sizing-fix",
+      "target": "vP-seeder-side-direction-fix",
+      "type": "tag-overlap",
+      "weight": 0.5,
+      "bidirectional": true,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "shared tags: physics, fix"
       }
     },
     {
@@ -19510,6 +20401,18 @@
       "id": "edge-policy.source.of.truth-src.accessibility.motionsafetyregistry-describes",
       "source": "policy.source.of.truth",
       "target": "src.accessibility.motionsafetyregistry",
+      "type": "describes",
+      "weight": 0.6,
+      "bidirectional": false,
+      "provenance": {
+        "source": "heuristic",
+        "detail": "doc mentions code path"
+      }
+    },
+    {
+      "id": "edge-physics.gwells.contract-src.graph.physics.directorybackboneseeder-describes",
+      "source": "physics.gwells.contract",
+      "target": "src.graph.physics.directorybackboneseeder",
       "type": "describes",
       "weight": 0.6,
       "bidirectional": false,
@@ -21415,6 +22318,126 @@
       }
     },
     {
+      "id": "edge-vP-backbone-spacing-src.graph.physics.directorybackboneseeder-describes",
+      "source": "vP-backbone-spacing",
+      "target": "src.graph.physics.directorybackboneseeder",
+      "type": "describes",
+      "weight": 0.6,
+      "bidirectional": false,
+      "provenance": {
+        "source": "heuristic",
+        "detail": "doc mentions code path"
+      }
+    },
+    {
+      "id": "edge-vP-cluster-aware-physics-rebuild-src.graph.renderers.sigma2d.sigmagraphview-describes",
+      "source": "vP-cluster-aware-physics-rebuild",
+      "target": "src.graph.renderers.sigma2d.sigmagraphview",
+      "type": "describes",
+      "weight": 0.6,
+      "bidirectional": false,
+      "provenance": {
+        "source": "heuristic",
+        "detail": "doc mentions code path"
+      }
+    },
+    {
+      "id": "edge-vP-cluster-aware-physics-rebuild-src.graph.physics.seedfunctionregistry-describes",
+      "source": "vP-cluster-aware-physics-rebuild",
+      "target": "src.graph.physics.seedfunctionregistry",
+      "type": "describes",
+      "weight": 0.6,
+      "bidirectional": false,
+      "provenance": {
+        "source": "heuristic",
+        "detail": "doc mentions code path"
+      }
+    },
+    {
+      "id": "edge-vP-cluster-aware-physics-rebuild-src.graph.physics.edgetypephysicsregistry-describes",
+      "source": "vP-cluster-aware-physics-rebuild",
+      "target": "src.graph.physics.edgetypephysicsregistry",
+      "type": "describes",
+      "weight": 0.6,
+      "bidirectional": false,
+      "provenance": {
+        "source": "heuristic",
+        "detail": "doc mentions code path"
+      }
+    },
+    {
+      "id": "edge-vP-cluster-aware-physics-rebuild-src.graph.physics.directorybackboneseeder-describes",
+      "source": "vP-cluster-aware-physics-rebuild",
+      "target": "src.graph.physics.directorybackboneseeder",
+      "type": "describes",
+      "weight": 0.6,
+      "bidirectional": false,
+      "provenance": {
+        "source": "heuristic",
+        "detail": "doc mentions code path"
+      }
+    },
+    {
+      "id": "edge-vP-cluster-aware-physics-rebuild-src.graph.physics.clusterawareforceloop-describes",
+      "source": "vP-cluster-aware-physics-rebuild",
+      "target": "src.graph.physics.clusterawareforceloop",
+      "type": "describes",
+      "weight": 0.6,
+      "bidirectional": false,
+      "provenance": {
+        "source": "heuristic",
+        "detail": "doc mentions code path"
+      }
+    },
+    {
+      "id": "edge-vP-noverlap-dependency-check-src.graph.renderers.sigma2d.sigmagraphview-describes",
+      "source": "vP-noverlap-dependency-check",
+      "target": "src.graph.renderers.sigma2d.sigmagraphview",
+      "type": "describes",
+      "weight": 0.6,
+      "bidirectional": false,
+      "provenance": {
+        "source": "heuristic",
+        "detail": "doc mentions code path"
+      }
+    },
+    {
+      "id": "edge-vP-noverlap-dependency-check-src.graph.physics.noverlappass-describes",
+      "source": "vP-noverlap-dependency-check",
+      "target": "src.graph.physics.noverlappass",
+      "type": "describes",
+      "weight": 0.6,
+      "bidirectional": false,
+      "provenance": {
+        "source": "heuristic",
+        "detail": "doc mentions code path"
+      }
+    },
+    {
+      "id": "edge-vP-noverlap-restoration-src.graph.renderers.sigma2d.sigmagraphview-describes",
+      "source": "vP-noverlap-restoration",
+      "target": "src.graph.renderers.sigma2d.sigmagraphview",
+      "type": "describes",
+      "weight": 0.6,
+      "bidirectional": false,
+      "provenance": {
+        "source": "heuristic",
+        "detail": "doc mentions code path"
+      }
+    },
+    {
+      "id": "edge-vP-noverlap-restoration-src.graph.physics.noverlappass-describes",
+      "source": "vP-noverlap-restoration",
+      "target": "src.graph.physics.noverlappass",
+      "type": "describes",
+      "weight": 0.6,
+      "bidirectional": false,
+      "provenance": {
+        "source": "heuristic",
+        "detail": "doc mentions code path"
+      }
+    },
+    {
       "id": "edge-vP-physics-backbone-seed-fix-src.graph.renderers.sigma2d.buildgraphologygraph-describes",
       "source": "vP-physics-backbone-seed-fix",
       "target": "src.graph.renderers.sigma2d.buildgraphologygraph",
@@ -21586,6 +22609,42 @@
       "id": "edge-docs.vp-physics-directory-mirror-report-src.graph.renderers.sigma2d.sigmagraphview-describes",
       "source": "docs.vp-physics-directory-mirror-report",
       "target": "src.graph.renderers.sigma2d.sigmagraphview",
+      "type": "describes",
+      "weight": 0.6,
+      "bidirectional": false,
+      "provenance": {
+        "source": "heuristic",
+        "detail": "doc mentions code path"
+      }
+    },
+    {
+      "id": "edge-vP-physics-sizing-fix-src.graph.renderers.sigma2d.buildgraphologygraph-describes",
+      "source": "vP-physics-sizing-fix",
+      "target": "src.graph.renderers.sigma2d.buildgraphologygraph",
+      "type": "describes",
+      "weight": 0.6,
+      "bidirectional": false,
+      "provenance": {
+        "source": "heuristic",
+        "detail": "doc mentions code path"
+      }
+    },
+    {
+      "id": "edge-vP-physics-sizing-fix-src.control-plane.settings.settings.defaults-describes",
+      "source": "vP-physics-sizing-fix",
+      "target": "src.control-plane.settings.settings.defaults",
+      "type": "describes",
+      "weight": 0.6,
+      "bidirectional": false,
+      "provenance": {
+        "source": "heuristic",
+        "detail": "doc mentions code path"
+      }
+    },
+    {
+      "id": "edge-vP-seeder-side-direction-fix-src.graph.physics.directorybackboneseeder-describes",
+      "source": "vP-seeder-side-direction-fix",
+      "target": "src.graph.physics.directorybackboneseeder",
       "type": "describes",
       "weight": 0.6,
       "bidirectional": false,

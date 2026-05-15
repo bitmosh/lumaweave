@@ -3,20 +3,31 @@ id: dialect.physics.constellation
 title: Constellation Mode Physics Dialect
 type: concept
 status: concept
-version: v73c
+version: v86b
 domain: physics
-cluster: teal
+cluster: azure
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-depends_on:
-  - system.physics.dialects
-  - contract.audio.reactivity
-  - contract.motion.safety
+last_updated: 2026-05-15
+references:
+   - system.physics.dialects
+   - contract.audio.reactivity
+   - contract.motion.safety
+   - physics.gwells.contract
 tags: [physics, constellation, starfield, dialect, audio, layout]
 ---
 
 # Constellation Mode Physics Dialect
+
+> **Status (v86b):** This is a **future gwells dialect**. The visual
+> target (high-repel, low-gravity star-field layout) remains the design
+> goal. No runtime implementation has been shipped for this dialect.
+> When it ships, it will be expressed as gwells well types and
+> interactions — likely with a single well type that has high
+> sibling repulsion and low anchor attraction.
+>
+> See `docs/physics/GRAVITY_WELL_SYSTEM_CONTRACT.md` for the engine
+> that will host this dialect.
 
 ## Overview
 

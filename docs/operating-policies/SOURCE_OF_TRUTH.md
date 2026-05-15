@@ -7,7 +7,7 @@ cluster: violet
 domain: operating-policies
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-09
+last_updated: 2026-05-15
 references:
   - policy.session.and.stack
   - policy.qa.and.playwright
@@ -21,12 +21,14 @@ references:
   - system.index.registry.contract
   - human.mode.evidence.mode.contract
   - command.deck.and.hotkey.registry.contract
+  - physics.gwells.contract
 tags:
   - policy
   - source-of-truth
   - governance
   - forbidden-boundaries
   - v86a
+  - gwells
 ---
 
 # LumaWeave — Source of Truth Map
@@ -86,7 +88,67 @@ Rules:
 - Registry and inventory metadata do not mutate Sigma.
 - DOM-wrapper evidence is not canvas/Sigma internals evidence.
 - Node/edge/canvas styling requires explicit future contract.
-- Physics/camera/filter behavior requires explicit future contract.
+- Camera/filter behavior requires explicit future contract.
+- Physics layout is now governed by the Gwells contract (see "Physics / Gwells" section below). Layout changes outside the gwells engine remain forbidden.
+
+---
+
+## Physics / Gwells
+
+Primary:
+docs/physics/GRAVITY_WELL_SYSTEM_CONTRACT.md
+docs/physics/GWELLS_README.md
+docs/physics/GWELLS_REGISTRY_PATTERNS.md
+docs/physics/GWELLS_DIALECT_END_TO_END_SPINE.md
+src/physics/gwells/types.ts
+src/physics/gwells/wellTypes.ts
+src/physics/gwells/interactions.ts
+src/physics/gwells/seedFunctions.ts
+src/physics/gwells/dialects.ts
+src/physics/gwells/engine.ts
+src/physics/gwells/seeders/directoryBackboneN2.ts
+scripts/validate-gwells.mjs
+
+Rules:
+- Gwells is the sole physics engine. No other layout or force-simulation
+  code may write node positions.
+- Gwells depends only on `graphology`. No React, no Sigma, no theme
+  tokens, no LumaWeave-specific imports inside the module.
+- Gwells writes only the `x` and `y` node attributes plus the
+  `__seededSpinePositions` and `__gwellsState` graph-level attributes.
+  All other mutations are forbidden.
+- The `__seededSpinePositions` attribute is a stable contract used by
+  Sigma's `nodeReducer` for spine pinning. Do not rename it.
+- The `__gwellsState` attribute is read-only for all external consumers
+  (Graph Inspector Panel, debug tools). Engine has exclusive write
+  authority.
+- Dialects are the user-facing concept. Picking a layout means picking
+  a dialect. Dialect IDs are stable string references; never rename
+  without a migration.
+- The dialect-not-found case must fall back to a default dialect and
+  log via `onError`. Engine never crashes on unknown dialect ID.
+- Validator script (`scripts/validate-gwells.mjs`) must pass before
+  registry edits are accepted.
+- Force kinds are minimal-and-final: `attraction`, `repulsion`,
+  `spring`, `linear-alignment`, `perpendicular`. New kinds added only
+  when they cannot be composed from existing ones.
+
+Retired (do not reintroduce):
+- ForceAtlas2 (`graphology-layout-forceatlas2`)
+- Noverlap (`graphology-layout-noverlap`)
+- The FA2-based helix and solar-orbit dialect implementations
+- Per-edge physicsWeight via `edgeTypePhysicsRegistry`
+- Slider-based physics tuning (linkDistance, repelForce, centerForce,
+  communityGravity, strongGravityMode, linLogMode, adjustSizes,
+  barnesHutTheta, physicsPreset)
+
+Future dialects (concept docs only; gwells provides the implementation
+substrate):
+- `docs/physics/CONSTELLATION_MODE_DIALECT.md`
+- `docs/physics/HELIX_CONSTELLATION_DIALECT.md`
+- `docs/physics/GALAXY_MODE_DIALECT.md`
+- `docs/physics/PHYSICS_DIALECT_SYSTEM.md`
+- `docs/graph/intelligence/CLUSTER_GRAVITY_AND_COLOR_CODED_NEIGHBORHOODS.md`
 
 ---
 
@@ -265,7 +327,8 @@ The following capabilities require an explicit new contract before any implement
 
 **Graph / Renderer:**
 - Sigma/renderer mutation of any kind
-- Graph physics, camera, or filter behavior changes
+- Camera or filter behavior changes
+- Physics layout changes outside the Gwells contract (gwells engine is the only allowed physics path; see "Physics / Gwells" section above)
 - Node/edge/canvas styling
 
 **Audio:**
@@ -299,4 +362,4 @@ The following capabilities require an explicit new contract before any implement
 
 ---
 
-*Stale doc paths from pre-rehaul docs (`docs/theme-system/`, `docs/system-index/`, `docs/modes/`, `docs/control-plane/qa/BACKLOG_POLICY.md`, `docs/security/lattica_theme_workshop_security_packet/`) have been corrected to current locations. v86a-era docs added (Source Adapter OS, Visual Grammar Engine cluster, three-tier token model).*
+*Stale doc paths from pre-rehaul docs (`docs/theme-system/`, `docs/system-index/`, `docs/modes/`, `docs/control-plane/qa/BACKLOG_POLICY.md`, `docs/security/lattica_theme_workshop_security_packet/`) have been corrected to current locations. v86a-era docs added (Source Adapter OS, Visual Grammar Engine cluster, three-tier token model). 2026-05-15 update: Physics / Gwells section added as gwells migration begins; FA2/noverlap/edgeTypePhysicsRegistry retired.*

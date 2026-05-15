@@ -3,20 +3,31 @@ id: dialect.physics.helix
 title: Helix / DNA Constellation Physics Dialect
 type: concept
 status: concept
-version: v73c
+version: v86b
 domain: physics
-cluster: blue
+cluster: azure
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-depends_on:
-  - system.physics.dialects
-  - contract.audio.reactivity
-  - contract.motion.safety
+last_updated: 2026-05-15
+references:
+   - system.physics.dialects
+   - contract.audio.reactivity
+   - contract.motion.safety
+   - physics.gwells.contract
 tags: [physics, helix, dna, constellation, dialect, brand, audio, layout]
 ---
 
 # Helix / DNA Constellation Physics Dialect
+
+> **Status (v86b):** This is a **future gwells dialect**. The visual
+> target (double-helix backbone with constellation branches) remains
+> the brand layout intent. The earlier FA2/Louvain-based helix
+> implementation that briefly ran in code has been retired during the
+> gwells migration. When this dialect ships, it will be expressed as
+> gwells well types, interactions, and a seed function.
+>
+> See `docs/physics/GRAVITY_WELL_SYSTEM_CONTRACT.md` for the engine
+> that will host this dialect.
 
 ## Overview
 

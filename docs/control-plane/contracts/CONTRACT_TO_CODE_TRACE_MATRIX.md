@@ -3,21 +3,22 @@ id: control.plane.contract.to.code.trace.matrix
 title: Contract-to-Code Trace Matrix
 type: matrix
 status: accepted
-version: v71a
+version: v71b
 cluster: slate
 domain: control-plane
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-09
+last_updated: 2026-05-15
 references:
   - control.plane.system.index.registry.contract
   - control.plane.system.index.panel.mount.contract
-tags: [control-plane, traceability, matrix, contracts, code, qa, evidence, v71a]
+  - physics.gwells.contract
+tags: [control-plane, traceability, matrix, contracts, code, qa, evidence, v71b]
 ---
 
 # Contract-to-Code Trace Matrix
 
-**Version**: v71a
+**Version**: v71b
 **Purpose**: Map major contracts and governance docs to runtime files, registries, tests, and evidence paths to reduce drift between contracts, source, QA, and validation.
 
 ## Overview
@@ -40,6 +41,7 @@ This matrix traces the relationship between:
 | **Command Deck / Hotkey Registry** | `src/command-deck/` | `src/command-deck/hotkeyRegistry.ts` | v30–v32 | `tests/e2e/hotkey-registry.spec.ts` | Command Deck panel | No command execution without explicit authorization | Stable (v32) | Future: dedicated hotkey policy contract |
 | **Perspective System** | `src/perspective/` | `src/perspective/perspectiveRegistry.ts` | v30 | `tests/e2e/perspective.spec.ts` | Perspective switcher UI | No perspective mutation without contract | Stable (v30) | Future: perspective migration protocol |
 | **Graph View Element Registry** | `src/graph/graphViewElementRegistry.ts` | `src/graph/graphViewElementRegistry.ts` | v40 | `tests/e2e/graph-view-element-registry.spec.ts` | Graph Visual Inventory panel | No graph/Sigma mutation without explicit authorization | Stable (v40) | Future: element registry refresh policy |
+| **Gwells Physics Engine** | `src/physics/gwells/` (engine.ts, types.ts, seeders/) | `src/physics/gwells/wellTypes.ts`, `src/physics/gwells/interactions.ts`, `src/physics/gwells/seedFunctions.ts`, `src/physics/gwells/dialects.ts` | vP-Gwells-Migration (Pass A starting) | `tests/e2e/gwells-physics.spec.ts` (planned) + `src/physics/gwells/__tests__/smoke.test.ts` | Graph rendering (visible physics layout); Graph Inspector `__gwellsState` diagnostics | No physics outside gwells; gwells writes only `x`/`y` node attrs + `__gwellsState` + `__seededSpinePositions` graph attrs; no Sigma/React/theme imports inside the module | Future (Pass A starting) | Validator (`scripts/validate-gwells.mjs`) + Tier A docs (README, REGISTRY_PATTERNS, END_TO_END_SPINE) + smoke test pending |
 | **Graph Visual Inventory** | `src/control-plane/graph/GraphVisualInventoryPanel.tsx` | `src/graph/graphViewElementRegistry.ts`, `src/graph/graphVisualThemeMappingRegistry.ts`, `src/accessibility/motionSafetyRegistry.ts`, `src/audio/syntheticAudioSignal.ts`, `src/audio/musicReactiveMappingRegistry.ts`, `src/audio/audioSourceRegistry.ts` | v48 (detail mode), v68 (navigation contract) | `tests/e2e/graph-visual-inventory.spec.ts` | Graph Visual Inventory panel | No collapsible evidence sections without v69 retry | Stable (v68) | v69 paused/retry later with sliced passes |
 | **Graph Runtime Boundary / Probe** | `src/graph/graphRuntimeBoundary.ts` | `src/graph/graphRuntimeBoundary.ts` | v42 | `tests/e2e/graph-runtime-boundary.spec.ts` | Theme target probe UI | No graph/Sigma renderer mutation | Stable (v42) | Future: runtime boundary expansion |
 | **Graph Theme Mapping Registry** | `src/graph/graphVisualThemeMappingRegistry.ts` | `src/graph/graphVisualThemeMappingRegistry.ts` | v57 | `tests/e2e/theme-mapping.spec.ts` | Theme Mapping panel | No theme mutation without lock/pin stability | Stable (v57) | Future: theme application readiness diagnostic |
@@ -125,3 +127,4 @@ node scripts/validate-qa-bundle.mjs
 ## Version History
 
 - **v71a** (2026-05-04): Initial Contract-to-Code Trace Matrix (docs-only)
+- **v71b** (2026-05-15): Added Gwells Physics Engine row. Non-breaking content addition; no schema or column changes.

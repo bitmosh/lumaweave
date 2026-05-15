@@ -1,46 +1,46 @@
 # Self-Graph Report
 
-Generated: 2026-05-15T01:33:02.508Z
+Generated: 2026-05-15T22:58:07.449Z
 Source commit: N/A
 Schema: lumaweave-self-graph/v1
 
 ## Summary
 
-- Total nodes: 366
-- Total edges: 1288
+- Total nodes: 378
+- Total edges: 1358
 
 ### Nodes by type
-- doc: 190
-- code: 106
+- doc: 200
+- code: 108
 - config: 5
 - fixture: 0
 - spine: 65
 
 ### Edges by type
-- contains: 359
+- contains: 370
 - governs: 29
-- explicit-reference: 340
-- code-import: 125
-- tag-overlap: 150
-- describes: 285
+- explicit-reference: 371
+- code-import: 126
+- tag-overlap: 163
+- describes: 299
 
 ## Top 10 by in-degree
+- src.graph.renderers.sigma2d.sigmagraphview (code): 22
 - src.themes.themetokenpaths (code): 20
-- src.graph.renderers.sigma2d.sigmagraphview (code): 19
+- theme.system.overview (doc): 18
 - theme.token.path.map (doc): 18
 - src.app.appshell (code): 18
 - link.network.overview (doc): 17
-- theme.system.overview (doc): 17
 - theme.token.compatibility (doc): 15
+- src.graph.renderers.sigma2d.buildgraphologygraph (code): 15
 - src.control-plane.settings.settings.schema (code): 15
 - agent.survival.manual.readme (doc): 14
-- src.graph.renderers.sigma2d.buildgraphologygraph (code): 14
 
 ## Top 10 by out-degree
-- docs (spine): 67
+- docs (spine): 73
 - registry.inventory (doc): 27
 - src.app.appshell (code): 26
-- policy.source.of.truth (doc): 23
+- policy.source.of.truth (doc): 24
 - link.network.overview (doc): 22
 - theme.system.overview (doc): 21
 - docs.updates.v86--updates.-new-v86--v86-bandit-master-index (doc): 21
@@ -55,7 +55,7 @@ Schema: lumaweave-self-graph/v1
 - vite.config (config)
 - playwright.config (config)
 
-## Broken references [86]
+## Broken references [92]
 Frontmatter references targeting unknown ids:
 - docs.rehaul.ledger references docs.rehaul.audit (not found)
 - policy.multi.agent references index.session.and.stack (not found)
@@ -80,8 +80,6 @@ Frontmatter references targeting unknown ids:
 - graph.self.schema.v1 references graph.normalized.source.schema (not found)
 - graph.self.schema.v1 references graph.source.adapter.os.overview (not found)
 - graph.self.schema.v1 references registries.link.network.overview (not found)
-- graph.contracts.sigma.lifecycle references graph.contracts.first.graph.runtime.mutation (not found)
-- graph.contracts.sigma.lifecycle references graph.contracts.graph.runtime.boundary (not found)
 - graph.contracts.sigma.lifecycle references graph.contracts.graph.theme.runtime.application (not found)
 - graph.depth.slider references graph.cluster.gravity.and.color.coded.neighborhoods (not found)
 - graph.depth.slider references graph.visual.policy (not found)
@@ -100,6 +98,14 @@ Frontmatter references targeting unknown ids:
 - policy.source.of.truth references system.index.registry.contract (not found)
 - policy.source.of.truth references human.mode.evidence.mode.contract (not found)
 - policy.source.of.truth references command.deck.and.hotkey.registry.contract (not found)
+- dialect.physics.constellation references contract.audio.reactivity (not found)
+- dialect.physics.galaxy references contract.audio.reactivity (not found)
+- physics.gwells.contract references physics.gwells.registry.patterns (not found)
+- physics.gwells.contract references physics.gwells.dialect.end.to.end.spine (not found)
+- physics.gwells.readme references physics.gwells.registry.patterns (not found)
+- physics.gwells.readme references physics.gwells.dialect.end.to.end.spine (not found)
+- dialect.physics.helix references contract.audio.reactivity (not found)
+- system.physics.dialects references contract.audio.reactivity (not found)
 - link.network.layer.2 references control.surface.contract (not found)
 - link.network.layer.3 references graph.visual.theme.mapping.contract (not found)
 - link.network.layer.3.gaps references TOKEN_CENSUS_CANONICAL.md (not found)
@@ -147,8 +153,7 @@ Frontmatter references targeting unknown ids:
 ## Cluster breakdown
 | Cluster | Node count |
 |---------|------------|
-| azure | 73 |
-| blue | 2 |
+| azure | 88 |
 | crimson | 4 |
 | ember | 9 |
 | gold | 32 |
@@ -158,5 +163,5 @@ Frontmatter references targeting unknown ids:
 | purple | 1 |
 | slate | 90 |
 | stone | 7 |
-| teal | 14 |
+| teal | 12 |
 | violet | 36 |

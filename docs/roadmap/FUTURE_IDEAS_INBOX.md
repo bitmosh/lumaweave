@@ -3,12 +3,12 @@ id: inbox.future.ideas
 title: Future Ideas Inbox
 type: manual
 status: current
-version: v73c
+version: v86b
 domain: roadmap
 cluster: violet
 agent_readable: true
 include_in_self_graph: false
-last_updated: 2026-05-09
+last_updated: 2026-05-15
 tags:
   - future
   - ideas
@@ -54,16 +54,18 @@ Items here are promoted to the roadmap only when:
     Override selected edge stroke color
     Wire to graphVisualTokens.edgeColor.selected
 
-- **SOLAR ORBIT DIALECT — PHASE 1 (cluster gravity)**
-  Custom physics plugin: compute cluster centroid per frame,
-  apply inward pull to cluster members. Result: loose solar
-  system layout, clusters stay separated by centroid gravity
-  wells. Blendable: gravity well strength slider 0→1 mixes
-  between FA2 default and solar orbit. Phase 2: animated
-  orbital drift (angle per node). Phase 3: cluster boundary
-  repulsion (soft walls). Phase 4: Kepler-accurate orbital mechanics.
-  Pre-req: continuous FA2 loop (DONE). Priority: after physics
-  settings expansion.
+- **SOLAR ORBIT DIALECT (gwells)**
+  Future gwells dialect. Cluster sun nodes act as gravity anchors;
+  cluster members orbit at radii driven by importance. Inter-cluster
+  repulsion keeps systems separated. Phase 1: orbital placement.
+  Phase 2: animated orbital drift. Phase 3: cluster boundary
+  repulsion walls. Phase 4: Kepler-accurate orbital mechanics.
+  Implementation path: gwells well types (cluster-sun, cluster-orbit)
+  + interactions (gravity, sibling-repulsion, inter-cluster-repulsion)
+  + new seed function. See docs/physics/GALAXY_MODE_DIALECT.md for
+  the visual target.
+  Pre-req: gwells v0 ships. Priority: after end-to-end-spine dialect
+  is stable.
 
 - **CLUSTER DEPTH SLIDER**
   Replace neighborhood depth dropdown with a slider from
@@ -75,23 +77,6 @@ Items here are promoted to the roadmap only when:
   This was discussed with user and never made it to docs.
   Capture it now. Priority: medium — high UX value.
 
-- **PHYSICS PLUGIN PIPELINE**
-  src/graph/physics/physics-pipeline.ts
-  Type: PhysicsPlugin = (graph, settings, frame) => void
-  Pipeline array runs each plugin per animation frame.
-  Custom behaviors slot in without touching FA2.
-  Examples: cluster gravity, helix attractor, repulsion walls,
-  orbital drift, spiral breathing. Architecture makes custom
-  physics trivial to add. Priority: after FA2 settings expansion.
-
-- **BLENDABLE CLUSTER MIXING**
-  In solar orbit mode, a "cluster cohesion" slider 0 = complete
-  mixing (pure FA2, no cluster gravity). 0.5 = soft neighborhood
-  bubbles, some mixing. 1.0 = hard cluster separation, no mixing.
-  Fractional values create the in-between states that are
-  visually most interesting. The slider blends between two
-  force systems. Priority: after solar orbit Phase 1 lands.
-
 - **YAML GRAPH PARSER — PRE-BUILD SCRIPT APPROACH**
   Fix for self-split: use Node.js build script instead of Vite glob at runtime.
   Script: scripts/generate-self-graph.mjs
@@ -102,25 +87,20 @@ Items here are promoted to the roadmap only when:
   Run before dev/build to keep graph fresh.
   108 docs with include_in_self_graph:true = 131+ nodes.
 
-- **GRAPHOLOGY ECOSYSTEM — HIGH PRIORITY INSTALLS**
-  Three packages that would have immediate impact:
+- **GRAPHOLOGY ECOSYSTEM — REMAINING CANDIDATES**
+  Of three previously-listed candidate packages, only one remains
+  relevant after the gwells migration:
 
-  **graphology-communities-louvain**
-    Auto community detection for ANY graph source
-    Makes helix dialect work universally (not just
-    self-graph fixture which has manual clusters)
-    Install before: helix dialect becomes default
-
-  **graphology-metrics**
+  **graphology-metrics** (installed)
     Degree centrality → auto node size by connections
     Betweenness centrality → identify bridge nodes
     PageRank → identify influential nodes
-    Install before: YAML frontmatter parser pass
+    Already in use for centrality-based sizing.
 
-  **graphology-layout-noverlap**
-    Anti-collision post-processing after FA2
-    Prevents node overlap in dense graph regions
-    Install with: next physics tuning pass
+  Retired: graphology-layout-forceatlas2 and graphology-layout-noverlap
+  were removed during the gwells migration. graphology-communities-louvain
+  remains in package.json but is no longer load-bearing for any active
+  dialect; verify usage and retire if confirmed orphaned.
 
 - **USEFIXTURE SMART SWITCHING**
   AppShell.tsx useFixture is hardcoded true.
@@ -140,14 +120,14 @@ Items here are promoted to the roadmap only when:
   Priority: medium — affects demo experience
   Constraint: 2 layout assertions need updating first
 
-- **Cluster gravity** — hard gravity walls between neighborhoods, nodes orbit within cluster (proto-Galaxy mode)
+- **Cluster gravity** — hard gravity walls between neighborhoods, nodes orbit within cluster (proto-Galaxy mode). Implementation path: future gwells dialect. See docs/physics/GALAXY_MODE_DIALECT.md and docs/graph/intelligence/CLUSTER_GRAVITY_AND_COLOR_CODED_NEIGHBORHOODS.md.
 - **Color-coded neighborhoods** — community detection driving brand cluster colors in graph
 - **Edge confidence visualization** — edge thickness or opacity encodes confidence class (observed / inferred / ai-inferred)
 - **Node importance rings** — high-weight nodes rendered with a subtle ring/corona to indicate weight
 - **Graph diff view** — highlight nodes/edges that changed between two history slider positions
-- **Cluster drag interaction** — Hold modifier key (Alt or Shift) + drag node → node and all directly connected neighbors move as a rigid unit with proportions locked, external edges stretch/compress naturally, on key release: force simulation resumes from new positions. Priority: after basic node dragging works. Relevant for: Helix dialect (moving constellation branches without breaking the backbone). Physics wiring order: 1. Fix static sunflower / force layout, 2. Wire repel + gravity controls, 3. Individual node drag, 4. Cluster drag with modifier key, 5. Physics dialect selection.
-- **GRAPH ROTATION + PSEUDO-3D PROJECTION** — Right-click drag → rotate 2D graph coord space. Store helix node positions as true 3D (x, y, z). Project 3D → 2D with rotation matrix on Sigma. Animate projection angle on node selection. Auto-rotate to selected cluster centroid. No Three.js needed — pure projection math on existing Sigma 2D renderer. Three3d renderer (src/renderers/three3d/) is the future path for true 3D graphs. Priority: after cluster colors + graph density.
-- **Advanced Physics Controls** — Add direct FA2 parameter controls to settings.schema.ts physics section: gravityStrength (0.001–1.0), fa2Iterations (10–500), fa2SlowDown (1–20), adjustSizes (boolean), strongGravityMode (boolean), linLogMode (boolean). These give users fine-grained control over ForceAtlas2 behavior beyond the current 3 sliders (nodeSize, linkDistance, repelForce, centerForce). Priority: after helix dialect stabilization.
+- **Cluster drag interaction** — Hold modifier key (Alt or Shift) + drag node → node and all directly connected neighbors move as a rigid unit with proportions locked, external edges stretch/compress naturally, on key release: physics resumes from new positions. Implementation path: respect gwells's `fixed: true` attribute for the entire cluster during drag, then release. Priority: after basic node dragging works in gwells. Relevant for: future gwells dialects (moving constellation branches without breaking the backbone).
+- **GRAPH ROTATION + PSEUDO-3D PROJECTION** — Right-click drag → rotate 2D graph coord space. Store node positions as true 3D (x, y, z). Project 3D → 2D with rotation matrix on Sigma. Animate projection angle on node selection. Auto-rotate to selected cluster centroid. No Three.js needed — pure projection math on existing Sigma 2D renderer. The src/renderers/ subtree is the future path for true 3D graphs. Gwells v2+ may extend its schema to include z-coordinate. Priority: after cluster colors + graph density.
+- **Gwells dialect-aware tunable handles** — Once gwells is stable, expose per-dialect tunables (spine spacing, fan arc width, repulsion strength, etc.) as Layer 1 handles with `status: planned`. UI surfaces them in the Advanced section of the Physics panel only when their owning dialect is active. Replaces the retired "Advanced Physics Controls" idea, which was FA2-specific.
 
 ---
 
