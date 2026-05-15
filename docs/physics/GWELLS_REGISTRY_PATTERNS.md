@@ -1,8 +1,4 @@
-Moving to Doc 3 of 4 — GWELLS_REGISTRY_PATTERNS.md. This is the deepest of the four: it has to document the data-flow precisely enough that an agent adding a registry entry knows exactly what shape it takes, where the lookup happens, and how the four registries compose into a working physics frame.
-No new ids to verify for this one — I'll reuse the same set as Doc 2 (physics.gwells.contract, physics.gwells.readme, physics.gwells.dialect.end.to.end.spine, protocol.registry.contract.patterns). Locking the id of this doc as physics.gwells.registry.patterns to match the forward-references in Doc 1 and Doc 2.
-
-Doc 3 of 4 — docs/physics/GWELLS_REGISTRY_PATTERNS.md
-markdown---
+---
 id: physics.gwells.registry.patterns
 title: Gwells Registry Patterns
 type: reference
