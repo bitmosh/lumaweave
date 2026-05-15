@@ -1,27 +1,27 @@
 # Self-Graph Report
 
-Generated: 2026-05-15T22:58:07.449Z
+Generated: 2026-05-15T23:23:56.231Z
 Source commit: N/A
 Schema: lumaweave-self-graph/v1
 
 ## Summary
 
-- Total nodes: 378
-- Total edges: 1358
+- Total nodes: 379
+- Total edges: 1378
 
 ### Nodes by type
-- doc: 200
+- doc: 201
 - code: 108
 - config: 5
 - fixture: 0
 - spine: 65
 
 ### Edges by type
-- contains: 370
+- contains: 371
 - governs: 29
-- explicit-reference: 371
+- explicit-reference: 386
 - code-import: 126
-- tag-overlap: 163
+- tag-overlap: 167
 - describes: 299
 
 ## Top 10 by in-degree
@@ -55,7 +55,7 @@ Schema: lumaweave-self-graph/v1
 - vite.config (config)
 - playwright.config (config)
 
-## Broken references [92]
+## Broken references [88]
 Frontmatter references targeting unknown ids:
 - docs.rehaul.ledger references docs.rehaul.audit (not found)
 - policy.multi.agent references index.session.and.stack (not found)
@@ -100,10 +100,6 @@ Frontmatter references targeting unknown ids:
 - policy.source.of.truth references command.deck.and.hotkey.registry.contract (not found)
 - dialect.physics.constellation references contract.audio.reactivity (not found)
 - dialect.physics.galaxy references contract.audio.reactivity (not found)
-- physics.gwells.contract references physics.gwells.registry.patterns (not found)
-- physics.gwells.contract references physics.gwells.dialect.end.to.end.spine (not found)
-- physics.gwells.readme references physics.gwells.registry.patterns (not found)
-- physics.gwells.readme references physics.gwells.dialect.end.to.end.spine (not found)
 - dialect.physics.helix references contract.audio.reactivity (not found)
 - system.physics.dialects references contract.audio.reactivity (not found)
 - link.network.layer.2 references control.surface.contract (not found)
@@ -153,7 +149,7 @@ Frontmatter references targeting unknown ids:
 ## Cluster breakdown
 | Cluster | Node count |
 |---------|------------|
-| azure | 88 |
+| azure | 90 |
 | crimson | 4 |
 | ember | 9 |
 | gold | 32 |
