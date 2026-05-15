@@ -35,7 +35,6 @@ import { applyNodeLabelPolicy,
   type NodeLabelMode,
   type EdgeLabelMode,
 } from "../../visual/applyGraphLabelPolicyToGraphology";
-import NodeSphereProgram from "./NodeSphereProgram";
 import { attachCameraController } from "../../overlay/cameraController";
 import { NodeCircleProgram } from "sigma/rendering";
 // import { applyNoverlap } from "../../physics/noverlapPass"; // vP-ClusterAware-Physics-Rebuild: noverlap replaced with cluster-aware force loop
