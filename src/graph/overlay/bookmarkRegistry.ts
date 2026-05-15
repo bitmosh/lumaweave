@@ -69,7 +69,7 @@ export function initializeDemoBookmarks(): void {
   bookmarkRegistry.register({
     id: "demo-alert-1",
     type: "alert",
-    position: { x: 0.1, y: 0.1 },
+    position: { x: 0.94, y: 0.06 },
     label: "Alert",
     sub: "High priority",
   });
@@ -77,7 +77,7 @@ export function initializeDemoBookmarks(): void {
   bookmarkRegistry.register({
     id: "demo-pinned-1",
     type: "pinned",
-    position: { x: 0.9, y: 0.1 },
+    position: { x: 0.94, y: 0.14 },
     label: "Pinned",
     sub: "Saved for later",
   });
@@ -85,7 +85,7 @@ export function initializeDemoBookmarks(): void {
   bookmarkRegistry.register({
     id: "demo-ref-1",
     type: "ref",
-    position: { x: 0.9, y: 0.9 },
+    position: { x: 0.94, y: 0.22 },
     label: "Reference",
     sub: "Related node",
   });

@@ -723,5 +723,6 @@ export function resolveGraphVisualTokens(
     },
     nodeColorScale: themeGraphTokens.nodeColorScale,
     edgeColorScale: themeGraphTokens.edgeColorScale,
+    selectionHaloColor: "#3b82f6",
   };
 }

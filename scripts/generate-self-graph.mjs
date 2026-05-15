@@ -19,13 +19,39 @@ const graphOutputFile = path.join(repoRoot, "src/fixtures/self-graph-generated.j
 const manifestOutputFile = path.join(repoRoot, "src/fixtures/self-graph-manifest.json");
 const reportOutputFile = path.join(repoRoot, "src/fixtures/GRAPH_REPORT.md");
 
-// Cluster taxonomy
+// Cluster taxonomy (canonical alignment with cluster-colors.json)
 const CLUSTER_MAP = {
   "src/themes/*": "gold",
   "src/graph/*": "azure",
-  "src/control-plane/*": "teal",
-  "src/audio/*": "purple",
-  "src/accessibility/*": "green",
+  "src/control-plane/*": "slate",
+  "src/audio/*": "ember",
+  "src/accessibility/*": "crimson",
+  "src/source-adapter/*": "lime",
+  "docs/theme/*": "gold",
+  "docs/graph/*": "azure",
+  "docs/control-plane/*": "slate",
+  "docs/agent/*": "violet",
+  "docs/visual-grammar-engine/*": "teal",
+  "docs/source-adapter/*": "lime",
+  "docs/audio/*": "ember",
+  "docs/accessibility/*": "crimson",
+  "docs/layout/*": "stone",
+  "docs/platform/*": "indigo",
+  "docs/vr/*": "indigo",
+  "docs/rendering/*": "azure",
+  "docs/registries/*": "slate",
+  "docs/mission-control/*": "slate",
+  "docs/grammar-lens/*": "teal",
+  "docs/handleset/*": "azure",
+  "docs/operating-policies/*": "violet",
+  "docs/roadmap/*": "slate",
+  "docs/quest/*": "slate",
+  "docs/physics/*": "azure",
+  "docs/overview/*": "stone",
+  "docs/known-bugs/*": "violet",
+  "docs/updates/*": "violet",
+  "docs/_meta/*": "violet",
+  "docs/screenshots/*": "stone",
 };
 
 // Config files to include (v1 hard-coded list)
@@ -67,8 +93,10 @@ function slug(filePath) {
 function inferClusterFromPath(filePath) {
   const relPath = path.relative(repoRoot, filePath).replace(/\\/g, "/");
   for (const [pattern, cluster] of Object.entries(CLUSTER_MAP)) {
-    const regex = new RegExp("^" + pattern.replace("*", ".*"));
-    if (regex.test(relPath)) {
+    // Pattern may be "src/audio/*" or "docs/agent/*"
+    // For directory paths, strip the "/*" and match prefix
+    const patternBase = pattern.replace(/\/\*$/, "");
+    if (relPath === patternBase || relPath.startsWith(patternBase + "/")) {
       return cluster;
     }
   }
@@ -271,38 +299,64 @@ for (const filePath of fixtureFiles) {
   });
 }
 
-// --- SPINE (synthetic subsystem nodes) ---
+// Build node map for edge resolution
+for (const node of nodes) {
+  nodeMap.set(node.id, node);
+}
 
-const SPINE_NODES = [
-  { id: "spine.graph", label: "graph", path: "src/graph" },
-  { id: "spine.themes", label: "themes", path: "src/themes" },
-  { id: "spine.control-plane", label: "control-plane", path: "src/control-plane" },
-  { id: "spine.audio", label: "audio", path: "src/audio" },
-  { id: "spine.accessibility", label: "accessibility", path: "src/accessibility" },
-];
+// ============================================================================
+// SECTION: SYNTHESIZE DIRECTORY SPINE NODES
+// Mirror the full directory hierarchy as spine-type nodes so the renderer
+// has a structural backbone to lay out against.
+// ============================================================================
 
-for (const spine of SPINE_NODES) {
-  nodes.push({
-    id: spine.id,
+// Collect every unique directory path from every node's path field,
+// walking up to repo-relative roots ("src" and "docs").
+const directoryPaths = new Set();
+for (const node of nodes) {
+  if (!node.path) continue;
+  let p = path.dirname(node.path);
+  while (p && p !== "." && p !== "/" && p !== "") {
+    directoryPaths.add(p);
+    p = path.dirname(p);
+  }
+}
+
+// Materialize spine nodes for every directory not already represented.
+for (const dirPath of Array.from(directoryPaths).sort()) {
+  const id = slug(dirPath);
+
+  // Skip if a node with this id already exists (prevents duplicate ids
+  // from files whose slug happens to coincide with a dirname).
+  if (nodeMap.has(id)) continue;
+
+  // Get directory mtime for lastModified
+  let mtime;
+  try {
+    mtime = fs.statSync(path.join(repoRoot, dirPath)).mtime.toISOString();
+  } catch {
+    mtime = new Date().toISOString();
+  }
+
+  const dirNode = {
+    id,
     type: "spine",
-    label: spine.label,
-    fullLabel: spine.label,
-    path: spine.path,
-    cluster: null,
+    label: path.basename(dirPath),
+    fullLabel: dirPath,
+    path: dirPath,
+    cluster: inferClusterFromPath(path.join(repoRoot, dirPath)) || null,
     status: null,
     tags: [],
     size: 0,
-    lastModified: new Date().toISOString(),
+    lastModified: mtime,
     raw: {
       color: "#9ca3af",
       dimFactor: 0.8,
     },
-  });
-}
+  };
 
-// Build node map for edge resolution
-for (const node of nodes) {
-  nodeMap.set(node.id, node);
+  nodes.push(dirNode);
+  nodeMap.set(id, dirNode);
 }
 
 // ============================================================================
@@ -331,12 +385,17 @@ function addEdge(source, target, type, weight, bidirectional, provenance) {
 // --- Type "contains" (parent directory → child file) ---
 
 for (const node of nodes) {
-  if (node.type === "spine") continue; // spines don't have directory parents
-  
+  if (!node.path) continue;
+
   const dirPath = path.dirname(node.path);
+
+  // Root nodes (src, docs) have no directory parent
+  if (!dirPath || dirPath === "." || dirPath === "/") continue;
+
   const parentId = slug(dirPath);
-  
-  // Only create edge if parent exists as a node
+
+  // Only emit edge if parent exists as a node. Should always be true now
+  // that we materialize intermediate spines.
   if (nodeMap.has(parentId)) {
     addEdge(
       parentId,
@@ -351,17 +410,26 @@ for (const node of nodes) {
 
 // --- Type "governs" (contract/policy → spine) ---
 
+const DOMAIN_TO_SPINE = {
+  "graph":          "src.graph",
+  "theme":          "src.themes",
+  "audio":          "src.audio",
+  "accessibility":  "src.accessibility",
+  "source-adapter": "src.source-adapter",
+  "control-plane":  "src.control-plane",
+};
+
 for (const node of nodes) {
   if (node.type !== "doc") continue;
   if (!node._frontmatter) continue;
-  
+
   const fm = node._frontmatter;
   if (fm.type !== "contract" && fm.type !== "policy") continue;
-  
+
   const domain = fm.domain;
-  const spineId = `spine.${domain}`;
-  
-  if (nodeMap.has(spineId)) {
+  const spineId = DOMAIN_TO_SPINE[domain];
+
+  if (spineId && nodeMap.has(spineId)) {
     addEdge(
       node.id,
       spineId,

@@ -40,7 +40,7 @@ export interface TileLayoutEntry {
 }
 
 export interface StarmapSettings {
-  version: 80; // v86b: bumped from 79 to 80 (performance preset coupling fields)
+  version: 81; // vP-physics-backbone-seed-fix: bumped from 80 to 81 (remove helix dialect)
 
   general: {
     startupProjectId: string | null;
@@ -86,7 +86,7 @@ export interface StarmapSettings {
     repelForce: number;
     centerForce: number;
     communityGravity: number;
-    physicsDialect: "default" | "helix" | "solar-orbit";
+    physicsDialect: "default" | "solar-orbit";
     // ForceAtlas2 advanced parameters
     strongGravityMode: boolean;
     linLogMode: boolean;
@@ -118,7 +118,7 @@ export interface StarmapSettings {
   };
 
   performance: {
-    qualityPreset: "beautiful" | "balanced" | "large-graph" | "potato";
+    qualityPreset: "custom" | "beautiful" | "balanced" | "large-graph" | "potato";
     particleCap: number;
     maxVisibleLabels: number;
     largeGraphModeThreshold: number;

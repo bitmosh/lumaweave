@@ -88,6 +88,15 @@ const MIGRATIONS: Record<number,
     physics.qualityPreset ??= defaultSettings.physics.qualityPreset;
     return { ...s, appearance, physics } as Partial<StarmapSettings>;
   },
+
+  // v80 → v81: remove helix physics dialect (vP-physics-backbone-seed-fix)
+  81: (s) => {
+    const physics = { ...(s.physics ?? {}) } as any;
+    if (physics.physicsDialect === "helix") {
+      physics.physicsDialect = "default";
+    }
+    return { ...s, physics } as Partial<StarmapSettings>;
+  },
 };
 
 export function migrateSettings(

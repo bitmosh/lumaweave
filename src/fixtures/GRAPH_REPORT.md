@@ -1,101 +1,59 @@
 # Self-Graph Report
 
-Generated: 2026-05-12T03:28:08.800Z
+Generated: 2026-05-15T01:33:02.508Z
 Source commit: N/A
 Schema: lumaweave-self-graph/v1
 
 ## Summary
 
-- Total nodes: 276
-- Total edges: 846
+- Total nodes: 366
+- Total edges: 1288
 
 ### Nodes by type
-- doc: 163
-- code: 103
+- doc: 190
+- code: 106
 - config: 5
 - fixture: 0
-- spine: 5
+- spine: 65
 
 ### Edges by type
-- contains: 1
-- governs: 23
+- contains: 359
+- governs: 29
 - explicit-reference: 340
-- code-import: 117
-- tag-overlap: 144
-- describes: 221
+- code-import: 125
+- tag-overlap: 150
+- describes: 285
 
 ## Top 10 by in-degree
-- src.themes.themetokenpaths (code): 19
-- theme.token.path.map (doc): 17
-- theme.system.overview (doc): 16
-- link.network.overview (doc): 16
-- theme.token.compatibility (doc): 14
-- src.app.appshell (code): 13
-- agent.survival.manual.readme (doc): 13
-- spine.graph (spine): 12
-- source.adapter.os.overview (doc): 12
-- src.control-plane.settings.settings.schema (code): 12
+- src.themes.themetokenpaths (code): 20
+- src.graph.renderers.sigma2d.sigmagraphview (code): 19
+- theme.token.path.map (doc): 18
+- src.app.appshell (code): 18
+- link.network.overview (doc): 17
+- theme.system.overview (doc): 17
+- theme.token.compatibility (doc): 15
+- src.control-plane.settings.settings.schema (code): 15
+- agent.survival.manual.readme (doc): 14
+- src.graph.renderers.sigma2d.buildgraphologygraph (code): 14
 
 ## Top 10 by out-degree
+- docs (spine): 67
 - registry.inventory (doc): 27
+- src.app.appshell (code): 26
 - policy.source.of.truth (doc): 23
 - link.network.overview (doc): 22
 - theme.system.overview (doc): 21
 - docs.updates.v86--updates.-new-v86--v86-bandit-master-index (doc): 21
-- src.app.appshell (code): 20
+- src.themes (spine): 19
 - docs.token-census-orphans (doc): 19
-- theme.engine (doc): 13
-- theme.token.compatibility (doc): 13
-- vge.overview.and.terms (doc): 13
+- src.control-plane.panels (spine): 15
 
-## Orphaned nodes (degree = 0) [47]
-- docs.token-census-dead-candidates (doc)
-- docs.-archive.git.gitignore-draft (doc)
-- docs.-archive.git.git-readiness-audit (doc)
-- docs.-archive.test-forensics.contract-registry--advisory-backlog-reorder-moves-item-down (doc)
-- docs.-archive.test-forensics.contract-registry--advisory-backlog-reorder-moves-item-up (doc)
-- docs.-archive.test-forensics.contract-registry--advisory-backlog-reorder-persists-through-tab-switching (doc)
-- docs.-archive.test-forensics.contract-registry--bandit-backlog-top-10-renders (doc)
-- docs.-archive.test-forensics.contract-registry--question-status-can-be-changed (doc)
-- docs.-archive.test-forensics.contract-registry--v48-report-includes-advisory-set-key (doc)
-- docs.-archive.test-forensics.contract-registry--v64-is-default-active-checklist (doc)
-- docs.-archive.test-forensics.edge-plasma-overlay--plasmaoverlay-renders-as-svg-sibling (doc)
-- docs.-archive.test-forensics.reduce-motion-halt--reducemotion-halts-shader-uniforms (doc)
-- docs.-archive.test-forensics.reduce-motion-halt--reducemotion-off-allows-uniforms-to-animate (doc)
-- docs.-archive.test-forensics.reduce-motion-halt--reducemotion-preserves-glowstrength (doc)
-- docs.-archive.test-forensics.theme-target-inspector--inspector-panel-stays-inside-graph-viewport (doc)
-- docs.-archive.test-forensics.theme-target-inspector--sigma-graph-primitives-cannot-be-pinned (doc)
-- docs.-archive.test-forensics.visual-handles--v15-advisory-question-notes-still-work (doc)
-- docs.-docs-tree (doc)
-- docs.rehaul.ledger (doc)
-- docs.-src-tree (doc)
-- docs.buildgraphologygraph (doc)
-- docs.e2e-test-coverage-audit (doc)
-- concept.graph.cluster.gravity (doc)
-- docs.self-graph-adapter (doc)
-- docs.updates.v86--updates.-new-v86--v86-supplement (doc)
-- docs.updates.v86--updates.-new-v86--v86-index (doc)
-- docs.updates.v86--updates.-new-v86--v86-roadmap (doc)
-- docs.updates.v86--updates.-new-v86--v86a-foundation (doc)
-- docs.updates.v86--updates.-new-v86--v86c-tile-system (doc)
-- docs.updates.v86--updates.-new-v86--v86d-inspector-mini-graph (doc)
-- docs.updates.v86--updates.-new-v86--v86e-cosmetic-polish (doc)
-- docs.v86c-redo-render-refactor-coverage-audit (doc)
-- docs.v86c-redo-self-graph-phase3-followup (doc)
-- docs.v86c-redo-structural-report (doc)
-- src.graph.visual.graphvisualtypes (code)
-- src.graph.visual.applygraphlabelpolicytographology (code)
-- src.graph.renderers.sigma2d.labelpolicy (code)
-- src.control-plane.panels.panel.types (code)
-- src.control-plane.panels.tile (code)
-- src.control-plane.handles.index (code)
-- src.control-plane.commands.commandpalette (code)
+## Orphaned nodes (degree = 0) [5]
 - package (config)
 - tsconfig (config)
 - tsconfig.node (config)
 - vite.config (config)
 - playwright.config (config)
-- spine.themes (spine)
 
 ## Broken references [86]
 Frontmatter references targeting unknown ids:
@@ -189,17 +147,16 @@ Frontmatter references targeting unknown ids:
 ## Cluster breakdown
 | Cluster | Node count |
 |---------|------------|
-| azure | 50 |
+| azure | 73 |
 | blue | 2 |
-| crimson | 1 |
-| ember | 4 |
-| gold | 30 |
+| crimson | 4 |
+| ember | 9 |
+| gold | 32 |
 | gray | 1 |
-| green | 1 |
-| indigo | 4 |
-| lime | 9 |
-| purple | 4 |
-| slate | 25 |
-| stone | 5 |
-| teal | 58 |
-| violet | 26 |
+| indigo | 6 |
+| lime | 13 |
+| purple | 1 |
+| slate | 90 |
+| stone | 7 |
+| teal | 14 |
+| violet | 36 |

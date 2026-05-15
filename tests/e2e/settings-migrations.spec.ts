@@ -1,7 +1,7 @@
 /**
  * v86b: Synthetic migration chain test
- * 
- * Tests that the full migration chain from v76 to v80 produces the correct endpoint shape.
+ *
+ * Tests that the full migration chain from v76 to v81 produces the correct endpoint shape.
  * This ensures that each migration step in the chain preserves data and adds new fields correctly.
  */
 
@@ -9,7 +9,7 @@ import { test, expect } from "@playwright/test";
 import { migrateSettings } from "../../src/control-plane/settings/settings.migrations";
 
 test.describe("settings migration chain", () => {
-  test("v76 → v80 chain produces correct endpoint", () => {
+  test("v76 → v81 chain produces correct endpoint", () => {
     // Synthetic v76 settings object (minimal shape, using any to bypass type checks)
     const v76: any = {
       version: 76,
@@ -17,6 +17,7 @@ test.describe("settings migration chain", () => {
         physicsPreset: "performance",
         nodeSize: 10,
         linkDistance: 100,
+        physicsDialect: "helix", // Test helix → default migration
       },
       appearance: {
         theme: "midnight",
@@ -33,7 +34,7 @@ test.describe("settings migration chain", () => {
     const result = migrateSettings(v76);
 
     // Verify version is current
-    expect(result.version).toBe(80);
+    expect(result.version).toBe(81);
 
     // Verify v80 fields are present (v86b additions)
     expect(result.appearance.glitterDensity).toBe("medium");
@@ -43,6 +44,9 @@ test.describe("settings migration chain", () => {
     expect(result.appearance.nodeHum).toBe(0.7);
     expect(result.appearance.nodeFlowSpeed).toBe(0.55);
     expect(result.appearance.nodeGlow).toBe(1.0);
+
+    // Verify v81 field: helix → default migration
+    expect(result.physics.physicsDialect).toBe("default");
 
     // Verify original fields are preserved
     expect(result.physics.physicsPreset).toBe("performance");

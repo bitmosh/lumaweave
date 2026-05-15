@@ -27,6 +27,12 @@ import { adaptSelfGraphToSigma } from "../fixtures/self-graph-adapter";
 import generatedGraph from "../fixtures/self-graph-generated.json";
 import type { LumaSourceGraph } from "../fixtures/types";
 import { PlasmaOverlayEdge } from "../graph/edges/PlasmaOverlayEdge";
+import { SolarBackdrop } from "../graph/overlay/SolarBackdrop";
+import { ClickHalo } from "../graph/overlay/ClickHalo";
+import { GlitterField } from "../graph/overlay/GlitterField";
+import { BookmarkLayer } from "../graph/overlay/BookmarkLayer";
+import { Minimap } from "../graph/overlay/Minimap";
+import { bookmarkRegistry, initializeDemoBookmarks } from "../graph/overlay/bookmarkRegistry";
 
 export function AppShell() {
   const settings = useSettingsStore((state) => state.settings);
@@ -125,13 +131,19 @@ export function AppShell() {
       edgePlasmaMode: "static" as const,
       backdropMotion: "off" as const,
     },
+    "large-graph": {
+      reduceMotion: false,
+      glitterDensity: "low" as const,
+      edgePlasmaMode: "static" as const,
+      backdropMotion: "low" as const,
+    },
     balanced: {
       reduceMotion: false,
       glitterDensity: "medium" as const,
       edgePlasmaMode: "animated-overlay" as const,
       backdropMotion: "half" as const,
     },
-    fancy: {
+    beautiful: {
       reduceMotion: false,
       glitterDensity: "high" as const,
       edgePlasmaMode: "animated-overlay" as const,
@@ -151,44 +163,51 @@ export function AppShell() {
       physicsPreset: preset,
     });
   }, [settings.physics.physicsPreset]);
-
+  
+  // Auto-flip physicsPreset to custom when physics fields change manually
+  useEffect(() => {
+    const preset = settings.physics.physicsPreset;
+    if (preset === "custom") return;
+    const vals = PRESET_VALUES[preset as keyof typeof PRESET_VALUES];
+    if (!vals) return;
+    const current = settings.physics;
+    const differs =
+      current.repelForce !== vals.repelForce ||
+      current.centerForce !== vals.centerForce ||
+      current.linkDistance !== vals.linkDistance ||
+      current.strongGravityMode !== vals.strongGravityMode ||
+      current.linLogMode !== vals.linLogMode;
+    if (differs) setSetting("physics.physicsPreset", "custom");
+  }, [
+    settings.physics.repelForce,
+    settings.physics.centerForce,
+    settings.physics.linkDistance,
+    settings.physics.strongGravityMode,
+    settings.physics.linLogMode,
+  ]);
+  
   // v86b: Sync appearance settings with quality preset values
   useEffect(() => {
-    const preset = settings.physics.qualityPreset;
+    const preset = settings.performance.qualityPreset;
     if (preset === "custom") return;
-    
     const vals = QUALITY_PRESET_VALUES[preset as keyof typeof QUALITY_PRESET_VALUES];
     if (!vals) return;
-    
-    setSetting("appearance", {
-      ...settings.appearance,
-      ...vals,
-      physics: {
-        ...settings.physics,
-        qualityPreset: preset,
-      },
-    });
-  }, [settings.physics.qualityPreset]);
-
+    setSetting("appearance", { ...settings.appearance, ...vals });
+  }, [settings.performance.qualityPreset]);
+  
   // v86b: Auto-flip qualityPreset to custom when appearance values change manually
   useEffect(() => {
-    const preset = settings.physics.qualityPreset;
+    const preset = settings.performance.qualityPreset;
     if (preset === "custom") return;
-    
     const vals = QUALITY_PRESET_VALUES[preset as keyof typeof QUALITY_PRESET_VALUES];
     if (!vals) return;
-    
-    // Check if any appearance value differs from preset defaults
     const current = settings.appearance;
-    const differs = 
+    const differs =
       current.reduceMotion !== vals.reduceMotion ||
       current.glitterDensity !== vals.glitterDensity ||
       current.edgePlasmaMode !== vals.edgePlasmaMode ||
       current.backdropMotion !== vals.backdropMotion;
-    
-    if (differs) {
-      setSetting("physics.qualityPreset", "custom");
-    }
+    if (differs) setSetting("performance.qualityPreset", "custom");
   }, [
     settings.appearance.reduceMotion,
     settings.appearance.glitterDensity,
@@ -215,6 +234,21 @@ export function AppShell() {
     settings.graphView.neighborhoodDepth ?? 2
   ) as 1 | 2 | 3 | 4;
 
+  // v86b: Click halo state — single active halo, overridden by rapid clicks
+  const [clickHalo, setClickHalo] = useState<{
+    x: number;
+    y: number;
+    color: string;
+    key: number;
+  } | null>(null);
+
+  // v86b: Initialize demo bookmarks once on mount
+  useEffect(() => {
+    if (bookmarkRegistry.getAll().length === 0) {
+      initializeDemoBookmarks();
+    }
+  }, []);
+
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
   const [pathTargetId, setPathTargetId] = useState<string | null>(null);
@@ -235,6 +269,17 @@ export function AppShell() {
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [settings.ui, setSetting]);
+
+  // v86b: Click handler for viewport background — spawns visual halo
+  const handleViewportClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setClickHalo({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+      color: resolvedGraphTokens?.selectionHaloColor ?? "#3b82f6",
+      key: Date.now(),
+    });
+  };
 
   // Determine which graph data to use
   const graphNodes = useFixture ? adaptedFixture.nodes : summary.normalizedNodes;
@@ -803,6 +848,7 @@ export function AppShell() {
               background: "radial-gradient(ellipse at center, #0d1929 0%, #060b14 60%, #030508 100%)",
             } as React.CSSProperties}
             data-lw-theme-target="graph.frame"
+            onClick={handleViewportClick}
           >
             <div 
               className="absolute inset-0"
@@ -814,6 +860,18 @@ export function AppShell() {
               graphEdges &&
               graphNodes.length > 0 ? (
                 <>
+                  {/* v86b close-1: Solar backdrop — renders before Sigma so Sigma paints on top */}
+                  <SolarBackdrop
+                    backdropMotion={settings.appearance.backdropMotion ?? "half"}
+                    reduceMotion={settings.appearance.reduceMotion}
+                    starfieldEnabled={settings.appearance.starfieldEnabled ?? true}
+                    coronaColor={themeTokens.backdrop?.coronaColor}
+                    coronaIntensity={themeTokens.backdrop?.coronaIntensity}
+                    flareColor={themeTokens.backdrop?.flareColor}
+                    starfieldDensity={themeTokens.backdrop?.starfieldDensity}
+                    vignetteIntensity={themeTokens.backdrop?.vignetteIntensity}
+                  />
+
                   {/* v86c: Stable key prop prevents remount on settings changes */}
                   <SigmaGraphView
                     key={graphSummary.source}
@@ -898,6 +956,72 @@ export function AppShell() {
                           />
                         </CollapsiblePanel>
                       </div>
+
+                      {/* v86b close-1: Click halo */}
+                      {clickHalo && (
+                        <ClickHalo
+                          key={clickHalo.key}
+                          x={clickHalo.x}
+                          y={clickHalo.y}
+                          color={clickHalo.color}
+                          reduceMotion={settings.appearance.reduceMotion}
+                          onComplete={() => setClickHalo(null)}
+                        />
+                      )}
+
+                      {/* v86b close-1: Glitter field on selected node */}
+                      {selectedNodeId && (window as any).__lwSigma && (() => {
+                        const sigma = (window as any).__lwSigma;
+                        try {
+                          const display = sigma.getNodeDisplayData(selectedNodeId);
+                          if (!display) return null;
+                          const viewport = sigma.graphToViewport(display);
+                          return (
+                            <GlitterField
+                              x={viewport.x}
+                              y={viewport.y}
+                              color={resolvedGraphTokens?.selectionHaloColor ?? "#fbbf24"}
+                              glitterDensity={settings.appearance.glitterDensity ?? "medium"}
+                              reduceMotion={settings.appearance.reduceMotion}
+                            />
+                          );
+                        } catch {
+                          return null;
+                        }
+                      })()}
+
+                      {/* v86b close-1: Floating bookmarks */}
+                      <BookmarkLayer
+                        alertColor={themeTokens.bookmark?.alertColor}
+                        pinnedColor={themeTokens.bookmark?.pinnedColor}
+                        refColor={themeTokens.bookmark?.refColor}
+                      />
+
+                      {/* v86b close-1: Minimap */}
+                      {(window as any).__lwSigma && (() => {
+                        const sigma = (window as any).__lwSigma;
+                        try {
+                          let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                          sigma.getGraph().forEachNode((id: string) => {
+                            const d = sigma.getNodeDisplayData(id);
+                            if (!d) return;
+                            if (d.x < minX) minX = d.x;
+                            if (d.y < minY) minY = d.y;
+                            if (d.x > maxX) maxX = d.x;
+                            if (d.y > maxY) maxY = d.y;
+                          });
+                          if (!isFinite(minX)) return null;
+                          const cam = sigma.getCamera().getState();
+                          return (
+                            <Minimap
+                              graphBounds={{ minX, minY, maxX, maxY }}
+                              viewportBounds={{ x: cam.x, y: cam.y, ratio: cam.ratio }}
+                            />
+                          );
+                        } catch {
+                          return null;
+                        }
+                      })()}
                     </>
                   ) : (
                 <div className="flex h-full items-center justify-center">

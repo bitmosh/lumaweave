@@ -56,7 +56,6 @@ export const settingsRegistry: SettingControl[] = [
     description: "Layout algorithm and shape",
     options: [
       { value: "default", label: "Default (Force-Directed)" },
-      { value: "helix", label: "Helix (Brand Shape)" },
       { value: "solar-orbit", label: "Solar Orbit" },
     ],
   },

@@ -37,6 +37,9 @@ import { applyNodeLabelPolicy,
 } from "../../visual/applyGraphLabelPolicyToGraphology";
 import NodeSphereProgram from "./NodeSphereProgram";
 import { attachCameraController } from "../../overlay/cameraController";
+import { NodeCircleProgram } from "sigma/rendering";
+// import { applyNoverlap } from "../../physics/noverlapPass"; // vP-ClusterAware-Physics-Rebuild: noverlap replaced with cluster-aware force loop
+import { startClusterAwareForceLoop } from "../../physics/clusterAwareForceLoop";
 
 interface SigmaGraphViewProps {
   nodes: LumaWeaveNodeDraft[];
@@ -176,6 +179,7 @@ function SigmaGraphViewComponent({
   const sigmaRef = useRef<Sigma | null>(null);
   const cameraControllerRef = useRef<ReturnType<typeof attachCameraController> | null>(null);
   const fa2Ref = useRef<FA2Layout | null>(null);
+  const clusterStopRef = useRef<(() => void) | null>(null);
   const graphRef = useRef<any>(null);
   const onSelectNodeRef = useRef(onSelectNode);
   const onSetPathTargetRef = useRef(onSetPathTarget);
@@ -540,6 +544,7 @@ function SigmaGraphViewComponent({
     if (!containerRef.current) return;
 
     const sigma = new Sigma(graph, containerRef.current, {
+      allowInvalidContainer: true,
       renderLabels: true,
       labelFont: resolvedTokens.sigmaConfig.labelFont,
       labelSize: nodeLabelFontSize,
@@ -558,7 +563,7 @@ function SigmaGraphViewComponent({
       edgeLabelColor: { color: resolvedTokens.edgeLabelColor.default },
 
       nodeProgramClasses: {
-        circle: NodeSphereProgram,
+        circle: NodeCircleProgram,
       },
       defaultNodeType: "circle",
     });
@@ -577,6 +582,25 @@ function SigmaGraphViewComponent({
     (window as any).__lwSigma = sigma;
     (window as any).__lwCameraController = cameraControllerRef.current;
 
+    // vP-Physics-Backbone-Seed: Install nodeReducer to pin spine positions
+    // This overrides display positions at render time, working around FA2 worker
+    // overwriting graphology attributes. The seeder stores seeded positions in
+    // graph-level attribute __seededSpinePositions.
+    const previousNodeReducer = sigma.getSetting("nodeReducer");
+    sigma.setSetting("nodeReducer", (nodeId: string, data: any) => {
+      const base = previousNodeReducer
+        ? previousNodeReducer(nodeId, data)
+        : { ...data };
+      const seeded = graph.getAttribute("__seededSpinePositions") as Map<string, { x: number; y: number }> | undefined;
+      if (seeded && seeded.has(nodeId)) {
+        const pos = seeded.get(nodeId);
+        if (pos) {
+          return { ...base, x: pos.x, y: pos.y };
+        }
+      }
+      return base;
+    });
+
   // Start continuous FA2 supervisor
   // Stop any existing supervisor
   if (fa2Ref.current) {
@@ -586,7 +610,7 @@ function SigmaGraphViewComponent({
 
   // Start continuous FA2 supervisor
   const fa2Settings = {
-    gravity: Math.max(0.001, centerForce * 0.005),
+    gravity: Math.max(0.001, centerForce * 0.05),
     scalingRatio: Math.max(0.1, repelForce * 0.1),
     slowDown: Math.max(1, linkDistance * 1),
     strongGravityMode,
@@ -594,12 +618,28 @@ function SigmaGraphViewComponent({
     adjustSizes,
     barnesHutOptimize: graph.order > 150,
     barnesHutTheta,
+    edgeWeightInfluence: 1,
   };
+
+  // INSTRUMENTATION: vP-physics-instrument-positions
+  console.log("[LW-INSTR fa2-init]", {
+    gravity: fa2Settings.gravity,
+    scalingRatio: fa2Settings.scalingRatio,
+    slowDown: fa2Settings.slowDown,
+    strongGravityMode: fa2Settings.strongGravityMode,
+    linLogMode: fa2Settings.linLogMode,
+    rawCenterForce: centerForce,
+    rawRepelForce: repelForce,
+    rawLinkDistance: linkDistance,
+  });
 
   // Start FA2 worker after Sigma completes first render
   // This ensures Sigma has fully registered all nodes AND edges
   // before the worker starts mutating positions
   sigma.once("afterRender", () => {
+    // vP-ClusterAware-Physics-Rebuild: Replace FA2 with cluster-aware force loop
+    // FA2 invocation commented out for fallback comparison
+    /*
     if (fa2Ref.current) {
       fa2Ref.current.stop();
       fa2Ref.current.kill();
@@ -608,6 +648,39 @@ function SigmaGraphViewComponent({
       settings: fa2Settings,
     });
     fa2Ref.current.start();
+
+    // One-shot noverlap pass after FA2 settles (3 seconds)
+    setTimeout(() => {
+      if (graph.order > 0) {
+        applyNoverlap(graph);
+      }
+    }, 3000);
+    */
+
+    // Start cluster-aware force loop
+    clusterStopRef.current = startClusterAwareForceLoop(graph);
+
+    // INSTRUMENTATION: vP-physics-instrument-positions
+    setTimeout(() => {
+      if (!graphRef.current) return;
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      graphRef.current.forEachNode((id: string) => {
+        const attrs = graphRef.current!.getNodeAttributes(id);
+        const x = attrs.x as number;
+        const y = attrs.y as number;
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      });
+      console.log("[LW-INSTR post-fa2 +3s]", {
+        minX: minX.toFixed(1),
+        maxX: maxX.toFixed(1),
+        minY: minY.toFixed(1),
+        maxY: maxY.toFixed(1),
+        spread: { x: (maxX - minX).toFixed(1), y: (maxY - minY).toFixed(1) },
+      });
+    }, 3000);
   });
 
   // Camera preservation rule: Only reset camera once after initial graph load.
@@ -724,11 +797,18 @@ function SigmaGraphViewComponent({
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
+    // vP-ClusterAware-Physics-Rebuild: Stop cluster loop instead of FA2
+    if (clusterStopRef.current) {
+      clusterStopRef.current();
+      clusterStopRef.current = null;
+    }
+    /*
     if (fa2Ref.current) {
       fa2Ref.current.stop();
       fa2Ref.current.kill();
       fa2Ref.current = null;
     }
+    */
     if (sigmaRef.current) {
       sigmaRef.current.kill();
       sigmaRef.current = null;
@@ -737,29 +817,17 @@ function SigmaGraphViewComponent({
   }
 }, [nodes, edges]);
 
-// Live slider updates for FA2 settings without graph rebuild
+// Live slider updates for cluster-aware force loop without graph rebuild
 useEffect(() => {
   if (!graphRef.current || !sigmaRef.current) return;
-  if (fa2Ref.current) {
-    fa2Ref.current.stop();
-    fa2Ref.current.kill();
-    fa2Ref.current = null;
+  // vP-ClusterAware-Physics-Rebuild: Restart cluster loop on slider changes
+  if (clusterStopRef.current) {
+    clusterStopRef.current();
+    clusterStopRef.current = null;
   }
   sigmaRef.current.once("afterRender", () => {
     if (!graphRef.current) return;
-    fa2Ref.current = new FA2Layout(graphRef.current, {
-      settings: {
-        gravity: Math.max(0.001, centerForce * 0.005),
-        scalingRatio: Math.max(0.1, repelForce * 0.1),
-        slowDown: Math.max(1, linkDistance * 1),
-        strongGravityMode,
-        linLogMode,
-        adjustSizes,
-        barnesHutOptimize: true,
-        barnesHutTheta,
-      },
-    });
-    fa2Ref.current.start();
+    clusterStopRef.current = startClusterAwareForceLoop(graphRef.current);
   });
   sigmaRef.current.refresh();
 }, [centerForce, repelForce, linkDistance,

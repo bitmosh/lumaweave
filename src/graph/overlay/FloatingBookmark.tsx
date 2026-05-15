@@ -25,20 +25,20 @@ export function FloatingBookmark({ bookmark, onClick, alertColor = "#ef4444", pi
 
   return (
     <div
-      className="absolute cursor-pointer rounded-lg px-3 py-2 shadow-lg backdrop-blur-sm border"
+      className="absolute cursor-pointer rounded-lg px-2 py-1 w-32 shadow-lg backdrop-blur-sm border"
       style={{
         left: `${bookmark.position.x * 100}%`,
         top: `${bookmark.position.y * 100}%`,
         backgroundColor: typeColors[bookmark.type] + "33",
         borderColor: typeColors[bookmark.type],
         color: "#fff",
-        fontSize: 12,
+        fontSize: 11,
         transform: "translate(-50%, -50%)",
       }}
       onClick={onClick}
     >
       <div className="font-semibold">{bookmark.label}</div>
-      {bookmark.sub && <div className="text-xs opacity-75">{bookmark.sub}</div>}
+      {bookmark.sub && <div className="text-[10px] opacity-70">{bookmark.sub}</div>}
     </div>
   );
 }

@@ -4,8 +4,6 @@
  */
 
 import Graph from "graphology";
-import noverlap from "graphology-layout-noverlap";
-import louvain from "graphology-communities-louvain";
 import { degree } from "graphology-metrics/centrality";
 import {
   connectedComponents,
@@ -17,6 +15,10 @@ import type {
   LumaWeaveNodeDraft,
 } from "../../schema/graph.types";
 import { graphVisualTokens } from "../../visual/graphVisualTokens";
+import { getEdgePhysicsWeight } from "../../physics/edgeTypePhysicsRegistry";
+import { seedDirectoryBackboneN2 } from "../../physics/directoryBackboneSeeder";
+
+const BASE_NODE_SIZE = 8;
 
 export interface LayoutSettings {
   nodeSize: number;
@@ -25,172 +27,6 @@ export interface LayoutSettings {
   centerForce: number;
   physicsDialect: "default" | "helix" | "solar-orbit";
   nodeColorScale?: string[]; // theme-driven
-}
-
-/**
- * Generate a sunflower/golden-angle position for a node.
- * This spreads nodes evenly in a spiral pattern.
- */
-function getSunflowerPosition(
-  index: number,
-  layoutScale: number,
-): { x: number; y: number } {
-  const goldenAngle = Math.PI * (3 - Math.sqrt(5));
-  const radius = Math.sqrt(index + 1) * layoutScale;
-  const angle = index * goldenAngle;
-
-  return {
-    x: Math.cos(angle) * radius,
-    y: Math.sin(angle) * radius,
-  };
-}
-
-/**
- * Group nodes by their cluster attribute.
- * Returns clusters sorted by size (largest first).
- */
-function groupByCluster(
-  nodes: LumaWeaveNodeDraft[]
-): Map<string, LumaWeaveNodeDraft[]> {
-  const clusters = new Map<string, LumaWeaveNodeDraft[]>();
-  nodes.forEach((node) => {
-    const cluster = (node.raw?.cluster as string) ?? "gray";
-    if (!clusters.has(cluster)) clusters.set(cluster, []);
-    clusters.get(cluster)!.push(node);
-  });
-  // Sort by size descending — largest cluster = backbone
-  return new Map(
-    [...clusters.entries()].sort((a, b) => b[1].length - a[1].length)
-  );
-}
-
-/**
- * Map Louvain community numbers to brand cluster colors.
- * Community 0 → blue, 1 → purple, 2 → gold, 3 → teal, 4 → green, 5+ → gray
- */
-function mapCommunityToCluster(community: number): string {
-  const clusterMap: Record<number, string> = {
-    0: "blue",
-    1: "purple",
-    2: "gold",
-    3: "teal",
-    4: "green",
-  };
-  return clusterMap[community] ?? "gray";
-}
-
-/**
- * Run Louvain community detection and assign clusters to nodes
- * that don't already have a cluster assigned.
- */
-function assignLouvainCommunities(
-  nodes: LumaWeaveNodeDraft[],
-  graph: Graph
-): void {
-  // Run Louvain on the graph - assigns community as node attribute
-  louvain.assign(graph);
-
-  // Assign cluster to nodes that don't have one
-  nodes.forEach((node) => {
-    if (!node.raw?.cluster) {
-      const community = graph.getNodeAttribute(node.id, "community") as number;
-      const clusterColor = mapCommunityToCluster(community);
-      node.raw = { ...node.raw, cluster: clusterColor };
-    }
-  });
-}
-
-/**
- * Get helix position for a node on the backbone.
- * Arranges nodes along a 3D-projected helix spiral.
- */
-function getHelixPosition(
-  index: number,
-  total: number,
-  helixRadius: number,
-  helixPitch: number,
-  helixTurns: number,
-): { x: number; y: number } {
-  const t = (index / Math.max(total - 1, 1)) * helixTurns * 2 * Math.PI;
-  return {
-    x: Math.cos(t) * helixRadius,
-    y: (t / (2 * Math.PI)) * helixPitch - (helixTurns * helixPitch) / 2,
-  };
-}
-
-/**
- * Get constellation branch position.
- * Spreads branch nodes in a small cluster around
- * their nearest backbone node position.
- */
-function getBranchPosition(
-  index: number,
-  total: number,
-  anchorX: number,
-  anchorY: number,
-  branchRadius: number,
-): { x: number; y: number } {
-  const angle = (index / Math.max(total, 1)) * 2 * Math.PI;
-  const r = branchRadius * (0.4 + 0.6 * (index / Math.max(total, 1)));
-  return {
-    x: anchorX + Math.cos(angle) * r,
-    y: anchorY + Math.sin(angle) * r,
-  };
-}
-
-/**
- * Apply helix layout to graph.
- * Places largest cluster along helix backbone,
- * remaining clusters as constellation branches.
- */
-function applyHelixLayout(
-  nodes: LumaWeaveNodeDraft[],
-  graph: Graph,
-): void {
-  const helixRadius = 120;
-  const helixPitch = 80;
-  const helixTurns = 3;
-  const branchRadius = 60;
-
-  const clusters = groupByCluster(nodes);
-  const clusterEntries = [...clusters.entries()];
-
-  // Largest cluster = backbone helix
-  const [, backboneNodes] = clusterEntries[0] ?? [];
-  const backbonePositions: { x: number; y: number }[] = [];
-
-  // Place backbone nodes along helix
-  if (backboneNodes) {
-    backboneNodes.forEach((node, i) => {
-      const pos = getHelixPosition(
-        i, backboneNodes.length,
-        helixRadius, helixPitch, helixTurns
-      );
-      backbonePositions.push(pos);
-      graph.setNodeAttribute(node.id, "x", pos.x);
-      graph.setNodeAttribute(node.id, "y", pos.y);
-    });
-  }
-
-  // Remaining clusters = constellation branches
-  clusterEntries.slice(1).forEach(([, branchNodes], clusterIdx) => {
-    // Find nearest backbone position for this branch
-    const anchorIdx = Math.floor(
-      (clusterIdx / (clusterEntries.length - 1)) *
-      Math.max(backbonePositions.length - 1, 0)
-    );
-    const anchor = backbonePositions[anchorIdx] ?? { x: 0, y: 0 };
-
-    // Spread branch nodes around anchor
-    branchNodes.forEach((node, i) => {
-      const pos = getBranchPosition(
-        i, branchNodes.length,
-        anchor.x, anchor.y, branchRadius
-      );
-      graph.setNodeAttribute(node.id, "x", pos.x);
-      graph.setNodeAttribute(node.id, "y", pos.y);
-    });
-  });
 }
 
 export interface GraphBuildResult {
@@ -222,14 +58,12 @@ export function buildGraphologyGraph(
 ): GraphBuildResult {
   const graph = new Graph({ multi: true });
 
-  const layoutScale =
-    18 + settings.linkDistance * 0.2 + settings.repelForce * 0.08;
-
   const baseSize = 10;
 
-  nodes.forEach((node, index) => {
+  nodes.forEach((node) => {
     try {
-      const position = getSunflowerPosition(index, layoutScale);
+      // Start at origin — seeder will set deterministic positions
+      const position = { x: 0, y: 0 };
 
       graph.addNode(node.id, {
         x: position.x,
@@ -248,15 +82,42 @@ export function buildGraphologyGraph(
     }
   });
 
+  // INSTRUMENTATION: vP-physics-instrument-positions
+  {
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    graph.forEachNode((id) => {
+      const attrs = graph.getNodeAttributes(id);
+      const x = attrs.x as number;
+      const y = attrs.y as number;
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+      if (y < minY) minY = y;
+      if (y > maxY) maxY = y;
+    });
+    console.log("[LW-INSTR seed]", {
+      callSite: new Error().stack?.split("\n")[2]?.trim() ?? "unknown",
+      nodeCount: nodes.length,
+      layoutScale: Math.sqrt(nodes.length) * 50,
+      minX: minX.toFixed(1),
+      maxX: maxX.toFixed(1),
+      minY: minY.toFixed(1),
+      maxY: maxY.toFixed(1),
+      spread: { x: (maxX - minX).toFixed(1), y: (maxY - minY).toFixed(1) },
+    });
+  }
+
   edges.forEach((edge) => {
     try {
       const relationshipLabel = edge.relationship || "related";
+      const edgeType = (edge.raw?.type as string) || relationshipLabel;
+      const physicsWeight = getEdgePhysicsWeight(edgeType);
       graph.addEdgeWithKey(edge.id, edge.source, edge.target, {
         id: edge.id,
         relationship: relationshipLabel,
         label: relationshipLabel,
         fullLabel: relationshipLabel,
         originalLabel: relationshipLabel,
+        weight: physicsWeight,
         color: (edge.raw?.color as string) ?? "rgba(100,130,180,0.55)",
         size: (edge.raw?.size as number) ?? 1.5,
         raw: edge.raw,
@@ -275,15 +136,23 @@ export function buildGraphologyGraph(
 
   graph.forEachNode((nodeId) => {
     const attrs = graph.getNodeAttributes(nodeId);
-    const baseSz = (attrs.baseSize as number) ?? 8;
-    const c = (centralityScores[nodeId] ?? 0) as number;
-    const normalized = c / maxCentrality;
-    // Blend: base size + up to 80% boost for most connected
-    const newSize = baseSz * (1 + normalized * 0.8);
-    graph.setNodeAttribute(
-      nodeId, "size", newSize * settings.nodeSize
-    );
-    graph.setNodeAttribute(nodeId, "baseSize", newSize);
+    const nodeType = attrs.nodeType || attrs.raw?.type;
+    
+    // Spine nodes: size based on child count (not centrality)
+    if (nodeType === "spine") {
+      const childCount = graph.outDegree(nodeId);
+      const spineSize = BASE_NODE_SIZE * (1 + Math.log2(childCount + 1) * 0.3);
+      graph.setNodeAttribute(nodeId, "size", spineSize * settings.nodeSize);
+      graph.setNodeAttribute(nodeId, "baseSize", spineSize);
+    } else {
+      // Non-spine nodes: centrality boost
+      const c = (centralityScores[nodeId] ?? 0) as number;
+      const normalized = c / maxCentrality;
+      // Blend: base size + up to 40% boost for most connected (reduced from 80%)
+      const newSize = BASE_NODE_SIZE * (1 + normalized * 0.4);
+      graph.setNodeAttribute(nodeId, "size", newSize * settings.nodeSize);
+      graph.setNodeAttribute(nodeId, "baseSize", newSize);
+    }
   });
 
   // Apply theme-driven color scale by centrality rank
@@ -345,30 +214,8 @@ export function buildGraphologyGraph(
     "clusterSunCount", clusterSuns.size
   );
 
-  // Apply dialect-specific layout seeding
-  if (settings.physicsDialect === "helix") {
-    // Run Louvain community detection before helix layout
-    // to assign clusters to nodes that don't have them
-    assignLouvainCommunities(nodes, graph);
-    applyHelixLayout(nodes, graph);
-  }
-
-  // Apply ForceAtlas2 force simulation
-  // Moved to SigmaGraphView.tsx as continuous supervisor
-  // Initial sunflower positions seed the layout
-
-  // Anti-collision pass — nudges nodes apart
-  // after FA2 settles the layout
-  noverlap.assign(graph, {
-    maxIterations: 50,
-    settings: {
-      ratio: 1.2,
-      margin: 2,
-      speed: 3,
-      gridSize: 25,
-      expansion: 1.5,
-    },
-  });
+  // Call directory backbone seeder
+  seedDirectoryBackboneN2({ graph, settings });
 
   // Connected components analysis
   const componentCount = countConnectedComponents(graph);

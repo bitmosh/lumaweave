@@ -174,6 +174,28 @@ Full policy: `docs/agent/onboarding/MULTI_AGENT_POLICY.md`
 
 ---
 
+Imperative resource lifecycle is independent of React's
+component lifecycle.
+
+When a useEffect:
+  - Owns an imperative resource (Sigma instance, WebGL context,
+    subscription, animation loop, etc.), AND
+  - Has a cleanup function that destroys that resource
+
+Then the effect's dependency array is effectively a "resource
+recreation trigger." Adding props to the deps array means
+"recreate the resource when these change."
+
+This is rarely what you want for imperative resources. Prefer:
+  - Mount-once effect with minimal deps (e.g., [sourceId])
+  - Separate update effects that mutate the existing resource
+
+Confusing this with React's component lifecycle leads to
+silently expensive recreation cycles that look like "re-renders"
+but are actually full resource teardown + rebuild.
+
+---
+
 ## Large Bite Rules
 
 A large Quest Mode bite is allowed only when:
