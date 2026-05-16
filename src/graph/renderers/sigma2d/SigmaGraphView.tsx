@@ -242,7 +242,7 @@ function SigmaGraphViewComponent({
     debounceRef.current = setTimeout(() => {
       const { graph, diagnostics } = buildGraphologyGraph(nodes, edges, settings);
 
-      // Store graph for FA2 supervisor updates
+      // Store graph for gwells controller updates
       graphRef.current = graph;
 
       // Clear solar orbit attributes on rebuild

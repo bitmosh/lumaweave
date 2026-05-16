@@ -1,28 +1,28 @@
 # Self-Graph Report
 
-Generated: 2026-05-16T20:22:26.014Z
+Generated: 2026-05-16T21:56:59.133Z
 Source commit: N/A
 Schema: lumaweave-self-graph/v1
 
 ## Summary
 
-- Total nodes: 394
-- Total edges: 1417
+- Total nodes: 387
+- Total edges: 1398
 
 ### Nodes by type
-- doc: 202
-- code: 119
+- doc: 201
+- code: 114
 - config: 5
 - fixture: 0
-- spine: 68
+- spine: 67
 
 ### Edges by type
-- contains: 386
+- contains: 379
 - governs: 29
 - explicit-reference: 380
 - code-import: 140
 - tag-overlap: 169
-- describes: 313
+- describes: 301
 
 ## Top 10 by in-degree
 - src.graph.renderers.sigma2d.sigmagraphview (code): 22
@@ -37,7 +37,7 @@ Schema: lumaweave-self-graph/v1
 - agent.survival.manual.readme (doc): 14
 
 ## Top 10 by out-degree
-- docs (spine): 73
+- docs (spine): 72
 - policy.source.of.truth (doc): 30
 - registry.inventory (doc): 27
 - src.app.appshell (code): 26
@@ -158,7 +158,7 @@ Frontmatter references targeting unknown ids:
 ## Cluster breakdown
 | Cluster | Node count |
 |---------|------------|
-| azure | 92 |
+| azure | 86 |
 | crimson | 4 |
 | ember | 9 |
 | gold | 32 |

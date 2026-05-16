@@ -1931,7 +1931,7 @@ export const advisoryV74b: BanditAdvisorySection = {
     {
       id: "v74b-noverlap-anti-collision",
       title: "Add graphology-layout-noverlap",
-      summary: "Anti-collision post-processing after FA2. Prevents node overlap in dense graph regions. Run after ForceAtlas2 for cleaner visual separation.",
+      summary: "Anti-collision post-processing for force-directed layouts. Prevents node overlap in dense graph regions. Retired in Pass C3 alongside FA2 and noverlap - gwells uses built-in collision avoidance.",
       risk: "low",
       recommendedNextAction: "Install with next physics tuning pass",
       userDecision: "unreviewed",

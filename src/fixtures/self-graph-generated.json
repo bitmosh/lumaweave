@@ -2,26 +2,26 @@
   "schemaVersion": "lumaweave-self-graph/v1",
   "metadata": {
     "schemaVersion": "lumaweave-self-graph/v1",
-    "generatedAt": "2026-05-16T20:22:26.014Z",
+    "generatedAt": "2026-05-16T21:56:59.133Z",
     "generator": "generate-self-graph@v2",
     "sourceTree": "./",
     "stats": {
-      "nodeCount": 394,
-      "edgeCount": 1417,
+      "nodeCount": 387,
+      "edgeCount": 1398,
       "nodesByType": {
-        "doc": 202,
-        "code": 119,
+        "doc": 201,
+        "code": 114,
         "config": 5,
         "fixture": 0,
-        "spine": 68
+        "spine": 67
       },
       "edgesByType": {
-        "contains": 386,
+        "contains": 379,
         "governs": 29,
         "explicit-reference": 380,
         "code-import": 140,
         "tag-overlap": 169,
-        "describes": 313
+        "describes": 301
       }
     }
   },
@@ -859,19 +859,6 @@
       ],
       "size": 256,
       "lastModified": "2026-05-15T23:12:46.558Z",
-      "raw": {}
-    },
-    {
-      "id": "docs.buildgraphologygraph",
-      "type": "doc",
-      "label": "buildGraphologyGraph",
-      "fullLabel": "buildGraphologyGraph",
-      "path": "docs/buildGraphologyGraph.md",
-      "cluster": null,
-      "status": null,
-      "tags": [],
-      "size": 348,
-      "lastModified": "2026-05-15T23:12:46.536Z",
       "raw": {}
     },
     {
@@ -4225,8 +4212,8 @@
         "src",
         "physics"
       ],
-      "size": 251,
-      "lastModified": "2026-05-16T19:58:58.470Z",
+      "size": 250,
+      "lastModified": "2026-05-16T20:44:07.676Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4244,8 +4231,8 @@
         "src",
         "physics"
       ],
-      "size": 255,
-      "lastModified": "2026-05-16T20:00:47.940Z",
+      "size": 250,
+      "lastModified": "2026-05-16T20:44:28.232Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4511,7 +4498,7 @@
         "graph"
       ],
       "size": 894,
-      "lastModified": "2026-05-16T17:46:14.665Z",
+      "lastModified": "2026-05-16T21:56:13.071Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4531,101 +4518,6 @@
       ],
       "size": 150,
       "lastModified": "2026-05-15T23:12:46.635Z",
-      "raw": {
-        "color": "#5a6678",
-        "dimFactor": 0.55
-      }
-    },
-    {
-      "id": "src.graph.physics.seedfunctionregistry",
-      "type": "code",
-      "label": "seedFunctionRegistry",
-      "fullLabel": "seedFunctionRegistry.ts",
-      "path": "src/graph/physics/seedFunctionRegistry.ts",
-      "cluster": "azure",
-      "status": null,
-      "tags": [
-        "src",
-        "graph"
-      ],
-      "size": 75,
-      "lastModified": "2026-05-15T23:12:46.633Z",
-      "raw": {
-        "color": "#5a6678",
-        "dimFactor": 0.55
-      }
-    },
-    {
-      "id": "src.graph.physics.noverlappass",
-      "type": "code",
-      "label": "noverlapPass",
-      "fullLabel": "noverlapPass.ts",
-      "path": "src/graph/physics/noverlapPass.ts",
-      "cluster": "azure",
-      "status": null,
-      "tags": [
-        "src",
-        "graph"
-      ],
-      "size": 67,
-      "lastModified": "2026-05-15T23:12:46.633Z",
-      "raw": {
-        "color": "#5a6678",
-        "dimFactor": 0.55
-      }
-    },
-    {
-      "id": "src.graph.physics.edgetypephysicsregistry",
-      "type": "code",
-      "label": "edgeTypePhysicsRegistry",
-      "fullLabel": "edgeTypePhysicsRegistry.ts",
-      "path": "src/graph/physics/edgeTypePhysicsRegistry.ts",
-      "cluster": "azure",
-      "status": null,
-      "tags": [
-        "src",
-        "graph"
-      ],
-      "size": 103,
-      "lastModified": "2026-05-15T23:12:46.633Z",
-      "raw": {
-        "color": "#5a6678",
-        "dimFactor": 0.55
-      }
-    },
-    {
-      "id": "src.graph.physics.directorybackboneseeder",
-      "type": "code",
-      "label": "directoryBackboneSeeder",
-      "fullLabel": "directoryBackboneSeeder.ts",
-      "path": "src/graph/physics/directoryBackboneSeeder.ts",
-      "cluster": "azure",
-      "status": null,
-      "tags": [
-        "src",
-        "graph"
-      ],
-      "size": 229,
-      "lastModified": "2026-05-15T23:12:46.632Z",
-      "raw": {
-        "color": "#5a6678",
-        "dimFactor": 0.55
-      }
-    },
-    {
-      "id": "src.graph.physics.clusterawareforceloop",
-      "type": "code",
-      "label": "clusterAwareForceLoop",
-      "fullLabel": "clusterAwareForceLoop.ts",
-      "path": "src/graph/physics/clusterAwareForceLoop.ts",
-      "cluster": "azure",
-      "status": null,
-      "tags": [
-        "src",
-        "graph"
-      ],
-      "size": 204,
-      "lastModified": "2026-05-15T23:12:46.632Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4967,7 +4859,7 @@
         "control-plane"
       ],
       "size": 65,
-      "lastModified": "2026-05-16T20:05:10.739Z",
+      "lastModified": "2026-05-16T20:45:40.297Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4986,7 +4878,7 @@
         "control-plane"
       ],
       "size": 167,
-      "lastModified": "2026-05-16T20:04:06.922Z",
+      "lastModified": "2026-05-16T20:45:32.923Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -5004,8 +4896,8 @@
         "src",
         "control-plane"
       ],
-      "size": 126,
-      "lastModified": "2026-05-16T17:39:22.461Z",
+      "size": 130,
+      "lastModified": "2026-05-16T20:46:51.849Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -5023,8 +4915,8 @@
         "src",
         "control-plane"
       ],
-      "size": 193,
-      "lastModified": "2026-05-16T20:05:03.142Z",
+      "size": 187,
+      "lastModified": "2026-05-16T20:58:35.562Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -5043,7 +4935,7 @@
         "control-plane"
       ],
       "size": 117,
-      "lastModified": "2026-05-16T20:04:24.501Z",
+      "lastModified": "2026-05-16T20:45:18.553Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -5062,7 +4954,7 @@
         "control-plane"
       ],
       "size": 191,
-      "lastModified": "2026-05-15T23:12:46.620Z",
+      "lastModified": "2026-05-16T20:47:14.656Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -5138,7 +5030,7 @@
         "control-plane"
       ],
       "size": 4659,
-      "lastModified": "2026-05-15T23:12:46.627Z",
+      "lastModified": "2026-05-16T21:56:25.322Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -5975,7 +5867,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-15T23:12:46.573Z",
+      "lastModified": "2026-05-16T21:56:49.336Z",
       "raw": {
         "color": "#9ca3af",
         "dimFactor": 0.8
@@ -6823,7 +6715,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-15T23:12:46.634Z",
+      "lastModified": "2026-05-16T21:55:56.502Z",
       "raw": {
         "color": "#9ca3af",
         "dimFactor": 0.8
@@ -6888,22 +6780,6 @@
       "tags": [],
       "size": 0,
       "lastModified": "2026-05-15T23:12:46.634Z",
-      "raw": {
-        "color": "#9ca3af",
-        "dimFactor": 0.8
-      }
-    },
-    {
-      "id": "src.graph.physics",
-      "type": "spine",
-      "label": "physics",
-      "fullLabel": "src/graph/physics",
-      "path": "src/graph/physics",
-      "cluster": "azure",
-      "status": null,
-      "tags": [],
-      "size": 0,
-      "lastModified": "2026-05-15T23:12:46.633Z",
       "raw": {
         "color": "#9ca3af",
         "dimFactor": 0.8
@@ -7598,17 +7474,6 @@
       "id": "edge-docs.audio-audio.universal.handle.routing-contains",
       "source": "docs.audio",
       "target": "audio.universal.handle.routing",
-      "type": "contains",
-      "weight": 0.5,
-      "bidirectional": false,
-      "provenance": {
-        "source": "directory-walk"
-      }
-    },
-    {
-      "id": "edge-docs-docs.buildgraphologygraph-contains",
-      "source": "docs",
-      "target": "docs.buildgraphologygraph",
       "type": "contains",
       "weight": 0.5,
       "bidirectional": false,
@@ -9795,61 +9660,6 @@
       }
     },
     {
-      "id": "edge-src.graph.physics-src.graph.physics.seedfunctionregistry-contains",
-      "source": "src.graph.physics",
-      "target": "src.graph.physics.seedfunctionregistry",
-      "type": "contains",
-      "weight": 0.5,
-      "bidirectional": false,
-      "provenance": {
-        "source": "directory-walk"
-      }
-    },
-    {
-      "id": "edge-src.graph.physics-src.graph.physics.noverlappass-contains",
-      "source": "src.graph.physics",
-      "target": "src.graph.physics.noverlappass",
-      "type": "contains",
-      "weight": 0.5,
-      "bidirectional": false,
-      "provenance": {
-        "source": "directory-walk"
-      }
-    },
-    {
-      "id": "edge-src.graph.physics-src.graph.physics.edgetypephysicsregistry-contains",
-      "source": "src.graph.physics",
-      "target": "src.graph.physics.edgetypephysicsregistry",
-      "type": "contains",
-      "weight": 0.5,
-      "bidirectional": false,
-      "provenance": {
-        "source": "directory-walk"
-      }
-    },
-    {
-      "id": "edge-src.graph.physics-src.graph.physics.directorybackboneseeder-contains",
-      "source": "src.graph.physics",
-      "target": "src.graph.physics.directorybackboneseeder",
-      "type": "contains",
-      "weight": 0.5,
-      "bidirectional": false,
-      "provenance": {
-        "source": "directory-walk"
-      }
-    },
-    {
-      "id": "edge-src.graph.physics-src.graph.physics.clusterawareforceloop-contains",
-      "source": "src.graph.physics",
-      "target": "src.graph.physics.clusterawareforceloop",
-      "type": "contains",
-      "weight": 0.5,
-      "bidirectional": false,
-      "provenance": {
-        "source": "directory-walk"
-      }
-    },
-    {
       "id": "edge-src.graph.overlay-src.graph.overlay.cameracontroller-contains",
       "source": "src.graph.overlay",
       "target": "src.graph.overlay.cameracontroller",
@@ -11184,17 +10994,6 @@
       "id": "edge-src.graph-src.graph.overlay-contains",
       "source": "src.graph",
       "target": "src.graph.overlay",
-      "type": "contains",
-      "weight": 0.5,
-      "bidirectional": false,
-      "provenance": {
-        "source": "directory-walk"
-      }
-    },
-    {
-      "id": "edge-src.graph-src.graph.physics-contains",
-      "source": "src.graph",
-      "target": "src.graph.physics",
       "type": "contains",
       "weight": 0.5,
       "bidirectional": false,
@@ -21358,18 +21157,6 @@
       }
     },
     {
-      "id": "edge-physics.gwells.contract-src.graph.physics.directorybackboneseeder-describes",
-      "source": "physics.gwells.contract",
-      "target": "src.graph.physics.directorybackboneseeder",
-      "type": "describes",
-      "weight": 0.6,
-      "bidirectional": false,
-      "provenance": {
-        "source": "heuristic",
-        "detail": "doc mentions code path"
-      }
-    },
-    {
       "id": "edge-physics.gwells.dialect.radial.backbone-src.physics.gwells.welltypes-describes",
       "source": "physics.gwells.dialect.radial.backbone",
       "target": "src.physics.gwells.welltypes",
@@ -23314,69 +23101,9 @@
       }
     },
     {
-      "id": "edge-vP-backbone-spacing-src.graph.physics.directorybackboneseeder-describes",
-      "source": "vP-backbone-spacing",
-      "target": "src.graph.physics.directorybackboneseeder",
-      "type": "describes",
-      "weight": 0.6,
-      "bidirectional": false,
-      "provenance": {
-        "source": "heuristic",
-        "detail": "doc mentions code path"
-      }
-    },
-    {
       "id": "edge-vP-cluster-aware-physics-rebuild-src.graph.renderers.sigma2d.sigmagraphview-describes",
       "source": "vP-cluster-aware-physics-rebuild",
       "target": "src.graph.renderers.sigma2d.sigmagraphview",
-      "type": "describes",
-      "weight": 0.6,
-      "bidirectional": false,
-      "provenance": {
-        "source": "heuristic",
-        "detail": "doc mentions code path"
-      }
-    },
-    {
-      "id": "edge-vP-cluster-aware-physics-rebuild-src.graph.physics.seedfunctionregistry-describes",
-      "source": "vP-cluster-aware-physics-rebuild",
-      "target": "src.graph.physics.seedfunctionregistry",
-      "type": "describes",
-      "weight": 0.6,
-      "bidirectional": false,
-      "provenance": {
-        "source": "heuristic",
-        "detail": "doc mentions code path"
-      }
-    },
-    {
-      "id": "edge-vP-cluster-aware-physics-rebuild-src.graph.physics.edgetypephysicsregistry-describes",
-      "source": "vP-cluster-aware-physics-rebuild",
-      "target": "src.graph.physics.edgetypephysicsregistry",
-      "type": "describes",
-      "weight": 0.6,
-      "bidirectional": false,
-      "provenance": {
-        "source": "heuristic",
-        "detail": "doc mentions code path"
-      }
-    },
-    {
-      "id": "edge-vP-cluster-aware-physics-rebuild-src.graph.physics.directorybackboneseeder-describes",
-      "source": "vP-cluster-aware-physics-rebuild",
-      "target": "src.graph.physics.directorybackboneseeder",
-      "type": "describes",
-      "weight": 0.6,
-      "bidirectional": false,
-      "provenance": {
-        "source": "heuristic",
-        "detail": "doc mentions code path"
-      }
-    },
-    {
-      "id": "edge-vP-cluster-aware-physics-rebuild-src.graph.physics.clusterawareforceloop-describes",
-      "source": "vP-cluster-aware-physics-rebuild",
-      "target": "src.graph.physics.clusterawareforceloop",
       "type": "describes",
       "weight": 0.6,
       "bidirectional": false,
@@ -23398,33 +23125,9 @@
       }
     },
     {
-      "id": "edge-vP-noverlap-dependency-check-src.graph.physics.noverlappass-describes",
-      "source": "vP-noverlap-dependency-check",
-      "target": "src.graph.physics.noverlappass",
-      "type": "describes",
-      "weight": 0.6,
-      "bidirectional": false,
-      "provenance": {
-        "source": "heuristic",
-        "detail": "doc mentions code path"
-      }
-    },
-    {
       "id": "edge-vP-noverlap-restoration-src.graph.renderers.sigma2d.sigmagraphview-describes",
       "source": "vP-noverlap-restoration",
       "target": "src.graph.renderers.sigma2d.sigmagraphview",
-      "type": "describes",
-      "weight": 0.6,
-      "bidirectional": false,
-      "provenance": {
-        "source": "heuristic",
-        "detail": "doc mentions code path"
-      }
-    },
-    {
-      "id": "edge-vP-noverlap-restoration-src.graph.physics.noverlappass-describes",
-      "source": "vP-noverlap-restoration",
-      "target": "src.graph.physics.noverlappass",
       "type": "describes",
       "weight": 0.6,
       "bidirectional": false,
@@ -23530,42 +23233,6 @@
       }
     },
     {
-      "id": "edge-vP-physics-backbone-seed-src.graph.physics.seedfunctionregistry-describes",
-      "source": "vP-physics-backbone-seed",
-      "target": "src.graph.physics.seedfunctionregistry",
-      "type": "describes",
-      "weight": 0.6,
-      "bidirectional": false,
-      "provenance": {
-        "source": "heuristic",
-        "detail": "doc mentions code path"
-      }
-    },
-    {
-      "id": "edge-vP-physics-backbone-seed-src.graph.physics.edgetypephysicsregistry-describes",
-      "source": "vP-physics-backbone-seed",
-      "target": "src.graph.physics.edgetypephysicsregistry",
-      "type": "describes",
-      "weight": 0.6,
-      "bidirectional": false,
-      "provenance": {
-        "source": "heuristic",
-        "detail": "doc mentions code path"
-      }
-    },
-    {
-      "id": "edge-vP-physics-backbone-seed-src.graph.physics.directorybackboneseeder-describes",
-      "source": "vP-physics-backbone-seed",
-      "target": "src.graph.physics.directorybackboneseeder",
-      "type": "describes",
-      "weight": 0.6,
-      "bidirectional": false,
-      "provenance": {
-        "source": "heuristic",
-        "detail": "doc mentions code path"
-      }
-    },
-    {
       "id": "edge-vP-physics-baseline-reset-src.graph.renderers.sigma2d.buildgraphologygraph-describes",
       "source": "vP-physics-baseline-reset",
       "target": "src.graph.renderers.sigma2d.buildgraphologygraph",
@@ -23629,18 +23296,6 @@
       "id": "edge-vP-physics-sizing-fix-src.control-plane.settings.settings.defaults-describes",
       "source": "vP-physics-sizing-fix",
       "target": "src.control-plane.settings.settings.defaults",
-      "type": "describes",
-      "weight": 0.6,
-      "bidirectional": false,
-      "provenance": {
-        "source": "heuristic",
-        "detail": "doc mentions code path"
-      }
-    },
-    {
-      "id": "edge-vP-seeder-side-direction-fix-src.graph.physics.directorybackboneseeder-describes",
-      "source": "vP-seeder-side-direction-fix",
-      "target": "src.graph.physics.directorybackboneseeder",
       "type": "describes",
       "weight": 0.6,
       "bidirectional": false,
