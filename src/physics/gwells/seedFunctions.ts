@@ -12,22 +12,19 @@
  */
 
 import type { GWSeedFunctionEntry, GWStatus } from "./types";
+import { seedRadialBackbone } from "./seeders/radialBackbone";
 
 export const GW_SEED_FUNCTION_REGISTRY: readonly GWSeedFunctionEntry[] = [
   {
-    id: "gwells.seed.directory-backbone-n2",
-    label: "Directory Backbone N=2",
+    id: "gwells.seed.radial-backbone",
+    label: "Radial Backbone",
     description:
-      "Two halves of a continuous spine (docs left, src right) with " +
-      "alternating perpendicular directory anchors. Migrated from " +
-      "src/graph/physics/directoryBackboneSeeder.ts in Pass C2.",
-    status: "planned",
-    seed: (_ctx) => {
-      // Placeholder for Pass C2. Currently does nothing.
-      // Nodes use whatever positions buildGraphologyGraph assigned.
-      // When Pass C2 migrates the seeder, this becomes the real
-      // implementation.
-    },
+      "Generalized N-spine radial layout. Spines emanate from a hub " +
+      "at configurable angles with optional helical twist. Used by " +
+      "horizontal-linear, vertical-parallel, helix-dual, and future " +
+      "radial dialects.",
+    status: "active",
+    seed: (ctx) => seedRadialBackbone(ctx),
   },
 ] as const;
 
