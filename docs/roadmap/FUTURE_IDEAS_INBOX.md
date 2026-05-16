@@ -64,7 +64,7 @@ Items here are promoted to the roadmap only when:
   + interactions (gravity, sibling-repulsion, inter-cluster-repulsion)
   + new seed function. See docs/physics/GALAXY_MODE_DIALECT.md for
   the visual target.
-  Pre-req: gwells v0 ships. Priority: after end-to-end-spine dialect
+  Pre-req: gwells v0 ships. Priority: after the horizontal-linear dialect
   is stable.
 
 - **CLUSTER DEPTH SLIDER**

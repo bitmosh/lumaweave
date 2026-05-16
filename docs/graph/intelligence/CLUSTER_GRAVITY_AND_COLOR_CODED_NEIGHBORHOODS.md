@@ -71,7 +71,7 @@ These colors are also the helix physics dialect's neighborhood colors. The clust
 - **Theme token system:** Cluster color tokens must be part of the theme system
 - **Stable depth/neighborhood traversal:** Must have stable integer depth/neighborhood traversal before adding cluster gravity
 - **Cluster color tokens:** Theme tokens for cluster colors (primary, secondary, tertiary, etc.)
-- **Gwells physics engine:** The cluster-gravity *physics* requires gwells dialect support. Gwells v0 ships with `end-to-end-spine`; cluster-gravity is a future dialect built on gwells well types and typed interactions. See `docs/physics/GRAVITY_WELL_SYSTEM_CONTRACT.md`.
+- **Gwells physics engine:** The cluster-gravity *physics* requires gwells dialect support. Gwells v0 ships with the radial-backbone family (horizontal-linear, vertical-parallel, helix-dual); cluster-gravity is a future dialect built on gwells well types and typed interactions. See `docs/physics/GRAVITY_WELL_SYSTEM_CONTRACT.md`.
 
 ## Possible Data Model
 

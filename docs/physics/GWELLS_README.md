@@ -12,7 +12,7 @@ last_updated: 2026-05-15
 references:
   - physics.gwells.contract
   - physics.gwells.registry.patterns
-  - physics.gwells.dialect.end.to.end.spine
+  - physics.gwells.dialect.radial.backbone
   - graph.contracts.sigma.lifecycle
   - protocol.registry.contract.patterns
 tags: [physics, gwells, readme, orientation, v0]
@@ -155,8 +155,8 @@ Read in this order when you arrive:
    four registries (well types, interactions, seed functions, dialects)
    compose and how data flows between them. Read this before adding any
    registry entry.
-4. **[End-to-End Spine Dialect](physics.gwells.dialect.end.to.end.spine)**
-   — the v0 dialect's visual target and parameter spec. Read this when
+4. **[Radial Backbone Dialect Family](physics.gwells.dialect.radial.backbone)**
+   — the v0 seeder family's visual targets and parameter specs. Read this when
    working on the v0 seeder, well-type defaults, or interaction tuning.
 5. **`src/physics/gwells/types.ts`** — the type definitions. The fastest
    way to see "what shape does this thing take" without reading prose.
@@ -286,8 +286,8 @@ is deliberately not v0."
   authoritative behavior contract.
 - [Registry Patterns](physics.gwells.registry.patterns) — how the four
   registries compose.
-- [End-to-End Spine Dialect](physics.gwells.dialect.end.to.end.spine)
-  — the v0 dialect spec.
+- [Radial Backbone Dialect Family](physics.gwells.dialect.radial.backbone)
+  — the v0 seeder family spec.
 - [Sigma Lifecycle Contract](graph.contracts.sigma.lifecycle) — the
   integration layer's lifecycle rules.
 - [Registry Contract Patterns](protocol.registry.contract.patterns)

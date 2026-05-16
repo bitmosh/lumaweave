@@ -18,7 +18,7 @@ references:
   - concept.graph.cluster.gravity
   - physics.gwells.readme
   - physics.gwells.registry.patterns
-  - physics.gwells.dialect.end.to.end.spine
+  - physics.gwells.dialect.radial.backbone
 tags: [physics, gwells, gravity-wells, contract, v0, layout]
 ---
 
@@ -533,8 +533,8 @@ In the browser after integration:
 - `docs/physics/GWELLS_README.md` exists and orients new agents.
 - `docs/physics/GWELLS_REGISTRY_PATTERNS.md` documents how the four
   registries compose.
-- `docs/physics/GWELLS_DIALECT_END_TO_END_SPINE.md` describes the
-  v0 dialect's visual outcome.
+- `docs/physics/GWELLS_DIALECT_RADIAL_BACKBONE.md` describes the
+  radial-backbone seeder family and its initial dialects.
 - A row for "Gwells Physics Engine" exists in
   `docs/control-plane/contracts/CONTRACT_TO_CODE_TRACE_MATRIX.md`.
 
@@ -658,8 +658,8 @@ Pre-flight standalone typecheck (Evidence § 4) enforces this property.
 - [Gwells README](physics.gwells.readme) — module orientation.
 - [Gwells Registry Patterns](physics.gwells.registry.patterns) — how
   the four registries compose.
-- [End-to-End Spine Dialect](physics.gwells.dialect.end.to.end.spine)
-  — the v0 dialect spec.
+- [Radial Backbone Dialect Family](physics.gwells.dialect.radial.backbone)
+  — the v0 seeder family spec.
 
 ## v0 Sign-Off Note
 

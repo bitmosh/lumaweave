@@ -12,7 +12,7 @@ last_updated: 2026-05-15
 references:
   - physics.gwells.contract
   - physics.gwells.readme
-  - physics.gwells.dialect.end.to.end.spine
+  - physics.gwells.dialect.radial.backbone
   - protocol.registry.contract.patterns
 tags: [physics, gwells, registry, patterns, reference, v0]
 ---
@@ -347,7 +347,7 @@ honest about what's being applied.
   authoritative schema for all four registries.
 - [Gwells README](physics.gwells.readme) — module orientation and
   quickstart.
-- [End-to-End Spine Dialect](physics.gwells.dialect.end.to.end.spine)
-  — the v0 dialect, used as the worked example throughout this doc.
+- [Radial Backbone Dialect Family](physics.gwells.dialect.radial.backbone)
+  — the v0 seeder family, used as the worked example throughout this doc.
 - [Registry Contract Patterns](protocol.registry.contract.patterns)
   — the project-wide standard ladder gwells's registries follow.

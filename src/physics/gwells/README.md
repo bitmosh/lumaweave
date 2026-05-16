@@ -10,8 +10,8 @@ read the following in order:
    behavior contract
 3. `docs/physics/GWELLS_REGISTRY_PATTERNS.md` — how the four
    registries compose
-4. `docs/physics/GWELLS_DIALECT_END_TO_END_SPINE.md` — the v0 dialect
-   specification
+4. `docs/physics/GWELLS_DIALECT_RADIAL_BACKBONE.md` — the v0 seeder
+   family specification
 
 The module is designed for future extraction as a standalone npm
 package. Its only runtime dependency is `graphology`.

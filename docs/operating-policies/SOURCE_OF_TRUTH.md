@@ -99,7 +99,7 @@ Primary:
 docs/physics/GRAVITY_WELL_SYSTEM_CONTRACT.md
 docs/physics/GWELLS_README.md
 docs/physics/GWELLS_REGISTRY_PATTERNS.md
-docs/physics/GWELLS_DIALECT_END_TO_END_SPINE.md
+docs/physics/GWELLS_DIALECT_RADIAL_BACKBONE.md
 src/physics/gwells/types.ts
 src/physics/gwells/wellTypes.ts
 src/physics/gwells/interactions.ts

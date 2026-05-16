@@ -28,7 +28,7 @@ tags: [physics, dialects, layout, audio, helix, constellation, galaxy, signal-lo
 > framing described below remains the architecture intent. Specific
 > dialect implementations referenced in this doc (helix, constellation,
 > galaxy) are treated as *future gwells dialects*; the v0 gwells dialect
-> is `gwells.dialect.end-to-end-spine` (a directory-backbone layout,
+> is `gwells.dialect.horizontal-linear` (a directory-backbone layout,
 > not described in this doc). The FA2/Louvain-based helix implementation
 > that briefly ran in code has been retired.
 >

@@ -1,28 +1,28 @@
 # Self-Graph Report
 
-Generated: 2026-05-15T23:23:56.231Z
+Generated: 2026-05-16T16:01:11.033Z
 Source commit: N/A
 Schema: lumaweave-self-graph/v1
 
 ## Summary
 
-- Total nodes: 379
-- Total edges: 1378
+- Total nodes: 388
+- Total edges: 1400
 
 ### Nodes by type
 - doc: 201
-- code: 108
+- code: 115
 - config: 5
 - fixture: 0
-- spine: 65
+- spine: 67
 
 ### Edges by type
-- contains: 371
+- contains: 380
 - governs: 29
-- explicit-reference: 386
-- code-import: 126
+- explicit-reference: 377
+- code-import: 134
 - tag-overlap: 167
-- describes: 299
+- describes: 313
 
 ## Top 10 by in-degree
 - src.graph.renderers.sigma2d.sigmagraphview (code): 22
@@ -38,14 +38,14 @@ Schema: lumaweave-self-graph/v1
 
 ## Top 10 by out-degree
 - docs (spine): 73
+- policy.source.of.truth (doc): 30
 - registry.inventory (doc): 27
 - src.app.appshell (code): 26
-- policy.source.of.truth (doc): 24
-- link.network.overview (doc): 22
 - theme.system.overview (doc): 21
 - docs.updates.v86--updates.-new-v86--v86-bandit-master-index (doc): 21
 - src.themes (spine): 19
 - docs.token-census-orphans (doc): 19
+- control.plane.contract.to.code.trace.matrix (doc): 16
 - src.control-plane.panels (spine): 15
 
 ## Orphaned nodes (degree = 0) [5]
@@ -55,7 +55,7 @@ Schema: lumaweave-self-graph/v1
 - vite.config (config)
 - playwright.config (config)
 
-## Broken references [88]
+## Broken references [97]
 Frontmatter references targeting unknown ids:
 - docs.rehaul.ledger references docs.rehaul.audit (not found)
 - policy.multi.agent references index.session.and.stack (not found)
@@ -109,6 +109,15 @@ Frontmatter references targeting unknown ids:
 - link.network.layer.4.gaps references graph.view.element.registry.contract (not found)
 - link.network.overview references graph.visual.theme.mapping.contract (not found)
 - link.network.overview references graph.view.element.registry.contract (not found)
+- link.network.overview references link.network.layer.1 (LAYER_1_HANDLE_REGISTRY.md) (not found)
+- link.network.overview references link.network.layer.2 (LAYER_2_CONTROL_SURFACE_CONTRACT.md) (not found)
+- link.network.overview references link.network.layer.3 (LAYER_3_GRAPH_VISUAL_THEME_MAPPING.md) (not found)
+- link.network.overview references link.network.layer.4 (LAYER_4_GRAPH_VIEW_ELEMENT.md) (not found)
+- link.network.overview references link.network.layer.2.overlay.question (LAYER_2_OVERLAY_SURFACE_QUESTION.md) (not found)
+- link.network.overview references link.network.layer.3.gaps (LAYER_3_TOKEN_COVERAGE_GAP.md) (not found)
+- link.network.overview references link.network.layer.4.gaps (LAYER_4_OVERLAY_ELEMENT_GAP.md) (not found)
+- link.network.overview references link.network.naming.drift (NAMING_CONVENTION_DRIFT.md) (not found)
+- link.network.overview references registry.inventory (REGISTRY_INVENTORY.md) (not found)
 - rendering.cross.layer.override.cache references graph.theme.application.contract (not found)
 - rendering.cross.layer.override.cache references grammar.lens.contract (not found)
 - rendering.cross.layer.override.cache references grammar.lens.ghost.overlay.current.state (not found)
