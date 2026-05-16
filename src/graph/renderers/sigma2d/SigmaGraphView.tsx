@@ -7,7 +7,6 @@
 
 import { useEffect, useRef, useState, memo } from "react";
 import Sigma from "sigma";
-import FA2Layout from "graphology-layout-forceatlas2/worker";
 import { bidirectional } from "graphology-shortest-path";
 import type {
   LumaWeaveNodeDraft,
@@ -37,24 +36,14 @@ import { applyNodeLabelPolicy,
 } from "../../visual/applyGraphLabelPolicyToGraphology";
 import { attachCameraController } from "../../overlay/cameraController";
 import { NodeCircleProgram } from "sigma/rendering";
-// import { applyNoverlap } from "../../physics/noverlapPass"; // vP-ClusterAware-Physics-Rebuild: noverlap replaced with cluster-aware force loop
-import { startClusterAwareForceLoop } from "../../physics/clusterAwareForceLoop";
+import { applyDialect, type GWController } from "../../../physics/gwells";
+import { installGwellsProbeGlobal } from "./gwellsProbe";
 
 interface SigmaGraphViewProps {
   nodes: LumaWeaveNodeDraft[];
   edges: LumaWeaveEdgeDraft[];
   nodeSize: number;
-  linkDistance: number;
-  repelForce: number;
-  centerForce: number;
-  physicsPreset: "custom" | "balanced" | "spread" | "tight" | "organic" | "performance";
-  physicsDialect: "default" | "helix" | "solar-orbit";
-  // ForceAtlas2 advanced parameters
-  strongGravityMode: boolean;
-  linLogMode: boolean;
-  adjustSizes: boolean;
-  barnesHutTheta: number;
-  communityGravity: number;
+  dialectId: string;
 
   selectedNodeId: string | null;
   selectedEdgeId?: string | null;
@@ -142,16 +131,7 @@ function SigmaGraphViewComponent({
   nodes,
   edges,
   nodeSize,
-  linkDistance,
-  repelForce,
-  centerForce,
-  physicsPreset = "balanced",
-  physicsDialect = "default",
-  strongGravityMode = false,
-  linLogMode = false,
-  adjustSizes = false,
-  barnesHutTheta = 0.5,
-  communityGravity = 0,
+  dialectId = "gwells.dialect.horizontal-linear",
   selectedNodeId,
   selectedEdgeId = null,
   pathTargetId = null,
@@ -177,8 +157,7 @@ function SigmaGraphViewComponent({
   const containerRef = useRef<HTMLDivElement>(null);
   const sigmaRef = useRef<Sigma | null>(null);
   const cameraControllerRef = useRef<ReturnType<typeof attachCameraController> | null>(null);
-  const fa2Ref = useRef<FA2Layout | null>(null);
-  const clusterStopRef = useRef<(() => void) | null>(null);
+  const gwellsControllerRef = useRef<GWController | null>(null);
   const graphRef = useRef<any>(null);
   const onSelectNodeRef = useRef(onSelectNode);
   const onSetPathTargetRef = useRef(onSetPathTarget);
@@ -187,8 +166,7 @@ function SigmaGraphViewComponent({
   const hasInitialCameraResetRef = useRef(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resolvedTokensRef = useRef(resolvedTokens);
-  const communityGravityRef = useRef<(() => void) | null>(null);
-  const solarOrbitRef = useRef<(() => void) | null>(null);
+  const cleanupProbeRef = useRef<(() => void) | null>(null);
 
   // v86b: Ref-based uniform pipeline - animation loop updates this ref directly
   // NodeSphereProgram reads from this ref on its natural render cycle
@@ -210,218 +188,6 @@ function SigmaGraphViewComponent({
   });
 
   // v86b: Ref-based uniform pipeline - rAF loop updates uniformsRef directly
-  // NodeSphereProgram reads from uniformsRef on its natural render cycle
-  // No sigma.setSetting or sigma.refresh calls per frame
-  useEffect(() => {
-    // Contract #1: reduceMotion halts uniforms at 0.0 (except glowStrength)
-    if (reduceMotion) {
-      uniformsRef.current.time = 0;
-      uniformsRef.current.hum = 0;
-      uniformsRef.current.flowSpeed = 0;
-      uniformsRef.current.glowStrength = nodeGlow ?? 1.0;
-      return;
-    }
-
-    // Normal mode: animate uniforms with rAF loop
-    let raf: number;
-    const tick = (now: number) => {
-      uniformsRef.current.time = now * 0.001;
-      uniformsRef.current.hum = nodeHum ?? 0.7;
-      uniformsRef.current.flowSpeed = nodeFlowSpeed ?? 0.55;
-      uniformsRef.current.glowStrength = nodeGlow ?? 1.0;
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [reduceMotion, nodeHum, nodeFlowSpeed, nodeGlow]);
-
-  // Separate useEffect for communityGravity centroid force
-  useEffect(() => {
-    const sigma = sigmaRef.current;
-    const graph = graphRef.current;
-    if (!sigma || !graph) return;
-
-    // Remove previous handler
-    if (communityGravityRef.current) {
-      sigma.removeListener("afterRender", communityGravityRef.current);
-    }
-
-    if (communityGravity <= 0) {
-      communityGravityRef.current = null;
-      return;
-    }
-
-    const handler = () => {
-      // Compute centroid per cluster
-      const centroids = new Map<string, {x: number, y: number, count: number}>();
-
-      graph.forEachNode((_nodeId: string, attrs: any) => {
-        const cluster = (attrs.raw as any)?.cluster ?? "gray";
-        if (!centroids.has(cluster)) {
-          centroids.set(cluster, {x: 0, y: 0, count: 0});
-        }
-        const c = centroids.get(cluster)!;
-        c.x += (attrs.x as number);
-        c.y += (attrs.y as number);
-        c.count++;
-      });
-
-      centroids.forEach(c => {
-        c.x /= c.count;
-        c.y /= c.count;
-      });
-
-      // Apply gentle pull toward cluster centroid
-      const strength = communityGravity * 0.0008;
-      graph.forEachNode((nodeId: string, attrs: any) => {
-        const cluster = (attrs.raw as any)?.cluster ?? "gray";
-        const centroid = centroids.get(cluster);
-        if (!centroid) return;
-        const dx = centroid.x - (attrs.x as number);
-        const dy = centroid.y - (attrs.y as number);
-        graph.setNodeAttribute(nodeId, "x", (attrs.x as number) + dx * strength);
-        graph.setNodeAttribute(nodeId, "y", (attrs.y as number) + dy * strength);
-      });
-    };
-
-    communityGravityRef.current = handler;
-    sigma.on("afterRender", handler);
-
-    return () => {
-      if (communityGravityRef.current) {
-        sigma.removeListener("afterRender", communityGravityRef.current);
-        communityGravityRef.current = null;
-      }
-    };
-  }, [communityGravity]);
-
-  // Separate useEffect for solar-orbit dialect
-  useEffect(() => {
-    const sigma = sigmaRef.current;
-    const graph = graphRef.current;
-    if (!sigma || !graph) return;
-
-    // Remove previous handler
-    if (solarOrbitRef.current) {
-      sigma.removeListener("afterRender", solarOrbitRef.current);
-    }
-
-    if (physicsDialect !== "solar-orbit") {
-      solarOrbitRef.current = null;
-      return;
-    }
-
-    const handler = () => {
-      // Step 1: compute cluster centroids
-      const centroids = new Map<string,
-        {x:number, y:number, count:number,
-         sunId:string|null}>();
-
-      graph.forEachNode((nodeId: string, attrs: any) => {
-        const cluster =
-          (attrs.raw as any)?.cluster ?? "gray";
-        if (!centroids.has(cluster)) {
-          centroids.set(cluster,
-            {x:0, y:0, count:0, sunId:null});
-        }
-        const c = centroids.get(cluster)!;
-        c.x += (attrs.x as number);
-        c.y += (attrs.y as number);
-        c.count++;
-        if (attrs.isSun) c.sunId = nodeId;
-      });
-
-      centroids.forEach(c => {
-        c.x /= c.count;
-        c.y /= c.count;
-      });
-
-      // Step 2: pull nodes toward their centroid
-      // Sun nodes: stronger pull (they anchor cluster)
-      // Non-sun nodes: moderate pull
-      graph.forEachNode((nodeId: string, attrs: any) => {
-        const cluster =
-          (attrs.raw as any)?.cluster ?? "gray";
-        const centroid = centroids.get(cluster);
-        if (!centroid) return;
-
-        const isSun = attrs.isSun as boolean;
-        const strength = isSun ? 0.004 : 0.002;
-
-        const dx = centroid.x - (attrs.x as number);
-        const dy = centroid.y - (attrs.y as number);
-
-        graph.setNodeAttribute(nodeId, "x",
-          (attrs.x as number) + dx * strength);
-        graph.setNodeAttribute(nodeId, "y",
-          (attrs.y as number) + dy * strength);
-      });
-
-      // Step 3: inter-cluster sun repulsion
-      // Suns push away from other suns
-      const sunList: Array<{
-        id:string, x:number, y:number
-      }> = [];
-
-      centroids.forEach((c) => {
-        if (c.sunId) {
-          const sunAttrs =
-            graph.getNodeAttributes(c.sunId);
-          sunList.push({
-            id: c.sunId,
-            x: sunAttrs.x as number,
-            y: sunAttrs.y as number,
-          });
-        }
-      });
-
-      // Apply repulsion between each pair of suns
-      for (let i = 0; i < sunList.length; i++) {
-        for (let j = i+1; j < sunList.length; j++) {
-          const a = sunList[i];
-          const b = sunList[j];
-          const dx = b.x - a.x;
-          const dy = b.y - a.y;
-          const dist = Math.sqrt(dx*dx + dy*dy)
-            || 1;
-
-          // Repulsion falls off with distance
-          const force = Math.min(
-            200 / (dist * dist), 0.5
-          );
-          const nx = dx / dist;
-          const ny = dy / dist;
-
-          const aAttrs =
-            graph.getNodeAttributes(a.id);
-          const bAttrs =
-            graph.getNodeAttributes(b.id);
-
-          graph.setNodeAttribute(a.id, "x",
-            (aAttrs.x as number) - nx * force);
-          graph.setNodeAttribute(a.id, "y",
-            (aAttrs.y as number) - ny * force);
-          graph.setNodeAttribute(b.id, "x",
-            (bAttrs.x as number) + nx * force);
-          graph.setNodeAttribute(b.id, "y",
-            (bAttrs.y as number) + ny * force);
-        }
-      }
-    };
-
-    solarOrbitRef.current = handler;
-    sigma.on("afterRender", handler);
-
-    return () => {
-      if (solarOrbitRef.current) {
-        sigma.removeListener(
-          "afterRender",
-          solarOrbitRef.current
-        );
-        solarOrbitRef.current = null;
-      }
-    };
-  }, [physicsDialect]);
 
   const [debugInfo, setDebugInfo] = useState<Record<string, string | number>>(
     {},
@@ -448,10 +214,6 @@ function SigmaGraphViewComponent({
 
   const settings: LayoutSettings = {
     nodeSize,
-    linkDistance,
-    repelForce,
-    centerForce,
-    physicsDialect,
     nodeColorScale: resolvedTokensRef.current?.nodeColorScale,
   };
 
@@ -500,8 +262,7 @@ function SigmaGraphViewComponent({
       minY: diagnostics.minY,
       maxY: diagnostics.maxY,
       currentNodeSize: nodeSize,
-      currentLinkDistance: linkDistance,
-      currentRepelForce: repelForce,
+      currentDialectId: dialectId,
     });
 
     // Apply label policy to graphology graph before Sigma renders
@@ -582,9 +343,8 @@ function SigmaGraphViewComponent({
     (window as any).__lwCameraController = cameraControllerRef.current;
 
     // vP-Physics-Backbone-Seed: Install nodeReducer to pin spine positions
-    // This overrides display positions at render time, working around FA2 worker
-    // overwriting graphology attributes. The seeder stores seeded positions in
-    // graph-level attribute __seededSpinePositions.
+    // Gwells writes seeded positions in graph-level attribute __seededSpinePositions.
+    // Sigma nodeReducer reads this to enforce pinning at render time.
     const previousNodeReducer = sigma.getSetting("nodeReducer");
     sigma.setSetting("nodeReducer", (nodeId: string, data: any) => {
       const base = previousNodeReducer
@@ -600,87 +360,26 @@ function SigmaGraphViewComponent({
       return base;
     });
 
-  // Start continuous FA2 supervisor
-  // Stop any existing supervisor
-  if (fa2Ref.current) {
-    fa2Ref.current.stop();
-    fa2Ref.current.kill();
-  }
+    // Install gwells runtime probe for Playwright testing
+    cleanupProbeRef.current = installGwellsProbeGlobal(graph);
 
-  // Start continuous FA2 supervisor
-  const fa2Settings = {
-    gravity: Math.max(0.001, centerForce * 0.05),
-    scalingRatio: Math.max(0.1, repelForce * 0.1),
-    slowDown: Math.max(1, linkDistance * 1),
-    strongGravityMode,
-    linLogMode,
-    adjustSizes,
-    barnesHutOptimize: graph.order > 150,
-    barnesHutTheta,
-    edgeWeightInfluence: 1,
-  };
-
-  // INSTRUMENTATION: vP-physics-instrument-positions
-  console.log("[LW-INSTR fa2-init]", {
-    gravity: fa2Settings.gravity,
-    scalingRatio: fa2Settings.scalingRatio,
-    slowDown: fa2Settings.slowDown,
-    strongGravityMode: fa2Settings.strongGravityMode,
-    linLogMode: fa2Settings.linLogMode,
-    rawCenterForce: centerForce,
-    rawRepelForce: repelForce,
-    rawLinkDistance: linkDistance,
-  });
-
-  // Start FA2 worker after Sigma completes first render
-  // This ensures Sigma has fully registered all nodes AND edges
-  // before the worker starts mutating positions
-  sigma.once("afterRender", () => {
-    // vP-ClusterAware-Physics-Rebuild: Replace FA2 with cluster-aware force loop
-    // FA2 invocation commented out for fallback comparison
-    /*
-    if (fa2Ref.current) {
-      fa2Ref.current.stop();
-      fa2Ref.current.kill();
+    // Stop any existing gwells controller
+    if (gwellsControllerRef.current) {
+      gwellsControllerRef.current.stop();
+      gwellsControllerRef.current = null;
     }
-    fa2Ref.current = new FA2Layout(graph, {
-      settings: fa2Settings,
-    });
-    fa2Ref.current.start();
 
-    // One-shot noverlap pass after FA2 settles (3 seconds)
-    setTimeout(() => {
-      if (graph.order > 0) {
-        applyNoverlap(graph);
+    // Start gwells controller after Sigma completes first render
+    // This ensures Sigma has fully registered all nodes AND edges
+    // before gwells starts mutating positions
+    sigma.once("afterRender", () => {
+      try {
+        gwellsControllerRef.current = applyDialect(graph, dialectId);
+        console.log(`[gwells] started controller with dialect '${dialectId}'`);
+      } catch (err) {
+        console.error(`[gwells] failed to apply dialect '${dialectId}':`, err);
       }
-    }, 3000);
-    */
-
-    // Start cluster-aware force loop
-    clusterStopRef.current = startClusterAwareForceLoop(graph);
-
-    // INSTRUMENTATION: vP-physics-instrument-positions
-    setTimeout(() => {
-      if (!graphRef.current) return;
-      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-      graphRef.current.forEachNode((id: string) => {
-        const attrs = graphRef.current!.getNodeAttributes(id);
-        const x = attrs.x as number;
-        const y = attrs.y as number;
-        if (x < minX) minX = x;
-        if (x > maxX) maxX = x;
-        if (y < minY) minY = y;
-        if (y > maxY) maxY = y;
-      });
-      console.log("[LW-INSTR post-fa2 +3s]", {
-        minX: minX.toFixed(1),
-        maxX: maxX.toFixed(1),
-        minY: minY.toFixed(1),
-        maxY: maxY.toFixed(1),
-        spread: { x: (maxX - minX).toFixed(1), y: (maxY - minY).toFixed(1) },
-      });
-    }, 3000);
-  });
+    });
 
   // Camera preservation rule: Only reset camera once after initial graph load.
   // Browser resize should resize canvas but preserve camera position/ratio.
@@ -736,9 +435,9 @@ function SigmaGraphViewComponent({
     dragState.dragging = true;
     dragState.nodeId = e.node;
     sigma.getCamera().disable();
-    // Pause worker during drag so it doesn't fight mouse position
-    if (fa2Ref.current) {
-      fa2Ref.current.stop();
+    // Pause gwells during drag so it doesn't fight mouse position
+    if (gwellsControllerRef.current) {
+      gwellsControllerRef.current.pause();
     }
     // Fix node position while dragging
     graph.setNodeAttribute(e.node, "fixed", true);
@@ -774,9 +473,9 @@ function SigmaGraphViewComponent({
     dragState.dragging = false;
     dragState.nodeId = null;
     sigma.getCamera().enable();
-    // Resume worker after drag ends
-    if (fa2Ref.current) {
-      fa2Ref.current.start();
+    // Resume gwells after drag ends
+    if (gwellsControllerRef.current) {
+      gwellsControllerRef.current.resume();
     }
   };
 
@@ -796,18 +495,16 @@ function SigmaGraphViewComponent({
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
-    // vP-ClusterAware-Physics-Rebuild: Stop cluster loop instead of FA2
-    if (clusterStopRef.current) {
-      clusterStopRef.current();
-      clusterStopRef.current = null;
+    // Cleanup gwells runtime probe
+    if (cleanupProbeRef.current) {
+      cleanupProbeRef.current();
+      cleanupProbeRef.current = null;
     }
-    /*
-    if (fa2Ref.current) {
-      fa2Ref.current.stop();
-      fa2Ref.current.kill();
-      fa2Ref.current = null;
+    // Stop gwells controller
+    if (gwellsControllerRef.current) {
+      gwellsControllerRef.current.stop();
+      gwellsControllerRef.current = null;
     }
-    */
     if (sigmaRef.current) {
       sigmaRef.current.kill();
       sigmaRef.current = null;
@@ -816,22 +513,30 @@ function SigmaGraphViewComponent({
   }
 }, [nodes, edges]);
 
-// Live slider updates for cluster-aware force loop without graph rebuild
+// Dialect change effect - ACTIVE-to-ACTIVE mutate path
+// When dialectId changes, stop current controller and apply new dialect without Sigma recreation
 useEffect(() => {
-  if (!graphRef.current || !sigmaRef.current) return;
-  // vP-ClusterAware-Physics-Rebuild: Restart cluster loop on slider changes
-  if (clusterStopRef.current) {
-    clusterStopRef.current();
-    clusterStopRef.current = null;
+  const sigma = sigmaRef.current;
+  const graph = graphRef.current;
+  if (!sigma || !graph) return;
+
+  // Stop existing controller
+  if (gwellsControllerRef.current) {
+    gwellsControllerRef.current.stop();
+    gwellsControllerRef.current = null;
   }
-  sigmaRef.current.once("afterRender", () => {
-    if (!graphRef.current) return;
-    clusterStopRef.current = startClusterAwareForceLoop(graphRef.current);
+
+  // Apply new dialect
+  sigma.once("afterRender", () => {
+    try {
+      gwellsControllerRef.current = applyDialect(graph, dialectId);
+      console.log(`[gwells] switched to dialect '${dialectId}'`);
+    } catch (err) {
+      console.error(`[gwells] failed to apply dialect '${dialectId}':`, err);
+    }
   });
-  sigmaRef.current.refresh();
-}, [centerForce, repelForce, linkDistance,
-    strongGravityMode, linLogMode, adjustSizes,
-    barnesHutTheta, physicsPreset]);
+  sigma.refresh();
+}, [dialectId]);
 
 // Node size live update without rebuild
 useEffect(() => {
@@ -1147,16 +852,7 @@ const arePropsEqual = (prev: SigmaGraphViewProps, next: SigmaGraphViewProps) => 
 
   // Value checks for physics props - these should trigger re-render
   if (prev.nodeSize !== next.nodeSize) return false;
-  if (prev.linkDistance !== next.linkDistance) return false;
-  if (prev.repelForce !== next.repelForce) return false;
-  if (prev.centerForce !== next.centerForce) return false;
-  if (prev.physicsPreset !== next.physicsPreset) return false;
-  if (prev.physicsDialect !== next.physicsDialect) return false;
-  if (prev.strongGravityMode !== next.strongGravityMode) return false;
-  if (prev.linLogMode !== next.linLogMode) return false;
-  if (prev.adjustSizes !== next.adjustSizes) return false;
-  if (prev.barnesHutTheta !== next.barnesHutTheta) return false;
-  if (prev.communityGravity !== next.communityGravity) return false;
+  if (prev.dialectId !== next.dialectId) return false;
 
   // Value checks for label props - these should trigger re-render
   if (prev.nodeLabelMode !== next.nodeLabelMode) return false;

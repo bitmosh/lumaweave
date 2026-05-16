@@ -3,7 +3,7 @@ import { defaultSettings } from "./settings.defaults";
 import { migrateSettings } from "./settings.migrations";
 import type { StarmapSettings } from "./settings.schema";
 
-export const CURRENT_SCHEMA_VERSION = 81;
+export const CURRENT_SCHEMA_VERSION = 82;
 
 export type SettingsStore = {
   settings: StarmapSettings;

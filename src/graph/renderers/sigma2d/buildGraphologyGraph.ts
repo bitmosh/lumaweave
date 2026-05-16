@@ -15,17 +15,11 @@ import type {
   LumaWeaveNodeDraft,
 } from "../../schema/graph.types";
 import { graphVisualTokens } from "../../visual/graphVisualTokens";
-import { getEdgePhysicsWeight } from "../../physics/edgeTypePhysicsRegistry";
-import { seedDirectoryBackboneN2 } from "../../physics/directoryBackboneSeeder";
 
 const BASE_NODE_SIZE = 8;
 
 export interface LayoutSettings {
   nodeSize: number;
-  linkDistance: number;
-  repelForce: number;
-  centerForce: number;
-  physicsDialect: "default" | "helix" | "solar-orbit";
   nodeColorScale?: string[]; // theme-driven
 }
 
@@ -109,15 +103,13 @@ export function buildGraphologyGraph(
   edges.forEach((edge) => {
     try {
       const relationshipLabel = edge.relationship || "related";
-      const edgeType = (edge.raw?.type as string) || relationshipLabel;
-      const physicsWeight = getEdgePhysicsWeight(edgeType);
       graph.addEdgeWithKey(edge.id, edge.source, edge.target, {
         id: edge.id,
         relationship: relationshipLabel,
         label: relationshipLabel,
         fullLabel: relationshipLabel,
         originalLabel: relationshipLabel,
-        weight: physicsWeight,
+        weight: 1,
         color: (edge.raw?.color as string) ?? "rgba(100,130,180,0.55)",
         size: (edge.raw?.size as number) ?? 1.5,
         raw: edge.raw,
@@ -213,9 +205,6 @@ export function buildGraphologyGraph(
   graph.setAttribute(
     "clusterSunCount", clusterSuns.size
   );
-
-  // Call directory backbone seeder
-  seedDirectoryBackboneN2({ graph, settings });
 
   // Connected components analysis
   const componentCount = countConnectedComponents(graph);

@@ -40,7 +40,7 @@ export interface TileLayoutEntry {
 }
 
 export interface StarmapSettings {
-  version: 81; // vP-physics-backbone-seed-fix: bumped from 80 to 81 (remove helix dialect)
+  version: 82; // vP-physics-gwells-integration: bumped from 81 to 82 (replace FA2 with gwells)
 
   general: {
     startupProjectId: string | null;
@@ -76,22 +76,11 @@ export interface StarmapSettings {
     showLowConfidenceEdges: boolean;
     neighborhoodDepth: number;
     hoverNodeColor: string;
+    nodeSize: number;
   };
 
   physics: {
-    physicsPreset: "custom" | "balanced" | "spread" | "tight" | "organic" | "performance";
-    qualityPreset: "custom" | "potato" | "balanced" | "fancy";
-    nodeSize: number;
-    linkDistance: number;
-    repelForce: number;
-    centerForce: number;
-    communityGravity: number;
-    physicsDialect: "default" | "solar-orbit";
-    // ForceAtlas2 advanced parameters
-    strongGravityMode: boolean;
-    linLogMode: boolean;
-    adjustSizes: boolean;
-    barnesHutTheta: number;
+    dialectId: string;
   };
 
   labels: {

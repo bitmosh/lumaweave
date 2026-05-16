@@ -6,32 +6,15 @@ import type { StarmapSettings } from "./settings.schema";
 const MIGRATIONS: Record<number,
   (s: Partial<StarmapSettings>) => Partial<StarmapSettings>
 > = {
-  // v1 → v2: added physics presets + community gravity + advanced FA2 params
+  // v1 → v2: added gwells dialectId (vP-physics-gwells-integration)
   // deep merge handles new fields automatically
   2: (s) => ({
     ...s,
     physics: {
       ...defaultSettings.physics,
       ...(s.physics ?? {}),
-      // Ensure new v2 fields exist
-      physicsPreset: s.physics?.physicsPreset
-        ?? defaultSettings.physics.physicsPreset,
-      communityGravity: s.physics?.communityGravity
-        ?? defaultSettings.physics.communityGravity,
-      strongGravityMode: s.physics?.strongGravityMode
-        ?? defaultSettings.physics.strongGravityMode,
-      linLogMode: s.physics?.linLogMode
-        ?? defaultSettings.physics.linLogMode,
-      adjustSizes: s.physics?.adjustSizes
-        ?? defaultSettings.physics.adjustSizes,
-      barnesHutTheta: s.physics?.barnesHutTheta
-        ?? defaultSettings.physics.barnesHutTheta,
-    },
-    graphView: {
-      ...defaultSettings.graphView,
-      ...(s.graphView ?? {}),
-      neighborhoodDepth: s.graphView?.neighborhoodDepth
-        ?? defaultSettings.graphView.neighborhoodDepth,
+      // Ensure v2 field exists
+      dialectId: s.physics?.dialectId ?? defaultSettings.physics.dialectId,
     },
   }),
 
@@ -71,10 +54,6 @@ const MIGRATIONS: Record<number,
     const appearance = { ...(s.appearance ?? {}) } as any;
     appearance.drama ??= "cranked";
     appearance.motionScale ??= 0.6;
-    appearance.panelBlur ??= 16;
-    appearance.nodeHum ??= 0.7;
-    appearance.nodeFlowSpeed ??= 0.55;
-    appearance.nodeGlow ??= 1.0;
     return { ...s, appearance } as Partial<StarmapSettings>;
   },
 
@@ -84,9 +63,7 @@ const MIGRATIONS: Record<number,
     appearance.glitterDensity ??= "medium";
     appearance.edgePlasmaMode ??= "animated-overlay";
     appearance.backdropMotion ??= "half";
-    const physics = { ...(s.physics ?? {}) } as any;
-    physics.qualityPreset ??= defaultSettings.physics.qualityPreset;
-    return { ...s, appearance, physics } as Partial<StarmapSettings>;
+    return { ...s, appearance } as Partial<StarmapSettings>;
   },
 
   // v80 → v81: remove helix physics dialect (vP-physics-backbone-seed-fix)
@@ -96,6 +73,38 @@ const MIGRATIONS: Record<number,
       physics.physicsDialect = "default";
     }
     return { ...s, physics } as Partial<StarmapSettings>;
+  },
+
+  // v81 → v82: replace FA2 with gwells (vP-physics-gwells-integration)
+  82: (s) => {
+    const physics = { ...(s.physics ?? {}) } as any;
+    // Remove all FA2 fields
+    delete physics.physicsPreset;
+    delete physics.qualityPreset;
+    delete physics.nodeSize;
+    delete physics.linkDistance;
+    delete physics.repelForce;
+    delete physics.centerForce;
+    delete physics.communityGravity;
+    delete physics.physicsDialect;
+    delete physics.strongGravityMode;
+    delete physics.linLogMode;
+    delete physics.adjustSizes;
+    delete physics.barnesHutTheta;
+    // Add dialectId with default
+    physics.dialectId = physics.dialectId ?? "gwells.dialect.horizontal-linear";
+
+    // Move nodeSize from physics to graphView
+    const graphView = { ...(s.graphView ?? {}) } as any;
+    if (physics.nodeSize !== undefined && graphView.nodeSize === undefined) {
+      graphView.nodeSize = physics.nodeSize;
+    }
+    // Ensure nodeSize exists
+    if (graphView.nodeSize === undefined) {
+      graphView.nodeSize = 1;
+    }
+
+    return { ...s, physics, graphView } as Partial<StarmapSettings>;
   },
 };
 

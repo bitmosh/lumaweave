@@ -1,7 +1,7 @@
 import type { StarmapSettings } from "./settings.schema";
 
 export const defaultSettings: StarmapSettings = {
-  version: 81, // vP-physics-backbone-seed-fix: bumped from 80 to 81 (remove helix dialect)
+  version: 82, // vP-physics-gwells-integration: bumped from 81 to 82 (replace FA2 with gwells)
 
   general: {
     startupProjectId: null,
@@ -37,22 +37,11 @@ export const defaultSettings: StarmapSettings = {
     showLowConfidenceEdges: false,
     neighborhoodDepth: 2,
     hoverNodeColor: "#ffffff",
+    nodeSize: 1,
   },
 
   physics: {
-    physicsPreset: "balanced",
-    qualityPreset: "balanced",
-    nodeSize: 1,
-    linkDistance: 3,
-    repelForce: 100,
-    centerForce: 200,
-    communityGravity: 0.5,
-    physicsDialect: "default" as const,
-    // ForceAtlas2 advanced parameters
-    strongGravityMode: false,
-    linLogMode: false,
-    adjustSizes: false,
-    barnesHutTheta: 0.5,
+    dialectId: "gwells.dialect.horizontal-linear",
   },
 
   labels: {
