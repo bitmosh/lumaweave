@@ -59,18 +59,47 @@ test.describe("Gwells Physics Integration", () => {
     const initialState = await page.evaluate(() => {
       return (window as any).__lwGetGwellsState?.();
     });
-    
+
     // Wait for physics frames to advance
     await page.waitForTimeout(1000);
-    
+
     // Get updated frame count
     const updatedState = await page.evaluate(() => {
       return (window as any).__lwGetGwellsState?.();
     });
-    
+
     if (initialState && updatedState) {
       // Frame counter should have increased
       expect(updatedState.frame).toBeGreaterThan(initialState.frame);
+    }
+  });
+
+  test("Gwells dialect switching works", async ({ page }) => {
+    // Get initial dialect (should be radial-backbone by default)
+    const initialState = await page.evaluate(() => {
+      return (window as any).__lwGetGwellsState?.();
+    });
+
+    if (initialState) {
+      expect(initialState.dialectId).toBe("gwells.dialect.radial-backbone");
+    }
+
+    // Switch to parallel-spines via the dropdown UI
+    await page.selectOption(
+      '[data-testid="dialect-select"]',
+      "gwells.dialect.parallel-spines"
+    );
+
+    // Wait for physics to restart with new dialect
+    await page.waitForTimeout(500);
+
+    // Verify dialect changed
+    const updatedState = await page.evaluate(() => {
+      return (window as any).__lwGetGwellsState?.();
+    });
+
+    if (updatedState) {
+      expect(updatedState.dialectId).toBe("gwells.dialect.parallel-spines");
     }
   });
 });

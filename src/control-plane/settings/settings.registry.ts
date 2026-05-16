@@ -5,6 +5,7 @@ export type SettingControl =
       label: string;
       description?: string;
       category: string;
+      testId?: string;
     }
   | {
       type: "range";
@@ -15,6 +16,7 @@ export type SettingControl =
       min: number;
       max: number;
       step: number;
+      testId?: string;
     }
   | {
       type: "select";
@@ -23,6 +25,7 @@ export type SettingControl =
       description?: string;
       category: string;
       options: Array<{ value: string; label: string }>;
+      testId?: string;
     }
   | {
       type: "text";
@@ -30,6 +33,7 @@ export type SettingControl =
       label: string;
       description?: string;
       category: string;
+      testId?: string;
     };
 
 export const settingsRegistry: SettingControl[] = [
@@ -39,10 +43,10 @@ export const settingsRegistry: SettingControl[] = [
     path: "physics.dialectId",
     label: "Gwells Dialect",
     description: "Gwells physics dialect for graph layout.",
+    testId: "dialect-select",
     options: [
-      { value: "gwells.dialect.horizontal-linear", label: "Horizontal Linear" },
-      { value: "gwells.dialect.vertical-parallel", label: "Vertical Parallel" },
-      { value: "gwells.dialect.helix-dual", label: "Helix Dual" },
+      { value: "gwells.dialect.radial-backbone", label: "Radial Backbone" },
+      { value: "gwells.dialect.parallel-spines", label: "Parallel Spines" },
     ],
   },
   {

@@ -1,7 +1,7 @@
 import type { StarmapSettings } from "./settings.schema";
 
 export const defaultSettings: StarmapSettings = {
-  version: 82, // vP-physics-gwells-integration: bumped from 81 to 82 (replace FA2 with gwells)
+  version: 82, // vP-physics-dialect-c3.1.1: bumped from 83 to 82 (consolidated migrations)
 
   general: {
     startupProjectId: null,
@@ -41,7 +41,7 @@ export const defaultSettings: StarmapSettings = {
   },
 
   physics: {
-    dialectId: "gwells.dialect.horizontal-linear",
+    dialectId: "gwells.dialect.radial-backbone",
   },
 
   labels: {

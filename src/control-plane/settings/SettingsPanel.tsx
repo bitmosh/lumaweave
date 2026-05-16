@@ -139,7 +139,7 @@ export function SettingsPanel() {
                             </p>
                           ) : null}
                           <select
-                            data-testid={`setting-${setting.path.replace(/\./g, '-')}`}
+                            data-testid={setting.testId || `setting-${setting.path.replace(/\./g, '-')}`}
                             value={String(value)}
                             onChange={(event) =>
                               setSetting(setting.path, event.currentTarget.value)

@@ -37,6 +37,29 @@ export type GWForceKind =
   | "perpendicular";
 
 /**
+ * Per-well-type helix twist record.
+ *
+ * Each key specifies twist in degrees per 100 units of distance from the hub
+ * (or center axis for parallel-spines). All keys are optional. Missing keys
+ * default to 0 (no twist).
+ *
+ * The `all` key, if set, applies to every well type as a baseline — individual
+ * keys override `all` for their specific well type.
+ *
+ * Used as the `helixTwist` value in seedParams. Default value is `{}` (all zero).
+ */
+export interface GWHelixTwistRecord {
+  /** Baseline twist applied to all well types if their specific key is not set. */
+  all?: number;
+  /** Twist applied to spine-linear nodes. Meaningful for parallel-spines seeder. */
+  spine?: number;
+  /** Twist applied to directory-anchor perpendicular angle. */
+  directory?: number;
+  /** Twist applied to file-orbit angle around parent. */
+  file?: number;
+}
+
+/**
  * Default physics parameters for a well type.
  */
 export interface GWWellTypeDefaults {
@@ -50,6 +73,14 @@ export interface GWWellTypeDefaults {
   damping: number;
   /** Ideal distance from anchor (target distance for spring forces). */
   idealDistance: number;
+  /**
+   * Per-frame pull toward (0, 0, 0). Value is the strength of attraction
+   * toward origin. 0 means no center gravity. Typical values: 0–0.1.
+   * Useful for keeping non-spine nodes from drifting outward indefinitely.
+   *
+   * Defaults to 0 if not specified, for backward compatibility.
+   */
+  centerGravity?: number;
 }
 
 /**

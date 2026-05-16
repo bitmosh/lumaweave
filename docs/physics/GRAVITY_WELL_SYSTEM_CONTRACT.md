@@ -3,12 +3,12 @@ id: physics.gwells.contract
 title: Gravity Well System Contract (gwells)
 type: contract
 status: current
-version: v0
+version: v0.1
 cluster: azure
 domain: physics
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-15
+last_updated: 2026-05-16
 references:
   - graph.contracts.sigma.lifecycle
   - contract.graph.first.runtime.mutation
@@ -19,13 +19,14 @@ references:
   - physics.gwells.readme
   - physics.gwells.registry.patterns
   - physics.gwells.dialect.radial.backbone
-tags: [physics, gwells, gravity-wells, contract, v0, layout]
+  - physics.gwells.dialect.parallel.spines
+tags: [physics, gwells, gravity-wells, contract, v0.1, layout]
 ---
 
 # Gravity Well System Contract (gwells)
 
 A typed gravity-well physics engine for structured graphology graph
-layouts. This contract governs v0 — the first stable iteration.
+layouts. This contract governs v0.1 — the second stable iteration.
 
 ## Purpose
 
@@ -34,30 +35,30 @@ generic force-directed algorithms (ForceAtlas2, force-directed graph
 drawing), gwells treats nodes as instances of typed *wells* with
 declared *interactions* between well types. Each well type carries
 default physics parameters (attraction, repulsion, spring stiffness,
-damping, ideal distance) and rules about which other well types it
-perceives. A *dialect* bundles a seed function, a node→well assignment,
-a subset of active interactions, and parameter overrides into a single
-named layout configuration. Picking a dialect is what a user does when
-they pick a layout.
+damping, ideal distance, and optionally centerGravity) and rules about which
+other well types it perceives. A *dialect* bundles a seed function, a
+node→well assignment, a subset of active interactions, and parameter
+overrides into a single named layout configuration. Picking a dialect is what
+a user does when they pick a layout.
 
 The module is designed to be extracted as a standalone package
 (`gwells`) with a single runtime dependency: `graphology`. All inputs
 and outputs flow through the graphology graph API. The module has no
 React, no Sigma, no theme tokens, no LumaWeave-specific awareness.
 
-v0 ships with enough well types, interactions, and dialects to support
-the directory backbone layout used by LumaWeave's self-graph
-visualization (the `gwells.dialect.end-to-end-spine` dialect). Future
-versions add helix dialects, 3D coordinates, additional well types,
-user-defined dialects, and per-dialect tunable handles.
+v0.1 ships with two dialects: `gwells.dialect.radial-backbone` (default,
+horizontal layout) and `gwells.dialect.parallel-spines` (vertical side-by-side
+layout matching the former FA2 dual-vertical visual).
 
 ## Allowed Behavior
 
 Gwells implementations may:
 
 1. Read all node and edge attributes from a graphology graph.
-2. Mutate node `x` and `y` attributes via
-   `graph.setNodeAttribute(id, "x" | "y", value)`.
+2. Mutate node `x`, `y`, and `z` attributes via
+   `graph.setNodeAttribute(id, "x" | "y" | "z", value)`. The `z` coordinate
+   is stored for forward-compatibility with 3D camera support; Sigma currently
+   renders only x and y.
 3. Read and write graph-level attributes scoped to gwells:
    `__gwellsState` (inspectable engine state, see Schema § Physics State)
    and `__seededSpinePositions` (seed-function output, read by Sigma's
@@ -89,7 +90,7 @@ Gwells implementations must not:
    (`graphology-types`).
 2. Reference React, Sigma, theme tokens, or any LumaWeave-specific
    module, type, or constant.
-3. Mutate any node attribute other than `x` and `y`.
+3. Mutate any node attribute other than `x`, `y`, and `z`.
 4. Mutate edges in any way (create, delete, set attributes).
 5. Read or write `localStorage`, `sessionStorage`, IndexedDB, or any
    other browser storage.
@@ -147,6 +148,8 @@ export interface GWWellTypeDefaults {
   damping: number;
   /** Ideal distance from anchor (target distance for spring forces). */
   idealDistance: number;
+  /** Per-frame pull toward the origin (0–0.1, optional). Added in v0.1. */
+  centerGravity?: number;
 }
 
 export interface GWWellTypeEntry {
@@ -280,6 +283,9 @@ export interface GWDialectConfig {
   >;
   /** Custom config values used by the seed function. */
   seedParams?: Record<string, unknown>;
+  /** Note: In v0.1, seeders may include helixTwist as a GWHelixTwistRecord
+   * object with keys {all, spine, directory, file} instead of a number.
+   * See dialect documentation for details. */
 }
 
 export interface GWDialectEntry {

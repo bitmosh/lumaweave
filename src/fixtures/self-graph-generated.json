@@ -2,25 +2,25 @@
   "schemaVersion": "lumaweave-self-graph/v1",
   "metadata": {
     "schemaVersion": "lumaweave-self-graph/v1",
-    "generatedAt": "2026-05-16T16:01:11.033Z",
+    "generatedAt": "2026-05-16T20:22:26.014Z",
     "generator": "generate-self-graph@v2",
     "sourceTree": "./",
     "stats": {
-      "nodeCount": 388,
-      "edgeCount": 1400,
+      "nodeCount": 394,
+      "edgeCount": 1417,
       "nodesByType": {
-        "doc": 201,
-        "code": 115,
+        "doc": 202,
+        "code": 119,
         "config": 5,
         "fixture": 0,
-        "spine": 67
+        "spine": 68
       },
       "edgesByType": {
-        "contains": 380,
+        "contains": 386,
         "governs": 29,
-        "explicit-reference": 377,
-        "code-import": 134,
-        "tag-overlap": 167,
+        "explicit-reference": 380,
+        "code-import": 140,
+        "tag-overlap": 169,
         "describes": 313
       }
     }
@@ -1895,18 +1895,38 @@
         "gwells",
         "gravity-wells",
         "contract",
-        "v0",
+        "v0.1",
         "layout"
       ],
-      "size": 690,
-      "lastModified": "2026-05-16T16:00:11.954Z",
+      "size": 696,
+      "lastModified": "2026-05-16T20:19:41.843Z",
+      "raw": {}
+    },
+    {
+      "id": "physics.gwells.dialect.parallel.spines",
+      "type": "doc",
+      "label": "GWELLS_DIALECT_PARALLEL_SPINES",
+      "fullLabel": "Gwells Dialect — Parallel Spines",
+      "path": "docs/physics/GWELLS_DIALECT_PARALLEL_SPINES.md",
+      "cluster": "azure",
+      "status": "current",
+      "tags": [
+        "physics",
+        "gwells",
+        "dialect",
+        "parallel-spines",
+        "v0.1",
+        "layout"
+      ],
+      "size": 212,
+      "lastModified": "2026-05-16T20:17:54.953Z",
       "raw": {}
     },
     {
       "id": "physics.gwells.dialect.radial.backbone",
       "type": "doc",
       "label": "GWELLS_DIALECT_RADIAL_BACKBONE",
-      "fullLabel": "Gwells Dialect — Radial Backbone Family",
+      "fullLabel": "Gwells Dialect — Radial Backbone",
       "path": "docs/physics/GWELLS_DIALECT_RADIAL_BACKBONE.md",
       "cluster": "azure",
       "status": "current",
@@ -1915,12 +1935,11 @@
         "gwells",
         "dialect",
         "radial-backbone",
-        "helix",
-        "v0",
+        "v0.1",
         "layout"
       ],
-      "size": 714,
-      "lastModified": "2026-05-16T15:59:26.902Z",
+      "size": 443,
+      "lastModified": "2026-05-16T20:16:28.705Z",
       "raw": {}
     },
     {
@@ -1936,10 +1955,10 @@
         "gwells",
         "readme",
         "orientation",
-        "v0"
+        "v0.1"
       ],
-      "size": 294,
-      "lastModified": "2026-05-16T16:00:29.683Z",
+      "size": 307,
+      "lastModified": "2026-05-16T20:22:25.842Z",
       "raw": {}
     },
     {
@@ -4073,8 +4092,27 @@
         "src",
         "physics"
       ],
-      "size": 276,
-      "lastModified": "2026-05-16T03:04:20.204Z",
+      "size": 307,
+      "lastModified": "2026-05-16T19:29:57.087Z",
+      "raw": {
+        "color": "#5a6678",
+        "dimFactor": 0.55
+      }
+    },
+    {
+      "id": "src.physics.gwells.seederhelpers",
+      "type": "code",
+      "label": "seederHelpers",
+      "fullLabel": "seederHelpers.ts",
+      "path": "src/physics/gwells/seederHelpers.ts",
+      "cluster": null,
+      "status": null,
+      "tags": [
+        "src",
+        "physics"
+      ],
+      "size": 148,
+      "lastModified": "2026-05-16T19:58:16.666Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4092,8 +4130,8 @@
         "src",
         "physics"
       ],
-      "size": 45,
-      "lastModified": "2026-05-16T03:34:48.477Z",
+      "size": 52,
+      "lastModified": "2026-05-16T20:01:31.451Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4149,8 +4187,8 @@
         "src",
         "physics"
       ],
-      "size": 353,
-      "lastModified": "2026-05-16T03:33:02.172Z",
+      "size": 363,
+      "lastModified": "2026-05-16T19:54:50.850Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4168,8 +4206,46 @@
         "src",
         "physics"
       ],
-      "size": 103,
-      "lastModified": "2026-05-16T03:35:33.906Z",
+      "size": 163,
+      "lastModified": "2026-05-16T20:03:17.999Z",
+      "raw": {
+        "color": "#5a6678",
+        "dimFactor": 0.55
+      }
+    },
+    {
+      "id": "src.physics.gwells.seeders.radialbackbone",
+      "type": "code",
+      "label": "radialBackbone",
+      "fullLabel": "radialBackbone.ts",
+      "path": "src/physics/gwells/seeders/radialBackbone.ts",
+      "cluster": null,
+      "status": null,
+      "tags": [
+        "src",
+        "physics"
+      ],
+      "size": 251,
+      "lastModified": "2026-05-16T19:58:58.470Z",
+      "raw": {
+        "color": "#5a6678",
+        "dimFactor": 0.55
+      }
+    },
+    {
+      "id": "src.physics.gwells.seeders.parallelspines",
+      "type": "code",
+      "label": "parallelSpines",
+      "fullLabel": "parallelSpines.ts",
+      "path": "src/physics/gwells/seeders/parallelSpines.ts",
+      "cluster": null,
+      "status": null,
+      "tags": [
+        "src",
+        "physics"
+      ],
+      "size": 255,
+      "lastModified": "2026-05-16T20:00:47.940Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4385,6 +4461,25 @@
       }
     },
     {
+      "id": "src.graph.renderers.sigma2d.gwellsprobe",
+      "type": "code",
+      "label": "gwellsProbe",
+      "fullLabel": "gwellsProbe.ts",
+      "path": "src/graph/renderers/sigma2d/gwellsProbe.ts",
+      "cluster": "azure",
+      "status": null,
+      "tags": [
+        "src",
+        "graph"
+      ],
+      "size": 26,
+      "lastModified": "2026-05-16T17:46:50.652Z",
+      "raw": {
+        "color": "#5a6678",
+        "dimFactor": 0.55
+      }
+    },
+    {
       "id": "src.graph.renderers.sigma2d.buildgraphologygraph",
       "type": "code",
       "label": "buildGraphologyGraph",
@@ -4396,8 +4491,8 @@
         "src",
         "graph"
       ],
-      "size": 283,
-      "lastModified": "2026-05-15T23:12:46.634Z",
+      "size": 272,
+      "lastModified": "2026-05-16T17:30:46.209Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4415,8 +4510,8 @@
         "src",
         "graph"
       ],
-      "size": 1198,
-      "lastModified": "2026-05-16T00:14:32.447Z",
+      "size": 894,
+      "lastModified": "2026-05-16T17:46:14.665Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4872,7 +4967,7 @@
         "control-plane"
       ],
       "size": 65,
-      "lastModified": "2026-05-15T23:12:46.620Z",
+      "lastModified": "2026-05-16T20:05:10.739Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4890,8 +4985,8 @@
         "src",
         "control-plane"
       ],
-      "size": 174,
-      "lastModified": "2026-05-15T23:12:46.620Z",
+      "size": 167,
+      "lastModified": "2026-05-16T20:04:06.922Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4909,8 +5004,8 @@
         "src",
         "control-plane"
       ],
-      "size": 220,
-      "lastModified": "2026-05-15T23:12:46.619Z",
+      "size": 126,
+      "lastModified": "2026-05-16T17:39:22.461Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4928,8 +5023,8 @@
         "src",
         "control-plane"
       ],
-      "size": 164,
-      "lastModified": "2026-05-15T23:12:46.619Z",
+      "size": 193,
+      "lastModified": "2026-05-16T20:05:03.142Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4947,8 +5042,8 @@
         "src",
         "control-plane"
       ],
-      "size": 128,
-      "lastModified": "2026-05-15T23:12:46.620Z",
+      "size": 117,
+      "lastModified": "2026-05-16T20:04:24.501Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -5441,8 +5536,8 @@
         "src",
         "control-plane"
       ],
-      "size": 86,
-      "lastModified": "2026-05-15T23:12:46.631Z",
+      "size": 91,
+      "lastModified": "2026-05-16T17:44:29.507Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -5460,8 +5555,8 @@
         "src",
         "control-plane"
       ],
-      "size": 513,
-      "lastModified": "2026-05-15T23:12:46.631Z",
+      "size": 536,
+      "lastModified": "2026-05-16T20:05:32.713Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -5764,8 +5859,8 @@
         "src",
         "app"
       ],
-      "size": 1182,
-      "lastModified": "2026-05-15T23:12:46.637Z",
+      "size": 1091,
+      "lastModified": "2026-05-16T17:42:33.220Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -6264,7 +6359,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-16T15:59:36.001Z",
+      "lastModified": "2026-05-16T20:17:53.339Z",
       "raw": {
         "color": "#9ca3af",
         "dimFactor": 0.8
@@ -6840,7 +6935,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-16T00:14:32.446Z",
+      "lastModified": "2026-05-16T17:45:07.146Z",
       "raw": {
         "color": "#9ca3af",
         "dimFactor": 0.8
@@ -6904,7 +6999,23 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-16T03:32:52.783Z",
+      "lastModified": "2026-05-16T19:30:15.075Z",
+      "raw": {
+        "color": "#9ca3af",
+        "dimFactor": 0.8
+      }
+    },
+    {
+      "id": "src.physics.gwells.seeders",
+      "type": "spine",
+      "label": "seeders",
+      "fullLabel": "src/physics/gwells/seeders",
+      "path": "src/physics/gwells/seeders",
+      "cluster": null,
+      "status": null,
+      "tags": [],
+      "size": 0,
+      "lastModified": "2026-05-16T20:00:47.940Z",
       "raw": {
         "color": "#9ca3af",
         "dimFactor": 0.8
@@ -8081,6 +8192,17 @@
       "id": "edge-docs.physics-physics.gwells.contract-contains",
       "source": "docs.physics",
       "target": "physics.gwells.contract",
+      "type": "contains",
+      "weight": 0.5,
+      "bidirectional": false,
+      "provenance": {
+        "source": "directory-walk"
+      }
+    },
+    {
+      "id": "edge-docs.physics-physics.gwells.dialect.parallel.spines-contains",
+      "source": "docs.physics",
+      "target": "physics.gwells.dialect.parallel.spines",
       "type": "contains",
       "weight": 0.5,
       "bidirectional": false,
@@ -9420,6 +9542,17 @@
       }
     },
     {
+      "id": "edge-src.physics.gwells-src.physics.gwells.seederhelpers-contains",
+      "source": "src.physics.gwells",
+      "target": "src.physics.gwells.seederhelpers",
+      "type": "contains",
+      "weight": 0.5,
+      "bidirectional": false,
+      "provenance": {
+        "source": "directory-walk"
+      }
+    },
+    {
       "id": "edge-src.physics.gwells-src.physics.gwells.seedfunctions-contains",
       "source": "src.physics.gwells",
       "target": "src.physics.gwells.seedfunctions",
@@ -9467,6 +9600,28 @@
       "id": "edge-src.physics.gwells-src.physics.gwells.dialects-contains",
       "source": "src.physics.gwells",
       "target": "src.physics.gwells.dialects",
+      "type": "contains",
+      "weight": 0.5,
+      "bidirectional": false,
+      "provenance": {
+        "source": "directory-walk"
+      }
+    },
+    {
+      "id": "edge-src.physics.gwells.seeders-src.physics.gwells.seeders.radialbackbone-contains",
+      "source": "src.physics.gwells.seeders",
+      "target": "src.physics.gwells.seeders.radialbackbone",
+      "type": "contains",
+      "weight": 0.5,
+      "bidirectional": false,
+      "provenance": {
+        "source": "directory-walk"
+      }
+    },
+    {
+      "id": "edge-src.physics.gwells.seeders-src.physics.gwells.seeders.parallelspines-contains",
+      "source": "src.physics.gwells.seeders",
+      "target": "src.physics.gwells.seeders.parallelspines",
       "type": "contains",
       "weight": 0.5,
       "bidirectional": false,
@@ -9588,6 +9743,17 @@
       "id": "edge-src.graph.renderers.sigma2d-src.graph.renderers.sigma2d.labelpolicy-contains",
       "source": "src.graph.renderers.sigma2d",
       "target": "src.graph.renderers.sigma2d.labelpolicy",
+      "type": "contains",
+      "weight": 0.5,
+      "bidirectional": false,
+      "provenance": {
+        "source": "directory-walk"
+      }
+    },
+    {
+      "id": "edge-src.graph.renderers.sigma2d-src.graph.renderers.sigma2d.gwellsprobe-contains",
+      "source": "src.graph.renderers.sigma2d",
+      "target": "src.graph.renderers.sigma2d.gwellsprobe",
       "type": "contains",
       "weight": 0.5,
       "bidirectional": false,
@@ -11095,6 +11261,17 @@
       "id": "edge-src.physics-src.physics.gwells-contains",
       "source": "src.physics",
       "target": "src.physics.gwells",
+      "type": "contains",
+      "weight": 0.5,
+      "bidirectional": false,
+      "provenance": {
+        "source": "directory-walk"
+      }
+    },
+    {
+      "id": "edge-src.physics.gwells-src.physics.gwells.seeders-contains",
+      "source": "src.physics.gwells",
+      "target": "src.physics.gwells.seeders",
       "type": "contains",
       "weight": 0.5,
       "bidirectional": false,
@@ -13489,6 +13666,66 @@
       }
     },
     {
+      "id": "edge-physics.gwells.contract-physics.gwells.dialect.parallel.spines-explicit-reference",
+      "source": "physics.gwells.contract",
+      "target": "physics.gwells.dialect.parallel.spines",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-physics.gwells.dialect.parallel.spines-physics.gwells.contract-explicit-reference",
+      "source": "physics.gwells.dialect.parallel.spines",
+      "target": "physics.gwells.contract",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-physics.gwells.dialect.parallel.spines-physics.gwells.readme-explicit-reference",
+      "source": "physics.gwells.dialect.parallel.spines",
+      "target": "physics.gwells.readme",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-physics.gwells.dialect.parallel.spines-physics.gwells.registry.patterns-explicit-reference",
+      "source": "physics.gwells.dialect.parallel.spines",
+      "target": "physics.gwells.registry.patterns",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-physics.gwells.dialect.parallel.spines-physics.gwells.dialect.radial.backbone-explicit-reference",
+      "source": "physics.gwells.dialect.parallel.spines",
+      "target": "physics.gwells.dialect.radial.backbone",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
       "id": "edge-physics.gwells.dialect.radial.backbone-physics.gwells.contract-explicit-reference",
       "source": "physics.gwells.dialect.radial.backbone",
       "target": "physics.gwells.contract",
@@ -13525,45 +13762,9 @@
       }
     },
     {
-      "id": "edge-physics.gwells.dialect.radial.backbone-dialect.physics.helix-explicit-reference",
+      "id": "edge-physics.gwells.dialect.radial.backbone-physics.gwells.dialect.parallel.spines-explicit-reference",
       "source": "physics.gwells.dialect.radial.backbone",
-      "target": "dialect.physics.helix",
-      "type": "explicit-reference",
-      "weight": 1,
-      "bidirectional": false,
-      "provenance": {
-        "source": "frontmatter",
-        "detail": "references"
-      }
-    },
-    {
-      "id": "edge-physics.gwells.dialect.radial.backbone-dialect.physics.galaxy-explicit-reference",
-      "source": "physics.gwells.dialect.radial.backbone",
-      "target": "dialect.physics.galaxy",
-      "type": "explicit-reference",
-      "weight": 1,
-      "bidirectional": false,
-      "provenance": {
-        "source": "frontmatter",
-        "detail": "references"
-      }
-    },
-    {
-      "id": "edge-physics.gwells.dialect.radial.backbone-dialect.physics.constellation-explicit-reference",
-      "source": "physics.gwells.dialect.radial.backbone",
-      "target": "dialect.physics.constellation",
-      "type": "explicit-reference",
-      "weight": 1,
-      "bidirectional": false,
-      "provenance": {
-        "source": "frontmatter",
-        "detail": "references"
-      }
-    },
-    {
-      "id": "edge-physics.gwells.dialect.radial.backbone-concept.graph.cluster.gravity-explicit-reference",
-      "source": "physics.gwells.dialect.radial.backbone",
-      "target": "concept.graph.cluster.gravity",
+      "target": "physics.gwells.dialect.parallel.spines",
       "type": "explicit-reference",
       "weight": 1,
       "bidirectional": false,
@@ -13600,6 +13801,18 @@
       "id": "edge-physics.gwells.readme-physics.gwells.dialect.radial.backbone-explicit-reference",
       "source": "physics.gwells.readme",
       "target": "physics.gwells.dialect.radial.backbone",
+      "type": "explicit-reference",
+      "weight": 1,
+      "bidirectional": false,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "references"
+      }
+    },
+    {
+      "id": "edge-physics.gwells.readme-physics.gwells.dialect.parallel.spines-explicit-reference",
+      "source": "physics.gwells.readme",
+      "target": "physics.gwells.dialect.parallel.spines",
       "type": "explicit-reference",
       "weight": 1,
       "bidirectional": false,
@@ -16333,6 +16546,30 @@
       }
     },
     {
+      "id": "edge-src.physics.gwells.seedfunctions-src.physics.gwells.seeders.radialbackbone-code-import",
+      "source": "src.physics.gwells.seedfunctions",
+      "target": "src.physics.gwells.seeders.radialbackbone",
+      "type": "code-import",
+      "weight": 0.85,
+      "bidirectional": false,
+      "provenance": {
+        "source": "body-parse",
+        "detail": "import"
+      }
+    },
+    {
+      "id": "edge-src.physics.gwells.seedfunctions-src.physics.gwells.seeders.parallelspines-code-import",
+      "source": "src.physics.gwells.seedfunctions",
+      "target": "src.physics.gwells.seeders.parallelspines",
+      "type": "code-import",
+      "weight": 0.85,
+      "bidirectional": false,
+      "provenance": {
+        "source": "body-parse",
+        "detail": "import"
+      }
+    },
+    {
       "id": "edge-src.physics.gwells.interactions-src.physics.gwells.types-code-import",
       "source": "src.physics.gwells.interactions",
       "target": "src.physics.gwells.types",
@@ -16417,6 +16654,54 @@
       }
     },
     {
+      "id": "edge-src.physics.gwells.seeders.radialbackbone-src.physics.gwells.types-code-import",
+      "source": "src.physics.gwells.seeders.radialbackbone",
+      "target": "src.physics.gwells.types",
+      "type": "code-import",
+      "weight": 0.85,
+      "bidirectional": false,
+      "provenance": {
+        "source": "body-parse",
+        "detail": "import"
+      }
+    },
+    {
+      "id": "edge-src.physics.gwells.seeders.radialbackbone-src.physics.gwells.seederhelpers-code-import",
+      "source": "src.physics.gwells.seeders.radialbackbone",
+      "target": "src.physics.gwells.seederhelpers",
+      "type": "code-import",
+      "weight": 0.85,
+      "bidirectional": false,
+      "provenance": {
+        "source": "body-parse",
+        "detail": "import"
+      }
+    },
+    {
+      "id": "edge-src.physics.gwells.seeders.parallelspines-src.physics.gwells.types-code-import",
+      "source": "src.physics.gwells.seeders.parallelspines",
+      "target": "src.physics.gwells.types",
+      "type": "code-import",
+      "weight": 0.85,
+      "bidirectional": false,
+      "provenance": {
+        "source": "body-parse",
+        "detail": "import"
+      }
+    },
+    {
+      "id": "edge-src.physics.gwells.seeders.parallelspines-src.physics.gwells.seederhelpers-code-import",
+      "source": "src.physics.gwells.seeders.parallelspines",
+      "target": "src.physics.gwells.seederhelpers",
+      "type": "code-import",
+      "weight": 0.85,
+      "bidirectional": false,
+      "provenance": {
+        "source": "body-parse",
+        "detail": "import"
+      }
+    },
+    {
       "id": "edge-src.graph.visual.graphstylepolicy-src.graph.visual.graphvisualtokens-code-import",
       "source": "src.graph.visual.graphstylepolicy",
       "target": "src.graph.visual.graphvisualtokens",
@@ -16465,33 +16750,21 @@
       }
     },
     {
+      "id": "edge-src.graph.renderers.sigma2d.gwellsprobe-src.physics.gwells.index-code-import",
+      "source": "src.graph.renderers.sigma2d.gwellsprobe",
+      "target": "src.physics.gwells.index",
+      "type": "code-import",
+      "weight": 0.85,
+      "bidirectional": false,
+      "provenance": {
+        "source": "body-parse",
+        "detail": "import"
+      }
+    },
+    {
       "id": "edge-src.graph.renderers.sigma2d.buildgraphologygraph-src.graph.visual.graphvisualtokens-code-import",
       "source": "src.graph.renderers.sigma2d.buildgraphologygraph",
       "target": "src.graph.visual.graphvisualtokens",
-      "type": "code-import",
-      "weight": 0.85,
-      "bidirectional": false,
-      "provenance": {
-        "source": "body-parse",
-        "detail": "import"
-      }
-    },
-    {
-      "id": "edge-src.graph.renderers.sigma2d.buildgraphologygraph-src.graph.physics.edgetypephysicsregistry-code-import",
-      "source": "src.graph.renderers.sigma2d.buildgraphologygraph",
-      "target": "src.graph.physics.edgetypephysicsregistry",
-      "type": "code-import",
-      "weight": 0.85,
-      "bidirectional": false,
-      "provenance": {
-        "source": "body-parse",
-        "detail": "import"
-      }
-    },
-    {
-      "id": "edge-src.graph.renderers.sigma2d.buildgraphologygraph-src.graph.physics.directorybackboneseeder-code-import",
-      "source": "src.graph.renderers.sigma2d.buildgraphologygraph",
-      "target": "src.graph.physics.directorybackboneseeder",
       "type": "code-import",
       "weight": 0.85,
       "bidirectional": false,
@@ -16549,9 +16822,21 @@
       }
     },
     {
-      "id": "edge-src.graph.renderers.sigma2d.sigmagraphview-src.graph.physics.clusterawareforceloop-code-import",
+      "id": "edge-src.graph.renderers.sigma2d.sigmagraphview-src.physics.gwells.index-code-import",
       "source": "src.graph.renderers.sigma2d.sigmagraphview",
-      "target": "src.graph.physics.clusterawareforceloop",
+      "target": "src.physics.gwells.index",
+      "type": "code-import",
+      "weight": 0.85,
+      "bidirectional": false,
+      "provenance": {
+        "source": "body-parse",
+        "detail": "import"
+      }
+    },
+    {
+      "id": "edge-src.graph.renderers.sigma2d.sigmagraphview-src.graph.renderers.sigma2d.gwellsprobe-code-import",
+      "source": "src.graph.renderers.sigma2d.sigmagraphview",
+      "target": "src.graph.renderers.sigma2d.gwellsprobe",
       "type": "code-import",
       "weight": 0.85,
       "bidirectional": false,
@@ -18697,6 +18982,30 @@
       }
     },
     {
+      "id": "edge-dialect.physics.galaxy-physics.gwells.dialect.parallel.spines-tag-overlap",
+      "source": "dialect.physics.galaxy",
+      "target": "physics.gwells.dialect.parallel.spines",
+      "type": "tag-overlap",
+      "weight": 0.6,
+      "bidirectional": true,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "shared tags: physics, dialect, layout"
+      }
+    },
+    {
+      "id": "edge-dialect.physics.galaxy-physics.gwells.dialect.radial.backbone-tag-overlap",
+      "source": "dialect.physics.galaxy",
+      "target": "physics.gwells.dialect.radial.backbone",
+      "type": "tag-overlap",
+      "weight": 0.6,
+      "bidirectional": true,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "shared tags: physics, dialect, layout"
+      }
+    },
+    {
       "id": "edge-dialect.physics.galaxy-dialect.physics.helix-tag-overlap",
       "source": "dialect.physics.galaxy",
       "target": "dialect.physics.helix",
@@ -18721,6 +19030,18 @@
       }
     },
     {
+      "id": "edge-physics.gwells.contract-physics.gwells.dialect.parallel.spines-tag-overlap",
+      "source": "physics.gwells.contract",
+      "target": "physics.gwells.dialect.parallel.spines",
+      "type": "tag-overlap",
+      "weight": 0.6,
+      "bidirectional": true,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "shared tags: physics, gwells, v0.1, layout"
+      }
+    },
+    {
       "id": "edge-physics.gwells.contract-physics.gwells.dialect.radial.backbone-tag-overlap",
       "source": "physics.gwells.contract",
       "target": "physics.gwells.dialect.radial.backbone",
@@ -18729,7 +19050,7 @@
       "bidirectional": true,
       "provenance": {
         "source": "frontmatter",
-        "detail": "shared tags: physics, gwells, v0, layout"
+        "detail": "shared tags: physics, gwells, v0.1, layout"
       }
     },
     {
@@ -18741,19 +19062,43 @@
       "bidirectional": true,
       "provenance": {
         "source": "frontmatter",
-        "detail": "shared tags: physics, gwells, v0"
+        "detail": "shared tags: physics, gwells, v0.1"
       }
     },
     {
-      "id": "edge-physics.gwells.contract-physics.gwells.registry.patterns-tag-overlap",
-      "source": "physics.gwells.contract",
-      "target": "physics.gwells.registry.patterns",
+      "id": "edge-physics.gwells.dialect.parallel.spines-physics.gwells.dialect.radial.backbone-tag-overlap",
+      "source": "physics.gwells.dialect.parallel.spines",
+      "target": "physics.gwells.dialect.radial.backbone",
       "type": "tag-overlap",
       "weight": 0.6,
       "bidirectional": true,
       "provenance": {
         "source": "frontmatter",
-        "detail": "shared tags: physics, gwells, v0"
+        "detail": "shared tags: physics, gwells, dialect, v0.1, layout"
+      }
+    },
+    {
+      "id": "edge-physics.gwells.dialect.parallel.spines-physics.gwells.readme-tag-overlap",
+      "source": "physics.gwells.dialect.parallel.spines",
+      "target": "physics.gwells.readme",
+      "type": "tag-overlap",
+      "weight": 0.6,
+      "bidirectional": true,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "shared tags: physics, gwells, v0.1"
+      }
+    },
+    {
+      "id": "edge-physics.gwells.dialect.parallel.spines-dialect.physics.helix-tag-overlap",
+      "source": "physics.gwells.dialect.parallel.spines",
+      "target": "dialect.physics.helix",
+      "type": "tag-overlap",
+      "weight": 0.6,
+      "bidirectional": true,
+      "provenance": {
+        "source": "frontmatter",
+        "detail": "shared tags: physics, dialect, layout"
       }
     },
     {
@@ -18765,19 +19110,7 @@
       "bidirectional": true,
       "provenance": {
         "source": "frontmatter",
-        "detail": "shared tags: physics, gwells, v0"
-      }
-    },
-    {
-      "id": "edge-physics.gwells.dialect.radial.backbone-physics.gwells.registry.patterns-tag-overlap",
-      "source": "physics.gwells.dialect.radial.backbone",
-      "target": "physics.gwells.registry.patterns",
-      "type": "tag-overlap",
-      "weight": 0.6,
-      "bidirectional": true,
-      "provenance": {
-        "source": "frontmatter",
-        "detail": "shared tags: physics, gwells, v0"
+        "detail": "shared tags: physics, gwells, v0.1"
       }
     },
     {
@@ -18789,19 +19122,7 @@
       "bidirectional": true,
       "provenance": {
         "source": "frontmatter",
-        "detail": "shared tags: physics, dialect, helix, layout"
-      }
-    },
-    {
-      "id": "edge-physics.gwells.dialect.radial.backbone-system.physics.dialects-tag-overlap",
-      "source": "physics.gwells.dialect.radial.backbone",
-      "target": "system.physics.dialects",
-      "type": "tag-overlap",
-      "weight": 0.6,
-      "bidirectional": true,
-      "provenance": {
-        "source": "frontmatter",
-        "detail": "shared tags: physics, helix, layout"
+        "detail": "shared tags: physics, dialect, layout"
       }
     },
     {
@@ -18809,11 +19130,11 @@
       "source": "physics.gwells.readme",
       "target": "physics.gwells.registry.patterns",
       "type": "tag-overlap",
-      "weight": 0.6,
+      "weight": 0.5,
       "bidirectional": true,
       "provenance": {
         "source": "frontmatter",
-        "detail": "shared tags: physics, gwells, v0"
+        "detail": "shared tags: physics, gwells"
       }
     },
     {
@@ -18826,18 +19147,6 @@
       "provenance": {
         "source": "frontmatter",
         "detail": "shared tags: physics, helix, constellation, layout"
-      }
-    },
-    {
-      "id": "edge-dialect.physics.helix-vP-physics-backbone-seed-tag-overlap",
-      "source": "dialect.physics.helix",
-      "target": "vP-physics-backbone-seed",
-      "type": "tag-overlap",
-      "weight": 0.5,
-      "bidirectional": true,
-      "provenance": {
-        "source": "frontmatter",
-        "detail": "shared tags: physics, layout"
       }
     },
     {

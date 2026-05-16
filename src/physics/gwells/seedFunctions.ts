@@ -13,6 +13,7 @@
 
 import type { GWSeedFunctionEntry, GWStatus } from "./types";
 import { seedRadialBackbone } from "./seeders/radialBackbone";
+import { seedParallelSpines } from "./seeders/parallelSpines";
 
 export const GW_SEED_FUNCTION_REGISTRY: readonly GWSeedFunctionEntry[] = [
   {
@@ -21,10 +22,19 @@ export const GW_SEED_FUNCTION_REGISTRY: readonly GWSeedFunctionEntry[] = [
     description:
       "Generalized N-spine radial layout. Spines emanate from a hub " +
       "at configurable angles with optional helical twist. Used by " +
-      "horizontal-linear, vertical-parallel, helix-dual, and future " +
-      "radial dialects.",
+      "radial-backbone and future radial dialects.",
     status: "active",
     seed: (ctx) => seedRadialBackbone(ctx),
+  },
+  {
+    id: "gwells.seed.parallel-spines",
+    label: "Parallel Spines",
+    description:
+      "N vertical spines distributed around a central y-axis in 3D. Each spine " +
+      "runs vertically; spines are arranged in a ring around the central axis. " +
+      "z attribute stored for forward-compatibility with future 3D camera support.",
+    status: "active",
+    seed: (ctx) => seedParallelSpines(ctx),
   },
 ] as const;
 

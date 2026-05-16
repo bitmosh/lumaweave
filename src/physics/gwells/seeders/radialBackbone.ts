@@ -15,8 +15,8 @@
  * Deterministic: same input → same output.
  */
 
-import type Graph from "graphology";
-import type { GWSeedFunctionContext } from "../types";
+import type { GWSeedFunctionContext, GWHelixTwistRecord } from "../types";
+import { resolveHelixTwist, buildContainsMap, flattenSpinesFromRoot, assignSpinesToAxes } from "../seederHelpers";
 
 interface RadialBackboneParams {
   spineCount: number;
@@ -25,7 +25,7 @@ interface RadialBackboneParams {
   spineSpacing: number;
   directoryOffset: number;
   directoryAlternation: "above-below" | "above-only" | "below-only";
-  helixTwist: number; // degrees per 100 units distance
+  helixTwist: GWHelixTwistRecord; // CHANGED from number
   fileOrbitRadius: number;
   endpointFanArc: number; // degrees
   endpointFanCount: number;
@@ -38,7 +38,7 @@ const DEFAULTS: RadialBackboneParams = {
   spineSpacing: 150,
   directoryOffset: 220,
   directoryAlternation: "above-below",
-  helixTwist: 0,
+  helixTwist: {}, // CHANGED — empty record means no twist
   fileOrbitRadius: 90,
   endpointFanArc: 100,
   endpointFanCount: 6,
@@ -55,112 +55,14 @@ function resolveParams(raw: Record<string, unknown>): RadialBackboneParams {
       raw.directoryAlternation === "above-only" || raw.directoryAlternation === "below-only"
         ? raw.directoryAlternation
         : "above-below",
-    helixTwist: typeof raw.helixTwist === "number" ? raw.helixTwist : DEFAULTS.helixTwist,
+    helixTwist:
+      raw.helixTwist && typeof raw.helixTwist === "object" && !Array.isArray(raw.helixTwist)
+        ? raw.helixTwist as GWHelixTwistRecord
+        : DEFAULTS.helixTwist,
     fileOrbitRadius: typeof raw.fileOrbitRadius === "number" ? raw.fileOrbitRadius : DEFAULTS.fileOrbitRadius,
     endpointFanArc: typeof raw.endpointFanArc === "number" ? raw.endpointFanArc : DEFAULTS.endpointFanArc,
     endpointFanCount: typeof raw.endpointFanCount === "number" ? raw.endpointFanCount : DEFAULTS.endpointFanCount,
   };
-}
-
-/**
- * Build parent-child maps from contains edges.
- * Returns:
- * - parentToChildren: Map<parentId, Set<childId>>
- * - rootSpineIds: Array of spine node IDs with no parent
- */
-function buildContainsMap(graph: Graph): {
-  parentToChildren: Map<string, Set<string>>;
-  rootSpineIds: string[];
-} {
-  const parentToChildren = new Map<string, Set<string>>();
-  const childToParent = new Map<string, string>();
-  const rootSpineIds: string[] = [];
-
-  graph.forEachNode((nodeId) => {
-    const attrs = graph.getNodeAttributes(nodeId);
-    const nodeType = attrs.nodeType || attrs.raw?.type;
-
-    // Initialize empty set for all spine nodes
-    if (nodeType === "spine") {
-      parentToChildren.set(nodeId, new Set());
-    }
-  });
-
-  graph.forEachEdge((edgeId, attrs) => {
-    const edgeType = attrs.relationship || attrs.raw?.type;
-    if (edgeType === "contains") {
-      const source = graph.source(edgeId);
-      const target = graph.target(edgeId);
-      const sourceAttrs = graph.getNodeAttributes(source);
-      const sourceType = sourceAttrs.nodeType || sourceAttrs.raw?.type;
-
-      // Only track contains where source is a spine
-      if (sourceType === "spine") {
-        if (!parentToChildren.has(source)) {
-          parentToChildren.set(source, new Set());
-        }
-        parentToChildren.get(source)!.add(target);
-        childToParent.set(target, source);
-      }
-    }
-  });
-
-  // Find roots: spine nodes with no parent
-  parentToChildren.forEach((_, spineId) => {
-    if (!childToParent.has(spineId)) {
-      rootSpineIds.push(spineId);
-    }
-  });
-
-  return { parentToChildren, rootSpineIds };
-}
-
-/**
- * DFS-flatten spine nodes from a root into stable iteration order.
- * Returns array of spine IDs in DFS order, sorted alphabetically at each level.
- */
-function flattenSpinesFromRoot(
-  rootId: string,
-  parentToChildren: Map<string, Set<string>>,
-  graph: Graph,
-): string[] {
-  const result: string[] = [rootId];
-
-  const children = parentToChildren.get(rootId);
-  if (children) {
-    const sortedChildren = Array.from(children).sort();
-    for (const childId of sortedChildren) {
-      const childAttrs = graph.getNodeAttributes(childId);
-      const childType = childAttrs.nodeType || childAttrs.raw?.type;
-      if (childType === "spine") {
-        result.push(...flattenSpinesFromRoot(childId, parentToChildren, graph));
-      }
-    }
-  }
-
-  return result;
-}
-
-/**
- * Group spine roots into N spines per spineCount, in alphabetical order.
- * Returns: spineCount-length array of root-id arrays
- */
-function assignSpinesToAxes(
-  rootSpineIds: string[],
-  spineCount: number,
-): string[][] {
-  const axes: string[][] = Array.from({ length: spineCount }, () => []);
-
-  // Round-robin assign roots to axes in reverse order
-  // so that alphabetical "docs" goes to the last axis (e.g., 180° for horizontal-linear)
-  // and "src" goes to the first axis (e.g., 0° for horizontal-linear)
-  const sortedRoots = rootSpineIds.sort();
-  sortedRoots.forEach((rootId, index) => {
-    const axisIndex = (sortedRoots.length - 1 - index) % spineCount;
-    axes[axisIndex].push(rootId);
-  });
-
-  return axes;
 }
 
 export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
@@ -220,6 +122,7 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
 
       graph.setNodeAttribute(spineNodeId, "x", spineX);
       graph.setNodeAttribute(spineNodeId, "y", spineY);
+      graph.setNodeAttribute(spineNodeId, "z", 0);
       seededPositions.set(spineNodeId, { x: spineX, y: spineY });
 
       // Mark outermost node as endpoint
@@ -260,7 +163,8 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
         const perpAngleBase = angleRad + Math.PI / 2;
 
         // Apply helix twist
-        const twistRad = params.helixTwist * (dHub / 100) * Math.PI / 180;
+        const directoryTwist = resolveHelixTwist(params.helixTwist, "directory");
+        const twistRad = directoryTwist * (dHub / 100) * Math.PI / 180;
         const perpAngle = perpAngleBase + twistRad;
 
         // Direction the directory sits relative to the spine node
@@ -283,6 +187,7 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
 
         graph.setNodeAttribute(childId, "x", dirX);
         graph.setNodeAttribute(childId, "y", dirY);
+        graph.setNodeAttribute(childId, "z", 0);
 
         // Place file children in orbit around the directory
         const dirFiles = parentToChildren.get(childId);
@@ -294,13 +199,17 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
 
             if (fileType === "file") {
               const fileCount = fileArray.length;
-              const orbitAngle = (fileIndex / fileCount) * 2 * Math.PI;
+              const dDirectory = Math.sqrt(dirX * dirX + dirY * dirY);
+              const fileTwist = resolveHelixTwist(params.helixTwist, "file");
+              const fileTwistRad = fileTwist * (dDirectory / 100) * Math.PI / 180;
+              const orbitAngle = (fileIndex / fileCount) * 2 * Math.PI + fileTwistRad;
 
               const fileX = dirX + params.fileOrbitRadius * Math.cos(orbitAngle);
               const fileY = dirY + params.fileOrbitRadius * Math.sin(orbitAngle);
 
               graph.setNodeAttribute(fileId, "x", fileX);
               graph.setNodeAttribute(fileId, "y", fileY);
+              graph.setNodeAttribute(fileId, "z", 0);
             }
           });
         }
@@ -319,11 +228,13 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
           const fanAngle = angleRad + (t - 0.5) * fanArcRad;
 
           const fanDist = params.fileOrbitRadius * 1.5;
+
           const fileX = spineX + fanDist * Math.cos(fanAngle);
           const fileY = spineY + fanDist * Math.sin(fanAngle);
 
           graph.setNodeAttribute(fileId, "x", fileX);
           graph.setNodeAttribute(fileId, "y", fileY);
+          graph.setNodeAttribute(fileId, "z", 0);
         });
       }
     });

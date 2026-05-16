@@ -211,7 +211,7 @@ export const handlesetRegistry: HandlesetRegistry = {
       handle: "physics.dialectId",
       label: "Gwells Dialect",
       category: "Graph View",
-      defaultValue: "gwells.dialect.horizontal-linear",
+      defaultValue: "gwells.dialect.radial-backbone",
       controlType: "select",
       status: "active",
       binding: {
@@ -221,10 +221,10 @@ export const handlesetRegistry: HandlesetRegistry = {
         notes: "Dialect change triggers ACTIVE-to-ACTIVE mutate path",
       },
       qa: {
-        checklistId: "vP-physics-gwells-integration",
+        checklistId: "vP-physics-dialect-c3.1",
         playwrightTest: "tests/e2e/gwells-physics.spec.ts",
       },
-      notes: "Gwells physics dialect for graph layout (horizontal-linear, vertical-parallel, helix-dual)",
+      notes: "Gwells physics dialect for graph layout (radial-backbone, parallel-spines)",
     },
 
     {

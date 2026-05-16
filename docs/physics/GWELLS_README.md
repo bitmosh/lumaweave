@@ -3,19 +3,20 @@ id: physics.gwells.readme
 title: Gwells Module README
 type: readme
 status: current
-version: v0
+version: v0.1
 cluster: azure
 domain: physics
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-15
+last_updated: 2026-05-16
 references:
   - physics.gwells.contract
   - physics.gwells.registry.patterns
   - physics.gwells.dialect.radial.backbone
+  - physics.gwells.dialect.parallel.spines
   - graph.contracts.sigma.lifecycle
   - protocol.registry.contract.patterns
-tags: [physics, gwells, readme, orientation, v0]
+tags: [physics, gwells, readme, orientation, v0.1]
 ---
 
 # Gwells — Module README
@@ -80,20 +81,20 @@ You're *not* touching gwells if you're:
 
 ## Quickstart
 
-The minimum runtime use case — apply the v0 dialect to a graph:
+The minimum runtime use case — apply the v0.1 dialect to a graph:
 
 ```typescript
 import Graph from "graphology";
 import { applyDialect } from "@/physics/gwells";
 
 // graph is a graphology Graph built by buildGraphologyGraph
-const controller = applyDialect(graph, "gwells.dialect.end-to-end-spine", {
+const controller = applyDialect(graph, "gwells.dialect.radial-backbone", {
   onError: (err) => console.warn("[gwells]", err),
 });
 
 // later, when switching dialects:
 controller.stop();
-const next = applyDialect(graph, "gwells.dialect.some-future-dialect");
+const next = applyDialect(graph, "gwells.dialect.parallel-spines");
 
 // on unmount:
 controller.stop();
@@ -130,8 +131,10 @@ src/physics/gwells/
 ├── seedFunctions.ts          [GW_SEED_FUNCTION_REGISTRY + lookup helpers]
 ├── dialects.ts               [GW_DIALECT_REGISTRY + lookup helpers]
 ├── engine.ts                 [applyDialect, the physics loop]
+├── seederHelpers.ts          [shared seeder utilities (axisOffsetForN, resolveHelixTwist, etc.)]
 ├── seeders/
-│   └── directoryBackboneN2.ts  [v0 spine seeder]
+│   ├── radialBackbone.ts     [radial-backbone seeder]
+│   └── parallelSpines.ts     [parallel-spines seeder]
 └── tests/
 └── smoke.test.ts         [the standalone smoke test]
 
@@ -155,12 +158,15 @@ Read in this order when you arrive:
    four registries (well types, interactions, seed functions, dialects)
    compose and how data flows between them. Read this before adding any
    registry entry.
-4. **[Radial Backbone Dialect Family](physics.gwells.dialect.radial.backbone)**
-   — the v0 seeder family's visual targets and parameter specs. Read this when
-   working on the v0 seeder, well-type defaults, or interaction tuning.
-5. **`src/physics/gwells/types.ts`** — the type definitions. The fastest
+4. **[Radial Backbone Dialect](physics.gwells.dialect.radial.backbone)**
+   — the default horizontal layout dialect. Read this when
+   working on the radial-backbone seeder, well-type defaults, or interaction tuning.
+5. **[Parallel Spines Dialect](physics.gwells.dialect.parallel.spines)**
+   — the vertical side-by-side layout dialect. Read this when
+   working on the parallel-spines seeder or its 3D positioning logic.
+6. **`src/physics/gwells/types.ts`** — the type definitions. The fastest
    way to see "what shape does this thing take" without reading prose.
-6. **`src/physics/gwells/engine.ts`** — read when you need to understand
+7. **`src/physics/gwells/engine.ts`** — read when you need to understand
    *what actually happens* on a given frame. Stick to the contract for
    *what should* happen; engine.ts is the *how*.
 
@@ -183,8 +189,8 @@ contract → registry → validator → integration ladder.
 
 Add an entry to `GW_WELL_TYPE_REGISTRY` in `wellTypes.ts`. Give it a
 stable id (`gwells.well.<name>`), defaults (attractionStrength,
-siblingRepulsion, springStiffness, damping, idealDistance), a pinning
-flag, and a lifecycle status. Run the validator
+siblingRepulsion, springStiffness, damping, idealDistance, and optionally
+centerGravity), a pinning flag, and a lifecycle status. Run the validator
 (`node scripts/validate-gwells.mjs`) to confirm shape. A new well type
 is dead code until a dialect references it.
 
@@ -206,12 +212,13 @@ forces; the contract explicitly forbids redundant kinds.
 
 Two files: the seeder implementation in `seeders/<name>.ts`, and the
 registry entry in `seedFunctions.ts` that points at it. Seed functions
-must be pure (same input → same output) and write only `x` and `y`
+must be pure (same input → same output) and write only `x`, `y`, and `z`
 attributes (plus `__seededSpinePositions` for nodes that should be
 pinned at the seeded position for Sigma's nodeReducer).
 
-The migration of `directoryBackboneSeeder.ts` from `src/graph/physics/`
-into `seeders/directoryBackboneN2.ts` is the reference example.
+The `radialBackbone.ts` and `parallelSpines.ts` seeders are the reference
+examples for v0.1. Both use shared utilities from `seederHelpers.ts`
+for common operations like `axisOffsetForN` and `resolveHelixTwist`.
 
 ### Adding a dialect
 
@@ -234,7 +241,7 @@ The contract is authoritative for the full list. The short version:
 
 - Don't import anything other than `graphology` and `graphology-types`
   from inside the module. Pre-flight standalone typecheck enforces this.
-- Don't mutate any node attribute other than `x` and `y`.
+- Don't mutate any node attribute other than `x`, `y`, and `z`.
 - Don't mutate edges at all.
 - Don't touch `localStorage`, `sessionStorage`, network I/O, DOM, or
   canvas.
@@ -262,19 +269,23 @@ basin defined by the dialect's wells and interactions.
 
 ## Future direction
 
-v0 ships with one dialect (`end-to-end-spine`) and the well types,
-interactions, and seed function needed to make that dialect work.
+v0.1 ships with two dialects (`radial-backbone` and `parallel-spines`),
+per-well-type helix twist configuration via `GWHelixTwistRecord`, and
+`centerGravity` parameter for drift prevention. The `z` coordinate is now
+written to all nodes for forward-compatibility with 3D camera support
+(though Sigma currently renders only x and y).
+
 Future versions:
 
-- **v0.1+** — per-dialect tunable handles, exposed via Layer 1 of the
+- **v0.2+** — per-dialect tunable handles, exposed via Layer 1 of the
   Handle Registry. UI surfaces them in the Physics panel only when
   their owning dialect is active.
-- **v0.2+** — additional dialects (helix, constellation, galaxy — these
+- **v0.3+** — additional dialects (helix-constellation, galaxy — these
   exist as concept docs today; see `docs/physics/` siblings).
 - **v1+** — standalone package extraction. The module moves out of
   `src/physics/gwells/` into its own repository and gets published to
   npm. LumaWeave imports it as an external dependency.
-- **v2+** — 3D coordinates (`z` axis). The current schema is 2D-only.
+- **v2+** — 3D camera projection (z-axis rendering in Sigma).
 - **v2+** — Web Worker offload for large graphs.
 
 The non-goals list in the contract is the canonical source for "what
@@ -286,8 +297,10 @@ is deliberately not v0."
   authoritative behavior contract.
 - [Registry Patterns](physics.gwells.registry.patterns) — how the four
   registries compose.
-- [Radial Backbone Dialect Family](physics.gwells.dialect.radial.backbone)
-  — the v0 seeder family spec.
+- [Radial Backbone Dialect](physics.gwells.dialect.radial.backbone)
+  — the default horizontal layout dialect.
+- [Parallel Spines Dialect](physics.gwells.dialect.parallel.spines)
+  — the vertical side-by-side layout dialect.
 - [Sigma Lifecycle Contract](graph.contracts.sigma.lifecycle) — the
   integration layer's lifecycle rules.
 - [Registry Contract Patterns](protocol.registry.contract.patterns)

@@ -28,6 +28,10 @@ export type LayoutLensId =
   | "pipeline"
   | "impact-rings";
 
+export type GwellsDialectId =
+  | "gwells.dialect.radial-backbone"
+  | "gwells.dialect.parallel-spines";
+
 export interface TileLayoutEntry {
   id: string;
   sectionKey: string;
@@ -40,7 +44,7 @@ export interface TileLayoutEntry {
 }
 
 export interface StarmapSettings {
-  version: 82; // vP-physics-gwells-integration: bumped from 81 to 82 (replace FA2 with gwells)
+  version: 82; // vP-physics-dialect-c3.1.1: bumped from 83 to 82 (consolidated migrations)
 
   general: {
     startupProjectId: string | null;
@@ -80,7 +84,7 @@ export interface StarmapSettings {
   };
 
   physics: {
-    dialectId: string;
+    dialectId: GwellsDialectId;
   };
 
   labels: {

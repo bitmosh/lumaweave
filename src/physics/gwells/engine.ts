@@ -132,6 +132,7 @@ export function applyDialect(
         springStiffness: 0,
         damping: 1,
         idealDistance: 0,
+        centerGravity: 0,
       };
     }
     const override = resolvedConfig.wellOverrides?.[wellTypeId];
@@ -145,6 +146,7 @@ export function applyDialect(
       damping: override?.damping ?? wellType.defaults.damping,
       idealDistance:
         override?.idealDistance ?? wellType.defaults.idealDistance,
+      centerGravity: override?.centerGravity ?? wellType.defaults.centerGravity ?? 0,
     };
   }
 
@@ -273,6 +275,14 @@ export function applyDialect(
         if (interactionFired) {
           state.activeInteractions.push(interaction.id);
         }
+      }
+
+      // Apply center gravity (per-frame pull toward origin)
+      if (params.centerGravity && params.centerGravity > 0) {
+        const distFromOrigin = Math.sqrt(x * x + y * y) + 0.0001;
+        // Pull strength is proportional to centerGravity. Direction is from node toward origin.
+        fx += (-x / distFromOrigin) * params.centerGravity;
+        fy += (-y / distFromOrigin) * params.centerGravity;
       }
 
       // Update velocity with damping

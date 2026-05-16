@@ -25,14 +25,15 @@ const radialBackboneInteractions = [
   "gwells.interaction.endpoint-fan.repels.endpoint-fan",
 ] as const;
 
-// Shared per-well-type overrides used by all three dialects.
-const radialBackboneWellOverrides = {
+// Shared per-well-type overrides used by all dialects.
+const sharedWellOverrides = {
   "gwells.well.spine-linear": {
     // pinned; physics params don't apply
   },
   "gwells.well.directory-anchor": {
     siblingRepulsion: 280,
     damping: 0.85,
+    centerGravity: 0.05,
   },
   "gwells.well.file-orbit": {
     attractionStrength: 0.6,
@@ -40,6 +41,7 @@ const radialBackboneWellOverrides = {
     springStiffness: 0.08,
     damping: 0.9,
     idealDistance: 90,
+    centerGravity: 0.02,
   },
   "gwells.well.endpoint-fan": {
     attractionStrength: 0.5,
@@ -47,24 +49,35 @@ const radialBackboneWellOverrides = {
     springStiffness: 0.06,
     damping: 0.9,
     idealDistance: 100,
+    centerGravity: 0,
   },
 };
 
 // Shared per-interaction overrides.
-const radialBackboneInteractionOverrides = {
+const sharedInteractionOverrides = {
   "gwells.interaction.file-orbit.repels.directory-anchor-other": {
     strength: 1.4,
     range: 180,
   },
 };
 
+// Parallel-spines softens the directory-directory repulsion to allow
+// directories from different spines to branch inward without violent rejection.
+const parallelSpinesInteractionOverrides = {
+  ...sharedInteractionOverrides,
+  "gwells.interaction.directory-anchor.repels.directory-anchor": {
+    strength: 80,
+    range: 200,
+  },
+};
+
 export const GW_DIALECT_REGISTRY: readonly GWDialectEntry[] = [
   {
-    id: "gwells.dialect.horizontal-linear",
-    label: "Horizontal Linear",
+    id: "gwells.dialect.radial-backbone",
+    label: "Radial Backbone",
     description:
-      "Single horizontal spine running left-to-right. Directories " +
-      "perpendicular above/below. The default radial-backbone preset.",
+      "Two spines emanating from a central hub at 0° and 180°. " +
+      "Directories perpendicular above/below. The default dialect.",
     status: "active",
     isDefault: true,
     seedFunctionId: "gwells.seed.radial-backbone",
@@ -86,24 +99,24 @@ export const GW_DIALECT_REGISTRY: readonly GWDialectEntry[] = [
         spineSpacing: 150,
         directoryOffset: 220,
         directoryAlternation: "above-below",
-        helixTwist: 0,
+        helixTwist: {},
         fileOrbitRadius: 90,
         endpointFanArc: 100,
         endpointFanCount: 6,
       },
-      wellOverrides: radialBackboneWellOverrides,
-      interactionOverrides: radialBackboneInteractionOverrides,
+      wellOverrides: sharedWellOverrides,
+      interactionOverrides: sharedInteractionOverrides,
     },
   },
   {
-    id: "gwells.dialect.vertical-parallel",
-    label: "Vertical Parallel",
+    id: "gwells.dialect.parallel-spines",
+    label: "Parallel Spines",
     description:
-      "Two parallel vertical spines with a gap. Preserves the visual " +
-      "layout of the existing FA2-pipeline directoryBackboneSeeder.",
+      "Two vertical spines at x=±2000, z=0. Directories fan horizontally. " +
+      "Visual match for the former FA2 dual-vertical layout.",
     status: "active",
     isDefault: false,
-    seedFunctionId: "gwells.seed.radial-backbone",
+    seedFunctionId: "gwells.seed.parallel-spines",
     wellAssignment: {
       assign: (_nodeId: string, attrs: Record<string, unknown>): string | null => {
         if (attrs.nodeType === "spine") return "gwells.well.spine-linear";
@@ -117,55 +130,17 @@ export const GW_DIALECT_REGISTRY: readonly GWDialectEntry[] = [
     config: {
       seedParams: {
         spineCount: 2,
-        spineAngles: [90, 270],
         offsetFromHub: 1000,
         spineSpacing: 150,
         directoryOffset: 220,
         directoryAlternation: "above-below",
-        helixTwist: 0,
+        helixTwist: {},
         fileOrbitRadius: 80,
         endpointFanArc: 100,
         endpointFanCount: 6,
       },
-      wellOverrides: radialBackboneWellOverrides,
-      interactionOverrides: radialBackboneInteractionOverrides,
-    },
-  },
-  {
-    id: "gwells.dialect.helix-dual",
-    label: "Helix Dual",
-    description:
-      "Two strands meeting at hub, twisted around each other. " +
-      "Demonstrates helix-twist math; foundation for future " +
-      "helix-triple, helix-quad, etc.",
-    status: "active",
-    isDefault: false,
-    seedFunctionId: "gwells.seed.radial-backbone",
-    wellAssignment: {
-      assign: (_nodeId: string, attrs: Record<string, unknown>): string | null => {
-        if (attrs.nodeType === "spine") return "gwells.well.spine-linear";
-        if (attrs.isEndpoint === true) return "gwells.well.endpoint-fan";
-        if (attrs.nodeType === "directory") return "gwells.well.directory-anchor";
-        if (attrs.nodeType === "file") return "gwells.well.file-orbit";
-        return null;
-      },
-    },
-    activeInteractions: radialBackboneInteractions,
-    config: {
-      seedParams: {
-        spineCount: 2,
-        spineAngles: [90, 270],
-        offsetFromHub: 0,
-        spineSpacing: 150,
-        directoryOffset: 220,
-        directoryAlternation: "above-below",
-        helixTwist: 5,
-        fileOrbitRadius: 90,
-        endpointFanArc: 100,
-        endpointFanCount: 6,
-      },
-      wellOverrides: radialBackboneWellOverrides,
-      interactionOverrides: radialBackboneInteractionOverrides,
+      wellOverrides: sharedWellOverrides,
+      interactionOverrides: parallelSpinesInteractionOverrides,
     },
   },
 ] as const;

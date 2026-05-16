@@ -1,27 +1,27 @@
 # Self-Graph Report
 
-Generated: 2026-05-16T16:01:11.033Z
+Generated: 2026-05-16T20:22:26.014Z
 Source commit: N/A
 Schema: lumaweave-self-graph/v1
 
 ## Summary
 
-- Total nodes: 388
-- Total edges: 1400
+- Total nodes: 394
+- Total edges: 1417
 
 ### Nodes by type
-- doc: 201
-- code: 115
+- doc: 202
+- code: 119
 - config: 5
 - fixture: 0
-- spine: 67
+- spine: 68
 
 ### Edges by type
-- contains: 380
+- contains: 386
 - governs: 29
-- explicit-reference: 377
-- code-import: 134
-- tag-overlap: 167
+- explicit-reference: 380
+- code-import: 140
+- tag-overlap: 169
 - describes: 313
 
 ## Top 10 by in-degree
@@ -158,7 +158,7 @@ Frontmatter references targeting unknown ids:
 ## Cluster breakdown
 | Cluster | Node count |
 |---------|------------|
-| azure | 90 |
+| azure | 92 |
 | crimson | 4 |
 | ember | 9 |
 | gold | 32 |

@@ -75,13 +75,11 @@ const MIGRATIONS: Record<number,
     return { ...s, physics } as Partial<StarmapSettings>;
   },
 
-  // v81 → v82: replace FA2 with gwells (vP-physics-gwells-integration)
+  // v81 → v82: remove FA2 fields and add gwells dialectId (Pass C3)
   82: (s) => {
     const physics = { ...(s.physics ?? {}) } as any;
-    // Remove all FA2 fields
+    // Remove all FA2 fields except qualityPreset and nodeSize (C3.1.1 fix)
     delete physics.physicsPreset;
-    delete physics.qualityPreset;
-    delete physics.nodeSize;
     delete physics.linkDistance;
     delete physics.repelForce;
     delete physics.centerForce;
@@ -91,10 +89,10 @@ const MIGRATIONS: Record<number,
     delete physics.linLogMode;
     delete physics.adjustSizes;
     delete physics.barnesHutTheta;
-    // Add dialectId with default
+    // Add dialectId with default (will be renamed below)
     physics.dialectId = physics.dialectId ?? "gwells.dialect.horizontal-linear";
 
-    // Move nodeSize from physics to graphView
+    // Move nodeSize from physics to graphView (preserved, not deleted)
     const graphView = { ...(s.graphView ?? {}) } as any;
     if (physics.nodeSize !== undefined && graphView.nodeSize === undefined) {
       graphView.nodeSize = physics.nodeSize;
@@ -102,6 +100,22 @@ const MIGRATIONS: Record<number,
     // Ensure nodeSize exists
     if (graphView.nodeSize === undefined) {
       graphView.nodeSize = 1;
+    }
+    // Delete nodeSize from physics after moving to graphView
+    delete physics.nodeSize;
+
+    // Apply dialect rename (from old v83)
+    if (physics.dialectId === "gwells.dialect.horizontal-linear") {
+      physics.dialectId = "gwells.dialect.radial-backbone";
+    }
+    if (physics.dialectId === "gwells.dialect.vertical-parallel" ||
+        physics.dialectId === "gwells.dialect.helix-dual") {
+      physics.dialectId = "gwells.dialect.parallel-spines";
+    }
+    // Ensure a valid dialect ID
+    if (physics.dialectId !== "gwells.dialect.radial-backbone" &&
+        physics.dialectId !== "gwells.dialect.parallel-spines") {
+      physics.dialectId = "gwells.dialect.radial-backbone";
     }
 
     return { ...s, physics, graphView } as Partial<StarmapSettings>;

@@ -1,49 +1,30 @@
 ---
 id: physics.gwells.dialect.radial.backbone
-title: Gwells Dialect — Radial Backbone Family
+title: Gwells Dialect — Radial Backbone
 type: reference
 status: current
-version: v0
+version: v0.1
 cluster: azure
 domain: physics
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-15
+last_updated: 2026-05-16
 references:
   - physics.gwells.contract
   - physics.gwells.readme
   - physics.gwells.registry.patterns
-  - dialect.physics.helix
-  - dialect.physics.galaxy
-  - dialect.physics.constellation
-  - concept.graph.cluster.gravity
-tags: [physics, gwells, dialect, radial-backbone, helix, v0, layout]
+  - physics.gwells.dialect.parallel.spines
+tags: [physics, gwells, dialect, radial-backbone, v0.1, layout]
 ---
 
-# Gwells Dialect — Radial Backbone Family
+# Gwells Dialect — Radial Backbone
 
-A family of dialects sharing one generalized seeder. Seeder id:
-`gwells.seed.radial-backbone`. Initial dialects: `horizontal-linear`,
-`vertical-parallel`, `helix-dual`. Future dialects (`triple-spine-y`,
-`quad-spine-cross`, `helix-triple`, etc.) become new entries in the
-dialect registry without algorithm changes.
+Two spines emanating from a central hub at 0° and 180°. Directories sit
+perpendicular above/below each spine. Files orbit their parent directory.
 
-This is the seeder family that ships in Pass C2 of the gwells migration.
-
-## Core concept — radial backbone
-
-A radial backbone is N spines (vectors) emanating from a single hub at
-the canvas origin. Each spine has an angle, a length, and an optional
-helical twist. Directories sit along each spine at regular spacing,
-optionally rotating around the spine axis as they get farther from the
-hub. Files orbit their parent directory.
-
-The "single horizontal spine" layout and the "two parallel vertical
-spines" layout are instances of the same algorithm with different
-parameter sets. N=2 horizontal angles=[0°, 180°] gives the first.
-N=2 vertical angles=[90°, 270°] with `offsetFromHub > 0` gives the
-second. N=3 angles=[0°, 120°, 240°] gives a Y-shape. N=4 angles=[0°,
-90°, 180°, 270°] gives a cross. Any N is supported.
+**Dialect id:** `gwells.dialect.radial-backbone`
+**Default:** Yes (registry default)
+**Seeder id:** `gwells.seed.radial-backbone`
 
 ## Seed function: gwells.seed.radial-backbone
 
@@ -58,7 +39,7 @@ graph. It reads from `ctx.config.seedParams`:
 | `spineSpacing` | number | Distance between consecutive directories along each spine. |
 | `directoryOffset` | number | Perpendicular distance from spine to directory anchor. |
 | `directoryAlternation` | string | How directories alternate around the spine: `"above-below"`, `"above-only"`, or `"below-only"`. |
-| `helixTwist` | number | Degrees of rotation per 100 units of distance from the hub. 0 means no twist. |
+| `helixTwist` | `GWHelixTwistRecord` | Per-well-type twist configuration. Keys: `all`, `spine`, `directory`, `file`. Values are degrees per 100 units. |
 | `fileOrbitRadius` | number | Distance from directory to initial file position. |
 | `endpointFanArc` | number | Angular width of the endpoint fan (in degrees). |
 | `endpointFanCount` | number | Target files per endpoint fan, used for angle spacing. |
@@ -71,64 +52,126 @@ graph. It reads from `ctx.config.seedParams`:
 3. **Assign spines to axes** based on `spineCount` and `spineAngles`. Each
    spine gets a direction vector computed from its angle. The hub is at
    `(0, 0)`.
-4. **Place spine nodes** along their assigned axes. For spine at index `i`
-   on axis with angle `θ`:
+4. **Place spine nodes** along their assigned axes. Position is computed as:
    - Distance from hub: `d = i * spineSpacing + offsetFromHub`
-   - Position: `x = d * cos(θ)`, `y = d * sin(θ)`
-   - If `helixTwist` is non-zero, rotate the position around the axis
-     perpendicular to the spine direction by `helixTwist * d / 100` degrees.
+   - Position: `x = d * cos(θ)`, `y = d * sin(θ)`, `z = 0`
 5. **Identify endpoint spine nodes** (the outermost node on each axis)
    and set `attrs.isEndpoint = true` on them if not already set by the
    adapter.
 6. **For each directory node**, locate its parent spine node via the
    contains-edge. Position the directory at the spine's location offset by
-   `directoryOffset` on the perpendicular axis. If `directoryAlternation`
-   is `"above-below"`, alternate above/below for adjacent directories
-   along the same spine.
+   `directoryOffset` on the perpendicular axis with optional helix twist.
+   Set `z = 0`.
 7. **For each file node**, locate its parent directory. Position the file
    at the directory's location offset by `fileOrbitRadius` at a
-   sibling-distributed angle (evenly spaced around the directory).
+   sibling-distributed angle with optional helix twist. Set `z = 0`.
 8. **For endpoint files**, fan outward from the spine endpoint. Angle
    range is the `endpointFanArc` value centered on the perpendicular axis;
-   distribute `endpointFanCount` files within that arc.
-9. **Write all positions** via `graph.setNodeAttribute(nodeId, "x" | "y", value)`.
+   distribute `endpointFanCount` files within that arc. Set `z = 0`.
+9. **Write all positions** via `graph.setNodeAttribute(nodeId, "x" | "y" | "z", value)`.
 10. **For every spine node**, additionally write the position to
-    `__seededSpinePositions[nodeId] = { x, y }` so Sigma's nodeReducer
-    can enforce the pin at render time.
+    `__seededSpinePositions[nodeId] = { x, y }` for Sigma's nodeReducer.
 
 The seeder is pure: same graph + same `seedParams` produces the same
 position output. No `Math.random()`. No I/O. No external state.
 
-## Initial dialect presets
+## Helix twist record (v0.1)
 
-### Horizontal-Linear
+In v0.1, `helixTwist` is an object instead of a number:
 
-**Dialect id:** `gwells.dialect.horizontal-linear`
-**Default:** Yes (this is the registry default; `isDefault: true`)
-**Description:** Single horizontal spine, two halves running left-to-right.
-Directories perpendicular above/below.
-
-This is the original end-to-end-spine design. The spine runs through the
-canvas center at `y = 0`. The left half holds documentation directories
-and files; the right half holds source code directories and files.
-
-**seedParams:**
 ```typescript
-{
-  spineCount: 2,
-  spineAngles: [0, 180],      // 0° = east, 180° = west
-  offsetFromHub: 0,           // spines meet at the canvas center
-  spineSpacing: 150,
-  directoryOffset: 220,
-  directoryAlternation: "above-below",
-  helixTwist: 0,
-  fileOrbitRadius: 90,
-  endpointFanArc: 100,
-  endpointFanCount: 6,
+interface GWHelixTwistRecord {
+  all?: number;      // Baseline twist for all well types
+  spine?: number;    // Twist for spine nodes
+  directory?: number; // Twist for directory anchors
+  file?: number;     // Twist for file orbits
 }
 ```
 
-**Visual outcome:**
+This allows per-well-type control of helical twist. For example, you can twist
+directories but keep files upright, or twist spines while keeping directories
+fixed. Missing keys default to 0 (no twist).
+
+The seeder uses `resolveHelixTwist(record, wellType)` to extract the specific
+value for each well type, falling back to `all`, then to 0.
+
+## Radial-Backbone dialect configuration
+
+```typescript
+{
+  id: "gwells.dialect.radial-backbone",
+  label: "Radial Backbone",
+  description: "Two spines emanating from a central hub at 0° and 180°. Directories perpendicular above/below.",
+  status: "active",
+  isDefault: true,
+  seedFunctionId: "gwells.seed.radial-backbone",
+  wellAssignment: {
+    assign: (nodeId, attrs) => {
+      if (attrs.nodeType === "spine")     return "gwells.well.spine-linear";
+      if (attrs.isEndpoint === true)      return "gwells.well.endpoint-fan";
+      if (attrs.nodeType === "directory") return "gwells.well.directory-anchor";
+      if (attrs.nodeType === "file")      return "gwells.well.file-orbit";
+      return null;
+    },
+  },
+  activeInteractions: [
+    "gwells.interaction.spine-linear.aligns.spine-linear",
+    "gwells.interaction.directory-anchor.perpendicular.spine-linear",
+    "gwells.interaction.directory-anchor.repels.directory-anchor",
+    "gwells.interaction.file-orbit.springs.directory-anchor",
+    "gwells.interaction.file-orbit.repels.file-orbit",
+    "gwells.interaction.file-orbit.repels.directory-anchor-other",
+    "gwells.interaction.endpoint-fan.springs.spine-linear-endpoint",
+    "gwells.interaction.endpoint-fan.repels.endpoint-fan",
+  ],
+  config: {
+    seedParams: {
+      spineCount: 2,
+      spineAngles: [0, 180],
+      offsetFromHub: 0,
+      spineSpacing: 150,
+      directoryOffset: 220,
+      directoryAlternation: "above-below",
+      helixTwist: {},  // Empty record = no twist
+      fileOrbitRadius: 90,
+      endpointFanArc: 100,
+      endpointFanCount: 6,
+    },
+    wellOverrides: {
+      "gwells.well.directory-anchor": {
+        siblingRepulsion: 280,
+        damping: 0.85,
+        centerGravity: 0.05,
+      },
+      "gwells.well.file-orbit": {
+        attractionStrength: 0.6,
+        siblingRepulsion: 120,
+        springStiffness: 0.08,
+        damping: 0.9,
+        idealDistance: 90,
+        centerGravity: 0.02,
+      },
+      "gwells.well.endpoint-fan": {
+        attractionStrength: 0.5,
+        siblingRepulsion: 90,
+        springStiffness: 0.06,
+        damping: 0.9,
+        idealDistance: 100,
+        centerGravity: 0,
+      },
+    },
+    interactionOverrides: {
+      "gwells.interaction.file-orbit.repels.directory-anchor-other": {
+        strength: 1.4,
+        range: 180,
+      },
+    },
+  },
+}
+```
+
+## Visual outcome
+
 ```
           ┌─ src half ─┐
 ┌─ docs half ─┐
@@ -154,127 +197,9 @@ files            files     │       │     files          files
 └─ src half ─┘
 ```
 
-### Vertical-Parallel
+## Well types and interactions
 
-**Dialect id:** `gwells.dialect.vertical-parallel`
-**Default:** No
-**Description:** Two parallel vertical spines with a gap between them.
-Preserves the visual layout of the existing FA2-pipeline
-directoryBackboneSeeder.ts.
-
-This layout matches the existing dual-backbone seeder: two vertical
-axes separated by 2000 units (each offset 1000 from the hub). Spines are
-stacked vertically along each axis. Files orbit outward from the
-backbone axis.
-
-**seedParams:**
-```typescript
-{
-  spineCount: 2,
-  spineAngles: [90, 270],     // 90° = north, 270° = south
-  offsetFromHub: 1000,       // each spine offset 1000 units → 2000-unit gap
-  spineSpacing: 150,
-  directoryOffset: 220,
-  directoryAlternation: "above-below",
-  helixTwist: 0,
-  fileOrbitRadius: 80,
-  endpointFanArc: 100,
-  endpointFanCount: 6,
-}
-```
-
-**Visual outcome:**
-```
-┌─────────┐                    ┌─────────┐
-│ docs    │                    │ src     │
-│ spine   │                    │ spine   │
-└─────────┘                    └─────────┘
-    │                              │
-    ●                              ●
-    │                              │
-  files                         files
-    │                              │
-    ●                              ●
-    │                              │
-  dir-A                         dir-X
-    │                              │
-    ●                              ●
-    │                              │
-  files                         files
-```
-
-### Helix-Dual
-
-**Dialect id:** `gwells.dialect.helix-dual`
-**Default:** No
-**Description:** Two strands meeting at hub, twisted around each other.
-Demonstrates helix-twist math; foundation for future helix-triple,
-helix-quad, etc.
-
-This layout uses the same vertical-parallel configuration but adds a
-helical twist. As directories get farther from the hub, they rotate
-around their spine axis. The twist parameter (5° per 100 units) produces
-a gentle corkscrew effect.
-
-**seedParams:**
-```typescript
-{
-  spineCount: 2,
-  spineAngles: [90, 270],
-  offsetFromHub: 0,            // spines meet at the hub
-  spineSpacing: 150,
-  directoryOffset: 220,
-  directoryAlternation: "above-below",
-  helixTwist: 5,               // degrees per 100 units distance from hub
-  fileOrbitRadius: 90,
-  endpointFanArc: 100,
-  endpointFanCount: 6,
-}
-```
-
-**Visual outcome:**
-```
-    ○ (twisted)
-     \
-      ●
-       \
-        ○
-         \
-          ● (hub)
-         /
-        ○
-       /
-      ●
-     /
-    ○ (twisted)
-```
-
-The helix twist is subtle at 5° per 100 units. A directory at distance
-1500 from the hub will have rotated 75° around its spine axis compared
-to a directory at distance 0.
-
-## Helix twist units
-
-`helixTwist` is degrees per 100 units of distance from the hub along
-the spine axis. The formula for rotation angle at distance `d` is:
-
-```
-rotation = helixTwist * (d / 100)
-```
-
-A value of 5 means a directory at distance 1500 from hub will have
-rotated 75° around its spine axis (compared to a directory at distance
-0). Value 0 means no twist (straight spine). Negative values rotate
-in the opposite direction.
-
-The helix twist is applied as a rotation around the axis perpendicular
-to the spine direction. For a vertical spine (angle 90°), the twist
-axis is horizontal. For a horizontal spine (angle 0°), the twist axis
-is vertical.
-
-## Well types and interactions (shared across all presets)
-
-Four well types power these dialects. Each registers in
+Four well types power this dialect. Each registers in
 `src/physics/gwells/wellTypes.ts`.
 
 ### `gwells.well.spine-linear`
@@ -325,13 +250,14 @@ Active. Represents directory nodes that anchor file orbits.
     springStiffness: 0.05,
     damping: 0.85,
     idealDistance: 220,
+    centerGravity: 0.05,  // NEW in v0.1
   },
 }
 ```
 
 The `idealDistance` of 220 is the seeded perpendicular offset from
-the spine. Damping is moderately high (0.85) to prevent oscillation
-once the directories settle into their alternating pattern.
+the spine. Damping is moderately high (0.85) to prevent oscillation.
+`centerGravity` applies a gentle pull toward the origin to prevent drift.
 
 ### `gwells.well.file-orbit`
 
@@ -354,6 +280,7 @@ Active. Represents file nodes that orbit their parent directory.
     springStiffness: 0.07,
     damping: 0.9,
     idealDistance: 90,
+    centerGravity: 0.02,  // NEW in v0.1
   },
 }
 ```
@@ -380,13 +307,14 @@ to a specific directory.
     springStiffness: 0.05,
     damping: 0.9,
     idealDistance: 100,
+    centerGravity: 0,  // NEW in v0.1
   },
 }
 ```
 
-## Interactions (shared across all presets)
+## Interactions
 
-Eight interactions are active in these dialects. They register in
+Eight interactions are active in this dialect. They register in
 `src/physics/gwells/interactions.ts`.
 
 ### `gwells.interaction.spine-linear.aligns.spine-linear`
@@ -489,225 +417,26 @@ of root-level files at each endpoint.
 
 ## Success criteria
 
-When the horizontal-linear dialect is applied for the first time in
-Pass D integration, the implementer should observe:
+When the radial-backbone dialect is applied, the implementer should observe:
 
-1. **Spine is horizontal and continuous.** All spine nodes line up at
-   `y ≈ 0` (within a few pixels of the seed position; pinned wells
-   should be exactly at seed position).
-2. **Spine spans the canvas.** Leftmost spine node sits in the
-   docs-cluster side; rightmost in the src-cluster side. The geometric
-   center of the spine is roughly the canvas center.
-3. **Directories alternate above and below.** Adjacent directories on
-   the same spine should not stack on the same side. The alternation may
-   bend slightly due to sibling repulsion but the alternating pattern
-   should be visually clear.
-4. **Files orbit their parents.** Files cluster around their parent
-   directory at roughly the configured `fileOrbitRadius`. The orbit
-   may not be circular — sibling repulsion and cross-directory
-   repulsion will deform it — but each file is visibly closer to its
-   parent than to any other directory.
-5. **Endpoint fans appear at spine tips.** Files marked `isEndpoint`
-   appear in fans extending outward from the outermost spine nodes
-   rather than orbiting a directory.
-6. **Cross-cluster separation is observable.** Looking at the docs half
-   vs. the src half, the two halves should be visually distinguishable
-   as separate clusters of activity, with the spine as the connecting
-   backbone.
-7. **No NaN or Infinity positions.** After 60 frames of physics,
-   every node's `x` and `y` is finite. The smoke test asserts this
-   programmatically; the runtime probe confirms visually (no nodes
-   flying off to the canvas edge or disappearing).
-8. **`__gwellsState` is populated.** After applying the dialect, the
-   graph attribute `__gwellsState` exists and contains an entry for
-   every non-null-assigned node. Spine nodes show `pinned: true`,
-   `vx: 0`, `vy: 0`. Other nodes show finite velocity values and a
-   non-empty `activeInteractions` array on most frames.
+1. **Spine is horizontal and continuous.** All spine nodes line up at `y ≈ 0`.
+2. **Directories alternate above and below.** Adjacent directories on the same spine should not stack on the same side.
+3. **Files orbit their parents.** Files cluster around their parent directory at roughly `fileOrbitRadius`.
+4. **No NaN or Infinity positions.** Every node's `x`, `y`, and `z` is finite.
+5. **`__gwellsState` is populated.** The graph attribute exists and contains an entry for every non-null-assigned node.
 
-For vertical-parallel, the success criteria are similar but the spine
-is vertical and there are two parallel axes with a gap between them.
+## centerGravity (v0.1)
 
-For helix-dual, the success criteria include observing the helical
-twist: directories farther from the hub should show progressive
-rotation around their spine axis.
-
-## What stays stable across tuning
-
-These are the *invariants* of the radial-backbone family. Tuning the
-parameter values is expected during Pass C; changing any of these is
-a dialect rewrite, not a tuning pass:
-
-- **Seeder id**: `gwells.seed.radial-backbone`. Stable string reference;
-  never rename without a migration.
-- **Three initial dialect ids**: `gwells.dialect.horizontal-linear`,
-  `gwells.dialect.vertical-parallel`, `gwells.dialect.helix-dual`.
-  Stable.
-- **Four well types**: spine-linear, directory-anchor, file-orbit,
-  endpoint-fan. Adding a fifth is a separate change.
-- **Eight active interactions**: the list above. Adding more interactions
-  to a dialect is allowed; removing one is a redesign.
-- **Assignment rule**: the four `attrs.nodeType` / `attrs.isEndpoint`
-  predicates. These are the contract between the source adapter and
-  the dialect; changing them means the adapter has to change too.
-- **Pin semantic**: spine nodes are pinned. Files and directories are
-  not. Changing this changes the layout fundamentally.
-
-The parameter values (`spineSpacing`, `directoryOffset`, force
-strengths, ranges, damping) are *all* tunable. Don't preserve their
-specific numbers if visual judgment demands different ones.
-
-## Future presets (not in v0)
-
-These are paste-ready dialect entries demonstrating how the algorithm
-extends to higher N. They become new dialect entries in Pass C2+ without
-algorithm changes.
-
-### Triple-Spine-Y (N=3)
-```typescript
-{
-  id: "gwells.dialect.triple-spine-y",
-  label: "Triple Spine Y",
-  description: "Three spines in a Y-shape (0°, 120°, 240°).",
-  status: "planned",
-  isDefault: false,
-  seedFunctionId: "gwells.seed.radial-backbone",
-  wellAssignment: {
-    assign: (nodeId, attrs) => {
-      if (attrs.nodeType === "spine")     return "gwells.well.spine-linear";
-      if (attrs.isEndpoint === true)      return "gwells.well.endpoint-fan";
-      if (attrs.nodeType === "directory") return "gwells.well.directory-anchor";
-      if (attrs.nodeType === "file")      return "gwells.well.file-orbit";
-      return null;
-    },
-  },
-  activeInteractions: [
-    // same eight interactions as above
-  ],
-  config: {
-    seedParams: {
-      spineCount: 3,
-      spineAngles: [0, 120, 240],
-      offsetFromHub: 0,
-      spineSpacing: 150,
-      directoryOffset: 220,
-      directoryAlternation: "above-below",
-      helixTwist: 0,
-      fileOrbitRadius: 90,
-      endpointFanArc: 100,
-      endpointFanCount: 6,
-    },
-  },
-}
-```
-
-### Quad-Spine-Cross (N=4)
-```typescript
-{
-  id: "gwells.dialect.quad-spine-cross",
-  label: "Quad Spine Cross",
-  description: "Four spines in a cross shape (0°, 90°, 180°, 270°).",
-  status: "planned",
-  isDefault: false,
-  seedFunctionId: "gwells.seed.radial-backbone",
-  // ... same wellAssignment and activeInteractions as above
-  config: {
-    seedParams: {
-      spineCount: 4,
-      spineAngles: [0, 90, 180, 270],
-      offsetFromHub: 0,
-      spineSpacing: 150,
-      directoryOffset: 220,
-      directoryAlternation: "above-below",
-      helixTwist: 0,
-      fileOrbitRadius: 90,
-      endpointFanArc: 100,
-      endpointFanCount: 6,
-    },
-  },
-}
-```
-
-### Helix-Triple (N=3 with twist)
-```typescript
-{
-  id: "gwells.dialect.helix-triple",
-  label: "Helix Triple",
-  description: "Three strands meeting at hub, twisted around each other.",
-  status: "planned",
-  isDefault: false,
-  seedFunctionId: "gwells.seed.radial-backbone",
-  // ... same wellAssignment and activeInteractions as above
-  config: {
-    seedParams: {
-      spineCount: 3,
-      spineAngles: [0, 120, 240],
-      offsetFromHub: 0,
-      spineSpacing: 150,
-      directoryOffset: 220,
-      directoryAlternation: "above-below",
-      helixTwist: 5,
-      fileOrbitRadius: 90,
-      endpointFanArc: 100,
-      endpointFanCount: 6,
-    },
-  },
-}
-```
-
-### Helix-Quad (N=4 with twist — produces a 4-strand braid)
-```typescript
-{
-  id: "gwells.dialect.helix-quad",
-  label: "Helix Quad",
-  description: "Four strands meeting at hub, twisted into a braid.",
-  status: "planned",
-  isDefault: false,
-  seedFunctionId: "gwells.seed.radial-backbone",
-  // ... same wellAssignment and activeInteractions as above
-  config: {
-    seedParams: {
-      spineCount: 4,
-      spineAngles: [0, 90, 180, 270],
-      offsetFromHub: 0,
-      spineSpacing: 150,
-      directoryOffset: 220,
-      directoryAlternation: "above-below",
-      helixTwist: 5,
-      fileOrbitRadius: 90,
-      endpointFanArc: 100,
-      endpointFanCount: 6,
-    },
-  },
-}
-```
-
-Each future preset is a new dialect entry referencing the same
-`gwells.seed.radial-backbone` seeder. No algorithm work needed.
-
-## Relationship to future visual features
-
-The radial-backbone seeder produces *positions* only. Cross-link visuals
-between adjacent spines (the "rungs" in a double-helix appearance) are
-a separate rendering feature, planned for a future pass — they live in
-the renderer or as an overlay layer, not in the seeder.
-
-Galaxy-style orbital motion (continuous rotation along spine axes
-during physics simulation) is similarly out of scope for the seeder;
-that would be an engine feature, not a seeding feature.
+`centerGravity` applies a per-frame pull toward the origin (0, 0, 0). This
+helps keep non-spine nodes from drifting outward indefinitely. Typical values
+are small (0–0.1). The radial-backbone dialect uses:
+- `directory-anchor.centerGravity = 0.05` (gentle pull inward)
+- `file-orbit.centerGravity = 0.02` (very gentle pull)
+- `endpoint-fan.centerGravity = 0` (no pull)
 
 ## References
 
-- [Gravity Well System Contract](physics.gwells.contract) — the
-  authoritative behavior contract.
-- [Gwells README](physics.gwells.readme) — module orientation.
-- [Gwells Registry Patterns](physics.gwells.registry.patterns) — how
-  the four registries compose, with radial-backbone as the worked
-  example.
-- [Helix Constellation Dialect](dialect.physics.helix) — sibling
-  future dialect, vision-only.
-- [Galaxy Mode Dialect](dialect.physics.galaxy) — sibling future
-  dialect, vision-only.
-- [Constellation Mode Dialect](dialect.physics.constellation) —
-  sibling future dialect, vision-only.
-- [Cluster Gravity and Color-Coded Neighborhoods](concept.graph.cluster.gravity)
-  — future consumer of gwells.
+- [Gravity Well System Contract](physics.gwells.contract)
+- [Gwells README](physics.gwells.readme)
+- [Gwells Registry Patterns](physics.gwells.registry.patterns)
+- [Parallel Spines Dialect](physics.gwells.dialect.parallel.spines)
