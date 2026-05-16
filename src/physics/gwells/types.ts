@@ -1,11 +1,16 @@
 /**
- * GWells — Shared TypeScript Types
+ * GWells — Shared Types
  *
- * Type definitions matching the contract at
- * docs/physics/GRAVITY_WELL_SYSTEM_CONTRACT.md
+ * v0 — Skeleton. Full contract types from GRAVITY_WELL_SYSTEM_CONTRACT.md.
+ *
+ * This file contains all shared TypeScript types used across the gwells module.
+ * Types are exported for use by registry files and the engine.
+ *
+ * No engine logic lives in this file — only type definitions.
  */
 
-import type Graph from "graphology";
+// Default import for Graph from graphology (not named export)
+import Graph from "graphology";
 
 /**
  * Lifecycle status for registry entries.
