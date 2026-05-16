@@ -8,7 +8,7 @@
  * physics loop starts.
  *
  * Engine logic lives in engine.ts. This file is registry only.
- * Actual seed implementations live in ./seeders/.ts.
+ * Actual seed implementations live in ./seeders/<name>.ts.
  */
 
 import type { GWSeedFunctionEntry, GWStatus } from "./types";
