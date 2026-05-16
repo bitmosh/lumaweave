@@ -137,22 +137,21 @@ function findEntryEnd(content, startIndex) {
 }
 
 // Helper to extract array entries from registry content
-function extractRegistryEntries(content, registryName) {
+function extractRegistryEntries(content, registryConstantName) {
   const entries = [];
-  // Match the export const declaration with the variable name
-  const constName = registryName === "seedFunctions" 
-    ? "GW_SEED_FUNCTION_REGISTRY" 
-    : `GW_${registryName.toUpperCase()}_REGISTRY`;
-  
-  const registryMatch = content.match(
-    new RegExp(`export const ${constName}:\\s*readonly`)
-  );
-  
-  if (!registryMatch) {
+  // Find the constant declaration line
+  const constIndex = content.indexOf(registryConstantName);
+  if (constIndex === -1) {
     return entries;
   }
   
-  const arrayStart = content.indexOf('[', registryMatch.index);
+  // Find the opening array bracket after the constant
+  // Look for "= [" pattern to avoid matching [] in type annotations
+  const equalsBracketIndex = content.indexOf('= [', constIndex);
+  if (equalsBracketIndex === -1) {
+    return entries;
+  }
+  const arrayStart = content.indexOf('[', equalsBracketIndex);
   if (arrayStart === -1) {
     return entries;
   }
@@ -435,10 +434,10 @@ function validate() {
   }
   
   // Extract registry entries
-  const wellTypeEntries = extractRegistryEntries(wellTypesContent, 'wellTypes');
-  const interactionEntries = extractRegistryEntries(interactionsContent, 'interactions');
-  const seedFunctionEntries = extractRegistryEntries(seedFunctionsContent, 'seedFunctions');
-  const dialectEntries = extractRegistryEntries(dialectsContent, 'dialects');
+  const wellTypeEntries = extractRegistryEntries(wellTypesContent, 'GW_WELL_TYPE_REGISTRY');
+  const interactionEntries = extractRegistryEntries(interactionsContent, 'GW_INTERACTION_REGISTRY');
+  const seedFunctionEntries = extractRegistryEntries(seedFunctionsContent, 'GW_SEED_FUNCTION_REGISTRY');
+  const dialectEntries = extractRegistryEntries(dialectsContent, 'GW_DIALECT_REGISTRY');
   
   // Check 5: Entry shape validation (well types)
   section('Check 5: Well Type Entry Shape');
