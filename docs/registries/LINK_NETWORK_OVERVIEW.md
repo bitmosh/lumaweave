@@ -20,15 +20,15 @@ references:
   - theme.target.registry
   - graph.visual.theme.mapping.contract
   - graph.view.element.registry.contract
-  - link.network.layer.1
-  - link.network.layer.2
-  - link.network.layer.3
-  - link.network.layer.4
-  - link.network.layer.2.overlay.question
-  - link.network.layer.3.gaps
-  - link.network.layer.4.gaps
-  - link.network.naming.drift
-  - registry.inventory
+  - link.network.layer.1 (LAYER_1_HANDLE_REGISTRY.md)
+  - link.network.layer.2 (LAYER_2_CONTROL_SURFACE_CONTRACT.md)
+  - link.network.layer.3 (LAYER_3_GRAPH_VISUAL_THEME_MAPPING.md)
+  - link.network.layer.4 (LAYER_4_GRAPH_VIEW_ELEMENT.md)
+  - link.network.layer.2.overlay.question (LAYER_2_OVERLAY_SURFACE_QUESTION.md)
+  - link.network.layer.3.gaps (LAYER_3_TOKEN_COVERAGE_GAP.md)
+  - link.network.layer.4.gaps (LAYER_4_OVERLAY_ELEMENT_GAP.md)
+  - link.network.naming.drift (NAMING_CONVENTION_DRIFT.md)
+  - registry.inventory (REGISTRY_INVENTORY.md)
 tags:
   - link-network
   - registries
