@@ -14,9 +14,21 @@
 import type { GWSeedFunctionEntry, GWStatus } from "./types";
 
 export const GW_SEED_FUNCTION_REGISTRY: readonly GWSeedFunctionEntry[] = [
-  // Entries added in Pass C. Initial planned entry:
-  //   - "gwells.seed.directory-backbone-n2" (variation B — end-to-end spine)
-  //   Migrated from src/graph/physics/directoryBackboneSeeder.ts
+  {
+    id: "gwells.seed.directory-backbone-n2",
+    label: "Directory Backbone N=2",
+    description:
+      "Two halves of a continuous spine (docs left, src right) with " +
+      "alternating perpendicular directory anchors. Migrated from " +
+      "src/graph/physics/directoryBackboneSeeder.ts in Pass C2.",
+    status: "planned",
+    seed: (_ctx) => {
+      // Placeholder for Pass C2. Currently does nothing.
+      // Nodes use whatever positions buildGraphologyGraph assigned.
+      // When Pass C2 migrates the seeder, this becomes the real
+      // implementation.
+    },
+  },
 ] as const;
 
 export function getSeedFunctionById(id: string): GWSeedFunctionEntry | undefined {

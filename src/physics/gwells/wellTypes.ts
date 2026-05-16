@@ -12,11 +12,76 @@
 import type { GWWellTypeEntry, GWStatus } from "./types";
 
 export const GW_WELL_TYPE_REGISTRY: readonly GWWellTypeEntry[] = [
-  // Entries added in Pass C. Initial planned entries:
-  //   - "gwells.well.spine-linear"       (pinned, arranges with siblings)
-  //   - "gwells.well.directory-anchor"   (perpendicular from spine)
-  //   - "gwells.well.file-orbit"         (radial around directory)
-  //   - "gwells.well.endpoint-fan"       (loose files at spine tips)
+  {
+    id: "gwells.well.spine-linear",
+    label: "Spine (linear, pinned)",
+    description:
+      "A node on the spine backbone. Position is set by the seed function " +
+      "and never moved by the engine. The nodeReducer in Sigma reads " +
+      "__seededSpinePositions to enforce the pin at render time.",
+    status: "active",
+    pinned: true,
+    defaults: {
+      attractionStrength: 0,
+      siblingRepulsion: 0,
+      springStiffness: 0,
+      damping: 1,
+      idealDistance: 0,
+    },
+  },
+  {
+    id: "gwells.well.directory-anchor",
+    label: "Directory Anchor",
+    description:
+      "A directory node. Seeded perpendicular to the spine, alternating " +
+      "above and below. Subject to sibling repulsion from other directory " +
+      "anchors to prevent stacking along the spine axis.",
+    status: "active",
+    pinned: false,
+    defaults: {
+      attractionStrength: 0.4,
+      siblingRepulsion: 250,
+      springStiffness: 0.05,
+      damping: 0.85,
+      idealDistance: 220,
+    },
+  },
+  {
+    id: "gwells.well.file-orbit",
+    label: "File Orbit",
+    description:
+      "A file node orbiting its parent directory-anchor. Identifies the " +
+      "parent through the contains-edge from the source adapter. Subject " +
+      "to spring attraction to the parent and repulsion from siblings " +
+      "(same parent) and from other directory anchors (anti-overlap).",
+    status: "active",
+    pinned: false,
+    defaults: {
+      attractionStrength: 0.5,
+      siblingRepulsion: 100,
+      springStiffness: 0.07,
+      damping: 0.9,
+      idealDistance: 90,
+    },
+  },
+  {
+    id: "gwells.well.endpoint-fan",
+    label: "Endpoint Fan",
+    description:
+      "A root-level file fanning outward from a spine endpoint. Identified " +
+      "via attrs.isEndpoint set by the source adapter. Springs toward the " +
+      "endpoint spine node with a wider ideal distance and lower stiffness " +
+      "than file-orbit, producing a softer fan rather than tight orbit.",
+    status: "active",
+    pinned: false,
+    defaults: {
+      attractionStrength: 0.4,
+      siblingRepulsion: 80,
+      springStiffness: 0.05,
+      damping: 0.9,
+      idealDistance: 100,
+    },
+  },
 ] as const;
 
 export function getWellTypeById(id: string): GWWellTypeEntry | undefined {

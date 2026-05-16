@@ -66,4 +66,4 @@ export {
 } from "./dialects";
 
 // Engine — added in Pass C
-// export { applyDialect } from "./engine";
+export { applyDialect } from "./engine";

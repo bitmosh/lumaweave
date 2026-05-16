@@ -139,7 +139,14 @@ function findEntryEnd(content, startIndex) {
 // Helper to extract array entries from registry content
 function extractRegistryEntries(content, registryName) {
   const entries = [];
-  const registryMatch = content.match(new RegExp(`export const (GW_${registryName.toUpperCase()}_REGISTRY|GW_SEED_FUNCTION_REGISTRY):\\s*readonly\\s+\\w+\\[\\]`));
+  // Match the export const declaration with the variable name
+  const constName = registryName === "seedFunctions" 
+    ? "GW_SEED_FUNCTION_REGISTRY" 
+    : `GW_${registryName.toUpperCase()}_REGISTRY`;
+  
+  const registryMatch = content.match(
+    new RegExp(`export const ${constName}:\\s*readonly`)
+  );
   
   if (!registryMatch) {
     return entries;
