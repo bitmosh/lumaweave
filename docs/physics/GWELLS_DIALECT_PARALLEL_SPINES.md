@@ -91,6 +91,17 @@ picked up by the controller's `applyConfigOverride` method and triggers a
 seed function re-run with the merged config. Each dialect maintains independent
 slider positions (per-dialect persistence).
 
+## Seed Position Retention (Pass C5)
+
+As of Pass C5 (v0.1), non-pinned wells (directory-anchor, file-orbit, endpoint-fan)
+retain their seeded positions via a per-frame spring force toward the seed
+position. The seeder writes all node positions to the `__gwellsSeedPositions`
+graph attribute, and the engine applies a force `f = seedAdherence × (seedPos - currentPos)`
+each frame. This preserves seeded layout intent (e.g., helix-twisted directories
+stay twisted) while still allowing physics-driven refinement. Default adherence
+values: directory-anchor 0.15 (strong), file-orbit 0.05 (light), endpoint-fan 0.08
+(moderate).
+
 ## Parallel-Spines dialect configuration
 
 ```typescript

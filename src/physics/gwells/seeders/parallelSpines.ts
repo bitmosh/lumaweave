@@ -85,6 +85,9 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
   const axes = assignSpinesToAxes(sortedRoots, params.spineCount);
   const seededPositions = new Map();
 
+  // NEW: Stored for engine's seed-anchor force — ALL nodes
+  const allSeedPositions = new Map<string, { x: number; y: number; z: number }>();
+
   const R = axisOffsetForN(params.offsetFromHub, params.spineCount);
   const spineTwist = resolveHelixTwist(params.helixTwist, "spine");
 
@@ -120,6 +123,7 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
       graph.setNodeAttribute(spineNodeId, "y", y);
       graph.setNodeAttribute(spineNodeId, "z", z);
       seededPositions.set(spineNodeId, { x, y, z });
+      allSeedPositions.set(spineNodeId, { x, y, z });
 
       // Mark outermost as endpoint
       if (nodeIndex === allSpineNodes.length - 1) {
@@ -183,6 +187,7 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
         graph.setNodeAttribute(childId, "x", dirX);
         graph.setNodeAttribute(childId, "y", dirY);
         graph.setNodeAttribute(childId, "z", dirZ);
+        allSeedPositions.set(childId, { x: dirX, y: dirY, z: dirZ });
 
         // Place file children in orbit around the directory (in the x-z plane, at constant y)
         const fileTwist = resolveHelixTwist(params.helixTwist, "file");
@@ -205,6 +210,7 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
               graph.setNodeAttribute(fileId, "x", fileX);
               graph.setNodeAttribute(fileId, "y", fileY);
               graph.setNodeAttribute(fileId, "z", fileZ);
+              allSeedPositions.set(fileId, { x: fileX, y: fileY, z: fileZ });
             }
           });
         }
@@ -229,6 +235,7 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
           graph.setNodeAttribute(fileId, "x", fileX);
           graph.setNodeAttribute(fileId, "y", fileY);
           graph.setNodeAttribute(fileId, "z", fileZ);
+          allSeedPositions.set(fileId, { x: fileX, y: fileY, z: fileZ });
         });
       }
     });
@@ -242,8 +249,10 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
     positionsForReducer.set(id, { x: pos.x, y: pos.y });
   });
   graph.setAttribute("__seededSpinePositions", positionsForReducer);
+  graph.setAttribute("__gwellsSeedPositions", allSeedPositions);
 
   console.log(
-    `[parallelSpines] Seeded ${seededPositions.size} spine positions across ${params.spineCount} parallel spines`
+    `[parallelSpines] Seeded ${seededPositions.size} spine positions and ` +
+    `${allSeedPositions.size} total node positions across ${params.spineCount} parallel spines`
   );
 }

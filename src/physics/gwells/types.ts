@@ -81,6 +81,23 @@ export interface GWWellTypeDefaults {
    * Defaults to 0 if not specified, for backward compatibility.
    */
   centerGravity?: number;
+  /**
+   * NEW (Pass C5): Per-frame spring force toward the node's seed position.
+   *
+   * Each non-pinned node remembers its last-seeded position in the
+   * __gwellsSeedPositions graph attribute. Each frame, a spring force pulls
+   * the node toward that seed: `f = seedAdherence × (seedPos - currentPos)`.
+   *
+   * Strength is the spring constant. Values 0.05–0.20 are typical: light
+   * enough that other forces (repulsion, attraction) can still adjust
+   * positions, strong enough to retain seeded layout intent.
+   *
+   * 0 means no adherence (pure physics, classical behavior).
+   * Defaults to 0 if not specified.
+   *
+   * Ignored for pinned well types (the engine skips them entirely).
+   */
+  seedAdherence?: number;
 }
 
 /**

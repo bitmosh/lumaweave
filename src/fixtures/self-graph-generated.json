@@ -2,7 +2,7 @@
   "schemaVersion": "lumaweave-self-graph/v1",
   "metadata": {
     "schemaVersion": "lumaweave-self-graph/v1",
-    "generatedAt": "2026-05-17T00:16:56.682Z",
+    "generatedAt": "2026-05-17T00:53:01.842Z",
     "generator": "generate-self-graph@v2",
     "sourceTree": "./",
     "stats": {
@@ -1885,8 +1885,8 @@
         "v0.1",
         "layout"
       ],
-      "size": 713,
-      "lastModified": "2026-05-16T22:54:27.125Z",
+      "size": 783,
+      "lastModified": "2026-05-17T00:51:36.867Z",
       "raw": {}
     },
     {
@@ -1905,8 +1905,8 @@
         "v0.1",
         "layout"
       ],
-      "size": 229,
-      "lastModified": "2026-05-16T22:55:09.753Z",
+      "size": 240,
+      "lastModified": "2026-05-17T00:52:21.034Z",
       "raw": {}
     },
     {
@@ -1925,8 +1925,8 @@
         "v0.1",
         "layout"
       ],
-      "size": 453,
-      "lastModified": "2026-05-16T22:54:47.716Z",
+      "size": 464,
+      "lastModified": "2026-05-17T00:52:00.548Z",
       "raw": {}
     },
     {
@@ -4060,8 +4060,8 @@
         "src",
         "physics"
       ],
-      "size": 102,
-      "lastModified": "2026-05-16T03:33:35.126Z",
+      "size": 110,
+      "lastModified": "2026-05-17T00:40:12.549Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4079,8 +4079,8 @@
         "src",
         "physics"
       ],
-      "size": 322,
-      "lastModified": "2026-05-16T22:43:55.407Z",
+      "size": 339,
+      "lastModified": "2026-05-17T00:39:43.850Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4174,8 +4174,8 @@
         "src",
         "physics"
       ],
-      "size": 414,
-      "lastModified": "2026-05-16T22:44:28.779Z",
+      "size": 430,
+      "lastModified": "2026-05-17T00:42:09.072Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4212,8 +4212,8 @@
         "src",
         "physics"
       ],
-      "size": 250,
-      "lastModified": "2026-05-16T20:44:07.676Z",
+      "size": 259,
+      "lastModified": "2026-05-17T00:43:31.794Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4231,8 +4231,8 @@
         "src",
         "physics"
       ],
-      "size": 250,
-      "lastModified": "2026-05-16T20:44:28.232Z",
+      "size": 259,
+      "lastModified": "2026-05-17T00:44:33.307Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4497,8 +4497,8 @@
         "src",
         "graph"
       ],
-      "size": 908,
-      "lastModified": "2026-05-17T00:15:53.431Z",
+      "size": 922,
+      "lastModified": "2026-05-17T00:45:12.465Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55

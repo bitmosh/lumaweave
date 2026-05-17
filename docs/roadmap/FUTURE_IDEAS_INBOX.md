@@ -135,37 +135,17 @@ Items here are promoted to the roadmap only when:
 
 ## Seed-Position Retention for Non-Pinned Wells
 
-**Discovered:** Pass C4 visual verification (helix-twist sliders on Radial-Backbone)
+**COMPLETED (Pass C5, v0.1):** Non-pinned wells now retain seeded positions via a per-frame spring force (`seedAdherence`). Seed functions write `__gwellsSeedPositions` graph attribute; engine applies `f = seedAdherence × (seedPos - currentPos)`. Drag handlers update seed positions on mouseup. Default adherence: directory-anchor 0.15 (strong), file-orbit 0.05 (light), endpoint-fan 0.08 (moderate). Helix-twist sliders now persist correctly.
 
-Seeded positions are currently treated as initial conditions, not as
-layout intent. For pinned wells (spine-linear), positions persist because
-physics skips them. For non-pinned wells (directory-anchor, file-orbit,
-endpoint-fan), physics immediately drifts seeded positions toward whatever
-equilibrium the active interactions produce — washing out helix twist,
-directory alternation, and other position-derived intent.
+**Follow-up ideas for future expansion:**
 
-Symptom in Pass C4: helixTwist.directory and helixTwist.file sliders fire
-their seeder math correctly (verified via probe + console logs), but
-within a few physics frames the directories drift back toward
-"natural" equilibrium positions. The twist briefly flashes then dissipates.
+- **UI sliders for seedAdherence:** Expose per-well-type seedAdherence as tunable handles in the Physics panel (similar to helixTwist sliders). Allow users to adjust how strongly nodes retain their seeded positions vs drift to physics equilibrium.
 
-Possible solutions:
-- New force kind: spring-to-seed-position, soft spring per non-pinned node
-  toward its last-seeded position. Strength tunable per well type.
-- New well-type field: `seedAdherence` (0–1), how strongly the engine
-  retains seeded positions vs lets physics dominate.
-- Alternative interaction model: directory-anchor's "perpendicular"
-  interaction becomes "spring-to-perpendicular-angle" rather than a
-  tangential force, with the angle baked from helixTwist.
+- **Per-dialect seedAdherence overrides:** Currently seedAdherence is set on well-type defaults. Future: allow dialects to override seedAdherence per well type via `wellOverrides`, enabling dialect-specific retention behavior (e.g., a "loose" variant of radial-backbone with weaker adherence).
 
-Architectural question to settle: do seeded positions express ideal
-layout intent (and physics should preserve that intent), or are they
-just initial conditions (and physics is free to find its own
-equilibrium)? Current behavior is the latter; helix-twist semantics
-implicitly assume the former.
+- **Seed position snapshots:** Allow users to save/load seed position snapshots as presets. Could be useful for saving interesting layout states (e.g., a specific helix-twist configuration) and restoring them later.
 
-Pass C4 ships with the limitation. Resolving it is a separate pass
-(Pass C5 candidate).
+- **Selective seed retention:** Currently all non-pinned wells have seedAdherence. Future: allow users to selectively disable seed retention for specific nodes or node types (e.g., let files drift freely while keeping directories anchored).
 
 ---
 

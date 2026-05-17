@@ -467,6 +467,20 @@ function SigmaGraphViewComponent({
   // End drag
   const handleMouseUp = () => {
     if (dragState.nodeId) {
+      // Pass C5: Update seed position to where the user dropped the node
+      // so the engine's seed-anchor force doesn't pull it back to its
+      // original seeded position.
+      if (graph.hasAttribute("__gwellsSeedPositions")) {
+        const seedPositions = graph.getAttribute("__gwellsSeedPositions") as Map<
+          string,
+          { x: number; y: number; z: number }
+        >;
+        const x = graph.getNodeAttribute(dragState.nodeId, "x") as number;
+        const y = graph.getNodeAttribute(dragState.nodeId, "y") as number;
+        const z = (graph.getNodeAttribute(dragState.nodeId, "z") as number) ?? 0;
+        seedPositions.set(dragState.nodeId, { x, y, z });
+      }
+
       // Unfix node so physics can resume
       graph.setNodeAttribute(
         dragState.nodeId, "fixed", false

@@ -133,6 +133,7 @@ export function applyDialect(
         damping: 1,
         idealDistance: 0,
         centerGravity: 0,
+        seedAdherence: 0,
       };
     }
     const override = resolvedConfig.wellOverrides?.[wellTypeId];
@@ -147,6 +148,7 @@ export function applyDialect(
       idealDistance:
         override?.idealDistance ?? wellType.defaults.idealDistance,
       centerGravity: override?.centerGravity ?? wellType.defaults.centerGravity ?? 0,
+      seedAdherence: override?.seedAdherence ?? wellType.defaults.seedAdherence ?? 0,
     };
   }
 
@@ -192,6 +194,11 @@ export function applyDialect(
     for (const [, state] of physicsState.nodes) {
       state.activeInteractions.length = 0;
     }
+
+    // NEW: Get seed positions map (set by seed function)
+    const seedPositions = graph.hasAttribute("__gwellsSeedPositions")
+      ? graph.getAttribute("__gwellsSeedPositions") as Map<string, { x: number; y: number; z?: number }>
+      : null;
 
     // For each non-pinned node, accumulate forces
     for (const [nodeId, state] of physicsState.nodes) {
@@ -283,6 +290,15 @@ export function applyDialect(
         // Pull strength is proportional to centerGravity. Direction is from node toward origin.
         fx += (-x / distFromOrigin) * params.centerGravity;
         fy += (-y / distFromOrigin) * params.centerGravity;
+      }
+
+      // NEW: Seed-anchor force — pull toward seeded position
+      if (params.seedAdherence && params.seedAdherence > 0 && seedPositions) {
+        const seedPos = seedPositions.get(nodeId);
+        if (seedPos) {
+          fx += (seedPos.x - x) * params.seedAdherence;
+          fy += (seedPos.y - y) * params.seedAdherence;
+        }
       }
 
       // Update velocity with damping

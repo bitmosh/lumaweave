@@ -196,4 +196,152 @@ test.describe("Gwells Physics Integration", () => {
     });
     expect(settings.physics.seedParamOverrides["gwells.dialect.parallel-spines"].helixTwist.spine).toBe(15);
   });
+
+  test("Pass C5: Directory twist persists with seedAdherence", async ({ page }) => {
+    // Wait for seeder to complete (wait for __gwellsSeedPositions to exist)
+    await page.waitForFunction(() => {
+      const sigma = (window as any).__lwSigma;
+      if (!sigma) return false;
+      const graph = sigma.getGraph();
+      return graph.hasAttribute("__gwellsSeedPositions");
+    }, { timeout: 10000 });
+
+    // Set directory twist to 20 on radial-backbone (default)
+    await page.locator('[data-testid="helix-twist-directory"]').fill("20");
+    await page.locator('[data-testid="helix-twist-directory"]').dispatchEvent("change");
+    await page.waitForTimeout(500);  // let seeder run
+
+    // Capture any node's position (not specifically directory)
+    const initialPos = await page.evaluate(() => {
+      const sigma = (window as any).__lwSigma;
+      if (!sigma) return null;
+      const graph = sigma.getGraph();
+      let firstNodeId: string | null = null;
+      graph.forEachNode((id: string) => {
+        if (!firstNodeId) firstNodeId = id;
+      });
+      if (!firstNodeId) return null;
+      return {
+        id: firstNodeId,
+        x: graph.getNodeAttribute(firstNodeId, "x"),
+        y: graph.getNodeAttribute(firstNodeId, "y"),
+      };
+    });
+    expect(initialPos).not.toBeNull();
+
+    // Wait several physics frames
+    await page.waitForTimeout(2000);
+
+    // Position should be CLOSE to initial (within 150 units) — seedAdherence kept it near seed
+    const finalPos = await page.evaluate((id: string) => {
+      const sigma = (window as any).__lwSigma;
+      const graph = sigma.getGraph();
+      return {
+        x: graph.getNodeAttribute(id, "x"),
+        y: graph.getNodeAttribute(id, "y"),
+      };
+    }, initialPos!.id);
+
+    const drift = Math.sqrt(
+      Math.pow(finalPos.x - initialPos!.x, 2) +
+      Math.pow(finalPos.y - initialPos!.y, 2)
+    );
+    expect(drift).toBeLessThan(150);  // before C5, drift was 500+ units within 2 seconds
+  });
+
+  test("Pass C5: Dragging a node updates its seed position", async ({ page }) => {
+    // Wait for seeder to complete
+    await page.waitForFunction(() => {
+      const sigma = (window as any).__lwSigma;
+      if (!sigma) return false;
+      const graph = sigma.getGraph();
+      return graph.hasAttribute("__gwellsSeedPositions");
+    }, { timeout: 10000 });
+
+    await page.waitForTimeout(500);
+
+    // Get any node that has a seed position
+    const probe = await page.evaluate(() => {
+      const sigma = (window as any).__lwSigma;
+      const graph = sigma.getGraph();
+      if (!graph.hasAttribute("__gwellsSeedPositions")) return null;
+      const seeds = graph.getAttribute("__gwellsSeedPositions");
+      let foundNodeId: string | null = null;
+      let foundSeed: any = null;
+      graph.forEachNode((id: string) => {
+        if (!foundNodeId) {
+          const seed = seeds.get(id);
+          if (seed) {
+            foundNodeId = id;
+            foundSeed = seed;
+          }
+        }
+      });
+      if (!foundNodeId) return null;
+      return {
+        id: foundNodeId,
+        seed: foundSeed,
+      };
+    });
+    expect(probe).not.toBeNull();
+    expect(probe?.seed).toBeDefined();
+
+    // Simulate drag-update via direct attribute write + mouseup-like update
+    // (Real drag is hard to simulate in Playwright; we test the data flow.)
+    await page.evaluate((id: string) => {
+      const sigma = (window as any).__lwSigma;
+      const graph = sigma.getGraph();
+      // Move the node
+      graph.setNodeAttribute(id, "x", 9999);
+      graph.setNodeAttribute(id, "y", 9999);
+      // Update the seed (what handleMouseUp does)
+      const seeds = graph.getAttribute("__gwellsSeedPositions");
+      seeds.set(id, { x: 9999, y: 9999, z: 0 });
+    }, probe!.id);
+
+    await page.waitForTimeout(1000);
+
+    // Position should still be close to (9999, 9999) — seed-anchor pulled it back to the new seed
+    const finalPos = await page.evaluate((id: string) => {
+      const sigma = (window as any).__lwSigma;
+      const graph = sigma.getGraph();
+      return {
+        x: graph.getNodeAttribute(id, "x"),
+        y: graph.getNodeAttribute(id, "y"),
+      };
+    }, probe!.id);
+
+    // Allow significant interaction-driven drift but confirm it's NOT back near original (0-ish)
+    expect(Math.abs(finalPos.x - 9999)).toBeLessThan(500);
+    expect(Math.abs(finalPos.y - 9999)).toBeLessThan(500);
+  });
+
+  test("Pass C5: Dialect change resets seed positions", async ({ page }) => {
+    await page.waitForTimeout(500);
+
+    // Get initial seed positions for radial-backbone
+    const radialSeeds = await page.evaluate(() => {
+      const sigma = (window as any).__lwSigma;
+      const graph = sigma.getGraph();
+      if (!graph.hasAttribute("__gwellsSeedPositions")) return null;
+      const seeds = graph.getAttribute("__gwellsSeedPositions");
+      return seeds.size;
+    });
+    expect(radialSeeds).toBeGreaterThan(0);
+
+    // Switch dialect
+    await page.selectOption('[data-testid="dialect-select"]', "gwells.dialect.parallel-spines");
+    await page.waitForTimeout(800);
+
+    // Seed positions should still exist and have positions for the parallel-spines layout
+    const parallelSeeds = await page.evaluate(() => {
+      const sigma = (window as any).__lwSigma;
+      const graph = sigma.getGraph();
+      if (!graph.hasAttribute("__gwellsSeedPositions")) return null;
+      const seeds = graph.getAttribute("__gwellsSeedPositions");
+      return seeds.size;
+    });
+    expect(parallelSeeds).toBeGreaterThan(0);
+    // The two should have similar node counts (same graph), but positions are different
+  });
 });

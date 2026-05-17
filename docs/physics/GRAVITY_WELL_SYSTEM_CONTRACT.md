@@ -481,6 +481,76 @@ also skipped, even if their well type is not pinned. This lets the
 drag handler temporarily disable physics for the dragged node without
 modifying gwells state.
 
+## Seed Position Retention (v0.1, Pass C5)
+
+Non-pinned wells (directory-anchor, file-orbit, endpoint-fan) now retain
+layout intent via seed-position retention. This addresses the limitation
+that seeded positions were previously treated as initial conditions only,
+causing nodes to drift from their seeded layout within a few physics frames.
+
+### Mechanism
+
+Each seed function writes a graph-level attribute `__gwellsSeedPositions`
+containing a `Map<nodeId, {x, y, z}>` of all node positions at seed time.
+The engine reads this map in `stepPhysics` and applies a spring force:
+
+```
+f = seedAdherence × (seedPos - currentPos)
+```
+
+Where `seedAdherence` is a per-well-type parameter (default 0.05–0.20 for
+non-pinned wells, 0 for pinned wells). The force pulls nodes toward their
+seeded positions while still allowing other forces (repulsion, attraction,
+centerGravity) to adjust positions. This preserves seeded layout intent
+without preventing physics-driven refinement.
+
+### Well Type Defaults Extension
+
+`GWWellTypeDefaults` gains an optional field:
+
+```typescript
+export interface GWWellTypeDefaults {
+  // ... existing fields ...
+  /**
+   * Per-frame spring force toward the node's seed position.
+   * Values 0.05–0.20 are typical. 0 means no adherence.
+   * Defaults to 0 if not specified.
+   * Ignored for pinned well types.
+   */
+  seedAdherence?: number;
+}
+```
+
+Default values (v0.1):
+- `spine-linear` (pinned): 0
+- `directory-anchor`: 0.15 (strong — retains helix twist)
+- `file-orbit`: 0.05 (light — files spread freely)
+- `endpoint-fan`: 0.08 (moderate)
+
+### Graph Attribute Contract
+
+Seed functions MUST write `__gwellsSeedPositions` as a graph-level attribute
+with type `Map<string, {x: number, y: number, z: number}>`. This is
+separate from `__seededSpinePositions` (which contains only pinned spine
+nodes for Sigma's nodeReducer). `__gwellsSeedPositions` contains ALL
+nodes and is used by the engine's seed-anchor force.
+
+### Drag Handler Integration
+
+When a user drags a node, the drag handler SHOULD update the node's seed
+position in `__gwellsSeedPositions` on mouseup. This prevents the seed-
+anchor force from pulling the node back to its original seeded position,
+allowing the user's placement to become the new layout intent. The
+integration point is in `SigmaGraphView.tsx`'s drag mouseup handler.
+
+### Dialect Switching
+
+When switching dialects, the seed function re-runs and overwrites
+`__gwellsSeedPositions` with the new layout's seeded positions. The
+seed-anchor force then pulls nodes toward the new seed positions,
+enabling smooth dialect transitions while respecting each dialect's
+layout intent.
+
 ## Evidence Required
 
 For v0 acceptance:

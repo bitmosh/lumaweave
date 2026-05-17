@@ -98,6 +98,9 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
   // Store seeded positions for nodeReducer
   const seededPositions = new Map<string, { x: number; y: number }>();
 
+  // NEW: Stored for engine's seed-anchor force — ALL nodes
+  const allSeedPositions = new Map<string, { x: number; y: number; z: number }>();
+
   // Process each spine axis
   for (let spineIndex = 0; spineIndex < params.spineCount; spineIndex++) {
     const angleDeg = params.spineAngles[spineIndex];
@@ -124,6 +127,7 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
       graph.setNodeAttribute(spineNodeId, "y", spineY);
       graph.setNodeAttribute(spineNodeId, "z", 0);
       seededPositions.set(spineNodeId, { x: spineX, y: spineY });
+      allSeedPositions.set(spineNodeId, { x: spineX, y: spineY, z: 0 });
 
       // Mark outermost node as endpoint
       if (nodeIndex === allSpineNodes.length - 1) {
@@ -188,6 +192,7 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
         graph.setNodeAttribute(childId, "x", dirX);
         graph.setNodeAttribute(childId, "y", dirY);
         graph.setNodeAttribute(childId, "z", 0);
+        allSeedPositions.set(childId, { x: dirX, y: dirY, z: 0 });
 
         // Place file children in orbit around the directory
         const dirFiles = parentToChildren.get(childId);
@@ -210,6 +215,7 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
               graph.setNodeAttribute(fileId, "x", fileX);
               graph.setNodeAttribute(fileId, "y", fileY);
               graph.setNodeAttribute(fileId, "z", 0);
+              allSeedPositions.set(fileId, { x: fileX, y: fileY, z: 0 });
             }
           });
         }
@@ -235,6 +241,7 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
           graph.setNodeAttribute(fileId, "x", fileX);
           graph.setNodeAttribute(fileId, "y", fileY);
           graph.setNodeAttribute(fileId, "z", 0);
+          allSeedPositions.set(fileId, { x: fileX, y: fileY, z: 0 });
         });
       }
     });
@@ -242,8 +249,10 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
 
   // Store seeded positions as graph-level attribute for nodeReducer
   graph.setAttribute("__seededSpinePositions", seededPositions);
+  graph.setAttribute("__gwellsSeedPositions", allSeedPositions);
 
   console.log(
-    `[radialBackbone] Seeded ${seededPositions.size} spine positions across ${params.spineCount} spines`
+    `[radialBackbone] Seeded ${seededPositions.size} spine positions and ` +
+    `${allSeedPositions.size} total node positions across ${params.spineCount} spines`
   );
 }

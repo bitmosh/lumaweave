@@ -27,6 +27,8 @@ export const GW_WELL_TYPE_REGISTRY: readonly GWWellTypeEntry[] = [
       springStiffness: 0,
       damping: 1,
       idealDistance: 0,
+      centerGravity: 0,
+      seedAdherence: 0,
     },
   },
   {
@@ -44,6 +46,8 @@ export const GW_WELL_TYPE_REGISTRY: readonly GWWellTypeEntry[] = [
       springStiffness: 0.05,
       damping: 0.85,
       idealDistance: 220,
+      centerGravity: 0.05,
+      seedAdherence: 0.15,
     },
   },
   {
@@ -62,6 +66,8 @@ export const GW_WELL_TYPE_REGISTRY: readonly GWWellTypeEntry[] = [
       springStiffness: 0.07,
       damping: 0.9,
       idealDistance: 90,
+      centerGravity: 0.02,
+      seedAdherence: 0.05,
     },
   },
   {
@@ -80,6 +86,8 @@ export const GW_WELL_TYPE_REGISTRY: readonly GWWellTypeEntry[] = [
       springStiffness: 0.05,
       damping: 0.9,
       idealDistance: 100,
+      centerGravity: 0,
+      seedAdherence: 0.08,
     },
   },
 ] as const;
