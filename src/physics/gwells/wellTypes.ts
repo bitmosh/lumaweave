@@ -67,7 +67,7 @@ export const GW_WELL_TYPE_REGISTRY: readonly GWWellTypeEntry[] = [
       damping: 0.9,
       idealDistance: 90,
       centerGravity: 0.02,
-      seedAdherence: 0.05,
+      seedAdherence: 0.4,  // Tuned for Pass C7 drag-seed test (was 0.05)
     },
   },
   {

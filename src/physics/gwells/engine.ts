@@ -88,6 +88,19 @@ export function applyDialect(
     }
   });
 
+  // Step 5.5 (Pass C7): Build parent-of-node lookup from contains edges.
+  // Used by interactions with requireEdge filter to know which nodes are
+  // structurally related to which.
+  const parentOfNode = new Map<string, string>();
+  graph.forEachEdge((edgeId, attrs) => {
+    const edgeType = attrs.relationship || attrs.raw?.type;
+    if (edgeType === "contains") {
+      const source = graph.source(edgeId); // contains-source = parent
+      const target = graph.target(edgeId); // contains-target = child
+      parentOfNode.set(target, source);
+    }
+  });
+
   // Step 6: Build resolved per-interaction table
   interface ResolvedInteraction {
     id: string;
@@ -97,6 +110,7 @@ export function applyDialect(
     strength: number;
     range: number | undefined;
     idealDistance: number | undefined;
+    requireEdge: GWInteractionEntry["requireEdge"];  // NEW (Pass C7)
   }
 
   const resolvedInteractions: ResolvedInteraction[] = [];
@@ -119,6 +133,7 @@ export function applyDialect(
       strength: override?.strength ?? interaction.strength,
       range: override?.range ?? interaction.range,
       idealDistance: override?.idealDistance ?? interaction.idealDistance,
+      requireEdge: interaction.requireEdge,  // NEW (Pass C7)
     });
   }
 
@@ -224,6 +239,21 @@ export function applyDialect(
         for (const [otherId, otherState] of physicsState.nodes) {
           if (otherId === nodeId) continue;
           if (otherState.wellTypeId !== interaction.target) continue;
+
+          // Pass C7: edge-aware structural filter
+          if (interaction.requireEdge === "contains-parent") {
+            // Source's parent must be the target
+            if (parentOfNode.get(nodeId) !== otherId) continue;
+          } else if (interaction.requireEdge === "no-contains-parent") {
+            // Source's parent must NOT be the target
+            if (parentOfNode.get(nodeId) === otherId) continue;
+          } else if (interaction.requireEdge === "shared-parent") {
+            // Source and target must share the same parent
+            const sourceParent = parentOfNode.get(nodeId);
+            const otherParent = parentOfNode.get(otherId);
+            if (!sourceParent || sourceParent !== otherParent) continue;
+          }
+          // If requireEdge is undefined, no filter applies (legacy behavior)
 
           const ox = graph.getNodeAttribute(otherId, "x") as number;
           const oy = graph.getNodeAttribute(otherId, "y") as number;
@@ -382,6 +412,7 @@ export function applyDialect(
           strength: override?.strength ?? interaction.strength,
           range: override?.range ?? interaction.range,
           idealDistance: override?.idealDistance ?? interaction.idealDistance,
+          requireEdge: interaction.requireEdge,  // NEW (Pass C7)
         });
       }
     }

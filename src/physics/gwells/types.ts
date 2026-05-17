@@ -140,6 +140,24 @@ export interface GWInteractionEntry {
   status: GWStatus;
   /** Description of intent. */
   description: string;
+  /**
+   * Optional structural filter. If set, the engine only applies this
+   * interaction between (source, target) node pairs that satisfy the
+   * relationship:
+   *
+   * - "contains-parent": target has a `contains` edge to source
+   *   (target is source's parent). E.g., file→its-parent-directory.
+   * - "no-contains-parent": no `contains` edge from target to source
+   *   (target is NOT source's parent). E.g., file→other-directories.
+   * - "shared-parent": source and target both have the same
+   *   `contains`-parent. E.g., sibling files.
+   *
+   * If omitted, the interaction fires for all well-type matches
+   * (legacy behavior — backward compatible).
+   *
+   * Added in Pass C7.
+   */
+  requireEdge?: "contains-parent" | "no-contains-parent" | "shared-parent";
 }
 
 /**

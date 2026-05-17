@@ -2,7 +2,7 @@
   "schemaVersion": "lumaweave-self-graph/v1",
   "graphFile": "self-graph-generated.json",
   "reportFile": "GRAPH_REPORT.md",
-  "generatedAt": "2026-05-17T02:52:37.025Z",
+  "generatedAt": "2026-05-17T04:08:40.201Z",
   "health": {
     "nodesWithoutCluster": 81,
     "nodesWithoutStatus": 66,

@@ -32,6 +32,7 @@ export const GW_INTERACTION_REGISTRY: readonly GWInteractionEntry[] = [
     strength: 0.3,
     range: 180,
     status: "active",
+    requireEdge: "contains-parent",
     description:
       "Pulls directory anchors perpendicular to the spine axis. The seed " +
       "function provides the initial above/below assignment; this interaction " +
@@ -59,10 +60,11 @@ export const GW_INTERACTION_REGISTRY: readonly GWInteractionEntry[] = [
     strength: 1.0,
     idealDistance: 90,
     status: "active",
+    requireEdge: "contains-parent",
     description:
       "The primary attractive force: files spring toward their parent " +
-      "directory. The target identification uses the parent relationship " +
-      "from the contains-edge, not a generic well-type match.",
+      "directory. The target identification uses the contains-edge from " +
+      "the source adapter — files only spring to their actual parent.",
   },
   {
     id: "gwells.interaction.file-orbit.repels.file-orbit",
@@ -72,6 +74,7 @@ export const GW_INTERACTION_REGISTRY: readonly GWInteractionEntry[] = [
     strength: 0.6,
     range: 140,
     status: "active",
+    requireEdge: "shared-parent",
     description:
       "Sibling repulsion between files. Spreads files angularly around their " +
       "parent directory. The 140-unit range is wider than the orbit radius so " +
@@ -85,6 +88,7 @@ export const GW_INTERACTION_REGISTRY: readonly GWInteractionEntry[] = [
     strength: 1.4,
     range: 180,
     status: "active",
+    requireEdge: "no-contains-parent",
     description:
       "Anti-overlap force: files are repelled from directory anchors that " +
       "are not their parent. The strength is higher than file-sibling " +
@@ -98,6 +102,7 @@ export const GW_INTERACTION_REGISTRY: readonly GWInteractionEntry[] = [
     strength: 0.8,
     idealDistance: 100,
     status: "active",
+    requireEdge: "contains-parent",
     description:
       "Endpoint fans spring toward the spine endpoint nodes — the " +
       "leftmost and rightmost spine nodes specifically. Target identification " +
@@ -111,6 +116,7 @@ export const GW_INTERACTION_REGISTRY: readonly GWInteractionEntry[] = [
     strength: 0.7,
     range: 130,
     status: "active",
+    requireEdge: "shared-parent",
     description:
       "Sibling repulsion within the fan, controlling the angular distribution " +
       "of root-level files at each endpoint.",

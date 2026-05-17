@@ -551,6 +551,37 @@ seed-anchor force then pulls nodes toward the new seed positions,
 enabling smooth dialect transitions while respecting each dialect's
 layout intent.
 
+## Edge-aware Interactions (Pass C7)
+
+Interactions can declare structural requirements via the optional
+`requireEdge` field on GWInteractionEntry. The engine builds a
+`parentOfNode` lookup at applyDialect time from `contains` edges in
+the graph, then filters target nodes in the force loop before
+applying force.
+
+Three filter values:
+
+- `"contains-parent"`: the interaction only fires when the target
+  has a `contains` edge to the source. In radial-backbone semantics:
+  "this is the source's parent." Used for `file → its parent
+  directory` spring force.
+
+- `"no-contains-parent"`: the interaction only fires when the target
+  does NOT have a `contains` edge to the source. Used for
+  `file → all other directories` repulsion.
+
+- `"shared-parent"`: the interaction only fires when source and
+  target both have the same `contains`-parent. Used for sibling
+  repulsion (`file → its siblings`).
+
+If `requireEdge` is omitted (or undefined), the interaction fires
+for all source-target well-type matches regardless of structural
+relationship (legacy behavior, backward compatible).
+
+The parent lookup is built once per applyDialect call. The filter
+adds O(1) lookups per (source, target) pair in the per-frame force
+loop.
+
 ## Evidence Required
 
 For v0 acceptance:

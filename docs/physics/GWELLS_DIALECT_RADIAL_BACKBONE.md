@@ -363,11 +363,13 @@ target:  gwells.well.spine-linear
 kind:    perpendicular
 strength: 0.3
 range:    180
+requireEdge: "contains-parent"
 
-Pulls directory anchors perpendicular to the spine axis. The seed
+Pulls directory anchors perpendicular to their parent spine axis. The seed
 function provides the initial above/below assignment; this interaction
 maintains the perpendicular alignment as the directory anchor moves to
-balance sibling repulsion.
+balance sibling repulsion. The `requireEdge: "contains-parent"` filter
+ensures directories only feel this force from their actual parent spine.
 
 ### `gwells.interaction.directory-anchor.repels.directory-anchor`
 source:  gwells.well.directory-anchor
@@ -388,11 +390,11 @@ target:  gwells.well.directory-anchor
 kind:    spring
 strength: 1.0
 idealDistance: 90
+requireEdge: "contains-parent"
 
 The primary attractive force: files spring toward their parent
-directory. The target identification uses the parent relationship
-from the contains-edge, not a generic well-type match. Files only
-spring to *their own* parent.
+directory. The `requireEdge: "contains-parent"` filter ensures files only
+spring to *their own* parent via the contains-edge from the source adapter.
 
 ### `gwells.interaction.file-orbit.repels.file-orbit`
 source:  gwells.well.file-orbit
@@ -400,10 +402,11 @@ target:  gwells.well.file-orbit
 kind:    repulsion
 strength: 0.6
 range:    140
+requireEdge: "shared-parent"
 
 Sibling repulsion between files. Spreads files angularly around their
-parent directory. The 140-unit range is wider than the orbit radius so
-files in adjacent orbits also influence each other slightly.
+parent directory. The `requireEdge: "shared-parent"` filter ensures files
+only repel from siblings (files sharing the same parent directory).
 
 ### `gwells.interaction.file-orbit.repels.directory-anchor-other`
 source:  gwells.well.file-orbit
@@ -411,15 +414,13 @@ target:  gwells.well.directory-anchor
 kind:    repulsion
 strength: 1.4
 range:    180
+requireEdge: "no-contains-parent"
 
 Anti-overlap force: files are repelled from directory anchors that
-are *not* their parent. The strength is higher than file-sibling
-repulsion because the failure mode (a file drifting into the wrong
-directory's orbit) is more visually damaging than tight file
-clustering.
-
-The target identification excludes the file's own parent — only
-*other* directory anchors apply repulsion.
+are *not* their parent. The `requireEdge: "no-contains-parent"` filter
+excludes the file's own parent — only *other* directory anchors apply
+repulsion. The strength is higher than file-sibling repulsion because
+the failure mode is more visually damaging.
 
 ### `gwells.interaction.endpoint-fan.springs.spine-linear-endpoint`
 source:  gwells.well.endpoint-fan
@@ -427,12 +428,12 @@ target:  gwells.well.spine-linear
 kind:    spring
 strength: 0.8
 idealDistance: 100
+requireEdge: "contains-parent"
 
 Endpoint fans spring toward the spine *endpoint* nodes — the
-outermost nodes on each axis. Target identification uses the
-`isEndpoint` attribute on the spine node, not just the well type. The
-fan attaches to a specific endpoint based on which spine the fan node
-was seeded near.
+outermost nodes on each axis. The `requireEdge: "contains-parent"` filter
+ensures fans only spring to their parent spine endpoint. Target
+identification uses the `isEndpoint` attribute on the spine node.
 
 ### `gwells.interaction.endpoint-fan.repels.endpoint-fan`
 source:  gwells.well.endpoint-fan
@@ -440,9 +441,12 @@ target:  gwells.well.endpoint-fan
 kind:    repulsion
 strength: 0.7
 range:    130
+requireEdge: "shared-parent"
 
 Sibling repulsion within the fan, controlling the angular distribution
-of root-level files at each endpoint.
+of root-level files at each endpoint. The `requireEdge: "shared-parent"`
+filter ensures files only repel from siblings (files sharing the same
+parent spine endpoint).
 
 ## Success criteria
 
