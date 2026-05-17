@@ -316,6 +316,8 @@ Active. Represents file nodes that orbit their parent directory.
 }
 ```
 
+**Note (Pass C8.2):** For the standard radial-backbone usage, the `idealDistance: 90` is a fallback only. The engine computes per-pair ideal distances from seed positions at applyDialect time for edge-aware spring interactions (those with `requireEdge: "contains-parent"`). A file seeded at orbit radius 900 has a spring target distance of 900, not this static default. The static default applies only for non-edge-aware springs or dialects without contains-edge structure.
+
 ### `gwells.well.endpoint-fan`
 
 Active. Represents files that belong to the root of a spine rather than

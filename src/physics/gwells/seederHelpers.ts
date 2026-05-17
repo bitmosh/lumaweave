@@ -168,8 +168,8 @@ export function computeOrbitRadius(
   fileCount: number,
   baseRadius: number,
 ): number {
-  const MIN_RADIUS = 180;
-  const MAX_RADIUS = 900;
+  const MIN_RADIUS = 300;
+  const MAX_RADIUS = 1500;
   const REFERENCE_COUNT = 6;
 
   if (fileCount <= 0) return MIN_RADIUS;

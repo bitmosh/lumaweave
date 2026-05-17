@@ -199,6 +199,40 @@ export function applyDialect(
 
   graph.setAttribute("__gwellsState", physicsState);
 
+  // Step 5.7 (Pass C8.2): Build per-pair ideal distance for edge-aware springs.
+  // For interactions with requireEdge === "contains-parent", the spring's target
+  // distance is the seeded distance between source and target — not a static
+  // well-type default. This makes the spring agree with the seeder's placement.
+  const pairIdealDistance = new Map<string, number>();
+  const seedPositions = graph.hasAttribute("__gwellsSeedPositions")
+    ? graph.getAttribute("__gwellsSeedPositions") as Map<string, { x: number; y: number; z?: number }>
+    : null;
+
+  if (seedPositions) {
+    // Iterate every potential (source, target) pair for edge-aware spring interactions.
+    // The parentOfNode map already tells us each node's parent. For each node in physics
+    // state, if its parent participates in a relevant spring interaction, record the seeded
+    // distance.
+    for (const [nodeId] of nodeStates) {
+      const parentId = parentOfNode.get(nodeId);
+      if (!parentId) continue;
+      
+      const nodeSeed = seedPositions.get(nodeId);
+      const parentSeed = seedPositions.get(parentId);
+      if (!nodeSeed || !parentSeed) continue;
+      
+      const dx = parentSeed.x - nodeSeed.x;
+      const dy = parentSeed.y - nodeSeed.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      // Store both directions for lookup convenience (the spring iterates source-target,
+      // and depending on which direction the interaction is defined, the lookup happens
+      // in one direction or the other).
+      pairIdealDistance.set(`${nodeId}|${parentId}`, distance);
+      pairIdealDistance.set(`${parentId}|${nodeId}`, distance);
+    }
+  }
+
   // Step 8: Frame loop
   let running = true;
   let paused = false;
@@ -286,7 +320,13 @@ export function applyDialect(
               break;
             }
             case "spring": {
-              const ideal = idealDistance ?? params.idealDistance;
+              // Pass C8.2: prefer per-pair seeded ideal distance for edge-aware springs.
+              // Falls back to interaction's static idealDistance, then well-type default.
+              const pairKey = `${nodeId}|${otherId}`;
+              const pairIdeal = pairIdealDistance.get(pairKey);
+              const ideal = pairIdeal !== undefined
+                ? pairIdeal
+                : (idealDistance ?? params.idealDistance);
               const displacement = dist - ideal;
               force = strength * params.springStiffness * displacement;
               fx += (dx / dist) * force;

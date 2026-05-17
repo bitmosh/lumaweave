@@ -175,7 +175,7 @@ Items here are promoted to the roadmap only when:
 
 **Deferred to Pass C9:**
 
-- **Drag-pin redesign:** The current drag implementation updates the seed position directly when a node is dragged. A future redesign could introduce a "drag pin" model where dragging creates a temporary pin that decays over time, or where users can explicitly pin/unpin nodes to override seed positions. This would provide more control over manual layout adjustments.
+- **Drag-pin redesign:** The current drag implementation updates the seed position directly when a node is dragged. A future redesign could introduce a "drag pin" model where dragging creates a temporary pin that decays over time, or where users can explicitly pin/unpin nodes to override seed positions. This would provide more control over manual layout adjustments. **Pass C8.2 note:** With the introduction of per-pair spring distances (`pairIdealDistance` map), drag-pin redesign should also reconsider how dragging updates the spring target distance. If a user drags a file to a new position, should the spring target (currently the seeded distance) update to the new distance, or remain at the seeded distance? This affects whether manual layout adjustments persist across physics frames.
 
 - **seedAdherence tuning:** The current seedAdherence values (directory-anchor: 0.15, file-orbit: 0.4, endpoint-fan: 0.15) were tuned to make the Pass C5 drag-seed test pass. Further tuning may be needed to balance seed position retention against layout flexibility, especially after the fern-frond layout changes introduced in Pass C8.
 

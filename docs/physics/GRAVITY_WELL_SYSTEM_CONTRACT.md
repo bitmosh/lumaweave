@@ -582,6 +582,23 @@ The parent lookup is built once per applyDialect call. The filter
 adds O(1) lookups per (source, target) pair in the per-frame force
 loop.
 
+## Per-pair Spring Distance (Pass C8.2)
+
+For spring interactions with `requireEdge: "contains-parent"`, the engine
+computes the spring's ideal distance from the source and target's seed
+positions at applyDialect time rather than reading from the well-type
+default. This ensures the spring agrees with the seeder's placement —
+a file seeded at orbit radius 900 has a spring target distance of 900,
+not the static well-type default.
+
+The lookup map (`pairIdealDistance`) is built once per dialect application
+from `__gwellsSeedPositions`. The spring force evaluation checks this map
+first, falls back to interaction's static `idealDistance`, then to the
+well-type default.
+
+For dialects without contains-edge structure (e.g., non-radial dialects
+in future work), the static defaults apply unchanged. Backward compatible.
+
 ## Evidence Required
 
 For v0 acceptance:
