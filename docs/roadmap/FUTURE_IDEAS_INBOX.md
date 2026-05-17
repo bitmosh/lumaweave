@@ -127,7 +127,45 @@ Items here are promoted to the roadmap only when:
 - **Graph diff view** — highlight nodes/edges that changed between two history slider positions
 - **Cluster drag interaction** — Hold modifier key (Alt or Shift) + drag node → node and all directly connected neighbors move as a rigid unit with proportions locked, external edges stretch/compress naturally, on key release: physics resumes from new positions. Implementation path: respect gwells's `fixed: true` attribute for the entire cluster during drag, then release. Priority: after basic node dragging works in gwells. Relevant for: future gwells dialects (moving constellation branches without breaking the backbone).
 - **GRAPH ROTATION + PSEUDO-3D PROJECTION** — Right-click drag → rotate 2D graph coord space. Store node positions as true 3D (x, y, z). Project 3D → 2D with rotation matrix on Sigma. Animate projection angle on node selection. Auto-rotate to selected cluster centroid. No Three.js needed — pure projection math on existing Sigma 2D renderer. The src/renderers/ subtree is the future path for true 3D graphs. Gwells v2+ may extend its schema to include z-coordinate. Priority: after cluster colors + graph density.
-- **Gwells dialect-aware tunable handles** — Once gwells is stable, expose per-dialect tunables (spine spacing, fan arc width, repulsion strength, etc.) as Layer 1 handles with `status: planned`. UI surfaces them in the Advanced section of the Physics panel only when their owning dialect is active. Replaces the retired "Advanced Physics Controls" idea, which was FA2-specific.
+- **Gwells dialect-aware tunable handles** — ~~Once gwells is stable, expose per-dialect tunables (spine spacing, fan arc width, repulsion strength, etc.) as Layer 1 handles with `status: planned`. UI surfaces them in the Advanced section of the Physics panel only when their owning dialect is active. Replaces the retired "Advanced Physics Controls" idea, which was FA2-specific.~~
+
+  **PARTIALLY COMPLETED (Pass C4):** Live tuning sliders for `helixTwist` parameters (spine, directory, file) are now implemented via the `applyConfigOverride` mechanism. Per-dialect persistence is supported via `settings.physics.seedParamOverrides`. The broader "dialect-aware tunable handles" idea remains for future expansion to other seedParams (spine spacing, fan arc width, etc.) and wellOverrides.
+
+---
+
+## Seed-Position Retention for Non-Pinned Wells
+
+**Discovered:** Pass C4 visual verification (helix-twist sliders on Radial-Backbone)
+
+Seeded positions are currently treated as initial conditions, not as
+layout intent. For pinned wells (spine-linear), positions persist because
+physics skips them. For non-pinned wells (directory-anchor, file-orbit,
+endpoint-fan), physics immediately drifts seeded positions toward whatever
+equilibrium the active interactions produce — washing out helix twist,
+directory alternation, and other position-derived intent.
+
+Symptom in Pass C4: helixTwist.directory and helixTwist.file sliders fire
+their seeder math correctly (verified via probe + console logs), but
+within a few physics frames the directories drift back toward
+"natural" equilibrium positions. The twist briefly flashes then dissipates.
+
+Possible solutions:
+- New force kind: spring-to-seed-position, soft spring per non-pinned node
+  toward its last-seeded position. Strength tunable per well type.
+- New well-type field: `seedAdherence` (0–1), how strongly the engine
+  retains seeded positions vs lets physics dominate.
+- Alternative interaction model: directory-anchor's "perpendicular"
+  interaction becomes "spring-to-perpendicular-angle" rather than a
+  tangential force, with the angle baked from helixTwist.
+
+Architectural question to settle: do seeded positions express ideal
+layout intent (and physics should preserve that intent), or are they
+just initial conditions (and physics is free to find its own
+equilibrium)? Current behavior is the latter; helix-twist semantics
+implicitly assume the former.
+
+Pass C4 ships with the limitation. Resolving it is a separate pass
+(Pass C5 candidate).
 
 ---
 

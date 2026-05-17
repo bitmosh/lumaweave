@@ -418,6 +418,23 @@ export interface GWController {
   getDialectId: () => string;
   /** Get the current resolved config (dialect + overrides merged). */
   getResolvedConfig: () => GWDialectConfig;
+  /**
+   * Apply a runtime config override to the running dialect.
+   *
+   * Merges partialConfig into the controller's resolvedConfig in-place.
+   * If partialConfig.seedParams is set, re-runs the seed function with the
+   * merged config — node positions update visibly.
+   * If partialConfig.wellOverrides is set, per-well-type parameters update on
+   * the next frame.
+   * If partialConfig.interactionOverrides is set, the interaction cache is
+   * rebuilt and changes take effect on the next frame.
+   *
+   * Frame counter is NOT reset. Physics state is NOT recreated. This is the
+   * ACTIVE → ACTIVE mutate path per the Sigma Lifecycle Contract.
+   *
+   * Added in v0.1 (Pass C4: Live Tuning Sliders).
+   */
+  applyConfigOverride: (partialConfig: Partial<GWDialectConfig>) => void;
 }
 
 export function applyDialect(

@@ -95,6 +95,16 @@ fixed. Missing keys default to 0 (no twist).
 The seeder uses `resolveHelixTwist(record, wellType)` to extract the specific
 value for each well type, falling back to `all`, then to 0.
 
+## Live tuning (Pass C4)
+
+As of Pass C4 (v0.1), the `helixTwist` parameter is tunable via UI sliders in
+the ControlDock. Users can adjust spine, directory, and file twist values in
+real-time without restarting the physics engine. The sliders write to
+`settings.physics.seedParamOverrides[activeDialectId].helixTwist`, which is
+picked up by the controller's `applyConfigOverride` method and triggers a
+seed function re-run with the merged config. Each dialect maintains independent
+slider positions (per-dialect persistence).
+
 ## Radial-Backbone dialect configuration
 
 ```typescript

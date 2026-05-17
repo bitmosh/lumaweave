@@ -120,6 +120,15 @@ const MIGRATIONS: Record<number,
 
     return { ...s, physics, graphView } as Partial<StarmapSettings>;
   },
+
+  // v82 → v83: add seedParamOverrides field for live tuning (Pass C4)
+  83: (s) => {
+    const physics = { ...(s.physics ?? {}) } as any;
+    if (physics.seedParamOverrides === undefined) {
+      physics.seedParamOverrides = {};
+    }
+    return { ...s, physics };
+  },
 };
 
 export function migrateSettings(

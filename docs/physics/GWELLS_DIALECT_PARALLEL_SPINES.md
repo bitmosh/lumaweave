@@ -74,6 +74,23 @@ where `R = axisOffsetForN(offsetFromHub, spineCount) = offsetFromHub × max(1, s
 The seeder is pure: same graph + same `seedParams` produces the same
 position output. No `Math.random()`. No I/O. No external state.
 
+## Helix twist (v0.1)
+
+The `helixTwist` parameter is a `GWHelixTwistRecord` object with keys
+`all`, `spine`, `directory`, and `file`. Values are degrees per 100 units
+of distance along the spine. The seeder uses `resolveHelixTwist(record, wellType)`
+to extract the specific value for each well type, falling back to `all`, then to 0.
+
+## Live tuning (Pass C4)
+
+As of Pass C4 (v0.1), the `helixTwist` parameter is tunable via UI sliders in
+the ControlDock. Users can adjust spine, directory, and file twist values in
+real-time without restarting the physics engine. The sliders write to
+`settings.physics.seedParamOverrides[activeDialectId].helixTwist`, which is
+picked up by the controller's `applyConfigOverride` method and triggers a
+seed function re-run with the merged config. Each dialect maintains independent
+slider positions (per-dialect persistence).
+
 ## Parallel-Spines dialect configuration
 
 ```typescript

@@ -160,6 +160,9 @@ export function AppShell() {
     settings.graphView.neighborhoodDepth ?? 2
   ) as 1 | 2 | 3 | 4;
 
+  // Pass C4: Derive active dialect's seedParamOverrides for live tuning
+  const activeSeedParamOverrides = (settings.physics.seedParamOverrides?.[settings.physics.dialectId] ?? {}) as Record<string, unknown>;
+
   // v86b: Click halo state — single active halo, overridden by rapid clicks
   const [clickHalo, setClickHalo] = useState<{
     x: number;
@@ -797,6 +800,7 @@ export function AppShell() {
                     edges={graphEdges}
                     nodeSize={settings.graphView.nodeSize}
                     dialectId={settings.physics.dialectId}
+                    seedParamOverrides={activeSeedParamOverrides}
                     selectedNodeId={selectedNodeId}
                     selectedEdgeId={selectedEdgeId}
                     pathTargetId={pathTargetId}

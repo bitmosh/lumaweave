@@ -337,6 +337,56 @@ export function applyDialect(
 
   rafId = requestAnimationFrame(tick);
 
+  // Pass C4: live config override mechanism
+  function applyConfigOverride(partial: Partial<GWDialectConfig>): void {
+    // Mutate resolvedConfig in place — closures (resolveWellParams) and
+    // the seed function will pick up new values.
+    if (partial.wellOverrides) {
+      resolvedConfig.wellOverrides = {
+        ...resolvedConfig.wellOverrides,
+        ...partial.wellOverrides,
+      };
+    }
+    if (partial.interactionOverrides) {
+      resolvedConfig.interactionOverrides = {
+        ...resolvedConfig.interactionOverrides,
+        ...partial.interactionOverrides,
+      };
+      // Rebuild cached resolvedInteractions array
+      resolvedInteractions.length = 0;
+      for (const interactionId of dialect!.activeInteractions) {
+        const interaction = getInteractionById(interactionId);
+        if (!interaction) continue;
+        const override = resolvedConfig.interactionOverrides?.[interactionId];
+        resolvedInteractions.push({
+          id: interaction.id,
+          source: interaction.source,
+          target: interaction.target,
+          kind: interaction.kind,
+          strength: override?.strength ?? interaction.strength,
+          range: override?.range ?? interaction.range,
+          idealDistance: override?.idealDistance ?? interaction.idealDistance,
+        });
+      }
+    }
+    if (partial.seedParams) {
+      resolvedConfig.seedParams = {
+        ...resolvedConfig.seedParams,
+        ...partial.seedParams,
+      };
+      // Re-run seed function so node positions visibly update
+      if (seedFn) {
+        try {
+          seedFn.seed({ graph, config: resolvedConfig });
+        } catch (err) {
+          const seedErr = err instanceof Error ? err : new Error(String(err));
+          if (options.onError) options.onError(seedErr);
+          else console.warn(`[gwells] seed function failed during override:`, seedErr);
+        }
+      }
+    }
+  }
+
   // Step 9: Return controller
   const controller: GWController = {
     stop: () => {
@@ -355,6 +405,7 @@ export function applyDialect(
     },
     getDialectId: () => dialect.id,
     getResolvedConfig: () => resolvedConfig,
+    applyConfigOverride,
   };
 
   console.log(`[gwells] applied dialect '${dialect.id}'`);

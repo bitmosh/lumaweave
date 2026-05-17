@@ -2,24 +2,24 @@
   "schemaVersion": "lumaweave-self-graph/v1",
   "metadata": {
     "schemaVersion": "lumaweave-self-graph/v1",
-    "generatedAt": "2026-05-16T21:56:59.133Z",
+    "generatedAt": "2026-05-17T00:16:56.682Z",
     "generator": "generate-self-graph@v2",
     "sourceTree": "./",
     "stats": {
-      "nodeCount": 387,
-      "edgeCount": 1398,
+      "nodeCount": 388,
+      "edgeCount": 1401,
       "nodesByType": {
         "doc": 201,
-        "code": 114,
+        "code": 115,
         "config": 5,
         "fixture": 0,
         "spine": 67
       },
       "edgesByType": {
-        "contains": 379,
+        "contains": 380,
         "governs": 29,
         "explicit-reference": 380,
-        "code-import": 140,
+        "code-import": 142,
         "tag-overlap": 169,
         "describes": 301
       }
@@ -1885,8 +1885,8 @@
         "v0.1",
         "layout"
       ],
-      "size": 696,
-      "lastModified": "2026-05-16T20:19:41.843Z",
+      "size": 713,
+      "lastModified": "2026-05-16T22:54:27.125Z",
       "raw": {}
     },
     {
@@ -1905,8 +1905,8 @@
         "v0.1",
         "layout"
       ],
-      "size": 212,
-      "lastModified": "2026-05-16T20:17:54.953Z",
+      "size": 229,
+      "lastModified": "2026-05-16T22:55:09.753Z",
       "raw": {}
     },
     {
@@ -1925,8 +1925,8 @@
         "v0.1",
         "layout"
       ],
-      "size": 443,
-      "lastModified": "2026-05-16T20:16:28.705Z",
+      "size": 453,
+      "lastModified": "2026-05-16T22:54:47.716Z",
       "raw": {}
     },
     {
@@ -4079,8 +4079,8 @@
         "src",
         "physics"
       ],
-      "size": 307,
-      "lastModified": "2026-05-16T19:29:57.087Z",
+      "size": 322,
+      "lastModified": "2026-05-16T22:43:55.407Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4174,8 +4174,8 @@
         "src",
         "physics"
       ],
-      "size": 363,
-      "lastModified": "2026-05-16T19:54:50.850Z",
+      "size": 414,
+      "lastModified": "2026-05-16T22:44:28.779Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4497,8 +4497,8 @@
         "src",
         "graph"
       ],
-      "size": 894,
-      "lastModified": "2026-05-16T21:56:13.071Z",
+      "size": 908,
+      "lastModified": "2026-05-17T00:15:53.431Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4858,8 +4858,8 @@
         "src",
         "control-plane"
       ],
-      "size": 65,
-      "lastModified": "2026-05-16T20:45:40.297Z",
+      "size": 73,
+      "lastModified": "2026-05-16T22:46:31.710Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4877,8 +4877,8 @@
         "src",
         "control-plane"
       ],
-      "size": 167,
-      "lastModified": "2026-05-16T20:45:32.923Z",
+      "size": 183,
+      "lastModified": "2026-05-16T22:45:25.874Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4915,8 +4915,8 @@
         "src",
         "control-plane"
       ],
-      "size": 187,
-      "lastModified": "2026-05-16T20:58:35.562Z",
+      "size": 196,
+      "lastModified": "2026-05-16T22:46:08.882Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4934,8 +4934,8 @@
         "src",
         "control-plane"
       ],
-      "size": 117,
-      "lastModified": "2026-05-16T20:45:18.553Z",
+      "size": 118,
+      "lastModified": "2026-05-16T22:45:31.910Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4953,8 +4953,8 @@
         "src",
         "control-plane"
       ],
-      "size": 191,
-      "lastModified": "2026-05-16T20:47:14.656Z",
+      "size": 194,
+      "lastModified": "2026-05-16T22:50:34.560Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -5278,6 +5278,25 @@
       ],
       "size": 166,
       "lastModified": "2026-05-15T23:12:46.630Z",
+      "raw": {
+        "color": "#5a6678",
+        "dimFactor": 0.55
+      }
+    },
+    {
+      "id": "src.control-plane.panels.helixtwistsliders",
+      "type": "code",
+      "label": "HelixTwistSliders",
+      "fullLabel": "HelixTwistSliders.tsx",
+      "path": "src/control-plane/panels/HelixTwistSliders.tsx",
+      "cluster": "slate",
+      "status": null,
+      "tags": [
+        "src",
+        "control-plane"
+      ],
+      "size": 82,
+      "lastModified": "2026-05-16T22:47:14.411Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -5751,8 +5770,8 @@
         "src",
         "app"
       ],
-      "size": 1091,
-      "lastModified": "2026-05-16T17:42:33.220Z",
+      "size": 1095,
+      "lastModified": "2026-05-16T22:52:38.070Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -6619,7 +6638,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-15T23:12:46.630Z",
+      "lastModified": "2026-05-16T22:47:14.411Z",
       "raw": {
         "color": "#9ca3af",
         "dimFactor": 0.8
@@ -10092,6 +10111,17 @@
       "id": "edge-src.control-plane.panels-src.control-plane.panels.inspectorpanel-contains",
       "source": "src.control-plane.panels",
       "target": "src.control-plane.panels.inspectorpanel",
+      "type": "contains",
+      "weight": 0.5,
+      "bidirectional": false,
+      "provenance": {
+        "source": "directory-walk"
+      }
+    },
+    {
+      "id": "edge-src.control-plane.panels-src.control-plane.panels.helixtwistsliders-contains",
+      "source": "src.control-plane.panels",
+      "target": "src.control-plane.panels.helixtwistsliders",
       "type": "contains",
       "weight": 0.5,
       "bidirectional": false,
@@ -16825,6 +16855,18 @@
       }
     },
     {
+      "id": "edge-src.control-plane.settings.settingspanel-src.control-plane.panels.helixtwistsliders-code-import",
+      "source": "src.control-plane.settings.settingspanel",
+      "target": "src.control-plane.panels.helixtwistsliders",
+      "type": "code-import",
+      "weight": 0.85,
+      "bidirectional": false,
+      "provenance": {
+        "source": "body-parse",
+        "detail": "import"
+      }
+    },
+    {
       "id": "edge-src.control-plane.qa.qa.store-src.control-plane.qa.qa.types-code-import",
       "source": "src.control-plane.qa.qa.store",
       "target": "src.control-plane.qa.qa.types",
@@ -17116,6 +17158,18 @@
       "id": "edge-src.control-plane.panels.thememappingpanel-src.themes.themetokenpaths-code-import",
       "source": "src.control-plane.panels.thememappingpanel",
       "target": "src.themes.themetokenpaths",
+      "type": "code-import",
+      "weight": 0.85,
+      "bidirectional": false,
+      "provenance": {
+        "source": "body-parse",
+        "detail": "import"
+      }
+    },
+    {
+      "id": "edge-src.control-plane.panels.helixtwistsliders-src.control-plane.settings.settings.store-code-import",
+      "source": "src.control-plane.panels.helixtwistsliders",
+      "target": "src.control-plane.settings.settings.store",
       "type": "code-import",
       "weight": 0.85,
       "bidirectional": false,

@@ -3,7 +3,7 @@ import { defaultSettings } from "./settings.defaults";
 import { migrateSettings } from "./settings.migrations";
 import type { StarmapSettings } from "./settings.schema";
 
-export const CURRENT_SCHEMA_VERSION = 82;
+export const CURRENT_SCHEMA_VERSION = 83;
 
 export type SettingsStore = {
   settings: StarmapSettings;
@@ -63,3 +63,11 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
 
 // Export raw store for test helpers (dev mode only)
 export const settingsStore = useSettingsStore;
+
+// Install the probe in DEV/PLAYWRIGHT mode
+if (
+  typeof window !== "undefined" &&
+  (import.meta.env.DEV || (window as any).PLAYWRIGHT)
+) {
+  (window as any).__lwStore = useSettingsStore;
+}

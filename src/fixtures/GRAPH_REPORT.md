@@ -1,26 +1,26 @@
 # Self-Graph Report
 
-Generated: 2026-05-16T21:56:59.133Z
+Generated: 2026-05-17T00:16:56.682Z
 Source commit: N/A
 Schema: lumaweave-self-graph/v1
 
 ## Summary
 
-- Total nodes: 387
-- Total edges: 1398
+- Total nodes: 388
+- Total edges: 1401
 
 ### Nodes by type
 - doc: 201
-- code: 114
+- code: 115
 - config: 5
 - fixture: 0
 - spine: 67
 
 ### Edges by type
-- contains: 379
+- contains: 380
 - governs: 29
 - explicit-reference: 380
-- code-import: 140
+- code-import: 142
 - tag-overlap: 169
 - describes: 301
 
@@ -45,8 +45,8 @@ Schema: lumaweave-self-graph/v1
 - docs.updates.v86--updates.-new-v86--v86-bandit-master-index (doc): 21
 - src.themes (spine): 19
 - docs.token-census-orphans (doc): 19
+- src.control-plane.panels (spine): 16
 - control.plane.contract.to.code.trace.matrix (doc): 16
-- src.control-plane.panels (spine): 15
 
 ## Orphaned nodes (degree = 0) [5]
 - package (config)
@@ -166,7 +166,7 @@ Frontmatter references targeting unknown ids:
 | indigo | 6 |
 | lime | 13 |
 | purple | 1 |
-| slate | 90 |
+| slate | 91 |
 | stone | 7 |
 | teal | 12 |
 | violet | 36 |

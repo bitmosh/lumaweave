@@ -44,6 +44,7 @@ interface SigmaGraphViewProps {
   edges: LumaWeaveEdgeDraft[];
   nodeSize: number;
   dialectId: string;
+  seedParamOverrides: Record<string, unknown>;
 
   selectedNodeId: string | null;
   selectedEdgeId?: string | null;
@@ -132,6 +133,7 @@ function SigmaGraphViewComponent({
   edges,
   nodeSize,
   dialectId = "gwells.dialect.horizontal-linear",
+  seedParamOverrides = {},
   selectedNodeId,
   selectedEdgeId = null,
   pathTargetId = null,
@@ -538,6 +540,17 @@ useEffect(() => {
   sigma.refresh();
 }, [dialectId]);
 
+// Pass C4: Override change — apply runtime config override (no Sigma recreation, no controller restart)
+useEffect(() => {
+  if (!gwellsControllerRef.current) return;
+  
+  // Only the seedParams path supported for v0 — wellOverrides and interactionOverrides
+  // are not currently exposed via the UI but the engine supports them.
+  gwellsControllerRef.current.applyConfigOverride({
+    seedParams: seedParamOverrides,
+  });
+}, [seedParamOverrides]);
+
 // Node size live update without rebuild
 useEffect(() => {
   const sigma = sigmaRef.current;
@@ -853,6 +866,7 @@ const arePropsEqual = (prev: SigmaGraphViewProps, next: SigmaGraphViewProps) => 
   // Value checks for physics props - these should trigger re-render
   if (prev.nodeSize !== next.nodeSize) return false;
   if (prev.dialectId !== next.dialectId) return false;
+  if (prev.seedParamOverrides !== next.seedParamOverrides) return false;
 
   // Value checks for label props - these should trigger re-render
   if (prev.nodeLabelMode !== next.nodeLabelMode) return false;

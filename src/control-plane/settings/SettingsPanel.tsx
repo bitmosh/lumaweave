@@ -1,6 +1,7 @@
 import { settingsRegistry } from "./settings.registry";
 import { useSettingsStore } from "./settings.store";
 import { CollapsibleSection } from "../panels/CollapsibleSection";
+import { HelixTwistSliders } from "../panels/HelixTwistSliders";
 
 function getNestedValue(obj: any, path: string) {
   return path.split(".").reduce((cursor, key) => cursor?.[key], obj);
@@ -181,6 +182,8 @@ export function SettingsPanel() {
 
                     return null;
                   })}
+                {/* Pass C4: HelixTwistSliders for live tuning (Physics category only) */}
+                {category === "Physics" && <HelixTwistSliders />}
               </div>
             </section>
           </CollapsibleSection>

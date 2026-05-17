@@ -44,7 +44,7 @@ export interface TileLayoutEntry {
 }
 
 export interface StarmapSettings {
-  version: 82; // vP-physics-dialect-c3.1.1: bumped from 83 to 82 (consolidated migrations)
+  version: 83; // vP-physics-dialect-c4: bumped from 82 for seedParamOverrides field
 
   general: {
     startupProjectId: string | null;
@@ -85,6 +85,22 @@ export interface StarmapSettings {
 
   physics: {
     dialectId: GwellsDialectId;
+    /**
+     * Per-dialect parameter overrides. Keyed by dialect id.
+     * Each value is a partial seedParams record that gets merged onto
+     * the dialect's defaults at runtime.
+     *
+     * Example:
+     *   {
+     *     "gwells.dialect.radial-backbone": {
+     *       helixTwist: { directory: 5, file: 2 }
+     *     },
+     *     "gwells.dialect.parallel-spines": {
+     *       helixTwist: { spine: 8 }
+     *     }
+     *   }
+     */
+    seedParamOverrides: Record<string, Record<string, unknown>>;
   };
 
   labels: {

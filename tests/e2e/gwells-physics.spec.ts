@@ -102,4 +102,98 @@ test.describe("Gwells Physics Integration", () => {
       expect(updatedState.dialectId).toBe("gwells.dialect.parallel-spines");
     }
   });
+
+  test("Pass C4: HelixTwistSliders render and persist", async ({ page }) => {
+    // Verify sliders are rendered in ControlDock
+    const slidersContainer = page.locator('[data-testid="helix-twist-sliders"]');
+    await expect(slidersContainer).toBeVisible();
+
+    // Verify all three sliders exist
+    const spineSlider = page.locator('[data-testid="helix-twist-spine"]');
+    const directorySlider = page.locator('[data-testid="helix-twist-directory"]');
+    const fileSlider = page.locator('[data-testid="helix-twist-file"]');
+
+    await expect(spineSlider).toBeVisible();
+    await expect(directorySlider).toBeVisible();
+    await expect(fileSlider).toBeVisible();
+
+    // Get initial slider values (should default to 0)
+    const initialSpineValue = await spineSlider.inputValue();
+    const initialDirectoryValue = await directorySlider.inputValue();
+    const initialFileValue = await fileSlider.inputValue();
+
+    expect(parseFloat(initialSpineValue)).toBe(0);
+    expect(parseFloat(initialDirectoryValue)).toBe(0);
+    expect(parseFloat(initialFileValue)).toBe(0);
+
+    // Drag spine slider to new value
+    await spineSlider.fill("10");
+    await page.waitForTimeout(100);
+
+    // Verify value changed in DOM
+    const updatedSpineValue = await spineSlider.inputValue();
+    expect(parseFloat(updatedSpineValue)).toBe(10);
+
+    // Verify value persisted to settings
+    const settings = await page.evaluate(() => {
+      return (window as any).__lwStore.getState().settings;
+    });
+    const activeDialectId = settings.physics.dialectId;
+    const dialectOverrides = settings.physics.seedParamOverrides[activeDialectId];
+    expect(dialectOverrides).toBeDefined();
+    expect(dialectOverrides.helixTwist.spine).toBe(10);
+  });
+
+  test("Pass C4: Per-dialect persistence of slider values", async ({ page }) => {
+    // Set a value for radial-backbone dialect
+    const spineSlider = page.locator('[data-testid="helix-twist-spine"]');
+    await spineSlider.fill("5");
+    await page.waitForTimeout(100);
+
+    // Verify value persisted for radial-backbone
+    let settings = await page.evaluate(() => {
+      return (window as any).__lwStore.getState().settings;
+    });
+    const radialOverrides = settings.physics.seedParamOverrides["gwells.dialect.radial-backbone"];
+    expect(radialOverrides.helixTwist.spine).toBe(5);
+
+    // Switch to parallel-spines dialect
+    await page.selectOption(
+      '[data-testid="dialect-select"]',
+      "gwells.dialect.parallel-spines"
+    );
+    await page.waitForTimeout(500);
+
+    // Verify slider reset to 0 for new dialect
+    const updatedSpineValue = await spineSlider.inputValue();
+    expect(parseFloat(updatedSpineValue)).toBe(0);
+
+    // Set a different value for parallel-spines
+    await spineSlider.fill("15");
+    await page.waitForTimeout(100);
+
+    // Verify value persisted for parallel-spines
+    settings = await page.evaluate(() => {
+      return (window as any).__lwStore.getState().settings;
+    });
+    const parallelOverrides = settings.physics.seedParamOverrides["gwells.dialect.parallel-spines"];
+    expect(parallelOverrides.helixTwist.spine).toBe(15);
+
+    // Switch back to radial-backbone
+    await page.selectOption(
+      '[data-testid="dialect-select"]',
+      "gwells.dialect.radial-backbone"
+    );
+    await page.waitForTimeout(500);
+
+    // Verify slider shows previous radial-backbone value (per-dialect persistence)
+    const restoredSpineValue = await spineSlider.inputValue();
+    expect(parseFloat(restoredSpineValue)).toBe(5);
+
+    // Verify parallel-spines value was preserved independently
+    settings = await page.evaluate(() => {
+      return (window as any).__lwStore.getState().settings;
+    });
+    expect(settings.physics.seedParamOverrides["gwells.dialect.parallel-spines"].helixTwist.spine).toBe(15);
+  });
 });
