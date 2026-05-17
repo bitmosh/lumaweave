@@ -169,6 +169,18 @@ Items here are promoted to the roadmap only when:
 
 ---
 
+## Fern-Frond Hierarchical Layout (Pass C8)
+
+**COMPLETED (Pass C8, v0.1):** Restored real filesystem hierarchy in the self-graph `contains` edges and updated the radial-backbone and parallel-spines seeders to use recursive directory placement. The source adapter now creates hierarchical `contains` edges (directory-hierarchy, spine-to-top-directory, directory-leaf, spine-direct-leaf, spine-fallback) instead of the flattened Pass C6 model. The seeders recursively place directories: at depth 0, directories are placed perpendicular to the spine axis; at depth > 0, directories continue along the same outward direction as their parent, creating a fern-frond visual structure where sub-branches extend outward along the same axis as their parent branch. Helix twist is applied only at depth 0. Result: directories at multiple depths (0, 1, 2) are now visible in the graph layout, making the directory hierarchy visually apparent.
+
+**Deferred to Pass C9:**
+
+- **Drag-pin redesign:** The current drag implementation updates the seed position directly when a node is dragged. A future redesign could introduce a "drag pin" model where dragging creates a temporary pin that decays over time, or where users can explicitly pin/unpin nodes to override seed positions. This would provide more control over manual layout adjustments.
+
+- **seedAdherence tuning:** The current seedAdherence values (directory-anchor: 0.15, file-orbit: 0.4, endpoint-fan: 0.15) were tuned to make the Pass C5 drag-seed test pass. Further tuning may be needed to balance seed position retention against layout flexibility, especially after the fern-frond layout changes introduced in Pass C8.
+
+---
+
 ## Visual Grammar Engine
 
 - **Grammar handle autocomplete** — typing a handle path gets autocomplete from the handle registry

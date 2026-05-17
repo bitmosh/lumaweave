@@ -145,3 +145,35 @@ export function assignSpinesToAxes(
 
   return axes;
 }
+
+/**
+ * Computes a dynamic orbit radius for a directory's file orbit.
+ *
+ * Files need more orbit radius when there are many of them (to spread out
+ * and not overlap). Few files need tight orbits to avoid wasting space.
+ *
+ * Formula: clamp(baseRadius × sqrt(fileCount / 6), MIN, MAX)
+ *
+ * - 1-2 files:  hits the MIN_RADIUS (tight cluster)
+ * - 6 files:    returns baseRadius (the reference point)
+ * - 24 files:   returns 2× baseRadius
+ * - 96+ files:  hits MAX_RADIUS (wide orbit, no overlap)
+ *
+ * Square-root scaling ensures the orbit area grows linearly with file count,
+ * so each file gets roughly the same angular share regardless of total count.
+ *
+ * Pass C8 amendment.
+ */
+export function computeOrbitRadius(
+  fileCount: number,
+  baseRadius: number,
+): number {
+  const MIN_RADIUS = 180;
+  const MAX_RADIUS = 900;
+  const REFERENCE_COUNT = 6;
+
+  if (fileCount <= 0) return MIN_RADIUS;
+
+  const scaled = baseRadius * Math.sqrt(fileCount / REFERENCE_COUNT);
+  return Math.max(MIN_RADIUS, Math.min(MAX_RADIUS, scaled));
+}

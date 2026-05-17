@@ -75,6 +75,8 @@ graph. It reads from `ctx.config.seedParams`:
 The seeder is pure: same graph + same `seedParams` produces the same
 position output. No `Math.random()`. No I/O. No external state.
 
+**Spine count:** The number of spine nodes is determined by the source adapter (how many top-level subsystems the data has). The dialect's `spineCount` parameter controls how many radial axes the spines are distributed across; if there are more spines than axes, spines are round-robin distributed and each axis carries a chain of multiple spines. For example, with 41 spines and `spineCount: 2`, each of the 2 axes (0° and 180°) carries a chain of ~20 spine nodes.
+
 ## Helix twist record (v0.1)
 
 In v0.1, `helixTwist` is an object instead of a number:
@@ -447,6 +449,65 @@ Sibling repulsion within the fan, controlling the angular distribution
 of root-level files at each endpoint. The `requireEdge: "shared-parent"`
 filter ensures files only repel from siblings (files sharing the same
 parent spine endpoint).
+
+## Fern-Frond Layout (Pass C8)
+
+Pass C8 restored real filesystem hierarchy in the self-graph `contains` edges
+and updated the seeder to use recursive directory placement, creating a
+fern-frond visual structure.
+
+**Key changes:**
+
+- **Self-graph hierarchy:** Directories now have true filesystem parent-child
+  relationships instead of the flattened Pass C6 model. A directory at
+  `src/graph/renderers` is contained by `src/graph`, which is contained by
+  `spine.graph`.
+
+- **Recursive placement:** The seeder now recursively places directories.
+  At depth 0 (first-level directories off a spine), directories are placed
+  perpendicular to the spine axis with alternation. At depth > 0, directories
+  continue along the same outward direction as their parent, creating the
+  characteristic fern-frond shape where sub-branches extend outward along the
+  same axis as their parent branch.
+
+- **Helix twist:** Helix twist is applied only at depth 0. Deeper levels do
+  not receive additional twist, maintaining the coherent fern-frond structure.
+
+This change enables visualization of deeper directory nesting levels that
+were previously flattened into a single level. The fern-frond shape makes the
+directory hierarchy visually apparent in the graph layout.
+
+### Pass C8 Amendment — Dynamic Scaling & Spacing Tune
+
+The initial Pass C8 implementation had correct algorithm but compressed visual
+spacing. This amendment tunes scaling parameters and adds dynamic file orbit sizing.
+
+**Parameter changes:**
+
+- `spineSpacing`: 150 → 450 (triple — spine nodes visibly separated)
+- `directoryOffset`: 220 → 400 (double — successive depths visually distinct)
+- `fileOrbitRadius`: 90 → 80 (now serves as base for dynamic computation)
+
+**Dynamic file orbit radius:**
+
+Replaces static orbit radius with per-directory computation based on file count:
+
+```
+orbitRadius = clamp(baseRadius × sqrt(fileCount / 6), 40, 200)
+```
+
+- Base radius: 80 units (for ~6 files)
+- Min radius: 40 units (floor for 1-2 files)
+- Max radius: 200 units (ceiling for 96+ files)
+
+Square-root scaling ensures orbit area grows linearly with file count, so each
+file gets roughly the same angular share regardless of total count. Low-count
+directories get tight clusters; high-count directories get wider orbits to avoid
+overlap.
+
+**Result:** Extent increased from ~1500×1500 to ~3000-4500×3000-4500 units. Deep nodes
+reach 2000+ from origin. Fern fronds visible as distinct chains with varying
+file orbit radii based on directory size.
 
 ## Success criteria
 

@@ -24,7 +24,7 @@
  */
 
 import type { GWSeedFunctionContext, GWHelixTwistRecord } from "../types";
-import { axisOffsetForN, resolveHelixTwist, buildContainsMap, flattenSpinesFromRoot, assignSpinesToAxes } from "../seederHelpers";
+import { axisOffsetForN, resolveHelixTwist, buildContainsMap, flattenSpinesFromRoot, assignSpinesToAxes, computeOrbitRadius } from "../seederHelpers";
 
 interface ParallelSpinesParams {
   spineCount: number;
@@ -88,6 +88,114 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
   // NEW: Stored for engine's seed-anchor force — ALL nodes
   const allSeedPositions = new Map<string, { x: number; y: number; z: number }>();
 
+  // NEW: Recursive directory placement (Pass C8 fern-frond)
+  //
+  // Places a directory and recursively all its descendants in the fern-frond shape.
+  // depth=0 means this directory is a first-level branch off a spine — it gets
+  // placed outward from the spine axis with y-offset for sibling alternation.
+  // depth>0 means this directory is a deeper descendant — it continues along
+  // the same outwardDir as its parent without further y-jitter.
+  function placeBranchRecursive(
+    dirId: string,
+    parentPos: { x: number; y: number; z: number },
+    outwardDir: { dx: number; dy: number; dz: number },
+    depth: number,
+    siblingIndex: number,
+    spineAngleRad: number,   // angle of the spine this branch belongs to
+    yAlongSpine: number,     // y position along spine for helix twist calculation
+  ): void {
+    // Compute this directory's position.
+    let myDir: { dx: number; dy: number; dz: number };
+    let myX: number, myY: number, myZ: number;
+
+    if (depth === 0) {
+      // First-level branch: outward from center with y-offset for sibling alternation
+      // Outward direction is constant (away from central axis)
+      myDir = {
+        dx: Math.cos(spineAngleRad),
+        dy: 0,
+        dz: Math.sin(spineAngleRad),
+      };
+
+      // Apply small y-offset for sibling alternation (so siblings don't stack)
+      const ySign = (siblingIndex % 2 === 0) ? 1 : -1;
+      const ySpacing = params.directoryOffset * 0.25; // small vertical jitter
+      myY = parentPos.y + ySign * Math.floor(siblingIndex / 2) * ySpacing;
+
+      // Apply helix twist to outward direction
+      const directoryTwist = resolveHelixTwist(params.helixTwist, "directory");
+      const twistRad = directoryTwist === 0 ? 0 : (directoryTwist * (yAlongSpine / 100) * Math.PI) / 180;
+      const twistedAngle = spineAngleRad + twistRad;
+
+      myDir = {
+        dx: Math.cos(twistedAngle),
+        dy: 0,
+        dz: Math.sin(twistedAngle),
+      };
+
+      myX = parentPos.x + myDir.dx * params.directoryOffset;
+      myZ = parentPos.z + myDir.dz * params.directoryOffset;
+    } else {
+      // Deeper level: continue along parent's outwardDir without y-jitter
+      myDir = outwardDir;
+      myX = parentPos.x + myDir.dx * params.directoryOffset;
+      myY = parentPos.y; // match parent's y
+      myZ = parentPos.z + myDir.dz * params.directoryOffset;
+    }
+
+    graph.setNodeAttribute(dirId, "x", myX);
+    graph.setNodeAttribute(dirId, "y", myY);
+    graph.setNodeAttribute(dirId, "z", myZ);
+    allSeedPositions.set(dirId, { x: myX, y: myY, z: myZ });
+
+    // Recurse into children.
+    const myChildren = parentToChildren.get(dirId);
+    if (!myChildren) return;
+
+    const childArr = Array.from(myChildren).sort();
+    const childDirs: string[] = [];
+    const childFiles: string[] = [];
+    childArr.forEach((cid) => {
+      const ct = graph.getNodeAttributes(cid).nodeType || graph.getNodeAttributes(cid).raw?.type;
+      if (ct === "directory") childDirs.push(cid);
+      else if (ct === "doc" || ct === "code" || ct === "config" || ct === "fixture" || ct === "file") {
+        childFiles.push(cid);
+      }
+    });
+
+    // Place each child directory recursively along myDir.
+    childDirs.forEach((cid, ci) => {
+      placeBranchRecursive(
+        cid,
+        { x: myX, y: myY, z: myZ },
+        myDir,           // children continue along my direction
+        depth + 1,       // depth advances
+        ci,              // sibling index for this directory's children
+        spineAngleRad,  // unchanged
+        yAlongSpine,    // unchanged (helix twist only at depth=0)
+      );
+    });
+
+    // Place my file children in orbit around me (in x-z plane, at constant y)
+    const fileCount = childFiles.length;
+    const orbitRadius = computeOrbitRadius(fileCount, params.fileOrbitRadius);  // NEW: dynamic
+    childFiles.forEach((fid, fi) => {
+      const fileTwist = resolveHelixTwist(params.helixTwist, "file");
+      const dDir = Math.sqrt(myX * myX + myZ * myZ);
+      const fileTwistRad = fileTwist === 0 ? 0 : (fileTwist * (dDir / 100) * Math.PI) / 180;
+      const orbitAngle = (fi / Math.max(1, fileCount)) * 2 * Math.PI + fileTwistRad;
+
+      const fx = myX + orbitRadius * Math.cos(orbitAngle);  // DYNAMIC
+      const fy = myY;
+      const fz = myZ + orbitRadius * Math.sin(orbitAngle);  // DYNAMIC
+
+      graph.setNodeAttribute(fid, "x", fx);
+      graph.setNodeAttribute(fid, "y", fy);
+      graph.setNodeAttribute(fid, "z", fz);
+      allSeedPositions.set(fid, { x: fx, y: fy, z: fz });
+    });
+  }
+
   const R = axisOffsetForN(params.offsetFromHub, params.spineCount);
   const spineTwist = resolveHelixTwist(params.helixTwist, "spine");
 
@@ -147,7 +255,8 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
       if (!children) return;
 
       const childArray = Array.from(children).sort();
-      let dirIndex = 0;
+
+      // Separate files and directories
       const fileChildren: string[] = [];
       const dirChildren: string[] = [];
 
@@ -164,70 +273,17 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
         ) fileChildren.push(childId);
       });
 
-      // Place directories perpendicular to the spine axis.
-      // For parallel-spines, "perpendicular" means horizontal — perpendicular to the
-      // vertical spine direction. Directories alternate left/right relative to the
-      // spine's current x position. Helix twist on directory affects the angle.
-      const directoryTwist = resolveHelixTwist(params.helixTwist, "directory");
-
-      dirChildren.forEach((childId) => {
-        // Perpendicular direction in the x-z plane, perpendicular to the radial direction
-        // from central axis to spine. For a spine at angle θ around central axis,
-        // perpendicular direction (in x-z plane) is (cos(θ+90°), sin(θ+90°)).
-        const perpAngleBase = spineAngleAtThisHeight + Math.PI / 2;
-        const twistRad = directoryTwist === 0 ? 0 : (directoryTwist * (yAlongSpine / 100) * Math.PI) / 180;
-        const perpAngle = perpAngleBase + twistRad;
-
-        let sign: number;
-        switch (params.directoryAlternation) {
-          case "above-only": sign = +1; break;
-          case "below-only": sign = -1; break;
-          case "above-below":
-          default: sign = dirIndex % 2 === 0 ? +1 : -1; break;
-        }
-
-        const dirX = spineX + sign * params.directoryOffset * Math.cos(perpAngle);
-        const dirY = spineY; // directories sit at same y as their spine node
-        const dirZ = spineZ + sign * params.directoryOffset * Math.sin(perpAngle);
-
-        graph.setNodeAttribute(childId, "x", dirX);
-        graph.setNodeAttribute(childId, "y", dirY);
-        graph.setNodeAttribute(childId, "z", dirZ);
-        allSeedPositions.set(childId, { x: dirX, y: dirY, z: dirZ });
-
-        // Place file children in orbit around the directory (in the x-z plane, at constant y)
-        const fileTwist = resolveHelixTwist(params.helixTwist, "file");
-        const dirFiles = parentToChildren.get(childId);
-        if (dirFiles) {
-          const fileArray = Array.from(dirFiles).sort();
-          fileArray.forEach((fileId, fileIndex) => {
-            const fileAttrs = graph.getNodeAttributes(fileId);
-            const fileType = fileAttrs.nodeType || fileAttrs.raw?.type;
-            if (
-              fileType === "file" ||
-              fileType === "doc" ||
-              fileType === "code" ||
-              fileType === "config" ||
-              fileType === "fixture"
-            ) {
-              const fileCount = fileArray.length;
-              const dDir = Math.sqrt(dirX * dirX + dirZ * dirZ);
-              const fileTwistRad = fileTwist === 0 ? 0 : (fileTwist * (dDir / 100) * Math.PI) / 180;
-              const orbitAngle = (fileIndex / fileCount) * 2 * Math.PI + fileTwistRad;
-
-              const fileX = dirX + params.fileOrbitRadius * Math.cos(orbitAngle);
-              const fileY = dirY;
-              const fileZ = dirZ + params.fileOrbitRadius * Math.sin(orbitAngle);
-
-              graph.setNodeAttribute(fileId, "x", fileX);
-              graph.setNodeAttribute(fileId, "y", fileY);
-              graph.setNodeAttribute(fileId, "z", fileZ);
-              allSeedPositions.set(fileId, { x: fileX, y: fileY, z: fileZ });
-            }
-          });
-        }
-
-        dirIndex++;
+      // Recursive placement for each directory child of this spine node
+      dirChildren.forEach((childId, dirIndex) => {
+        placeBranchRecursive(
+          childId,
+          { x: spineX, y: spineY, z: spineZ },
+          { dx: 0, dy: 0, dz: 0 },
+          0,
+          dirIndex,
+          spineAngleAtThisHeight,
+          yAlongSpine,
+        );
       });
 
       // Endpoint / spine-attached files fan out from the spine node

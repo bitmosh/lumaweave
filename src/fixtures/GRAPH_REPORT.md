@@ -1,12 +1,12 @@
 # Self-Graph Report
 
-Generated: 2026-05-17T04:08:40.201Z
+Generated: 2026-05-17T16:48:04.893Z
 Source commit: N/A
 Schema: lumaweave-self-graph/v1
 
 ## Summary
 
-- Total nodes: 399
+- Total nodes: 429
 - Total edges: 1403
 
 ### Nodes by type
@@ -14,7 +14,7 @@ Schema: lumaweave-self-graph/v1
 - code: 115
 - config: 5
 - fixture: 0
-- spine: 11
+- spine: 41
 - directory: 67
 
 ### Edges by type
@@ -39,29 +39,27 @@ Schema: lumaweave-self-graph/v1
 
 ## Top 10 by out-degree
 - docs (directory): 47
-- spine.docs-control-plane (spine): 35
 - policy.source.of.truth (doc): 30
-- spine.source-adapter (spine): 30
 - registry.inventory (doc): 27
 - src.app.appshell (code): 26
 - theme.system.overview (doc): 21
 - docs.updates.v86--updates.-new-v86--v86-bandit-master-index (doc): 21
 - docs.token-census-orphans (doc): 19
 - src.themes (directory): 19
+- control.plane.contract.to.code.trace.matrix (doc): 16
+- src.control-plane.panels (directory): 16
 
-## Orphaned nodes (degree = 0) [12]
+## Orphaned nodes (degree = 0) [10]
 - package (config)
 - tsconfig (config)
 - tsconfig.node (config)
 - vite.config (config)
 - playwright.config (config)
-- spine.themes (spine)
-- spine.audio (spine)
-- spine.accessibility (spine)
-- spine.control-plane (spine)
-- spine.physics (spine)
-- spine.docs-agent (spine)
-- spine.docs-physics (spine)
+- spine.src.assets (spine)
+- spine.src.renderers (spine)
+- spine.src.styles (spine)
+- spine.src.ui (spine)
+- spine.docs.know (spine)
 
 ## Broken references [97]
 Frontmatter references targeting unknown ids:
@@ -166,15 +164,15 @@ Frontmatter references targeting unknown ids:
 ## Cluster breakdown
 | Cluster | Node count |
 |---------|------------|
-| azure | 89 |
-| crimson | 5 |
-| ember | 10 |
-| gold | 33 |
+| azure | 91 |
+| crimson | 6 |
+| ember | 11 |
+| gold | 34 |
 | gray | 1 |
-| indigo | 6 |
-| lime | 14 |
+| indigo | 8 |
+| lime | 15 |
 | purple | 1 |
-| slate | 93 |
-| stone | 7 |
-| teal | 12 |
-| violet | 37 |
+| slate | 97 |
+| stone | 9 |
+| teal | 14 |
+| violet | 41 |

@@ -41,13 +41,13 @@ export const GW_WELL_TYPE_REGISTRY: readonly GWWellTypeEntry[] = [
     status: "active",
     pinned: false,
     defaults: {
-      attractionStrength: 0.4,
+      attractionStrength: 0.15,
       siblingRepulsion: 250,
-      springStiffness: 0.05,
+      springStiffness: 0.03,
       damping: 0.85,
-      idealDistance: 220,
+      idealDistance: 460,
       centerGravity: 0.05,
-      seedAdherence: 0.15,
+      seedAdherence: 0.08,
     },
   },
   {
@@ -61,13 +61,13 @@ export const GW_WELL_TYPE_REGISTRY: readonly GWWellTypeEntry[] = [
     status: "active",
     pinned: false,
     defaults: {
-      attractionStrength: 0.5,
+      attractionStrength: 0.15,
       siblingRepulsion: 100,
-      springStiffness: 0.07,
+      springStiffness: 0.02,
       damping: 0.9,
-      idealDistance: 90,
-      centerGravity: 0.02,
-      seedAdherence: 0.4,  // Tuned for Pass C7 drag-seed test (was 0.05)
+      idealDistance: 360,
+      centerGravity: 0.01,
+      seedAdherence: 0.05,  // Tuned for Pass C7 drag-seed test (was 0.05)
     },
   },
   {

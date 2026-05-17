@@ -102,6 +102,38 @@ stay twisted) while still allowing physics-driven refinement. Default adherence
 values: directory-anchor 0.15 (strong), file-orbit 0.05 (light), endpoint-fan 0.08
 (moderate).
 
+## Pass C8 Amendment — Dynamic Scaling & Spacing Tune
+
+The initial Pass C8 implementation had correct algorithm but compressed visual
+spacing. This amendment tunes scaling parameters and adds dynamic file orbit sizing.
+
+**Parameter changes:**
+
+- `spineSpacing`: 150 → 450 (triple — spine nodes visibly separated)
+- `directoryOffset`: 220 → 400 (double — successive depths visually distinct)
+- `fileOrbitRadius`: 80 → 80 (now serves as base for dynamic computation)
+
+**Dynamic file orbit radius:**
+
+Replaces static orbit radius with per-directory computation based on file count:
+
+```
+orbitRadius = clamp(baseRadius × sqrt(fileCount / 6), 40, 200)
+```
+
+- Base radius: 80 units (for ~6 files)
+- Min radius: 40 units (floor for 1-2 files)
+- Max radius: 200 units (ceiling for 96+ files)
+
+Square-root scaling ensures orbit area grows linearly with file count, so each
+file gets roughly the same angular share regardless of total count. Low-count
+directories get tight clusters; high-count directories get wider orbits to avoid
+overlap.
+
+**Result:** Extent increased from ~1500×1500 to ~3000-4500×3000-4500 units. Deep nodes
+reach 2000+ from origin. Fern fronds visible as distinct chains with varying
+file orbit radii based on directory size.
+
 ## Parallel-Spines dialect configuration
 
 ```typescript
@@ -134,12 +166,12 @@ values: directory-anchor 0.15 (strong), file-orbit 0.05 (light), endpoint-fan 0.
   config: {
     seedParams: {
       spineCount: 2,
-      offsetFromHub: 1000,  // R = 2000 for N=2
-      spineSpacing: 150,
-      directoryOffset: 220,
+      offsetFromHub: 1000,  // R = 2000 for N=2 (unchanged)
+      spineSpacing: 450,       // CHANGED from 150 (Pass C8 tune: matches radial-backbone)
+      directoryOffset: 400,    // CHANGED from 220 (Pass C8 tune: matches radial-backbone)
       directoryAlternation: "above-below",
       helixTwist: {},
-      fileOrbitRadius: 80,
+      fileOrbitRadius: 80,     // Base for dynamic computation (Pass C8 tune: matches radial-backbone)
       endpointFanArc: 100,
       endpointFanCount: 6,
     },
