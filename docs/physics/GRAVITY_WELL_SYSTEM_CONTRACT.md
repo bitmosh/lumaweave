@@ -624,8 +624,10 @@ Exits 1 otherwise, with a clear failure report.
 
 `src/physics/gwells/__tests__/smoke.test.ts` covers:
 
-- `applyDialect(graph, "gwells.dialect.end-to-end-spine")` runs without
+- `applyDialect(graph, "gwells.dialect.radial-backbone")` runs without
   error on a fixture graph containing the LumaWeave self-graph data shape.
+- `applyDialect(graph, "gwells.dialect.parallel-spines")` runs without
+  error on the same fixture graph.
 - After 60 frames, all non-pinned node positions are finite (no NaN, no
   Infinity).
 - All pinned node positions exactly match what the seed function produced.
@@ -638,7 +640,9 @@ Exits 1 otherwise, with a clear failure report.
 legacy-to-gwells settings migration:
 
 - Legacy `physicsDialect: "helix"` → `dialectId:
-  "gwells.dialect.end-to-end-spine"`.
+  "gwells.dialect.radial-backbone"` (the new default dialect).
+- Legacy `physicsDialect: "vertical-parallel"` → `dialectId:
+  "gwells.dialect.parallel-spines"`.
 - Legacy `physicsDialect: "solar-orbit"` → fallback default.
 - Legacy `physicsDialect` field is removed from migrated state.
 - Legacy FA2 slider fields (`linkDistance`, `repelForce`, etc.) are
@@ -717,13 +721,18 @@ v0 is "accepted" when:
 
 1. The contract document exists and is referenced from source-of-truth.
 2. All four registries (well types, interactions, seed functions,
-   dialects) exist with at least the entries needed for the
-   `end-to-end-spine` dialect.
-3. `applyDialect(graph, "gwells.dialect.end-to-end-spine")` produces
-   a visible two-half spine layout matching the variation B sketch
-   (docs left half, src right half, single continuous spine axis,
-   directories alternating perpendicular, files orbiting parents,
-   endpoint fans at spine tips).
+   dialects) exist with at least the entries needed for both the
+   `radial-backbone` and `parallel-spines` dialects.
+3. `applyDialect(graph, "gwells.dialect.radial-backbone")` produces a
+   visible N-spine radial layout: spines bucketed by first path segment
+   on radial axes from the hub, fern-frond directory branches alternating
+   per-axis static, files orbiting their parent directories in
+   phyllotaxis spirals, root-spines at the far end of their axis with
+   loose files fanning outward (see GWELLS_LAYOUT_RULES.md for full
+   rules).
+   `applyDialect(graph, "gwells.dialect.parallel-spines")` produces the
+   parallel-spines variant — N parallel vertical spines at distinct x
+   positions, otherwise sharing the same layout rules.
 4. The validator script passes.
 5. The smoke test passes.
 6. The settings migration test passes.

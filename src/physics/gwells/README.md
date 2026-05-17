@@ -12,11 +12,18 @@ read the following in order:
    registries compose
 4. `docs/physics/GWELLS_DIALECT_RADIAL_BACKBONE.md` — the v0 seeder
    family specification
+5. `docs/physics/GWELLS_DIALECT_PARALLEL_SPINES.md` — the parallel-spines
+   dialect specification
+6. `docs/physics/GWELLS_OVERVIEW.md` — system overview (start here for new
+   readers)
+7. `docs/physics/GWELLS_CURRENT_STATE.md` — pass timeline and known state
 
 The module is designed for future extraction as a standalone npm
 package. Its only runtime dependency is `graphology`.
 
 ## Status
 
-v0 — Pre-implementation. Skeletons only; entries and engine arrive
-in Pass C of the gwells migration.
+v0 of the radial-backbone and parallel-spines dialects ships as of Pass
+C8.4. See `GWELLS_CURRENT_STATE.md` for migration history. Pass C9 (drag-
+pin redesign) is next; future passes extend the system per the trajectory
+in `GWELLS_FUTURE_VISION.md`.
