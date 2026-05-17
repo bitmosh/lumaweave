@@ -1,16 +1,16 @@
 # Self-Graph Report
 
-Generated: 2026-05-17T20:12:23.472Z
+Generated: 2026-05-17T23:39:06.430Z
 Source commit: N/A
 Schema: lumaweave-self-graph/v1
 
 ## Summary
 
-- Total nodes: 429
-- Total edges: 1404
+- Total nodes: 437
+- Total edges: 1419
 
 ### Nodes by type
-- doc: 201
+- doc: 209
 - code: 115
 - config: 5
 - fixture: 0
@@ -22,19 +22,19 @@ Schema: lumaweave-self-graph/v1
 - explicit-reference: 380
 - code-import: 143
 - tag-overlap: 169
-- describes: 301
-- contains: 382
+- describes: 308
+- contains: 390
 
 ## Top 10 by in-degree
-- src.graph.renderers.sigma2d.sigmagraphview (code): 22
+- src.graph.renderers.sigma2d.sigmagraphview (code): 23
 - src.themes.themetokenpaths (code): 20
 - theme.system.overview (doc): 18
 - theme.token.path.map (doc): 18
 - src.app.appshell (code): 18
 - link.network.overview (doc): 17
+- src.graph.renderers.sigma2d.buildgraphologygraph (code): 16
 - theme.token.compatibility (doc): 15
 - src.control-plane.settings.settings.schema (code): 15
-- src.graph.renderers.sigma2d.buildgraphologygraph (code): 15
 - agent.survival.manual.readme (doc): 14
 
 ## Top 10 by out-degree
@@ -46,8 +46,8 @@ Schema: lumaweave-self-graph/v1
 - docs.updates.v86--updates.-new-v86--v86-bandit-master-index (doc): 21
 - docs.token-census-orphans (doc): 19
 - src.themes (directory): 19
+- docs.physics (directory): 17
 - control.plane.contract.to.code.trace.matrix (doc): 16
-- src.control-plane.panels (directory): 16
 
 ## Orphaned nodes (degree = 0) [10]
 - package (config)
