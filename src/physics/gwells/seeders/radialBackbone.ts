@@ -16,7 +16,7 @@
  */
 
 import type { GWSeedFunctionContext, GWHelixTwistRecord } from "../types";
-import { resolveHelixTwist, buildContainsMap, flattenSpinesFromRoot, assignSpinesToAxes, computeOrbitRadius } from "../seederHelpers";
+import { resolveHelixTwist, buildContainsMap, flattenSpinesFromRoot, assignSpinesToAxes, computeFileOrbit } from "../seederHelpers";
 
 interface RadialBackboneParams {
   spineCount: number;
@@ -175,17 +175,28 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
       );
     });
 
-    // Place my file children in orbit around me.
-    const fileCount = childFiles.length;
-    const orbitRadius = computeOrbitRadius(fileCount, params.fileOrbitRadius);  // NEW: dynamic
-    childFiles.forEach((fid, fi) => {
+    // Place my file children in orbit around me using phyllotaxis spiral (Pass C8.3).
+    // Sort files by raw size ascending — smaller files closer to parent, larger farther.
+    const sortedFiles = childFiles.slice().sort((a, b) => {
+      const sa = (graph.getNodeAttributes(a) as any).rawSize ?? 0;
+      const sb = (graph.getNodeAttributes(b) as any).rawSize ?? 0;
+      return sa - sb;
+    });
+
+    // Parent's visual size for orbit scaling
+    const parentVisualSize = (graph.getNodeAttributes(dirId) as any).size ?? 10;
+
+    sortedFiles.forEach((fid, fi) => {
+      const { radius, angleRad } = computeFileOrbit(fi, sortedFiles.length, parentVisualSize);
+      
+      // Apply helix twist if present (preserves existing twist behavior)
       const fileTwist = resolveHelixTwist(params.helixTwist, "file");
       const dDirectory = Math.sqrt(myX * myX + myY * myY);
       const fileTwistRad = fileTwist * (dDirectory / 100) * Math.PI / 180;
-      const orbitAngle = (fi / Math.max(1, fileCount)) * 2 * Math.PI + fileTwistRad;
-
-      const fx = myX + orbitRadius * Math.cos(orbitAngle);  // DYNAMIC
-      const fy = myY + orbitRadius * Math.sin(orbitAngle);  // DYNAMIC
+      const finalAngle = angleRad + fileTwistRad;
+      
+      const fx = myX + radius * Math.cos(finalAngle);
+      const fy = myY + radius * Math.sin(finalAngle);
       const fz = myZ;
       graph.setNodeAttribute(fid, "x", fx);
       graph.setNodeAttribute(fid, "y", fy);
@@ -274,18 +285,26 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
 
       // Place file children of spine nodes (endpoint files)
       // Also place file children of non-endpoint spine nodes (they fan from the spine node)
+      // Pass C8.3: Use phyllotaxis spiral sorted by size
       if (fileChildren.length > 0) {
-        const fanArcRad = params.endpointFanArc * Math.PI / 180;
-        const numEndpointFiles = fileChildren.length;
+        // Sort files by raw size ascending — smaller files closer to parent, larger farther
+        const sortedFiles = fileChildren.slice().sort((a, b) => {
+          const sa = (graph.getNodeAttributes(a) as any).rawSize ?? 0;
+          const sb = (graph.getNodeAttributes(b) as any).rawSize ?? 0;
+          return sa - sb;
+        });
 
-        fileChildren.forEach((fileId, fileIdx) => {
-          const t = numEndpointFiles === 1 ? 0.5 : fileIdx / (numEndpointFiles - 1);
-          const fanAngle = angleRad + (t - 0.5) * fanArcRad;
+        // Parent's visual size for orbit scaling
+        const parentVisualSize = (graph.getNodeAttributes(spineNodeId) as any).size ?? 10;
 
-          const fanDist = params.fileOrbitRadius * 1.5;
+        sortedFiles.forEach((fileId, fileIdx) => {
+          const { radius, angleRad } = computeFileOrbit(fileIdx, sortedFiles.length, parentVisualSize);
+          
+          // Add the spine's axis angle to the phyllotaxis angle so files fan outward from the spine direction
+          const finalAngle = angleRad + angleRad;
 
-          const fileX = spineX + fanDist * Math.cos(fanAngle);
-          const fileY = spineY + fanDist * Math.sin(fanAngle);
+          const fileX = spineX + radius * Math.cos(finalAngle);
+          const fileY = spineY + radius * Math.sin(finalAngle);
 
           graph.setNodeAttribute(fileId, "x", fileX);
           graph.setNodeAttribute(fileId, "y", fileY);

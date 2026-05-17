@@ -1,13 +1,13 @@
 # Self-Graph Report
 
-Generated: 2026-05-17T18:20:52.839Z
+Generated: 2026-05-17T19:36:08.778Z
 Source commit: N/A
 Schema: lumaweave-self-graph/v1
 
 ## Summary
 
 - Total nodes: 429
-- Total edges: 1403
+- Total edges: 1404
 
 ### Nodes by type
 - doc: 201
@@ -20,7 +20,7 @@ Schema: lumaweave-self-graph/v1
 ### Edges by type
 - governs: 29
 - explicit-reference: 380
-- code-import: 142
+- code-import: 143
 - tag-overlap: 169
 - describes: 301
 - contains: 382

@@ -2,12 +2,12 @@
   "schemaVersion": "lumaweave-self-graph/v1",
   "metadata": {
     "schemaVersion": "lumaweave-self-graph/v1",
-    "generatedAt": "2026-05-17T18:20:52.839Z",
+    "generatedAt": "2026-05-17T19:36:08.778Z",
     "generator": "generate-self-graph@v2",
     "sourceTree": "./",
     "stats": {
       "nodeCount": 429,
-      "edgeCount": 1403,
+      "edgeCount": 1404,
       "nodesByType": {
         "doc": 201,
         "code": 115,
@@ -19,7 +19,7 @@
       "edgesByType": {
         "governs": 29,
         "explicit-reference": 380,
-        "code-import": 142,
+        "code-import": 143,
         "tag-overlap": 169,
         "describes": 301,
         "contains": 382
@@ -1906,8 +1906,8 @@
         "v0.1",
         "layout"
       ],
-      "size": 272,
-      "lastModified": "2026-05-17T16:14:16.504Z",
+      "size": 278,
+      "lastModified": "2026-05-17T19:36:08.620Z",
       "raw": {}
     },
     {
@@ -1926,8 +1926,8 @@
         "v0.1",
         "layout"
       ],
-      "size": 539,
-      "lastModified": "2026-05-17T18:20:35.171Z",
+      "size": 541,
+      "lastModified": "2026-05-17T19:35:49.671Z",
       "raw": {}
     },
     {
@@ -4099,8 +4099,8 @@
         "src",
         "physics"
       ],
-      "size": 180,
-      "lastModified": "2026-05-17T17:03:47.330Z",
+      "size": 296,
+      "lastModified": "2026-05-17T19:28:35.797Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4213,8 +4213,8 @@
         "src",
         "physics"
       ],
-      "size": 308,
-      "lastModified": "2026-05-17T16:10:48.669Z",
+      "size": 327,
+      "lastModified": "2026-05-17T19:32:18.881Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4232,8 +4232,8 @@
         "src",
         "physics"
       ],
-      "size": 327,
-      "lastModified": "2026-05-17T16:11:27.073Z",
+      "size": 347,
+      "lastModified": "2026-05-17T19:33:27.076Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -4479,8 +4479,8 @@
         "src",
         "graph"
       ],
-      "size": 272,
-      "lastModified": "2026-05-16T17:30:46.209Z",
+      "size": 290,
+      "lastModified": "2026-05-17T19:35:09.991Z",
       "raw": {
         "color": "#5a6678",
         "dimFactor": 0.55
@@ -6543,7 +6543,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.779Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6559,7 +6559,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.779Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6575,7 +6575,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6591,7 +6591,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6607,7 +6607,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6623,7 +6623,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6639,7 +6639,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6655,7 +6655,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6671,7 +6671,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6687,7 +6687,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6703,7 +6703,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6719,7 +6719,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6735,7 +6735,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6751,7 +6751,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6767,7 +6767,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6783,7 +6783,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6799,7 +6799,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6815,7 +6815,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6831,7 +6831,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6847,7 +6847,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6863,7 +6863,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6879,7 +6879,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6895,7 +6895,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6911,7 +6911,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6927,7 +6927,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6943,7 +6943,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6959,7 +6959,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6975,7 +6975,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -6991,7 +6991,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7007,7 +7007,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7023,7 +7023,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7039,7 +7039,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7055,7 +7055,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.726Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7071,7 +7071,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7087,7 +7087,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7103,7 +7103,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7119,7 +7119,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7135,7 +7135,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7151,7 +7151,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7167,7 +7167,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7183,7 +7183,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7199,7 +7199,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7215,7 +7215,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7231,7 +7231,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7247,7 +7247,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7263,7 +7263,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7279,7 +7279,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7295,7 +7295,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7311,7 +7311,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7327,7 +7327,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7343,7 +7343,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7359,7 +7359,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7375,7 +7375,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7391,7 +7391,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7407,7 +7407,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7423,7 +7423,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7439,7 +7439,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7455,7 +7455,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7471,7 +7471,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7487,7 +7487,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7503,7 +7503,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7519,7 +7519,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7535,7 +7535,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7551,7 +7551,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7567,7 +7567,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7583,7 +7583,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -7599,7 +7599,7 @@
       "status": null,
       "tags": [],
       "size": 0,
-      "lastModified": "2026-05-17T18:20:52.780Z",
+      "lastModified": "2026-05-17T19:36:08.727Z",
       "raw": {
         "color": "#7a8a9a",
         "dimFactor": 0.7
@@ -13071,6 +13071,18 @@
       "id": "edge-src.graph.renderers.sigma2d.buildgraphologygraph-src.graph.visual.graphvisualtokens-code-import",
       "source": "src.graph.renderers.sigma2d.buildgraphologygraph",
       "target": "src.graph.visual.graphvisualtokens",
+      "type": "code-import",
+      "weight": 0.85,
+      "bidirectional": false,
+      "provenance": {
+        "source": "body-parse",
+        "detail": "import"
+      }
+    },
+    {
+      "id": "edge-src.graph.renderers.sigma2d.buildgraphologygraph-src.physics.gwells.seederhelpers-code-import",
+      "source": "src.graph.renderers.sigma2d.buildgraphologygraph",
+      "target": "src.physics.gwells.seederhelpers",
       "type": "code-import",
       "weight": 0.85,
       "bidirectional": false,

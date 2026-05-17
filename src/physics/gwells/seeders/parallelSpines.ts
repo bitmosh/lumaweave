@@ -24,7 +24,7 @@
  */
 
 import type { GWSeedFunctionContext, GWHelixTwistRecord } from "../types";
-import { axisOffsetForN, resolveHelixTwist, buildContainsMap, flattenSpinesFromRoot, assignSpinesToAxes, computeOrbitRadius } from "../seederHelpers";
+import { axisOffsetForN, resolveHelixTwist, buildContainsMap, flattenSpinesFromRoot, assignSpinesToAxes, computeFileOrbit } from "../seederHelpers";
 
 interface ParallelSpinesParams {
   spineCount: number;
@@ -176,18 +176,29 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
       );
     });
 
-    // Place my file children in orbit around me (in x-z plane, at constant y)
-    const fileCount = childFiles.length;
-    const orbitRadius = computeOrbitRadius(fileCount, params.fileOrbitRadius);  // NEW: dynamic
-    childFiles.forEach((fid, fi) => {
+    // Place my file children in orbit around me using phyllotaxis spiral (Pass C8.3).
+    // Sort files by raw size ascending — smaller files closer to parent, larger farther.
+    const sortedFiles = childFiles.slice().sort((a, b) => {
+      const sa = (graph.getNodeAttributes(a) as any).rawSize ?? 0;
+      const sb = (graph.getNodeAttributes(b) as any).rawSize ?? 0;
+      return sa - sb;
+    });
+
+    // Parent's visual size for orbit scaling
+    const parentVisualSize = (graph.getNodeAttributes(dirId) as any).size ?? 10;
+
+    sortedFiles.forEach((fid, fi) => {
+      const { radius, angleRad } = computeFileOrbit(fi, sortedFiles.length, parentVisualSize);
+      
+      // Apply helix twist if present (preserves existing twist behavior)
       const fileTwist = resolveHelixTwist(params.helixTwist, "file");
       const dDir = Math.sqrt(myX * myX + myZ * myZ);
       const fileTwistRad = fileTwist === 0 ? 0 : (fileTwist * (dDir / 100) * Math.PI) / 180;
-      const orbitAngle = (fi / Math.max(1, fileCount)) * 2 * Math.PI + fileTwistRad;
+      const finalAngle = angleRad + fileTwistRad;
 
-      const fx = myX + orbitRadius * Math.cos(orbitAngle);  // DYNAMIC
+      const fx = myX + radius * Math.cos(finalAngle);
       const fy = myY;
-      const fz = myZ + orbitRadius * Math.sin(orbitAngle);  // DYNAMIC
+      const fz = myZ + radius * Math.sin(finalAngle);
 
       graph.setNodeAttribute(fid, "x", fx);
       graph.setNodeAttribute(fid, "y", fy);
@@ -287,18 +298,27 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
       });
 
       // Endpoint / spine-attached files fan out from the spine node
+      // Pass C8.3: Use phyllotaxis spiral sorted by size
       if (fileChildren.length > 0) {
-        const fanArcRad = (params.endpointFanArc * Math.PI) / 180;
-        const numEndpointFiles = fileChildren.length;
-        fileChildren.forEach((fileId, fileIdx) => {
-          const t = numEndpointFiles === 1 ? 0.5 : fileIdx / (numEndpointFiles - 1);
-          // Fan opens outward from the central axis — in the spine's radial direction
-          const fanAngle = spineAngleAtThisHeight + (t - 0.5) * fanArcRad;
-          const fanDist = params.fileOrbitRadius * 1.5;
+        // Sort files by raw size ascending — smaller files closer to parent, larger farther
+        const sortedFiles = fileChildren.slice().sort((a, b) => {
+          const sa = (graph.getNodeAttributes(a) as any).rawSize ?? 0;
+          const sb = (graph.getNodeAttributes(b) as any).rawSize ?? 0;
+          return sa - sb;
+        });
 
-          const fileX = spineX + fanDist * Math.cos(fanAngle);
+        // Parent's visual size for orbit scaling
+        const parentVisualSize = (graph.getNodeAttributes(spineNodeId) as any).size ?? 10;
+
+        sortedFiles.forEach((fileId, fileIdx) => {
+          const { radius, angleRad } = computeFileOrbit(fileIdx, sortedFiles.length, parentVisualSize);
+          
+          // Add the spine's angle so files fan outward from the spine direction
+          const finalAngle = angleRad + spineAngleAtThisHeight;
+
+          const fileX = spineX + radius * Math.cos(finalAngle);
           const fileY = spineY;
-          const fileZ = spineZ + fanDist * Math.sin(fanAngle);
+          const fileZ = spineZ + radius * Math.sin(finalAngle);
 
           graph.setNodeAttribute(fileId, "x", fileX);
           graph.setNodeAttribute(fileId, "y", fileY);

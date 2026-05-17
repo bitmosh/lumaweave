@@ -134,6 +134,12 @@ overlap.
 reach 2000+ from origin. Fern fronds visible as distinct chains with varying
 file orbit radii based on directory size.
 
+## Pass C8.3 Amendment — Size-Aware Phyllotaxis Layout
+
+File placement now uses phyllotaxis spiral (φ-angle 137.508°) sorted by raw size ascending. Smaller files are placed closer to the parent directory, larger files farther away. Orbit radii scale with parent visual size. This replaces the previous evenly-spaced circular orbit placement. Helix twist is still applied on top of the phyllotaxis angle.
+
+Node visual sizes are now computed from raw content size (line count) using logarithmic scaling to the range [4, 40]. Directories and spines aggregate sizes from all descendant files, so larger containers appear larger visually.
+
 ## Parallel-Spines dialect configuration
 
 ```typescript

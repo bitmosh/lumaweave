@@ -318,6 +318,8 @@ Active. Represents file nodes that orbit their parent directory.
 
 **Note (Pass C8.2):** For the standard radial-backbone usage, the `idealDistance: 90` is a fallback only. The engine computes per-pair ideal distances from seed positions at applyDialect time for edge-aware spring interactions (those with `requireEdge: "contains-parent"`). A file seeded at orbit radius 900 has a spring target distance of 900, not this static default. The static default applies only for non-edge-aware springs or dialects without contains-edge structure.
 
+**Note (Pass C8.3):** File placement uses phyllotaxis spiral (φ-angle 137.508°) sorted by raw size ascending. Smaller files are placed closer to the parent directory, larger files farther away. Orbit radii scale with parent visual size. This replaces the previous evenly-spaced circular orbit placement. Helix twist is still applied on top of the phyllotaxis angle.
+
 ### `gwells.well.endpoint-fan`
 
 Active. Represents files that belong to the root of a spine rather than
