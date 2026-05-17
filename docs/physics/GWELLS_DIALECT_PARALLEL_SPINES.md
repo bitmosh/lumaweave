@@ -140,6 +140,23 @@ File placement now uses phyllotaxis spiral (φ-angle 137.508°) sorted by raw si
 
 Node visual sizes are now computed from raw content size (line count) using logarithmic scaling to the range [4, 40]. Directories and spines aggregate sizes from all descendant files, so larger containers appear larger visually.
 
+## Spine Layout (Pass C8.4)
+
+Spines are bucketed across parallel axes by first path segment (e.g., "src"
+goes to one axis, "docs" to another). Within each axis, spines extend
+along the vertical axis in alphabetical order, with the root-spine (loose
+files at the project root) at the outermost position.
+
+Each spine consumes one slot in a static alternation sequence along its
+axis. Index 0 along the axis = sign +1 (fronds extend in the perpendicular
+positive direction). Index 1 = sign -1. Index 2 = sign +1. Etc. This sign
+is determined per-spine and applied to the spine's entire subtree.
+
+Empty spines (no directory children) still consume their alternation slot
+— their direction is reserved even though no branch renders. This rule is
+critical for future N≥3 dialects where z-axis subdivision relies on
+predictable alternation.
+
 ## Parallel-Spines dialect configuration
 
 ```typescript

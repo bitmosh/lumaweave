@@ -320,6 +320,23 @@ Active. Represents file nodes that orbit their parent directory.
 
 **Note (Pass C8.3):** File placement uses phyllotaxis spiral (φ-angle 137.508°) sorted by raw size ascending. Smaller files are placed closer to the parent directory, larger files farther away. Orbit radii scale with parent visual size. This replaces the previous evenly-spaced circular orbit placement. Helix twist is still applied on top of the phyllotaxis angle.
 
+## Spine Layout (Pass C8.4)
+
+Spines are bucketed across radial axes by first path segment (e.g., "src"
+goes to one axis, "docs" to another). Within each axis, spines extend
+outward from the hub in alphabetical order, with the root-spine (loose
+files at the project root) at the outermost position.
+
+Each spine consumes one slot in a static alternation sequence along its
+axis. Index 0 along the axis = sign +1 (fronds extend in the perpendicular
+positive direction). Index 1 = sign -1. Index 2 = sign +1. Etc. This sign
+is determined per-spine and applied to the spine's entire subtree.
+
+Empty spines (no directory children) still consume their alternation slot
+— their direction is reserved even though no branch renders. This rule is
+critical for future N≥3 dialects where z-axis subdivision relies on
+predictable alternation.
+
 ### `gwells.well.endpoint-fan`
 
 Active. Represents files that belong to the root of a spine rather than

@@ -125,8 +125,11 @@ export function flattenSpinesFromRoot(
 }
 
 /**
- * Group spine roots into N spines per spineCount, in alphabetical order.
+ * Group spine roots into N spines per spineCount, bucketed by first path segment.
  * Returns: spineCount-length array of root-id arrays
+ * 
+ * Pass C8.4: replaces alphabetical round-robin with category bucketing so
+ * src and docs spines don't interleave across axes.
  */
 export function assignSpinesToAxes(
   rootSpineIds: string[],
@@ -134,15 +137,50 @@ export function assignSpinesToAxes(
 ): string[][] {
   const axes: string[][] = Array.from({ length: spineCount }, () => []);
 
-  // Round-robin assign roots to axes in reverse order
-  // so that alphabetical "docs" goes to the last axis (e.g., 180° for horizontal-linear)
-  // and "src" goes to the first axis (e.g., 0° for horizontal-linear)
-  const sortedRoots = rootSpineIds.sort();
-  sortedRoots.forEach((rootId, index) => {
-    const axisIndex = (sortedRoots.length - 1 - index) % spineCount;
-    axes[axisIndex].push(rootId);
+  // Bucket spines by first path segment. For spine.src.* and spine.src-root,
+  // the bucket key is "src". For spine.docs.* and spine.docs-root, the bucket
+  // key is "docs". For other patterns (future source adapters), use whatever
+  // string follows "spine." up to the first dot or hyphen.
+  
+  function bucketKey(spineId: string): string {
+    // Strip "spine." prefix, then split on "." or "-" to get first segment
+    const stripped = spineId.replace(/^spine\./, "");
+    // For "src-root" or "docs-root", treat as same bucket as "src" or "docs"
+    const firstSeg = stripped.split(/[.-]/)[0];
+    return firstSeg;
+  }
+  
+  // Group spines by bucket key
+  const buckets = new Map<string, string[]>();
+  for (const spineId of rootSpineIds) {
+    const key = bucketKey(spineId);
+    if (!buckets.has(key)) buckets.set(key, []);
+    buckets.get(key)!.push(spineId);
+  }
+  
+  // Sort each bucket alphabetically for deterministic order within axis
+  for (const [, list] of buckets) {
+    list.sort();
+  }
+  
+  // Pass C8.4: move root-spines (spine.src-root, spine.docs-root) to the end
+  // of their bucket so they get the outermost position on their axis.
+  const rootSpineSuffix = "-root";
+  for (const [, list] of buckets) {
+    const rootSpines = list.filter(id => id.endsWith(rootSpineSuffix));
+    const nonRootSpines = list.filter(id => !id.endsWith(rootSpineSuffix));
+    list.length = 0;
+    list.push(...nonRootSpines, ...rootSpines);
+  }
+  
+  // Assign buckets to axes in deterministic order.
+  // First sort bucket keys alphabetically so axis assignment is reproducible.
+  const sortedKeys = Array.from(buckets.keys()).sort();
+  sortedKeys.forEach((key, bucketIndex) => {
+    const axisIndex = bucketIndex % spineCount;
+    axes[axisIndex].push(...buckets.get(key)!);
   });
-
+  
   return axes;
 }
 
@@ -168,8 +206,8 @@ export function computeOrbitRadius(
   fileCount: number,
   baseRadius: number,
 ): number {
-  const MIN_RADIUS = 300;
-  const MAX_RADIUS = 1500;
+  const MIN_RADIUS = 120;
+  const MAX_RADIUS = 480;
   const REFERENCE_COUNT = 6;
 
   if (fileCount <= 0) return MIN_RADIUS;
@@ -199,9 +237,9 @@ export function computeOrbitRadius(
  *   size=11000 (max in our data) -> 40
  */
 export function computeNodeSize(rawSize: number): number {
-  const MIN = 4;
-  const MAX = 40;
-  const SCALE_REF = 11000;
+  const MIN = 48;
+  const MAX = 360;
+  const SCALE_REF = 6000;
   
   if (rawSize <= 0) return MIN;
   
@@ -235,8 +273,8 @@ export function computeFileOrbit(
   const PHYLLOTAXIS_ANGLE = (3 - Math.sqrt(5)) * Math.PI;
   
   // Envelope. Scales modestly with parent size — bigger parents push files farther.
-  const MIN_ORBIT = 300 + parentVisualSize * 8;
-  const MAX_ORBIT = 1200 + parentVisualSize * 30;
+  const MIN_ORBIT = 30 + parentVisualSize * 1;
+  const MAX_ORBIT = 120 + parentVisualSize * 3;
   
   // Radial position: index 0 -> MIN, index N-1 -> MAX
   // Linear in index. Could be log-linear if we wanted heavier weighting near MIN.

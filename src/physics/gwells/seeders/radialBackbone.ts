@@ -112,7 +112,7 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
     parentPos: { x: number; y: number; z: number },
     outwardDir: { dx: number; dy: number; dz: number },
     depth: number,
-    siblingIndex: number,
+    alternationSign: number,   // Pass C8.4: renamed from siblingIndex; values +1 or -1
     spineAxisAngle: number,   // angle of the spine this branch belongs to
     dHub: number,             // distance from hub for helix twist calculation
   ): void {
@@ -127,10 +127,10 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
       const twistRad = directoryTwist * (dHub / 100) * Math.PI / 180;
       const perpAngle = perpAngleBase + twistRad;
 
-      const sign = (siblingIndex % 2 === 0) ? 1 : -1;
+      // Pass C8.4: use the passed alternation sign directly instead of computing from index
       myDir = {
-        dx: Math.cos(perpAngle) * sign,
-        dy: Math.sin(perpAngle) * sign,
+        dx: Math.cos(perpAngle) * alternationSign,
+        dy: Math.sin(perpAngle) * alternationSign,
         dz: 0,
       };
     } else {
@@ -163,13 +163,14 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
     });
 
     // Place each child directory recursively along myDir.
-    childDirs.forEach((cid, ci) => {
+    // Pass C8.4: children inherit parent's alternation sign
+    childDirs.forEach((cid) => {
       placeBranchRecursive(
         cid,
         { x: myX, y: myY, z: myZ },
         myDir,           // children continue along my direction
         depth + 1,       // depth advances
-        ci,              // sibling index for this directory's children
+        alternationSign, // Pass C8.4: inherited — child uses parent's sign
         spineAxisAngle,  // unchanged
         dHub,            // unchanged (helix twist only at depth=0)
       );
@@ -270,14 +271,23 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
         }
       });
 
+      // Pass C8.4: static per-axis alternation.
+      // Each spine consumes one alternation slot. Sign is determined by
+      // spine's index along the axis, NOT by which child of which spine.
+      // Empty spines still consume their slot — their direction is reserved
+      // even though no branch renders.
+      const axisAlternationSign = (nodeIndex % 2 === 0) ? +1 : -1;
+
       // Recursive placement for each directory child of this spine node
-      dirChildren.forEach((childId, dirIndex) => {
+      // Pass C8.4: ALL of this spine's directory children and their entire
+      // subtrees inherit the same axisAlternationSign at depth 0.
+      dirChildren.forEach((childId) => {
         placeBranchRecursive(
           childId,
           { x: spineX, y: spineY, z: 0 },  // start from spine node's position
           { dx: 0, dy: 0, dz: 0 },         // outwardDir unused at depth=0; computed inside
           0,                                // depth 0 = first level
-          dirIndex,                         // alternation sign
+          axisAlternationSign,             // Pass C8.4: sign for this whole spine's subtree
           angleRad,                         // spine's angle in radial-backbone
           dHub,                             // distance from hub for helix twist
         );

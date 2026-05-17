@@ -328,6 +328,7 @@ function SigmaGraphViewComponent({
         circle: NodeCircleProgram,
       },
       defaultNodeType: "circle",
+      itemSizesReference: "positions",  // ADD THIS LINE
     });
 
     sigmaRef.current = sigma;

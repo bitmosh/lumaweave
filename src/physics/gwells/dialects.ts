@@ -105,11 +105,11 @@ export const GW_DIALECT_REGISTRY: readonly GWDialectEntry[] = [
         spineCount: 2,
         spineAngles: [0, 180],
         offsetFromHub: 0,
-        spineSpacing: 3200,       // CHANGED from 150 (Pass C8 tune: triple spine spacing)
-        directoryOffset: 4400,    // CHANGED from 220 (Pass C8 tune: double directory spacing)
+        spineSpacing: 1200,       // CHANGED from 150 (Pass C8 tune: triple spine spacing)
+        directoryOffset: 2400,    // CHANGED from 4400 (Pass C8.4: wider spacing between depth levels)
         directoryAlternation: "above-below",
         helixTwist: {},
-        fileOrbitRadius: 1200,     // Renamed semantically: this is now the BASE for dynamic computation
+        fileOrbitRadius: 40,     // Renamed semantically: this is now the BASE for dynamic computation
         endpointFanArc: 100,
         endpointFanCount: 6,
       },
@@ -149,11 +149,11 @@ export const GW_DIALECT_REGISTRY: readonly GWDialectEntry[] = [
       seedParams: {
         spineCount: 2,
         offsetFromHub: 1000,     // unchanged (the central-axis radius)
-        spineSpacing: 1350,       // CHANGED from 150 (matches radial-backbone)
-        directoryOffset: 1800,    // CHANGED from 220 (matches radial-backbone)
+        spineSpacing: 1200,       // CHANGED from 150 (matches radial-backbone)
+        directoryOffset: 2400,    // CHANGED from 1800 (Pass C8.4: wider spacing between depth levels)
         directoryAlternation: "above-below",
         helixTwist: {},
-        fileOrbitRadius: 360,     // Same base as radial-backbone
+        fileOrbitRadius: 40,     // Same base as radial-backbone
         endpointFanArc: 100,
         endpointFanCount: 6,
       },
