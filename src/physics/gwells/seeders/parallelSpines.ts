@@ -155,7 +155,13 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
         const childAttrs = graph.getNodeAttributes(childId);
         const childType = childAttrs.nodeType || childAttrs.raw?.type;
         if (childType === "directory") dirChildren.push(childId);
-        else if (childType === "file") fileChildren.push(childId);
+        else if (
+          childType === "file" ||
+          childType === "doc" ||
+          childType === "code" ||
+          childType === "config" ||
+          childType === "fixture"
+        ) fileChildren.push(childId);
       });
 
       // Place directories perpendicular to the spine axis.
@@ -197,7 +203,13 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
           fileArray.forEach((fileId, fileIndex) => {
             const fileAttrs = graph.getNodeAttributes(fileId);
             const fileType = fileAttrs.nodeType || fileAttrs.raw?.type;
-            if (fileType === "file") {
+            if (
+              fileType === "file" ||
+              fileType === "doc" ||
+              fileType === "code" ||
+              fileType === "config" ||
+              fileType === "fixture"
+            ) {
               const fileCount = fileArray.length;
               const dDir = Math.sqrt(dirX * dirX + dirZ * dirZ);
               const fileTwistRad = fileTwist === 0 ? 0 : (fileTwist * (dDir / 100) * Math.PI) / 180;

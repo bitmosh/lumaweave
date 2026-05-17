@@ -156,7 +156,13 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
         const childType = childAttrs.nodeType || childAttrs.raw?.type;
         if (childType === "directory") {
           dirChildren.push(childId);
-        } else if (childType === "file") {
+        } else if (
+          childType === "file" ||
+          childType === "doc" ||
+          childType === "code" ||
+          childType === "config" ||
+          childType === "fixture"
+        ) {
           fileChildren.push(childId);
         }
       });
@@ -202,7 +208,13 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
             const fileAttrs = graph.getNodeAttributes(fileId);
             const fileType = fileAttrs.nodeType || fileAttrs.raw?.type;
 
-            if (fileType === "file") {
+            if (
+              fileType === "file" ||
+              fileType === "doc" ||
+              fileType === "code" ||
+              fileType === "config" ||
+              fileType === "fixture"
+            ) {
               const fileCount = fileArray.length;
               const dDirectory = Math.sqrt(dirX * dirX + dirY * dirY);
               const fileTwist = resolveHelixTwist(params.helixTwist, "file");

@@ -77,8 +77,8 @@ export function buildContainsMap(graph: Graph): {
       const sourceAttrs = graph.getNodeAttributes(source);
       const sourceType = sourceAttrs.nodeType || sourceAttrs.raw?.type;
 
-      // Only track contains where source is a spine
-      if (sourceType === "spine") {
+      // Track contains where source is a spine or directory
+      if (sourceType === "spine" || sourceType === "directory") {
         if (!parentToChildren.has(source)) {
           parentToChildren.set(source, new Set());
         }

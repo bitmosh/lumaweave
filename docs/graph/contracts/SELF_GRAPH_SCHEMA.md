@@ -66,6 +66,7 @@ type SelfGraphMetadata = {
       config: number;
       fixture: number;
       spine: number;
+      directory: number;
     };
     edgesByType: Record<EdgeType, number>;
   };
@@ -110,7 +111,7 @@ type SelfGraphNodeBase = {
   };
 };
 
-type NodeType = "doc" | "code" | "config" | "fixture" | "spine";
+type NodeType = "doc" | "code" | "config" | "fixture" | "spine" | "directory";
 ```
 
 ### Identity strategy
@@ -134,6 +135,11 @@ Examples:
 - **`config`** — Configuration files (`.json`, `.yaml`, `.toml`) at significant points (root `package.json`, `tsconfig.json`, etc.). Excludes auto-generated configs.
 - **`fixture`** — Test data, sample inputs, generated outputs in `src/fixtures/`
 - **`spine`** — Synthetic node representing a code subsystem (e.g., "graph", "themes", "control-plane"). Aggregates code files. Promoted from current 8-spine handling.
+- **`directory`** — Synthetic node representing a directory in the file tree.
+  Created by the generator for every unique directory path encountered when
+  scanning docs/, src/, and tests/. Used by physics engines (gwells) to anchor
+  files perpendicular to their parent spine. No frontmatter, no body — pure
+  structural intermediary.
 
 ### Visual treatment by node type
 

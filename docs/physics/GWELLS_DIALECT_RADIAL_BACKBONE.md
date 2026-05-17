@@ -116,6 +116,14 @@ stay twisted) while still allowing physics-driven refinement. Default adherence
 values: directory-anchor 0.15 (strong), file-orbit 0.05 (light), endpoint-fan 0.08
 (moderate).
 
+## Source Adapter Integration (Pass C6)
+
+As of Pass C6 (v0.1), the self-graph source adapter synthesizes `directory` nodes
+for every unique directory path. The radial-backbone seeder traverses spine →
+directory → file via contains edges, producing the layered visual structure this
+dialect was designed for. The wellAssignment maps `nodeType: "directory"` to
+`directory-anchor` and `nodeType: "doc" | "code" | "config" | "fixture"` to `file-orbit`.
+
 ## Radial-Backbone dialect configuration
 
 ```typescript

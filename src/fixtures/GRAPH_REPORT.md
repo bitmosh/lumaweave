@@ -1,28 +1,29 @@
 # Self-Graph Report
 
-Generated: 2026-05-17T00:53:01.842Z
+Generated: 2026-05-17T02:52:37.025Z
 Source commit: N/A
 Schema: lumaweave-self-graph/v1
 
 ## Summary
 
-- Total nodes: 388
-- Total edges: 1401
+- Total nodes: 399
+- Total edges: 1403
 
 ### Nodes by type
 - doc: 201
 - code: 115
 - config: 5
 - fixture: 0
-- spine: 67
+- spine: 11
+- directory: 67
 
 ### Edges by type
-- contains: 380
 - governs: 29
 - explicit-reference: 380
 - code-import: 142
 - tag-overlap: 169
 - describes: 301
+- contains: 382
 
 ## Top 10 by in-degree
 - src.graph.renderers.sigma2d.sigmagraphview (code): 22
@@ -32,28 +33,35 @@ Schema: lumaweave-self-graph/v1
 - src.app.appshell (code): 18
 - link.network.overview (doc): 17
 - theme.token.compatibility (doc): 15
-- src.graph.renderers.sigma2d.buildgraphologygraph (code): 15
 - src.control-plane.settings.settings.schema (code): 15
+- src.graph.renderers.sigma2d.buildgraphologygraph (code): 15
 - agent.survival.manual.readme (doc): 14
 
 ## Top 10 by out-degree
-- docs (spine): 72
+- docs (directory): 47
+- spine.docs-control-plane (spine): 35
 - policy.source.of.truth (doc): 30
+- spine.source-adapter (spine): 30
 - registry.inventory (doc): 27
 - src.app.appshell (code): 26
 - theme.system.overview (doc): 21
 - docs.updates.v86--updates.-new-v86--v86-bandit-master-index (doc): 21
-- src.themes (spine): 19
 - docs.token-census-orphans (doc): 19
-- src.control-plane.panels (spine): 16
-- control.plane.contract.to.code.trace.matrix (doc): 16
+- src.themes (directory): 19
 
-## Orphaned nodes (degree = 0) [5]
+## Orphaned nodes (degree = 0) [12]
 - package (config)
 - tsconfig (config)
 - tsconfig.node (config)
 - vite.config (config)
 - playwright.config (config)
+- spine.themes (spine)
+- spine.audio (spine)
+- spine.accessibility (spine)
+- spine.control-plane (spine)
+- spine.physics (spine)
+- spine.docs-agent (spine)
+- spine.docs-physics (spine)
 
 ## Broken references [97]
 Frontmatter references targeting unknown ids:
@@ -158,15 +166,15 @@ Frontmatter references targeting unknown ids:
 ## Cluster breakdown
 | Cluster | Node count |
 |---------|------------|
-| azure | 86 |
-| crimson | 4 |
-| ember | 9 |
-| gold | 32 |
+| azure | 89 |
+| crimson | 5 |
+| ember | 10 |
+| gold | 33 |
 | gray | 1 |
 | indigo | 6 |
-| lime | 13 |
+| lime | 14 |
 | purple | 1 |
-| slate | 91 |
+| slate | 93 |
 | stone | 7 |
 | teal | 12 |
-| violet | 36 |
+| violet | 37 |

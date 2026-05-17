@@ -86,7 +86,16 @@ export const GW_DIALECT_REGISTRY: readonly GWDialectEntry[] = [
         if (attrs.nodeType === "spine") return "gwells.well.spine-linear";
         if (attrs.isEndpoint === true) return "gwells.well.endpoint-fan";
         if (attrs.nodeType === "directory") return "gwells.well.directory-anchor";
-        if (attrs.nodeType === "file") return "gwells.well.file-orbit";
+        // Map all leaf content types to file-orbit
+        if (
+          attrs.nodeType === "file" ||
+          attrs.nodeType === "doc" ||
+          attrs.nodeType === "code" ||
+          attrs.nodeType === "config" ||
+          attrs.nodeType === "fixture"
+        ) {
+          return "gwells.well.file-orbit";
+        }
         return null;
       },
     },
@@ -122,7 +131,16 @@ export const GW_DIALECT_REGISTRY: readonly GWDialectEntry[] = [
         if (attrs.nodeType === "spine") return "gwells.well.spine-linear";
         if (attrs.isEndpoint === true) return "gwells.well.endpoint-fan";
         if (attrs.nodeType === "directory") return "gwells.well.directory-anchor";
-        if (attrs.nodeType === "file") return "gwells.well.file-orbit";
+        // Map all leaf content types to file-orbit
+        if (
+          attrs.nodeType === "file" ||
+          attrs.nodeType === "doc" ||
+          attrs.nodeType === "code" ||
+          attrs.nodeType === "config" ||
+          attrs.nodeType === "fixture"
+        ) {
+          return "gwells.well.file-orbit";
+        }
         return null;
       },
     },

@@ -149,6 +149,12 @@ Items here are promoted to the roadmap only when:
 
 ---
 
+## Directory Node Synthesis (Pass C6)
+
+**COMPLETED (Pass C6, v0.1):** The self-graph source adapter now synthesizes `directory` nodes for every unique directory path. Spine nodes use "spine.X" IDs and represent only top-level subsystems. Directory nodes use slug(path) IDs and represent intermediate directories. Contains edges link spine → directory → file hierarchy. WellAssignment maps `nodeType: "directory"` to `directory-anchor` and `nodeType: "doc" | "code" | "config" | "fixture"` to `file-orbit`. Radial-backbone and parallel-spines seeders updated to recognize these node types. Result: 67 directory nodes, 11 spine nodes, 402 contains edges (up from 380 baseline).
+
+---
+
 ## Visual Grammar Engine
 
 - **Grammar handle autocomplete** — typing a handle path gets autocomplete from the handle registry
