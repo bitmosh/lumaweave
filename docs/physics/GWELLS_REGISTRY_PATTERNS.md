@@ -63,7 +63,8 @@ nothing — they are the leaves.
 ## The composition shape
 
 Picking a dialect at runtime activates a slice through the registries:
-applyDialect(graph, "gwells.dialect.end-to-end-spine")
+
+applyDialect(graph, "gwells.dialect.radial-backbone")
 │
 ▼
 dialect entry
@@ -73,7 +74,7 @@ dialect entry
 │                                                              ▼
 │                                                       initial positions
 │                                                       written to x/y +
-│                                                       __seededSpinePositions
+│                                                       __gwellsSeedPositions
 │
 ├─► wellAssignment.assign ────► (per node) returns well-type id
 │                                          │
@@ -91,21 +92,33 @@ dialect entry
 │                                                  strength (or overridden by
 │                                                  dialect.config.interactionOverrides)
 │
+└─► pairIdealDistance map built ──► (per contained pair) seeded distance
+│                                                              │
+│                                                              ▼
+│                                                  cached for spring force
+│                                                  resolution in stepPhysics
+│                                                  (Pass C8.2 mechanism)
+│
 └─► engine runs continuous force loop
-using resolved per-node parameters and per-interaction forces
+    using resolved per-node parameters, per-interaction forces, and
+    per-pair seeded distances.
 
 The engine never reaches into a registry directly during the frame
 loop. At dialect-apply time, it walks the dialect entry once, resolves
-all referenced entries, merges any overrides, and caches the resolved
-configuration in the per-controller closure and in `__gwellsState.config`.
+all referenced entries, merges any overrides, builds the
+pairIdealDistance map from seed positions, and caches the resolved
+configuration in the per-controller closure and in `__gwellsState`.
 The frame loop then operates on the resolved configuration only.
 
 This is important: **registries are looked up once, not every frame.**
 The cost of dialect application is `O(n)` where n is the number of nodes
-(for well assignment) plus `O(|activeInteractions|)` (for interaction
-resolution). The cost of a frame is `O(n × avg_targets_per_interaction)`
-where target identification uses the resolved well-type mapping, not a
-registry scan.
+(for well assignment, seed function execution, and pairIdealDistance
+construction) plus `O(|activeInteractions|)` (for interaction resolution).
+The cost of a frame is `O(n × avg_targets_per_interaction)` where target
+identification uses the resolved well-type mapping, edge-aware interactions
+additionally filter by `parentOfNode` lookup (Pass C7), and spring
+interactions use a `pairIdealDistance` map lookup (Pass C8.2) — all
+constant-time operations per pair.
 
 ## How a node gets its well type
 
@@ -126,13 +139,16 @@ wells are *not* the same as null assignment: pinned wells have a well
 type (so they get an inspector display and an `activeInteractions`
 field), they just don't accept force application.
 
-A simple assignment function for the end-to-end-spine dialect looks like:
+A simple assignment function for the radial-backbone dialect looks like:
 
 ```typescript
 const assign: GWWellAssignmentFn = (nodeId, attrs) => {
   if (attrs.nodeType === "spine")     return "gwells.well.spine-linear";
   if (attrs.nodeType === "directory") return "gwells.well.directory-anchor";
-  if (attrs.nodeType === "file")      return "gwells.well.file-orbit";
+  if (attrs.nodeType === "doc")       return "gwells.well.file-orbit";
+  if (attrs.nodeType === "code")      return "gwells.well.file-orbit";
+  if (attrs.nodeType === "config")    return "gwells.well.file-orbit";
+  if (attrs.nodeType === "fixture")   return "gwells.well.file-orbit";
   if (attrs.isEndpoint === true)      return "gwells.well.endpoint-fan";
   return null;
 };
@@ -142,6 +158,13 @@ The function reads from `attrs`, which is the node's full attribute
 record from graphology (not a curated subset). Anything the source
 adapter set on the node is visible here. Don't add new attributes from
 inside gwells — the assignment function reads what's already there.
+
+Note that the four leaf types (`doc`, `code`, `config`, `fixture`) all
+map to `file-orbit`. This is the current concrete-string approach; a
+future Pass C10 (universal structural classification) may replace these
+matches with topology-based queries (e.g., `out-degree === 0` for
+file-orbit) so source adapters with different naming conventions plug in
+without engine changes.
 
 ## Parameter resolution order
 
@@ -331,8 +354,8 @@ Each dialect is self-contained from cold start.
 **Forgetting `isDefault`.** Exactly one dialect carries `isDefault: true`.
 This is the fallback when an unknown dialect id is requested. The
 validator enforces "exactly one" — adding a second `isDefault` dialect
-fails validation; removing the only one also fails. The v0 default is
-`gwells.dialect.end-to-end-spine`.
+fails validation; removing the only one also fails. The current default
+is `gwells.dialect.radial-backbone`.
 
 **Composing forces inside the engine instead of declaring two
 interactions.** If a behavior needs both attraction and repulsion, that's

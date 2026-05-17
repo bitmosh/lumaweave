@@ -11,7 +11,9 @@ last-updated: 2026-05-17
 
 The gwells migration began with Pass A on a `feat/gwells-physics-migration`
 branch. Each pass is a single git commit. As of 2026-05-17, the branch is at
-22 commits (Pass C8.4 pending; updates this doc when committed).
+24 commits — the most recent being Pass C8.4, the comprehensive handoff
+documentation, and a C-hygiene cleanup of stale `end-to-end-spine`
+references.
 
 ```
 [Pass A]       Setup, repo conventions, validator stubs
@@ -31,7 +33,8 @@ branch. Each pass is a single git commit. As of 2026-05-17, the branch is at
 [Pass C8.2]    Per-pair spring distance (commit f92f5a7)
 [Pass C8.3]    Size-aware phyllotaxis layout (commit 7a435bd)
 [Pass C8.4]    Spine bucketing + static alternation + root-spine far-end
-                (pending commit at time of writing)
+                + sizing model fix (itemSizesReference: positions)
+                (commit c537ea6)
 ```
 
 Each pass commits cleanly with passing tests. The branch is intended to be
@@ -56,8 +59,9 @@ merged to main as a single coherent feature once Pass C9 completes.
   root-spines).
 - Phyllotaxis file orbits: files sorted by size, smallest near parent, largest
   far. Phi-angle (137.508°) between consecutive files.
-- Content-driven node sizing: log-mapped from raw size to visual range [4, 40].
-  Directories and spines aggregate recursively.
+- Content-driven node sizing: log-mapped from raw size to visual range
+  [48, 360] in graph coordinates. Directories and spines aggregate
+  recursively.
 - Spine bucketing by first path segment: src spines and docs spines on
   different axes.
 - Static per-axis alternation: each spine consumes one alternation slot;
@@ -78,31 +82,32 @@ merged to main as a single coherent feature once Pass C9 completes.
 
 - Validator (`npm run physics:gwells`): 12/12 passing.
 - Gwells Playwright spec (`tests/e2e/gwells-physics.spec.ts`): 10/10 passing
-  as of Pass C8.4. The Pass C5 drag-seed test failed at threshold 800 with
-  drift 872 between Passes C8.2 and C8.4 — relaxed in Pass C8.4 to reflect
-  Pass C8.2's expected behavior change; Pass C9 will rework the test entirely
-  alongside the drag-pin redesign.
+  as of Pass C8.4. The Pass C5 drag-seed test threshold was bumped from 800
+  to 1100 in Pass C8.4 to accommodate the per-pair-spring behavior change
+  introduced in Pass C8.2 plus the layout-scale changes from C8.4. Pass C9
+  will rework the test entirely alongside the drag-pin redesign.
 
 ## Sample current values
 
 For radial-backbone dialect with the LumaWeave self-graph (~400 nodes):
 
-- spineSpacing: 1350 (units between consecutive spine nodes along an axis)
-- directoryOffset: 2700 (units between consecutive directory levels along an
-  outward fern frond)
-- fileOrbitRadius base: 360 (passed to computeOrbitRadius as the legacy
-  fallback; phyllotaxis uses its own MIN_ORBIT/MAX_ORBIT computed in
-  `computeFileOrbit` instead)
-- Phyllotaxis MIN_ORBIT: 300 + parentVisualSize × 8 (closer for smaller
-  parents)
-- Phyllotaxis MAX_ORBIT: 1200 + parentVisualSize × 30 (further for larger
-  parents)
-- computeNodeSize: MIN 4, MAX 40, SCALE_REF 11000 (logarithmic)
+- `spineSpacing: 1200` (units between consecutive spine nodes along an axis)
+- `directoryOffset: 2400` (units between consecutive directory levels along
+  an outward fern frond)
+- `fileOrbitRadius` base: 360 (legacy fallback; phyllotaxis uses its own
+  `MIN_ORBIT` / `MAX_ORBIT` computed in `computeFileOrbit` instead)
+- Phyllotaxis `MIN_ORBIT` / `MAX_ORBIT`: defined in `computeFileOrbit` in
+  `seederHelpers.ts`, tuned for the current sizing model
+- `computeNodeSize`: MIN 48, MAX 360, SCALE_REF 6000 (logarithmic)
 
-Camera ratio at default zoom: ~0.046 (with the ~64000-unit-wide graph in a
-~600px viewport). Nodes render at approximately `size / ratio` pixel radius
-(varies by Sigma program). At ratio 0.046, a size-8 node renders ~174 pixel
-radius — large relative to screen. Zoom in to see detail.
+Sigma's `itemSizesReference` is set to `"positions"` (Pass C8.4), so node
+visual sizes live in graph coordinates rather than screen pixels. The graph
+extent at these values is approximately 48,000 × 16,000 units (~3:1 ratio).
+At the default camera ratio (~1.0), the full graph fits the viewport. Node
+sizes scale proportionally with the coordinate space, so tuning spacing
+values has visible effect — a key design rule established in Pass C8.4. See
+`GWELLS_LAYOUT_RULES.md` Rule 5 (Content-Driven Sizing) and
+`GWELLS_DESIGN_CONVERSATIONS.md` for the rationale.
 
 ## Known issues
 
@@ -111,8 +116,8 @@ radius — large relative to screen. Zoom in to see detail.
 - **8 pre-existing e2e failures** unrelated to gwells:
   contract-registry-spec, quality-preset-coupling, settings-migrations,
   theme-target-inspector (3 tests), v86c-tile-system (2 tests). These existed
-  before gwells migration began and are not affected by gwells work. Filed for
-  separate cleanup pass.
+  before gwells migration began and are not affected by gwells work. Filed
+  for separate cleanup pass.
 - **6 orphan leaves at repo root** (`package.json`, `tsconfig.json`,
   `tsconfig.node.json`, `vite.config.ts`, `playwright.config.ts`,
   `src/App.tsx`). The source adapter logs these as orphans; they end up at
@@ -130,9 +135,9 @@ radius — large relative to screen. Zoom in to see detail.
 - **Drag-on-mouseup makes the graph view go blank.** Pre-existing render bug
   in SigmaGraphView, separate from physics. Filed separately. Will be
   addressed when Pass C9 redesigns drag handling.
-- **Pass C5 drag-seed test** assertion (drift < 800) was relaxed in Pass C8.4
-  to accept drift ~872. The relaxation reflects Pass C8.2's expected behavior
-  change. Pass C9 will rework the test entirely.
+- **Pass C5 drag-seed test threshold** was bumped from 800 to 1100 in Pass
+  C8.4 (observed drift around 988 with the post-C8.4 sizing model). Pass C9
+  will rework the test entirely alongside the drag-pin redesign.
 
 ### Queued for upcoming passes
 
@@ -176,20 +181,24 @@ Branch: `feat/gwells-physics-migration`
 Most recent commits (top is newest):
 
 ```
-[pending]   feat(gwells): Pass C8.4 — spine layout organization
-7a435bd     feat(gwells): Pass C8.3 — size-aware phyllotaxis layout
-f92f5a7     feat(gwells): Pass C8.2 — per-pair spring distance, agrees with seeder
-abf775f     feat(gwells): Pass C8 — fern-frond hierarchical layout + dynamic spine enumeration
-f9d9557     feat(gwells): Pass C7 — edge-aware interactions, complete the physics architecture
-c27b2fb     feat(self-graph): Pass C6 — synthesize directory nodes, complete gwells integration
-6c06d06     feat(gwells): Pass C5 — seed-position retention for non-pinned wells
-f9dac81     feat(gwells): Pass C4 — live tuning sliders for helixTwist
-ba9f234     chore(gwells): Pass C3.1.2 — remove FA2 cleanup debt
+[new]    docs(gwells): C-hygiene — remove stale end-to-end-spine references
+85fac8a  docs(physics): gwells comprehensive handoff documentation
+c537ea6  feat(gwells): Pass C8.4 — spine layout organization + sizing model fix
+7a435bd  feat(gwells): Pass C8.3 — size-aware phyllotaxis layout
+f92f5a7  feat(gwells): Pass C8.2 — per-pair spring distance, agrees with seeder
+abf775f  feat(gwells): Pass C8 — fern-frond hierarchical layout + dynamic spine enumeration
+f9d9557  feat(gwells): Pass C7 — edge-aware interactions, complete the physics architecture
+c27b2fb  feat(self-graph): Pass C6 — synthesize directory nodes, complete gwells integration
+6c06d06  feat(gwells): Pass C5 — seed-position retention for non-pinned wells
+f9dac81  feat(gwells): Pass C4 — live tuning sliders for helixTwist
+ba9f234  chore(gwells): Pass C3.1.2 — remove FA2 cleanup debt
 [earlier]
 ```
 
-When Pass C8.4 commits, update this doc's "Migration arc" and the recent
-commits list. Same for Pass C9 and beyond.
+When Pass C9 or future passes commit, update the "Migration arc" section
+and the "Branch state and commit hashes" list. Keep "Sample current values"
+synced with whatever the final pass values are, and keep the camera/scale
+description accurate per the current sizing model.
 
 ## Where things live
 

@@ -42,7 +42,10 @@ src/graph/renderers/sigma2d/
 ├── buildGraphologyGraph.ts  Translates source-adapter output to graphology
 │                            graph; assigns visual sizes (Pass C8.3)
 ├── SigmaGraphView.tsx       React component; mounts gwells controller; handles
-│                            drag, dialect switching, sigma camera lifecycle
+│                            drag, dialect switching, sigma camera lifecycle.
+│                            Sigma's itemSizesReference is set to "positions"
+│                            so node visual sizes live in graph coordinates
+│                            rather than screen pixels (Pass C8.4).
 └── gwellsProbe.ts          Installs window.__lwGetGwellsState in DEV/Playwright
 ```
 
@@ -156,7 +159,7 @@ A dialect bundles everything into a named arrangement:
   wellAssignment: { /* function classifying graph nodes into well types */ },
   activeInteractions: [...],
   config: {
-    seedParams: { spineCount: 2, spineSpacing: 1350, ... },
+    seedParams: { spineCount: 2, spineSpacing: 1200, directoryOffset: 2400, ... },
     wellOverrides: { ... },         // override well-type defaults per dialect
     interactionOverrides: { ... },  // tune interaction strength/range per dialect
   },
@@ -219,7 +222,7 @@ to gwells should land in the existing registries, not as one-off code.
 ## Sigma integration contract
 
 Sigma is the canvas-based graph renderer. Gwells writes positions to a
-`graphology` Graph instance; Sigma observes the graph and renders it. Two
+`graphology` Graph instance; Sigma observes the graph and renders it. Three
 important rules:
 
 **ACTIVE → ACTIVE mutate path.** When the user switches dialects, do NOT
@@ -229,13 +232,22 @@ graph instance survives; new positions get written; Sigma observes the changes
 and re-renders. The lifecycle contract for this is in
 `docs/graph/contracts/SIGMA_LIFECYCLE_CONTRACT.md`.
 
+**`itemSizesReference: "positions"` is set at instantiation.** Sigma's default
+is to measure node sizes in screen pixels regardless of graph coordinate scale.
+With `"positions"`, sizes live in graph coordinates instead. This is
+load-bearing for the post-Pass-C8.4 sizing model: coordinate-space spacing
+changes (e.g., to `spineSpacing` or `directoryOffset`) actually affect visual
+layout because node sizes scale with the coordinate space rather than fighting
+it. If this setting is reverted, the entire content-driven sizing model
+becomes inert — coordinate tuning has no visible effect. See
+`GWELLS_LAYOUT_RULES.md` Rule 5 and `GWELLS_DESIGN_CONVERSATIONS.md` for the
+full reasoning.
+
 **Node visual size is read by Sigma at render time.** Pass C8.3 made node
 visual sizes content-driven via `computeNodeSize`. Sigma reads `node.size` to
-determine rendered pixel radius. The `physics.nodeSize` setting becomes a
-multiplier on the content-derived base. Camera ratio interacts with this:
-rendered pixel radius ≈ `node.size / camera.ratio` (approximate; varies by
-Sigma program). At low camera ratios (zoomed out), nodes can render large
-relative to their orbit radii.
+determine rendered radius. With `itemSizesReference: "positions"`, that
+radius is in graph coordinates. The `physics.nodeSize` setting becomes a
+multiplier on the content-derived base.
 
 ## Settings + migrations
 

@@ -64,15 +64,20 @@ console.log(`Furthest: ${furthestNode} at ${furthestDist.toFixed(0)}`);
 const sigma = window.__lwSigma;
 console.log("Camera ratio:", sigma.getCamera().getState().ratio);
 console.log("Container size:", sigma.getContainer().getBoundingClientRect());
+console.log("itemSizesReference:", sigma.getSettings().itemSizesReference);
 
 // Pick a sample node and show its size
 const sample = sigma.getGraph().getNodeAttributes("docs.physics");
 console.log("Sample node size:", sample.size, "rawSize:", sample.rawSize);
 ```
 
-At camera ratio 0.046 with size 8, a node renders ~174 pixel radius on a
-~600px container — large relative to viewport. Use zoom to see structure
-in detail.
+With `itemSizesReference: "positions"` (the Pass C8.4 setting), node sizes
+live in graph coordinates. At current values (`computeNodeSize` MIN 48,
+MAX 360), a directory of moderate content renders at ~150-250 graph units
+of visual radius against `directoryOffset: 2400` spacing — comfortable
+proportion. If `itemSizesReference` is "screen" instead of "positions",
+something has reverted the Pass C8.4 fix — check the Sigma instantiation
+in `SigmaGraphView.tsx`.
 
 ### Check spine layout (Pass C8.4 verification)
 
@@ -194,7 +199,8 @@ seeds.forEach((seedPos, id) => {
 console.log(`Drift: avg ${(totalDrift / n).toFixed(1)}, max ${maxDrift.toFixed(0)}, n=${n}`);
 ```
 
-Healthy after Pass C8.2: avg < 20, max < 100. Pre-C8.2 was avg ~370.
+Healthy after Pass C8.2: avg < 20, max < 100 (with current sizing model
+values, max may be somewhat higher). Pre-C8.2 was avg ~370.
 
 ### Check phyllotaxis size correlation (Pass C8.3 verification)
 
@@ -263,7 +269,8 @@ npm run qa:e2e -- tests/e2e/gwells-physics.spec.ts
 - Dialect switching via dropdown works
 - Frame counter advances (physics loop running)
 - Seed positions stored and accessible
-- Drag-seed retention (currently expected-failure pending Pass C9)
+- Drag-seed retention (threshold relaxed to 1100 in Pass C8.4; Pass C9 will
+  rework entirely)
 - Other smoke checks
 
 Run after any change to gwells, source adapter, or related Sigma code.
@@ -306,15 +313,34 @@ Symptom: edit a value, hot reload happens, but the graph looks the same.
 Cause: edits to `seederHelpers.ts` or `dialects.ts` need a re-seed. Fix: hard
 reload or dialect-switch toggle.
 
-### "Files are stacked on top of their parent"
+### "Coordinate spacing changes have no visible effect"
 
-Symptom: directory's children appear to be drawn over the parent dot.
-Cause: rendered pixel sizes too large relative to orbit radius. At a given
-camera ratio, `nodeSize / ratio ≈ pixel_radius`. If pixel_radius > orbit
-pixel size, children visually overlap the parent.
-Fix: zoom in (camera ratio decreases, screen sizes decrease proportionally
-faster than orbit sizes). Or reduce `physics.nodeSize`. Or increase orbit
-radius in dialect.
+Symptom: you double `spineSpacing` or `directoryOffset`, do a hard reload,
+and the visual layout looks identical. Tuning seems to have no effect at
+all.
+Cause: `itemSizesReference` has reverted to `"screen"` (Sigma's default).
+With screen-pixel sizing, Sigma normalizes graph coordinates to a unit
+square internally, so coordinate-space changes don't affect visual scale.
+Fix: check `SigmaGraphView.tsx` near the `new Sigma(...)` call. The setting
+`itemSizesReference: "positions"` must be present. This was set in Pass
+C8.4; if missing, restore it. Verify in console:
+```javascript
+window.__lwSigma.getSettings().itemSizesReference  // should be "positions"
+```
+
+### "Files are stacked on top of their parent" (post-C8.4)
+
+Symptom: a directory's file children appear to be drawn inside or
+overlapping the parent dot, not spaced around it.
+Cause (Pass C8.4 model): node visual sizes are too large relative to file
+orbit radii, in graph coordinates. Either `computeNodeSize` outputs are
+too high, or `computeFileOrbit` MIN_ORBIT is too small for current node
+sizes.
+Fix: check `computeNodeSize` constants in `seederHelpers.ts`; current values
+are MIN 48, MAX 360, SCALE_REF 6000. Check `computeFileOrbit`'s MIN_ORBIT
+math in the same file. If you've recently changed one, the other likely
+needs proportional adjustment. Use the orbit/size probe above to verify
+the relationship.
 
 ### "Drift values are unexpectedly high"
 
@@ -323,15 +349,26 @@ Cause: spring force not agreeing with seed-anchor force.
 Fix: check that `pairIdealDistance` is populated. The probe
 `measureBothRadii` shows whether `currentAvg` and `seededAvg` agree.
 
+### "Spines are interleaving instead of bucketing"
+
+Pre-Pass-C8.4 only. After C8.4, the bucketing-by-first-path-segment rule
+should keep src and docs on separate axes. If they're mixed post-C8.4,
+`assignSpinesToAxes` was reverted to alphabetical round-robin somewhere.
+
+### "Alternation pattern is chaotic per-spine instead of static per-axis"
+
+Pre-Pass-C8.4 only. Spines should alternate up-down-up-down along an axis
+regardless of how many children each spine has. If you see consecutive
+spines all pointing the same direction (or random direction), the
+alternation logic isn't reading from per-axis index. Check
+`placeBranchRecursive` — it should take an `alternationSign` parameter
+computed from the spine's index in the axis, not from siblingIndex within
+its parent.
+
 ### "Drag makes the graph go blank"
 
 Pre-existing bug in SigmaGraphView's drag mouseup handler. Unrelated to
 physics. Filed; will be addressed in Pass C9.
-
-### "Spines are interleaving instead of bucketing"
-
-Pre-Pass-C8.4 only. After C8.4, the bucketing-by-first-path-segment rule
-should keep src and docs on separate axes.
 
 ## Where to add new probes
 

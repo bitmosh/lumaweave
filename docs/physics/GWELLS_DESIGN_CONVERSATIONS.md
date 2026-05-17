@@ -193,11 +193,81 @@ The log rule was selected because:
 - **Human perception is logarithmic.** Doubling a file's size feels like
   "a little bigger," not "twice as big." Log mapping matches intuition.
 - **Visual range stays manageable.** All files render at visually-distinct
-  sizes within [4, 40] without runaway outliers.
+  sizes within [48, 360] (current values; range tunable via `computeNodeSize`
+  constants) without runaway outliers.
 - **Power-law content distributions** are common in source code (Zipf-like).
   Log mapping handles them gracefully without parameter tuning.
 
-The log rule was codified in Pass C8.3 via `computeNodeSize`.
+The log rule was codified in Pass C8.3 via `computeNodeSize`. The MIN/MAX
+range values were retuned in Pass C8.4 from [4, 40] to [48, 360] to match
+the post-C8.4 sizing model where sizes live in graph coordinates.
+
+## Why itemSizesReference: "positions", not "screen"
+
+This is the architectural decision that took the longest to surface and is
+the most load-bearing for current and future tuning. Sigma (the renderer)
+has a setting called `itemSizesReference` that controls how node visual
+sizes are interpreted. It has two values.
+
+**Option A (Sigma default, ultimately rejected): "screen".** Node sizes
+are measured in screen pixels regardless of graph coordinate scale. A
+size-40 node always renders as 40 pixels regardless of zoom or graph
+extent.
+
+**Option B (selected, set in Pass C8.4): "positions".** Node sizes are
+measured in graph coordinate units. A size-40 node renders large relative
+to a small coordinate space and small relative to a large one. Sizes
+scale with the coordinate space.
+
+The decision was load-bearing because it determined whether *any* of our
+spacing tuning would actually have visible effect. With "screen":
+
+- Sigma normalizes graph coordinates to a unit square `[0,1]` internally
+  for rendering. Whether the coordinate space is 100 wide or 100,000 wide,
+  the rendered viewport shows the same thing — just at different zoom
+  ratios.
+- Node sizes are independent of this normalization. A size-40 node renders
+  40 pixels no matter what.
+- Result: when you double `spineSpacing` from 1000 to 2000, the coordinate
+  space doubles, the camera zooms out 2×, but everything (nodes and
+  spacing) appears at the same visual size. **Spacing tuning has zero
+  effect on visual layout.**
+
+This was the silent bug that ate the latter half of the C-series passes.
+We tuned coordinate spacing extensively (Pass C8 through C8.4) expecting
+visual changes that never came. The nodes always looked the same size
+relative to gaps because Sigma's screen-pixel sizing canceled out every
+coordinate-space change.
+
+With "positions":
+
+- Node sizes live in the same coordinate space as positions.
+- Doubling `spineSpacing` doubles the spacing relative to node sizes —
+  visible gap grows.
+- Content-driven sizing actually conveys content to the eye, because
+  bigger content → bigger coordinate footprint → bigger visual footprint.
+- Coordinate tuning produces predictable visual effect.
+
+The decision required also retuning `computeNodeSize`'s MIN/MAX from
+[4, 40] to [48, 360]. With "screen", a size-40 was already big enough to
+render. With "positions", a size-40 in a 50,000-unit-wide graph is
+invisible — needed bigger absolute values.
+
+Why this wasn't caught earlier: Sigma's "screen" default is sensible for
+small graphs in fixed coordinate spaces. The bug only surfaced as
+coordinate ranges grew with Pass C8.3's content-driven sizing producing
+larger envelopes for big directories. By then we'd accumulated layout
+rules that depended on coordinate-space tuning having visible effect,
+which was a false premise.
+
+The fix in Pass C8.4: one line added to Sigma's instantiation settings in
+`SigmaGraphView.tsx`, plus retuning `computeNodeSize` constants. The whole
+prior tuning suddenly started working.
+
+This is the load-bearing-est decision in the post-FA2 architecture. If a
+future change reverts `itemSizesReference` to "screen", the entire
+content-driven sizing model becomes inert and all coordinate-space tuning
+loses its visible effect. Don't.
 
 ## Why two seeders, not one configurable seeder
 
@@ -314,10 +384,16 @@ what's already there.
 
 **Visible "wrong" can be rendering, not physics.** During Pass C8 we
 spent significant time tuning physics to make fronds visible. The actual
-issue was rendering scale: node visual sizes at 8 with camera ratio 0.046
-rendered at ~174px radius — files inside the parent dot visually. Once we
-checked the camera ratio, the physics turned out to be correct all along.
-Always check rendering scale before assuming physics is wrong.
+issue was rendering scale: Sigma's default `itemSizesReference: "screen"`
+made node sizes pixel-based while coordinate-space spacing scaled
+proportionally with the camera zoom, so doubling coordinate spacing
+produced zero visual change. The diagnostic moment came when probes
+showed that increasing `directoryOffset` from 1800 to 8000 to 16000
+all produced visually identical graphs. Once we discovered
+`itemSizesReference: "positions"`, the whole prior tuning suddenly worked
+correctly. Always check whether your "tuning knob" actually has a visible
+effect — if doubling a value changes nothing on screen, something between
+you and the renderer is canceling it out.
 
 **Single-letter sign errors are easy.** Pass C8 had alternation working
 per-spine but not per-axis. The bug was that the alternation index was
@@ -334,3 +410,13 @@ harder to recover from.
 pass observations suggested a related fix. The discipline was always:
 file it for the next pass, complete the current pass cleanly, commit.
 Layered, focused passes shipped faster than ambitious combined passes.
+
+**Two-way intuition checks for "smaller and closer together" vs "bigger
+and farther apart".** When something looks too compressed or too sparse,
+the question is *which side of the relationship is the right knob* —
+smaller nodes in compact space, or larger nodes in spacious space. Both
+reach the same proportions but with very different total coordinate
+ranges. The choice affects how the camera fits, how labels render, and
+how the graph feels. We landed on "small enough to see structure, with
+spacing tuned to support it" — but only after running the wrong direction
+once and being corrected.

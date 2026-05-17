@@ -129,7 +129,16 @@ Every node's visual size derives from content via logarithmic scaling:
   `aggregateSize` is the recursive sum of descendant raw sizes
 - **Spines**: size = `computeNodeSize(aggregateSize)` for the spine's whole
   subtree
-- Result range: [4, 40] visual size, log-mapped from raw size [1, ~11000+]
+- Result range: [48, 360] visual size, log-mapped from raw size [1, ~11000+]
+  via `computeNodeSize` with `SCALE_REF: 6000`
+
+**Sizes live in graph coordinates, not screen pixels.** Sigma's
+`itemSizesReference` is set to `"positions"` (Pass C8.4). This is load-bearing:
+without it, Sigma would measure sizes in screen pixels and every
+content-driven sizing decision would be invisible because coordinate-space
+spacing would have no proportional relationship to visual sizes. With it,
+larger directories visibly occupy more space, file orbits are proportional to
+node sizes, and spacing tuning in `dialects.ts` produces visible effects.
 
 A directory with many large files becomes a visually larger directory node.
 That directory's spine becomes correspondingly larger. The principle "ripples
@@ -140,7 +149,10 @@ The `physics.nodeSize` setting is a global multiplier applied on top. The
 default of 1 produces the content-derived base; users can scale up or down
 without losing the content-relative differentiation.
 
-The rule was established in Pass C8.3.
+The rule was established in Pass C8.3 (content-driven sizing) and completed
+in Pass C8.4 (itemSizesReference fix that made the sizing model actually
+take visual effect). See `GWELLS_DESIGN_CONVERSATIONS.md` for the
+"Why itemSizesReference: positions" reasoning.
 
 ## Rule 6 — Spine Bucketing by First Path Segment
 
@@ -218,7 +230,7 @@ Rules 1-8 compose. A radial-backbone layout with N=2:
 - Rule 2 assigns alternation signs to each spine slot along the axis
 - Rule 1 places depth-0 directories perpendicular, deeper levels along outward
 - Rule 4 places files in phyllotaxis spirals around their directories
-- Rule 5 sizes every node by content
+- Rule 5 sizes every node by content, in graph coordinates
 - Rule 3 makes spring forces agree with seeded placement
 - Rule 8 filters spring forces to only fire between contained pairs
 
@@ -231,7 +243,7 @@ layout that the engine maintains via balanced forces.
   buckets), distribute spine origins along a growing circle rather than at a
   single hub point.
 - **Inward branching for parallel-spines.** Subdirectory trees branch toward
-  the central axis with a gravity pull, instead of outward.
+  the central axis (with a gravity pull), instead of outward.
 - **Drift-back drag (Pass C9).** Drag is currently permanent; the design rule
   is that drag should be temporary — release returns the node toward its
   seeded position. Pinned positions should be per-dialect, persistent across
