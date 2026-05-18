@@ -108,12 +108,18 @@ const inspectorEntitiesAreEqual = (a: ThemeTargetInspectorEntity | null, b: Them
 
 export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeTargetInspectorOverlayProps) {
   const [hoverEntity, setHoverEntity] = useState<ThemeTargetInspectorEntity | null>(null);
+  const hoverEntityRef = useRef<ThemeTargetInspectorEntity | null>(null);
   const [pinnedEntity, setPinnedEntity] = useState<ThemeTargetInspectorEntity | null>(null);
   const [latestProbeResult, setLatestProbeResult] = useState<ThemeTargetProbeResult | null>(null);
   const candidateLookupRef = useRef<Map<string, ThemeTargetProbeResult["candidates"][number]>>(new Map());
   const [graphViewportOffsets, setGraphViewportOffsets] = useState<GraphViewportOffsets | null>(null);
   const [ghostOutlines, setGhostOutlines] = useState<GhostOutline[]>([]);
   const [warningBadges, setWarningBadges] = useState<WarningBadge[]>([]);
+
+  // Sync hoverEntityRef with hoverEntity state (for pin handler to read latest value)
+  useEffect(() => {
+    hoverEntityRef.current = hoverEntity;
+  }, [hoverEntity]);
 
   const displayEntity = pinnedEntity ?? hoverEntity;
   const tokenBindingEntries =
@@ -395,13 +401,14 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
 
       event.preventDefault();
       setPinnedEntity((current) => {
-        if (current && hoverEntity && !inspectorEntitiesAreEqual(current, hoverEntity)) {
-          return hoverEntity;
+        const currentHover = hoverEntityRef.current;
+        if (current && currentHover && !inspectorEntitiesAreEqual(current, currentHover)) {
+          return currentHover;
         }
         if (current) {
           return null;
         }
-        return hoverEntity;
+        return currentHover;
       });
     };
 
