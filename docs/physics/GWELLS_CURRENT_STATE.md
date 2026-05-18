@@ -162,8 +162,16 @@ values has visible effect — a key design rule established in Pass C8.4. See
   individual pins, and the pinned bookmark toggles dim-on-pinned highlight
   mode for visual focus.
 
+- **Pass C9.3 (completed) hardens dim-on-pinned test and adds render bug regression test** —
+  The dim-on-pinned test now has real assertions verifying alpha values. The
+  design was changed to make `pinnedHighlightActive` a persisted setting for
+  testability. A regression test for the pre-existing graph-blanks-on-mouseup bug
+  was added but does not reproduce the issue in the test environment; the fix
+  is deferred to C9.4.
+
 - **Pre-existing graph-blanks-on-mouseup render bug** — separate from physics,
-  filed separately. Will be investigated in Phase 10 (RECON ONLY).
+  filed separately. A regression test was added in C9.3 but does not reproduce
+  the issue; fix deferred to C9.4.
 
 - **Pass C10 candidate — universal structural classification.** Current
   wellAssignment matches on string node types: `nodeType === "directory"`,

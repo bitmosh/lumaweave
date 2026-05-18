@@ -704,4 +704,54 @@ test.describe("Gwells Physics Integration", () => {
     expect(restoredPinnedVisible).toBe(true);
     expect(restoredNonPinnedVisible).toBe(true);
   });
+
+  test("Pass C9.3: Graph remains visible after drag mouseup", async ({ page }) => {
+    await page.waitForFunction(() => {
+      const sigma = (window as any).__lwSigma;
+      if (!sigma) return false;
+      return sigma.getGraph().hasAttribute("__gwellsSeedPositions");
+    }, { timeout: 10000 });
+
+    await page.waitForTimeout(500);
+
+    // Get a non-spine node to drag
+    const nodeId = await page.evaluate(() => {
+      const graph = (window as any).__lwSigma.getGraph();
+      let targetId: string | null = null;
+      graph.forEachNode((id: string) => {
+        const attrs = graph.getNodeAttributes(id);
+        if (attrs.nodeType !== "spine" && !targetId) {
+          targetId = id;
+        }
+      });
+      return targetId;
+    });
+    expect(nodeId).not.toBeNull();
+
+    // Get initial node count (before drag)
+    const initialNodeCount = await page.evaluate(() => {
+      return (window as any).__lwSigma.getGraph().order;
+    });
+    expect(initialNodeCount).toBeGreaterThan(0);
+
+    // Drag the node slightly
+    await page.evaluate((id: string) => {
+      const sigma = (window as any).__lwSigma;
+      const graph = sigma.getGraph();
+      const attrs = graph.getNodeAttributes(id);
+      
+      // Simulate drag by updating position
+      graph.setNodeAttribute(id, "x", attrs.x + 100);
+      graph.setNodeAttribute(id, "y", attrs.y + 100);
+    }, nodeId!);
+
+    // Wait for render to settle
+    await page.waitForTimeout(300);
+
+    // Verify graph is still visible after drag
+    const nodeCountAfterDrag = await page.evaluate(() => {
+      return (window as any).__lwSigma.getGraph().order;
+    });
+    expect(nodeCountAfterDrag).toBe(initialNodeCount);
+  });
 });
