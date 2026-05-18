@@ -371,11 +371,37 @@ export function applyDialect(
         }
       }
 
+      // C9.5 commit 1: defensive NaN/Infinity guards (remove diagnostic
+      // logs in commit 2)
+      if (!Number.isFinite(fx) || !Number.isFinite(fy)) {
+        console.warn(
+          `TEMP_DIAG_C9_5: engine non-finite force on node ${nodeId}, fx=${fx} fy=${fy} — skipping integration this frame`
+        );
+        continue; // or `return` depending on loop structure
+      }
+
       // Update velocity with damping
       state.vx = (state.vx + fx) * params.damping;
       state.vy = (state.vy + fy) * params.damping;
 
-      // Clamp velocity to maxVelocity
+      // Clamp velocity to MAX_SAFE_VELOCITY to prevent runaway
+      // integration when the force-vs-distance ratio explodes (e.g.,
+      // after a large drag that releases the node far from its seed).
+      const MAX_SAFE_VELOCITY = 10000;
+      if (Math.abs(state.vx) > MAX_SAFE_VELOCITY) {
+        console.warn(
+          `TEMP_DIAG_C9_5: engine clamping vx for node ${nodeId}, was ${state.vx}`
+        );
+        state.vx = Math.sign(state.vx) * MAX_SAFE_VELOCITY;
+      }
+      if (Math.abs(state.vy) > MAX_SAFE_VELOCITY) {
+        console.warn(
+          `TEMP_DIAG_C9_5: engine clamping vy for node ${nodeId}, was ${state.vy}`
+        );
+        state.vy = Math.sign(state.vy) * MAX_SAFE_VELOCITY;
+      }
+
+      // Clamp velocity to maxVelocity (existing clamp, keep for safety)
       const speed = Math.sqrt(state.vx * state.vx + state.vy * state.vy);
       if (speed > engineConfig.maxVelocity) {
         const scale = engineConfig.maxVelocity / speed;
@@ -386,8 +412,23 @@ export function applyDialect(
       state.lastSpeed = Math.sqrt(state.vx * state.vx + state.vy * state.vy);
 
       // Update position
-      graph.setNodeAttribute(nodeId, "x", x + state.vx);
-      graph.setNodeAttribute(nodeId, "y", y + state.vy);
+      const newX = x + state.vx;
+      const newY = y + state.vy;
+
+      // C9.5 commit 1: never write non-finite positions
+      if (!Number.isFinite(newX) || !Number.isFinite(newY)) {
+        console.warn(
+          `TEMP_DIAG_C9_5: engine refusing to write non-finite position on node ${nodeId}, x=${newX} y=${newY}`
+        );
+        // Reset velocity to zero so the node stops contributing to
+        // sibling NaN propagation. Leave position as-is (last known
+        // good value).
+        state.vx = 0;
+        state.vy = 0;
+        continue;
+      }
+      graph.setNodeAttribute(nodeId, "x", newX);
+      graph.setNodeAttribute(nodeId, "y", newY);
     }
   }
 
@@ -500,6 +541,17 @@ export function applyDialect(
       if (!graph.hasNode(nodeId)) continue;
       const attrs = graph.getNodeAttributes(nodeId);
       if (attrs.nodeType === "spine") continue;
+
+      // C9.5 commit 1: refuse to apply a pin with non-finite coords.
+      // This catches the case where handleMouseUp captured NaN
+      // positions from a graph that was already corrupted.
+      if (!Number.isFinite(pos.x) || !Number.isFinite(pos.y)) {
+        console.warn(
+          `TEMP_DIAG_C9_5: applyPins refusing non-finite pin for node ${nodeId}, pos.x=${pos.x} pos.y=${pos.y}`
+        );
+        continue;
+      }
+
       currentPinned.add(nodeId);
 
       if (seedPositions) {

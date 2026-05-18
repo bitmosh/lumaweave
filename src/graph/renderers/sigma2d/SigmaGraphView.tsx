@@ -530,12 +530,24 @@ function SigmaGraphViewComponent({
 
     // Capture starting positions for rigid-body offset
     const startPositions = new Map<string, { x: number; y: number }>();
+    let nonFiniteCapture = false;
     for (const id of dragSet) {
       const a = graph.getNodeAttributes(id);
-      startPositions.set(id, {
-        x: a.x as number,
-        y: a.y as number,
-      });
+      const ax = a.x as number;
+      const ay = a.y as number;
+      if (!Number.isFinite(ax) || !Number.isFinite(ay)) {
+        console.warn(
+          `TEMP_DIAG_C9_5: downNode startPosition non-finite, id=${id} ax=${ax} ay=${ay}`
+        );
+        nonFiniteCapture = true;
+      }
+      startPositions.set(id, { x: ax, y: ay });
+    }
+    if (nonFiniteCapture) {
+      console.warn(
+        `TEMP_DIAG_C9_5: aborting drag because dragSet contained non-finite positions at mousedown`
+      );
+      return; // abort drag
     }
 
     dragState.dragging = true;
@@ -579,11 +591,31 @@ function SigmaGraphViewComponent({
     const deltaX = graphCoords.x - primaryStart.x;
     const deltaY = graphCoords.y - primaryStart.y;
 
+    // C9.5 commit 1: defensive guard. If viewportToGraph returns
+    // non-finite (e.g., camera in invalid state) or startPositions
+    // had NaN at capture, skip this frame's update rather than
+    // propagating NaN into graph attributes.
+    if (!Number.isFinite(deltaX) || !Number.isFinite(deltaY)) {
+      console.warn(
+        `TEMP_DIAG_C9_5: handleMouseMove non-finite delta, deltaX=${deltaX} deltaY=${deltaY}, graphCoords=${JSON.stringify(graphCoords)}, primaryStart=${JSON.stringify(primaryStart)}`
+      );
+      return;
+    }
+
     for (const id of dragState.dragSet) {
       const start = dragState.startPositions.get(id);
       if (!start) continue;
-      graph.setNodeAttribute(id, "x", start.x + deltaX);
-      graph.setNodeAttribute(id, "y", start.y + deltaY);
+      const newX = start.x + deltaX;
+      const newY = start.y + deltaY;
+      // Defensive: also guard the per-member write
+      if (!Number.isFinite(newX) || !Number.isFinite(newY)) {
+        console.warn(
+          `TEMP_DIAG_C9_5: handleMouseMove non-finite per-member, id=${id} newX=${newX} newY=${newY} start=${JSON.stringify(start)}`
+        );
+        continue;
+      }
+      graph.setNodeAttribute(id, "x", newX);
+      graph.setNodeAttribute(id, "y", newY);
     }
   };
 
@@ -603,13 +635,41 @@ function SigmaGraphViewComponent({
         string,
         { x: number; y: number; z?: number }
       > = { ...baseMap };
+      let nonFinitePin = false;
       for (const id of dragState.dragSet) {
         const a = graph.getNodeAttributes(id);
+        const ax = a.x as number;
+        const ay = a.y as number;
+        if (!Number.isFinite(ax) || !Number.isFinite(ay)) {
+          console.warn(
+            `TEMP_DIAG_C9_5: handleMouseUp pin-capture non-finite, id=${id} ax=${ax} ay=${ay}`
+          );
+          nonFinitePin = true;
+          continue;
+        }
         newPinsForDialect[id] = {
-          x: a.x as number,
-          y: a.y as number,
+          x: ax,
+          y: ay,
           z: typeof a.z === "number" ? (a.z as number) : 0,
         };
+      }
+      if (nonFinitePin) {
+        console.warn(
+          `TEMP_DIAG_C9_5: handleMouseUp skipping pin write because dragSet contained non-finite positions at mouseup`
+        );
+        // Still unfix the dragSet so engine resumes physics; just don't
+        // pin. The user's gesture didn't land cleanly but at least we
+        // don't write corrupt state.
+        for (const id of dragState.dragSet) {
+          graph.setNodeAttribute(id, "fixed", false);
+        }
+        // Reset drag state and return without calling onUpdatePins
+        dragState.dragging = false;
+        dragState.primaryNodeId = null;
+        dragState.dragSet = [];
+        dragState.startPositions.clear();
+        sigma.getCamera().enable();
+        return;
       }
       // Unfix temporarily — applyPins will re-fix after settings propagate
       for (const id of dragState.dragSet) {

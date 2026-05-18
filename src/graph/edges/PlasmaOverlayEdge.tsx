@@ -45,21 +45,41 @@ export function PlasmaOverlayEdge({
 
     const update = () => {
       const newPaths: EdgePath[] = [];
+      let droppedCount = 0;
       edges.forEach((edge) => {
         const a = sigma.getNodeDisplayData(edge.source);
         const b = sigma.getNodeDisplayData(edge.target);
-        if (a && b) {
-          const sa = sigma.graphToViewport(a);
-          const sb = sigma.graphToViewport(b);
-          newPaths.push({
-            id: edge.id,
-            sx: sa.x,
-            sy: sa.y,
-            tx: sb.x,
-            ty: sb.y,
-          });
+        if (!a || !b) return;
+        const sa = sigma.graphToViewport(a);
+        const sb = sigma.graphToViewport(b);
+        // Defensive: drop any path with non-finite coords so the
+        // SVG <line> element never receives NaN/Infinity for
+        // x1/y1/x2/y2. Without this, React floods the console with
+        // validateProperty warnings and the renderer enters a
+        // degenerate state.
+        if (
+          !Number.isFinite(sa.x) ||
+          !Number.isFinite(sa.y) ||
+          !Number.isFinite(sb.x) ||
+          !Number.isFinite(sb.y)
+        ) {
+          droppedCount++;
+          return;
         }
+        newPaths.push({
+          id: edge.id,
+          sx: sa.x,
+          sy: sa.y,
+          tx: sb.x,
+          ty: sb.y,
+        });
       });
+      // Phase 1 diagnostic (remove in commit 2)
+      if (droppedCount > 0) {
+        console.warn(
+          `TEMP_DIAG_C9_5: PlasmaOverlayEdge dropped ${droppedCount} edge(s) with non-finite coords`
+        );
+      }
       setPaths(newPaths);
     };
 

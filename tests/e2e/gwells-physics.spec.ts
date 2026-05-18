@@ -896,10 +896,72 @@ test.describe("Gwells Physics Integration", () => {
     // Wait for render to settle
     await page.waitForTimeout(300);
 
-    // Verify graph is still visible after drag
-    const nodeCountAfterDrag = await page.evaluate(() => {
-      return (window as any).__lwSigma.getGraph().order;
+    // C9.5: assert every node has finite x/y, not just one probe.
+    // The original test would have passed even if NaN propagated to
+    // sibling nodes via interactions, as long as the primary node
+    // remained valid.
+    const after = await page.evaluate(() => {
+      const sigma = (window as any).__lwSigma;
+      if (!sigma) {
+        return { sigmaAlive: false };
+      }
+      const graph = sigma.getGraph();
+      const camera = sigma.getCamera();
+      const cameraState = camera.getState();
+      let firstNodeId: string | null = null;
+      graph.forEachNode((id: string) => {
+        if (!firstNodeId) firstNodeId = id;
+      });
+      const displayData = firstNodeId ? sigma.getNodeDisplayData(firstNodeId) : null;
+
+      // C9.5 tightening: scan EVERY node for finite x/y.
+      let nonFiniteCount = 0;
+      let firstBadId: string | null = null;
+      let firstBadX: any = null;
+      let firstBadY: any = null;
+      graph.forEachNode((id: string) => {
+        const x = graph.getNodeAttribute(id, "x");
+        const y = graph.getNodeAttribute(id, "y");
+        if (!Number.isFinite(x) || !Number.isFinite(y)) {
+          nonFiniteCount++;
+          if (!firstBadId) {
+            firstBadId = id;
+            firstBadX = x;
+            firstBadY = y;
+          }
+        }
+      });
+
+      return {
+        sigmaAlive: !!sigma,
+        nodeCount: graph.order,
+        cameraRatio: cameraState.ratio,
+        cameraRatioFinite: Number.isFinite(cameraState.ratio),
+        displayDataPresent: !!displayData,
+        displayX: displayData?.x,
+        displayY: displayData?.y,
+        displayXFinite: Number.isFinite(displayData?.x),
+        displayYFinite: Number.isFinite(displayData?.y),
+        nonFiniteCount,
+        firstBadId,
+        firstBadX,
+        firstBadY,
+      };
     });
-    expect(nodeCountAfterDrag).toBe(initialNodeCount);
+
+    expect(after.sigmaAlive).toBe(true);
+    expect(after.nodeCount).toBe(initialNodeCount);
+    expect(after.cameraRatioFinite).toBe(true);
+    expect(after.cameraRatio).toBeGreaterThan(0);
+    expect(after.displayDataPresent).toBe(true);
+    expect(after.displayXFinite).toBe(true);
+    expect(after.displayYFinite).toBe(true);
+    // C9.5: every node must have finite x/y. If any node went NaN
+    // during the drag, this catches it. The error message includes
+    // the offending node id and its values for diagnosis.
+    expect(
+      after.nonFiniteCount,
+      `Expected zero nodes with non-finite x/y after drag. Got ${after.nonFiniteCount}. First bad: id=${after.firstBadId} x=${after.firstBadX} y=${after.firstBadY}`
+    ).toBe(0);
   });
 });

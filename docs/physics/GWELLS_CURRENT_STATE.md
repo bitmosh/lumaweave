@@ -54,6 +54,13 @@ references.
                (causing dim mode to not refresh when pins were
                added/removed mid-session). Two regression tests
                added. (this commit)
+[Pass C9.5 c1] Added defensive NaN guards across the drag-pin
+               pipeline (PlasmaOverlayEdge, engine integration
+               and position writes, applyPins, drag handlers).
+               Tightened the C9.3 regression test to assert
+               every node has finite x/y post-mouseup, not just
+               a probe. Diagnostic logs left in place for
+               commit 2 to identify root cause. (this commit)
 ```
 
 Each pass commits cleanly with passing tests. The branch is intended to be
@@ -189,9 +196,14 @@ values has visible effect — a key design rule established in Pass C8.4. See
   C9.4 audit: C9.1 drag-handler refs were declared but never used
   or synced, and activePins was missing from Effect B's deps.
 
-- **Pass C9.5 (queued) will investigate the pre-existing render bug**
-  (graph blanks on mouseup). Regression test from C9.3 (Test 4)
-  remains the harness.
+- **Pass C9.5 commit 1 (this commit) added defensive guards so no**
+  surface produces or propagates NaN unobserved. The React
+  error storm is stopped by PlasmaOverlayEdge's defensive
+  filter; engine guards clamp velocities and refuse NaN writes.
+
+- **Pass C9.5 commit 2 (queued) will identify the actual NaN producer**
+  from the diagnostic logs and apply a targeted root-cause fix,
+  plus add a Ctrl-drag regression test.
 
 - **Pass C10 candidate — universal structural classification.** Current
   wellAssignment matches on string node types: `nodeType === "directory"`,
