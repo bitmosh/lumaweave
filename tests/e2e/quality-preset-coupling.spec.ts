@@ -17,11 +17,11 @@ test.describe("v86b quality-preset-coupling", () => {
   test("setSetting qualityPreset=balanced sets all appearance values", async ({ page }) => {
     await page.goto("/");
     await page.waitForSelector("canvas");
-    await setSetting(page, "physics.qualityPreset", "balanced");
+    await setSetting(page, "performance.qualityPreset", "balanced");
     await page.waitForTimeout(100);
     const settings = await getSettings(page);
     // After C3.1.1, qualityPreset is preserved during migration
-    expect((settings as any).physics.qualityPreset).toBe("balanced");
+    expect((settings as any).performance.qualityPreset).toBe("balanced");
     expect(settings.appearance.reduceMotion).toBe(false);
     expect(settings.appearance.glitterDensity).toBe("medium");
     expect(settings.appearance.edgePlasmaMode).toBe("animated-overlay");
@@ -31,23 +31,23 @@ test.describe("v86b quality-preset-coupling", () => {
   test("setSetting motionScale to non-default flips qualityPreset to custom", async ({ page }) => {
     await page.goto("/");
     await page.waitForSelector("canvas");
-    await setSetting(page, "physics.qualityPreset", "balanced");
+    await setSetting(page, "performance.qualityPreset", "balanced");
     await page.waitForTimeout(100);
     await setSetting(page, "appearance.glitterDensity", "high");
     await page.waitForTimeout(100);
     const settings = await getSettings(page);
     // After C3.1.1, qualityPreset is preserved during migration
-    expect((settings as any).physics.qualityPreset).toBe("custom");
+    expect((settings as any).performance.qualityPreset).toBe("custom");
   });
 
   test("setSetting qualityPreset=potato sets all appearance values", async ({ page }) => {
     await page.goto("/");
     await page.waitForSelector("canvas");
-    await setSetting(page, "physics.qualityPreset", "potato");
+    await setSetting(page, "performance.qualityPreset", "potato");
     await page.waitForTimeout(100);
     const settings = await getSettings(page);
     // After C3.1.1, qualityPreset is preserved during migration
-    expect((settings as any).physics.qualityPreset).toBe("potato");
+    expect((settings as any).performance.qualityPreset).toBe("potato");
     expect(settings.appearance.reduceMotion).toBe(true);
     expect(settings.appearance.glitterDensity).toBe("off");
     expect(settings.appearance.edgePlasmaMode).toBe("static");

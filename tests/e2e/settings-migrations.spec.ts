@@ -1,15 +1,18 @@
 /**
  * v86b/vC3.1.1: Synthetic migration chain test
  *
- * Tests that the full migration chain from v76 to v82 produces the correct endpoint shape.
+ * Tests that the full migration chain from v76 to v86 produces the correct endpoint shape.
  * This ensures that each migration step in the chain preserves data and adds new fields correctly.
+ * Chain includes: v76→v77 (settings tab removal), v77→v78 (tile layout), v78→v79 (appearance defaults),
+ * v79→v80 (quality preset fields), v80→v81 (helix removal), v81→v82 (FA2 removal + gwells),
+ * v82→v83 (seedParamOverrides), v83→v84 (pins), v84→v85 (pinnedHighlightActive), v85→v86 (FA2 safety net).
  */
 
 import { test, expect } from "@playwright/test";
 import { migrateSettings } from "../../src/control-plane/settings/settings.migrations";
 
 test.describe("settings migration chain", () => {
-  test("v76 → v82 chain produces correct endpoint", () => {
+  test("v76 → v86 chain produces correct endpoint", () => {
     // Synthetic v76 settings object (minimal shape, using any to bypass type checks)
     const v76: any = {
       version: 76,
@@ -33,8 +36,8 @@ test.describe("settings migration chain", () => {
     // Run full migration chain
     const result = migrateSettings(v76);
 
-    // Verify version is current (v82 after C3.1.1 consolidation)
-    expect(result.version).toBe(82);
+    // Verify version is current (v86 after gwells migration + hygiene)
+    expect(result.version).toBe(86);
 
     // Verify v80 fields are present (v86b additions)
     expect(result.appearance.glitterDensity).toBe("medium");
@@ -51,11 +54,27 @@ test.describe("settings migration chain", () => {
     // Verify v82 field: FA2 → gwells migration with dialect rename
     expect(resultAny.physics.dialectId).toBe("gwells.dialect.radial-backbone");
 
-    // Verify FA2 fields are removed (v82 removed them)
+    // Verify v83 field: seedParamOverrides added
+    expect(resultAny.physics.seedParamOverrides).toBeDefined();
+
+    // Verify v84 field: pins added
+    expect(resultAny.physics.pins).toBeDefined();
+
+    // Verify v85 field: pinnedHighlightActive added
+    expect(resultAny.physics.pinnedHighlightActive).toBe(false);
+
+    // Verify FA2 fields are removed (v82 removed them, v86 safety net)
     expect(resultAny.physics.physicsPreset).toBeUndefined();
     expect(resultAny.physics.linkDistance).toBeUndefined();
     expect(resultAny.physics.repelForce).toBeUndefined();
-    // qualityPreset is not in current schema, so it's undefined
+    expect(resultAny.physics.centerForce).toBeUndefined();
+    expect(resultAny.physics.communityGravity).toBeUndefined();
+    expect(resultAny.physics.physicsDialect).toBeUndefined();
+    expect(resultAny.physics.strongGravityMode).toBeUndefined();
+    expect(resultAny.physics.linLogMode).toBeUndefined();
+    expect(resultAny.physics.adjustSizes).toBeUndefined();
+    expect(resultAny.physics.barnesHutTheta).toBeUndefined();
+    // qualityPreset is not in physics (moved to performance in v86b), so it's undefined
     expect(resultAny.physics.qualityPreset).toBeUndefined();
     // nodeSize is moved to graphView and preserved
     expect(resultAny.physics.nodeSize).toBeUndefined(); // Moved to graphView
