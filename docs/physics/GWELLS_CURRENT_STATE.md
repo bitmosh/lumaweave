@@ -82,6 +82,14 @@ references.
                rows, and test registries. Updated
                ACTIVE_HANDLES.md to remove stale FA2 runtime
                targets. (this commit)
+[Post-gwells hygiene 3] Fixed doc drift in
+               GRAVITY_WELL_SYSTEM_CONTRACT.md
+               (pinnedHighlightActive described as
+               session-scoped React state; corrected
+               to persisted setting per Pass C9.3).
+               src/seedFunctionRegistry.ts already deleted
+               in prior gwells migration commit (ba9f234),
+               no action needed. (this commit)
 ```
 
 Each pass commits cleanly with passing tests. The branch is intended to be

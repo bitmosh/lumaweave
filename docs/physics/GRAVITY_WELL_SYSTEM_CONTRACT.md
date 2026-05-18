@@ -623,8 +623,7 @@ Pass C9.2 adds three UI features for pin management:
    (sourced from the graph-level `__gwellsPinnedSet` attribute maintained by
    `gwells controller.applyPins`). Pinned nodes render at full alpha (1.0);
    everything else dims to `pinnedDimOpacity` (default 0.45). This provides
-   visual focus on the pinned nodes. The mode is session-scoped (React state in
-   AppShell, not persisted to settings).
+   visual focus on the pinned nodes. The mode is persisted as `settings.physics.pinnedHighlightActive` (boolean, default false). It was originally session-scoped React state in AppShell; Pass C9.3 promoted it to a persisted setting for testability (v84→v85 migration added at the same time). See settings.schema.ts for the field definition.
 
 ### Dialect Switching
 
