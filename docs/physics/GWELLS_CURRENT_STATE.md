@@ -90,6 +90,17 @@ references.
                src/seedFunctionRegistry.ts already deleted
                in prior gwells migration commit (ba9f234),
                no action needed. (this commit)
+[Post-gwells hygiene 4] Extended selfGraphWatcherPlugin in
+               vite.config.ts to self-heal the
+               self-graph fixture at dev server
+               startup. If
+               src/fixtures/self-graph-generated.json
+               is missing, the plugin runs the
+               generator synchronously before serving
+               any requests. Closes the fresh-clone
+               gap where the manual generate:graph
+               step was required (and easy to forget).
+               (this commit)
 ```
 
 Each pass commits cleanly with passing tests. The branch is intended to be

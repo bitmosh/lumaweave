@@ -2,6 +2,8 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { spawn } from "child_process";
+import { existsSync } from "fs";
+import { execSync } from "child_process";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -15,6 +17,35 @@ function selfGraphWatcherPlugin() {
     name: "lumaweave-self-graph-watcher",
     apply: "serve" as const,
     configureServer(server: any) {
+      // C-hygiene-4: self-heal the self-graph fixture on dev server
+      // startup. AppShell.tsx statically imports the generated JSON;
+      // if it's missing (fresh clone, or someone rm'd it), the build
+      // fails. Generate it synchronously here so Vite has it before
+      // parsing any module that depends on it.
+      const fixturePath = path.resolve(
+        __dirname,
+        "src/fixtures/self-graph-generated.json"
+      );
+      if (!existsSync(fixturePath)) {
+        console.log(
+          "[LumaWeave] Self-graph fixture missing — generating before server start..."
+        );
+        try {
+          execSync("node scripts/generate-self-graph.mjs", {
+            cwd: process.cwd(),
+            stdio: "inherit",
+          });
+          console.log("[LumaWeave] Self-graph generated ✓");
+        } catch (err) {
+          console.error(
+            "[LumaWeave] Failed to generate self-graph at startup:",
+            err
+          );
+          // Don't throw — let Vite continue and surface the import error
+          // if the generator failed. Easier to debug than a plugin crash.
+        }
+      }
+
       const docsPattern = path.resolve(__dirname, "docs/**/*.md");
 
       server.watcher.add(docsPattern);

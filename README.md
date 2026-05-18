@@ -6,16 +6,16 @@ This template should help get you started developing with Tauri, React and Types
 
 ```bash
 npm install
-npm run generate:graph   # generates the self-graph fixture
 npm run dev
 ```
 
-The self-graph fixture (`src/fixtures/self-graph-generated.json` and siblings) is generated from this project's own `docs/` and `src/` directories. It's gitignored because:
+The self-graph fixture (`src/fixtures/self-graph-generated.json` and siblings) is generated from this project's own `docs/` and `src/` directories. It's gitignored because Vite handles regeneration automatically:
 
-- Vite's `selfGraphWatcherPlugin` regenerates it automatically whenever a `.md` file under `docs/` changes during `npm run dev`.
-- Manual regen: `npm run generate:graph`.
+- The `selfGraphWatcherPlugin` generates the fixture at dev server startup if it's missing (fresh clone, or anyone `rm`d it).
+- The plugin also regenerates whenever a `.md` file under `docs/` changes during `npm run dev`.
+- Manual regen on demand: `npm run generate:graph`.
 
-The fresh-clone `generate:graph` step is only needed once, to seed the initial fixture before the watcher takes over. When source adapters land in a future pass, this manual step will be replaced by adapter-aware initialization.
+When source adapters land in a future pass, this plugin will be replaced by adapter-aware initialization that handles user-selected source roots.
 
 ## Recommended IDE Setup
 
