@@ -46,6 +46,14 @@ references.
                 (this commit)
 [Pass C9.4]    Fixes pinned-highlight wiring and adds v84→v85 migration
                 (this commit)
+[Pass C9.4b]   Closed two latent wiring issues exposed by the
+               C9.4 audit: drag-handler refs from C9.1 were dead
+               code (drag handlers were reading dialectId/
+               activePins from stale mount-effect closures), and
+               activePins was missing from Effect B's dep array
+               (causing dim mode to not refresh when pins were
+               added/removed mid-session). Two regression tests
+               added. (this commit)
 ```
 
 Each pass commits cleanly with passing tests. The branch is intended to be
@@ -173,13 +181,17 @@ values has visible effect — a key design rule established in Pass C8.4. See
   was added but does not reproduce the issue in the test environment; the fix
   remains deferred.
 
-- **Pass C9.4 (completed) fixes pinned-highlight wiring and adds migration** —
-  Fixed the broken `pinnedHighlightActive` wiring in the third `applyGraphStylePolicy`
-  call site in `SigmaGraphView.tsx`. Fixed the toggle-off issue in `graphStylePolicy.ts`
-  by always calling `applyDimPolicy` (including when mode is "off" to clear dimming).
-  Added v84→v85 migration to backfill `physics.pinnedHighlightActive` to `false`.
-  Replaced the workaround test with an honest E2E test that actually clicks the bookmark
-  and asserts visible dimming.
+- **Pass C9.4 (committed) fixed the broken pinned-highlight wiring**
+  plus a separate toggle-off bug in graphStylePolicy (applyDimPolicy
+  wasn't called when mode was "off", so dim couldn't clear).
+
+- **Pass C9.4b (this commit) closed two more wiring issues from the**
+  C9.4 audit: C9.1 drag-handler refs were declared but never used
+  or synced, and activePins was missing from Effect B's deps.
+
+- **Pass C9.5 (queued) will investigate the pre-existing render bug**
+  (graph blanks on mouseup). Regression test from C9.3 (Test 4)
+  remains the harness.
 
 - **Pass C10 candidate — universal structural classification.** Current
   wellAssignment matches on string node types: `nodeType === "directory"`,

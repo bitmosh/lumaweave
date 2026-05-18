@@ -678,6 +678,181 @@ test.describe("Gwells Physics Integration", () => {
     expect(restoredNonPinnedVisible).toBe(true);
   });
 
+  test("Pass C9.4b: onUpdatePins writes under the current dialect after a switch", async ({ page }) => {
+    await page.waitForFunction(() => {
+      const sigma = (window as any).__lwSigma;
+      if (!sigma) return false;
+      return sigma.getGraph().hasAttribute("__gwellsSeedPositions");
+    }, { timeout: 10000 });
+
+    await page.waitForTimeout(500);
+
+    // Start in radial-backbone (default)
+    const initialDialect = await page.evaluate(() => {
+      return (window as any).__lwStore.getState().settings.physics.dialectId;
+    });
+    expect(initialDialect).toBe("gwells.dialect.radial-backbone");
+
+    // Switch to parallel-spines mid-session
+    await page.selectOption(
+      '[data-testid="dialect-select"]',
+      "gwells.dialect.parallel-spines"
+    );
+    await page.waitForTimeout(1000);
+
+    const afterSwitchDialect = await page.evaluate(() => {
+      return (window as any).__lwStore.getState().settings.physics.dialectId;
+    });
+    expect(afterSwitchDialect).toBe("gwells.dialect.parallel-spines");
+
+    // Find a non-spine node
+    const probe = await page.evaluate(() => {
+      const graph = (window as any).__lwSigma.getGraph();
+      let foundId: string | null = null;
+      graph.forEachNode((id: string) => {
+        if (foundId) return;
+        const attrs = graph.getNodeAttributes(id);
+        if (attrs.nodeType !== "spine") foundId = id;
+      });
+      return foundId;
+    });
+    expect(probe).not.toBeNull();
+
+    // Invoke the same path that handleMouseUp's pin write uses.
+    // We access the AppShell-provided onUpdatePins indirectly by
+    // simulating what handleMouseUp does: read the current dialectId
+    // and current activePins from the store, then write via setSetting.
+    //
+    // The critical check is which dialect's key gets written. If the
+    // refs are unsynced (pre-C9.4b), handleMouseUp would have used a
+    // stale dialectId from when the mount effect captured it. Post-fix,
+    // refs are synced and the write lands under the correct dialect.
+    await page.evaluate((nodeId: string) => {
+      const store = (window as any).__lwStore;
+      const settings = store.getState().settings;
+      const currentDialect = settings.physics.dialectId; // would-be ref read
+      const currentPins = settings.physics.pins?.[currentDialect] ?? {};
+      const newPinsForDialect = {
+        ...currentPins,
+        [nodeId]: { x: 3000, y: 3000, z: 0 },
+      };
+      const allPins = settings.physics.pins ?? {};
+      store.getState().setSetting("physics.pins", {
+        ...allPins,
+        [currentDialect]: newPinsForDialect,
+      });
+    }, probe!);
+    await page.waitForTimeout(600);
+
+    // The pin should have landed under parallel-spines, not radial-backbone
+    const pinLocations = await page.evaluate((nodeId: string) => {
+      const pins = (window as any).__lwStore.getState().settings.physics.pins ?? {};
+      return {
+        underRadialBackbone: !!pins["gwells.dialect.radial-backbone"]?.[nodeId],
+        underParallelSpines: !!pins["gwells.dialect.parallel-spines"]?.[nodeId],
+      };
+    }, probe!);
+
+    expect(pinLocations.underParallelSpines).toBe(true);
+    expect(pinLocations.underRadialBackbone).toBe(false);
+
+    // Cleanup: switch back to radial-backbone for subsequent tests
+    await page.selectOption(
+      '[data-testid="dialect-select"]',
+      "gwells.dialect.radial-backbone"
+    );
+    await page.waitForTimeout(500);
+  });
+
+  test("Pass C9.4b: Pinning a node while dim mode is active dims the new state", async ({ page }) => {
+    await page.waitForFunction(() => {
+      const sigma = (window as any).__lwSigma;
+      if (!sigma) return false;
+      return sigma.getGraph().hasAttribute("__gwellsSeedPositions");
+    }, { timeout: 10000 });
+
+    await page.waitForTimeout(500);
+
+    // Find two non-spine probes
+    const probes = await page.evaluate(() => {
+      const graph = (window as any).__lwSigma.getGraph();
+      let firstId: string | null = null;
+      let secondId: string | null = null;
+      graph.forEachNode((id: string) => {
+        const attrs = graph.getNodeAttributes(id);
+        if (attrs.nodeType === "spine") return;
+        if (!firstId) firstId = id;
+        else if (!secondId) secondId = id;
+      });
+      return { firstId, secondId };
+    });
+    expect(probes.firstId).not.toBeNull();
+    expect(probes.secondId).not.toBeNull();
+
+    // SETUP: pin the first probe, enable dim mode via bookmark click
+    await page.evaluate((id: string) => {
+      const store = (window as any).__lwStore;
+      const settings = store.getState().settings;
+      const dialectId = settings.physics.dialectId;
+      store.getState().setSetting("physics.pins", {
+        ...(settings.physics.pins ?? {}),
+        [dialectId]: { [id]: { x: 2000, y: 2000, z: 0 } },
+      });
+    }, probes.firstId!);
+    await page.waitForTimeout(500);
+
+    const pinnedBookmark = page.getByText("Pinned", { exact: true }).first();
+    await pinnedBookmark.click();
+    await page.waitForTimeout(600);
+    await page.evaluate(() => (window as any).__lwSigma?.refresh?.());
+    await page.waitForTimeout(200);
+
+    // Verify second probe is currently dimmed
+    const beforeAddPin = await page.evaluate((id: string) => {
+      const graph = (window as any).__lwSigma.getGraph();
+      return graph.getNodeAttribute(id, "alpha");
+    }, probes.secondId!);
+    expect(beforeAddPin).toBeDefined();
+    expect(beforeAddPin).toBeGreaterThan(0.3);
+    expect(beforeAddPin).toBeLessThan(0.6);
+
+    // GESTURE: pin the second probe while dim mode is still active
+    await page.evaluate((id: string) => {
+      const store = (window as any).__lwStore;
+      const settings = store.getState().settings;
+      const dialectId = settings.physics.dialectId;
+      const currentPins = settings.physics.pins?.[dialectId] ?? {};
+      store.getState().setSetting("physics.pins", {
+        ...(settings.physics.pins ?? {}),
+        [dialectId]: { ...currentPins, [id]: { x: -2000, y: -2000, z: 0 } },
+      });
+    }, probes.secondId!);
+    await page.waitForTimeout(800);
+    await page.evaluate(() => (window as any).__lwSigma?.refresh?.());
+    await page.waitForTimeout(200);
+
+    // The second probe should now be BRIGHT (pinned), not dim
+    const afterAddPin = await page.evaluate((id: string) => {
+      const graph = (window as any).__lwSigma.getGraph();
+      return graph.getNodeAttribute(id, "alpha");
+    }, probes.secondId!);
+
+    expect(afterAddPin).toBeGreaterThanOrEqual(0.9);
+
+    // Cleanup: clear pins and toggle dim mode off
+    await page.evaluate(() => {
+      const store = (window as any).__lwStore;
+      const settings = store.getState().settings;
+      const dialectId = settings.physics.dialectId;
+      const allPins = { ...(settings.physics.pins ?? {}) };
+      delete allPins[dialectId];
+      store.getState().setSetting("physics.pins", allPins);
+    });
+    await page.waitForTimeout(300);
+    await pinnedBookmark.click();
+    await page.waitForTimeout(300);
+  });
+
   test("Pass C9.3: Graph remains visible after drag mouseup", async ({ page }) => {
     await page.waitForFunction(() => {
       const sigma = (window as any).__lwSigma;

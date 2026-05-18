@@ -914,7 +914,7 @@ useEffect(() => {
     }
 
     sigma.refresh();
-  }, [selectedNodeId, selectedEdgeId, neighborhoodDepth, hoveredNodeId, hoveredEdgeId, hoverNodeColor, edgeLabelFontSize, pinnedHighlightActive, resolvedTokens]);
+  }, [selectedNodeId, selectedEdgeId, neighborhoodDepth, hoveredNodeId, hoveredEdgeId, hoverNodeColor, edgeLabelFontSize, pinnedHighlightActive, activePins, resolvedTokens]);
 
   // Edge label font size live update effect
   useEffect(() => {
