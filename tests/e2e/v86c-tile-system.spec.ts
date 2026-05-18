@@ -24,7 +24,7 @@ test("v86c-integration: tile-tear-off handle clickable", async ({ page }) => {
   // Find a tear-off handle and verify it's clickable
   const tearOffHandle = page.getByText("⤴").first();
   await expect(tearOffHandle).toBeVisible();
-  await expect(tearOffHandle).toHaveAttribute("title", "Tear off as tile");
+  await expect(tearOffHandle).toHaveAttribute("title", "Drag to tear off as tile");
 });
 
 test("v86c-integration: data-tiled-out attribute exists", async ({ page }) => {
