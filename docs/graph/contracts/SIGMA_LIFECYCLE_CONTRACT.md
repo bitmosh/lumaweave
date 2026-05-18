@@ -7,13 +7,14 @@ cluster: azure
 domain: graph
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-11
+last_updated: 2026-05-15
 last_pass: vP-Render-Pipeline-Refactor
 references:
-  - graph.contracts.first.graph.runtime.mutation
-  - graph.contracts.graph.runtime.boundary
+  - contract.graph.first.runtime.mutation
+  - contract.graph.runtime.boundary
   - graph.contracts.graph.theme.runtime.application
   - graph.self.schema.v1
+  - physics.gwells.contract
 tags: [graph, contract, sigma, lifecycle, render-pipeline, performance]
 ---
 
@@ -29,6 +30,18 @@ that recreates Sigma on every settings change.
 This document is the contract for the vP-Render-Pipeline-Refactor pass
 sequence. The refactor's success is measured against the success criteria
 in this document.
+
+> **Status (v86b — contract v1.1, non-breaking refinement):** The
+> lifecycle policy (ABSENT/ACTIVE states, ACTIVE-to-ACTIVE mutate as
+> default, no Sigma recreation on settings change) remains in full
+> force. The FA2-based physics layer referenced in the Mutation rules
+> table has been retired in favor of the **gwells** engine
+> (`docs/physics/GRAVITY_WELL_SYSTEM_CONTRACT.md`). Gwells slots into
+> the same lifecycle boundaries — it mutates node positions on the
+> existing Sigma instance and never recreates Sigma. The physics-related
+> rows in the Mutation rules table below have been updated to reference
+> the gwells API; the lifecycle model itself, the success criteria, the
+> phase plan (R1–R11), and the React effect topology are unchanged.
 
 ## Problem statement
 
@@ -108,8 +121,8 @@ boundaries (mount, unmount, source switch).
 
 | Trigger | Required action | Forbidden action |
 |---------|----------------|------------------|
-| Physics slider (repel, center, link distance) | `supervisor.setSettings({...})` on FA2 worker | Sigma recreation |
-| Physics dialect change | `supervisor.setLayout(newDialect)` if support exists, else `supervisor.restart(newSeed)` | Sigma recreation, camera reset |
+| Gwells dialect change (e.g., `dialectId` setting changes) | `gwellsControllerRef.current.stop()` then `applyDialect(graph, newDialectId)` against the existing Sigma instance | Sigma recreation, camera reset, graph rebuild |
+| Gwells config override (per-dialect tunables, future v0.1+) | `gwellsControllerRef.current.applyConfigOverride(partialConfig)` — engine merges in-place without restart | Sigma recreation, gwells controller recreation |
 | Theme switch | Update CSS vars + call `applyGraphStylePolicy` + `sigma.refresh()` | Sigma recreation, graph rebuild |
 | Selection change | Call `applyGraphStylePolicy` on existing graph + `sigma.refresh()` | Sigma recreation |
 | Hover change | Update reducer state via setSetting + `sigma.refresh()` | Sigma recreation |
@@ -676,9 +689,17 @@ No new user-facing features. No removed features.
 
 ## Versioning
 
-This is contract v1. Future revisions:
+This is contract v1.1 as of 2026-05-15 (was v1 through 2026-05-11).
 
-- v1.1 — non-breaking refinements (clarifications, additional examples,
+**v1 → v1.1 changes (non-breaking):**
+- Physics layer migrated from FA2 to gwells. The two physics-related
+  rows in the Mutation rules table were updated to reference the
+  gwells controller API. Lifecycle policy, success criteria, phase
+  plan, and effect topology are unchanged.
+
+**Future revisions:**
+
+- v1.2+ — non-breaking refinements (clarifications, additional examples,
   added phases if needed)
 - v2.0 — breaking change to lifecycle model (e.g., adding a third state,
   introducing async-mount, multi-renderer support)

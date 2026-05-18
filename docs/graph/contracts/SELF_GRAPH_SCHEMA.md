@@ -66,6 +66,7 @@ type SelfGraphMetadata = {
       config: number;
       fixture: number;
       spine: number;
+      directory: number;
     };
     edgesByType: Record<EdgeType, number>;
   };
@@ -110,7 +111,7 @@ type SelfGraphNodeBase = {
   };
 };
 
-type NodeType = "doc" | "code" | "config" | "fixture" | "spine";
+type NodeType = "doc" | "code" | "config" | "fixture" | "spine" | "directory";
 ```
 
 ### Identity strategy
@@ -133,7 +134,12 @@ Examples:
 - **`code`** — TypeScript/JavaScript source file (`.ts`, `.tsx`, `.mjs`, `.js`) in `src/`
 - **`config`** — Configuration files (`.json`, `.yaml`, `.toml`) at significant points (root `package.json`, `tsconfig.json`, etc.). Excludes auto-generated configs.
 - **`fixture`** — Test data, sample inputs, generated outputs in `src/fixtures/`
-- **`spine`** — Synthetic node representing a code subsystem (e.g., "graph", "themes", "control-plane"). Aggregates code files. Promoted from current 8-spine handling.
+- **`spine`** — Synthetic node representing a code subsystem. Every immediate subdirectory of `src/` and `docs/` becomes a spine node via dynamic enumeration (Pass C8.1). Spine IDs use full path (e.g., `spine.src.graph`, `spine.docs.graph`) to avoid ambiguity. Two "root-level" spines (`spine.src-root`, `spine.docs-root`) hold loose files directly at the root of `src/` or `docs/`. Aggregates code files.
+- **`directory`** — Synthetic node representing a directory in the file tree.
+  Created by the generator for every unique directory path encountered when
+  scanning docs/, src/, and tests/. Used by physics engines (gwells) to anchor
+  files perpendicular to their parent spine. No frontmatter, no body — pure
+  structural intermediary.
 
 ### Visual treatment by node type
 
@@ -210,7 +216,13 @@ type ProvenanceSource =
   | "body-parse"
   | "ast-parse"
   | "directory-walk"
-  | "heuristic";
+  | "heuristic"
+  // Contains-edge provenance (Pass C8)
+  | "directory-hierarchy"      // directory → parent directory (real filesystem hierarchy)
+  | "spine-to-top-directory"   // spine → its matching top-level directory
+  | "directory-leaf"           // directory → leaf file
+  | "spine-direct-leaf"        // spine → file at spine root (fallback)
+  | "spine-fallback"           // spine → directory with no synthesized parent (fallback);
 ```
 
 ### Edge type semantics + weight defaults

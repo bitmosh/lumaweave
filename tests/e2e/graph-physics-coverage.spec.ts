@@ -58,26 +58,4 @@ test.describe("Graph Physics Playwright Coverage", () => {
     // Graph should still be visible
     await expect(canvas).toBeVisible();
   });
-
-  test("physics controls are present and accessible", async ({ page }) => {
-    // Verify physics sliders exist
-    const nodeSizeSlider = page.locator("[data-testid='setting-physics-nodeSize']");
-    await expect(nodeSizeSlider).toBeVisible();
-
-    const linkDistanceSlider = page.locator("[data-testid='setting-physics-linkDistance']");
-    await expect(linkDistanceSlider).toBeVisible();
-
-    const repelForceSlider = page.locator("[data-testid='setting-physics-repelForce']");
-    await expect(repelForceSlider).toBeVisible();
-  });
-
-  test("graph controls remain passive/valid", async ({ page }) => {
-    // Physics sliders should be present
-    const nodeSizeSlider = page.locator("[data-testid='setting-physics-nodeSize']");
-    await expect(nodeSizeSlider).toBeVisible();
-
-    // Verify slider has a value
-    const initialValue = await nodeSizeSlider.inputValue();
-    expect(initialValue).not.toBe("");
-  });
 });

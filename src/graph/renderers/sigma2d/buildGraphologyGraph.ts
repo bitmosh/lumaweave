@@ -15,17 +15,10 @@ import type {
   LumaWeaveNodeDraft,
 } from "../../schema/graph.types";
 import { graphVisualTokens } from "../../visual/graphVisualTokens";
-import { getEdgePhysicsWeight } from "../../physics/edgeTypePhysicsRegistry";
-import { seedDirectoryBackboneN2 } from "../../physics/directoryBackboneSeeder";
-
-const BASE_NODE_SIZE = 8;
+import { computeNodeSize, computeAggregateSize } from "../../../physics/gwells/seederHelpers";
 
 export interface LayoutSettings {
   nodeSize: number;
-  linkDistance: number;
-  repelForce: number;
-  centerForce: number;
-  physicsDialect: "default" | "helix" | "solar-orbit";
   nodeColorScale?: string[]; // theme-driven
 }
 
@@ -65,14 +58,19 @@ export function buildGraphologyGraph(
       // Start at origin — seeder will set deterministic positions
       const position = { x: 0, y: 0 };
 
+      // Preserve raw size for downstream aggregation
+      const rawSize = (node.raw?.size as number) ?? baseSize;
+      const visualSize = computeNodeSize(rawSize);  // Pass C8.3: compute visual size
+
       graph.addNode(node.id, {
         x: position.x,
         y: position.y,
         label: node.label,
         fullLabel: node.label,
         originalLabel: node.label,
-        size: ((node.raw?.size as number) ?? baseSize) * settings.nodeSize,
-        baseSize: (node.raw?.size as number) ?? baseSize,
+        rawSize: rawSize,  // Pass C8.3: preserve for aggregation
+        size: visualSize * settings.nodeSize,  // Pass C8.3: content-driven sizing
+        baseSize: visualSize,  // Pass C8.3: baseSize is now visual size, not raw size
         color: (node.raw?.color as string) ?? graphVisualTokens.nodeColor.default,
         nodeType: node.type || "unknown",
         raw: node.raw,
@@ -109,15 +107,13 @@ export function buildGraphologyGraph(
   edges.forEach((edge) => {
     try {
       const relationshipLabel = edge.relationship || "related";
-      const edgeType = (edge.raw?.type as string) || relationshipLabel;
-      const physicsWeight = getEdgePhysicsWeight(edgeType);
       graph.addEdgeWithKey(edge.id, edge.source, edge.target, {
         id: edge.id,
         relationship: relationshipLabel,
         label: relationshipLabel,
         fullLabel: relationshipLabel,
         originalLabel: relationshipLabel,
-        weight: physicsWeight,
+        weight: 1,
         color: (edge.raw?.color as string) ?? "rgba(100,130,180,0.55)",
         size: (edge.raw?.size as number) ?? 1.5,
         raw: edge.raw,
@@ -127,33 +123,47 @@ export function buildGraphologyGraph(
     }
   });
 
-  // Degree centrality — boost size of well-connected nodes
-  const centralityScores = degree(graph);
-  const maxCentrality = Math.max(
-    1,
-    ...Object.values(centralityScores)
-  );
-
+  // Pass C8.3: Compute aggregate sizes for directories and spines
+  // Directories and spines get their size from total descendant content
   graph.forEachNode((nodeId) => {
     const attrs = graph.getNodeAttributes(nodeId);
     const nodeType = attrs.nodeType || attrs.raw?.type;
     
-    // Spine nodes: size based on child count (not centrality)
-    if (nodeType === "spine") {
-      const childCount = graph.outDegree(nodeId);
-      const spineSize = BASE_NODE_SIZE * (1 + Math.log2(childCount + 1) * 0.3);
-      graph.setNodeAttribute(nodeId, "size", spineSize * settings.nodeSize);
-      graph.setNodeAttribute(nodeId, "baseSize", spineSize);
-    } else {
-      // Non-spine nodes: centrality boost
-      const c = (centralityScores[nodeId] ?? 0) as number;
-      const normalized = c / maxCentrality;
-      // Blend: base size + up to 40% boost for most connected (reduced from 80%)
-      const newSize = BASE_NODE_SIZE * (1 + normalized * 0.4);
-      graph.setNodeAttribute(nodeId, "size", newSize * settings.nodeSize);
-      graph.setNodeAttribute(nodeId, "baseSize", newSize);
+    if (nodeType === "directory" || nodeType === "spine") {
+      const aggregateSize = computeAggregateSize(graph, nodeId);
+      const visualSize = computeNodeSize(aggregateSize);  // Pass C8.3: compute visual size
+      graph.setNodeAttribute(nodeId, "rawSize", aggregateSize);
+      graph.setNodeAttribute(nodeId, "size", visualSize * settings.nodeSize);
+      graph.setNodeAttribute(nodeId, "baseSize", visualSize);  // Pass C8.3: baseSize is now visual size
     }
   });
+
+  // Degree centrality — boost size of well-connected nodes
+  // Pass C8.3: Content-driven sizing now determines node sizes; centrality boost removed
+  // to avoid conflicting with the new size-aware layout.
+  const centralityScores = degree(graph);
+
+  // Pass C8.3: Skip centrality-based size adjustment - content-driven sizing is now the primary
+  // graph.forEachNode((nodeId) => {
+  //   const attrs = graph.getNodeAttributes(nodeId);
+  //   const nodeType = attrs.nodeType || attrs.raw?.type;
+  //   
+  //   // Spine nodes: size based on child count (not centrality)
+  //   if (nodeType === "spine") {
+  //     const childCount = graph.outDegree(nodeId);
+  //     const spineSize = BASE_NODE_SIZE * (1 + Math.log2(childCount + 1) * 0.3);
+  //     graph.setNodeAttribute(nodeId, "size", spineSize * settings.nodeSize);
+  //     graph.setNodeAttribute(nodeId, "baseSize", spineSize);
+  //   } else {
+  //     // Non-spine nodes: centrality boost
+  //     const c = (centralityScores[nodeId] ?? 0) as number;
+  //     const normalized = c / maxCentrality;
+  //     // Blend: base size + up to 40% boost for most connected (reduced from 80%)
+  //     const newSize = BASE_NODE_SIZE * (1 + normalized * 0.4);
+  //     graph.setNodeAttribute(nodeId, "size", newSize * settings.nodeSize);
+  //     graph.setNodeAttribute(nodeId, "baseSize", newSize);
+  //   }
+  // });
 
   // Apply theme-driven color scale by centrality rank
   if (settings.nodeColorScale &&
@@ -213,9 +223,6 @@ export function buildGraphologyGraph(
   graph.setAttribute(
     "clusterSunCount", clusterSuns.size
   );
-
-  // Call directory backbone seeder
-  seedDirectoryBackboneN2({ graph, settings });
 
   // Connected components analysis
   const componentCount = countConnectedComponents(graph);

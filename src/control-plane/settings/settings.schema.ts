@@ -28,6 +28,10 @@ export type LayoutLensId =
   | "pipeline"
   | "impact-rings";
 
+export type GwellsDialectId =
+  | "gwells.dialect.radial-backbone"
+  | "gwells.dialect.parallel-spines";
+
 export interface TileLayoutEntry {
   id: string;
   sectionKey: string;
@@ -40,7 +44,7 @@ export interface TileLayoutEntry {
 }
 
 export interface StarmapSettings {
-  version: 81; // vP-physics-backbone-seed-fix: bumped from 80 to 81 (remove helix dialect)
+  version: 85; // Pass C9.4: bumped from 84 for pinnedHighlightActive migration
 
   general: {
     startupProjectId: string | null;
@@ -76,22 +80,49 @@ export interface StarmapSettings {
     showLowConfidenceEdges: boolean;
     neighborhoodDepth: number;
     hoverNodeColor: string;
+    nodeSize: number;
   };
 
   physics: {
-    physicsPreset: "custom" | "balanced" | "spread" | "tight" | "organic" | "performance";
-    qualityPreset: "custom" | "potato" | "balanced" | "fancy";
-    nodeSize: number;
-    linkDistance: number;
-    repelForce: number;
-    centerForce: number;
-    communityGravity: number;
-    physicsDialect: "default" | "solar-orbit";
-    // ForceAtlas2 advanced parameters
-    strongGravityMode: boolean;
-    linLogMode: boolean;
-    adjustSizes: boolean;
-    barnesHutTheta: number;
+    dialectId: GwellsDialectId;
+    /**
+     * Per-dialect parameter overrides. Keyed by dialect id.
+     * Each value is a partial seedParams record that gets merged onto
+     * the dialect's defaults at runtime.
+     *
+     * Example:
+     *   {
+     *     "gwells.dialect.radial-backbone": {
+     *       helixTwist: { directory: 5, file: 2 }
+     *     },
+     *     "gwells.dialect.parallel-spines": {
+     *       helixTwist: { spine: 8 }
+     *     }
+     *   }
+     */
+    seedParamOverrides: Record<string, Record<string, unknown>>;
+    /**
+     * Per-dialect pin storage. Keyed by dialect id.
+     * Each value is a map from node ID to pinned position.
+     *
+     * Example:
+     *   {
+     *     "gwells.dialect.radial-backbone": {
+     *       "node-123": { x: 5000, y: 5000, z: 0 },
+     *       "node-456": { x: 6000, y: 6000 }
+     *     }
+     *   }
+     *
+     * Added in Pass C9.1.
+     */
+    pins: Record<string, Record<string, { x: number; y: number; z?: number }>>;
+    /**
+     * Pinned highlight mode toggle. When true, dims all nodes except
+     * those in the pinned set. Default false.
+     *
+     * Added in Pass C9.3 (changed from session-scoped to persisted for testability).
+     */
+    pinnedHighlightActive: boolean;
   };
 
   labels: {

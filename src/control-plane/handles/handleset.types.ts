@@ -10,6 +10,7 @@ export type HandleStatus =
   | "partial" // Handle is defined but not fully wired or behavior is uncertain
   | "planned" // Handle is defined in schema/registry but marked as future work
   | "deprecated" // Handle is obsolete
+  | "retired" // Handle was removed from schema but kept for documentation
   | "internal" // Handle used internally, not user-facing
   | "experimental"; // Handle in early development, unstable
 
@@ -73,6 +74,10 @@ export interface HandlesetEntry {
   qa?: HandlesetQAReference;
   /** Additional notes */
   notes?: string;
+  /** When the handle was retired (for status="retired") */
+  retiredAt?: string;
+  /** Reason for retirement (for status="retired") */
+  retiredReason?: string;
 }
 
 export interface HandlesetRegistry {

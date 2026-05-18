@@ -1,6 +1,7 @@
 import { settingsRegistry } from "./settings.registry";
 import { useSettingsStore } from "./settings.store";
 import { CollapsibleSection } from "../panels/CollapsibleSection";
+import { HelixTwistSliders } from "../panels/HelixTwistSliders";
 
 function getNestedValue(obj: any, path: string) {
   return path.split(".").reduce((cursor, key) => cursor?.[key], obj);
@@ -139,7 +140,7 @@ export function SettingsPanel() {
                             </p>
                           ) : null}
                           <select
-                            data-testid={`setting-${setting.path.replace(/\./g, '-')}`}
+                            data-testid={setting.testId || `setting-${setting.path.replace(/\./g, '-')}`}
                             value={String(value)}
                             onChange={(event) =>
                               setSetting(setting.path, event.currentTarget.value)
@@ -153,6 +154,25 @@ export function SettingsPanel() {
                             ))}
                           </select>
                         </label>
+                      );
+                    }
+
+                    // Pass C9.2: Reset Pinned button for physics.dialectId
+                    if (setting.path === "physics.dialectId") {
+                      return (
+                        <button
+                          key="reset-pinned"
+                          data-testid="reset-pinned-button"
+                          onClick={() => {
+                            const currentAll = settings.physics.pins ?? {};
+                            const newAll = { ...currentAll };
+                            delete newAll[settings.physics.dialectId];
+                            setSetting("physics.pins" as any, newAll);
+                          }}
+                          className="mt-2 w-full rounded-lg border border-cyan-400/20 bg-slate-900 px-3 py-2 text-sm text-slate-200 hover:bg-slate-800 transition-colors"
+                        >
+                          Reset Pinned
+                        </button>
                       );
                     }
 
@@ -181,6 +201,8 @@ export function SettingsPanel() {
 
                     return null;
                   })}
+                {/* Pass C4: HelixTwistSliders for live tuning (Physics category only) */}
+                {category === "Physics" && <HelixTwistSliders />}
               </div>
             </section>
           </CollapsibleSection>

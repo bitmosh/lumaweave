@@ -3,12 +3,12 @@ id: inbox.future.ideas
 title: Future Ideas Inbox
 type: manual
 status: current
-version: v73c
+version: v86b
 domain: roadmap
 cluster: violet
 agent_readable: true
 include_in_self_graph: false
-last_updated: 2026-05-09
+last_updated: 2026-05-15
 tags:
   - future
   - ideas
@@ -54,16 +54,18 @@ Items here are promoted to the roadmap only when:
     Override selected edge stroke color
     Wire to graphVisualTokens.edgeColor.selected
 
-- **SOLAR ORBIT DIALECT — PHASE 1 (cluster gravity)**
-  Custom physics plugin: compute cluster centroid per frame,
-  apply inward pull to cluster members. Result: loose solar
-  system layout, clusters stay separated by centroid gravity
-  wells. Blendable: gravity well strength slider 0→1 mixes
-  between FA2 default and solar orbit. Phase 2: animated
-  orbital drift (angle per node). Phase 3: cluster boundary
-  repulsion (soft walls). Phase 4: Kepler-accurate orbital mechanics.
-  Pre-req: continuous FA2 loop (DONE). Priority: after physics
-  settings expansion.
+- **SOLAR ORBIT DIALECT (gwells)**
+  Future gwells dialect. Cluster sun nodes act as gravity anchors;
+  cluster members orbit at radii driven by importance. Inter-cluster
+  repulsion keeps systems separated. Phase 1: orbital placement.
+  Phase 2: animated orbital drift. Phase 3: cluster boundary
+  repulsion walls. Phase 4: Kepler-accurate orbital mechanics.
+  Implementation path: gwells well types (cluster-sun, cluster-orbit)
+  + interactions (gravity, sibling-repulsion, inter-cluster-repulsion)
+  + new seed function. See docs/physics/GALAXY_MODE_DIALECT.md for
+  the visual target.
+  Pre-req: gwells v0 ships. Priority: after the horizontal-linear dialect
+  is stable.
 
 - **CLUSTER DEPTH SLIDER**
   Replace neighborhood depth dropdown with a slider from
@@ -75,23 +77,6 @@ Items here are promoted to the roadmap only when:
   This was discussed with user and never made it to docs.
   Capture it now. Priority: medium — high UX value.
 
-- **PHYSICS PLUGIN PIPELINE**
-  src/graph/physics/physics-pipeline.ts
-  Type: PhysicsPlugin = (graph, settings, frame) => void
-  Pipeline array runs each plugin per animation frame.
-  Custom behaviors slot in without touching FA2.
-  Examples: cluster gravity, helix attractor, repulsion walls,
-  orbital drift, spiral breathing. Architecture makes custom
-  physics trivial to add. Priority: after FA2 settings expansion.
-
-- **BLENDABLE CLUSTER MIXING**
-  In solar orbit mode, a "cluster cohesion" slider 0 = complete
-  mixing (pure FA2, no cluster gravity). 0.5 = soft neighborhood
-  bubbles, some mixing. 1.0 = hard cluster separation, no mixing.
-  Fractional values create the in-between states that are
-  visually most interesting. The slider blends between two
-  force systems. Priority: after solar orbit Phase 1 lands.
-
 - **YAML GRAPH PARSER — PRE-BUILD SCRIPT APPROACH**
   Fix for self-split: use Node.js build script instead of Vite glob at runtime.
   Script: scripts/generate-self-graph.mjs
@@ -102,25 +87,20 @@ Items here are promoted to the roadmap only when:
   Run before dev/build to keep graph fresh.
   108 docs with include_in_self_graph:true = 131+ nodes.
 
-- **GRAPHOLOGY ECOSYSTEM — HIGH PRIORITY INSTALLS**
-  Three packages that would have immediate impact:
+- **GRAPHOLOGY ECOSYSTEM — REMAINING CANDIDATES**
+  Of three previously-listed candidate packages, only one remains
+  relevant after the gwells migration:
 
-  **graphology-communities-louvain**
-    Auto community detection for ANY graph source
-    Makes helix dialect work universally (not just
-    self-graph fixture which has manual clusters)
-    Install before: helix dialect becomes default
-
-  **graphology-metrics**
+  **graphology-metrics** (installed)
     Degree centrality → auto node size by connections
     Betweenness centrality → identify bridge nodes
     PageRank → identify influential nodes
-    Install before: YAML frontmatter parser pass
+    Already in use for centrality-based sizing.
 
-  **graphology-layout-noverlap**
-    Anti-collision post-processing after FA2
-    Prevents node overlap in dense graph regions
-    Install with: next physics tuning pass
+  Retired: graphology-layout-forceatlas2 and graphology-layout-noverlap
+  were removed during the gwells migration. graphology-communities-louvain
+  remains in package.json but is no longer load-bearing for any active
+  dialect; verify usage and retire if confirmed orphaned.
 
 - **USEFIXTURE SMART SWITCHING**
   AppShell.tsx useFixture is hardcoded true.
@@ -140,14 +120,66 @@ Items here are promoted to the roadmap only when:
   Priority: medium — affects demo experience
   Constraint: 2 layout assertions need updating first
 
-- **Cluster gravity** — hard gravity walls between neighborhoods, nodes orbit within cluster (proto-Galaxy mode)
+- **Cluster gravity** — hard gravity walls between neighborhoods, nodes orbit within cluster (proto-Galaxy mode). Implementation path: future gwells dialect. See docs/physics/GALAXY_MODE_DIALECT.md and docs/graph/intelligence/CLUSTER_GRAVITY_AND_COLOR_CODED_NEIGHBORHOODS.md.
 - **Color-coded neighborhoods** — community detection driving brand cluster colors in graph
 - **Edge confidence visualization** — edge thickness or opacity encodes confidence class (observed / inferred / ai-inferred)
 - **Node importance rings** — high-weight nodes rendered with a subtle ring/corona to indicate weight
 - **Graph diff view** — highlight nodes/edges that changed between two history slider positions
-- **Cluster drag interaction** — Hold modifier key (Alt or Shift) + drag node → node and all directly connected neighbors move as a rigid unit with proportions locked, external edges stretch/compress naturally, on key release: force simulation resumes from new positions. Priority: after basic node dragging works. Relevant for: Helix dialect (moving constellation branches without breaking the backbone). Physics wiring order: 1. Fix static sunflower / force layout, 2. Wire repel + gravity controls, 3. Individual node drag, 4. Cluster drag with modifier key, 5. Physics dialect selection.
-- **GRAPH ROTATION + PSEUDO-3D PROJECTION** — Right-click drag → rotate 2D graph coord space. Store helix node positions as true 3D (x, y, z). Project 3D → 2D with rotation matrix on Sigma. Animate projection angle on node selection. Auto-rotate to selected cluster centroid. No Three.js needed — pure projection math on existing Sigma 2D renderer. Three3d renderer (src/renderers/three3d/) is the future path for true 3D graphs. Priority: after cluster colors + graph density.
-- **Advanced Physics Controls** — Add direct FA2 parameter controls to settings.schema.ts physics section: gravityStrength (0.001–1.0), fa2Iterations (10–500), fa2SlowDown (1–20), adjustSizes (boolean), strongGravityMode (boolean), linLogMode (boolean). These give users fine-grained control over ForceAtlas2 behavior beyond the current 3 sliders (nodeSize, linkDistance, repelForce, centerForce). Priority: after helix dialect stabilization.
+- **Cluster drag interaction** — Hold modifier key (Alt or Shift) + drag node → node and all directly connected neighbors move as a rigid unit with proportions locked, external edges stretch/compress naturally, on key release: physics resumes from new positions. Implementation path: respect gwells's `fixed: true` attribute for the entire cluster during drag, then release. Priority: after basic node dragging works in gwells. Relevant for: future gwells dialects (moving constellation branches without breaking the backbone).
+- **GRAPH ROTATION + PSEUDO-3D PROJECTION** — Right-click drag → rotate 2D graph coord space. Store node positions as true 3D (x, y, z). Project 3D → 2D with rotation matrix on Sigma. Animate projection angle on node selection. Auto-rotate to selected cluster centroid. No Three.js needed — pure projection math on existing Sigma 2D renderer. The src/renderers/ subtree is the future path for true 3D graphs. Gwells v2+ may extend its schema to include z-coordinate. Priority: after cluster colors + graph density.
+- **Gwells dialect-aware tunable handles** — ~~Once gwells is stable, expose per-dialect tunables (spine spacing, fan arc width, repulsion strength, etc.) as Layer 1 handles with `status: planned`. UI surfaces them in the Advanced section of the Physics panel only when their owning dialect is active. Replaces the retired "Advanced Physics Controls" idea, which was FA2-specific.~~
+
+  **PARTIALLY COMPLETED (Pass C4):** Live tuning sliders for `helixTwist` parameters (spine, directory, file) are now implemented via the `applyConfigOverride` mechanism. Per-dialect persistence is supported via `settings.physics.seedParamOverrides`. The broader "dialect-aware tunable handles" idea remains for future expansion to other seedParams (spine spacing, fan arc width, etc.) and wellOverrides.
+
+---
+
+## Seed-Position Retention for Non-Pinned Wells
+
+**COMPLETED (Pass C5, v0.1):** Non-pinned wells now retain seeded positions via a per-frame spring force (`seedAdherence`). Seed functions write `__gwellsSeedPositions` graph attribute; engine applies `f = seedAdherence × (seedPos - currentPos)`. Drag handlers update seed positions on mouseup. Default adherence: directory-anchor 0.15 (strong), file-orbit 0.05 (light), endpoint-fan 0.08 (moderate). Helix-twist sliders now persist correctly.
+
+**Follow-up ideas for future expansion:**
+
+- **UI sliders for seedAdherence:** Expose per-well-type seedAdherence as tunable handles in the Physics panel (similar to helixTwist sliders). Allow users to adjust how strongly nodes retain their seeded positions vs drift to physics equilibrium.
+
+- **Per-dialect seedAdherence overrides:** Currently seedAdherence is set on well-type defaults. Future: allow dialects to override seedAdherence per well type via `wellOverrides`, enabling dialect-specific retention behavior (e.g., a "loose" variant of radial-backbone with weaker adherence).
+
+- **Seed position snapshots:** Allow users to save/load seed position snapshots as presets. Could be useful for saving interesting layout states (e.g., a specific helix-twist configuration) and restoring them later.
+
+- **Selective seed retention:** Currently all non-pinned wells have seedAdherence. Future: allow users to selectively disable seed retention for specific nodes or node types (e.g., let files drift freely while keeping directories anchored).
+
+---
+
+## Directory Node Synthesis (Pass C6)
+
+**COMPLETED (Pass C6, v0.1):** The self-graph source adapter now synthesizes `directory` nodes for every unique directory path. Spine nodes use "spine.X" IDs and represent only top-level subsystems. Directory nodes use slug(path) IDs and represent intermediate directories. Contains edges link spine → directory → file hierarchy. WellAssignment maps `nodeType: "directory"` to `directory-anchor` and `nodeType: "doc" | "code" | "config" | "fixture"` to `file-orbit`. Radial-backbone and parallel-spines seeders updated to recognize these node types. Result: 67 directory nodes, 11 spine nodes, 402 contains edges (up from 380 baseline).
+
+---
+
+## Edge-Aware Interactions (Pass C7)
+
+**COMPLETED (Pass C7, v0.1):** Interactions now declare structural requirements via the optional `requireEdge` field on GWInteractionEntry. The engine builds a `parentOfNode` lookup at applyDialect time from `contains` edges in the graph, then filters target nodes in the force loop before applying force. Three filter values: `"contains-parent"` (target is source's parent), `"no-contains-parent"` (target is NOT source's parent), `"shared-parent"` (source and target share same parent). Six interactions updated with requireEdge filters: directory-anchor.perpendicular.spine-linear (contains-parent), file-orbit.springs.directory-anchor (contains-parent), file-orbit.repels.file-orbit (shared-parent), file-orbit.repels.directory-anchor-other (no-contains-parent), endpoint-fan.springs.spine-linear-endpoint (contains-parent), endpoint-fan.repels.endpoint-fan (shared-parent). Result: average drift from seed reduced from ~370 to 7.0 units; drag-seed test un-skipped with assertion relaxed from <500 to <800 units.
+
+**Follow-up ideas for future expansion:**
+
+- **UI controls for requireEdge filters:** Expose interaction-level requireEdge configuration in the Physics panel, allowing users to enable/disable structural filtering per interaction type. This could be useful for debugging or for creating "loose" layout variants where files feel forces from all directories.
+
+- **Edge-aware alignment constraints:** Extend requireEdge semantics to alignment forces (linear-alignment, perpendicular) to enforce that nodes only align with structurally related targets (e.g., directories only align with their parent spine axis).
+
+- **Dynamic edge-aware mode:** Allow users to toggle between "structural mode" (requireEdge filters active) and "global mode" (all interactions fire regardless of structure) via a runtime switch in the Physics panel. This could be useful for exploring different layout behaviors.
+
+---
+
+## Fern-Frond Hierarchical Layout (Pass C8)
+
+**COMPLETED (Pass C8, v0.1):** Restored real filesystem hierarchy in the self-graph `contains` edges and updated the radial-backbone and parallel-spines seeders to use recursive directory placement. The source adapter now creates hierarchical `contains` edges (directory-hierarchy, spine-to-top-directory, directory-leaf, spine-direct-leaf, spine-fallback) instead of the flattened Pass C6 model. The seeders recursively place directories: at depth 0, directories are placed perpendicular to the spine axis; at depth > 0, directories continue along the same outward direction as their parent, creating a fern-frond visual structure where sub-branches extend outward along the same axis as their parent branch. Helix twist is applied only at depth 0. Result: directories at multiple depths (0, 1, 2) are now visible in the graph layout, making the directory hierarchy visually apparent.
+
+**COMPLETED (Pass C8.2, v0.1):** Added per-pair spring distance computation. The engine builds a `pairIdealDistance` map at applyDialect time by extracting seeded distances from the graph. Springs with `requireEdge: "contains-parent"` read from this map instead of the static `idealDistance` default. This makes edge-aware springs (file-orbit, directory-anchor) respect the actual seeded geometry (orbit radius, directory spacing) rather than a uniform constant. Non-edge-aware springs continue to use the static default.
+
+**COMPLETED (Pass C8.3, v0.1):** Size-aware phyllotaxis layout. Added `computeNodeSize`, `computeFileOrbit`, and `computeAggregateSize` helpers. Node visual sizes computed logarithmically from raw size (line count) to range [4, 40]. Files placed in phyllotaxis spiral (φ-angle 137.508°) sorted by size ascending, with orbit radii scaled by parent visual size. Replaced circular orbit placement in both seeders.
+
+**COMPLETED (Pass C8.4, v0.1):** Spine layout organization. Bucketed spines by first path segment in `assignSpinesToAxes` (src to one axis, docs to another). Static per-axis alternation: each spine consumes one slot, sign determined by axis index, applied to entire subtree. Root-spines moved to end of bucket for outermost positioning. Bumped `directoryOffset` from 1800 to 2700. Resolves src/docs intermingling, all-same-direction fronds, (0,0) collision of root-spines.
+
+**Next: Pass C9 — Drag-pin redesign.**
 
 ---
 

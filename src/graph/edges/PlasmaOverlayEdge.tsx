@@ -48,17 +48,28 @@ export function PlasmaOverlayEdge({
       edges.forEach((edge) => {
         const a = sigma.getNodeDisplayData(edge.source);
         const b = sigma.getNodeDisplayData(edge.target);
-        if (a && b) {
-          const sa = sigma.graphToViewport(a);
-          const sb = sigma.graphToViewport(b);
-          newPaths.push({
-            id: edge.id,
-            sx: sa.x,
-            sy: sa.y,
-            tx: sb.x,
-            ty: sb.y,
-          });
+        if (!a || !b) return;
+        const sa = sigma.graphToViewport(a);
+        const sb = sigma.graphToViewport(b);
+        // Defensive: drop any path with non-finite coords so the
+        // SVG <line> element never receives NaN/Infinity for
+        // x1/y1/x2/y2. Established in Pass C9.5; see
+        // docs/physics/GWELLS_ARCHITECTURE.md § NaN guards.
+        if (
+          !Number.isFinite(sa.x) ||
+          !Number.isFinite(sa.y) ||
+          !Number.isFinite(sb.x) ||
+          !Number.isFinite(sb.y)
+        ) {
+          return;
         }
+        newPaths.push({
+          id: edge.id,
+          sx: sa.x,
+          sy: sa.y,
+          tx: sb.x,
+          ty: sb.y,
+        });
       });
       setPaths(newPaths);
     };

@@ -3,20 +3,35 @@ id: dialect.physics.galaxy
 title: Galaxy Mode Physics Dialect
 type: concept
 status: concept
-version: v73c
+version: v86b
 domain: physics
-cluster: teal
+cluster: azure
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-depends_on:
-  - system.physics.dialects
-  - contract.audio.reactivity
-  - contract.motion.safety
+last_updated: 2026-05-15
+references:
+   - system.physics.dialects
+   - contract.audio.reactivity
+   - contract.motion.safety
+   - physics.gwells.contract
 tags: [physics, galaxy, orbital, cluster, dialect, audio, layout, complex]
 ---
 
 # Galaxy Mode Physics Dialect
+
+> **Status (v86b):** This is a **future gwells dialect**, the most
+> ambitious one in the design space. The visual target (per-cluster
+> orbital systems with gravity wells and inter-cluster repulsion
+> walls) remains the long-term goal. Gwells provides the architectural
+> substrate: cluster-anchor well types + orbital interactions + 
+> inter-cluster repulsion. Implementation is gated on gwells v0
+> acceptance and the subsequent dialect-aware tunable system.
+>
+> See `docs/physics/GRAVITY_WELL_SYSTEM_CONTRACT.md` for the engine
+> that will host this dialect.
+>
+> The "Implementation Approach: D3-force" section below is obsolete.
+> Gwells is the runtime path; D3-force is not used.
 
 ## Overview
 

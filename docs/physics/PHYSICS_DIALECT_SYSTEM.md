@@ -3,25 +3,37 @@ id: system.physics.dialects
 title: Physics Dialect System
 type: policy
 status: accepted
-version: v73c
+version: v86b
 domain: physics
-cluster: blue
+cluster: azure
 agent_readable: true
 include_in_self_graph: true
-last_updated: v73c
-depends_on:
-  - contract.graph.runtime.boundary
-  - contract.audio.reactivity
-  - contract.motion.safety
+last_updated: 2026-05-15
+references:
+   - contract.graph.runtime.boundary
+   - contract.audio.reactivity
+   - contract.motion.safety
 related:
   - dialect.physics.helix
   - dialect.physics.constellation
   - dialect.physics.galaxy
-  - contract.physics.audio.routing
+  - physics.gwells.contract
 tags: [physics, dialects, layout, audio, helix, constellation, galaxy, signal-loom]
 ---
 
 # Physics Dialect System
+
+> **Status (v86b):** The Physics Dialect concept survives and is now
+> implemented via the **gwells** engine. The bundle-physics-with-audio
+> framing described below remains the architecture intent. Specific
+> dialect implementations referenced in this doc (helix, constellation,
+> galaxy) are treated as *future gwells dialects*; the v0 gwells dialect
+> is `gwells.dialect.horizontal-linear` (a directory-backbone layout,
+> not described in this doc). The FA2/Louvain-based helix implementation
+> that briefly ran in code has been retired.
+>
+> See `docs/physics/GRAVITY_WELL_SYSTEM_CONTRACT.md` for the current
+> physics architecture.
 
 ## Concept
 

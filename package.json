@@ -18,7 +18,8 @@
     "trace:contracts": "node scripts/validate-contract-trace.mjs",
     "index:system": "node scripts/validate-system-index.mjs",
     "modes:control-plane": "node scripts/validate-control-plane-modes.mjs",
-    "generate:graph": "node scripts/generate-self-graph.mjs"
+    "generate:graph": "node scripts/generate-self-graph.mjs",
+    "physics:gwells": "node scripts/validate-gwells.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",

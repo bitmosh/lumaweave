@@ -326,15 +326,21 @@ export function applyGraphStylePolicy(
     clearHoverStyles(graph);
   }
 
-  // 4. Apply dim mode (v86b)
-  if (dimMode && dimMode !== "off" && dimOpacity !== undefined) {
-    const dimState: DimPolicyState = {
-      mode: dimMode,
-      clusterDepth: neighborhoodDepth ?? 2,
-      selectedNodeId: selectedNodeId ?? selectedEdgeId ? null : null, // dim mode only works with node selection
-      dimOpacity,
-      transitionMs: 200,
-    };
-    applyDimPolicy(graph, dimState);
-  }
+  // 4. Apply dim mode (v86b, extended by C9.2)
+  const effectiveDimMode: DimMode = options.pinnedHighlightActive
+    ? "outside-pinned"
+    : (dimMode ?? "off");
+
+  // Always apply dim policy so it can handle "off" mode by clearing dimming
+  const dimState: DimPolicyState = {
+    mode: effectiveDimMode,
+    clusterDepth: neighborhoodDepth ?? 2,
+    selectedNodeId: effectiveDimMode === "outside-cluster"
+      ? (selectedNodeId ?? null)
+      : null,
+    dimOpacity: dimOpacity ?? 0.18,
+    pinnedDimOpacity: 0.45,
+    transitionMs: 200,
+  };
+  applyDimPolicy(graph, dimState);
 }

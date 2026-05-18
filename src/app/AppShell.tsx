@@ -84,45 +84,6 @@ export function AppShell() {
     largestComponentSize: undefined,
   } : summary;
 
-  // Physics preset values for slider sync
-  const PRESET_VALUES = {
-    balanced: {
-      repelForce: 100,
-      centerForce: 200,
-      linkDistance: 3,
-      strongGravityMode: false,
-      linLogMode: false,
-    },
-    spread: {
-      repelForce: 300,
-      centerForce: 50,
-      linkDistance: 3,
-      strongGravityMode: false,
-      linLogMode: false,
-    },
-    tight: {
-      repelForce: 50,
-      centerForce: 400,
-      linkDistance: 5,
-      strongGravityMode: true,
-      linLogMode: false,
-    },
-    organic: {
-      repelForce: 150,
-      centerForce: 100,
-      linkDistance: 3,
-      strongGravityMode: false,
-      linLogMode: true,
-    },
-    performance: {
-      repelForce: 80,
-      centerForce: 200,
-      linkDistance: 3,
-      strongGravityMode: false,
-      linLogMode: false,
-    },
-  };
-
   // v86b: Quality preset values for appearance sync
   const QUALITY_PRESET_VALUES = {
     potato: {
@@ -151,41 +112,6 @@ export function AppShell() {
     },
   };
 
-  // Sync physics sliders with preset values
-  useEffect(() => {
-    const preset = settings.physics.physicsPreset;
-    if (preset === "custom") return;
-    const vals = PRESET_VALUES[preset as keyof typeof PRESET_VALUES];
-    if (!vals) return;
-    setSetting("physics", {
-      ...settings.physics,
-      ...vals,
-      physicsPreset: preset,
-    });
-  }, [settings.physics.physicsPreset]);
-  
-  // Auto-flip physicsPreset to custom when physics fields change manually
-  useEffect(() => {
-    const preset = settings.physics.physicsPreset;
-    if (preset === "custom") return;
-    const vals = PRESET_VALUES[preset as keyof typeof PRESET_VALUES];
-    if (!vals) return;
-    const current = settings.physics;
-    const differs =
-      current.repelForce !== vals.repelForce ||
-      current.centerForce !== vals.centerForce ||
-      current.linkDistance !== vals.linkDistance ||
-      current.strongGravityMode !== vals.strongGravityMode ||
-      current.linLogMode !== vals.linLogMode;
-    if (differs) setSetting("physics.physicsPreset", "custom");
-  }, [
-    settings.physics.repelForce,
-    settings.physics.centerForce,
-    settings.physics.linkDistance,
-    settings.physics.strongGravityMode,
-    settings.physics.linLogMode,
-  ]);
-  
   // v86b: Sync appearance settings with quality preset values
   useEffect(() => {
     const preset = settings.performance.qualityPreset;
@@ -234,6 +160,12 @@ export function AppShell() {
     settings.graphView.neighborhoodDepth ?? 2
   ) as 1 | 2 | 3 | 4;
 
+  // Pass C4: Derive active dialect's seedParamOverrides for live tuning
+  const activeSeedParamOverrides = (settings.physics.seedParamOverrides?.[settings.physics.dialectId] ?? {}) as Record<string, unknown>;
+
+  // Pass C9.1: Derive active dialect's pin map
+  const activePins = (settings.physics.pins?.[settings.physics.dialectId] ?? {}) as Record<string, { x: number; y: number; z?: number }>;
+
   // v86b: Click halo state — single active halo, overridden by rapid clicks
   const [clickHalo, setClickHalo] = useState<{
     x: number;
@@ -254,6 +186,12 @@ export function AppShell() {
   const [pathTargetId, setPathTargetId] = useState<string | null>(null);
   const [inspectorExpanded, setInspectorExpanded] = useState(false);
   const [themeInspectorEnabled, setThemeInspectorEnabled] = useState(false);
+
+  // Pass C9.2: pinned highlight mode state (persisted for testability)
+  const pinnedHighlightActive = settings.physics?.pinnedHighlightActive ?? false;
+  const setPinnedHighlightActive = (value: boolean) => {
+    setSetting("physics.pinnedHighlightActive", value);
+  };
 
   // Ctrl+\ hotkey to toggle left panel
   useEffect(() => {
@@ -310,11 +248,7 @@ export function AppShell() {
       graphNodes,
       graphEdges,
       {
-        nodeSize: settings.physics.nodeSize,
-        linkDistance: settings.physics.linkDistance,
-        repelForce: settings.physics.repelForce,
-        centerForce: settings.physics.centerForce,
-        physicsDialect: "default",
+        nodeSize: settings.graphView.nodeSize,
       },
     );
     const neighborhood = getRelationshipNeighborhood(graph, selectedEdgeId);
@@ -334,11 +268,7 @@ export function AppShell() {
       adaptedFixture.nodes,
       adaptedFixture.edges,
       {
-        nodeSize: settings.physics.nodeSize,
-        linkDistance: settings.physics.linkDistance,
-        repelForce: settings.physics.repelForce,
-        centerForce: settings.physics.centerForce,
-        physicsDialect: "default",
+        nodeSize: settings.graphView.nodeSize,
       },
     );
     componentDiagnostics = {
@@ -877,17 +807,16 @@ export function AppShell() {
                     key={graphSummary.source}
                     nodes={graphNodes}
                     edges={graphEdges}
-                    nodeSize={settings.physics.nodeSize}
-                    linkDistance={settings.physics.linkDistance}
-                    repelForce={settings.physics.repelForce}
-                    centerForce={settings.physics.centerForce}
-                    physicsPreset={settings.physics.physicsPreset}
-                    physicsDialect={settings.physics.physicsDialect}
-                    strongGravityMode={settings.physics.strongGravityMode}
-                    linLogMode={settings.physics.linLogMode}
-                    adjustSizes={settings.physics.adjustSizes}
-                    barnesHutTheta={settings.physics.barnesHutTheta}
-                    communityGravity={settings.physics.communityGravity}
+                    nodeSize={settings.graphView.nodeSize}
+                    dialectId={settings.physics.dialectId}
+                    seedParamOverrides={activeSeedParamOverrides}
+                    activePins={activePins}
+                    onUpdatePins={(dialectId: string, pinMap: Record<string, { x: number; y: number; z?: number }>) => {
+                      const currentAll = useSettingsStore.getState().settings.physics.pins ?? {};
+                      const newAll = { ...currentAll, [dialectId]: pinMap };
+                      setSetting("physics.pins", newAll);
+                    }}
+                    pinnedHighlightActive={pinnedHighlightActive}
                     selectedNodeId={selectedNodeId}
                     selectedEdgeId={selectedEdgeId}
                     pathTargetId={pathTargetId}
@@ -995,6 +924,9 @@ export function AppShell() {
                         alertColor={themeTokens.bookmark?.alertColor}
                         pinnedColor={themeTokens.bookmark?.pinnedColor}
                         refColor={themeTokens.bookmark?.refColor}
+                        onTogglePinnedHighlight={() => {
+                          setPinnedHighlightActive(!pinnedHighlightActive);
+                        }}
                       />
 
                       {/* v86b close-1: Minimap */}

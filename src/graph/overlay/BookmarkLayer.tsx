@@ -12,9 +12,11 @@ interface BookmarkLayerProps {
   alertColor?: string;
   pinnedColor?: string;
   refColor?: string;
+  // Pass C9.2: toggle callback for pinned highlight mode
+  onTogglePinnedHighlight?: () => void;
 }
 
-export function BookmarkLayer({ alertColor, pinnedColor, refColor }: BookmarkLayerProps) {
+export function BookmarkLayer({ alertColor, pinnedColor, refColor, onTogglePinnedHighlight }: BookmarkLayerProps) {
   const bookmarks = bookmarkRegistry.getAll();
 
   return (
@@ -27,7 +29,12 @@ export function BookmarkLayer({ alertColor, pinnedColor, refColor }: BookmarkLay
             pinnedColor={pinnedColor}
             refColor={refColor}
             onClick={() => {
-              // Handle bookmark click - navigate to targetNodeId if present
+              // Pass C9.2: Toggle pinned highlight mode for pinned bookmarks
+              if (bookmark.type === "pinned" && onTogglePinnedHighlight) {
+                onTogglePinnedHighlight();
+                return;
+              }
+              // Existing behavior for alert/ref bookmarks
               if (bookmark.targetNodeId) {
                 console.log("Navigate to:", bookmark.targetNodeId);
               }

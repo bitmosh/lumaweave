@@ -12,39 +12,6 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Sigma instance identity persists across state changes", () => {
-  test("PART A: physics slider change does not recreate Sigma", async ({ page }) => {
-    await page.goto("/");
-    await page.waitForSelector("canvas");
-
-    // Wait for Sigma instance to be available
-    await page.waitForTimeout(200);
-
-    // Inject a sentinel
-    const originalSentinel = await page.evaluate(() => {
-      const sigma = (window as any).__lwSigma;
-      if (!sigma) throw new Error("Sigma instance not available");
-      const sentinel = "alpha-" + Date.now();
-      (sigma as any).__sentinel = sentinel;
-      return sentinel;
-    });
-
-    // Trigger physics slider change
-    const repelForceSlider = page.locator("[data-testid='setting-physics-repelForce']");
-    await expect(repelForceSlider).toBeVisible();
-    await repelForceSlider.fill("150");
-    await page.waitForTimeout(500);
-
-    // Capture sentinel after change
-    const sentinelAfter = await page.evaluate(() => {
-      const sigma = (window as any).__lwSigma;
-      if (!sigma) throw new Error("Sigma instance not available");
-      return (sigma as any).__sentinel;
-    });
-
-    // Assert: sentinel UNCHANGED (Sigma not recreated)
-    expect(sentinelAfter).toBe(originalSentinel);
-  });
-
   test("PART B: theme change does not recreate Sigma", async ({ page }) => {
     await page.goto("/");
     await page.waitForSelector("canvas");

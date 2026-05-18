@@ -1,0 +1,14 @@
+{
+  "name": "gwells",
+  "version": "0.0.0-pre",
+  "description": "Typed gravity-well physics engine for graphology graphs.",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "license": "UNLICENSED",
+  "private": true,
+  "peerDependencies": {
+    "graphology": "*",
+    "graphology-types": "*"
+  },
+  "keywords": ["graphology", "physics", "layout", "force-directed", "gravity-wells"]
+}

@@ -305,43 +305,67 @@ for (const node of nodes) {
 }
 
 // ============================================================================
-// SECTION: SYNTHESIZE DIRECTORY SPINE NODES
-// Mirror the full directory hierarchy as spine-type nodes so the renderer
-// has a structural backbone to lay out against.
+// SECTION: SYNTHESIZE DIRECTORY SPINE NODES (dynamic enumeration)
+// Every immediate subdirectory of src/ and docs/ becomes a spine node.
+// Plus two "root-level" spines (spine.src-root, spine.docs-root) for files
+// living directly in src/ or docs/ (not in any subdirectory). Those files
+// attach to their root spine via contains edges; the seeder treats them as
+// endpoint-fans at the spine's terminus.
+//
+// Pass C8.1: replaces the previously hardcoded TOP_LEVEL_SUBSYSTEMS list.
 // ============================================================================
 
-// Collect every unique directory path from every node's path field,
-// walking up to repo-relative roots ("src" and "docs").
-const directoryPaths = new Set();
-for (const node of nodes) {
-  if (!node.path) continue;
-  let p = path.dirname(node.path);
-  while (p && p !== "." && p !== "/" && p !== "") {
-    directoryPaths.add(p);
-    p = path.dirname(p);
-  }
+function listImmediateSubdirs(rootRelativeDir) {
+  const fullDir = path.join(repoRoot, rootRelativeDir);
+  if (!fs.existsSync(fullDir)) return [];
+  return fs
+    .readdirSync(fullDir, { withFileTypes: true })
+    .filter(d => d.isDirectory())
+    .filter(d => !d.name.startsWith('.'))  // skip .git, .vscode, etc.
+    .filter(d => !['node_modules', 'dist', 'build', 'screenshots'].includes(d.name))
+    .map(d => `${rootRelativeDir}/${d.name}`);
 }
 
-// Materialize spine nodes for every directory not already represented.
-for (const dirPath of Array.from(directoryPaths).sort()) {
-  const id = slug(dirPath);
+function listImmediateFiles(rootRelativeDir) {
+  const fullDir = path.join(repoRoot, rootRelativeDir);
+  if (!fs.existsSync(fullDir)) return [];
+  return fs
+    .readdirSync(fullDir, { withFileTypes: true })
+    .filter(d => d.isFile())
+    .filter(d => !d.name.startsWith('.'))
+    .map(d => `${rootRelativeDir}/${d.name}`);
+}
 
-  // Skip if a node with this id already exists (prevents duplicate ids
-  // from files whose slug happens to coincide with a dirname).
-  if (nodeMap.has(id)) continue;
+// Build the spine list: every immediate subdirectory of src/ and docs/
+const SUBSYSTEM_DIRS = [
+  ...listImmediateSubdirs('src'),
+  ...listImmediateSubdirs('docs'),
+];
 
-  // Get directory mtime for lastModified
+// Build spine ID from a directory path.
+// "src/graph" -> "spine.src.graph"
+// "docs/known-bugs" -> "spine.docs.known-bugs"
+function spineIdForPath(dirPath) {
+  const segs = dirPath.split('/').map(s => s.toLowerCase().replace(/[^a-z0-9-]/g, ''));
+  return `spine.${segs.join('.')}`;
+}
+
+// Materialize a spine node for each subdirectory
+for (const dirPath of SUBSYSTEM_DIRS) {
+  const spineId = spineIdForPath(dirPath);
+  if (nodeMap.has(spineId)) continue;
+  
   let mtime;
   try {
     mtime = fs.statSync(path.join(repoRoot, dirPath)).mtime.toISOString();
   } catch {
     mtime = new Date().toISOString();
   }
-
+  
   const dirNode = {
-    id,
+    id: spineId,
     type: "spine",
-    label: path.basename(dirPath),
+    label: dirPath,           // full path → "src/graph", "docs/known-bugs"
     fullLabel: dirPath,
     path: dirPath,
     cluster: inferClusterFromPath(path.join(repoRoot, dirPath)) || null,
@@ -354,10 +378,112 @@ for (const dirPath of Array.from(directoryPaths).sort()) {
       dimFactor: 0.8,
     },
   };
-
+  
   nodes.push(dirNode);
-  nodeMap.set(id, dirNode);
+  nodeMap.set(spineId, dirNode);
 }
+
+// Materialize "root-level" spines for src/ and docs/ themselves,
+// to hold loose files that aren't in any subsystem subdirectory.
+const ROOT_SPINES = [
+  { spineId: "spine.src-root", path: "src", label: "src (root files)" },
+  { spineId: "spine.docs-root", path: "docs", label: "docs (root files)" },
+];
+
+for (const { spineId, path: dirPath, label } of ROOT_SPINES) {
+  if (nodeMap.has(spineId)) continue;
+  
+  // Only create the root spine if there are actually loose files there
+  const looseFiles = listImmediateFiles(dirPath);
+  if (looseFiles.length === 0) continue;
+  
+  let mtime;
+  try {
+    mtime = fs.statSync(path.join(repoRoot, dirPath)).mtime.toISOString();
+  } catch {
+    mtime = new Date().toISOString();
+  }
+  
+  const dirNode = {
+    id: spineId,
+    type: "spine",
+    label,
+    fullLabel: dirPath,
+    path: dirPath,
+    cluster: inferClusterFromPath(path.join(repoRoot, dirPath)) || null,
+    status: null,
+    tags: [],
+    size: 0,
+    lastModified: mtime,
+    raw: {
+      color: "#9ca3af",
+      dimFactor: 0.8,
+    },
+  };
+  
+  nodes.push(dirNode);
+  nodeMap.set(spineId, dirNode);
+}
+
+console.log(`✅ Synthesized ${SUBSYSTEM_DIRS.length} subsystem spines + ${ROOT_SPINES.filter(r => listImmediateFiles(r.path).length > 0).length} root-level spines`);
+
+// ============================================================================
+// SECTION 1.5: SYNTHESIZE DIRECTORY NODES
+// ============================================================================
+// For every leaf node (doc/code/config/fixture), ensure every directory
+// component of its path exists as a "directory" type node.
+//
+// Example: src/control-plane/panels/HelixTwistSliders.tsx requires:
+//   - src                              → node id: "src"
+//   - src/control-plane                → node id: "src.control-plane"
+//   - src/control-plane/panels         → node id: "src.control-plane.panels"
+//
+// These directory nodes link the leaf files into a contains-edge chain
+// that gwells's radial-backbone seeder can walk.
+
+const directoriesToCreate = new Set();
+
+for (const node of nodes) {
+  // Walk every parent directory of this node's path
+  if (!node.path) continue;
+  let dirPath = path.dirname(node.path);
+  while (dirPath && dirPath !== "." && dirPath !== "/") {
+    directoriesToCreate.add(dirPath);
+    dirPath = path.dirname(dirPath);
+  }
+}
+
+// Convert each directory path into a directory node
+for (const dirPath of directoriesToCreate) {
+  const id = slug(dirPath);
+  
+  // Skip if a node with this ID already exists (defensive)
+  if (nodeMap.has(id)) continue;
+  
+  const label = path.basename(dirPath);
+  const cluster = inferClusterFromPath(dirPath) || null;
+  
+  nodes.push({
+    id,
+    type: "directory",
+    label,
+    fullLabel: dirPath,
+    path: dirPath,
+    cluster,
+    status: null,
+    tags: [],
+    size: 0,
+    lastModified: new Date().toISOString(),
+    raw: {
+      color: "#7a8a9a",
+      dimFactor: 0.7,
+    },
+  });
+  
+  nodeMap.set(id, nodes[nodes.length - 1]);
+}
+
+console.log(`✅ Synthesized ${directoriesToCreate.size} directory nodes`);
 
 // ============================================================================
 // SECTION 2: EDGE EXTRACTION
@@ -382,31 +508,8 @@ function addEdge(source, target, type, weight, bidirectional, provenance) {
   });
 }
 
-// --- Type "contains" (parent directory → child file) ---
-
-for (const node of nodes) {
-  if (!node.path) continue;
-
-  const dirPath = path.dirname(node.path);
-
-  // Root nodes (src, docs) have no directory parent
-  if (!dirPath || dirPath === "." || dirPath === "/") continue;
-
-  const parentId = slug(dirPath);
-
-  // Only emit edge if parent exists as a node. Should always be true now
-  // that we materialize intermediate spines.
-  if (nodeMap.has(parentId)) {
-    addEdge(
-      parentId,
-      node.id,
-      "contains",
-      0.5,
-      false,
-      { source: "directory-walk" }
-    );
-  }
-}
+// --- Type "contains" (flattened directory parenting) ---
+// See SECTION 2.1 below for unified contains-edge generation
 
 // --- Type "governs" (contract/policy → spine) ---
 
@@ -746,6 +849,189 @@ for (const node of nodes) {
 }
 
 // ============================================================================
+// SECTION 2.1: CONTAINS EDGES (filesystem-hierarchical parenting)
+// ============================================================================
+// Every node's contains-parent is its real immediate filesystem parent.
+//
+// - A leaf (doc/code/config/fixture) at `src/graph/foo.ts` is contained by
+//   the directory `src/graph`.
+// - A directory at `src/graph/renderers` is contained by `src/graph`.
+// - A top-level directory at `src/graph` is contained by the spine
+//   `spine.graph` (whose .path is also "src/graph").
+// - A top-level directory whose path doesn't match any spine's path (e.g.,
+//   `src/control-plane` when there's no `spine.control-plane`) is contained
+//   by its closest spine ancestor by path prefix.
+//
+// Provenance sources:
+// - "directory-hierarchy": directory → its-parent-directory
+// - "spine-to-top-directory": spine → its-matching-top-level-directory
+// - "directory-leaf": directory → its immediate file leaves
+// - "spine-direct-leaf": fallback for a leaf with no synthesized directory parent
+//
+// This restores real filesystem hierarchy that Pass C6's flatten broke.
+// The seeders rely on this to build the fern-frond layout.
+
+const SPINE_NODES = nodes.filter(n => n.type === "spine");
+
+// Find the spine whose .path is the longest prefix of the given path.
+// Also handles the case where the target path is an ancestor of a spine path
+// (e.g., "docs" is ancestor of "docs/graph").
+function findOwningSpine(targetPath) {
+  let best = null;
+  let bestLen = 0;
+  for (const spine of SPINE_NODES) {
+    // Case 1: spine path is prefix of target (target is under spine)
+    if (targetPath === spine.path || targetPath.startsWith(spine.path + "/")) {
+      if (spine.path.length > bestLen) {
+        best = spine;
+        bestLen = spine.path.length;
+      }
+    }
+    // Case 2: target path is prefix of spine path (target is ancestor of spine)
+    // This handles top-level directories like "docs" and "src"
+    else if (spine.path.startsWith(targetPath + "/")) {
+      if (targetPath.length > bestLen) {
+        best = spine;
+        bestLen = targetPath.length;
+      }
+    }
+  }
+  return best;
+}
+
+// Pass 1: every DIRECTORY gets a contains-parent.
+// - If its own path matches a spine.path, attach to that spine (spine root case).
+// - Else if its parent path matches another synthesized directory, use that.
+// - Else if its parent path matches a spine.path, attach to that spine.
+// - Else attach to its owning spine by prefix (fallback).
+for (const node of nodes) {
+  if (node.type !== "directory") continue;
+
+  const parentPath = path.dirname(node.path);
+  const parentDirId = slug(parentPath);
+
+  // Case A: directory's own path matches a spine.path (this directory IS the spine's root)
+  const matchingSpine = SPINE_NODES.find(s => s.path === node.path);
+  if (matchingSpine) {
+    addEdge(
+      matchingSpine.id,
+      node.id,
+      "contains",
+      0.5,
+      false,
+      { source: "spine-to-top-directory", detail: "spine→its-top-level-directory" }
+    );
+    continue;
+  }
+
+  // Case B: parent directory exists as a synthesized node
+  if (nodeMap.has(parentDirId) && nodeMap.get(parentDirId).type === "directory") {
+    addEdge(
+      parentDirId,
+      node.id,
+      "contains",
+      0.5,
+      false,
+      { source: "directory-hierarchy", detail: "directory→parent-directory" }
+    );
+    continue;
+  }
+
+  // Case C: parent is a spine (top-level directory whose parent path matches a spine.path)
+  const parentSpine = SPINE_NODES.find(s => s.path === parentPath);
+  if (parentSpine) {
+    addEdge(
+      parentSpine.id,
+      node.id,
+      "contains",
+      0.5,
+      false,
+      { source: "spine-to-top-directory", detail: "spine→its-top-level-directory" }
+    );
+    continue;
+  }
+
+  // Case D: no exact parent. Find the owning spine and attach there.
+  // This handles cases like `docs/_archive/legacy` where `docs/_archive` isn't
+  // synthesized but `docs` (under spine.docs) is.
+  const owningSpine = findOwningSpine(node.path);
+  if (owningSpine) {
+    addEdge(
+      owningSpine.id,
+      node.id,
+      "contains",
+      0.5,
+      false,
+      { source: "spine-fallback", detail: "directory with no synthesized parent" }
+    );
+  }
+  // If no owning spine either, the directory is orphaned. Don't error — log.
+  else {
+    console.warn(`[generate-self-graph] Orphan directory: ${node.id} (${node.path})`);
+  }
+}
+
+// Pass 2: every LEAF gets a contains-parent.
+// - Immediate filesystem parent directory if it exists as a synthesized node.
+// - Else owning spine as fallback.
+for (const node of nodes) {
+  if (
+    node.type !== "doc" &&
+    node.type !== "code" &&
+    node.type !== "config" &&
+    node.type !== "fixture"
+  ) continue;
+
+  const parentPath = path.dirname(node.path);
+  const parentDirId = slug(parentPath);
+
+  if (nodeMap.has(parentDirId) && nodeMap.get(parentDirId).type === "directory") {
+    addEdge(
+      parentDirId,
+      node.id,
+      "contains",
+      0.5,
+      false,
+      { source: "directory-leaf", detail: "directory→leaf-file" }
+    );
+    continue;
+  }
+
+  // Check if parent path matches a spine directly (file at top level of spine.path)
+  const parentSpine = SPINE_NODES.find(s => s.path === parentPath);
+  if (parentSpine) {
+    // Mark as endpoint-fan if attached to a root spine (loose file at src/ or docs/)
+    if (parentSpine.id === "spine.src-root" || parentSpine.id === "spine.docs-root") {
+      node.isEndpoint = true;
+    }
+    addEdge(
+      parentSpine.id,
+      node.id,
+      "contains",
+      0.5,
+      false,
+      { source: "spine-direct-leaf", detail: "spine→file-at-spine-root" }
+    );
+    continue;
+  }
+
+  // Fallback to owning spine
+  const owningSpine = findOwningSpine(node.path);
+  if (owningSpine) {
+    addEdge(
+      owningSpine.id,
+      node.id,
+      "contains",
+      0.5,
+      false,
+      { source: "spine-direct-leaf", detail: "leaf with no immediate directory parent" }
+    );
+  } else {
+    console.warn(`[generate-self-graph] Orphan leaf: ${node.id} (${node.path})`);
+  }
+}
+
+// ============================================================================
 // SECTION 3: CLEANUP
 // ============================================================================
 
@@ -784,6 +1070,7 @@ const nodesByType = {
   config: nodes.filter(n => n.type === "config").length,
   fixture: nodes.filter(n => n.type === "fixture").length,
   spine: nodes.filter(n => n.type === "spine").length,
+  directory: nodes.filter(n => n.type === "directory").length,
 };
 
 const edgesByType = {};

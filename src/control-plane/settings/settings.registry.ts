@@ -5,6 +5,7 @@ export type SettingControl =
       label: string;
       description?: string;
       category: string;
+      testId?: string;
     }
   | {
       type: "range";
@@ -15,6 +16,7 @@ export type SettingControl =
       min: number;
       max: number;
       step: number;
+      testId?: string;
     }
   | {
       type: "select";
@@ -23,6 +25,7 @@ export type SettingControl =
       description?: string;
       category: string;
       options: Array<{ value: string; label: string }>;
+      testId?: string;
     }
   | {
       type: "text";
@@ -30,114 +33,21 @@ export type SettingControl =
       label: string;
       description?: string;
       category: string;
+      testId?: string;
     };
 
 export const settingsRegistry: SettingControl[] = [
   {
     type: "select",
     category: "Physics",
-    path: "physics.physicsPreset",
-    label: "Physics Preset",
-    description: "Quick preset configurations for common graph layouts.",
+    path: "physics.dialectId",
+    label: "Gwells Dialect",
+    description: "Gwells physics dialect for graph layout.",
+    testId: "dialect-select",
     options: [
-      { value: "custom", label: "Custom" },
-      { value: "balanced", label: "Balanced" },
-      { value: "spread", label: "Spread Out" },
-      { value: "tight", label: "Tight Clusters" },
-      { value: "organic", label: "Organic Flow" },
-      { value: "performance", label: "Performance" },
+      { value: "gwells.dialect.radial-backbone", label: "Radial Backbone" },
+      { value: "gwells.dialect.parallel-spines", label: "Parallel Spines" },
     ],
-  },
-  {
-    type: "select",
-    category: "Physics",
-    path: "physics.physicsDialect",
-    label: "Physics Dialect",
-    description: "Layout algorithm and shape",
-    options: [
-      { value: "default", label: "Default (Force-Directed)" },
-      { value: "solar-orbit", label: "Solar Orbit" },
-    ],
-  },
-  {
-    type: "range",
-    category: "Physics",
-    path: "physics.nodeSize",
-    label: "Node Size",
-    min: 0.25,
-    max: 4,
-    step: 0.05,
-  },
-  {
-    type: "range",
-    category: "Physics",
-    path: "physics.linkDistance",
-    label: "Simulation Speed",
-    description: "Controls simulation convergence speed. Higher values slow movement and increase stability. Lower values create faster, more chaotic movement.",
-    min: 1,
-    max: 20,
-    step: 0.5,
-  },
-  {
-    type: "range",
-    category: "Physics",
-    path: "physics.repelForce",
-    label: "Repel Force",
-    min: 0,
-    max: 500,
-    step: 5,
-  },
-  {
-    type: "range",
-    category: "Physics",
-    path: "physics.centerForce",
-    label: "Center Force",
-    description: "Controls attraction to graph center.",
-    min: 0,
-    max: 200,
-    step: 5,
-  },
-  // ForceAtlas2 advanced parameters
-  {
-    type: "boolean",
-    category: "Physics",
-    path: "physics.strongGravityMode",
-    label: "Strong Gravity Mode",
-    description: "Enables stronger gravity force for more compact layouts.",
-  },
-  {
-    type: "boolean",
-    category: "Physics",
-    path: "physics.linLogMode",
-    label: "Lin-Log Mode",
-    description: "Uses logarithmic attraction for better edge distribution.",
-  },
-  {
-    type: "boolean",
-    category: "Physics",
-    path: "physics.adjustSizes",
-    label: "Adjust Sizes",
-    description: "Allows FA2 to adjust node sizes during simulation.",
-  },
-  {
-    type: "range",
-    category: "Physics",
-    path: "physics.barnesHutTheta",
-    label: "Barnes-Hut Theta",
-    description: "Accuracy/performance tradeoff for Barnes-Hut approximation.",
-    min: 0.1,
-    max: 1.2,
-    step: 0.05,
-  },
-  {
-    type: "range",
-    category: "Physics",
-    path: "physics.communityGravity",
-    label: "Community Gravity",
-    description: "Extra gravitational pull toward cluster centroid. Tightens neighborhoods.",
-    min: 0,
-    max: 5,
-    step: 0.1,
   },
   {
     type: "select",
