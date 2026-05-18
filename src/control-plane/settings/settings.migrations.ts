@@ -136,6 +136,14 @@ const MIGRATIONS: Record<number,
     physics.pins ??= {};
     return { ...s, physics } as Partial<StarmapSettings>;
   },
+
+  // v84 → v85: pinnedHighlightActive field added in Pass C9.3,
+  // migration backfilling added in Pass C9.4
+  85: (s) => {
+    const physics = { ...(s.physics ?? {}) } as any;
+    physics.pinnedHighlightActive ??= false;
+    return { ...s, physics } as Partial<StarmapSettings>;
+  },
 };
 
 export function migrateSettings(

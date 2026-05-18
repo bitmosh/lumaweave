@@ -565,7 +565,7 @@ test.describe("Gwells Physics Integration", () => {
     expect(state.second).toBe(true);
   });
 
-  test("Pass C9.2: Clicking pinned bookmark toggles dim-on-pinned highlight", async ({ page }) => {
+  test("Pass C9.4: Clicking pinned bookmark dims non-pinned nodes", async ({ page }) => {
     await page.waitForFunction(() => {
       const sigma = (window as any).__lwSigma;
       if (!sigma) return false;
@@ -574,8 +574,8 @@ test.describe("Gwells Physics Integration", () => {
 
     await page.waitForTimeout(500);
 
-    // Pin one node so the "pinned" set is non-empty AND find a
-    // non-pinned probe in the same evaluate (single round-trip)
+    // SETUP: pin one node and identify a non-pinned probe.
+    // Writing pins is setup state, not the gesture under test.
     const probes = await page.evaluate(() => {
       const graph = (window as any).__lwSigma.getGraph();
       let pinnedId: string | null = null;
@@ -591,7 +591,6 @@ test.describe("Gwells Physics Integration", () => {
     expect(probes.pinnedId).not.toBeNull();
     expect(probes.nonPinnedId).not.toBeNull();
 
-    // Pin the first probe
     await page.evaluate((id: string) => {
       const store = (window as any).__lwStore;
       const settings = store.getState().settings;
@@ -603,13 +602,19 @@ test.describe("Gwells Physics Integration", () => {
     }, probes.pinnedId!);
     await page.waitForTimeout(800);
 
-    // Force Sigma to refresh so any pending styling propagates
+    // Ensure dim mode starts OFF
+    await page.evaluate(() => {
+      const store = (window as any).__lwStore;
+      if (store.getState().settings.physics.pinnedHighlightActive) {
+        store.getState().setSetting("physics.pinnedHighlightActive", false);
+      }
+    });
+    await page.waitForTimeout(300);
     await page.evaluate(() => (window as any).__lwSigma?.refresh?.());
     await page.waitForTimeout(200);
 
-    // Before click: dim mode is off. Both nodes should be visible.
-    // applyDimPolicy in "off" mode sets alpha=1.0 on every node.
-    const beforeAlphas = await page.evaluate((ids: { pinnedId: string; nonPinnedId: string }) => {
+    // Baseline: dim is off, both nodes visible
+    const before = await page.evaluate((ids: { pinnedId: string; nonPinnedId: string }) => {
       const graph = (window as any).__lwSigma.getGraph();
       return {
         pinned: graph.getNodeAttribute(ids.pinnedId, "alpha"),
@@ -617,88 +622,56 @@ test.describe("Gwells Physics Integration", () => {
       };
     }, { pinnedId: probes.pinnedId!, nonPinnedId: probes.nonPinnedId! });
 
-    // Either explicit 1.0 or undefined (Sigma default) — both mean "visible"
-    const beforePinnedVisible = beforeAlphas.pinned === undefined || beforeAlphas.pinned >= 0.9;
-    const beforeNonPinnedVisible = beforeAlphas.nonPinned === undefined || beforeAlphas.nonPinned >= 0.9;
+    const beforePinnedVisible = before.pinned === undefined || before.pinned >= 0.9;
+    const beforeNonPinnedVisible = before.nonPinned === undefined || before.nonPinned >= 0.9;
     expect(beforePinnedVisible).toBe(true);
     expect(beforeNonPinnedVisible).toBe(true);
 
-    // Toggle dim mode via settings (now persisted for testability)
-    await page.evaluate(() => {
-      const store = (window as any).__lwStore;
-      store.getState().setSetting("physics.pinnedHighlightActive", true);
-    });
-    await page.waitForTimeout(500);
-
-    // Force refresh after the React state propagates
+    // GESTURE UNDER TEST: click the "Pinned" bookmark
+    const pinnedBookmark = page.getByText("Pinned", { exact: true }).first();
+    await expect(pinnedBookmark).toBeVisible({ timeout: 5000 });
+    await pinnedBookmark.click();
+    await page.waitForTimeout(600);
     await page.evaluate(() => (window as any).__lwSigma?.refresh?.());
     await page.waitForTimeout(200);
 
-    // Manually trigger styling by calling applyGraphStylePolicy
-    // NOTE: React effect not triggering when setting changes - this is a workaround
-    await page.evaluate((pinnedId: string) => {
-      const graph = (window as any).__lwSigma.getGraph();
-      // Get pinned set
-      const pinnedSet = graph.hasAttribute("__gwellsPinnedSet")
-        ? graph.getAttribute("__gwellsPinnedSet") as Set<string>
-        : new Set<string>();
-      // Apply dim policy manually: pinned nodes alpha=1.0, others alpha=0.45
-      graph.forEachNode((id: string) => {
-        graph.setNodeAttribute(id, "alpha", pinnedSet.has(id) ? 1.0 : 0.45);
-      });
-    }, probes.pinnedId!);
-    await page.evaluate(() => (window as any).__lwSigma?.refresh?.());
-    await page.waitForTimeout(200);
-
-    // After toggle: non-pinned should be dimmed (alpha ~0.45).
-    // Pinned should remain visible (alpha 1.0 or undefined).
-    const afterAlphas = await page.evaluate((ids: { pinnedId: string; nonPinnedId: string }) => {
+    // After click: non-pinned should be dimmed
+    const after = await page.evaluate((ids: { pinnedId: string; nonPinnedId: string }) => {
       const graph = (window as any).__lwSigma.getGraph();
       return {
         pinned: graph.getNodeAttribute(ids.pinnedId, "alpha"),
         nonPinned: graph.getNodeAttribute(ids.nonPinnedId, "alpha"),
+        pinnedHighlightActive: (window as any).__lwStore.getState()
+          .settings.physics.pinnedHighlightActive,
       };
     }, { pinnedId: probes.pinnedId!, nonPinnedId: probes.nonPinnedId! });
 
-    // The load-bearing assertion: non-pinned alpha is in the dim range.
-    // pinnedDimOpacity defaults to 0.45; allow 0.3-0.6 to absorb future
-    // tuning without making the test brittle.
-    expect(afterAlphas.nonPinned).toBeDefined();
-    expect(afterAlphas.nonPinned).toBeGreaterThan(0.3);
-    expect(afterAlphas.nonPinned).toBeLessThan(0.6);
+    expect(after.pinnedHighlightActive).toBe(true);
+    expect(after.nonPinned).toBeDefined();
+    expect(after.nonPinned).toBeGreaterThan(0.3);
+    expect(after.nonPinned).toBeLessThan(0.6);
 
-    // Pinned node should be brighter than non-pinned by a clear margin
-    const pinnedAlpha = afterAlphas.pinned ?? 1.0;
+    const pinnedAlpha = after.pinned ?? 1.0;
     expect(pinnedAlpha).toBeGreaterThanOrEqual(0.9);
-    expect(pinnedAlpha - (afterAlphas.nonPinned ?? 0)).toBeGreaterThan(0.3);
+    expect(pinnedAlpha - (after.nonPinned ?? 0)).toBeGreaterThan(0.3);
 
-    // Toggle off to verify restoration
-    await page.evaluate(() => {
-      const store = (window as any).__lwStore;
-      store.getState().setSetting("physics.pinnedHighlightActive", false);
-    });
-    await page.waitForTimeout(500);
-
-    // Manually restore styling (workaround for effect not triggering)
-    await page.evaluate(() => {
-      const graph = (window as any).__lwSigma.getGraph();
-      // Restore all nodes to alpha=1.0 (visible)
-      graph.forEachNode((id: string) => {
-        graph.setNodeAttribute(id, "alpha", 1.0);
-      });
-    });
+    // Click again to toggle off
+    await pinnedBookmark.click();
+    await page.waitForTimeout(600);
     await page.evaluate(() => (window as any).__lwSigma?.refresh?.());
     await page.waitForTimeout(200);
 
-    // Back to "off" — both visible again
     const restored = await page.evaluate((ids: { pinnedId: string; nonPinnedId: string }) => {
       const graph = (window as any).__lwSigma.getGraph();
       return {
         pinned: graph.getNodeAttribute(ids.pinnedId, "alpha"),
         nonPinned: graph.getNodeAttribute(ids.nonPinnedId, "alpha"),
+        pinnedHighlightActive: (window as any).__lwStore.getState()
+          .settings.physics.pinnedHighlightActive,
       };
     }, { pinnedId: probes.pinnedId!, nonPinnedId: probes.nonPinnedId! });
 
+    expect(restored.pinnedHighlightActive).toBe(false);
     const restoredPinnedVisible = restored.pinned === undefined || restored.pinned >= 0.9;
     const restoredNonPinnedVisible = restored.nonPinned === undefined || restored.nonPinned >= 0.9;
     expect(restoredPinnedVisible).toBe(true);

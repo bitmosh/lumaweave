@@ -42,6 +42,10 @@ references.
 [Pass C9.2]    Pin management UI: Reset Pinned button, Ctrl+RightClick per-node reset,
                 pinned bookmark dim-on-select highlight mode
                 (this commit)
+[Pass C9.3]    Hardens dim-on-pinned test and adds render bug regression test
+                (this commit)
+[Pass C9.4]    Fixes pinned-highlight wiring and adds v84→v85 migration
+                (this commit)
 ```
 
 Each pass commits cleanly with passing tests. The branch is intended to be
@@ -56,7 +60,7 @@ merged to main as a single coherent feature once Pass C9 completes.
   the project's registry contract pattern.
 - Two dialects ship: `gwells.dialect.radial-backbone` (default) and
   `gwells.dialect.parallel-spines`.
-- Settings store v82 with migration chain from FA2-era v80.
+- Settings store v85 with migration chain from FA2-era v80.
 
 ### Layout
 
@@ -88,11 +92,11 @@ merged to main as a single coherent feature once Pass C9 completes.
 ### Tests
 
 - Validator (`npm run physics:gwells`): 12/12 passing.
-- Gwells Playwright spec (`tests/e2e/gwells-physics.spec.ts`): 10/10 passing
-  as of Pass C8.4. The Pass C5 drag-seed test threshold was bumped from 800
+- Gwells Playwright spec (`tests/e2e/gwells-physics.spec.ts`): 15/15 passing
+  as of Pass C9.4. The Pass C5 drag-seed test threshold was bumped from 800
   to 1100 in Pass C8.4 to accommodate the per-pair-spring behavior change
   introduced in Pass C8.2 plus the layout-scale changes from C8.4. Pass C9
-  will rework the test entirely alongside the drag-pin redesign.
+  reworked the drag-pin tests and added pinned-highlight tests.
 
 ## Sample current values
 
@@ -167,11 +171,15 @@ values has visible effect — a key design rule established in Pass C8.4. See
   design was changed to make `pinnedHighlightActive` a persisted setting for
   testability. A regression test for the pre-existing graph-blanks-on-mouseup bug
   was added but does not reproduce the issue in the test environment; the fix
-  is deferred to C9.4.
+  remains deferred.
 
-- **Pre-existing graph-blanks-on-mouseup render bug** — separate from physics,
-  filed separately. A regression test was added in C9.3 but does not reproduce
-  the issue; fix deferred to C9.4.
+- **Pass C9.4 (completed) fixes pinned-highlight wiring and adds migration** —
+  Fixed the broken `pinnedHighlightActive` wiring in the third `applyGraphStylePolicy`
+  call site in `SigmaGraphView.tsx`. Fixed the toggle-off issue in `graphStylePolicy.ts`
+  by always calling `applyDimPolicy` (including when mode is "off" to clear dimming).
+  Added v84→v85 migration to backfill `physics.pinnedHighlightActive` to `false`.
+  Replaced the workaround test with an honest E2E test that actually clicks the bookmark
+  and asserts visible dimming.
 
 - **Pass C10 candidate — universal structural classification.** Current
   wellAssignment matches on string node types: `nodeType === "directory"`,

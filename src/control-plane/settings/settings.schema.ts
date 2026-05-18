@@ -44,7 +44,7 @@ export interface TileLayoutEntry {
 }
 
 export interface StarmapSettings {
-  version: 84; // vP-physics-dialect-c9.1: bumped from 83 for pins field
+  version: 85; // Pass C9.4: bumped from 84 for pinnedHighlightActive migration
 
   general: {
     startupProjectId: string | null;

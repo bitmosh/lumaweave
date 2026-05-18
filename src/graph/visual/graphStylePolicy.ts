@@ -331,17 +331,16 @@ export function applyGraphStylePolicy(
     ? "outside-pinned"
     : (dimMode ?? "off");
 
-  if (effectiveDimMode !== "off") {
-    const dimState: DimPolicyState = {
-      mode: effectiveDimMode,
-      clusterDepth: neighborhoodDepth ?? 2,
-      selectedNodeId: effectiveDimMode === "outside-cluster"
-        ? (selectedNodeId ?? null)
-        : null,
-      dimOpacity: dimOpacity ?? 0.18,
-      pinnedDimOpacity: 0.45,
-      transitionMs: 200,
-    };
-    applyDimPolicy(graph, dimState);
-  }
+  // Always apply dim policy so it can handle "off" mode by clearing dimming
+  const dimState: DimPolicyState = {
+    mode: effectiveDimMode,
+    clusterDepth: neighborhoodDepth ?? 2,
+    selectedNodeId: effectiveDimMode === "outside-cluster"
+      ? (selectedNodeId ?? null)
+      : null,
+    dimOpacity: dimOpacity ?? 0.18,
+    pinnedDimOpacity: 0.45,
+    transitionMs: 200,
+  };
+  applyDimPolicy(graph, dimState);
 }

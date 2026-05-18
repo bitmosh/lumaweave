@@ -804,6 +804,7 @@ useEffect(() => {
     {
       hoverNodeColor: hoverNodeColor || (resolvedTokensRef.current?.nodeColor?.hover ?? graphVisualTokens.nodeColor.hover),
       edgeLabelFontSize: edgeLabelFontSize || 13,
+      pinnedHighlightActive,
     },
     resolvedTokensRef.current
   );
@@ -913,7 +914,7 @@ useEffect(() => {
     }
 
     sigma.refresh();
-  }, [selectedNodeId, selectedEdgeId, neighborhoodDepth, hoveredNodeId, hoveredEdgeId, hoverNodeColor, edgeLabelFontSize, resolvedTokens]);
+  }, [selectedNodeId, selectedEdgeId, neighborhoodDepth, hoveredNodeId, hoveredEdgeId, hoverNodeColor, edgeLabelFontSize, pinnedHighlightActive, resolvedTokens]);
 
   // Edge label font size live update effect
   useEffect(() => {
