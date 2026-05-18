@@ -537,11 +537,20 @@ nodes and is used by the engine's seed-anchor force.
 
 ### Drag Handler Integration
 
-When a user drags a node, the drag handler SHOULD update the node's seed
-position in `__gwellsSeedPositions` on mouseup. This prevents the seed-
-anchor force from pulling the node back to its original seeded position,
-allowing the user's placement to become the new layout intent. The
-integration point is in `SigmaGraphView.tsx`'s drag mouseup handler.
+Drag is temporary by default. When a user drags a non-spine node and
+releases without a modifier held, the drag handler does NOT update
+`__gwellsSeedPositions`. The seed-anchor force (Pass C5) pulls the node
+back toward its original seeded position over the next several frames.
+Spine nodes (well type `gwells.well.spine-linear`) are pinned by the seed
+function and cannot be dragged; the Sigma downNode handler gates on
+`attrs.nodeType === "spine"` and refuses to start a drag.
+
+Pass C9.1 introduces a modifier-held pin gesture that writes the drop
+position to `settings.physics.pins[activeDialectId]` rather than to
+`__gwellsSeedPositions`, preserving the separation between seeder authority
+(geometric layout intent of the dialect) and user pin authority (manual
+placement override). The integration point remains in
+`SigmaGraphView.tsx`.
 
 ### Dialect Switching
 

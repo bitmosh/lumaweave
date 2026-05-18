@@ -35,6 +35,8 @@ references.
 [Pass C8.4]    Spine bucketing + static alternation + root-spine far-end
                 + sizing model fix (itemSizesReference: positions)
                 (commit c537ea6)
+[Pass C9.0]    Default drift-back drag; spine-drag gated
+                (this commit)
 ```
 
 Each pass commits cleanly with passing tests. The branch is intended to be
@@ -135,19 +137,20 @@ values has visible effect — a key design rule established in Pass C8.4. See
 - **Drag-on-mouseup makes the graph view go blank.** Pre-existing render bug
   in SigmaGraphView, separate from physics. Filed separately. Will be
   addressed when Pass C9 redesigns drag handling.
-- **Pass C5 drag-seed test threshold** was bumped from 800 to 1100 in Pass
-  C8.4 (observed drift around 988 with the post-C8.4 sizing model). Pass C9
-  will rework the test entirely alongside the drag-pin redesign.
+- **Pass C5 drag-seed test was reworked in Pass C9.0** to assert drift-back
+  instead of stay-put. The new test name is "Pass C9.0: Dragging a node
+  without modifier drifts back toward seed."
 
 ### Queued for upcoming passes
 
-- **Pass C9 — drag-pin redesign.** Drag-pin currently sets the seed position
-  permanently. The design intent is temporary pinning: drag holds while held,
-  release returns the node to drift naturally back toward parent. Pinned
-  positions should be per-dialect (not global) so they persist across dialect
-  switches without affecting unrelated dialects. A "reset" button under the
-  dialect dropdown should clear per-dialect pins. The Pass C5 drag-seed test
-  will be reworked here.
+- **Pass C9.0 (this commit) makes default drag temporary** — mouseup no longer
+  updates `__gwellsSeedPositions`, and the seed-anchor force pulls dragged
+  nodes back toward their seeded position. Spine nodes can no longer be
+  dragged. Pass C9.1 (queued) will add modifier-held scoped drag (single
+  node / node+children / node+subtree) and per-dialect pin storage in
+  `settings.physics.pins`. Pass C9.2 (queued) will add the Reset Pinned
+  button, Ctrl+RightClick per-node reset, pinned-bookmark dim-on-select,
+  and the pre-existing graph-blanks-on-mouseup render-bug fix.
 
 - **Pass C10 candidate — universal structural classification.** Current
   wellAssignment matches on string node types: `nodeType === "directory"`,

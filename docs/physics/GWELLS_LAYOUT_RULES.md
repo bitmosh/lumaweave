@@ -223,7 +223,7 @@ The rule was established in Pass C7.
 
 ## Composition note
 
-Rules 1-8 compose. A radial-backbone layout with N=2:
+Rules 1-9 compose. A radial-backbone layout with N=2:
 
 - Rule 6 sorts spines into "src" vs "docs" axes
 - Rule 7 places root-spines at the far end of each axis
@@ -233,9 +233,25 @@ Rules 1-8 compose. A radial-backbone layout with N=2:
 - Rule 5 sizes every node by content, in graph coordinates
 - Rule 3 makes spring forces agree with seeded placement
 - Rule 8 filters spring forces to only fire between contained pairs
+- Rule 9 makes drag temporary by default (drift-back toward seed)
 
 The result is a deterministic, content-responsive, hierarchically-correct
 layout that the engine maintains via balanced forces.
+
+## Rule 9 — Drag is temporary by default
+
+A user dragging a non-spine node and releasing without a modifier held
+sees the node drift back toward its seeded position via the seed-anchor
+force (Rule 6 / Pass C5). The drag handler does not mutate
+`__gwellsSeedPositions`. Spine nodes cannot be dragged at all — the
+downNode handler refuses to start a drag if `attrs.nodeType === "spine"`.
+
+Future passes (C9.1, C9.2) layer opt-in pin behavior on top of this
+default: modifier-held mouseup writes to a separate per-dialect pin map,
+not to `__gwellsSeedPositions`, preserving the separation of layout
+authority (seeder) from manual authority (user pins).
+
+The rule was established in Pass C9.0.
 
 ## Rules deferred to future work
 
@@ -244,10 +260,6 @@ layout that the engine maintains via balanced forces.
   single hub point.
 - **Inward branching for parallel-spines.** Subdirectory trees branch toward
   the central axis (with a gravity pull), instead of outward.
-- **Drift-back drag (Pass C9).** Drag is currently permanent; the design rule
-  is that drag should be temporary — release returns the node toward its
-  seeded position. Pinned positions should be per-dialect, persistent across
-  dialect switches.
 - **Universal structural classification.** Replace string-based
   `nodeType === "directory"` matching with graph-structural queries (depth,
   has-children, is-leaf) so future source adapters work without engine

@@ -249,8 +249,8 @@ test.describe("Gwells Physics Integration", () => {
     expect(drift).toBeLessThan(150);  // before C5, drift was 500+ units within 2 seconds
   });
 
-  test("Pass C5: Dragging a node updates its seed position", async ({ page }) => {
-    // Wait for seeder to complete
+  test("Pass C9.0: Dragging a node without modifier drifts back toward seed", async ({ page }) => {
+    // Wait for seeder
     await page.waitForFunction(() => {
       const sigma = (window as any).__lwSigma;
       if (!sigma) return false;
@@ -260,48 +260,46 @@ test.describe("Gwells Physics Integration", () => {
 
     await page.waitForTimeout(500);
 
-    // Get any node that has a seed position
+    // Find a non-pinned node with a seed position (avoid spine-linear
+    // since those are pinned and won't be moved by the engine anyway).
     const probe = await page.evaluate(() => {
       const sigma = (window as any).__lwSigma;
       const graph = sigma.getGraph();
-      if (!graph.hasAttribute("__gwellsSeedPositions")) return null;
       const seeds = graph.getAttribute("__gwellsSeedPositions");
-      let foundNodeId: string | null = null;
+      const state = graph.getAttribute("__gwellsState");
+      let foundId: string | null = null;
       let foundSeed: any = null;
       graph.forEachNode((id: string) => {
-        if (!foundNodeId) {
-          const seed = seeds.get(id);
-          if (seed) {
-            foundNodeId = id;
-            foundSeed = seed;
-          }
+        if (foundId) return;
+        const seed = seeds.get(id);
+        // Access nodes map across either Map or plain-object shapes
+        const nodes: any = state?.nodes;
+        const nodeState = nodes?.get ? nodes.get(id) : nodes?.[id];
+        if (seed && nodeState && !nodeState.pinned) {
+          foundId = id;
+          foundSeed = seed;
         }
       });
-      if (!foundNodeId) return null;
-      return {
-        id: foundNodeId,
-        seed: foundSeed,
-      };
+      return foundId ? { id: foundId, seed: foundSeed } : null;
     });
     expect(probe).not.toBeNull();
-    expect(probe?.seed).toBeDefined();
 
-    // Simulate drag-update via direct attribute write + mouseup-like update
-    // (Real drag is hard to simulate in Playwright; we test the data flow.)
-    await page.evaluate((id: string) => {
+    // Simulate a drag-release: move the node far from its seed WITHOUT
+    // updating __gwellsSeedPositions. This is what default mouseup does
+    // post-C9.0.
+    const displaceDelta = 2000;
+    await page.evaluate((p: { id: string; seed: { x: number; y: number } }) => {
       const sigma = (window as any).__lwSigma;
       const graph = sigma.getGraph();
-      // Move the node
-      graph.setNodeAttribute(id, "x", 9999);
-      graph.setNodeAttribute(id, "y", 9999);
-      // Update the seed (what handleMouseUp does)
-      const seeds = graph.getAttribute("__gwellsSeedPositions");
-      seeds.set(id, { x: 9999, y: 9999, z: 0 });
-    }, probe!.id);
+      graph.setNodeAttribute(p.id, "x", p.seed.x + 2000);
+      graph.setNodeAttribute(p.id, "y", p.seed.y + 2000);
+    }, probe!);
 
-    await page.waitForTimeout(1000);
+    // Allow the seed-anchor force time to pull the node back.
+    // Adherence values: directory-anchor 0.15, file-orbit 0.05,
+    // endpoint-fan 0.08. Worst case (file-orbit) settles in ~2-3s.
+    await page.waitForTimeout(3000);
 
-    // Position should still be close to (9999, 9999) — seed-anchor pulled it back to the new seed
     const finalPos = await page.evaluate((id: string) => {
       const sigma = (window as any).__lwSigma;
       const graph = sigma.getGraph();
@@ -311,9 +309,21 @@ test.describe("Gwells Physics Integration", () => {
       };
     }, probe!.id);
 
-    // Allow significant interaction-driven drift but confirm it's NOT back near original (0-ish)
-    expect(Math.abs(finalPos.x - 9999)).toBeLessThan(1100);  // Pass C7: edge-aware interactions reduce drift from 711→~674
-    expect(Math.abs(finalPos.y - 9999)).toBeLessThan(1100);
+    const distFromSeed = Math.sqrt(
+      Math.pow(finalPos.x - probe!.seed.x, 2) +
+      Math.pow(finalPos.y - probe!.seed.y, 2)
+    );
+    const distFromDisplaced = Math.sqrt(
+      Math.pow(finalPos.x - (probe!.seed.x + displaceDelta), 2) +
+      Math.pow(finalPos.y - (probe!.seed.y + displaceDelta), 2)
+    );
+
+    // Drift-back: closer to original seed than to the displaced position.
+    expect(distFromSeed).toBeLessThan(distFromDisplaced);
+    // Reasonably close to seed — generous bound to account for other
+    // forces (repulsion from siblings, spring to parent) competing with
+    // the seed-anchor pull. Tighten in a later pass if useful.
+    expect(distFromSeed).toBeLessThan(800);
   });
 
   test("Pass C5: Dialect change resets seed positions", async ({ page }) => {
