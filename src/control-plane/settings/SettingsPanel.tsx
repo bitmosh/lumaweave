@@ -157,6 +157,25 @@ export function SettingsPanel() {
                       );
                     }
 
+                    // Pass C9.2: Reset Pinned button for physics.dialectId
+                    if (setting.path === "physics.dialectId") {
+                      return (
+                        <button
+                          key="reset-pinned"
+                          data-testid="reset-pinned-button"
+                          onClick={() => {
+                            const currentAll = settings.physics.pins ?? {};
+                            const newAll = { ...currentAll };
+                            delete newAll[settings.physics.dialectId];
+                            setSetting("physics.pins" as any, newAll);
+                          }}
+                          className="mt-2 w-full rounded-lg border border-cyan-400/20 bg-slate-900 px-3 py-2 text-sm text-slate-200 hover:bg-slate-800 transition-colors"
+                        >
+                          Reset Pinned
+                        </button>
+                      );
+                    }
+
                     if (setting.type === "text") {
                       return (
                         <label key={setting.path} className="block text-sm">

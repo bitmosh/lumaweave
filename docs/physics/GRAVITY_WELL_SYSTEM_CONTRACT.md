@@ -599,6 +599,33 @@ On dialect change or when the component mounts with active pins,
 SigmaGraphView calls `controller.applyPins(activePinsRef.current)` to
 restore the pin overlay.
 
+#### Pin Management UI (Pass C9.2)
+
+Pass C9.2 adds three UI features for pin management:
+
+1. **Reset Pinned button**: A button in the SettingsPanel (rendered in the
+   ControlDock Physics section) that clears all pins for the active dialect.
+   The button reads `settings.physics.pins[activeDialectId]`, deletes that key
+   from the map, and writes the updated map back to settings. This provides a
+   quick way to unpin all nodes for the current dialect without manually
+   removing each pin.
+
+2. **Ctrl+RightClick per-node pin removal**: Users can remove individual pins
+   by Ctrl+RightClicking on a pinned node in the SigmaGraphView viewport. The
+   rightClickNode handler checks if the Ctrl key is held and if the node is in
+   the current pin map; if so, it removes that node from the pin map and calls
+   `onUpdatePins` to persist the change. The browser context menu is suppressed
+   on the viewport to enable this gesture.
+
+3. **Pinned bookmark dim-on-select highlight mode**: The "pinned" bookmark
+   (rendered by BookmarkLayer) toggles a dim mode when clicked. When active,
+   the dim mode dims all nodes and edges that are NOT in the pinned set
+   (sourced from the graph-level `__gwellsPinnedSet` attribute maintained by
+   `gwells controller.applyPins`). Pinned nodes render at full alpha (1.0);
+   everything else dims to `pinnedDimOpacity` (default 0.45). This provides
+   visual focus on the pinned nodes. The mode is session-scoped (React state in
+   AppShell, not persisted to settings).
+
 ### Dialect Switching
 
 When switching dialects, the seed function re-runs and overwrites

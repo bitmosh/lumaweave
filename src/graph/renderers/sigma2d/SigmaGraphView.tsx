@@ -77,6 +77,7 @@ interface SigmaGraphViewProps {
   seedParamOverrides: Record<string, unknown>;
   activePins: Record<string, { x: number; y: number; z?: number }>;
   onUpdatePins: (dialectId: string, pinMap: Record<string, { x: number; y: number; z?: number }>) => void;
+  pinnedHighlightActive: boolean;
 
   selectedNodeId: string | null;
   selectedEdgeId?: string | null;
@@ -185,6 +186,7 @@ function SigmaGraphViewComponent({
   nodeGlow = 1.0,
   reduceMotion = false,
   resolvedTokens = graphVisualTokens,
+  pinnedHighlightActive,
   onSelectNode,
   onSetPathTarget,
   onSelectEdge,
@@ -340,6 +342,7 @@ function SigmaGraphViewComponent({
     const styleOptions: StylePolicyOptions = {
       hoverNodeColor,
       edgeLabelFontSize,
+      pinnedHighlightActive,
     };
 
     applyGraphStylePolicy(graph, interactionState, styleOptions, resolvedTokens);
@@ -476,6 +479,21 @@ function SigmaGraphViewComponent({
 
   sigma.on("leaveEdge", () => {
     setHoveredEdgeId(null);
+  });
+
+  // Pass C9.2: Ctrl+RightClick on a pinned node clears just that pin.
+  sigma.on("rightClickNode", ({ node, event }) => {
+    const ev = event.original as MouseEvent;
+    if (!ev.ctrlKey) return;
+
+    const currentPins = activePinsRef.current ?? {};
+    if (!(node in currentPins)) return;
+
+    const newPins = { ...currentPins };
+    delete newPins[node];
+    onUpdatePinsRef.current(dialectIdRef.current, newPins);
+
+    ev.preventDefault?.();
   });
 
   // Node drag state
@@ -791,7 +809,7 @@ useEffect(() => {
   );
   sigma.refresh();
 
-}, [selectedNodeId, selectedEdgeId, neighborhoodDepth, hoveredNodeId, hoveredEdgeId, hoverNodeColor, edgeLabelFontSize]);
+}, [selectedNodeId, selectedEdgeId, neighborhoodDepth, hoveredNodeId, hoveredEdgeId, hoverNodeColor, edgeLabelFontSize, pinnedHighlightActive, activePins]);
 
 // ResizeObserver to handle container size changes
 useEffect(() => {
@@ -835,6 +853,7 @@ useEffect(() => {
     const styleOptions: StylePolicyOptions = {
       hoverNodeColor,
       edgeLabelFontSize,
+      pinnedHighlightActive,
     };
 
     // Apply complete styling policy (reset + selection + hover)
@@ -943,7 +962,7 @@ useEffect(() => {
 
   return (
     <div className="relative h-full w-full" data-testid="renderer-debug-panel">
-      <div ref={containerRef} className="absolute inset-0" />
+      <div ref={containerRef} className="absolute inset-0" onContextMenu={(e) => e.preventDefault()} />
 
       <CollapsiblePanel
         title="Renderer Debug"
@@ -1017,6 +1036,7 @@ const arePropsEqual = (prev: SigmaGraphViewProps, next: SigmaGraphViewProps) => 
   if (prev.dialectId !== next.dialectId) return false;
   if (prev.seedParamOverrides !== next.seedParamOverrides) return false;
   if (prev.activePins !== next.activePins) return false;
+  if (prev.pinnedHighlightActive !== next.pinnedHighlightActive) return false;
 
   // Value checks for label props - these should trigger re-render
   if (prev.nodeLabelMode !== next.nodeLabelMode) return false;

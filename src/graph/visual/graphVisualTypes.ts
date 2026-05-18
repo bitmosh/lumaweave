@@ -119,4 +119,7 @@ export interface StylePolicyOptions {
 
   /** Edge label font size */
   edgeLabelFontSize: number;
+
+  /** Pass C9.2: pinned highlight mode active */
+  pinnedHighlightActive?: boolean;
 }

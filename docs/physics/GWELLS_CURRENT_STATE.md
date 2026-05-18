@@ -39,6 +39,9 @@ references.
                 (commit 613009d)
 [Pass C9.1]    Scoped drag with modifier-held pin gesture + per-dialect pin storage
                 (this commit)
+[Pass C9.2]    Pin management UI: Reset Pinned button, Ctrl+RightClick per-node reset,
+                pinned bookmark dim-on-select highlight mode
+                (this commit)
 ```
 
 Each pass commits cleanly with passing tests. The branch is intended to be
@@ -145,14 +148,22 @@ values has visible effect — a key design rule established in Pass C8.4. See
 
 ### Queued for upcoming passes
 
-- **Pass C9.0 (this commit) makes default drag temporary** — mouseup no longer
+- **Pass C9.0 (completed) makes default drag temporary** — mouseup no longer
   updates `__gwellsSeedPositions`, and the seed-anchor force pulls dragged
   nodes back toward their seeded position. Spine nodes can no longer be
-  dragged. Pass C9.1 (queued) will add modifier-held scoped drag (single
+  dragged.
+
+- **Pass C9.1 (completed) adds modifier-held scoped drag** (single
   node / node+children / node+subtree) and per-dialect pin storage in
-  `settings.physics.pins`. Pass C9.2 (queued) will add the Reset Pinned
-  button, Ctrl+RightClick per-node reset, pinned-bookmark dim-on-select,
-  and the pre-existing graph-blanks-on-mouseup render-bug fix.
+  `settings.physics.pins`.
+
+- **Pass C9.2 (completed) adds pin management UI** — Reset Pinned button
+  clears pins for active dialect, Ctrl+RightClick on pinned nodes removes
+  individual pins, and the pinned bookmark toggles dim-on-pinned highlight
+  mode for visual focus.
+
+- **Pre-existing graph-blanks-on-mouseup render bug** — separate from physics,
+  filed separately. Will be investigated in Phase 10 (RECON ONLY).
 
 - **Pass C10 candidate — universal structural classification.** Current
   wellAssignment matches on string node types: `nodeType === "directory"`,

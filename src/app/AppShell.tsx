@@ -187,6 +187,9 @@ export function AppShell() {
   const [inspectorExpanded, setInspectorExpanded] = useState(false);
   const [themeInspectorEnabled, setThemeInspectorEnabled] = useState(false);
 
+  // Pass C9.2: pinned highlight mode state (session-scoped, not persisted)
+  const [pinnedHighlightActive, setPinnedHighlightActive] = useState(false);
+
   // Ctrl+\ hotkey to toggle left panel
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -810,6 +813,7 @@ export function AppShell() {
                       const newAll = { ...currentAll, [dialectId]: pinMap };
                       setSetting("physics.pins", newAll);
                     }}
+                    pinnedHighlightActive={pinnedHighlightActive}
                     selectedNodeId={selectedNodeId}
                     selectedEdgeId={selectedEdgeId}
                     pathTargetId={pathTargetId}
@@ -917,6 +921,7 @@ export function AppShell() {
                         alertColor={themeTokens.bookmark?.alertColor}
                         pinnedColor={themeTokens.bookmark?.pinnedColor}
                         refColor={themeTokens.bookmark?.refColor}
+                        onTogglePinnedHighlight={() => setPinnedHighlightActive(v => !v)}
                       />
 
                       {/* v86b close-1: Minimap */}
