@@ -168,6 +168,12 @@ for (const filePath of mdFiles) {
   const id = fm.id || slug(filePath);
   const stat = fs.statSync(filePath);
 
+  // Dedup: skip if id already exists (e.g., duplicate frontmatter id)
+  if (nodeMap.has(id)) {
+    console.warn(`generate-self-graph: skipping duplicate node id '${id}' (existing type: ${nodeMap.get(id).type}, attempted type: doc, path: ${relPath})`);
+    continue;
+  }
+
   nodes.push({
     id,
     type: "doc",
@@ -183,6 +189,8 @@ for (const filePath of mdFiles) {
     _body: body, // store for edge extraction
     _frontmatter: fm, // store for edge extraction
   });
+
+  nodeMap.set(id, nodes[nodes.length - 1]);
 
   // Health tracking
   if (!fm.cluster) health.nodesWithoutCluster++;
@@ -216,6 +224,12 @@ for (const filePath of codeFiles) {
   const cluster = inferClusterFromPath(filePath) || null;
   const tags = extractCodeTags(filePath);
 
+  // Dedup: skip if id already exists
+  if (nodeMap.has(id)) {
+    console.warn(`generate-self-graph: skipping duplicate node id '${id}' (existing type: ${nodeMap.get(id).type}, attempted type: code, path: ${relPath})`);
+    continue;
+  }
+
   nodes.push({
     id,
     type: "code",
@@ -234,6 +248,8 @@ for (const filePath of codeFiles) {
     _body: fs.readFileSync(filePath, "utf-8"), // store for import parsing
   });
 
+  nodeMap.set(id, nodes[nodes.length - 1]);
+
   if (!cluster) health.nodesWithoutCluster++;
 }
 
@@ -246,6 +262,12 @@ for (const configName of CONFIG_FILES) {
   const relPath = path.relative(repoRoot, filePath).replace(/\\/g, "/");
   const id = slug(filePath);
   const stat = fs.statSync(filePath);
+
+  // Dedup: skip if id already exists
+  if (nodeMap.has(id)) {
+    console.warn(`generate-self-graph: skipping duplicate node id '${id}' (existing type: ${nodeMap.get(id).type}, attempted type: config, path: ${relPath})`);
+    continue;
+  }
 
   nodes.push({
     id,
@@ -263,6 +285,8 @@ for (const configName of CONFIG_FILES) {
       dimFactor: 0.45,
     },
   });
+
+  nodeMap.set(id, nodes[nodes.length - 1]);
 }
 
 // --- FIXTURE ---
@@ -281,6 +305,12 @@ for (const filePath of fixtureFiles) {
   const id = slug(filePath);
   const stat = fs.statSync(filePath);
 
+  // Dedup: skip if id already exists
+  if (nodeMap.has(id)) {
+    console.warn(`generate-self-graph: skipping duplicate node id '${id}' (existing type: ${nodeMap.get(id).type}, attempted type: fixture, path: ${relPath})`);
+    continue;
+  }
+
   nodes.push({
     id,
     type: "fixture",
@@ -297,6 +327,8 @@ for (const filePath of fixtureFiles) {
       dimFactor: 0.45,
     },
   });
+
+  nodeMap.set(id, nodes[nodes.length - 1]);
 }
 
 // Build node map for edge resolution

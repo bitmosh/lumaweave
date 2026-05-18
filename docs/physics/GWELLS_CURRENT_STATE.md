@@ -67,6 +67,12 @@ references.
                produce NaN positions'. Pre-existing
                graph-blanks-on-mouseup render bug is resolved.
                (this commit)
+[Post-gwells hygiene 1] Gitignored self-graph fixtures (they
+               regenerate automatically via Vite plugin).
+               Resolved duplicate vP-backbone-spacing
+               emit in generate-self-graph.mjs. Added
+               fresh-clone setup note to README. (this
+               commit)
 ```
 
 Each pass commits cleanly with passing tests. The branch is intended to be
@@ -161,10 +167,13 @@ values has visible effect — a key design rule established in Pass C8.4. See
   parameters in dev requires a hard reload (Ctrl+Shift+R) or a dialect-switch
   toggle to re-run the seed function. This is a workflow papercut, not a
   correctness issue. Low priority.
-- **Pre-existing duplicate-node bug** in
-  `src/graph/renderers/sigma2d/buildGraphologyGraph.ts:75` for a node id
-  "vP-backbone-spacing". Logs a UsageGraphError to the console. Unrelated to
-  gwells; filed separately.
+- **[Resolved in post-gwells hygiene pass] Pre-existing duplicate-node bug**
+  in `src/graph/renderers/sigma2d/buildGraphologyGraph.ts:75` for a node id
+  "vP-backbone-spacing". Root cause: two docs (`vP-backbone-spacing-report.md`
+  and `vP-backbone-spacing-investigation.md`) had the same frontmatter
+  `id: vP-backbone-spacing`. Fix: added dedup guards in
+  `scripts/generate-self-graph.mjs` that skip node emission if the id
+  already exists in nodeMap, with console.warn logging the collision.
 - **Drag-on-mouseup makes the graph view go blank.** Pre-existing render bug
   in SigmaGraphView, separate from physics. Filed separately. Will be
   addressed when Pass C9 redesigns drag handling.
