@@ -36,6 +36,8 @@ references.
                 + sizing model fix (itemSizesReference: positions)
                 (commit c537ea6)
 [Pass C9.0]    Default drift-back drag; spine-drag gated
+                (commit 613009d)
+[Pass C9.1]    Scoped drag with modifier-held pin gesture + per-dialect pin storage
                 (this commit)
 ```
 

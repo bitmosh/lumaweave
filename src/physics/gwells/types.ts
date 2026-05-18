@@ -353,4 +353,20 @@ export interface GWController {
    * ACTIVE → ACTIVE mutate path per the Sigma Lifecycle Contract.
    */
   applyConfigOverride: (partialConfig: Partial<GWDialectConfig>) => void;
+  /**
+   * Apply pin overlay to the graph (Pass C9.1).
+   *
+   * Each entry in pinMap forces its node to fixed: true at the given
+   * position; the position is also written into __gwellsSeedPositions
+   * so the seed-anchor force won't pull it back. Nodes previously
+   * pinned (tracked via graph attribute __gwellsPinnedSet, which
+   * persists across controllers) but not in the new map are unfixed
+   * and drift back via the existing seed-anchor force.
+   *
+   * Spine nodes are filtered out defensively — they cannot be pinned.
+   *
+   * Idempotent: calling with the same map twice is a no-op except for
+   * redundant attribute writes.
+   */
+  applyPins: (pinMap: Record<string, { x: number; y: number; z?: number }>) => void;
 }

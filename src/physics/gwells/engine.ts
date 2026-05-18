@@ -474,6 +474,62 @@ export function applyDialect(
     }
   }
 
+  // Pass C9.1: pin overlay mechanism
+  function applyPins(
+    pinMap: Record<string, { x: number; y: number; z?: number }>
+  ): void {
+    const seedPositions = graph.hasAttribute("__gwellsSeedPositions")
+      ? graph.getAttribute("__gwellsSeedPositions") as Map<
+          string,
+          { x: number; y: number; z: number }
+        >
+      : null;
+
+    // Previously-pinned set lives on the graph so it survives controller
+    // lifecycle (stop/applyDialect creates a new controller closure, but
+    // the graph attribute persists, which is what lets dialect-switch
+    // correctly unfix the prior dialect's pins).
+    const previouslyPinned: Set<string> = graph.hasAttribute("__gwellsPinnedSet")
+      ? graph.getAttribute("__gwellsPinnedSet") as Set<string>
+      : new Set<string>();
+
+    const currentPinned = new Set<string>();
+
+    // Apply pins
+    for (const [nodeId, pos] of Object.entries(pinMap)) {
+      if (!graph.hasNode(nodeId)) continue;
+      const attrs = graph.getNodeAttributes(nodeId);
+      if (attrs.nodeType === "spine") continue;
+      currentPinned.add(nodeId);
+
+      if (seedPositions) {
+        seedPositions.set(nodeId, {
+          x: pos.x,
+          y: pos.y,
+          z: typeof pos.z === "number" ? pos.z : 0,
+        });
+      }
+
+      graph.setNodeAttribute(nodeId, "x", pos.x);
+      graph.setNodeAttribute(nodeId, "y", pos.y);
+      if (typeof pos.z === "number") {
+        graph.setNodeAttribute(nodeId, "z", pos.z);
+      }
+      graph.setNodeAttribute(nodeId, "fixed", true);
+    }
+
+    // Unpin nodes previously pinned but no longer
+    for (const nodeId of previouslyPinned) {
+      if (currentPinned.has(nodeId)) continue;
+      if (!graph.hasNode(nodeId)) continue;
+      graph.setNodeAttribute(nodeId, "fixed", false);
+      // Seed position left as-is — drift back via C5.
+    }
+
+    // Persist for next call (and across controllers via the graph)
+    graph.setAttribute("__gwellsPinnedSet", currentPinned);
+  }
+
   // Step 9: Return controller
   const controller: GWController = {
     stop: () => {
@@ -493,6 +549,7 @@ export function applyDialect(
     getDialectId: () => dialect.id,
     getResolvedConfig: () => resolvedConfig,
     applyConfigOverride,
+    applyPins,
   };
 
   console.log(`[gwells] applied dialect '${dialect.id}'`);

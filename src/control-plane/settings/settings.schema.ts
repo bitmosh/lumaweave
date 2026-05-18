@@ -44,7 +44,7 @@ export interface TileLayoutEntry {
 }
 
 export interface StarmapSettings {
-  version: 83; // vP-physics-dialect-c4: bumped from 82 for seedParamOverrides field
+  version: 84; // vP-physics-dialect-c9.1: bumped from 83 for pins field
 
   general: {
     startupProjectId: string | null;
@@ -101,6 +101,21 @@ export interface StarmapSettings {
      *   }
      */
     seedParamOverrides: Record<string, Record<string, unknown>>;
+    /**
+     * Per-dialect pin storage. Keyed by dialect id.
+     * Each value is a map from node ID to pinned position.
+     *
+     * Example:
+     *   {
+     *     "gwells.dialect.radial-backbone": {
+     *       "node-123": { x: 5000, y: 5000, z: 0 },
+     *       "node-456": { x: 6000, y: 6000 }
+     *     }
+     *   }
+     *
+     * Added in Pass C9.1.
+     */
+    pins: Record<string, Record<string, { x: number; y: number; z?: number }>>;
   };
 
   labels: {

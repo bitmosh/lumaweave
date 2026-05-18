@@ -129,6 +129,13 @@ const MIGRATIONS: Record<number,
     }
     return { ...s, physics };
   },
+
+  // v83 → v84: pin storage for Pass C9.1
+  84: (s) => {
+    const physics = { ...(s.physics ?? {}) } as any;
+    physics.pins ??= {};
+    return { ...s, physics } as Partial<StarmapSettings>;
+  },
 };
 
 export function migrateSettings(

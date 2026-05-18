@@ -163,6 +163,9 @@ export function AppShell() {
   // Pass C4: Derive active dialect's seedParamOverrides for live tuning
   const activeSeedParamOverrides = (settings.physics.seedParamOverrides?.[settings.physics.dialectId] ?? {}) as Record<string, unknown>;
 
+  // Pass C9.1: Derive active dialect's pin map
+  const activePins = (settings.physics.pins?.[settings.physics.dialectId] ?? {}) as Record<string, { x: number; y: number; z?: number }>;
+
   // v86b: Click halo state — single active halo, overridden by rapid clicks
   const [clickHalo, setClickHalo] = useState<{
     x: number;
@@ -801,6 +804,12 @@ export function AppShell() {
                     nodeSize={settings.graphView.nodeSize}
                     dialectId={settings.physics.dialectId}
                     seedParamOverrides={activeSeedParamOverrides}
+                    activePins={activePins}
+                    onUpdatePins={(dialectId: string, pinMap: Record<string, { x: number; y: number; z?: number }>) => {
+                      const currentAll = useSettingsStore.getState().settings.physics.pins ?? {};
+                      const newAll = { ...currentAll, [dialectId]: pinMap };
+                      setSetting("physics.pins", newAll);
+                    }}
                     selectedNodeId={selectedNodeId}
                     selectedEdgeId={selectedEdgeId}
                     pathTargetId={pathTargetId}

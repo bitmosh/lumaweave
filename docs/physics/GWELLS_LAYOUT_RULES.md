@@ -238,7 +238,7 @@ Rules 1-9 compose. A radial-backbone layout with N=2:
 The result is a deterministic, content-responsive, hierarchically-correct
 layout that the engine maintains via balanced forces.
 
-## Rule 9 — Drag is temporary by default
+## Rule 9 — Drag is temporary by default; pin is opt-in
 
 A user dragging a non-spine node and releasing without a modifier held
 sees the node drift back toward its seeded position via the seed-anchor
@@ -246,12 +246,21 @@ force (Rule 6 / Pass C5). The drag handler does not mutate
 `__gwellsSeedPositions`. Spine nodes cannot be dragged at all — the
 downNode handler refuses to start a drag if `attrs.nodeType === "spine"`.
 
-Future passes (C9.1, C9.2) layer opt-in pin behavior on top of this
-default: modifier-held mouseup writes to a separate per-dialect pin map,
-not to `__gwellsSeedPositions`, preserving the separation of layout
-authority (seeder) from manual authority (user pins).
+Pass C9.1 layers opt-in pin behavior on top of this default: when the user
+drags one or more nodes (with optional scope modifiers: Ctrl for single,
+Ctrl+Shift for family, Ctrl+Alt for subtree) and releases while holding Ctrl,
+the dragged nodes are "pinned" to their drop positions. The drag handler
+writes the drop positions to `settings.physics.pins[activeDialectId]` (a
+per-dialect pin map), not to `__gwellsSeedPositions`, preserving the
+separation of layout authority (seeder) from manual authority (user pins).
+The engine's `applyPins` method applies the pin overlay: it sets `fixed: true`
+on pinned nodes, writes their positions to `__gwellsSeedPositions`, and
+maintains a graph-level `__gwellsPinnedSet` attribute to track which nodes
+are currently pinned. This set persists across controller instances, enabling
+dialect-switch round-trips.
 
-The rule was established in Pass C9.0.
+The default (drift-back) was established in Pass C9.0. The pin gesture
+was added in Pass C9.1.
 
 ## Rules deferred to future work
 

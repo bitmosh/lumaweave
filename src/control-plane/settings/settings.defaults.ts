@@ -1,7 +1,7 @@
 import type { StarmapSettings } from "./settings.schema";
 
 export const defaultSettings: StarmapSettings = {
-  version: 83, // vP-physics-dialect-c4: bumped from 82 for seedParamOverrides field
+  version: 84, // vP-physics-dialect-c9.1: bumped from 83 for pins field
 
   general: {
     startupProjectId: null,
@@ -43,6 +43,7 @@ export const defaultSettings: StarmapSettings = {
   physics: {
     dialectId: "gwells.dialect.radial-backbone",
     seedParamOverrides: {},
+    pins: {}, // Pass C9.1
   },
 
   labels: {

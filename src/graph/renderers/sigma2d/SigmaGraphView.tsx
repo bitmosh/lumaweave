@@ -8,6 +8,7 @@
 import { useEffect, useRef, useState, memo } from "react";
 import Sigma from "sigma";
 import { bidirectional } from "graphology-shortest-path";
+import Graph from "graphology";
 import type {
   LumaWeaveNodeDraft,
   LumaWeaveEdgeDraft,
@@ -39,12 +40,43 @@ import { NodeCircleProgram } from "sigma/rendering";
 import { applyDialect, type GWController } from "../../../physics/gwells";
 import { installGwellsProbeGlobal } from "./gwellsProbe";
 
+// Pass C9.1: Module-level helper for resolving drag scope
+function resolveDragSet(
+  graph: Graph,
+  rootNodeId: string,
+  scope: "single" | "family" | "subtree"
+): string[] {
+  if (scope === "single") return [rootNodeId];
+
+  const visited = new Set<string>([rootNodeId]);
+  const result: string[] = [rootNodeId];
+  const queue: string[] = [rootNodeId];
+
+  while (queue.length > 0) {
+    const current = queue.shift()!;
+    graph.forEachOutEdge(current, (_eid, eattrs, _src, tgt) => {
+      const rel = (eattrs as any).relationship ?? (eattrs as any).raw?.type;
+      if (rel !== "contains") return;
+      if (visited.has(tgt)) return;
+      const tattrs = graph.getNodeAttributes(tgt);
+      if (tattrs.nodeType === "spine") return; // C9.0: spines ungrabbable
+      visited.add(tgt);
+      result.push(tgt);
+      if (scope === "subtree") queue.push(tgt);
+    });
+  }
+
+  return result;
+}
+
 interface SigmaGraphViewProps {
   nodes: LumaWeaveNodeDraft[];
   edges: LumaWeaveEdgeDraft[];
   nodeSize: number;
   dialectId: string;
   seedParamOverrides: Record<string, unknown>;
+  activePins: Record<string, { x: number; y: number; z?: number }>;
+  onUpdatePins: (dialectId: string, pinMap: Record<string, { x: number; y: number; z?: number }>) => void;
 
   selectedNodeId: string | null;
   selectedEdgeId?: string | null;
@@ -134,6 +166,8 @@ function SigmaGraphViewComponent({
   nodeSize,
   dialectId = "gwells.dialect.horizontal-linear",
   seedParamOverrides = {},
+  activePins,
+  onUpdatePins,
   selectedNodeId,
   selectedEdgeId = null,
   pathTargetId = null,
@@ -165,6 +199,9 @@ function SigmaGraphViewComponent({
   const onSetPathTargetRef = useRef(onSetPathTarget);
   const onSelectEdgeRef = useRef(onSelectEdge);
   const onClearSelectionRef = useRef(onClearSelection);
+  const dialectIdRef = useRef(dialectId);
+  const activePinsRef = useRef(activePins);
+  const onUpdatePinsRef = useRef(onUpdatePins);
   const hasInitialCameraResetRef = useRef(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resolvedTokensRef = useRef(resolvedTokens);
@@ -230,7 +267,11 @@ function SigmaGraphViewComponent({
     onSetPathTargetRef.current = onSetPathTarget;
     onSelectEdgeRef.current = onSelectEdge;
     onClearSelectionRef.current = onClearSelection;
-  }, [onSelectNode, onSetPathTarget, onSelectEdge, onClearSelection]);
+    // Pass C9.1: sync dialectId/activePins/onUpdatePins for drag-handler access
+    dialectIdRef.current = dialectId;
+    activePinsRef.current = activePins;
+    onUpdatePinsRef.current = onUpdatePins;
+  }, [onSelectNode, onSetPathTarget, onSelectEdge, onClearSelection, dialectId, activePins, onUpdatePins]);
 
   useEffect(() => {
     if (!containerRef.current || nodes.length === 0) return;
@@ -378,6 +419,8 @@ function SigmaGraphViewComponent({
     sigma.once("afterRender", () => {
       try {
         gwellsControllerRef.current = applyDialect(graph, dialectId);
+        // Pass C9.1: apply any pins for this dialect
+        gwellsControllerRef.current?.applyPins(activePinsRef.current);
         console.log(`[gwells] started controller with dialect '${dialectId}'`);
       } catch (err) {
         console.error(`[gwells] failed to apply dialect '${dialectId}':`, err);
@@ -393,6 +436,14 @@ function SigmaGraphViewComponent({
   }
 
   sigma.on("clickNode", ({ node, event }) => {
+    // Pass C9.1: if a drag just occurred, suppress the click action.
+    // The click event fires after mouseup; dragOccurred tells us this
+    // was the tail of a drag, not a real click.
+    if (dragState.dragOccurred) {
+      dragState.dragOccurred = false;
+      return;
+    }
+
     if (event.original.ctrlKey && selectedNodeId) {
       // Ctrl+click with existing selection = set path target
       onSetPathTargetRef.current?.(node);
@@ -430,8 +481,19 @@ function SigmaGraphViewComponent({
   // Node drag state
   const dragState: {
     dragging: boolean;
-    nodeId: string | null;
-  } = { dragging: false, nodeId: null };
+    primaryNodeId: string | null;
+    dragSet: string[];
+    startPositions: Map<string, { x: number; y: number }>;
+    dragOccurred: boolean;
+    startScreenPos: { x: number; y: number };
+  } = {
+    dragging: false,
+    primaryNodeId: null,
+    dragSet: [],
+    startPositions: new Map(),
+    dragOccurred: false,
+    startScreenPos: { x: 0, y: 0 },
+  };
 
   // Start drag on node mousedown
   sigma.on("downNode", (e) => {
@@ -439,50 +501,116 @@ function SigmaGraphViewComponent({
     const attrs = graph.getNodeAttributes(e.node);
     if (attrs.nodeType === "spine") return;
 
+    // Pass C9.1: read modifier state to determine drag scope
+    const ev = e.event.original as MouseEvent;
+    let scope: "single" | "family" | "subtree" = "single";
+    if (ev.ctrlKey && ev.altKey && !ev.shiftKey) scope = "subtree";
+    else if (ev.ctrlKey && ev.shiftKey && !ev.altKey) scope = "family";
+    // ev.ctrlKey alone (or no Ctrl) → "single"
+
+    const dragSet = resolveDragSet(graph, e.node, scope);
+
+    // Capture starting positions for rigid-body offset
+    const startPositions = new Map<string, { x: number; y: number }>();
+    for (const id of dragSet) {
+      const a = graph.getNodeAttributes(id);
+      startPositions.set(id, {
+        x: a.x as number,
+        y: a.y as number,
+      });
+    }
+
     dragState.dragging = true;
-    dragState.nodeId = e.node;
+    dragState.primaryNodeId = e.node;
+    dragState.dragSet = dragSet;
+    dragState.startPositions = startPositions;
+    dragState.dragOccurred = false;
+    dragState.startScreenPos = { x: ev.clientX, y: ev.clientY };
+
     sigma.getCamera().disable();
     // Pause gwells during drag so it doesn't fight mouse position
     if (gwellsControllerRef.current) {
       gwellsControllerRef.current.pause();
     }
-    // Fix node position while dragging
-    graph.setNodeAttribute(e.node, "fixed", true);
+    // Mark all drag-set members as fixed during drag so engine skips them
+    for (const id of dragSet) {
+      graph.setNodeAttribute(id, "fixed", true);
+    }
   });
 
   // Update position on mouse move
   const handleMouseMove = (e: MouseEvent) => {
-    if (!dragState.dragging || !dragState.nodeId) return;
+    if (!dragState.dragging || !dragState.primaryNodeId) return;
 
+    // Pass C9.1: dragOccurred flag (>5px movement)
+    const dxScreen = e.clientX - dragState.startScreenPos.x;
+    const dyScreen = e.clientY - dragState.startScreenPos.y;
+    if (!dragState.dragOccurred && dxScreen * dxScreen + dyScreen * dyScreen > 25) {
+      dragState.dragOccurred = true;
+    }
+
+    const rect = sigma.getContainer().getBoundingClientRect();
     const graphCoords = sigma.viewportToGraph({
-      x: e.clientX -
-        sigma.getContainer().getBoundingClientRect().left,
-      y: e.clientY -
-        sigma.getContainer().getBoundingClientRect().top,
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
     });
 
-    graph.setNodeAttribute(
-      dragState.nodeId, "x", graphCoords.x
-    );
-    graph.setNodeAttribute(
-      dragState.nodeId, "y", graphCoords.y
-    );
+    // Rigid-body offset from primary node's start
+    const primaryStart = dragState.startPositions.get(dragState.primaryNodeId);
+    if (!primaryStart) return;
+    const deltaX = graphCoords.x - primaryStart.x;
+    const deltaY = graphCoords.y - primaryStart.y;
+
+    for (const id of dragState.dragSet) {
+      const start = dragState.startPositions.get(id);
+      if (!start) continue;
+      graph.setNodeAttribute(id, "x", start.x + deltaX);
+      graph.setNodeAttribute(id, "y", start.y + deltaY);
+    }
   };
 
   // End drag
-  const handleMouseUp = () => {
-    if (dragState.nodeId) {
-      // Pass C9.0: drag is temporary. The seed-anchor force (Pass C5,
-      // seedAdherence per well type) pulls the node back toward its
-      // original seed position after release. Future Pass C9.1 will add
-      // modifier-held pin gestures that write to settings.physics.pins.
-      // Unfix node so physics can resume
-      graph.setNodeAttribute(
-        dragState.nodeId, "fixed", false
-      );
+  const handleMouseUp = (e: MouseEvent) => {
+    if (!dragState.dragging || !dragState.primaryNodeId) return;
+
+    const ctrlAtRelease = e.ctrlKey;
+    const shouldPin = ctrlAtRelease && dragState.dragOccurred;
+
+    if (shouldPin) {
+      // Pass C9.1: write pins to settings via ref-accessed callback.
+      // applyPins will be triggered by the [activePins] useEffect and
+      // will re-fix the pinned set.
+      const baseMap = activePinsRef.current ?? {};
+      const newPinsForDialect: Record<
+        string,
+        { x: number; y: number; z?: number }
+      > = { ...baseMap };
+      for (const id of dragState.dragSet) {
+        const a = graph.getNodeAttributes(id);
+        newPinsForDialect[id] = {
+          x: a.x as number,
+          y: a.y as number,
+          z: typeof a.z === "number" ? (a.z as number) : 0,
+        };
+      }
+      // Unfix temporarily — applyPins will re-fix after settings propagate
+      for (const id of dragState.dragSet) {
+        graph.setNodeAttribute(id, "fixed", false);
+      }
+      onUpdatePinsRef.current(dialectIdRef.current, newPinsForDialect);
+    } else {
+      // No pin intent — release drag set, engine resumes physics
+      for (const id of dragState.dragSet) {
+        graph.setNodeAttribute(id, "fixed", false);
+      }
     }
+
+    // Reset drag state but NOT dragOccurred — clickNode reads it next
+    // in the same event sequence to suppress its own action.
     dragState.dragging = false;
-    dragState.nodeId = null;
+    dragState.primaryNodeId = null;
+    dragState.dragSet = [];
+    dragState.startPositions.clear();
     sigma.getCamera().enable();
     // Resume gwells after drag ends
     if (gwellsControllerRef.current) {
@@ -541,6 +669,9 @@ useEffect(() => {
   sigma.once("afterRender", () => {
     try {
       gwellsControllerRef.current = applyDialect(graph, dialectId);
+      // Pass C9.1: apply pins for the new dialect (unfixes old pins,
+      // applies new ones via the graph-level __gwellsPinnedSet)
+      gwellsControllerRef.current?.applyPins(activePinsRef.current);
       console.log(`[gwells] switched to dialect '${dialectId}'`);
     } catch (err) {
       console.error(`[gwells] failed to apply dialect '${dialectId}':`, err);
@@ -552,13 +683,22 @@ useEffect(() => {
 // Pass C4: Override change — apply runtime config override (no Sigma recreation, no controller restart)
 useEffect(() => {
   if (!gwellsControllerRef.current) return;
-  
+
   // Only the seedParams path supported for v0 — wellOverrides and interactionOverrides
   // are not currently exposed via the UI but the engine supports them.
   gwellsControllerRef.current.applyConfigOverride({
     seedParams: seedParamOverrides,
   });
 }, [seedParamOverrides]);
+
+// Pass C9.1: live pin updates within the same dialect.
+// Triggers applyPins on the existing controller whenever activePins
+// changes (user adds or removes pins without switching dialect).
+useEffect(() => {
+  const controller = gwellsControllerRef.current;
+  if (!controller) return;
+  controller.applyPins(activePins);
+}, [activePins]);
 
 // Node size live update without rebuild
 useEffect(() => {
@@ -876,6 +1016,7 @@ const arePropsEqual = (prev: SigmaGraphViewProps, next: SigmaGraphViewProps) => 
   if (prev.nodeSize !== next.nodeSize) return false;
   if (prev.dialectId !== next.dialectId) return false;
   if (prev.seedParamOverrides !== next.seedParamOverrides) return false;
+  if (prev.activePins !== next.activePins) return false;
 
   // Value checks for label props - these should trigger re-render
   if (prev.nodeLabelMode !== next.nodeLabelMode) return false;

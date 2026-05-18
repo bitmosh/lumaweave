@@ -435,6 +435,22 @@ export interface GWController {
    * Added in v0.1 (Pass C4: Live Tuning Sliders).
    */
   applyConfigOverride: (partialConfig: Partial<GWDialectConfig>) => void;
+  /**
+   * Apply pin overlay to the graph (Pass C9.1).
+   *
+   * Each entry in pinMap forces its node to fixed: true at the given
+   * position; the position is also written into __gwellsSeedPositions
+   * so the seed-anchor force won't pull it back. Nodes previously
+   * pinned (tracked via graph attribute __gwellsPinnedSet, which
+   * persists across controllers) but not in the new map are unfixed
+   * and drift back via the existing seed-anchor force.
+   *
+   * Spine nodes are filtered out defensively — they cannot be pinned.
+   *
+   * Idempotent: calling with the same map twice is a no-op except for
+   * redundant attribute writes.
+   */
+  applyPins: (pinMap: Record<string, { x: number; y: number; z?: number }>) => void;
 }
 
 export function applyDialect(
@@ -535,22 +551,53 @@ separate from `__seededSpinePositions` (which contains only pinned spine
 nodes for Sigma's nodeReducer). `__gwellsSeedPositions` contains ALL
 nodes and is used by the engine's seed-anchor force.
 
-### Drag Handler Integration
 
 Drag is temporary by default. When a user drags a non-spine node and
 releases without a modifier held, the drag handler does NOT update
 `__gwellsSeedPositions`. The seed-anchor force (Pass C5) pulls the node
-back toward its original seeded position over the next several frames.
+back toward its original seeded position over the next frames.
 Spine nodes (well type `gwells.well.spine-linear`) are pinned by the seed
 function and cannot be dragged; the Sigma downNode handler gates on
 `attrs.nodeType === "spine"` and refuses to start a drag.
 
-Pass C9.1 introduces a modifier-held pin gesture that writes the drop
-position to `settings.physics.pins[activeDialectId]` rather than to
-`__gwellsSeedPositions`, preserving the separation between seeder authority
-(geometric layout intent of the dialect) and user pin authority (manual
-placement override). The integration point remains in
-`SigmaGraphView.tsx`.
+#### Modifier-held Pin Gesture (Pass C9.1)
+
+Pass C9.1 introduces a modifier-held pin gesture. When the user drags
+one or more nodes (with optional scope modifiers: Ctrl for single,
+Ctrl+Shift for family, Ctrl+Alt for subtree) and releases while holding
+Ctrl, the dragged nodes are "pinned" to their drop positions. The drag
+handler writes the drop positions to `settings.physics.pins[activeDialectId]`
+and calls `onUpdatePins` to persist them. The engine's `applyPins` method
+then applies the pin overlay: it sets `fixed: true` on pinned nodes, writes
+their positions to `__gwellsSeedPositions` (so the seed-anchor force won't
+pull them back), and maintains a graph-level `__gwellsPinnedSet` attribute
+to track which nodes are currently pinned. This set persists across controller
+instances, enabling dialect-switch round-trips: when the user switches to a
+different dialect and back, the original dialect's pins are restored.
+
+The drag handler also disambiguates drag from click by tracking
+`dragOccurred` (set to true after >5px of mouse movement). If
+`dragOccurred` is true at mouseup, the subsequent `clickNode` event
+suppressed.
+
+#### Pin Storage (Pass C9.1)
+
+Pinned positions are stored in `settings.physics.pins`, a map keyed by
+dialect ID. Each value is itself a map from node ID to pinned position
+(`{ x: number, y: number, z?: number }`). This per-dialect storage
+ensures pins are specific to a dialect and survive dialect-switch round-trips.
+The storage path is:
+```
+user drags with Ctrl held
+→ SigmaGraphView handleMouseUp
+→ onUpdatePins(dialectId, pinMap)
+→ AppShell setSetting("physics.pins", newAll)
+→ settings store persists to disk
+```
+
+On dialect change or when the component mounts with active pins,
+SigmaGraphView calls `controller.applyPins(activePinsRef.current)` to
+restore the pin overlay.
 
 ### Dialect Switching
 

@@ -252,20 +252,26 @@ multiplier on the content-derived base.
 ## Settings + migrations
 
 The `physics.dialectId` setting determines which dialect is active. The
-settings store is versioned (currently v82) with a migration chain. Pass C3's
+settings store is versioned (currently v84) with a migration chain. Pass C3's
 v81 migration mapped legacy FA2 dialect ids to gwells dialect ids. Pass C3.1's
 v82 migration renamed `horizontal-linear` to `radial-backbone` and removed
-helix-dual / vertical-parallel.
+helix-dual / vertical-parallel. Pass C4's v83 migration added `seedParamOverrides`
+for live tuning. Pass C9.1's v84 migration added `pins` for per-dialect pin storage.
+
+The `physics.pins` field (added in Pass C9.1) stores pinned positions as a map
+keyed by dialect ID: `Record<string, Record<string, { x: number; y: number; z?: number }>>`.
+Each value maps node IDs to pinned positions. This enables dialect-specific pins
+that survive dialect-switch round-trips.
 
 Future changes to settings need new migration entries. The pattern is:
 
 ```typescript
 // In settings.migrations.ts
-83: (s) => {
+84: (s) => {
   // ... transform s to new shape ...
   return { ...s, /* new fields */ };
 },
 ```
 
-Then bump `settings.defaults.ts` to version 83 and `settings.store.ts`
-`CURRENT_SCHEMA_VERSION` to 83.
+Then bump `settings.defaults.ts` to version 85 and `settings.store.ts`
+`CURRENT_SCHEMA_VERSION` to 85.
