@@ -1,6 +1,6 @@
 # Self-Graph Report
 
-Generated: 2026-05-17T23:39:06.430Z
+Generated: 2026-05-18T00:33:17.790Z
 Source commit: N/A
 Schema: lumaweave-self-graph/v1
 
