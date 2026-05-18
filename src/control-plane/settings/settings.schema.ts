@@ -116,6 +116,13 @@ export interface StarmapSettings {
      * Added in Pass C9.1.
      */
     pins: Record<string, Record<string, { x: number; y: number; z?: number }>>;
+    /**
+     * Pinned highlight mode toggle. When true, dims all nodes except
+     * those in the pinned set. Default false.
+     *
+     * Added in Pass C9.3 (changed from session-scoped to persisted for testability).
+     */
+    pinnedHighlightActive: boolean;
   };
 
   labels: {

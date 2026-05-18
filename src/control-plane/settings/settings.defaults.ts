@@ -43,7 +43,8 @@ export const defaultSettings: StarmapSettings = {
   physics: {
     dialectId: "gwells.dialect.radial-backbone",
     seedParamOverrides: {},
-    pins: {}, // Pass C9.1
+    pins: {},
+    pinnedHighlightActive: false,
   },
 
   labels: {

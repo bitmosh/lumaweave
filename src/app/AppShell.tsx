@@ -187,8 +187,11 @@ export function AppShell() {
   const [inspectorExpanded, setInspectorExpanded] = useState(false);
   const [themeInspectorEnabled, setThemeInspectorEnabled] = useState(false);
 
-  // Pass C9.2: pinned highlight mode state (session-scoped, not persisted)
-  const [pinnedHighlightActive, setPinnedHighlightActive] = useState(false);
+  // Pass C9.2: pinned highlight mode state (persisted for testability)
+  const pinnedHighlightActive = settings.physics?.pinnedHighlightActive ?? false;
+  const setPinnedHighlightActive = (value: boolean) => {
+    setSetting("physics.pinnedHighlightActive", value);
+  };
 
   // Ctrl+\ hotkey to toggle left panel
   useEffect(() => {
@@ -921,7 +924,9 @@ export function AppShell() {
                         alertColor={themeTokens.bookmark?.alertColor}
                         pinnedColor={themeTokens.bookmark?.pinnedColor}
                         refColor={themeTokens.bookmark?.refColor}
-                        onTogglePinnedHighlight={() => setPinnedHighlightActive(v => !v)}
+                        onTogglePinnedHighlight={() => {
+                          setPinnedHighlightActive(!pinnedHighlightActive);
+                        }}
                       />
 
                       {/* v86b close-1: Minimap */}

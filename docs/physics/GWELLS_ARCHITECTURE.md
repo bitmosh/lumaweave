@@ -55,7 +55,7 @@ Settings:
 src/control-plane/settings/
 ├── settings.defaults.ts    physics.dialectId default
 ├── settings.schema.ts      physics block shape
-├── settings.migrations.ts  v82 maps legacy FA2 dialect ids to gwells dialect ids
+├── settings.migrations.ts  v84 maps legacy FA2 dialect ids to gwells dialect ids
 └── settings.registry.ts    UI dropdown for dialect selection
 ```
 
