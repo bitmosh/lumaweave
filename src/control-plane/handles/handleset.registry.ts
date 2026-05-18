@@ -247,46 +247,6 @@ export const handlesetRegistry: HandlesetRegistry = {
       notes: "FA2 node size parameter (retired - replaced by gwells)",
     },
 
-    {
-      handle: "physics.linkDistance",
-      label: "Simulation Speed (Retired)",
-      category: "Graph View",
-      defaultValue: 1.0,
-      controlType: "range",
-      status: "retired",
-      retiredAt: "vP-physics-gwells-integration",
-      retiredReason: "FA2 physics replaced by gwells. Edge length now controlled by dialect parameters.",
-      binding: {
-        sourceFile: "src/control-plane/settings/settings.schema.ts (removed)",
-        runtimeTarget: "Removed - was FA2 parameter",
-        liveUpdate: false,
-      },
-      qa: {
-        manualQA: "Retired - no QA needed",
-      },
-      notes: "FA2 edge length parameter (retired - replaced by gwells)",
-    },
-
-    {
-      handle: "physics.repelForce",
-      label: "Repel Force (Retired)",
-      category: "Graph View",
-      defaultValue: 1.0,
-      controlType: "range",
-      status: "retired",
-      retiredAt: "vP-physics-gwells-integration",
-      retiredReason: "FA2 physics replaced by gwells. Repulsion now controlled by dialect well parameters.",
-      binding: {
-        sourceFile: "src/control-plane/settings/settings.schema.ts (removed)",
-        runtimeTarget: "Removed - was FA2 parameter",
-        liveUpdate: false,
-      },
-      qa: {
-        manualQA: "Retired - no QA needed",
-      },
-      notes: "FA2 node repulsion parameter (retired - replaced by gwells)",
-    },
-
     // === Internal Handles ===
 
     {

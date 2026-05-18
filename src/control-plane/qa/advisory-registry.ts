@@ -2071,7 +2071,7 @@ export const advisoryV39: BanditAdvisorySection = {
     {
       id: "v39-physics-controls-present",
       prompt: "Are physics controls present and accessible?",
-      context: "Graph physics sliders (nodeSize, linkDistance, repelForce) should have stable data-testid attributes.",
+      context: "Graph physics sliders (nodeSize) should have stable data-testid attributes.",
       responseType: "choice",
       userResponse: "",
       status: "unanswered",

@@ -83,6 +83,15 @@ graphify-out/
 generated/
 output/
 
+# Self-graph generator outputs (chore/post-gwells-hygiene)
+# These files are regenerated automatically by the
+# selfGraphWatcherPlugin in vite.config.ts whenever a .md file
+# under docs/ changes during `npm run dev`. Manual regen:
+# `npm run generate:graph`. See README for fresh-clone setup.
+src/fixtures/GRAPH_REPORT.md
+src/fixtures/self-graph-generated.json
+src/fixtures/self-graph-manifest.json
+
 # Local backups / temp
 backup/
 backups/

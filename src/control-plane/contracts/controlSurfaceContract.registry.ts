@@ -350,60 +350,6 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       notes: "Node size multiplier for force layout (not live-update, requires graph rebuild)",
     },
 
-    {
-      id: "graph.linkDistance",
-      label: "Link Distance",
-      surface: "graph",
-      owner: "settings.store.ts",
-      settingsKey: "physics.linkDistance",
-      runtimeBinding: {
-        sourceFile: "src/graph/renderers/sigma2d/buildGraphologyGraph.ts",
-        targetComponent: "force layout link distance",
-        liveUpdate: false,
-      },
-      qa: {
-        hasQaCoverage: true,
-        manualQaAccepted: true,
-      },
-      playwright: {
-        hasCoverage: false,
-      },
-      docs: {
-        location: "docs/handleset/ACTIVE_HANDLES.md",
-        hasDocs: true,
-      },
-      status: "active",
-      risk: "low",
-      notes: "Edge length multiplier for force layout (not live-update, requires graph rebuild)",
-    },
-
-    {
-      id: "graph.repelForce",
-      label: "Repel Force",
-      surface: "graph",
-      owner: "settings.store.ts",
-      settingsKey: "physics.repelForce",
-      runtimeBinding: {
-        sourceFile: "src/graph/renderers/sigma2d/buildGraphologyGraph.ts",
-        targetComponent: "force layout repulsion",
-        liveUpdate: false,
-      },
-      qa: {
-        hasQaCoverage: true,
-        manualQaAccepted: true,
-      },
-      playwright: {
-        hasCoverage: false,
-      },
-      docs: {
-        location: "docs/handleset/ACTIVE_HANDLES.md",
-        hasDocs: true,
-      },
-      status: "active",
-      risk: "low",
-      notes: "Repulsion force for force layout (not live-update, requires graph rebuild)",
-    },
-
     // === Mission Control Controls ===
 
     {
