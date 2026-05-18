@@ -91,24 +91,48 @@ export function AppShell() {
       glitterDensity: "off" as const,
       edgePlasmaMode: "static" as const,
       backdropMotion: "off" as const,
+      motionScale: 0,
+      drama: "quiet" as const,
+      nodeHum: 0,
+      nodeFlowSpeed: 0,
+      nodeGlow: 0.2,
+      starfieldEnabled: false,
     },
     "large-graph": {
-      reduceMotion: false,
+      reduceMotion: true,
       glitterDensity: "low" as const,
       edgePlasmaMode: "static" as const,
       backdropMotion: "low" as const,
+      motionScale: 0.3,
+      drama: "quiet" as const,
+      nodeHum: 0.2,
+      nodeFlowSpeed: 0.2,
+      nodeGlow: 0.5,
+      starfieldEnabled: false,
     },
     balanced: {
       reduceMotion: false,
       glitterDensity: "medium" as const,
       edgePlasmaMode: "animated-overlay" as const,
       backdropMotion: "half" as const,
+      motionScale: 0.6,
+      drama: "cranked" as const,
+      nodeHum: 0.7,
+      nodeFlowSpeed: 0.55,
+      nodeGlow: 1.0,
+      starfieldEnabled: true,
     },
     beautiful: {
       reduceMotion: false,
       glitterDensity: "high" as const,
       edgePlasmaMode: "animated-overlay" as const,
       backdropMotion: "full" as const,
+      motionScale: 1.0,
+      drama: "extreme" as const,
+      nodeHum: 1.2,
+      nodeFlowSpeed: 1.0,
+      nodeGlow: 1.5,
+      starfieldEnabled: true,
     },
   };
 
@@ -132,13 +156,25 @@ export function AppShell() {
       current.reduceMotion !== vals.reduceMotion ||
       current.glitterDensity !== vals.glitterDensity ||
       current.edgePlasmaMode !== vals.edgePlasmaMode ||
-      current.backdropMotion !== vals.backdropMotion;
+      current.backdropMotion !== vals.backdropMotion ||
+      current.motionScale !== vals.motionScale ||
+      current.drama !== vals.drama ||
+      current.nodeHum !== vals.nodeHum ||
+      current.nodeFlowSpeed !== vals.nodeFlowSpeed ||
+      current.nodeGlow !== vals.nodeGlow ||
+      current.starfieldEnabled !== vals.starfieldEnabled;
     if (differs) setSetting("performance.qualityPreset", "custom");
   }, [
     settings.appearance.reduceMotion,
     settings.appearance.glitterDensity,
     settings.appearance.edgePlasmaMode,
     settings.appearance.backdropMotion,
+    settings.appearance.motionScale,
+    settings.appearance.drama,
+    settings.appearance.nodeHum,
+    settings.appearance.nodeFlowSpeed,
+    settings.appearance.nodeGlow,
+    settings.appearance.starfieldEnabled,
   ]);
 
   // v86c: Memoize theme tokens to prevent identity churn on unrelated settings changes

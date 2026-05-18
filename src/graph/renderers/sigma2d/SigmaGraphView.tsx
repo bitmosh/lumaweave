@@ -275,6 +275,45 @@ function SigmaGraphViewComponent({
     onUpdatePinsRef.current = onUpdatePins;
   }, [onSelectNode, onSetPathTarget, onSelectEdge, onClearSelection, dialectId, activePins, onUpdatePins]);
 
+  // v86b: ref-based uniform pipeline.
+  // Updates uniformsRef.current without triggering React renders.
+  // NodeSphereProgram reads from this ref on its natural render
+  // cycle. See SIGMA_LIFECYCLE_CONTRACT.md § "v86b uniforms —
+  // special treatment."
+  //
+  // Refs for the per-frame values so the rAF tick reads the
+  // latest without invalidating the effect on every prop change.
+  const nodeHumRef = useRef(nodeHum);
+  const nodeFlowSpeedRef = useRef(nodeFlowSpeed);
+  const nodeGlowRef = useRef(nodeGlow);
+  useEffect(() => {
+    nodeHumRef.current = nodeHum;
+    nodeFlowSpeedRef.current = nodeFlowSpeed;
+    nodeGlowRef.current = nodeGlow;
+  }, [nodeHum, nodeFlowSpeed, nodeGlow]);
+
+  useEffect(() => {
+    if (reduceMotion) {
+      // Halt motion uniforms; preserve glowStrength.
+      // Per motion safety contract.
+      uniformsRef.current.time = 0;
+      uniformsRef.current.hum = 0;
+      uniformsRef.current.flowSpeed = 0;
+      uniformsRef.current.glowStrength = nodeGlowRef.current ?? 1.0;
+      return;
+    }
+    let raf: number;
+    const tick = (now: number) => {
+      uniformsRef.current.time = now * 0.001;
+      uniformsRef.current.hum = nodeHumRef.current ?? 0.7;
+      uniformsRef.current.flowSpeed = nodeFlowSpeedRef.current ?? 0.55;
+      uniformsRef.current.glowStrength = nodeGlowRef.current ?? 1.0;
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [reduceMotion]);
+
   useEffect(() => {
     if (!containerRef.current || nodes.length === 0) return;
 
@@ -388,6 +427,16 @@ function SigmaGraphViewComponent({
     // Expose Sigma instance and camera controller for Playwright tests
     (window as any).__lwSigma = sigma;
     (window as any).__lwCameraController = cameraControllerRef.current;
+
+    // v86b: Expose uniform ref reader for Playwright testing
+    if (import.meta.env.DEV || (window as any).PLAYWRIGHT) {
+      (window as any).__lwReadUniforms = () => ({
+        time: uniformsRef.current.time,
+        hum: uniformsRef.current.hum,
+        flowSpeed: uniformsRef.current.flowSpeed,
+        glowStrength: uniformsRef.current.glowStrength,
+      });
+    }
 
     // vP-Physics-Backbone-Seed: Install nodeReducer to pin spine positions
     // Gwells writes seeded positions in graph-level attribute __seededSpinePositions.
@@ -697,6 +746,10 @@ function SigmaGraphViewComponent({
     if (cleanupProbeRef.current) {
       cleanupProbeRef.current();
       cleanupProbeRef.current = null;
+    }
+    // Cleanup v86b uniform probe
+    if ((window as any).__lwReadUniforms) {
+      delete (window as any).__lwReadUniforms;
     }
     // Stop gwells controller
     if (gwellsControllerRef.current) {

@@ -38,3 +38,16 @@ Added skip comment to test with documentation of the reactivity issue.
 
 ## Deferral Counter
 1
+
+## Resolution (2026-05-18)
+**RESOLVED** - The root cause was not a reactivity issue but a missing implementation. vP-Render-Pipeline-Refactor R2 (commit 54e11a8f) removed the monkey-patched getSetting pattern and introduced a ref-based uniform pipeline, but never wired the useEffect + rAF loop that updates uniformsRef.current. The uniformsRef was initialized from props on first render and then never updated, so nodeGlow changes had no effect on the shader.
+
+This commit (feat/v86b-finish) adds the missing uniform update effect per SIGMA_LIFECYCLE_CONTRACT.md's documented pattern:
+- Ref-sync effect for nodeHum/nodeFlowSpeed/nodeGlow (prevents rAF tear-down on prop changes)
+- Main uniform update effect gated on reduceMotion:
+  - When reduceMotion=true: halts time/hum/flowSpeed to 0, preserves glowStrength from nodeGlowRef
+  - When reduceMotion=false: runs rAF loop to animate time continuously
+- Deterministic probe window.__lwReadUniforms() exposed for Playwright testing
+- Tests rewritten to use the new probe instead of the old monkey-patched path
+
+All three reduce-motion-halt tests now pass.
