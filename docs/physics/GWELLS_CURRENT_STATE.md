@@ -61,6 +61,12 @@ references.
                every node has finite x/y post-mouseup, not just
                a probe. Diagnostic logs left in place for
                commit 2 to identify root cause. (this commit)
+[Pass C9.5 c2] Promoted C9.5 commit 1 NaN guards to permanent.
+               Removed diagnostic logs. Added Ctrl-drag
+               regression test 'Pass C9.5: Ctrl-drag does not
+               produce NaN positions'. Pre-existing
+               graph-blanks-on-mouseup render bug is resolved.
+               (this commit)
 ```
 
 Each pass commits cleanly with passing tests. The branch is intended to be
@@ -107,11 +113,12 @@ merged to main as a single coherent feature once Pass C9 completes.
 ### Tests
 
 - Validator (`npm run physics:gwells`): 12/12 passing.
-- Gwells Playwright spec (`tests/e2e/gwells-physics.spec.ts`): 15/15 passing
-  as of Pass C9.4. The Pass C5 drag-seed test threshold was bumped from 800
+- Gwells Playwright spec (`tests/e2e/gwells-physics.spec.ts`): 18/18 passing
+  as of Pass C9.5. The Pass C5 drag-seed test threshold was bumped from 800
   to 1100 in Pass C8.4 to accommodate the per-pair-spring behavior change
   introduced in Pass C8.2 plus the layout-scale changes from C8.4. Pass C9
-  reworked the drag-pin tests and added pinned-highlight tests.
+  reworked the drag-pin tests and added pinned-highlight tests. Pass C9.5
+  added NaN guards and a Ctrl-drag regression test.
 
 ## Sample current values
 
@@ -196,14 +203,21 @@ values has visible effect — a key design rule established in Pass C8.4. See
   C9.4 audit: C9.1 drag-handler refs were declared but never used
   or synced, and activePins was missing from Effect B's deps.
 
-- **Pass C9.5 commit 1 (this commit) added defensive guards so no**
-  surface produces or propagates NaN unobserved. The React
-  error storm is stopped by PlasmaOverlayEdge's defensive
-  filter; engine guards clamp velocities and refuse NaN writes.
+- **[Resolved in Pass C9.5] Graph blanks on mouseup during Ctrl-drag**
+  pin gestures. Symptom: 120k+ "Received NaN for x1/y1/x2/y2
+  attribute" React errors from PlasmaOverlayEdge's SVG <line>
+  elements. Cause: engine integration produced runaway velocity
+  against the large position-vs-seed delta during the brief
+  unfix window between mouseup and applyPins; Infinity→NaN
+  cascade propagated through node interactions to siblings.
 
-- **Pass C9.5 commit 2 (queued) will identify the actual NaN producer**
-  from the diagnostic logs and apply a targeted root-cause fix,
-  plus add a Ctrl-drag regression test.
+  Fix shape: defensive NaN guards at every layer of the drag-pin
+  pipeline plus a velocity clamp in the engine integration step.
+  The clamp structurally prevents the Infinity cascade; the other
+  guards are defense in depth. Root cause force-resolution path
+  not surgically identified — clamp made it unreachable.
+
+  See docs/physics/GWELLS_ARCHITECTURE.md § NaN guards.
 
 - **Pass C10 candidate — universal structural classification.** Current
   wellAssignment matches on string node types: `nodeType === "directory"`,

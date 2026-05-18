@@ -203,6 +203,54 @@ the gwells module, types is the lowest layer and dialects is the highest. The
 engine sits at the same level as seeders — both consume types but neither
 imports the other.
 
+## Engine frame loop
+
+The engine's `stepPhysics` function runs once per frame when the controller is
+active. It iterates through all nodes, accumulates forces from interactions,
+updates velocities with damping, clamps velocities to safe bounds, writes new
+positions, and applies pins.
+
+### NaN guards (Pass C9.5)
+
+The engine is defended against non-finite position/velocity
+propagation at three layers:
+
+1. **Force integration.** If force resolution produces non-finite
+   fx or fy (e.g., a distance-zero normalize), the integration
+   step is skipped for that node-frame. Velocity is not updated.
+
+2. **Velocity clamp.** Per-axis velocity is clamped at
+   MAX_SAFE_VELOCITY=10000 — ~200x the engine's nominal
+   maxVelocity of 50. The clamp does not engage during normal
+   physics but structurally bounds pathological cases (e.g.,
+   a node released far from its seed with high adherence
+   producing runaway integration).
+
+3. **Position write refusal.** If the integration step produces a
+   non-finite new position, the engine refuses to write it AND
+   resets the offending node's velocity to zero. The node stays
+   at its last known good position until the next frame.
+
+The host application layer adds parallel guards:
+
+- `applyPins` refuses to apply pins with non-finite x/y.
+- `handleMouseMove` skips frames with non-finite delta.
+- `downNode` aborts drag if startPositions had non-finite values.
+- `handleMouseUp` skips the pin write if captured positions were
+  non-finite (still unfixes the dragSet so the engine resumes
+  normally — only the pin write is skipped).
+- `PlasmaOverlayEdge` filters out edges with non-finite endpoint
+  display data so the SVG `<line>` element never receives NaN.
+
+These guards were added in Pass C9.5 in response to a
+user-observed render bug: Ctrl-drag mouseup floods the React
+reconciler with NaN-coord SVG attribute warnings. Root cause was
+not surgically identified — the velocity clamp prevents the
+Infinity→NaN cascade structurally, so the original force-
+resolution edge case is no longer reachable. Diagnostic logs
+captured during C9.5 commit 1 reproduction confirmed no NaN
+propagates after the guards were in place.
+
 ## The registry-contract pattern
 
 LumaWeave uses this pattern across many systems beyond gwells: settings,

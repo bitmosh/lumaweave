@@ -964,4 +964,110 @@ test.describe("Gwells Physics Integration", () => {
       `Expected zero nodes with non-finite x/y after drag. Got ${after.nonFiniteCount}. First bad: id=${after.firstBadId} x=${after.firstBadX} y=${after.firstBadY}`
     ).toBe(0);
   });
+
+  test("Pass C9.5: Ctrl-drag does not produce NaN positions", async ({ page }) => {
+    await page.waitForFunction(() => {
+      const sigma = (window as any).__lwSigma;
+      if (!sigma) return false;
+      return sigma.getGraph().hasAttribute("__gwellsSeedPositions");
+    }, { timeout: 10000 });
+
+    await page.waitForTimeout(500);
+
+    // Find a non-spine node and capture its initial screen position
+    const target = await page.evaluate(() => {
+      const sigma = (window as any).__lwSigma;
+      const graph = sigma.getGraph();
+      let targetId: string | null = null;
+      graph.forEachNode((id: string) => {
+        if (targetId) return;
+        const attrs = graph.getNodeAttributes(id);
+        if (attrs.nodeType !== "spine") targetId = id;
+      });
+      if (!targetId) return null;
+      const display = sigma.getNodeDisplayData(targetId);
+      const container = sigma.getContainer();
+      const rect = container.getBoundingClientRect();
+      return {
+        id: targetId,
+        startX: rect.left + display.x,
+        startY: rect.top + display.y,
+      };
+    });
+    expect(target).not.toBeNull();
+
+    // Perform a Ctrl-drag gesture: hold Ctrl, mousedown on the node,
+    // drag a significant distance (300px to ensure we land
+    // noticeably far from the seed), release with Ctrl still held.
+    await page.keyboard.down("Control");
+    await page.mouse.move(target!.startX, target!.startY);
+    await page.mouse.down();
+    for (let i = 1; i <= 15; i++) {
+      const t = i / 15;
+      await page.mouse.move(
+        target!.startX + 300 * t,
+        target!.startY + 150 * t,
+        { steps: 1 }
+      );
+      await page.waitForTimeout(20);
+    }
+    await page.mouse.up();
+    await page.keyboard.up("Control");
+
+    // Allow time for any post-mouseup physics frames to fire and
+    // for applyPins to land
+    await page.waitForTimeout(1200);
+
+    // Post-mouseup invariant: every node has finite x/y.
+    // Without C9.5 guards, the brief unfix window between mouseup
+    // and applyPins gave the engine physics frames to integrate
+    // huge forces, producing runaway velocity that propagated NaN
+    // through node interactions.
+    const result = await page.evaluate(() => {
+      const sigma = (window as any).__lwSigma;
+      if (!sigma) return { sigmaAlive: false };
+      const graph = sigma.getGraph();
+      let nonFiniteCount = 0;
+      let firstBadId: string | null = null;
+      let firstBadX: any = null;
+      let firstBadY: any = null;
+      graph.forEachNode((id: string) => {
+        const x = graph.getNodeAttribute(id, "x");
+        const y = graph.getNodeAttribute(id, "y");
+        if (!Number.isFinite(x) || !Number.isFinite(y)) {
+          nonFiniteCount++;
+          if (!firstBadId) {
+            firstBadId = id;
+            firstBadX = x;
+            firstBadY = y;
+          }
+        }
+      });
+      return {
+        sigmaAlive: !!sigma,
+        nodeCount: graph.order,
+        nonFiniteCount,
+        firstBadId,
+        firstBadX,
+        firstBadY,
+      };
+    });
+
+    expect(result.sigmaAlive).toBe(true);
+    expect(
+      result.nonFiniteCount,
+      `Expected zero nodes with non-finite x/y after Ctrl-drag. Got ${result.nonFiniteCount}. First bad: id=${result.firstBadId} x=${result.firstBadX} y=${result.firstBadY}`
+    ).toBe(0);
+
+    // Cleanup: clear any pins this test created
+    await page.evaluate(() => {
+      const store = (window as any).__lwStore;
+      const settings = store.getState().settings;
+      const dialectId = settings.physics.dialectId;
+      const allPins = { ...(settings.physics.pins ?? {}) };
+      delete allPins[dialectId];
+      store.getState().setSetting("physics.pins", allPins);
+    });
+    await page.waitForTimeout(300);
+  });
 });

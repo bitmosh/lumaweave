@@ -536,18 +536,15 @@ function SigmaGraphViewComponent({
       const ax = a.x as number;
       const ay = a.y as number;
       if (!Number.isFinite(ax) || !Number.isFinite(ay)) {
-        console.warn(
-          `TEMP_DIAG_C9_5: downNode startPosition non-finite, id=${id} ax=${ax} ay=${ay}`
-        );
         nonFiniteCapture = true;
       }
       startPositions.set(id, { x: ax, y: ay });
     }
+    // C9.5: abort drag if any dragSet member started with non-finite
+    // position. Prevents propagating corrupted state through the
+    // drag pipeline.
     if (nonFiniteCapture) {
-      console.warn(
-        `TEMP_DIAG_C9_5: aborting drag because dragSet contained non-finite positions at mousedown`
-      );
-      return; // abort drag
+      return;
     }
 
     dragState.dragging = true;
@@ -591,14 +588,9 @@ function SigmaGraphViewComponent({
     const deltaX = graphCoords.x - primaryStart.x;
     const deltaY = graphCoords.y - primaryStart.y;
 
-    // C9.5 commit 1: defensive guard. If viewportToGraph returns
-    // non-finite (e.g., camera in invalid state) or startPositions
-    // had NaN at capture, skip this frame's update rather than
-    // propagating NaN into graph attributes.
+    // C9.5: skip frames with non-finite delta (e.g., camera in
+    // invalid state, or NaN startPositions).
     if (!Number.isFinite(deltaX) || !Number.isFinite(deltaY)) {
-      console.warn(
-        `TEMP_DIAG_C9_5: handleMouseMove non-finite delta, deltaX=${deltaX} deltaY=${deltaY}, graphCoords=${JSON.stringify(graphCoords)}, primaryStart=${JSON.stringify(primaryStart)}`
-      );
       return;
     }
 
@@ -607,11 +599,7 @@ function SigmaGraphViewComponent({
       if (!start) continue;
       const newX = start.x + deltaX;
       const newY = start.y + deltaY;
-      // Defensive: also guard the per-member write
       if (!Number.isFinite(newX) || !Number.isFinite(newY)) {
-        console.warn(
-          `TEMP_DIAG_C9_5: handleMouseMove non-finite per-member, id=${id} newX=${newX} newY=${newY} start=${JSON.stringify(start)}`
-        );
         continue;
       }
       graph.setNodeAttribute(id, "x", newX);
@@ -641,9 +629,6 @@ function SigmaGraphViewComponent({
         const ax = a.x as number;
         const ay = a.y as number;
         if (!Number.isFinite(ax) || !Number.isFinite(ay)) {
-          console.warn(
-            `TEMP_DIAG_C9_5: handleMouseUp pin-capture non-finite, id=${id} ax=${ax} ay=${ay}`
-          );
           nonFinitePin = true;
           continue;
         }
@@ -653,17 +638,13 @@ function SigmaGraphViewComponent({
           z: typeof a.z === "number" ? (a.z as number) : 0,
         };
       }
+      // C9.5: skip pin write if any dragSet member had non-finite
+      // captured position. Still unfix the dragSet so engine resumes
+      // normally; just don't pin corrupt state.
       if (nonFinitePin) {
-        console.warn(
-          `TEMP_DIAG_C9_5: handleMouseUp skipping pin write because dragSet contained non-finite positions at mouseup`
-        );
-        // Still unfix the dragSet so engine resumes physics; just don't
-        // pin. The user's gesture didn't land cleanly but at least we
-        // don't write corrupt state.
         for (const id of dragState.dragSet) {
           graph.setNodeAttribute(id, "fixed", false);
         }
-        // Reset drag state and return without calling onUpdatePins
         dragState.dragging = false;
         dragState.primaryNodeId = null;
         dragState.dragSet = [];
