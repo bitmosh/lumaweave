@@ -144,6 +144,23 @@ const MIGRATIONS: Record<number,
     physics.pinnedHighlightActive ??= false;
     return { ...s, physics } as Partial<StarmapSettings>;
   },
+
+  // v85 → v86: strip FA2-era physics fields (chore/post-gwells-hygiene)
+  // Safety net migration - v82 already removed these fields, but this
+  // ensures any edge cases or skipped migrations are cleaned up.
+  86: (s) => {
+    const physics = { ...(s.physics ?? {}) } as any;
+    delete physics.physicsDialect;
+    delete physics.linkDistance;
+    delete physics.repelForce;
+    delete physics.centerForce;
+    delete physics.communityGravity;
+    delete physics.strongGravityMode;
+    delete physics.linLogMode;
+    delete physics.adjustSizes;
+    delete physics.barnesHutTheta;
+    return { ...s, physics } as Partial<StarmapSettings>;
+  },
 };
 
 export function migrateSettings(

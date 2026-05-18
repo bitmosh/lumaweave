@@ -73,6 +73,15 @@ references.
                emit in generate-self-graph.mjs. Added
                fresh-clone setup note to README. (this
                commit)
+[Post-gwells hygiene 2] Retired FA2-era settings entries from all
+               three registries (settings, contract,
+               handleset). Stripped FA2 fields from
+               schema, defaults, and migration v85→v86.
+               Cleaned up LayoutSettings type ripple in
+               buildGraphologyGraph, SigmaGraphView debug
+               rows, and test registries. Updated
+               ACTIVE_HANDLES.md to remove stale FA2 runtime
+               targets. (this commit)
 ```
 
 Each pass commits cleanly with passing tests. The branch is intended to be

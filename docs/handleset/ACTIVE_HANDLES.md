@@ -139,28 +139,6 @@ Live Update:    Yes
 Status:         active
 ```
 
-### physics.linkDistance
-```
-Handle Path:    physics.linkDistance
-Label:          Link Distance
-Default:        80
-Control:        number slider
-Runtime Target: ForceAtlas2 link distance
-Live Update:    Yes
-Status:         active
-```
-
-### physics.repelForce
-```
-Handle Path:    physics.repelForce
-Label:          Repel Force
-Default:        0.5
-Control:        number slider
-Runtime Target: ForceAtlas2 repel force
-Live Update:    Yes
-Status:         active
-```
-
 ---
 
 ## Notes

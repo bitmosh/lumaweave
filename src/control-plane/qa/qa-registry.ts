@@ -1291,7 +1291,7 @@ export const qaCheckDefinitions: QaCheckDefinition[] = [
     featureName: "Graph Physics Playwright Coverage",
     qaKey: "v39",
     title: "Physics controls are present",
-    expected: "Graph physics sliders (nodeSize, linkDistance, repelForce) are present and accessible",
+    expected: "Graph physics sliders (nodeSize) are present and accessible",
     qaVersion: 39,
     active: false,
     steps: ["Verify physics sliders have stable data-testid attributes"],

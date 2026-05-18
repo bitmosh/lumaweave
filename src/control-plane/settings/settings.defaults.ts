@@ -1,7 +1,7 @@
 import type { StarmapSettings } from "./settings.schema";
 
 export const defaultSettings: StarmapSettings = {
-  version: 85, // Pass C9.4: bumped from 84 for pinnedHighlightActive migration
+  version: 86, // Pass C9.4: bumped from 84 for pinnedHighlightActive migration; v86: FA2 field cleanup
 
   general: {
     startupProjectId: null,
