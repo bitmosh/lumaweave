@@ -61,9 +61,52 @@ test("v86c-integration: tileable sections match registry", async ({ page }) => {
   await expect(page.getByTestId("section-graph-visual-inventory")).toBeVisible();
   await expect(page.getByTestId("section-system-index")).toBeVisible();
   await expect(page.getByTestId("section-command-deck")).toBeVisible();
-  
+
   // Right dock sections (now wrapped in CollapsibleSection with tileableKey)
   await expect(page.getByTestId("settings-section-physics")).toBeVisible();
   await expect(page.getByTestId("settings-section-labels")).toBeVisible();
   await expect(page.getByTestId("settings-section-graph-view")).toBeVisible();
+});
+
+test("v86c-B: Physics section renders content when tiled out", async ({ page }) => {
+  await page.goto("/");
+
+  // Find the Physics tear-off handle in the settings panel
+  const physicsHandle = page.locator(
+    '[data-testid="settings-section-physics"] [title="Drag to tear off as tile"]'
+  );
+  await expect(physicsHandle).toBeVisible();
+
+  // Tear off — click + small drag to trigger the >8px threshold
+  const box = await physicsHandle.boundingBox();
+  await page.mouse.move(box!.x + 5, box!.y + 5);
+  await page.mouse.down();
+  await page.mouse.move(box!.x + 100, box!.y + 100, { steps: 5 });
+  await page.mouse.up();
+  await page.waitForTimeout(300);
+
+  // Verify the tile rendered with Physics content
+  const tileLayer = page.getByTestId("tile-layer");
+  await expect(tileLayer).toBeVisible();
+
+  const physicsContent = tileLayer.getByTestId("physics-section-content");
+  await expect(physicsContent).toBeVisible();
+
+  // Specifically: verify Physics-internal controls render inside the tile
+  const dialectSelect = physicsContent.getByTestId("dialect-select");
+  await expect(dialectSelect).toBeVisible();
+
+  // Verify source slot greys out
+  const sourceSection = page.locator(
+    '[data-testid="settings-section-physics"]'
+  );
+  await expect(sourceSection).toHaveAttribute("data-tiled-out", "true");
+
+  // Cleanup: clear the tile so subsequent tests aren't affected
+  await page.evaluate(() => {
+    const store = (window as any).__lwStore;
+    const settings = store.getState().settings;
+    store.getState().setSetting("ui.tileLayout", []);
+  });
+  await page.waitForTimeout(200);
 });

@@ -2,6 +2,7 @@
  * v86c Tile System Type Definitions
  */
 
+import type { ReactNode } from "react";
 import type { RegistryContract } from "../../themes/registryContract.types";
 
 /**
@@ -21,6 +22,11 @@ export interface TileSectionEntry {
   defaultHeight: number;
   /** Whether the section is collapsible */
   collapsible: boolean;
+  /**
+   * Render function for the tile body. Called by FloatingTile
+   * when this section is tiled out. v86c-B onward.
+   */
+  content?: () => ReactNode;
 }
 
 /**

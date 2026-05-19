@@ -3,7 +3,9 @@
  * Registry contract pattern for tileable sections
  */
 
+import { createElement } from "react";
 import type { TileSectionEntry, TileSectionRegistry } from "./tile.types";
+import { PhysicsSectionContent } from "./PhysicsSectionContent";
 
 const entries: TileSectionEntry[] = [
   {
@@ -42,9 +44,10 @@ const entries: TileSectionEntry[] = [
     id: "physics-section",
     label: "Physics",
     category: "control-dock",
-    defaultWidth: 280,
-    defaultHeight: 350,
+    defaultWidth: 320,
+    defaultHeight: 400,
     collapsible: true,
+    content: () => createElement(PhysicsSectionContent),
   },
   {
     id: "appearance-section",
