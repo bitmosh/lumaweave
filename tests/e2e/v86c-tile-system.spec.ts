@@ -6,6 +6,58 @@
  */
 
 import { expect, test } from "@playwright/test";
+import { tileSectionRegistry } from "../../src/control-plane/panels/tileSectionRegistry";
+
+/**
+ * Helper for v86c section-content meta-tests.
+ * Tears off a section and verifies content rendered inside the tile.
+ *
+ * Usage: see the registry-driven meta-tests at the bottom of this
+ * file. One test per registry entry.
+ */
+async function tearOffAndCheckContent(
+  page: import("@playwright/test").Page,
+  sourceTestId: string,
+  expectedContentTestId: string
+): Promise<void> {
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+
+  // Locate the tear-off handle in the source slot
+  const handle = page.locator(
+    `[data-testid="${sourceTestId}"] [title="Drag to tear off as tile"]`
+  );
+  await expect(handle).toBeVisible({ timeout: 10000 });
+
+  // Drag past the 8px threshold to tear off
+  const box = await handle.boundingBox();
+  if (!box) throw new Error(`No bounding box for handle in ${sourceTestId}`);
+
+  await page.mouse.move(box.x + 5, box.y + 5);
+  await page.mouse.down();
+  await page.mouse.move(box.x + 120, box.y + 120, { steps: 6 });
+  await page.mouse.up();
+  await page.waitForTimeout(300);
+
+  // Verify the floating tile exists
+  const tileLayer = page.getByTestId("tile-layer");
+  await expect(tileLayer).toBeVisible();
+
+  // Critical: the expected content testid must be present inside
+  // the tile, NOT just anywhere on the page (which could match
+  // the original undocked rendering).
+  const content = tileLayer.getByTestId(expectedContentTestId);
+  await expect(content).toBeVisible();
+
+  // Cleanup: reset tile layout so subsequent tests start clean
+  await page.evaluate(() => {
+    const store = (window as any).__lwStore;
+    if (store) {
+      store.getState().setSetting("ui.tileLayout", []);
+    }
+  });
+  await page.waitForTimeout(200);
+}
 
 test("v86c-integration: tile-tear-off handle visible", async ({ page }) => {
   await page.goto("/");
@@ -150,3 +202,47 @@ test("v86c: Tiled-out indicator appears in source slot when section is torn off"
   });
   await page.waitForTimeout(200);
 });
+
+/**
+ * Registry-driven section content rendering tests.
+ *
+ * Iterates tileSectionRegistry and generates one test per entry.
+ * Sections with contentTestId set → real assertion; should pass.
+ * Sections without contentTestId → test.fail (expected failure
+ * until Scope C wires the section's content() function).
+ *
+ * As each section gets its content wired (and its contentTestId
+ * set in the registry), the test starts passing automatically.
+ * No edits to this file required to track Scope C progress.
+ */
+for (const section of tileSectionRegistry.list()) {
+  const { id, contentTestId, sourceTestId } = section;
+
+  // Skip entries with no sourceTestId (shouldn't happen for
+  // wired sections, but defensive)
+  if (!sourceTestId) {
+    continue;
+  }
+
+  const testName = `v86c-meta: ${id} renders content when tiled out`;
+
+  if (contentTestId) {
+    // Wired section — expect the test to pass
+    test(testName, async ({ page }) => {
+      await tearOffAndCheckContent(page, sourceTestId, contentTestId);
+    });
+  } else {
+    // Section's content() function is not yet wired (Scope C work).
+    // test.fixme marks this as intentionally pending — Playwright
+    // won't run the body, won't fail, won't affect exit code.
+    // When this section's contentTestId is set in the registry
+    // (signal that content() is wired), this branch will not be
+    // taken and the section will fall into the passing branch above.
+    test.fixme(
+      `${testName} (pending: section not yet wired)`,
+      async () => {
+        // Body intentionally empty — fixme tests don't execute.
+      }
+    );
+  }
+}

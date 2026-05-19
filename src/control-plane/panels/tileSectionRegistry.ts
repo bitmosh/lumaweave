@@ -15,6 +15,8 @@ const entries: TileSectionEntry[] = [
     defaultWidth: 320,
     defaultHeight: 400,
     collapsible: true,
+    sourceTestId: "section-graph-sources",
+    // contentTestId set in Scope C-1
   },
   {
     id: "qa-section",
@@ -23,6 +25,8 @@ const entries: TileSectionEntry[] = [
     defaultWidth: 320,
     defaultHeight: 300,
     collapsible: true,
+    sourceTestId: "section-qa-panel",
+    // contentTestId set in Scope C-3
   },
   {
     id: "evidence-section",
@@ -31,6 +35,8 @@ const entries: TileSectionEntry[] = [
     defaultWidth: 320,
     defaultHeight: 350,
     collapsible: true,
+    sourceTestId: "section-graph-visual-inventory",
+    // contentTestId set in Scope C-4
   },
   {
     id: "debug-section",
@@ -39,6 +45,8 @@ const entries: TileSectionEntry[] = [
     defaultWidth: 320,
     defaultHeight: 300,
     collapsible: true,
+    sourceTestId: "section-system-index",
+    // contentTestId set in Scope C-1
   },
   {
     id: "physics-section",
@@ -48,6 +56,8 @@ const entries: TileSectionEntry[] = [
     defaultHeight: 400,
     collapsible: true,
     content: () => createElement(PhysicsSectionContent),
+    contentTestId: "dialect-select",
+    sourceTestId: "settings-section-physics",
   },
   {
     id: "appearance-section",
@@ -56,6 +66,8 @@ const entries: TileSectionEntry[] = [
     defaultWidth: 280,
     defaultHeight: 300,
     collapsible: true,
+    sourceTestId: "settings-section-graph-view",
+    // contentTestId set in Scope C-2
   },
   {
     id: "labels-section",
@@ -64,6 +76,8 @@ const entries: TileSectionEntry[] = [
     defaultWidth: 280,
     defaultHeight: 300,
     collapsible: true,
+    sourceTestId: "settings-section-labels",
+    // contentTestId set in Scope C-2
   },
 ];
 
