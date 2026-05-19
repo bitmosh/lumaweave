@@ -83,3 +83,32 @@ Recommended next steps:
 - Continue monitoring for failures in future full-suite runs
 - If the watch-list condition is met again, retry this investigation with more iterations
 - Consider applying the tolerance-widening fix pre-emptively if the flake continues to appear
+
+## Tolerance widening hypothesis tested and rejected [2026-05-19]
+
+Applied a 4500ms wait extension (50% above the original 3000ms)
+based on the rAF-timing-variance hypothesis. Tested in a single
+full-suite run; C9.0 still failed.
+
+Conclusion: rAF timing variance is NOT the cause. The drift-back
+assertion is failing for some other reason under full-suite
+load. Possible causes to investigate next time:
+
+1. Physics engine not running during the wait under worker
+   contention (rAF loop fully blocked, not just throttled).
+2. Drag handler completing differently under load — drift logic
+   may not engage cleanly after drag-released state.
+3. Seed position itself drifting during the wait (other physics
+   activity moving the target), making "drift toward seed"
+   impossible to assert.
+4. Sigma render loop competing with the test's wait timing.
+
+Reverted the wait extension. Test is back to 3000ms. The bug
+remains an escalated known issue.
+
+A real fix needs a deeper investigation pass focused on what's
+actually happening during the wait under full-suite load, not
+just "more time." Suggested next attempt: instrument the gwells
+engine's frame counter and the dragged node's per-frame
+position to confirm whether the engine is running at all
+during the failing full-suite wait.
