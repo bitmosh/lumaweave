@@ -4,9 +4,20 @@
  * Reference: (NEW)tile-system.jsx lines 15-44
  */
 
-import { createContext, useContext, ReactNode, useCallback, useRef, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  ReactNode,
+  useCallback,
+  useRef,
+  useEffect,
+} from "react";
 import { useSettingsStore } from "../settings/settings.store";
-import type { TileLayoutEntry, TileContextState, TileContextActions } from "./tile.types";
+import type {
+  TileLayoutEntry,
+  TileContextState,
+  TileContextActions,
+} from "./tile.types";
 import { tileSectionRegistry } from "./tileSectionRegistry";
 
 const TILE_GRID = 16;
@@ -28,68 +39,122 @@ interface TileProviderProps {
 }
 
 export function TileProvider({ children }: TileProviderProps) {
-  const { settings, setSetting } = useSettingsStore();
-  const { ui } = settings;
-  const tileLayout = ui.tileLayout || [];
-  const [tiles, setTiles] = useState<TileLayoutEntry[]>(tileLayout);
-  const zCounter = useRef(Math.max(...tileLayout.map(t => t.z), 10));
+  // CRITICAL: Each useSettingsStore call uses its own selector.
+  // This is the SAME pattern SettingsPanel uses and that pattern
+  // works. If your previous attempts used destructuring or selected
+  // a nested path, they were not following this pattern.
+  const settings = useSettingsStore((state) => state.settings);
+  const setSetting = useSettingsStore((state) => state.setSetting);
 
-  // Persist tiles to settings store on any change
+  const tiles: TileLayoutEntry[] = settings.ui?.tileLayout ?? [];
+
+  // Read the latest tiles from the store directly via getState().
+  // Bypasses React's render cycle so we get the post-setSetting
+  // value within the same synchronous turn. Critical for callers
+  // that do create-and-immediately-update (e.g. CollapsibleSection's
+  // onMove handler which calls tileOut and updateTile in the same
+  // JS turn).
+  const getCurrentTiles = (): TileLayoutEntry[] =>
+    useSettingsStore.getState().settings.ui?.tileLayout ?? [];
+
+  const zCounterRef = useRef<number>(
+    Math.max(...tiles.map((t) => t.z), 10),
+  );
+
   useEffect(() => {
-    setSetting("ui.tileLayout", tiles);
-  }, [tiles, setSetting]);
+    const maxZ = Math.max(...tiles.map((t) => t.z), 10);
+    if (maxZ > zCounterRef.current) {
+      zCounterRef.current = maxZ;
+    }
+  }, [tiles]);
 
-  // Re-sync from settings on mount (fixes persistence bug)
-  useEffect(() => {
-    setTiles(ui.tileLayout || []);
-  }, [ui.tileLayout]);
+  const writeTiles = useCallback(
+    (newTiles: TileLayoutEntry[]) => {
+      setSetting("ui.tileLayout", newTiles);
+    },
+    [setSetting],
+  );
 
-  // Tile out: convert a section into a floating tile. Returns tile ID if added.
-  const tileOut = useCallback((sectionKey: string, atPos?: { x: number; y: number }): string | null => {
-    let createdId: string | null = null;
-    setTiles(prev => {
-      if (prev.find(t => t.sectionKey === sectionKey)) return prev;
+  const tileOut = useCallback(
+    (sectionKey: string, atPos?: { x: number; y: number }): string | null => {
+      const currentTiles = getCurrentTiles();
+      if (currentTiles.find((t) => t.sectionKey === sectionKey)) return null;
       const section = tileSectionRegistry.getById(sectionKey);
-      if (!section) return prev;
-      const id = `tile_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,5)}`;
-      const x = atPos?.x ?? snap(window.innerWidth / 2 - 160);
-      const y = atPos?.y ?? snap(120 + prev.length * 30);
-      const newTile = { id, sectionKey, x, y, w: section.defaultWidth, h: section.defaultHeight, collapsed: false, z: ++zCounter.current };
-      createdId = id;
-      return [...prev, newTile];
-    });
-    return createdId;
-  }, []);
-  
-  const closeTile = useCallback((id: string) => {
-    setTiles(prev => prev.filter(t => t.id !== id));
-  }, []);
-  
-  const closeGroup = useCallback((groupIds: string[]) => {
-    setTiles(prev => prev.filter(t => !groupIds.includes(t.id)));
-  }, []);
-  
-  const updateTile = useCallback((id: string, patch: Partial<TileLayoutEntry>) => {
-    setTiles(prev => prev.map(t => t.id === id ? { ...t, ...patch } : t));
-  }, []);
-  
-  const bring = useCallback((id: string) => {
-    setTiles(prev => prev.map(t => t.id === id ? { ...t, z: ++zCounter.current } : t));
-  }, []);
+      if (!section) return null;
 
-  const isTiledOut = useCallback((sectionKey: string) => !!tiles.find(t => t.sectionKey === sectionKey), [tiles]);
+      const id = `tile_${Date.now().toString(36)}_${Math.random()
+        .toString(36)
+        .slice(2, 5)}`;
+      const x = atPos?.x ?? snap(window.innerWidth / 2 - 160);
+      const y = atPos?.y ?? snap(120 + currentTiles.length * 30);
+
+      const newTile: TileLayoutEntry = {
+        id,
+        sectionKey,
+        x,
+        y,
+        w: section.defaultWidth,
+        h: section.defaultHeight,
+        collapsed: false,
+        z: ++zCounterRef.current,
+      };
+      writeTiles([...currentTiles, newTile]);
+      return id;
+    },
+    [writeTiles],
+  );
+
+  const closeTile = useCallback(
+    (id: string) => {
+      writeTiles(getCurrentTiles().filter((t) => t.id !== id));
+    },
+    [writeTiles],
+  );
+
+  const closeGroup = useCallback(
+    (groupIds: string[]) => {
+      writeTiles(getCurrentTiles().filter((t) => !groupIds.includes(t.id)));
+    },
+    [writeTiles],
+  );
+
+  const updateTile = useCallback(
+    (id: string, patch: Partial<TileLayoutEntry>) => {
+      writeTiles(
+        getCurrentTiles().map((t) => (t.id === id ? { ...t, ...patch } : t)),
+      );
+    },
+    [writeTiles],
+  );
+
+  const bring = useCallback(
+    (id: string) => {
+      writeTiles(
+        getCurrentTiles().map((t) =>
+          t.id === id ? { ...t, z: ++zCounterRef.current } : t,
+        ),
+      );
+    },
+    [writeTiles],
+  );
+
+  const isTiledOut = useCallback(
+    (sectionKey: string) =>
+      !!getCurrentTiles().find((t) => t.sectionKey === sectionKey),
+    [],
+  );
 
   const contextValue: TileContextState & TileContextActions = {
-    tiles: new Map(tiles.map(t => [t.id, t])),
-    maxZ: Math.max(...tiles.map(t => t.z), 10),
-    groups: [], // Will be computed in TileLayer
+    tiles: new Map(tiles.map((t) => [t.id, t])),
+    maxZ: Math.max(...tiles.map((t) => t.z), 10),
+    groups: [],
     tileOut,
     closeTile,
     closeGroup,
     updateTile,
     bringToFront: bring,
     toggleCollapsed: (id: string) => {
-      const tile = tiles.find(t => t.id === id);
+      const tile = getCurrentTiles().find((t) => t.id === id);
       if (!tile) return;
       updateTile(id, { collapsed: !tile.collapsed });
     },
