@@ -27,6 +27,23 @@ export interface TileSectionEntry {
    * when this section is tiled out. v86c-B onward.
    */
   content?: () => ReactNode;
+
+  /**
+   * Testid that must be visible inside the tile body when this
+   * section's content() is called. The regression test in
+   * v86c-tile-system.spec.ts asserts this testid is visible
+   * after tear-off. REQUIRED to be set when content is wired.
+   * Undefined for sections whose content() is not yet wired.
+   */
+  contentTestId?: string;
+
+  /**
+   * Testid of the source slot's outer container in the docked
+   * (not-tiled-out) state. Used by tests to locate the tear-off
+   * handle and verify the slot's tiled-out indicator state.
+   * Should be set for all entries in this registry.
+   */
+  sourceTestId?: string;
 }
 
 /**
