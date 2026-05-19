@@ -17,6 +17,14 @@ The self-graph fixture (`src/fixtures/self-graph-generated.json` and siblings) i
 
 When source adapters land in a future pass, this plugin will be replaced by adapter-aware initialization that handles user-selected source roots.
 
+## Running tests
+
+```bash
+npm run qa:e2e
+```
+
+Playwright's Chromium binary is auto-installed at first test run if missing from the cache. No manual `npx playwright install` needed.
+
 ## Recommended IDE Setup
 
 - [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
