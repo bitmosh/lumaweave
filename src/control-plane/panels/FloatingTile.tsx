@@ -6,6 +6,7 @@
 
 import type { TileLayoutEntry, TileGroup } from "./tile.types";
 import { useTileContext } from "./TileProvider";
+import { tileSectionRegistry } from "./tileSectionRegistry";
 
 const TILE_GRID = 16;
 const SNAP_TOLERANCE = 22;
@@ -23,6 +24,9 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
   const ctx = useTileContext();
   const reg = ctx.tiles.get(tile.id);
   if (!reg) return null;
+
+  const sectionEntry = tileSectionRegistry.getById(tile.sectionKey);
+  const sectionContent = sectionEntry?.content?.();
 
   const startTileDrag = (e: React.MouseEvent, { ungroup = false } = {}) => {
     if ((e.target as HTMLElement).closest(".tile-btn")) return;
@@ -148,8 +152,15 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
         </div>
       )}
       {!tile.collapsed && (
-        <div className="tile-body">
-          {/* Content will be rendered by TileLayer */}
+        <div className="tile-body" data-testid={`tile-body-${tile.sectionKey}`}>
+          {sectionContent ?? (
+            <div className="tile-body-empty">
+              {/* Placeholder for sections without content() yet. Scope C wires the rest. */}
+              <p className="text-xs text-slate-500 p-4">
+                {sectionEntry?.label ?? "Untitled"} (content not yet wired)
+              </p>
+            </div>
+          )}
         </div>
       )}
       {!tile.collapsed && <div className="tile-resize" onMouseDown={onResizeDown}/>}

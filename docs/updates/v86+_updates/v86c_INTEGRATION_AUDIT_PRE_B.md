@@ -109,3 +109,36 @@ The work required to get physics-section fully tearable end-to-end (handle click
 - CSS styling may conflict with existing Tailwind classes
 - SettingsPanel content may need to be refactored to be extractable as a standalone component
 
+## Scope B Outcome (2026-05-18)
+
+Physics section successfully wired end-to-end as a floating tile. Option X (shared `PhysicsSectionContent` component) implemented.
+
+**Files changed**:
+- New: `src/control-plane/panels/PhysicsSectionContent.tsx` (+168 lines)
+- Modified: `src/control-plane/settings/SettingsPanel.tsx` (-70 lines, +8 lines net)
+- Modified: `src/control-plane/panels/tileSectionRegistry.ts` (+2 lines)
+- Modified: `src/control-plane/panels/tile.types.ts` (+5 lines)
+- Modified: `src/control-plane/panels/FloatingTile.tsx` (+9 lines)
+- Modified: `tests/e2e/v86c-tile-system.spec.ts` (+42 lines)
+- Deleted: `src/control-plane/panels/TileableSection.tsx` (-93 lines)
+
+**Diff size**: ~171 lines net
+
+**Architecture implemented**:
+- Added optional `content?: () => ReactNode` field to `TileSectionEntry` interface
+- Created `PhysicsSectionContent` component rendering Physics settings JSX (dialect select, sliders, HelixTwistSliders)
+- Updated SettingsPanel to use `<PhysicsSectionContent />` for Physics category, inline for others
+- Wired physics-section registry entry's content() to return `createElement(PhysicsSectionContent)`
+- Updated FloatingTile to call `sectionEntry.content?.()` and render in tile-body with fallback placeholder
+- Deleted TileableSection.tsx (confirmed dead code with zero importers in Phase 1)
+
+**Test coverage**:
+- New integration test: "v86c-B: Physics section renders content when tiled out"
+- Verifies: tile renders with physics-section-content, dialect-select visible, source slot greys out via data-tiled-out
+- Tile system tests: 6/6 passing (5 existing + 1 new)
+
+**Remaining gaps for Scope C**:
+- Labels section needs `LabelsSectionContent` extraction
+- Graph View section needs `GraphViewSectionContent` extraction
+- Other tile registry entries (qa, evidence, debug) still lack content wiring
+- Group formation testing still untested (requires 2+ wired sections)
