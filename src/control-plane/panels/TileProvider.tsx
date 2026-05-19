@@ -39,6 +39,11 @@ export function TileProvider({ children }: TileProviderProps) {
     setSetting("ui.tileLayout", tiles);
   }, [tiles, setSetting]);
 
+  // Re-sync from settings on mount (fixes persistence bug)
+  useEffect(() => {
+    setTiles(ui.tileLayout || []);
+  }, [ui.tileLayout]);
+
   // Tile out: convert a section into a floating tile. Returns tile ID if added.
   const tileOut = useCallback((sectionKey: string, atPos?: { x: number; y: number }): string | null => {
     let createdId: string | null = null;
@@ -54,7 +59,7 @@ export function TileProvider({ children }: TileProviderProps) {
       return [...prev, newTile];
     });
     return createdId;
-  }, []);  // ← empty deps, stable forever
+  }, []);
   
   const closeTile = useCallback((id: string) => {
     setTiles(prev => prev.filter(t => t.id !== id));

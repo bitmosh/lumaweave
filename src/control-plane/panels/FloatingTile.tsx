@@ -153,14 +153,7 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
       )}
       {!tile.collapsed && (
         <div className="tile-body" data-testid={`tile-body-${tile.sectionKey}`}>
-          {sectionContent ?? (
-            <div className="tile-body-empty">
-              {/* Placeholder for sections without content() yet. Scope C wires the rest. */}
-              <p className="text-xs text-slate-500 p-4">
-                {sectionEntry?.label ?? "Untitled"} (content not yet wired)
-              </p>
-            </div>
-          )}
+          {sectionContent}
         </div>
       )}
       {!tile.collapsed && <div className="tile-resize" onMouseDown={onResizeDown}/>}
