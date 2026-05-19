@@ -16,7 +16,7 @@ export function TileLayer() {
   const { groups, tileToGroup } = useMemo(() => computeGroups(tilesArray), [tilesArray]);
 
   return (
-    <div className="tile-layer">
+    <div className="tile-layer" data-testid="tile-layer">
       {/* Render groups */}
       {groups.map(group => (
         <div key={group.tileIds.join("-")}>
