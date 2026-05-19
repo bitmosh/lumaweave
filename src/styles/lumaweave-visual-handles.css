@@ -405,39 +405,37 @@ input[type="range"]:focus {
   z-index: 999;
 }
 
-/* Tile ghost indicator for "Tiled out" sections */
-.tile-ghost-indicator {
-  position: absolute;
-  inset: 0;
+/* Tiled-out indicator for sections whose content is currently torn off as a tile */
+.tiled-out-indicator {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  pointer-events: none;
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 10px;
+  padding: 12px;
+  margin: 4px 8px;
+  border: 1px dashed rgba(245, 158, 11, 0.20);
+  border-radius: 6px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 9.5px;
   letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--lw-flare-gold, #f59e0b);
-  opacity: 0.55;
+  color: rgba(245, 158, 11, 0.7);
 }
 
-.tile-ghost-dot {
+.tiled-out-indicator-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: var(--lw-flare-gold, #f59e0b);
-  animation: tileGhostPulse 1.6s ease-in-out infinite;
+  opacity: 0.5;
+  animation: tiledOutPulse 2s ease-in-out infinite;
 }
 
-@keyframes tileGhostPulse {
+@keyframes tiledOutPulse {
   0%, 100% {
     opacity: 0.3;
-    transform: scale(0.85);
   }
   50% {
-    opacity: 1.0;
-    transform: scale(1.15);
+    opacity: 0.85;
   }
 }
 
