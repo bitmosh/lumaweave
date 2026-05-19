@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { useTileContext } from "./TileProvider";
+import { TiledOutIndicator } from "./TiledOutIndicator";
 
 interface CollapsibleSectionProps {
   title: string;
@@ -72,12 +73,6 @@ export function CollapsibleSection({
       data-tiled-out={tiledOut ? "true" : undefined}
       style={{
         marginBottom: "8px",
-        ...(tiledOut && {
-          opacity: 0.5,
-          border: "1px dashed rgba(34,211,238,0.3)",
-          animation: "pulse 2s ease-in-out infinite",
-          cursor: "not-allowed",
-        }),
       }}
       onClickCapture={tiledOut ? (e) => { e.stopPropagation(); e.preventDefault(); } : undefined}
     >
@@ -132,50 +127,23 @@ export function CollapsibleSection({
           </button>
         )}
       </div>
-      {!tiledOut && (
-        <div
-          style={{
-            overflow: "hidden",
-            maxHeight: isOpen ? "2000px" : "0px",
-            transition: "max-height 0.2s ease",
-          }}
-        >
-          <div style={{ padding: "12px 0" }}>
-            {children}
-          </div>
+      <div
+        style={{
+          overflow: "hidden",
+          maxHeight: isOpen ? "2000px" : "0px",
+          transition: "max-height 0.2s ease",
+        }}
+      >
+        <div style={{ padding: "12px 0" }}>
+          {tiledOut ? (
+            <TiledOutIndicator
+              testId={testId ? `${testId}-tiled-indicator` : undefined}
+            />
+          ) : (
+            children
+          )}
         </div>
-      )}
-      {tiledOut && (
-        <div
-          className="tile-ghost-indicator"
-          style={{
-            minHeight: "44px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "8px",
-            padding: "10px 12px",
-            fontFamily: "'IBM Plex Mono', monospace",
-            fontSize: "10px",
-            letterSpacing: "0.18em",
-            textTransform: "uppercase",
-            color: "var(--lw-flare-gold, #f59e0b)",
-            opacity: 0.55,
-            pointerEvents: "none",
-          }}
-        >
-          <span>Tiled out</span>
-          <span
-            className="tile-ghost-dot"
-            style={{
-              width: "6px",
-              height: "6px",
-              borderRadius: "50%",
-              background: "var(--lw-flare-gold, #f59e0b)",
-            }}
-          />
-        </div>
-      )}
+      </div>
     </div>
   );
 }

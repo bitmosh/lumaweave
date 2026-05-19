@@ -110,3 +110,43 @@ test("v86c-B: Physics section renders content when tiled out", async ({ page }) 
   });
   await page.waitForTimeout(200);
 });
+
+test("v86c: Tiled-out indicator appears in source slot when section is torn off", async ({ page }) => {
+  await page.goto("/");
+
+  const physicsHandle = page.locator(
+    '[data-testid="settings-section-physics"] [title="Drag to tear off as tile"]'
+  );
+  await expect(physicsHandle).toBeVisible();
+
+  const box = await physicsHandle.boundingBox();
+  if (!box) throw new Error("Physics handle has no bounding box");
+
+  await page.mouse.move(box.x + 5, box.y + 5);
+  await page.mouse.down();
+  await page.mouse.move(box.x + 120, box.y + 120, { steps: 6 });
+  await page.mouse.up();
+  await page.waitForTimeout(300);
+
+  // The indicator should now be visible in the source slot
+  const sourceSection = page.locator(
+    '[data-testid="settings-section-physics"]'
+  );
+  const indicator = sourceSection.getByTestId("settings-section-physics-tiled-indicator");
+  await expect(indicator).toBeVisible();
+
+  // And the original Physics content should NOT be visible in the source slot
+  // (it's been replaced by the indicator). The dialect-select is the load-bearing
+  // Physics control we test for absence here.
+  const dialectInSlot = sourceSection.getByTestId("dialect-select");
+  // The dialect select should still exist in the document (inside the floating tile),
+  // but not within the source section.
+  await expect(dialectInSlot).toHaveCount(0);
+
+  // Cleanup
+  await page.evaluate(() => {
+    const store = (window as any).__lwStore;
+    store.getState().setSetting("ui.tileLayout", []);
+  });
+  await page.waitForTimeout(200);
+});
