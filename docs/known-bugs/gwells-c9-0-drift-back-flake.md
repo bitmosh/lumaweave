@@ -63,3 +63,52 @@ Either:
 Priority: low. Failure is intermittent and the test path is
 exercised reliably in isolated runs. Watch list: if this fails
 in three or more consecutive full-suite runs, escalate.
+
+## Status update [2026-05-19]
+
+Investigation pass at fix/gwells-c9-0-drift-back-flake branch.
+
+Diagnostic findings:
+- Isolated run: passed, timing ~3004ms wait, final position x=31290, y=1906
+- Full suite run: passed, timing ~3004ms wait, final position x=31640, y=2538
+
+**Unexpected result:** The test did NOT fail in the full suite run during this investigation. The timing is identical (~3004ms) in both runs, but the final positions differ (likely due to different nodes being selected by the probe). Since the test passed in both isolated and full-suite runs, I could not reproduce the failure to identify Pattern A/B/C.
+
+The flake remains intermittent. Possible explanations:
+1. The flake is load-dependent and didn't trigger in this particular run
+2. Recent commits (v86c meta-test merge) may have affected the timing/worker contention
+3. The flake may be more rare than the 3-consecutive-failure watch-list condition suggested
+
+Recommended next steps:
+- Continue monitoring for failures in future full-suite runs
+- If the watch-list condition is met again, retry this investigation with more iterations
+- Consider applying the tolerance-widening fix pre-emptively if the flake continues to appear
+
+## Tolerance widening hypothesis tested and rejected [2026-05-19]
+
+Applied a 4500ms wait extension (50% above the original 3000ms)
+based on the rAF-timing-variance hypothesis. Tested in a single
+full-suite run; C9.0 still failed.
+
+Conclusion: rAF timing variance is NOT the cause. The drift-back
+assertion is failing for some other reason under full-suite
+load. Possible causes to investigate next time:
+
+1. Physics engine not running during the wait under worker
+   contention (rAF loop fully blocked, not just throttled).
+2. Drag handler completing differently under load — drift logic
+   may not engage cleanly after drag-released state.
+3. Seed position itself drifting during the wait (other physics
+   activity moving the target), making "drift toward seed"
+   impossible to assert.
+4. Sigma render loop competing with the test's wait timing.
+
+Reverted the wait extension. Test is back to 3000ms. The bug
+remains an escalated known issue.
+
+A real fix needs a deeper investigation pass focused on what's
+actually happening during the wait under full-suite load, not
+just "more time." Suggested next attempt: instrument the gwells
+engine's frame counter and the dragged node's per-frame
+position to confirm whether the engine is running at all
+during the failing full-suite wait.
