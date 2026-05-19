@@ -63,3 +63,23 @@ Either:
 Priority: low. Failure is intermittent and the test path is
 exercised reliably in isolated runs. Watch list: if this fails
 in three or more consecutive full-suite runs, escalate.
+
+## Status update [2026-05-19]
+
+Investigation pass at fix/gwells-c9-0-drift-back-flake branch.
+
+Diagnostic findings:
+- Isolated run: passed, timing ~3004ms wait, final position x=31290, y=1906
+- Full suite run: passed, timing ~3004ms wait, final position x=31640, y=2538
+
+**Unexpected result:** The test did NOT fail in the full suite run during this investigation. The timing is identical (~3004ms) in both runs, but the final positions differ (likely due to different nodes being selected by the probe). Since the test passed in both isolated and full-suite runs, I could not reproduce the failure to identify Pattern A/B/C.
+
+The flake remains intermittent. Possible explanations:
+1. The flake is load-dependent and didn't trigger in this particular run
+2. Recent commits (v86c meta-test merge) may have affected the timing/worker contention
+3. The flake may be more rare than the 3-consecutive-failure watch-list condition suggested
+
+Recommended next steps:
+- Continue monitoring for failures in future full-suite runs
+- If the watch-list condition is met again, retry this investigation with more iterations
+- Consider applying the tolerance-widening fix pre-emptively if the flake continues to appear
