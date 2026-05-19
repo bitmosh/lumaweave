@@ -453,19 +453,6 @@ input[type="range"]:focus {
   animation: pulse 2s ease-in-out infinite;
 }
 
-[data-tiled-out="true"]::after {
-  content: "Tiled out";
-  animation: tiledOutPulse 1.5s ease-in-out infinite;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 11px;
-  opacity: 0.6;
-  color: #94a3b8;
-  pointer-events: none;
-}
-
 @keyframes tiledOutPulse {
   0%, 100% {
     opacity: 0.4;
