@@ -26,7 +26,13 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
   if (!reg) return null;
 
   const sectionEntry = tileSectionRegistry.getById(tile.sectionKey);
-  const sectionContent = sectionEntry?.content?.();
+
+  let sectionContent: React.ReactNode = null;
+  try {
+    sectionContent = sectionEntry?.content?.();
+  } catch (e) {
+    // Section content failed to render
+  }
 
   const startTileDrag = (e: React.MouseEvent, { ungroup = false } = {}) => {
     if ((e.target as HTMLElement).closest(".tile-btn")) return;

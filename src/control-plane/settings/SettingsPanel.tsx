@@ -2,6 +2,8 @@ import { settingsRegistry } from "./settings.registry";
 import { useSettingsStore } from "./settings.store";
 import { CollapsibleSection } from "../panels/CollapsibleSection";
 import { PhysicsSectionContent } from "../panels/PhysicsSectionContent";
+import { LabelsSectionContent } from "../panels/LabelsSectionContent";
+import { AppearanceSectionContent } from "../panels/AppearanceSectionContent";
 
 function getNestedValue(obj: any, path: string) {
   return path.split(".").reduce((cursor, key) => cursor?.[key], obj);
@@ -27,11 +29,15 @@ export function SettingsPanel() {
       {categories.map((category) => {
         const tileableKey = categoryToTileKey[category];
 
-        // Physics rendering extracted to component (v86c-B Option X).
-        // Other categories still inline until Scope C extracts them too.
+        // Extracted components for v86c (Option X pattern).
         const innerContent = category === "Physics"
           ? <PhysicsSectionContent />
+          : category === "Labels"
+          ? <LabelsSectionContent />
+          : category === "Graph View"
+          ? <AppearanceSectionContent />
           : (
+            // Defensive fallback for any future category not yet extracted
             <section
               className="rounded-xl border border-cyan-400/20 bg-slate-950/70 p-4"
             >
