@@ -82,6 +82,7 @@ export interface StarmapSettings {
     neighborhoodDepth: number;
     hoverNodeColor: string;
     nodeSize: number;
+    dimMode: "off" | "outside-cluster" | "outside-pinned"; // v86d: inspector dim mode integration
   };
 
   physics: {

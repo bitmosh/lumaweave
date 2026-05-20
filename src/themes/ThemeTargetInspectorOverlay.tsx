@@ -192,60 +192,46 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
     };
   }, []);
 
-  useEffect(() => {
-    if (!enabled) {
-      setHoverEntity(null);
-      setPinnedEntity(null);
-      setGhostOutlines([]);
-      setWarningBadges([]);
-      setLatestProbeResult(null);
-      candidateLookupRef.current = new Map();
-      return;
+  // Helper function to resolve entity from event target (used by both effects)
+  const resolveEntityFromEventTarget = (rawTarget: EventTarget | null): ThemeTargetInspectorEntity | null => {
+    let current = rawTarget instanceof HTMLElement ? rawTarget : null;
+    if (current && current.matches(SIGMA_ELEMENT_SELECTOR)) {
+      return null;
     }
-
-    const runProbe = () => runAndRecordThemeTargetProbe();
-
-    const resolveEntityFromEventTarget = (rawTarget: EventTarget | null): ThemeTargetInspectorEntity | null => {
-      let current = rawTarget instanceof HTMLElement ? rawTarget : null;
-      if (current && current.matches(SIGMA_ELEMENT_SELECTOR)) {
+    while (current) {
+      if (isWithinOverlay(current)) {
         return null;
       }
-      while (current) {
-        if (isWithinOverlay(current)) {
-          return null;
+      if (current.matches(REGISTERED_TARGET_SELECTOR)) {
+        const themeTargetId = current.getAttribute("data-lw-theme-target");
+        if (themeTargetId) {
+          return {
+            kind: "registered",
+            themeTargetId,
+            metadata: getThemeTargetById(themeTargetId) ?? undefined,
+          };
         }
-        if (current.matches(REGISTERED_TARGET_SELECTOR)) {
-          const themeTargetId = current.getAttribute("data-lw-theme-target");
-          if (themeTargetId) {
-            return {
-              kind: "registered",
-              themeTargetId,
-              metadata: getThemeTargetById(themeTargetId) ?? undefined,
-            };
-          }
-        }
-        const descriptor = describeElementForMatching(current);
-        if (descriptor && candidateLookupRef.current.has(descriptor)) {
-          const candidate = candidateLookupRef.current.get(descriptor)!;
-          if (candidate.status === "candidate") {
-            return {
-              kind: "candidate",
-              descriptor: candidate.descriptor,
-              dataTestId: candidate.dataTestId,
-              signals: candidate.signals,
-            };
-          }
-        }
-        current = current.parentElement;
       }
-      return null;
-    };
+      const descriptor = describeElementForMatching(current);
+      if (descriptor && candidateLookupRef.current.has(descriptor)) {
+        const candidate = candidateLookupRef.current.get(descriptor)!;
+        if (candidate.status === "candidate") {
+          return {
+            kind: "candidate",
+            descriptor: candidate.descriptor,
+            dataTestId: candidate.dataTestId,
+            signals: candidate.signals,
+          };
+        }
+      }
+      current = current.parentElement;
+    }
+    return null;
+  };
 
-    const handleMouseMove = (event: MouseEvent) => {
-      const entity = resolveEntityFromEventTarget(event.target);
-      setHoverEntity(entity);
-    };
-
+  // Always-on: Alt+Shift+click listener for inspector:open event (v86d.1)
+  // This runs regardless of enabled state, per packet spec
+  useEffect(() => {
     const handleClick = (event: MouseEvent) => {
       // Dispatch inspector:open event when Alt+Shift+click on registered target
       // Use event.altKey and event.shiftKey directly for reliable state detection
@@ -263,7 +249,13 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
         return;
       }
 
-      // Dispatch custom event with target information
+      // Get anchor position from target element's bounding rect
+      const targetElement = event.target as HTMLElement;
+      const rect = targetElement.getBoundingClientRect();
+      const anchorX = rect.left + rect.width / 2;
+      const anchorY = rect.top + rect.height / 2;
+
+      // Dispatch custom event with target information and anchor position
       window.dispatchEvent(
         new CustomEvent("inspector:open", {
           detail: {
@@ -271,9 +263,35 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
             label: target.label,
             surface: target.surface,
             status: target.status,
+            anchorX,
+            anchorY,
           },
         }),
       );
+    };
+
+    window.addEventListener("click", handleClick);
+    return () => {
+      window.removeEventListener("click", handleClick);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!enabled) {
+      setHoverEntity(null);
+      setPinnedEntity(null);
+      setGhostOutlines([]);
+      setWarningBadges([]);
+      setLatestProbeResult(null);
+      candidateLookupRef.current = new Map();
+      return;
+    }
+
+    const runProbe = () => runAndRecordThemeTargetProbe();
+
+    const handleMouseMove = (event: MouseEvent) => {
+      const entity = resolveEntityFromEventTarget(event.target);
+      setHoverEntity(entity);
     };
 
     const scheduleGhostOutlineUpdate = (() => {
@@ -318,7 +336,6 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
     scheduleGhostOutlineUpdate();
     runProbe();
     window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("click", handleClick);
     window.addEventListener("resize", handleResizeOrScroll);
     window.addEventListener("scroll", handleResizeOrScroll, true);
 
@@ -361,7 +378,6 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("click", handleClick);
       window.removeEventListener("resize", handleResizeOrScroll);
       window.removeEventListener("scroll", handleResizeOrScroll, true);
       if (mutationObserver) {
