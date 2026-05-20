@@ -142,6 +142,7 @@ export interface TileLayoutEntry {
   h: number;
   collapsed: boolean;
   z: number;
+  prevH?: number;
 }
 
 /**

@@ -402,6 +402,82 @@ test.fixme("v86c: 3 tiles snap into a single 3-wide group", async ({ page }) => 
   });
 });
 
+test("v86c: tile near viewport bottom renders flipped", async ({ page }) => {
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+
+  // Set up: a tile near the bottom of the viewport
+  await page.evaluate(() => {
+    const store = (window as any).__lwStore;
+    if (!store) return;
+    const viewportH = window.innerHeight;
+    const tileH = 240;
+    // Position so tile would clip bottom AND has room above
+    const tile = {
+      id: "test_flip_tile",
+      sectionKey: "physics-section",
+      x: 200,
+      y: viewportH - 100,
+      w: 280,
+      h: tileH,
+      collapsed: false,
+      z: 10,
+    };
+    store.getState().setSetting("ui.tileLayout", [tile]);
+  });
+
+  await page.waitForTimeout(300);
+
+  // Verify the tile rendered with data-flipped="true"
+  const flipped = await page
+    .locator(".tile")
+    .first()
+    .getAttribute("data-flipped");
+  expect(flipped).toBe("true");
+
+  // Cleanup
+  await page.evaluate(() => {
+    const store = (window as any).__lwStore;
+    store.getState().setSetting("ui.tileLayout", []);
+  });
+});
+
+test("v86c: tile in middle of viewport renders normally", async ({ page }) => {
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+
+  // Set up: a tile in the middle, plenty of room
+  await page.evaluate(() => {
+    const store = (window as any).__lwStore;
+    if (!store) return;
+    const tile = {
+      id: "test_normal_tile",
+      sectionKey: "physics-section",
+      x: 200,
+      y: 100,
+      w: 280,
+      h: 240,
+      collapsed: false,
+      z: 10,
+    };
+    store.getState().setSetting("ui.tileLayout", [tile]);
+  });
+
+  await page.waitForTimeout(300);
+
+  const flipped = await page
+    .locator(".tile")
+    .first()
+    .getAttribute("data-flipped");
+  expect(flipped).toBe("false");
+
+  // Cleanup
+  await page.evaluate(() => {
+    const store = (window as any).__lwStore;
+    store.getState().setSetting("ui.tileLayout", []);
+  });
+});
+
 /**
  * Registry-driven section content rendering tests.
  *

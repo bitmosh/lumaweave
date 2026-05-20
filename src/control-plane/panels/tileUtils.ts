@@ -103,3 +103,16 @@ export function findSnap(movingTile: TileLayoutEntry, others: TileLayoutEntry[])
   const best = snapCandidates.reduce((a, b) => a.d < b.d ? a : b);
   return { x: best.x, y: best.y };
 }
+
+// --- Flip-on-overflow mechanic ----
+// Tiles render flipped (header at bottom, content above) when within 80px threshold of status bar
+export function shouldFlipTile(
+  tile: { y: number; h: number },
+  viewportHeight: number
+): boolean {
+  const statusBarHeight = 40;
+  const flipThreshold = viewportHeight - statusBarHeight - 80; // 80px threshold window before status bar
+  const inFlipZone = tile.y + tile.h > flipThreshold;
+  const hasRoomAbove = tile.y >= tile.h;
+  return inFlipZone && hasRoomAbove;
+}
