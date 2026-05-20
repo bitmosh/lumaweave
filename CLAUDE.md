@@ -445,6 +445,52 @@ pass" or "auto-approve everything for this session." When they do,
 override the defaults for that session only. Default restrictions
 resume at the next session.
 
+## Discord messaging protocol
+
+All significant Discord communication follows this structure:
+
+### #approve-this
+
+- **Purpose**: Approval gate for destructive operations
+- **Content**: Commit previews, merge notifications, push confirmations
+- **Pattern**: "Reply 'approve' to proceed"
+- **Wait**: Always wait for response before proceeding
+
+### #current-task
+
+- **Purpose**: Run lifecycle tracking
+- **Content**: 
+  - BEGIN: Post when starting a new pass/task with phase name
+  - END: Post when task completes with summary + changelog
+- **Frequency**: Once per major pass/task, beginning and end only
+- **Format**: Concise — phase name, key results, new/modified files
+
+### #notifications
+
+- **Purpose**: Detailed run updates and diagnostics
+- **Content**: 
+  - Test results (failure/pass counts)
+  - Regression alerts
+  - Diagnostic findings
+  - Status updates during long-running tasks
+- **Frequency**: As needed; one message per logical update
+- **Format**: Verbatim output when reporting failures (per CLAUDE.md)
+
+### #brainstorm
+
+- **Purpose**: High-ROI improvements, system optimizations, recommendations
+- **Content**: 
+  - Ideas for streamlining development workflow
+  - Architectural suggestions
+  - Process improvements
+  - Observations about pain points
+- **Format**: Summarized writeups (not raw brainstorm dumps); include:
+  - Problem identified
+  - Proposed solution
+  - Estimated ROI (time saved, complexity reduced, etc.)
+  - Implementation cost
+- **Trigger**: Only post if the suggestion has material impact (don't spam)
+
 ## Useful one-liners
 
 ```bash
