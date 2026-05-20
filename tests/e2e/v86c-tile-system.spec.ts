@@ -211,7 +211,8 @@ test("v86c: Tiled-out indicator appears in source slot when section is torn off"
  * Verifies that 3 tiles positioned edge-adjacent form a single group.
  * This tests adjacency detection independent of drag UX.
  */
-test("v86c: Group collapse-all expands ALL tiles including non-top-row", async ({ page }) => {
+test.fixme("v86c: Group collapse-all expands ALL tiles including non-top-row", async ({ page }) => {
+  // Disabled: tile grouping disabled in v86c-disable-groups; revisit when re-enabled
   await page.goto("/");
   await page.waitForLoadState("networkidle");
 
@@ -317,7 +318,8 @@ test("v86c: Group collapse-all expands ALL tiles including non-top-row", async (
   });
 });
 
-test("v86c: 3 tiles snap into a single 3-wide group", async ({ page }) => {
+test.fixme("v86c: 3 tiles snap into a single 3-wide group", async ({ page }) => {
+  // Disabled: tile grouping disabled in v86c-disable-groups; revisit when re-enabled
   await page.goto("/");
   await page.waitForLoadState("networkidle");
 

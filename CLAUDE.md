@@ -627,6 +627,7 @@ Claude Code posts to #current-task:
 - Scope C continues with right-dock only:
   - `labels-section`: pending wiring (C-2)
   - `appearance-section`: pending wiring (C-2)
+- **Tile grouping disabled (v86c-disable-groups)**: Automatic group creation, group bars, and group outlines no longer render. Individual tile behavior preserved (tear-off, drag, snap-to-grid, snap-to-tile-edge, collapse, resize all work). Group code remains in codebase for future re-enable. Reason: multiple days spent patching group bugs across old and rewritten tile systems; cost-benefit favors disabling pending product feature direction.
 - Multiple known bugs documented in `docs/known-bugs/`.
 
 If this file feels out of date, ask the developer. They (or the
