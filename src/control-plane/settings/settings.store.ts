@@ -33,14 +33,14 @@ function loadSettings(): StarmapSettings {
     }
     const parsed = JSON.parse(saved) as Partial<StarmapSettings>;
     const migrated = migrateSettings(parsed);
-    
+
     // Version gate: reject if migration didn't reach current version
     if (migrated.version !== CURRENT_SCHEMA_VERSION) {
       throw new Error(
         `Settings migration ended at v${migrated.version}, expected v${CURRENT_SCHEMA_VERSION}. Migration chain is incomplete.`,
       );
     }
-    
+
     return migrated;
   } catch {
     return defaultSettings;
@@ -50,7 +50,7 @@ function loadSettings(): StarmapSettings {
 export const useSettingsStore = create<SettingsStore>((set) => ({
   settings: loadSettings(),
 
-  setSetting: (path, value) =>
+  setSetting: (path: string, value: unknown) =>
     set((state) => ({
       settings: setNestedValue(state.settings, path, value),
     })),
@@ -60,6 +60,15 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
       settings: defaultSettings,
     }),
 }));
+
+// Subscribe to state changes and persist to localStorage
+useSettingsStore.subscribe((state) => {
+  try {
+    localStorage.setItem("lumaweave-settings", JSON.stringify(state.settings));
+  } catch (error) {
+    console.error("Failed to save settings to localStorage:", error);
+  }
+});
 
 // Export raw store for test helpers (dev mode only)
 export const settingsStore = useSettingsStore;
