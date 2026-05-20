@@ -53,13 +53,14 @@ function GroupBar({ group }: { group: TileGroup }) {
 
   const onCollapseAll = () => {
     const next = !allCollapsed;
-    console.log("[GroupBar.onCollapseAll] groupId:", group.tileIds[0], "allCollapsed:", allCollapsed, "next:", next, "groupTileIds:", groupTiles.map(t => t.id), "groupTileCollapsed:", groupTiles.map(t => ({ id: t.id, collapsed: t.collapsed, y: t.y, x: t.x, topRowMinY: Math.min(...groupTiles.map(t => t.y)) })));
+    console.log("[GroupBar.onCollapseAll] groupTileIds:", groupTiles.map(t => t.id), "topRowTileIds:", group.topRow, "allCollapsed:", allCollapsed, "→ next:", next);
+    console.log("[GroupBar.onCollapseAll.details]", groupTiles.map(t => ({ id: t.id, collapsed: t.collapsed, y: t.y, inTopRow: group.topRow.includes(t.id) })));
     groupTiles.forEach(t => {
       ctx.updateTile(t.id, { collapsed: next });
     });
     setTimeout(() => {
       const updated = Array.from(ctx.tiles.values()).filter(t => group.tileIds.includes(t.id));
-      console.log("[GroupBar.onCollapseAll.after] updated tiles:", updated.map(t => ({ id: t.id, collapsed: t.collapsed })));
+      console.log("[GroupBar.onCollapseAll.after] All tiles should now have collapsed:", next, "Actual:", updated.map(t => ({ id: t.id, collapsed: t.collapsed, inTopRow: group.topRow.includes(t.id) })));
     }, 50);
   };
 

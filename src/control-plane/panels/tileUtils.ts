@@ -79,6 +79,14 @@ export function findSnap(movingTile: TileLayoutEntry, others: TileLayoutEntry[])
         snapCandidates.push({ ...p, d: d * 0.6 });
       }
     });
+
+    // Row alignment: if horizontally adjacent (or near), snap Y to match for group row alignment
+    const xClose = Math.abs((r.x + r.w) - or.x) < SNAP_TOLERANCE || Math.abs((or.x + or.w) - r.x) < SNAP_TOLERANCE;
+    const yDiff = Math.abs(r.y - or.y);
+    if (xClose && yDiff > 0 && yDiff < SNAP_TOLERANCE) {
+      // Row alignment snap gets strong weighting (0.5x) to ensure tiles in same row
+      snapCandidates.push({ x: r.x, y: or.y, d: yDiff * 0.5 });
+    }
   });
   if (snapCandidates.length === 0) return null;
   const best = snapCandidates.reduce((a, b) => a.d < b.d ? a : b);
