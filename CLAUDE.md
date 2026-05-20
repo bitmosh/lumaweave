@@ -433,8 +433,8 @@ When pinging #approve-this, include:
 
 ### Recognized responses
 
-- "approve" / "approved" / "yes" / "go" / "proceed" — proceed
-- "no" / "wait" / "stop" / "hold" — STOP and explain or wait
+- "y" / "yes" / "approve" / "approved" / "go" / "proceed" — proceed
+- "n" / "no" / "wait" / "stop" / "hold" — STOP and explain or wait
 - "change X to Y" — incorporate the change before proceeding
 - Ambiguous response — post a clarifying question, continue waiting
 
