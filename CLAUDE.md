@@ -524,17 +524,18 @@ When you want to work async (e.g., you're stepping away but want work to continu
 
 ### Initiating Discord Mode
 
-**User sends in #current-task:**
+**User sends in any channel:**
 ```
-@Claude Code: [work command]
-/discord-mode
+[work command] /dm
 ```
+
+(Shorthand: `/dm` is equivalent to `/discord-mode`. Can be used in any channel, not just #current-task.)
 
 For example:
 ```
 Implement the tile snap fixes we planned. The snap tolerance should be 75px,
 edge snaps should be 0.6x weight, and row alignment snaps should be 0.5x weight.
-/discord-mode
+/dm
 ```
 
 **Claude Code responds:**
