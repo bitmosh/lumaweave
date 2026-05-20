@@ -11,12 +11,14 @@ import {
   useCallback,
   useRef,
   useEffect,
+  useState,
 } from "react";
 import { useSettingsStore } from "../settings/settings.store";
 import type {
   TileLayoutEntry,
   TileContextState,
   TileContextActions,
+  SnapGuide,
 } from "./tile.types";
 import { tileSectionRegistry } from "./tileSectionRegistry";
 
@@ -67,6 +69,8 @@ export function TileProvider({ children }: TileProviderProps) {
       zCounterRef.current = maxZ;
     }
   }, [tiles]);
+
+  const [snapGuide, setSnapGuide] = useState<SnapGuide | null>(null);
 
   const writeTiles = useCallback(
     (newTiles: TileLayoutEntry[]) => {
@@ -148,6 +152,7 @@ export function TileProvider({ children }: TileProviderProps) {
     tiles: new Map(tiles.map((t) => [t.id, t])),
     maxZ: Math.max(...tiles.map((t) => t.z), 10),
     groups: [],
+    snapGuide,
     tileOut,
     closeTile,
     closeGroup,
@@ -159,6 +164,7 @@ export function TileProvider({ children }: TileProviderProps) {
       updateTile(id, { collapsed: !tile.collapsed });
     },
     isTiledOut,
+    setSnapGuide,
   };
 
   return (

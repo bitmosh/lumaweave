@@ -47,6 +47,25 @@ export interface TileSectionEntry {
 }
 
 /**
+ * Snap guide state (shown during drag as visual feedback)
+ * Displays a preview rectangle and edge lines showing where tile will snap
+ */
+export interface SnapGuide {
+  /** X position of preview rectangle */
+  previewX: number;
+  /** Y position of preview rectangle */
+  previewY: number;
+  /** Width of preview rectangle */
+  previewW: number;
+  /** Height of preview rectangle */
+  previewH: number;
+  /** X coordinate of vertical edge line (null if no horizontal snap) */
+  edgeX: number | null;
+  /** Y coordinate of horizontal edge line (null if no vertical snap) */
+  edgeY: number | null;
+}
+
+/**
  * Tile group (runtime-computed, not persisted)
  * Represents a group of snapped-together tiles
  * Reference: (NEW)tile-system.jsx lines 134-184
@@ -81,6 +100,8 @@ export interface TileContextState {
   maxZ: number;
   /** Computed groups (runtime only) */
   groups: TileGroup[];
+  /** Active snap guide (shown during drag) */
+  snapGuide: SnapGuide | null;
 }
 
 /**
@@ -102,6 +123,8 @@ export interface TileContextActions {
   toggleCollapsed: (tileId: string) => void;
   /** Check if a section is currently tiled out */
   isTiledOut: (sectionKey: string) => boolean;
+  /** Set snap guide state (shown during drag as visual feedback) */
+  setSnapGuide: (guide: SnapGuide | null) => void;
   /** Legacy alias for tileOut (for backward compatibility) */
   tearOff?: (sectionKey: string, initialX: number, initialY: number) => void;
 }
@@ -130,4 +153,4 @@ export type TileSectionRegistry = RegistryContract<TileSectionEntry, Partial<Til
  * Snap constants
  */
 export const SNAP_GRID_SIZE = 16; // px
-export const EDGE_MAGNETISM_TOLERANCE = 22; // px
+export const EDGE_MAGNETISM_TOLERANCE = 30; // px (increased for more forgiving snap zones)

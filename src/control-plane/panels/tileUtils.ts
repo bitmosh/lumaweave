@@ -5,9 +5,8 @@
 
 import type { TileLayoutEntry, TileGroup } from "./tile.types";
 
-const SNAP_TOLERANCE = 22;
 const COLLAPSED_H = 30;
-const TILE_GRID = 16;
+const SNAP_TOLERANCE = 30; // increased for more forgiving snap zones
 
 // --- Group computation: tiles snapped edge-to-edge form a group ----
 // BIG RULE: topRow width is computed from CONTIGUOUS top-row tiles, NOT bbox

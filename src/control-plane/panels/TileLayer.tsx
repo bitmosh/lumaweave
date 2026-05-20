@@ -32,6 +32,9 @@ export function TileLayer() {
           <FloatingTile key={tile.id} tile={tile} group={group || null} />
         );
       })}
+
+      {/* Snap guide overlay */}
+      <SnapGuideOverlay />
     </div>
   );
 }
@@ -174,5 +177,54 @@ function GroupOutline({ group }: { group: TileGroup }) {
         />
       ))}
     </>
+  );
+}
+
+// --- Snap guide overlay: shows preview rectangle and edge lines during drag ----
+function SnapGuideOverlay() {
+  const ctx = useTileContext();
+  const guide = ctx.snapGuide;
+  if (!guide) return null;
+
+  return (
+    <div className="snap-guide-overlay" style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 9999 }}>
+      {/* Preview rectangle — dashed border showing where tile will land */}
+      <div
+        className="snap-guide-preview"
+        style={{
+          position: 'absolute',
+          left: guide.previewX,
+          top: guide.previewY,
+          width: guide.previewW,
+          height: guide.previewH,
+        }}
+      />
+      {/* Vertical edge line */}
+      {guide.edgeX !== null && (
+        <div
+          className="snap-guide-line snap-guide-line-v"
+          style={{
+            position: 'absolute',
+            left: guide.edgeX,
+            top: 0,
+            bottom: 0,
+            width: 1,
+          }}
+        />
+      )}
+      {/* Horizontal edge line */}
+      {guide.edgeY !== null && (
+        <div
+          className="snap-guide-line snap-guide-line-h"
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: guide.edgeY,
+            height: 1,
+          }}
+        />
+      )}
+    </div>
   );
 }
