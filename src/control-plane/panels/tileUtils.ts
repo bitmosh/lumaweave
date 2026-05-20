@@ -6,7 +6,7 @@
 import type { TileLayoutEntry, TileGroup } from "./tile.types";
 
 const COLLAPSED_H = 30;
-const SNAP_TOLERANCE = 30; // increased for more forgiving snap zones
+const SNAP_TOLERANCE = 75; // strong magnetic snap tolerance
 
 // --- Group computation: tiles snapped edge-to-edge form a group ----
 // BIG RULE: topRow width is computed from CONTIGUOUS top-row tiles, NOT bbox
@@ -75,8 +75,8 @@ export function findSnap(movingTile: TileLayoutEntry, others: TileLayoutEntry[])
     [tryL, tryR, tryT, tryB].forEach(p => {
       const d = Math.hypot(p.x - r.x, p.y - r.y);
       if (d < SNAP_TOLERANCE) {
-        // Edge snaps get 0.8x distance multiplier to make them win more aggressively
-        snapCandidates.push({ ...p, d: d * 0.8 });
+        // Edge snaps get 0.6x distance multiplier to make them win strongly
+        snapCandidates.push({ ...p, d: d * 0.6 });
       }
     });
   });

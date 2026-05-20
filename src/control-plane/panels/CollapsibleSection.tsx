@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { useTileContext } from "./TileProvider";
 import { TiledOutIndicator } from "./TiledOutIndicator";
 import { findSnap } from "./tileUtils";
+import { useSettingsStore } from "../settings/settings.store";
 import type { SnapGuide } from "./tile.types";
 
 interface CollapsibleSectionProps {
@@ -26,7 +27,7 @@ export function CollapsibleSection({
   tileableKey,
 }: CollapsibleSectionProps) {
   const ctx = useTileContext();
-  const { tileOut, isTiledOut, updateTile, setSnapGuide, tiles } = ctx;
+  const { tileOut, isTiledOut, updateTile, setSnapGuide } = ctx;
   const tiledOut = tileableKey ? isTiledOut(tileableKey) : false;
 
   const handleTearOffMouseDown = (e: React.MouseEvent) => {
@@ -57,10 +58,10 @@ export function CollapsibleSection({
         });
 
         // Show snap guide preview for tear-off drag
-        const currentTiles = Array.from(tiles.values());
-        const createdTile = currentTiles.find(t => t.id === createdTileId);
+        const currentTilesArray = useSettingsStore.getState().settings.ui?.tileLayout ?? [];
+        const createdTile = currentTilesArray.find(t => t.id === createdTileId);
         if (createdTile) {
-          const otherTiles = currentTiles.filter(t => t.id !== createdTileId);
+          const otherTiles = currentTilesArray.filter(t => t.id !== createdTileId);
           const projected = { ...createdTile, x: nx, y: ny };
           const candidate = findSnap(projected, otherTiles);
 
@@ -87,6 +88,19 @@ export function CollapsibleSection({
       setSnapGuide(null);
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
+
+      // Snap on release if tile was created during drag
+      if (createdTileId) {
+        const currentTilesArray = useSettingsStore.getState().settings.ui?.tileLayout ?? [];
+        const createdTile = currentTilesArray.find(t => t.id === createdTileId);
+        if (createdTile) {
+          const otherTiles = currentTilesArray.filter(t => t.id !== createdTileId);
+          const snapTo = findSnap(createdTile, otherTiles);
+          if (snapTo) {
+            updateTile(createdTileId, { x: snapTo.x, y: snapTo.y });
+          }
+        }
+      }
     };
 
     window.addEventListener("mousemove", onMove);

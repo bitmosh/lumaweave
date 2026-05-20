@@ -153,4 +153,4 @@ export type TileSectionRegistry = RegistryContract<TileSectionEntry, Partial<Til
  * Snap constants
  */
 export const SNAP_GRID_SIZE = 16; // px
-export const EDGE_MAGNETISM_TOLERANCE = 30; // px (increased for more forgiving snap zones)
+export const EDGE_MAGNETISM_TOLERANCE = 75; // px (strong magnetic snap)
