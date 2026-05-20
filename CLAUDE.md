@@ -510,27 +510,108 @@ All significant Discord communication follows this structure.
   - Implementation cost
 - **Trigger**: Only post if the suggestion has material impact (don't spam)
 
-## Useful one-liners
+## Discord Mode
 
-```bash
-# Run a single test by name pattern
-npm run qa:e2e -- --grep "section content"
+When you want to work async (e.g., you're stepping away but want work to continue), use Discord Mode.
 
-# Run a single test file
-npm run qa:e2e -- tests/e2e/v86c-tile-system.spec.ts
+### How it works
 
-# Capture browser console during a test (add to test code):
-# page.on("console", (msg) => console.log(`[B] ${msg.text()}`));
+1. **You send a work command via Discord** in #current-task (or elsewhere, specify the channel)
+2. **Claude Code enters listen mode**: starts a persistent Monitor that checks for messages every 10 seconds
+3. **Work executes in the background**: typecheck, tests, commits, all async
+4. **Progress updates post to #notifications**: each logical step (test pass, diagnostic finding, commit) gets a message
+5. **Final summary posts to #current-task**: when work completes (or hits a blocker)
 
-# Find rogue test.only declarations
-grep -rn "test\.only" tests/
+### Initiating Discord Mode
 
-# Find diagnostic console.logs before committing
-grep -rn "console.log.*TileProvider\|console.log.*FloatingTile" src/
-
-# Stack trace from inside a callback (for "who called this" diagnostics)
-new Error("trace").stack?.split("\n").slice(1, 5).join(" | ")
+**User sends in #current-task:**
 ```
+@Claude Code: [work command]
+/discord-mode
+```
+
+For example:
+```
+Implement the tile snap fixes we planned. The snap tolerance should be 75px,
+edge snaps should be 0.6x weight, and row alignment snaps should be 0.5x weight.
+/discord-mode
+```
+
+**Claude Code responds:**
+1. Posts to #current-task: "Discord Mode active. Monitoring for 30 minutes (or until work completes). Progress posts to #notifications."
+2. Enters a persistent Monitor that:
+   - Checks for messages every 10 seconds
+   - Executes the work command asynchronously
+   - Posts updates to #notifications
+   - Posts final result to #current-task when done
+
+### During Discord Mode
+
+- **Blocking issues**: If a test fails or a blocker is hit, Claude Code posts to #notifications with details and waits for your response (max 15 min)
+- **Approval gates**: Destructive operations (commit, push) post to #approve-this and wait for your response
+- **Progress cadence**: Major milestones (typecheck pass, test suite pass, new file created) get a notification
+- **Session timeout**: If no response to a blocking question for 15 minutes, work pauses and final status posts to #current-task
+
+### Exiting Discord Mode
+
+Discord Mode exits automatically when:
+- Work completes successfully (final summary posted to #current-task)
+- A blocker is hit and you respond with "pause" / "stop"
+- 30 minutes elapse (configurable, currently 30min)
+
+You can also explicitly exit by posting:
+```
+@Claude Code: pause
+```
+
+Claude Code will post final status to #current-task and return to normal mode.
+
+### Example Discord Mode flow
+
+```
+User (in #current-task):
+  Rewrite the tile snap system to be cleaner.
+  Increase SNAP_TOLERANCE to 75px, fix row alignment snapping.
+  /discord-mode
+
+Claude Code posts to #current-task:
+  Discord Mode active. Working on: tile snap rewrite.
+  Monitoring until work completes. Progress → #notifications.
+
+Claude Code posts to #notifications:
+  ✓ Typecheck passed (0 errors)
+  
+Claude Code posts to #notifications:
+  ✓ E2E tests passed (12/12 passing)
+  
+Claude Code posts to #notifications:
+  ℹ Snap tolerance increased to 75px
+  ℹ Row alignment snap weighting set to 0.5x
+  ℹ Edge snap weighting set to 0.6x
+  
+Claude Code posts to #notifications:
+  ⏳ Attempting commit... [commit message preview]
+  (waiting for approval in #approve-this)
+  
+User (in #approve-this):
+  approve
+
+Claude Code posts to #current-task:
+  ✓ Discord Mode complete. Tile snap rewrite finished.
+  New commits: [hash] ... [hash]
+  Tests: 12/12 passing
+  No blockers.
+```
+
+### Technical notes
+
+- Discord Mode uses a persistent Monitor loop (does not time out)
+- Each significant action (typecheck, test, commit) posts a notification
+- Destructive operations still require Discord approval in #approve-this
+- If you're not actively monitoring Discord, Discord Mode will naturally pause on approval gates (designed to be async-safe)
+- Discord Mode is opt-in; default behavior is synchronous (waits for text input in Claude Code)
+
+
 
 ## Project state at the time of writing this CLAUDE.md
 
