@@ -376,6 +376,19 @@ The pattern is:
    Windsurf may still show its own modal — the user can approve
    that via Windsurf or it may auto-approve depending on settings.
 
+### MANDATORY: All approvals must go through Discord
+
+This is non-negotiable. If an action requires approval, Claude Code
+MUST post to #approve-this on Discord and wait for a Discord response.
+Text-based approvals in this session are NOT sufficient. Discord is
+the authority for all approval gates.
+
+If Discord is unreachable or user hasn't seen the message:
+- Do NOT proceed with the action based on text approval in this session
+- STOP and wait for Discord approval or explicit user override
+- If user explicitly says "proceed anyway" in text, that counts as
+  override authorization for that single action only
+
 ### Always ping #approve-this before:
 
 - `rm` or `git rm` of any file
@@ -431,6 +444,61 @@ The user may say things like "auto-approve through commit for this
 pass" or "auto-approve everything for this session." When they do,
 override the defaults for that session only. Default restrictions
 resume at the next session.
+
+## Discord messaging protocol
+
+All significant Discord communication follows this structure.
+
+### Channel IDs (for MCP access)
+
+- #approve-this: `1506441138612080680`
+- #notifications: `1506441052826107964`
+- #current-task: `1506440945128701955`
+- #brainstorm: `1506441106869583932`
+
+### #approve-this
+
+- **Purpose**: Approval gate for destructive operations
+- **Content**: Commit previews, merge notifications, push confirmations
+- **Pattern**: "Reply 'approve' to proceed"
+- **Wait**: Always wait for response before proceeding
+- **Polling**: After posting approval request, check for response every 3-4 seconds
+  using `fetch_messages`. Do not wait passively — actively poll until response received.
+
+### #current-task
+
+- **Purpose**: Run lifecycle tracking
+- **Content**: 
+  - BEGIN: Post when starting a new pass/task with phase name
+  - END: Post when task completes with summary + changelog
+- **Frequency**: Once per major pass/task, beginning and end only
+- **Format**: Concise — phase name, key results, new/modified files
+
+### #notifications
+
+- **Purpose**: Detailed run updates and diagnostics
+- **Content**: 
+  - Test results (failure/pass counts)
+  - Regression alerts
+  - Diagnostic findings
+  - Status updates during long-running tasks
+- **Frequency**: As needed; one message per logical update
+- **Format**: Verbatim output when reporting failures (per CLAUDE.md)
+
+### #brainstorm
+
+- **Purpose**: High-ROI improvements, system optimizations, recommendations
+- **Content**: 
+  - Ideas for streamlining development workflow
+  - Architectural suggestions
+  - Process improvements
+  - Observations about pain points
+- **Format**: Summarized writeups (not raw brainstorm dumps); include:
+  - Problem identified
+  - Proposed solution
+  - Estimated ROI (time saved, complexity reduced, etc.)
+  - Implementation cost
+- **Trigger**: Only post if the suggestion has material impact (don't spam)
 
 ## Useful one-liners
 
