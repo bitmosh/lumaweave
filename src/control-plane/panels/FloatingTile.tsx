@@ -10,7 +10,6 @@ import { tileSectionRegistry } from "./tileSectionRegistry";
 
 const TILE_GRID = 16;
 const SNAP_TOLERANCE = 22;
-const SNAP_ENGAGE_DISTANCE = 8; // Only start snapping when very close
 const COLLAPSED_H = 30;
 const MIN_W = 200, MIN_H = 110;
 
@@ -43,7 +42,6 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
     const startX = e.clientX, startY = e.clientY;
     const startTilePos = { x: tile.x, y: tile.y };
     let detached = ungroup;
-    const others = Array.from(ctx.tiles.values()).filter(t => t.id !== tile.id);
     const groupIds = (group && !ungroup) ? group.tileIds : [tile.id];
     const groupTiles = Array.from(ctx.tiles.values()).filter(t => groupIds.includes(t.id));
     const offsets = groupTiles.map(t => ({ id: t.id, dx: t.x - startTilePos.x, dy: t.y - startTilePos.y }));
