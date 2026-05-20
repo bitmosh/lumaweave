@@ -7,9 +7,9 @@
 import type { TileLayoutEntry, TileGroup } from "./tile.types";
 import { useTileContext } from "./TileProvider";
 import { tileSectionRegistry } from "./tileSectionRegistry";
+import { findSnap } from "./tileUtils";
 
 const TILE_GRID = 16;
-const SNAP_TOLERANCE = 22;
 const COLLAPSED_H = 30;
 const MIN_W = 200, MIN_H = 110;
 
@@ -143,13 +143,6 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
   const showHeader = !inGroup;
   const showSlimStrip = inGroup;
 
-  const ungroup = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    // Close this tile only, leaving the group for remaining tiles
-    ctx.closeTile(tile.id);
-  };
-
   const realH = tile.collapsed ? COLLAPSED_H : tile.h;
 
   return (
@@ -190,25 +183,4 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
       {!tile.collapsed && <div className="tile-resize" onMouseDown={onResizeDown}/>}
     </div>
   );
-}
-
-// --- Find nearest snap target during drag ----
-function findSnap(movingTile: TileLayoutEntry, others: TileLayoutEntry[]): { x: number; y: number } | null {
-  const snapCandidates: { x: number; y: number; d: number }[] = [];
-  const r = { x: movingTile.x, y: movingTile.y, w: movingTile.w, h: movingTile.collapsed ? COLLAPSED_H : movingTile.h };
-  others.forEach(o => {
-    const or = { x: o.x, y: o.y, w: o.w, h: o.collapsed ? COLLAPSED_H : o.h };
-    // check 4 sides, snap edge-to-edge if close
-    const tryL = { x: or.x - r.w, y: or.y };
-    const tryR = { x: or.x + or.w, y: or.y };
-    const tryT = { x: or.x, y: or.y - r.h };
-    const tryB = { x: or.x, y: or.y + or.h };
-    [tryL, tryR, tryT, tryB].forEach(p => {
-      const d = Math.hypot(p.x - r.x, p.y - r.y);
-      if (d < SNAP_TOLERANCE) snapCandidates.push({ ...p, d });
-    });
-  });
-  if (snapCandidates.length === 0) return null;
-  const best = snapCandidates.reduce((a, b) => a.d < b.d ? a : b);
-  return { x: best.x, y: best.y };
 }

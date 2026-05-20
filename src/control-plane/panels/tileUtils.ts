@@ -43,8 +43,8 @@ export function computeGroups(tiles: TileLayoutEntry[]): { groups: TileGroup[]; 
   Object.entries(buckets).forEach(([, ts]) => {
     if (ts.length < 2) return; // single tile → no group bar
     const minY = Math.min(...ts.map(t => t.y));
-    // top row = tiles whose y is at minY (within 2px)
-    const topRow = ts.filter(t => Math.abs(t.y - minY) < 3).sort((a, b) => a.x - b.x);
+    // top row = tiles whose y is close to minY (within 10px) so minor drift doesn't split rows
+    const topRow = ts.filter(t => Math.abs(t.y - minY) < 10).sort((a, b) => a.x - b.x);
     // group bar spans entire group width (not just top row) so it visually connects to all tiles
     const topX = Math.min(...ts.map(t => t.x));
     const topW = Math.max(...ts.map(t => t.x + t.w)) - topX;
@@ -79,6 +79,14 @@ export function findSnap(movingTile: TileLayoutEntry, others: TileLayoutEntry[])
       const d = Math.hypot(p.x - r.x, p.y - r.y);
       if (d < SNAP_TOLERANCE) snapCandidates.push({ ...p, d });
     });
+
+    // Row-alignment: when tile is horizontally nearby and y-aligned, snap y to match
+    // This creates magnetic horizontal binding for tiles in the same row
+    const yDiff = Math.abs(r.y - or.y);
+    const hNear = r.x < or.x + or.w + 120 && or.x < r.x + r.w + 120;
+    if (yDiff > 0 && yDiff < SNAP_TOLERANCE && hNear) {
+      snapCandidates.push({ x: r.x, y: or.y, d: yDiff * 0.7 }); // weight y-align aggressively
+    }
   });
   if (snapCandidates.length === 0) return null;
   const best = snapCandidates.reduce((a, b) => a.d < b.d ? a : b);
