@@ -376,6 +376,19 @@ The pattern is:
    Windsurf may still show its own modal — the user can approve
    that via Windsurf or it may auto-approve depending on settings.
 
+### MANDATORY: All approvals must go through Discord
+
+This is non-negotiable. If an action requires approval, Claude Code
+MUST post to #approve-this on Discord and wait for a Discord response.
+Text-based approvals in this session are NOT sufficient. Discord is
+the authority for all approval gates.
+
+If Discord is unreachable or user hasn't seen the message:
+- Do NOT proceed with the action based on text approval in this session
+- STOP and wait for Discord approval or explicit user override
+- If user explicitly says "proceed anyway" in text, that counts as
+  override authorization for that single action only
+
 ### Always ping #approve-this before:
 
 - `rm` or `git rm` of any file
