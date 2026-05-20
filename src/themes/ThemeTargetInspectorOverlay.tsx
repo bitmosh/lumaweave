@@ -130,6 +130,7 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
 
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
+      // Alt+Shift+I: toggle discovery overlay
       if (event.key.toLowerCase() !== "i" || !event.altKey || !event.shiftKey) {
         return;
       }
@@ -149,7 +150,9 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
     };
 
     window.addEventListener("keydown", handleKeydown);
-    return () => window.removeEventListener("keydown", handleKeydown);
+    return () => {
+      window.removeEventListener("keydown", handleKeydown);
+    };
   }, [enabled, onEnabledChange]);
 
   useEffect(() => {
@@ -243,6 +246,36 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
       setHoverEntity(entity);
     };
 
+    const handleClick = (event: MouseEvent) => {
+      // Dispatch inspector:open event when Alt+Shift+click on registered target
+      // Use event.altKey and event.shiftKey directly for reliable state detection
+      if (!(event as any).altKey || !(event as any).shiftKey) {
+        return;
+      }
+
+      const entity = resolveEntityFromEventTarget(event.target);
+      if (!entity || entity.kind !== "registered") {
+        return;
+      }
+
+      const target = getThemeTargetById(entity.themeTargetId);
+      if (!target) {
+        return;
+      }
+
+      // Dispatch custom event with target information
+      window.dispatchEvent(
+        new CustomEvent("inspector:open", {
+          detail: {
+            targetId: entity.themeTargetId,
+            label: target.label,
+            surface: target.surface,
+            status: target.status,
+          },
+        }),
+      );
+    };
+
     const scheduleGhostOutlineUpdate = (() => {
       let raf: number | null = null;
       const measure = () => {
@@ -285,6 +318,7 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
     scheduleGhostOutlineUpdate();
     runProbe();
     window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("click", handleClick);
     window.addEventListener("resize", handleResizeOrScroll);
     window.addEventListener("scroll", handleResizeOrScroll, true);
 
@@ -327,6 +361,7 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("click", handleClick);
       window.removeEventListener("resize", handleResizeOrScroll);
       window.removeEventListener("scroll", handleResizeOrScroll, true);
       if (mutationObserver) {

@@ -231,3 +231,143 @@ export function exportGlobalThemeOverrideBundle(): ThemeOverrideBundle {
     overrides: validOverrides,
   };
 }
+
+// --- Target-scoped overrides (v86d.1) ---
+
+/**
+ * Set a target-scoped override for a canonical token path
+ * v86d.1: target scope only; target-kind/cluster defer to v89
+ */
+export function setTargetOverride(
+  targetId: string,
+  tokenPath: ThemeTokenPath,
+  value: ThemeTokenValue,
+): void {
+  const pathValidation = validateTokenPath(tokenPath);
+  if (!pathValidation.isValid) {
+    throw new Error(pathValidation.error);
+  }
+
+  const valueValidation = validateTokenValue(value);
+  if (!valueValidation.isValid) {
+    throw new Error(valueValidation.error);
+  }
+
+  const storage = loadOverrides();
+
+  // Remove existing target override for this target+path
+  const existingIndex = storage.overrides.findIndex(
+    (o) => o.scope.kind === "target" && o.scope.targetId === targetId && o.tokenPath === tokenPath,
+  );
+  if (existingIndex >= 0) {
+    storage.overrides.splice(existingIndex, 1);
+  }
+
+  // Add new target override
+  storage.overrides.push({
+    tokenPath,
+    value,
+    timestamp: Date.now(),
+    scope: { kind: "target", targetId },
+  });
+
+  saveOverrides(storage);
+}
+
+/**
+ * Get a target-scoped override for a token path
+ */
+export function getTargetOverride(
+  targetId: string,
+  tokenPath: ThemeTokenPath,
+): ThemeTokenValue | undefined {
+  const storage = loadOverrides();
+  const override = storage.overrides.find(
+    (o) => o.scope.kind === "target" && o.scope.targetId === targetId && o.tokenPath === tokenPath,
+  );
+  return override?.value;
+}
+
+/**
+ * Remove a target-scoped override for a token path
+ */
+export function removeTargetOverride(targetId: string, tokenPath: ThemeTokenPath): void {
+  const storage = loadOverrides();
+  const filteredOverrides = storage.overrides.filter(
+    (o) => !(o.scope.kind === "target" && o.scope.targetId === targetId && o.tokenPath === tokenPath),
+  );
+
+  if (filteredOverrides.length !== storage.overrides.length) {
+    storage.overrides = filteredOverrides;
+    saveOverrides(storage);
+  }
+}
+
+/**
+ * Get all overrides for a specific target
+ */
+export function getTargetOverrides(targetId: string): ThemeOverride[] {
+  const storage = loadOverrides();
+  return storage.overrides.filter((o) => o.scope.kind === "target" && o.scope.targetId === targetId);
+}
+
+/**
+ * Resolve a token value for a target with priority fallthrough
+ * Priority: target > target-kind > cluster > global
+ * v86d.1: implements target and global; target-kind/cluster defer to v89
+ */
+export function resolveForTarget(
+  tokenPath: ThemeTokenPath,
+  targetId: string,
+  targetKind?: string,
+  clusterAnchor?: string,
+): ThemeTokenValue | undefined {
+  const storage = loadOverrides();
+
+  // Priority 1: target scope
+  const targetOverride = storage.overrides.find(
+    (o) => o.scope.kind === "target" && o.scope.targetId === targetId && o.tokenPath === tokenPath,
+  );
+  if (targetOverride) return targetOverride.value;
+
+  // Priority 2: target-kind scope (v89)
+  if (targetKind) {
+    const targetKindOverride = storage.overrides.find(
+      (o) => o.scope.kind === "target-kind" && o.scope.targetKind === targetKind && o.tokenPath === tokenPath,
+    );
+    if (targetKindOverride) return targetKindOverride.value;
+  }
+
+  // Priority 3: cluster scope (v89)
+  if (clusterAnchor) {
+    const clusterOverride = storage.overrides.find(
+      (o) => o.scope.kind === "cluster" && o.scope.clusterAnchor === clusterAnchor && o.tokenPath === tokenPath,
+    );
+    if (clusterOverride) return clusterOverride.value;
+  }
+
+  // Priority 4: global scope
+  const globalOverride = storage.overrides.find((o) => o.scope.kind === "global" && o.tokenPath === tokenPath);
+  if (globalOverride) return globalOverride.value;
+
+  return undefined;
+}
+
+// Expose storage API for testing in DEV/PLAYWRIGHT mode
+if (
+  typeof window !== "undefined" &&
+  (import.meta.env.DEV || (window as any).PLAYWRIGHT)
+) {
+  (window as any).__lwThemeOverrideStorage = {
+    setGlobalOverride,
+    getGlobalOverride,
+    removeGlobalOverride,
+    setTargetOverride,
+    getTargetOverride,
+    removeTargetOverride,
+    getTargetOverrides,
+    resolveForTarget,
+    loadOverrides,
+    saveOverrides,
+  };
+}
