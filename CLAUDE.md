@@ -447,7 +447,14 @@ resume at the next session.
 
 ## Discord messaging protocol
 
-All significant Discord communication follows this structure:
+All significant Discord communication follows this structure.
+
+### Channel IDs (for MCP access)
+
+- #approve-this: `1506441138612080680`
+- #notifications: `1506441052826107964`
+- #current-task: `1506440945128701955`
+- #brainstorm: `1506441106869583932`
 
 ### #approve-this
 
