@@ -4,10 +4,9 @@
  * Uses window.addEventListener for mousemove/mouseup instead of setPointerCapture
  */
 
-import type { TileLayoutEntry, TileGroup, SnapGuide } from "./tile.types";
+import type { TileLayoutEntry, TileGroup } from "./tile.types";
 import { useTileContext } from "./TileProvider";
 import { tileSectionRegistry } from "./tileSectionRegistry";
-import { findSnap } from "./tileUtils";
 
 const TILE_GRID = 16;
 const COLLAPSED_H = 30;
@@ -76,53 +75,12 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
           y: startTilePos.y + o.dy + dy,
         });
       });
-
-      // Show snap guide preview for single-tile drags
-      if (groupTiles.length === 1) {
-        const currentTiles = Array.from(ctx.tiles.values());
-        const otherTiles = currentTiles.filter(t => t.id !== tile.id);
-        const projected = { ...tile, x: nx, y: ny };
-        const candidate = findSnap(projected, otherTiles);
-
-        if (candidate) {
-          const snapX = Math.abs(candidate.x - nx) > 1 ? candidate.x : null;
-          const snapY = Math.abs(candidate.y - ny) > 1 ? candidate.y : null;
-          const guide: SnapGuide = {
-            previewX: candidate.x,
-            previewY: candidate.y,
-            previewW: tile.w,
-            previewH: tile.collapsed ? COLLAPSED_H : tile.h,
-            edgeX: snapX !== null ? (snapX > nx ? candidate.x + tile.w : candidate.x) : null,
-            edgeY: snapY !== null ? candidate.y : null,
-          };
-          // Only update if guide changed to avoid excess re-renders
-          const cur = ctx.snapGuide;
-          const changed = !cur !== !guide || (guide && (cur!.previewX !== guide.previewX || cur!.previewY !== guide.previewY));
-          if (changed) ctx.setSnapGuide(guide);
-        } else {
-          if (ctx.snapGuide) ctx.setSnapGuide(null);
-        }
-      }
     };
     const onUp = () => {
-      ctx.setSnapGuide(null);
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("pointercancel", onPointerCancel);
-
-      // Snap on release if single tile (not in group)
-      if (groupTiles.length === 1) {
-        const currentTiles = Array.from(ctx.tiles.values());
-        const currentTile = currentTiles.find(t => t.id === tile.id);
-        if (currentTile) {
-          const otherTiles = currentTiles.filter(t => t.id !== tile.id);
-          const snapTo = findSnap(currentTile, otherTiles);
-          if (snapTo) {
-            ctx.updateTile(tile.id, { x: snapTo.x, y: snapTo.y });
-          }
-        }
-      }
     };
     const onKeyDown = (ev: KeyboardEvent) => {
       if (ev.key === "Escape") onUp();

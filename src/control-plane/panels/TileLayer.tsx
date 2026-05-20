@@ -33,8 +33,9 @@ export function TileLayer() {
         );
       })}
 
-      {/* Snap guide overlay */}
-      <SnapGuideOverlay />
+      {/* Snap guide overlay disabled — snap behavior disabled in fix/v86c-disable-snap.
+          Re-enable by removing this guard when snap is reimplemented. */}
+      {false && <SnapGuideOverlay />}
     </div>
   );
 }
