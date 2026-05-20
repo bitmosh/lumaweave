@@ -50,7 +50,11 @@ function GroupBar({ group }: { group: TileGroup }) {
 
   const onCollapseAll = () => {
     const next = !allCollapsed;
-    groupTiles.forEach(t => ctx.updateTile(t.id, { collapsed: next }));
+    console.log("[GroupBar.onCollapseAll] groupId:", group.tileIds[0], "allCollapsed:", allCollapsed, "next:", next, "groupTileIds:", groupTiles.map(t => t.id), "groupTileCollapsed:", groupTiles.map(t => t.collapsed));
+    groupTiles.forEach(t => {
+      console.log("[GroupBar.onCollapseAll.updateTile]", t.id, "collapsed:", t.collapsed, "->", next);
+      ctx.updateTile(t.id, { collapsed: next });
+    });
   };
 
   // Only render if group has 2+ tiles

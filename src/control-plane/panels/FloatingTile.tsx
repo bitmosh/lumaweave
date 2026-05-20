@@ -63,10 +63,24 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
         detached = false;
       }
 
-      // For single-tile drag, check for sticky snap
+      // For single-tile drag, check for sticky snap (but only to tiles NOT in same group)
       if (groupTiles.length === 1) {
         const movingPreview = { ...tile, x: nx, y: ny };
-        const snapTo = findSnap(movingPreview, others);
+        // Exclude tiles that would be in the same group (adjacency calculation)
+        // Only snap to truly independent tiles to avoid granular dragging during grouping
+        const snapCandidates = others.filter(o => {
+          // Only consider snapping to tiles that aren't already grouped with us
+          // Check if this tile would be adjacent (the real grouping criterion)
+          const movingR = { x: nx, y: ny, w: tile.w, h: tile.collapsed ? 30 : tile.h };
+          const oR = { x: o.x, y: o.y, w: o.w, h: o.collapsed ? 30 : o.h };
+          const horizontalTouch = Math.abs((movingR.x + movingR.w) - oR.x) < 2 || Math.abs((oR.x + oR.w) - movingR.x) < 2;
+          const verticalTouch = Math.abs((movingR.y + movingR.h) - oR.y) < 2 || Math.abs((oR.y + oR.h) - movingR.y) < 2;
+          const yOverlap = movingR.y < oR.y + oR.h && oR.y < movingR.y + movingR.h;
+          const xOverlap = movingR.x < oR.x + oR.w && oR.x < movingR.x + movingR.w;
+          // Only snap to tiles that aren't already adjacent (to avoid continuous re-snapping)
+          return !((horizontalTouch && yOverlap) || (verticalTouch && xOverlap));
+        });
+        const snapTo = findSnap(movingPreview, snapCandidates);
         if (snapTo) {
           // Sticky magnetic snap — use precise snap target position
           nx = snapTo.x;
