@@ -48,27 +48,39 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
     const offsets = groupTiles.map(t => ({ id: t.id, dx: t.x - startTilePos.x, dy: t.y - startTilePos.y }));
 
     const onMove = (ev: MouseEvent) => {
-      let nx = snap(startTilePos.x + (ev.clientX - startX));
-      let ny = snap(startTilePos.y + (ev.clientY - startY));
+      // Pixel-precise position from cursor (no grid quantization)
+      let nx = startTilePos.x + (ev.clientX - startX);
+      let ny = startTilePos.y + (ev.clientY - startY);
+
+      // Clamp to viewport
       nx = Math.max(8, Math.min(window.innerWidth - tile.w - 8, nx));
       ny = Math.max(60, Math.min(window.innerHeight - 80, ny));
+
       if (detached) {
         // first move after ungroup: pull away so we don't immediately re-snap to neighbors
         nx += 28;
         ny += 8;
         detached = false;
       }
+
+      // For single-tile drag, check for sticky snap
       if (groupTiles.length === 1) {
         const movingPreview = { ...tile, x: nx, y: ny };
         const snapTo = findSnap(movingPreview, others);
         if (snapTo) {
+          // Sticky magnetic snap — use precise snap target position
           nx = snapTo.x;
           ny = snapTo.y;
         }
       }
+
+      // Update positions (group movement preserves offsets)
       const dx = nx - startTilePos.x, dy = ny - startTilePos.y;
       offsets.forEach(o => {
-        ctx.updateTile(o.id, { x: snap(startTilePos.x + o.dx + dx), y: snap(startTilePos.y + o.dy + dy) });
+        ctx.updateTile(o.id, {
+          x: startTilePos.x + o.dx + dx,
+          y: startTilePos.y + o.dy + dy,
+        });
       });
     };
     const onUp = () => {

@@ -54,14 +54,14 @@ function GroupBar({ group }: { group: TileGroup }) {
     const startPositions = groupTiles.map(t => ({ id: t.id, x: t.x, y: t.y }));
 
     const onMove = (ev: MouseEvent) => {
+      // Pixel-precise movement (no grid quantization during drag)
       const dx = ev.clientX - startX, dy = ev.clientY - startY;
-      const TILE_GRID = 16;
-      const snap = (v: number) => Math.round(v / TILE_GRID) * TILE_GRID;
-      
+
       startPositions.forEach(pos => {
-        const nx = snap(pos.x + dx);
-        const ny = snap(pos.y + dy);
-        ctx.updateTile(pos.id, { x: nx, y: ny });
+        ctx.updateTile(pos.id, {
+          x: pos.x + dx,
+          y: pos.y + dy,
+        });
       });
     };
 

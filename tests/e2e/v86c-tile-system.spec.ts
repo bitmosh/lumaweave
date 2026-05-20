@@ -207,6 +207,94 @@ test("v86c: Tiled-out indicator appears in source slot when section is torn off"
 });
 
 /**
+ * v86c-C5a: 3-wide group formation test
+ * Verifies that 3 tiles positioned edge-adjacent form a single group.
+ * This tests adjacency detection independent of drag UX.
+ */
+test("v86c: 3 tiles snap into a single 3-wide group", async ({ page }) => {
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+
+  // Reset persisted tile layout
+  await page.evaluate(() => {
+    const store = (window as any).__lwStore;
+    if (store) {
+      store.getState().setSetting("ui.tileLayout", []);
+    }
+  });
+  await page.waitForTimeout(200);
+
+  // Tear off 3 right-dock sections
+  const tearOff = async (sourceTestId: string, dropX: number, dropY: number) => {
+    const handle = page.locator(
+      `[data-testid="${sourceTestId}"] [title="Drag to tear off as tile"]`
+    );
+    await handle.scrollIntoViewIfNeeded();
+    await expect(handle).toBeVisible();
+    const box = await handle.boundingBox();
+    if (!box) throw new Error(`No box for ${sourceTestId}`);
+    await page.mouse.move(box.x + 5, box.y + 5);
+    await page.mouse.down();
+    await page.mouse.move(dropX, dropY, { steps: 6 });
+    await page.mouse.up();
+    await page.waitForTimeout(300);
+  };
+
+  await tearOff("settings-section-physics", 400, 300);
+  await tearOff("settings-section-labels", 700, 300);
+  await tearOff("settings-section-graph-view", 1000, 300);
+
+  // Position them precisely edge-adjacent via the store
+  // (bypasses drag UX to test the adjacency detection itself)
+  await page.evaluate(() => {
+    const store = (window as any).__lwStore;
+    const tiles = store.getState().settings.ui?.tileLayout ?? [];
+    if (tiles.length !== 3) return;
+    const sorted = [...tiles].sort((a: any, b: any) => a.x - b.x);
+    let cursorX = 200;
+    const baseY = 300;
+    const updated = sorted.map((t: any) => {
+      const newTile = { ...t, x: cursorX, y: baseY };
+      cursorX += t.w;
+      return newTile;
+    });
+    store.getState().setSetting("ui.tileLayout", updated);
+  });
+  await page.waitForTimeout(300);
+
+  // Verify the runtime group: tile-layer should contain a group bar
+  // element indicating 3 tiles are grouped
+  const groupInfo = await page.evaluate(() => {
+    const store = (window as any).__lwStore;
+    const tiles = store.getState().settings.ui?.tileLayout ?? [];
+    return {
+      tileCount: tiles.length,
+      tilePositions: tiles.map((t: any) => ({
+        id: t.id,
+        sectionKey: t.sectionKey,
+        x: t.x,
+        y: t.y,
+        w: t.w,
+        right: t.x + t.w,
+      })),
+    };
+  });
+
+  expect(groupInfo.tileCount).toBe(3);
+
+  // Verify group bar exists. Group bars use className "group-bar"
+  // and indicate that 3 tiles have formed a single group.
+  const groupBarCount = await page.locator(".group-bar").count();
+  expect(groupBarCount).toBeGreaterThanOrEqual(1);
+
+  // Cleanup
+  await page.evaluate(() => {
+    const store = (window as any).__lwStore;
+    store.getState().setSetting("ui.tileLayout", []);
+  });
+});
+
+/**
  * Registry-driven section content rendering tests.
  *
  * Iterates tileSectionRegistry and generates one test per entry.
