@@ -379,20 +379,20 @@ grep -rn "console.log.*TileProvider\|console.log.*FloatingTile" src/
 new Error("trace").stack?.split("\n").slice(1, 5).join(" | ")
 ```
 
-## Project state at the time of writing
+## Project state at the time of writing this CLAUDE.md
 
 - v86c tile system in active development.
 - Physics tile (Scope B) is shipped and working.
 - TiledOutIndicator extraction is shipped.
-- C-1 left-panel work was REVERTED on this branch. The four
-  left-panel registry entries (graph, qa, evidence, debug) are
-  removed. Reasoning: those were tabs, not tileable units. Real
-  left-panel sub-section tile-out is deferred until left-panel
-  reorganization. See docs/updates/v86+_updates/v86c_LEFT_PANEL_DEFERRAL.md.
+- C-1 left-panel work was REVERTED. The four left-panel registry
+  entries (graph, qa, evidence, debug) are removed. Reasoning:
+  those were tabs, not tileable units. Real left-panel sub-section
+  tile-out is deferred until left-panel reorganization. See
+  `docs/updates/v86+_updates/v86c_LEFT_PANEL_DEFERRAL.md`.
 - Scope C continues with right-dock only:
-  - labels-section: pending wiring (C-2)
-  - appearance-section: pending wiring (C-2)
-- Multiple known bugs documented in docs/known-bugs/.
+  - `labels-section`: pending wiring (C-2)
+  - `appearance-section`: pending wiring (C-2)
+- Multiple known bugs documented in `docs/known-bugs/`.
 
 If this file feels out of date, ask the developer. They (or the
 planning Claude) will tell you what's changed.
