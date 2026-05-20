@@ -9,46 +9,6 @@ import { PhysicsSectionContent } from "./PhysicsSectionContent";
 
 const entries: TileSectionEntry[] = [
   {
-    id: "graph-section",
-    label: "Graph",
-    category: "left-panel",
-    defaultWidth: 320,
-    defaultHeight: 400,
-    collapsible: true,
-    sourceTestId: "section-graph-sources",
-    // contentTestId set in Scope C-1
-  },
-  {
-    id: "qa-section",
-    label: "QA",
-    category: "left-panel",
-    defaultWidth: 320,
-    defaultHeight: 300,
-    collapsible: true,
-    sourceTestId: "section-qa-panel",
-    // contentTestId set in Scope C-3
-  },
-  {
-    id: "evidence-section",
-    label: "Evidence",
-    category: "left-panel",
-    defaultWidth: 320,
-    defaultHeight: 350,
-    collapsible: true,
-    sourceTestId: "section-graph-visual-inventory",
-    // contentTestId set in Scope C-4
-  },
-  {
-    id: "debug-section",
-    label: "Debug",
-    category: "left-panel",
-    defaultWidth: 320,
-    defaultHeight: 300,
-    collapsible: true,
-    sourceTestId: "section-system-index",
-    // contentTestId set in Scope C-1
-  },
-  {
     id: "physics-section",
     label: "Physics",
     category: "control-dock",
