@@ -462,6 +462,8 @@ All significant Discord communication follows this structure.
 - **Content**: Commit previews, merge notifications, push confirmations
 - **Pattern**: "Reply 'approve' to proceed"
 - **Wait**: Always wait for response before proceeding
+- **Polling**: After posting approval request, check for response every 3-4 seconds
+  using `fetch_messages`. Do not wait passively — actively poll until response received.
 
 ### #current-task
 
