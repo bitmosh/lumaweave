@@ -52,7 +52,6 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
       // Pixel-precise position from cursor (no grid quantization)
       let nx = startTilePos.x + (ev.clientX - startX);
       let ny = startTilePos.y + (ev.clientY - startY);
-      if (moveCount % 10 === 0) console.log("[FloatingTile.drag]", tile.id, "moveCount:", moveCount, "pos:", {nx, ny}, "groupTiles.length:", groupTiles.length);
 
       // Clamp to viewport
       nx = Math.max(8, Math.min(window.innerWidth - tile.w - 8, nx));

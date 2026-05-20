@@ -4,6 +4,7 @@
  */
 
 import type { TileLayoutEntry, TileGroup } from "./tile.types";
+import { defaultFeatureFlags } from "../features/feature-flags";
 
 const COLLAPSED_H = 30;
 const SNAP_TOLERANCE = 75; // strong magnetic snap tolerance
@@ -12,6 +13,11 @@ const SNAP_TOLERANCE = 75; // strong magnetic snap tolerance
 // BIG RULE: topRow width is computed from CONTIGUOUS top-row tiles, NOT bbox
 // Reference: (NEW)tile-system.jsx lines 134-184
 export function computeGroups(tiles: TileLayoutEntry[]): { groups: TileGroup[]; tileToGroup: Record<string, string> } {
+  // Tile grouping disabled via feature flag
+  if (!defaultFeatureFlags.tileGrouping) {
+    return { groups: [], tileToGroup: {} };
+  }
+
   // skip collapsed-state — group the bbox you SEE
   const rect = (t: TileLayoutEntry) => ({ x: t.x, y: t.y, w: t.w, h: t.collapsed ? COLLAPSED_H : t.h });
   const adj = (a: TileLayoutEntry, b: TileLayoutEntry) => {
@@ -63,6 +69,11 @@ export function computeGroups(tiles: TileLayoutEntry[]): { groups: TileGroup[]; 
 // --- Find nearest snap target during drag ----
 // Reference: (NEW)tile-system.jsx lines 186-204
 export function findSnap(movingTile: TileLayoutEntry, others: TileLayoutEntry[]): { x: number; y: number } | null {
+  // Snap disabled when grouping is disabled
+  if (!defaultFeatureFlags.tileGrouping) {
+    return null;
+  }
+
   const snapCandidates: { x: number; y: number; d: number }[] = [];
   const r = { x: movingTile.x, y: movingTile.y, w: movingTile.w, h: movingTile.collapsed ? COLLAPSED_H : movingTile.h };
   others.forEach(o => {
