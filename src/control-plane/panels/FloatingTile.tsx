@@ -7,6 +7,7 @@
 import type { TileLayoutEntry, TileGroup } from "./tile.types";
 import { useTileContext } from "./TileProvider";
 import { tileSectionRegistry } from "./tileSectionRegistry";
+import { shouldFlipTile } from "./tileUtils";
 
 const TILE_GRID = 16;
 const COLLAPSED_H = 30;
@@ -52,9 +53,10 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
       let nx = startTilePos.x + (ev.clientX - startX);
       let ny = startTilePos.y + (ev.clientY - startY);
 
-      // Clamp to viewport
+      // Clamp to viewport (hard stop at status bar top, 40px from bottom)
+      const tileH = tile.collapsed ? COLLAPSED_H : tile.h;
       nx = Math.max(8, Math.min(window.innerWidth - tile.w - 8, nx));
-      ny = Math.max(60, Math.min(window.innerHeight - 80, ny));
+      ny = Math.max(60, Math.min(window.innerHeight - tileH - 40, ny));
 
       if (detached) {
         // first move after ungroup: pull away so we don't immediately re-snap to neighbors
@@ -129,41 +131,122 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
   const showSlimStrip = inGroup;
 
   const realH = tile.collapsed ? COLLAPSED_H : tile.h;
+  const flipped = shouldFlipTile({ y: tile.y, h: realH }, window.innerHeight);
+
+  // Handle collapse/expand while preserving header screen position
+  const handleToggleCollapsed = () => {
+    const currentH = tile.collapsed ? COLLAPSED_H : tile.h;
+    const currentlyFlipped = shouldFlipTile(
+      { y: tile.y, h: currentH },
+      window.innerHeight
+    );
+    // Where the user sees the header on screen
+    const currentHeaderY = currentlyFlipped
+      ? tile.y + currentH - COLLAPSED_H
+      : tile.y;
+
+    if (tile.collapsed) {
+      // Expanding - restore previous height or use current h
+      const newH = tile.prevH ?? tile.h;
+      const willBeFlipped = shouldFlipTile(
+        { y: tile.y, h: newH },
+        window.innerHeight
+      );
+      // Position so header stays at currentHeaderY
+      let newY = willBeFlipped
+        ? currentHeaderY - newH + COLLAPSED_H
+        : currentHeaderY;
+      // Clamp to viewport (hard stop at status bar top, 40px from bottom)
+      newY = Math.min(newY, window.innerHeight - newH - 40);
+      ctx.updateTile(tile.id, {
+        collapsed: false,
+        h: newH,
+        y: newY,
+        prevH: undefined,
+      });
+    } else {
+      // Collapsing - save current height before collapsing
+      const newY = currentHeaderY;
+      ctx.updateTile(tile.id, {
+        collapsed: true,
+        h: COLLAPSED_H,
+        y: newY,
+        prevH: tile.h,
+      });
+    }
+  };
 
   return (
     <div
       className={`tile ${tile.collapsed ? "collapsed" : ""} ${inGroup ? "ingroup" : ""}`}
+      data-flipped={flipped}
       style={{ left: tile.x, top: tile.y, width: tile.w, height: realH, zIndex: tile.z }}
       onMouseDown={() => ctx.bringToFront(tile.id)}
     >
-      {showHeader && (
-        <div className="tile-head" onMouseDown={onHeaderDown}>
-          <span className="tile-grip">⠿</span>
-          <span className="tile-title">{tile.sectionKey}</span>
-          <span className="tile-spacer"/>
-          <button className="tile-btn" title={tile.collapsed ? "Expand" : "Collapse"}
-                  onClick={() => ctx.updateTile(tile.id, { collapsed: !tile.collapsed })}>
-            {tile.collapsed ? "▾" : "─"}
-          </button>
-          <button className="tile-btn" title="Close" onClick={() => ctx.closeTile(tile.id)}>×</button>
-        </div>
-      )}
-      {showSlimStrip && (
-        <div className="tile-slim">
-          <span className="tile-ungrip" title="Drag to ungroup" onMouseDown={onUngroupDown}>⤴</span>
-          <span className="tile-slim-title">{tile.sectionKey}</span>
-          <span className="tile-spacer"/>
-          <button className="tile-btn slim" title={tile.collapsed ? "Expand" : "Collapse"}
-                  onClick={() => ctx.updateTile(tile.id, { collapsed: !tile.collapsed })}>
-            {tile.collapsed ? "▾" : "─"}
-          </button>
-          <button className="tile-btn slim" title="Close" onClick={() => ctx.closeTile(tile.id)}>×</button>
-        </div>
-      )}
-      {!tile.collapsed && (
-        <div className="tile-body" data-testid={`tile-body-${tile.sectionKey}`}>
-          {sectionContent}
-        </div>
+      {flipped ? (
+        <>
+          {!tile.collapsed && (
+            <div className="tile-body" data-testid={`tile-body-${tile.sectionKey}`}>
+              {sectionContent}
+            </div>
+          )}
+          {showHeader && (
+            <div className="tile-head" onMouseDown={onHeaderDown}>
+              <span className="tile-grip">⠿</span>
+              <span className="tile-title">{tile.sectionKey}</span>
+              <span className="tile-spacer"/>
+              <button className="tile-btn" title={tile.collapsed ? "Expand" : "Collapse"}
+                      onClick={handleToggleCollapsed}>
+                {tile.collapsed ? "▾" : "─"}
+              </button>
+              <button className="tile-btn" title="Close" onClick={() => ctx.closeTile(tile.id)}>×</button>
+            </div>
+          )}
+          {showSlimStrip && (
+            <div className="tile-slim">
+              <span className="tile-ungrip" title="Drag to ungroup" onMouseDown={onUngroupDown}>⤴</span>
+              <span className="tile-slim-title">{tile.sectionKey}</span>
+              <span className="tile-spacer"/>
+              <button className="tile-btn slim" title={tile.collapsed ? "Expand" : "Collapse"}
+                      onClick={handleToggleCollapsed}>
+                {tile.collapsed ? "▾" : "─"}
+              </button>
+              <button className="tile-btn slim" title="Close" onClick={() => ctx.closeTile(tile.id)}>×</button>
+            </div>
+          )}
+        </>
+      ) : (
+        <>
+          {showHeader && (
+            <div className="tile-head" onMouseDown={onHeaderDown}>
+              <span className="tile-grip">⠿</span>
+              <span className="tile-title">{tile.sectionKey}</span>
+              <span className="tile-spacer"/>
+              <button className="tile-btn" title={tile.collapsed ? "Expand" : "Collapse"}
+                      onClick={handleToggleCollapsed}>
+                {tile.collapsed ? "▾" : "─"}
+              </button>
+              <button className="tile-btn" title="Close" onClick={() => ctx.closeTile(tile.id)}>×</button>
+            </div>
+          )}
+          {showSlimStrip && (
+            <div className="tile-slim">
+              <span className="tile-ungrip" title="Drag to ungroup" onMouseDown={onUngroupDown}>⤴</span>
+              <span className="tile-slim-title">{tile.sectionKey}</span>
+              <span className="tile-spacer"/>
+              <button className="tile-btn slim" title={tile.collapsed ? "Expand" : "Collapse"}
+                      onClick={handleToggleCollapsed}>
+                {tile.collapsed ? "▾" : "─"}
+              </button>
+              <button className="tile-btn slim" title="Close" onClick={() => ctx.closeTile(tile.id)}>×</button>
+            </div>
+          )}
+          {!tile.collapsed && (
+            <div className="tile-body" data-testid={`tile-body-${tile.sectionKey}`}>
+              {sectionContent}
+            </div>
+          )}
+        </>
       )}
       {!tile.collapsed && <div className="tile-resize" onMouseDown={onResizeDown}/>}
     </div>
