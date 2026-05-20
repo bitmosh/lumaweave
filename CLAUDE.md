@@ -614,20 +614,32 @@ Claude Code posts to #current-task:
 
 
 
-## Project state at the time of writing this CLAUDE.md
+## Project state (current as of v86c stabilization)
 
-- v86c tile system in active development.
-- Physics tile (Scope B) is shipped and working.
-- TiledOutIndicator extraction is shipped.
-- C-1 left-panel work was REVERTED. The four left-panel registry
-  entries (graph, qa, evidence, debug) are removed. Reasoning:
-  those were tabs, not tileable units. Real left-panel sub-section
-  tile-out is deferred until left-panel reorganization. See
-  `docs/updates/v86+_updates/v86c_LEFT_PANEL_DEFERRAL.md`.
-- Scope C continues with right-dock only:
-  - `labels-section`: pending wiring (C-2)
-  - `appearance-section`: pending wiring (C-2)
-- **Tile grouping and snapping disabled (v86c)**: Both group auto-creation and tile snapping (snap-to-grid and snap-to-tile-edge) are disabled. Individual tile behavior preserved: tear-off, free drag (cursor-precise positions), resize, collapse/expand, close-and-return-to-home. Tiled-out indicators on panel slots work. Group code and snap code remain in codebase for future re-enable. Reason: multiple days spent patching group and snap bugs across old and rewritten tile systems; cost-benefit favors simplification (basic floating-container model) pending fresh design pass on snap mechanics and group architecture.
+**v86c Tile System — STABILIZED**
+
+The tile system has transitioned from rewrite attempts to a simplified
+floating-container model. This is the stable, working state:
+
+- **Physics tile** (Scope B): shipped and working
+- **TiledOutIndicator** extraction: shipped
+- **Right-dock sections** (Scope C-2): labels-section + appearance-section wired and working
+- **Left-panel reorganization**: deferred (C-1 reverted; see `docs/updates/v86+_updates/v86c_LEFT_PANEL_DEFERRAL.md`)
+- **Tile grouping** (feature flag `tileGrouping: false`): disabled.
+  Group code preserved in codebase for future re-enable. Tiles are independent floating containers.
+- **Tile snapping** (feature flag `snap` path): disabled.
+  Tiles drag freely with cursor-precise positions. Snap code preserved in codebase.
+- **Persistence**: Fixed. Tile positions survive page refresh via
+  Zustand `subscribe()` → localStorage sync.
+- **Orphan code cleanup**: Complete. Stale branches deleted; Pass 1A/1B
+  rewrite code removed (preserved in git history).
+
+**Key design decision**: Multiple days spent patching group and snap
+bugs across old and rewritten tile systems. Cost-benefit analysis favored
+simplification (basic floating-container model) with feature flags to
+disable problematic behaviors, pending fresh design pass on snap mechanics
+and group architecture.
+
 - Multiple known bugs documented in `docs/known-bugs/`.
 
 If this file feels out of date, ask the developer. They (or the
