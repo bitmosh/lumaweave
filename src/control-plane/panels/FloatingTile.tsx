@@ -140,10 +140,15 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
   };
 
   const inGroup = !!group;
-  // when in a group, hide own header for tiles that are NOT the leftmost top-row tile
-  // (that one shares the group bar). Other tiles still get a slim per-tile collapse/close strip.
   const showHeader = !inGroup;
   const showSlimStrip = inGroup;
+
+  const ungroup = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Close this tile only, leaving the group for remaining tiles
+    ctx.closeTile(tile.id);
+  };
 
   const realH = tile.collapsed ? COLLAPSED_H : tile.h;
 
