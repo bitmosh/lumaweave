@@ -48,8 +48,6 @@ export function computeGroups(tiles: TileLayoutEntry[]): { groups: TileGroup[]; 
     // group bar spans entire group width (not just top row) so it visually connects to all tiles
     const topX = Math.min(...ts.map(t => t.x));
     const topW = Math.max(...ts.map(t => t.x + t.w)) - topX;
-    // snap top bar y to grid for stable, predictable placement
-    const topY = Math.round(minY / TILE_GRID) * TILE_GRID;
     const bbox = {
       x: Math.min(...ts.map(t => t.x)),
       y: Math.min(...ts.map(t => t.y)),
@@ -57,7 +55,7 @@ export function computeGroups(tiles: TileLayoutEntry[]): { groups: TileGroup[]; 
       y2: Math.max(...ts.map(t => t.y + (t.collapsed ? COLLAPSED_H : t.h))),
     };
     groups.push({ tileIds: ts.map(t => t.id), topRow: topRow.map(t => t.id),
-                  topX, topW, topY, bbox });
+                  topX, topW, topY: minY, bbox });
     ts.forEach(t => tileToGroup[t.id] = groups[groups.length - 1].tileIds[0]);
   });
   return { groups, tileToGroup };
@@ -79,14 +77,6 @@ export function findSnap(movingTile: TileLayoutEntry, others: TileLayoutEntry[])
       const d = Math.hypot(p.x - r.x, p.y - r.y);
       if (d < SNAP_TOLERANCE) snapCandidates.push({ ...p, d });
     });
-
-    // Row-alignment: when tile is horizontally nearby and y-aligned, snap y to match
-    // This creates magnetic horizontal binding for tiles in the same row
-    const yDiff = Math.abs(r.y - or.y);
-    const hNear = r.x < or.x + or.w + 120 && or.x < r.x + r.w + 120;
-    if (yDiff > 0 && yDiff < SNAP_TOLERANCE && hNear) {
-      snapCandidates.push({ x: r.x, y: or.y, d: yDiff * 0.7 }); // weight y-align aggressively
-    }
   });
   if (snapCandidates.length === 0) return null;
   const best = snapCandidates.reduce((a, b) => a.d < b.d ? a : b);
