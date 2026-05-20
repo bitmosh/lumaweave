@@ -359,51 +359,78 @@ When you receive a less-structured request from the developer:
 
 ## Approval gates
 
-By default, post to #approve-this on Discord AND WAIT FOR EXPLICIT
-APPROVAL before running any of these:
+These gates govern when Claude Code must ping Discord and wait
+before doing something. They are SEPARATE from Windsurf's own
+approval modals — the Windsurf modal is for the user at the
+keyboard; Discord pings are for the user on their phone. Both
+exist; honor the Discord-ping rule independently of what Windsurf
+does.
+
+The pattern is:
+1. Claude Code decides to do action X.
+2. BEFORE the tool call, Claude Code posts to #approve-this on
+   Discord with the action and a "Reply 'approve' to proceed"
+   prompt.
+3. Claude Code waits for a Discord response.
+4. After approval (via Discord), Claude Code makes the tool call.
+   Windsurf may still show its own modal — the user can approve
+   that via Windsurf or it may auto-approve depending on settings.
+
+### Always ping #approve-this before:
 
 - `rm` or `git rm` of any file
-- `git reset --hard`
-- `git commit` (post the commit message preview first)
+- `git commit` (post the full commit message preview first)
 - `git push`
-- `git merge` (any direction)
-- `git checkout <branch>` when current working tree has uncommitted
-  changes
-- `npm uninstall` or any modification to package.json dependencies
-- Any `chmod` or system-level command
-- Editing CLAUDE.md (this file is durable; changes need explicit
-  approval)
-- Creating or deleting files in `docs/` outside the current task's
-  scope
-- Anything irreversible or that surprises you mid-pass
+- `git merge` (any direction, but especially to main)
+- `git reset --hard`
+- Editing CLAUDE.md (this file)
+- Modifying package.json (dependency adds/removes)
+- Creating files in `docs/` outside the current task's scope
+- Any system-level command (`chmod`, `sudo`, etc.)
+- Deleting any file or directory
 
-No approval needed for:
+### Never ping Discord for:
 
 - Read-only operations: `git status`, `git log`, `git diff`,
   `git branch`, `ls`, `cat`, `grep`, `find`, `head`, `tail`
-- `npm run typecheck`, `npm run qa:e2e` (test runs)
-- Reading any file
+- `cd` to change directories
+- Reading any file (`view`)
+- `npm run typecheck`, `npm run qa:e2e`, `npm run dev`
 - Editing files explicitly named in the current task prompt
+  (these are pre-approved by virtue of being in the prompt)
 - Posting status messages to Discord (the post itself is the
   notification)
+- Adding diagnostic console.logs to files already being modified
+  in the current task
 
-When posting an approval request, include:
-1. What you're about to do (the exact command or change)
+### Default for in-between cases
+
+If a command is destructive AND wasn't pre-approved by the prompt:
+ping #approve-this. When in doubt, ping.
+
+If a command is non-destructive (read-only, test, status):
+proceed without pinging.
+
+### Discord approval message format
+
+When pinging #approve-this, include:
+1. The exact command or change
 2. Why (one sentence)
-3. What approval looks like ("Reply 'approve' to proceed")
+3. "Reply 'approve' to proceed"
 
-Recognized approval responses:
+### Recognized responses
+
 - "approve" / "approved" / "yes" / "go" / "proceed" — proceed
 - "no" / "wait" / "stop" / "hold" — STOP and explain or wait
 - "change X to Y" — incorporate the change before proceeding
+- Ambiguous response — post a clarifying question, continue waiting
 
-If response is ambiguous: post a clarifying question to
-#approve-this and continue waiting. Don't guess.
+### Per-session overrides
 
-The user may loosen these per-session by saying things like
-"auto-approve through commit" or "auto-approve everything for this
-pass." When they do, those defaults are overridden for the duration
-of that session only. Default restrictions resume next session.
+The user may say things like "auto-approve through commit for this
+pass" or "auto-approve everything for this session." When they do,
+override the defaults for that session only. Default restrictions
+resume at the next session.
 
 ## Useful one-liners
 
