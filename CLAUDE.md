@@ -462,8 +462,18 @@ All significant Discord communication follows this structure.
 - **Content**: Commit previews, merge notifications, push confirmations
 - **Pattern**: "Reply 'approve' to proceed"
 - **Wait**: Always wait for response before proceeding
-- **Polling**: After posting approval request, check for response every 3-4 seconds
-  using `fetch_messages`. Do not wait passively — actively poll until response received.
+- **Active Listening Protocol** (REQUIRED):
+  - Upon posting to #approve-this, IMMEDIATELY start a Monitor loop:
+    ```bash
+    count=0; while true; do count=$((count+1)); if [ $((count % 5)) -eq 0 ]; then echo "listening..."; fi; sleep 10; done
+    ```
+    - `persistent: true`, no timeout (runs indefinitely)
+  - Monitor emits "listening..." every 50 seconds (once per 5 cycles, not every poll)
+  - This saves tokens and avoids chat flooding while maintaining active listening
+  - Upon each notification, I call `mcp__plugin_discord_discord__fetch_messages` to check for your response
+  - The 10-second check interval is maintained internally; only output every 50 seconds
+  - Response notifications wake me immediately—no manual checks needed
+- **CRITICAL**: Never post to #approve-this without starting the Monitor. The Monitor IS the approval waiting mechanism.
 
 ### #current-task
 

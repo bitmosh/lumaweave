@@ -211,6 +211,112 @@ test("v86c: Tiled-out indicator appears in source slot when section is torn off"
  * Verifies that 3 tiles positioned edge-adjacent form a single group.
  * This tests adjacency detection independent of drag UX.
  */
+test("v86c: Group collapse-all expands ALL tiles including non-top-row", async ({ page }) => {
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+
+  // Capture console logs for debugging
+  const consoleLogs: string[] = [];
+  page.on("console", (msg) => {
+    if (msg.text().includes("[GroupBar")) {
+      consoleLogs.push(msg.text());
+    }
+  });
+
+  // Reset persisted tile layout
+  await page.evaluate(() => {
+    const store = (window as any).__lwStore;
+    if (store) {
+      store.getState().setSetting("ui.tileLayout", []);
+    }
+  });
+  await page.waitForTimeout(200);
+
+  // Tear off 3 right-dock sections
+  const tearOff = async (sourceTestId: string, dropX: number, dropY: number) => {
+    const handle = page.locator(
+      `[data-testid="${sourceTestId}"] [title="Drag to tear off as tile"]`
+    );
+    await handle.scrollIntoViewIfNeeded();
+    await expect(handle).toBeVisible();
+    const box = await handle.boundingBox();
+    if (!box) throw new Error(`No box for ${sourceTestId}`);
+    await page.mouse.move(box.x + 5, box.y + 5);
+    await page.mouse.down();
+    await page.mouse.move(dropX, dropY, { steps: 6 });
+    await page.mouse.up();
+    await page.waitForTimeout(300);
+  };
+
+  await tearOff("settings-section-physics", 400, 300);
+  await tearOff("settings-section-labels", 700, 300);
+  await tearOff("settings-section-graph-view", 1000, 300);
+
+  // Position them precisely in a 3-wide group
+  await page.evaluate(() => {
+    const store = (window as any).__lwStore;
+    const tiles = store.getState().settings.ui?.tileLayout ?? [];
+    if (tiles.length !== 3) return;
+    const sorted = [...tiles].sort((a: any, b: any) => a.x - b.x);
+    let cursorX = 200;
+    const baseY = 300;
+    const updated = sorted.map((t: any) => {
+      const newTile = { ...t, x: cursorX, y: baseY };
+      cursorX += t.w;
+      return newTile;
+    });
+    store.getState().setSetting("ui.tileLayout", updated);
+  });
+  await page.waitForTimeout(300);
+
+  // Verify group bar exists
+  const groupBar = page.locator(".group-bar");
+  await expect(groupBar).toBeVisible();
+
+  // Get initial collapsed state of all tiles
+  const getCollapsedStates = async () => {
+    return await page.evaluate(() => {
+      const store = (window as any).__lwStore;
+      const tiles = store.getState().settings.ui?.tileLayout ?? [];
+      return tiles.map((t: any) => ({ id: t.id, collapsed: t.collapsed }));
+    });
+  };
+
+  const initialStates = await getCollapsedStates();
+  console.log("Initial states:", initialStates);
+
+  // Click collapse-all button
+  const collapseBtn = page.locator(".group-bar [title='Collapse all']");
+  await collapseBtn.click();
+  await page.waitForTimeout(200);
+
+  let afterFirstClick = await getCollapsedStates();
+  console.log("After first click (collapse-all):", afterFirstClick);
+  afterFirstClick.forEach((t) => {
+    expect(t.collapsed).toBe(true);
+  });
+
+  // Click collapse-all button again (should expand all)
+  const expandBtn = page.locator(".group-bar [title='Expand all']");
+  await expandBtn.click();
+  await page.waitForTimeout(200);
+
+  let afterSecondClick = await getCollapsedStates();
+  console.log("After second click (expand-all):", afterSecondClick);
+  console.log("Console logs:", consoleLogs);
+
+  // All tiles should be expanded
+  afterSecondClick.forEach((t) => {
+    expect(t.collapsed).toBe(false);
+  });
+
+  // Cleanup
+  await page.evaluate(() => {
+    const store = (window as any).__lwStore;
+    store.getState().setSetting("ui.tileLayout", []);
+  });
+});
+
 test("v86c: 3 tiles snap into a single 3-wide group", async ({ page }) => {
   await page.goto("/");
   await page.waitForLoadState("networkidle");

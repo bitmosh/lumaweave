@@ -7,6 +7,7 @@ import type { TileLayoutEntry, TileGroup } from "./tile.types";
 
 const SNAP_TOLERANCE = 22;
 const COLLAPSED_H = 30;
+const TILE_GRID = 16;
 
 // --- Group computation: tiles snapped edge-to-edge form a group ----
 // BIG RULE: topRow width is computed from CONTIGUOUS top-row tiles, NOT bbox
@@ -44,9 +45,11 @@ export function computeGroups(tiles: TileLayoutEntry[]): { groups: TileGroup[]; 
     const minY = Math.min(...ts.map(t => t.y));
     // top row = tiles whose y is at minY (within 2px)
     const topRow = ts.filter(t => Math.abs(t.y - minY) < 3).sort((a, b) => a.x - b.x);
-    // top row bar spans from leftmost x to rightmost x+w of CONTIGUOUS top-row tiles
-    const topX = Math.min(...topRow.map(t => t.x));
-    const topW = Math.max(...topRow.map(t => t.x + t.w)) - topX;
+    // group bar spans entire group width (not just top row) so it visually connects to all tiles
+    const topX = Math.min(...ts.map(t => t.x));
+    const topW = Math.max(...ts.map(t => t.x + t.w)) - topX;
+    // snap top bar y to grid for stable, predictable placement
+    const topY = Math.round(minY / TILE_GRID) * TILE_GRID;
     const bbox = {
       x: Math.min(...ts.map(t => t.x)),
       y: Math.min(...ts.map(t => t.y)),
@@ -54,7 +57,7 @@ export function computeGroups(tiles: TileLayoutEntry[]): { groups: TileGroup[]; 
       y2: Math.max(...ts.map(t => t.y + (t.collapsed ? COLLAPSED_H : t.h))),
     };
     groups.push({ tileIds: ts.map(t => t.id), topRow: topRow.map(t => t.id),
-                  topX, topW, topY: minY, bbox });
+                  topX, topW, topY, bbox });
     ts.forEach(t => tileToGroup[t.id] = groups[groups.length - 1].tileIds[0]);
   });
   return { groups, tileToGroup };

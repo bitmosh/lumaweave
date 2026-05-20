@@ -42,15 +42,17 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
     const startX = e.clientX, startY = e.clientY;
     const startTilePos = { x: tile.x, y: tile.y };
     let detached = ungroup;
-    const others = Array.from(ctx.tiles.values()).filter(t => t.id !== tile.id);
     const groupIds = (group && !ungroup) ? group.tileIds : [tile.id];
     const groupTiles = Array.from(ctx.tiles.values()).filter(t => groupIds.includes(t.id));
     const offsets = groupTiles.map(t => ({ id: t.id, dx: t.x - startTilePos.x, dy: t.y - startTilePos.y }));
 
+    let moveCount = 0;
     const onMove = (ev: MouseEvent) => {
+      moveCount++;
       // Pixel-precise position from cursor (no grid quantization)
       let nx = startTilePos.x + (ev.clientX - startX);
       let ny = startTilePos.y + (ev.clientY - startY);
+      if (moveCount % 10 === 0) console.log("[FloatingTile.drag]", tile.id, "moveCount:", moveCount, "pos:", {nx, ny}, "groupTiles.length:", groupTiles.length);
 
       // Clamp to viewport
       nx = Math.max(8, Math.min(window.innerWidth - tile.w - 8, nx));
@@ -63,16 +65,9 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
         detached = false;
       }
 
-      // For single-tile drag, check for sticky snap
-      if (groupTiles.length === 1) {
-        const movingPreview = { ...tile, x: nx, y: ny };
-        const snapTo = findSnap(movingPreview, others);
-        if (snapTo) {
-          // Sticky magnetic snap — use precise snap target position
-          nx = snapTo.x;
-          ny = snapTo.y;
-        }
-      }
+      // Snap disabled during drag for smooth movement.
+      // Snap will engage on mouseup if close to another tile.
+      // This prevents the "jumpy" 22px increments during dragging.
 
       // Update positions (group movement preserves offsets)
       const dx = nx - startTilePos.x, dy = ny - startTilePos.y;
@@ -88,6 +83,19 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
       window.removeEventListener("mouseup", onUp);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("pointercancel", onPointerCancel);
+
+      // Snap on release if single tile (not in group)
+      if (groupTiles.length === 1) {
+        const currentTiles = Array.from(ctx.tiles.values());
+        const currentTile = currentTiles.find(t => t.id === tile.id);
+        if (currentTile) {
+          const otherTiles = currentTiles.filter(t => t.id !== tile.id);
+          const snapTo = findSnap(currentTile, otherTiles);
+          if (snapTo) {
+            ctx.updateTile(tile.id, { x: snapTo.x, y: snapTo.y });
+          }
+        }
+      }
     };
     const onKeyDown = (ev: KeyboardEvent) => {
       if (ev.key === "Escape") onUp();
@@ -132,10 +140,15 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
   };
 
   const inGroup = !!group;
-  // when in a group, hide own header for tiles that are NOT the leftmost top-row tile
-  // (that one shares the group bar). Other tiles still get a slim per-tile collapse/close strip.
   const showHeader = !inGroup;
   const showSlimStrip = inGroup;
+
+  const ungroup = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Close this tile only, leaving the group for remaining tiles
+    ctx.closeTile(tile.id);
+  };
 
   const realH = tile.collapsed ? COLLAPSED_H : tile.h;
 

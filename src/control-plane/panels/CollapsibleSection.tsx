@@ -13,10 +13,6 @@ interface CollapsibleSectionProps {
   tileableKey?: string;
 }
 
-const TILE_GRID = 16;
-
-const snap = (v: number) => Math.round(v / TILE_GRID) * TILE_GRID;
-
 export function CollapsibleSection({
   title,
   isOpen,
@@ -42,16 +38,17 @@ export function CollapsibleSection({
     const onMove = (ev: MouseEvent) => {
       const dx = ev.clientX - startX, dy = ev.clientY - startY;
       if (!createdTileId && Math.hypot(dx, dy) > 8) {
+        // Create tile at pixel-precise position (no quantization)
         createdTileId = tileOut(tileableKey, {
-          x: snap(ev.clientX - 60),
-          y: snap(ev.clientY - 14)
+          x: ev.clientX - 60,
+          y: ev.clientY - 14
         });
       }
       if (createdTileId) {
-        // Continue dragging the created tile
+        // Continue dragging with pixel-precise positioning
         updateTile(createdTileId, {
-          x: snap(ev.clientX - 60),
-          y: snap(ev.clientY - 14)
+          x: ev.clientX - 60,
+          y: ev.clientY - 14
         });
       }
     };
