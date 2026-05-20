@@ -42,7 +42,6 @@ export function CollapsibleSection({
     const onMove = (ev: MouseEvent) => {
       const dx = ev.clientX - startX, dy = ev.clientY - startY;
       if (!createdTileId && Math.hypot(dx, dy) > 8) {
-        // Threshold reached: create tile
         createdTileId = tileOut(tileableKey, {
           x: snap(ev.clientX - 60),
           y: snap(ev.clientY - 14)

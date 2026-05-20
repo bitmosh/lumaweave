@@ -6,6 +6,8 @@
 import { createElement } from "react";
 import type { TileSectionEntry, TileSectionRegistry } from "./tile.types";
 import { PhysicsSectionContent } from "./PhysicsSectionContent";
+import { LabelsSectionContent } from "./LabelsSectionContent";
+import { AppearanceSectionContent } from "./AppearanceSectionContent";
 
 const entries: TileSectionEntry[] = [
   {
@@ -26,8 +28,9 @@ const entries: TileSectionEntry[] = [
     defaultWidth: 280,
     defaultHeight: 300,
     collapsible: true,
+    content: () => createElement(AppearanceSectionContent),
+    contentTestId: "appearance-section-content",
     sourceTestId: "settings-section-graph-view",
-    // contentTestId set in Scope C-2
   },
   {
     id: "labels-section",
@@ -36,8 +39,9 @@ const entries: TileSectionEntry[] = [
     defaultWidth: 280,
     defaultHeight: 300,
     collapsible: true,
+    content: () => createElement(LabelsSectionContent),
+    contentTestId: "labels-section-content",
     sourceTestId: "settings-section-labels",
-    // contentTestId set in Scope C-2
   },
 ];
 

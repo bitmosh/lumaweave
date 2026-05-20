@@ -29,6 +29,9 @@ async function tearOffAndCheckContent(
   );
   await expect(handle).toBeVisible({ timeout: 10000 });
 
+  // Scroll the handle into the viewport if needed (critical for off-screen sections)
+  await handle.scrollIntoViewIfNeeded();
+
   // Drag past the 8px threshold to tear off
   const box = await handle.boundingBox();
   if (!box) throw new Error(`No bounding box for handle in ${sourceTestId}`);
