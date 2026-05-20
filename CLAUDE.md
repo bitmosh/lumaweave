@@ -357,6 +357,54 @@ When you receive a less-structured request from the developer:
    test → manual verification mention if visual → commit. Don't
    skip steps.
 
+## Approval gates
+
+By default, post to #approve-this on Discord AND WAIT FOR EXPLICIT
+APPROVAL before running any of these:
+
+- `rm` or `git rm` of any file
+- `git reset --hard`
+- `git commit` (post the commit message preview first)
+- `git push`
+- `git merge` (any direction)
+- `git checkout <branch>` when current working tree has uncommitted
+  changes
+- `npm uninstall` or any modification to package.json dependencies
+- Any `chmod` or system-level command
+- Editing CLAUDE.md (this file is durable; changes need explicit
+  approval)
+- Creating or deleting files in `docs/` outside the current task's
+  scope
+- Anything irreversible or that surprises you mid-pass
+
+No approval needed for:
+
+- Read-only operations: `git status`, `git log`, `git diff`,
+  `git branch`, `ls`, `cat`, `grep`, `find`, `head`, `tail`
+- `npm run typecheck`, `npm run qa:e2e` (test runs)
+- Reading any file
+- Editing files explicitly named in the current task prompt
+- Posting status messages to Discord (the post itself is the
+  notification)
+
+When posting an approval request, include:
+1. What you're about to do (the exact command or change)
+2. Why (one sentence)
+3. What approval looks like ("Reply 'approve' to proceed")
+
+Recognized approval responses:
+- "approve" / "approved" / "yes" / "go" / "proceed" — proceed
+- "no" / "wait" / "stop" / "hold" — STOP and explain or wait
+- "change X to Y" — incorporate the change before proceeding
+
+If response is ambiguous: post a clarifying question to
+#approve-this and continue waiting. Don't guess.
+
+The user may loosen these per-session by saying things like
+"auto-approve through commit" or "auto-approve everything for this
+pass." When they do, those defaults are overridden for the duration
+of that session only. Default restrictions resume next session.
+
 ## Useful one-liners
 
 ```bash
