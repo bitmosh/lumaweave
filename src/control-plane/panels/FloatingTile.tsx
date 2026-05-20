@@ -67,20 +67,9 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
         detached = false;
       }
 
-      // For single-tile drag, check for sticky snap only when very close to another tile
-      if (groupTiles.length === 1) {
-        const movingPreview = { ...tile, x: nx, y: ny };
-        const snapTo = findSnap(movingPreview, others);
-        if (snapTo) {
-          // Only snap if we're very close to the snap target (within SNAP_ENGAGE_DISTANCE)
-          const distToSnap = Math.hypot(snapTo.x - nx, snapTo.y - ny);
-          if (distToSnap < SNAP_ENGAGE_DISTANCE) {
-            // Close enough to snap — use precise snap target position
-            nx = snapTo.x;
-            ny = snapTo.y;
-          }
-        }
-      }
+      // Snap disabled during drag for smooth movement.
+      // Snap will engage on mouseup if close to another tile.
+      // This prevents the "jumpy" 22px increments during dragging.
 
       // Update positions (group movement preserves offsets)
       const dx = nx - startTilePos.x, dy = ny - startTilePos.y;
@@ -96,6 +85,19 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
       window.removeEventListener("mouseup", onUp);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("pointercancel", onPointerCancel);
+
+      // Snap on release if single tile (not in group)
+      if (groupTiles.length === 1) {
+        const currentTiles = Array.from(ctx.tiles.values());
+        const currentTile = currentTiles.find(t => t.id === tile.id);
+        if (currentTile) {
+          const otherTiles = currentTiles.filter(t => t.id !== tile.id);
+          const snapTo = findSnap(currentTile, otherTiles);
+          if (snapTo) {
+            ctx.updateTile(tile.id, { x: snapTo.x, y: snapTo.y });
+          }
+        }
+      }
     };
     const onKeyDown = (ev: KeyboardEvent) => {
       if (ev.key === "Escape") onUp();
