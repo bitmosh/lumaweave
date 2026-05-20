@@ -40,17 +40,29 @@ export function TileLayer() {
 // Reference: (NEW)tile-system.jsx lines 377-395
 function GroupBar({ group }: { group: TileGroup }) {
   const ctx = useTileContext();
+  const tilesArray = Array.from(ctx.tiles.values());
+  const groupTiles = tilesArray.filter(t => group.tileIds.includes(t.id));
+
+  // Compute whether all group tiles are currently collapsed
+  const allCollapsed = groupTiles.every(t => t.collapsed);
+
   const onClose = () => ctx.closeGroup(group.tileIds);
+
+  const onCollapseAll = () => {
+    const next = !allCollapsed;
+    groupTiles.forEach(t => ctx.updateTile(t.id, { collapsed: next }));
+  };
 
   // Only render if group has 2+ tiles
   if (group.tileIds.length < 2) return null;
 
   const handleMouseDown = (e: React.MouseEvent) => {
+    // Don't initiate drag if click is on a button
+    if ((e.target as HTMLElement).closest(".group-btn")) return;
+
     e.preventDefault();
     e.stopPropagation();
     const startX = e.clientX, startY = e.clientY;
-    const tilesArray = Array.from(ctx.tiles.values());
-    const groupTiles = tilesArray.filter(t => group.tileIds.includes(t.id));
     const startPositions = groupTiles.map(t => ({ id: t.id, x: t.x, y: t.y }));
 
     const onMove = (ev: MouseEvent) => {
@@ -86,13 +98,42 @@ function GroupBar({ group }: { group: TileGroup }) {
     window.addEventListener("pointercancel", onPointerCancel);
   };
 
+  // Get max z of group + 1 so bar sits above tiles visually
+  const groupZ = Math.max(...groupTiles.map(t => t.z)) + 1;
+
+  const HEADER_H = 28;
+
   return (
     <div
       className="group-bar"
-      style={{ left: group.topX, top: group.topY - 8, width: group.topW, cursor: "grab" }}
+      style={{
+        left: group.topX,
+        top: group.topY - HEADER_H + 2,
+        width: group.topW,
+        zIndex: groupZ,
+      }}
       onMouseDown={handleMouseDown}
+      data-testid="group-bar"
     >
-      <button className="group-close" onClick={onClose}>×</button>
+      <span className="group-grip">⠿</span>
+      <span className="group-title">GROUP · {groupTiles.length} tiles</span>
+      <span className="group-spacer" />
+      <button
+        className="group-btn"
+        onClick={onCollapseAll}
+        title={allCollapsed ? "Expand all" : "Collapse all"}
+        data-testid="group-collapse-all"
+      >
+        {allCollapsed ? "▾▾" : "──"}
+      </button>
+      <button
+        className="group-btn"
+        onClick={onClose}
+        title="Close group"
+        data-testid="group-close"
+      >
+        ×
+      </button>
     </div>
   );
 }

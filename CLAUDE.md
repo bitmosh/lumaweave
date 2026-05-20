@@ -462,8 +462,13 @@ All significant Discord communication follows this structure.
 - **Content**: Commit previews, merge notifications, push confirmations
 - **Pattern**: "Reply 'approve' to proceed"
 - **Wait**: Always wait for response before proceeding
-- **Polling**: After posting approval request, check for response every 3-4 seconds
-  using `fetch_messages`. Do not wait passively — actively poll until response received.
+- **Polling Strategy**:
+  - Initial polling (first ~30 seconds): every 3-4 seconds for quick responses
+  - Continuous polling (long waits): every 10-15 seconds indefinitely
+  - Do NOT give up or proceed without explicit approval — keep polling until response arrives
+  - Use `fetch_messages` to check for new messages
+  - If user is testing or slow to respond, continuous polling ensures we capture approval
+    immediately without manual re-engagement
 
 ### #current-task
 
