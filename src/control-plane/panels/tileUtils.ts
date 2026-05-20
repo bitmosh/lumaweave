@@ -74,7 +74,10 @@ export function findSnap(movingTile: TileLayoutEntry, others: TileLayoutEntry[])
     const tryB = { x: or.x, y: or.y + or.h };
     [tryL, tryR, tryT, tryB].forEach(p => {
       const d = Math.hypot(p.x - r.x, p.y - r.y);
-      if (d < SNAP_TOLERANCE) snapCandidates.push({ ...p, d });
+      if (d < SNAP_TOLERANCE) {
+        // Edge snaps get 0.8x distance multiplier to make them win more aggressively
+        snapCandidates.push({ ...p, d: d * 0.8 });
+      }
     });
   });
   if (snapCandidates.length === 0) return null;

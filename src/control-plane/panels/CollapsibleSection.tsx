@@ -1,6 +1,8 @@
 import { ReactNode } from "react";
 import { useTileContext } from "./TileProvider";
 import { TiledOutIndicator } from "./TiledOutIndicator";
+import { findSnap } from "./tileUtils";
+import type { SnapGuide } from "./tile.types";
 
 interface CollapsibleSectionProps {
   title: string;
@@ -23,7 +25,8 @@ export function CollapsibleSection({
   borderColor = "rgba(34,211,238,0.1)",
   tileableKey,
 }: CollapsibleSectionProps) {
-  const { tileOut, isTiledOut, updateTile } = useTileContext();
+  const ctx = useTileContext();
+  const { tileOut, isTiledOut, updateTile, setSnapGuide, tiles } = ctx;
   const tiledOut = tileableKey ? isTiledOut(tileableKey) : false;
 
   const handleTearOffMouseDown = (e: React.MouseEvent) => {
@@ -46,14 +49,42 @@ export function CollapsibleSection({
       }
       if (createdTileId) {
         // Continue dragging with pixel-precise positioning
+        const nx = ev.clientX - 60;
+        const ny = ev.clientY - 14;
         updateTile(createdTileId, {
-          x: ev.clientX - 60,
-          y: ev.clientY - 14
+          x: nx,
+          y: ny,
         });
+
+        // Show snap guide preview for tear-off drag
+        const currentTiles = Array.from(tiles.values());
+        const createdTile = currentTiles.find(t => t.id === createdTileId);
+        if (createdTile) {
+          const otherTiles = currentTiles.filter(t => t.id !== createdTileId);
+          const projected = { ...createdTile, x: nx, y: ny };
+          const candidate = findSnap(projected, otherTiles);
+
+          if (candidate) {
+            const snapX = Math.abs(candidate.x - nx) > 1 ? candidate.x : null;
+            const snapY = Math.abs(candidate.y - ny) > 1 ? candidate.y : null;
+            const guide: SnapGuide = {
+              previewX: candidate.x,
+              previewY: candidate.y,
+              previewW: createdTile.w,
+              previewH: createdTile.h,
+              edgeX: snapX !== null ? (snapX > nx ? candidate.x + createdTile.w : candidate.x) : null,
+              edgeY: snapY !== null ? candidate.y : null,
+            };
+            setSnapGuide(guide);
+          } else {
+            setSnapGuide(null);
+          }
+        }
       }
     };
 
     const onUp = () => {
+      setSnapGuide(null);
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
     };
