@@ -25,6 +25,7 @@ import { getThemeRuntimeTokens, resolveGraphVisualTokens } from "../themes";
 import { themePrimitives } from "../themes/tokenPrimitives";
 import { themeTargetRegistry } from "../themes/themeTargetRegistry";
 import { useResolvedTargetColor } from "../themes/useResolvedTargetColor";
+import "../themes/provenanceRegistry";
 import { ThemeTargetInspectorOverlay } from "../themes/ThemeTargetInspectorOverlay";
 import { InspectorMiniGraph } from "../control-plane/inspector/InspectorMiniGraph";
 import { registerColorSpoke } from "../control-plane/inspector/spokes/registerColorSpoke";

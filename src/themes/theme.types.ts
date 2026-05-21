@@ -1,7 +1,8 @@
 /**
  * Theme Type Definitions
- * 
+ *
  * This file defines the core types for the theme preset system.
+ * v86e: Added ThemeLineage, ThemeAsCodeDefinition, DefineThemeFn.
  */
 
 import type { ThemeId } from "../control-plane/settings/settings.schema";
@@ -11,6 +12,33 @@ import type { AssetType } from "./assetBank.types";
  * Unique identifier for a theme preset
  */
 export type ThemePresetId = string;
+
+/**
+ * v86e: Lineage record for theme derivation / fork / remix chains.
+ */
+export interface ThemeLineage {
+  parentId: string;
+  parentHash?: string;
+  timestamp: number;
+  changeKind: "fork" | "remix" | "import" | "derive";
+}
+
+/**
+ * v86e: Theme-as-code definition (Theme-as-Code pattern, v87+).
+ */
+export interface ThemeAsCodeDefinition {
+  id: string;
+  label: string;
+  primitives: Record<string, string>;
+  semantics?: Record<string, string>;
+  components?: Record<string, string>;
+  lineage?: ThemeLineage[];
+}
+
+/**
+ * v86e: Function signature for theme-as-code definitions.
+ */
+export type DefineThemeFn = (def: ThemeAsCodeDefinition) => ThemePreset;
 
 /**
  * Theme preset definition
@@ -37,6 +65,14 @@ export interface ThemePreset {
     type: AssetType;
     purpose: string; // "starfield", "node-shader", etc.
   }>;
+
+  // v86e scaffolding (all optional, backward compatible):
+  /** Lineage chain for fork/remix/import/derive history */
+  lineage?: ThemeLineage[];
+  /** Content hash of this preset's definition */
+  hash?: string;
+  /** Hash of the parent preset this was derived from */
+  parentHash?: string;
 }
 
 /**

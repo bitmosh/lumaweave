@@ -12,7 +12,10 @@ export type AssetType =
   | "sound-pack"
   | "font-pack"
   | "icon-pack"
-  | "particle-system";
+  | "particle-system"
+  | "model-3d"          // v86e — forward-compat for v94
+  | "environment-hdr"   // v86e — image-based lighting
+  | "material-preset";  // v86e — PBR materials
 
 export type AssetFamily = string; // theme id or "shared"
 
@@ -41,6 +44,13 @@ export interface AssetEntry {
   license?: string;
   /** Human-readable description */
   description?: string;
+  /** v86e: Attribution and license information */
+  credits?: {
+    author?: string;
+    license?: string;
+    sourceUrl?: string;
+    notes?: string;
+  };
 }
 
 export interface AssetRegistry {

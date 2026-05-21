@@ -1,12 +1,15 @@
 /**
  * Music Reactive Mapping Registry
  *
- * Static, read-only registry for mapping audio signal channels to future graph visual targets.
+ * Registry for mapping audio signal channels to future graph visual targets.
  *
  * This registry does not execute mappings or drive visual effects. It provides classification
  * data for future safety gates and passive inventory display.
  *
  * v64: Passive Music Reactive Mapping Inventory - static/read-only registry with passive UI
+ * v86e: Aligned to standard class-based registry contract pattern
+ *
+ * Contract: docs/audio/contracts/MUSIC_REACTIVE_MAPPING_REGISTRY_CONTRACT.md (forthcoming)
  */
 
 import type { MotionRiskLevel, ReducedMotionBehavior, EpilepsyRiskLevel } from "../accessibility/motionSafetyRegistry";
@@ -45,79 +48,38 @@ export type MappingStatus =
   | "forbidden";
 
 export interface MusicReactiveMapping {
-  /**
-   * Unique identifier for the mapping
-   */
   id: string;
-
-  /**
-   * Human-readable name of the mapping
-   */
   title: string;
-
-  /**
-   * Description of what the mapping would do
-   */
   description: string;
-
-  /**
-   * Audio signal channel that drives the mapping
-   */
   audioChannel: AudioChannel;
-
-  /**
-   * Future graph visual target
-   */
   graphTarget: GraphTarget;
-
-  /**
-   * Reference to Motion Safety registry effect ID
-   */
   motionSafetyEffectId: string;
-
-  /**
-   * Risk classification inherited from Motion Safety
-   */
   risk: MotionRiskLevel;
-
-  /**
-   * Behavior when reduce motion is enabled
-   */
   reducedMotionBehavior: ReducedMotionBehavior;
-
-  /**
-   * Epilepsy risk level
-   */
   epilepsyRisk: EpilepsyRiskLevel;
-
-  /**
-   * Current status of the mapping
-   */
   status: MappingStatus;
-
-  /**
-   * Mode family grouping for future organization
-   */
   modeFamily: ModeFamily;
-
-  /**
-   * Future phase when this mapping may be implemented
-   */
   futurePhase: string;
-
-  /**
-   * Safety notes and considerations
-   */
   safetyNotes: string;
 }
 
-/**
- * Static registry of music-reactive mappings
- *
- * This is a read-only registry. Mappings are defined but not executed.
- * Future runtime safety gates will use this registry to decide whether to allow, soften, or disable mappings.
- */
-export const MUSIC_REACTIVE_MAPPING_REGISTRY: readonly MusicReactiveMapping[] = [
+export interface MusicReactiveMappingFilterQuery {
+  audioChannel?: AudioChannel;
+  modeFamily?: ModeFamily;
+  status?: MappingStatus;
+  risk?: MotionRiskLevel;
+}
+
+export interface MusicReactiveMappingRegistryContract {
+  list: () => MusicReactiveMapping[];
+  getById: (id: string) => MusicReactiveMapping | undefined;
+  filterByCategory: (query: MusicReactiveMappingFilterQuery) => MusicReactiveMapping[];
+  validateShape: (entry: unknown) => entry is MusicReactiveMapping;
+  register: (entry: MusicReactiveMapping) => void;
+  subscribe: (listener: () => void) => () => void;
+}
+
+const entries: MusicReactiveMapping[] = [
   // Lantern Pulse (2 entries)
   {
     id: "rms-to-shell-glow",
@@ -334,61 +296,88 @@ export const MUSIC_REACTIVE_MAPPING_REGISTRY: readonly MusicReactiveMapping[] = 
     futurePhase: "v65+",
     safetyNotes: "Focus-safe calm indicator, always allowed",
   },
-] as const;
+];
 
-/**
- * Get all music-reactive mappings
- */
-export function getAllMusicReactiveMappings(): readonly MusicReactiveMapping[] {
-  return MUSIC_REACTIVE_MAPPING_REGISTRY;
+const listeners: Set<() => void> = new Set();
+
+export const musicReactiveMappingRegistry: MusicReactiveMappingRegistryContract = {
+  list: () => [...entries],
+  getById: (id) => entries.find((e) => e.id === id),
+  filterByCategory: ({ audioChannel, modeFamily, status, risk }) =>
+    entries.filter((e) => {
+      if (audioChannel !== undefined && e.audioChannel !== audioChannel) return false;
+      if (modeFamily !== undefined && e.modeFamily !== modeFamily) return false;
+      if (status !== undefined && e.status !== status) return false;
+      if (risk !== undefined && e.risk !== risk) return false;
+      return true;
+    }),
+  validateShape: (entry): entry is MusicReactiveMapping => {
+    if (typeof entry !== "object" || entry === null) return false;
+    const e = entry as any;
+    return (
+      typeof e.id === "string" &&
+      typeof e.title === "string" &&
+      typeof e.description === "string" &&
+      typeof e.audioChannel === "string" &&
+      typeof e.graphTarget === "string" &&
+      typeof e.motionSafetyEffectId === "string" &&
+      typeof e.risk === "string" &&
+      typeof e.reducedMotionBehavior === "string" &&
+      typeof e.epilepsyRisk === "string" &&
+      typeof e.status === "string" &&
+      typeof e.modeFamily === "string" &&
+      typeof e.futurePhase === "string" &&
+      typeof e.safetyNotes === "string"
+    );
+  },
+  register: (entry) => {
+    entries.push(entry);
+    listeners.forEach((l) => l());
+  },
+  subscribe: (listener) => {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+  },
+};
+
+// Dev probe
+if (
+  typeof window !== "undefined" &&
+  (import.meta.env.DEV || (window as any).PLAYWRIGHT)
+) {
+  (window as any).__lwMusicReactiveMappingRegistry = musicReactiveMappingRegistry;
 }
 
-/**
- * Get mapping by ID
- */
+// Backward-compatible helpers (used by GraphVisualInventoryPanel)
+export function getAllMusicReactiveMappings(): MusicReactiveMapping[] {
+  return musicReactiveMappingRegistry.list();
+}
+
 export function getMusicReactiveMappingById(id: string): MusicReactiveMapping | undefined {
-  return MUSIC_REACTIVE_MAPPING_REGISTRY.find((mapping) => mapping.id === id);
+  return musicReactiveMappingRegistry.getById(id);
 }
 
-/**
- * Get mappings by audio channel
- */
-export function getMappingsByAudioChannel(channel: AudioChannel): readonly MusicReactiveMapping[] {
-  return MUSIC_REACTIVE_MAPPING_REGISTRY.filter((mapping) => mapping.audioChannel === channel);
+export function getMappingsByAudioChannel(channel: AudioChannel): MusicReactiveMapping[] {
+  return musicReactiveMappingRegistry.filterByCategory({ audioChannel: channel });
 }
 
-/**
- * Get mappings by mode family
- */
-export function getMappingsByModeFamily(modeFamily: ModeFamily): readonly MusicReactiveMapping[] {
-  return MUSIC_REACTIVE_MAPPING_REGISTRY.filter((mapping) => mapping.modeFamily === modeFamily);
+export function getMappingsByModeFamily(modeFamily: ModeFamily): MusicReactiveMapping[] {
+  return musicReactiveMappingRegistry.filterByCategory({ modeFamily });
 }
 
-/**
- * Get mappings by status
- */
-export function getMappingsByStatus(status: MappingStatus): readonly MusicReactiveMapping[] {
-  return MUSIC_REACTIVE_MAPPING_REGISTRY.filter((mapping) => mapping.status === status);
+export function getMappingsByStatus(status: MappingStatus): MusicReactiveMapping[] {
+  return musicReactiveMappingRegistry.filterByCategory({ status });
 }
 
-/**
- * Get mappings by risk level
- */
-export function getMappingsByRisk(risk: MotionRiskLevel): readonly MusicReactiveMapping[] {
-  return MUSIC_REACTIVE_MAPPING_REGISTRY.filter((mapping) => mapping.risk === risk);
+export function getMappingsByRisk(risk: MotionRiskLevel): MusicReactiveMapping[] {
+  return musicReactiveMappingRegistry.filterByCategory({ risk });
 }
 
-/**
- * Get mapping count
- */
 export function getMusicReactiveMappingCount(): number {
-  return MUSIC_REACTIVE_MAPPING_REGISTRY.length;
+  return musicReactiveMappingRegistry.list().length;
 }
 
-/**
- * Get all unique mode families
- */
-export function getModeFamilies(): readonly ModeFamily[] {
-  const families = new Set(MUSIC_REACTIVE_MAPPING_REGISTRY.map((mapping) => mapping.modeFamily));
+export function getModeFamilies(): ModeFamily[] {
+  const families = new Set(musicReactiveMappingRegistry.list().map((m) => m.modeFamily));
   return Array.from(families);
 }

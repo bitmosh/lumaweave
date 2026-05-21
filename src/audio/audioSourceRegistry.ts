@@ -8,12 +8,15 @@
  * all other sources are future/locked/deferred.
  *
  * v66: Passive Audio Source Registry
+ * v86e: Aligned to standard class-based registry contract pattern
  * - No microphone permission
  * - No file upload
  * - No audio playback
  * - No Web Audio input
  * - No graph/Sigma mutation
  * - No visual reactivity
+ *
+ * Contract: docs/audio/contracts/AUDIO_SOURCE_REGISTRY_CONTRACT.md (forthcoming)
  */
 
 export type AudioSourceType =
@@ -80,7 +83,21 @@ export interface AudioSource {
   safetyNotes?: string;
 }
 
-export const AUDIO_SOURCES: AudioSource[] = [
+export interface AudioSourceFilterQuery {
+  type?: AudioSourceType;
+  status?: AudioSourceStatus;
+}
+
+export interface AudioSourceRegistryContract {
+  list: () => AudioSource[];
+  getById: (id: string) => AudioSource | undefined;
+  filterByCategory: (query: AudioSourceFilterQuery) => AudioSource[];
+  validateShape: (entry: unknown) => entry is AudioSource;
+  register: (entry: AudioSource) => void;
+  subscribe: (listener: () => void) => () => void;
+}
+
+const entries: AudioSource[] = [
   {
     id: "synthetic-signal-source",
     type: "synthetic",
@@ -174,18 +191,64 @@ export const AUDIO_SOURCES: AudioSource[] = [
   },
 ];
 
+const listeners: Set<() => void> = new Set();
+
+export const audioSourceRegistry: AudioSourceRegistryContract = {
+  list: () => [...entries],
+  getById: (id) => entries.find((e) => e.id === id),
+  filterByCategory: ({ type, status }) =>
+    entries.filter((e) => {
+      if (type !== undefined && e.type !== type) return false;
+      if (status !== undefined && e.status !== status) return false;
+      return true;
+    }),
+  validateShape: (entry): entry is AudioSource => {
+    if (typeof entry !== "object" || entry === null) return false;
+    const e = entry as any;
+    return (
+      typeof e.id === "string" &&
+      typeof e.type === "string" &&
+      typeof e.title === "string" &&
+      typeof e.description === "string" &&
+      typeof e.status === "string" &&
+      typeof e.permission === "string" &&
+      typeof e.privacyRisk === "string" &&
+      typeof e.playback === "string" &&
+      typeof e.decoding === "string" &&
+      typeof e.visualOutput === "string"
+    );
+  },
+  register: (entry) => {
+    entries.push(entry);
+    listeners.forEach((l) => l());
+  },
+  subscribe: (listener) => {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+  },
+};
+
+// Dev probe
+if (
+  typeof window !== "undefined" &&
+  (import.meta.env.DEV || (window as any).PLAYWRIGHT)
+) {
+  (window as any).__lwAudioSourceRegistry = audioSourceRegistry;
+}
+
+// Backward-compatible helpers (used by GraphVisualInventoryPanel and QA assertions)
 export function getAllAudioSources(): AudioSource[] {
-  return AUDIO_SOURCES;
+  return audioSourceRegistry.list();
 }
 
 export function getAudioSourceById(id: string): AudioSource | undefined {
-  return AUDIO_SOURCES.find((source) => source.id === id);
+  return audioSourceRegistry.getById(id);
 }
 
 export function getAudioSourcesByType(type: AudioSourceType): AudioSource[] {
-  return AUDIO_SOURCES.filter((source) => source.type === type);
+  return audioSourceRegistry.filterByCategory({ type });
 }
 
 export function getAudioSourcesByStatus(status: AudioSourceStatus): AudioSource[] {
-  return AUDIO_SOURCES.filter((source) => source.status === status);
+  return audioSourceRegistry.filterByCategory({ status });
 }
