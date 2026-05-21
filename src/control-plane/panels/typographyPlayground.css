@@ -1,0 +1,63 @@
+.lw-typography-playground {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  color: var(--lw-text-primary);
+}
+
+.lw-playground-description {
+  font-size: 11px;
+  color: var(--lw-text-muted);
+  font-style: italic;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.lw-playground-family {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lw-playground-family-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.lw-playground-family-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--lw-text-primary);
+}
+
+.lw-playground-weight-value {
+  font-size: 11px;
+  color: var(--lw-accent);
+  font-family: var(--lw-font-mono);
+}
+
+.lw-playground-slider {
+  width: 100%;
+  accent-color: var(--lw-accent);
+}
+
+.lw-playground-sample {
+  padding: 10px 12px;
+  background: var(--lw-panel-bg);
+  border: 1px solid var(--lw-panel-border);
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 32px;
+  transition: font-weight 100ms ease-out;
+}
+
+.lw-playground-error {
+  font-size: 11px;
+  color: #f87171;
+  padding: 8px;
+  border: 1px dashed #f87171;
+  border-radius: 4px;
+}
