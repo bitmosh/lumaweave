@@ -329,3 +329,246 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* ── Shared tab primitives (Apply, IDE, History) ─────────────────────── */
+
+.lw-apply-tab,
+.lw-ide-tab,
+.lw-history-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  font-size: 12px;
+  color: var(--lw-text-primary, #FFE9D6);
+  background: linear-gradient(180deg, rgba(34, 12, 52, 0.88), rgba(11, 4, 22, 0.92));
+  border: 1px solid var(--lw-panel-border, rgba(255, 179, 71, 0.32));
+  border-radius: 8px;
+}
+
+.lw-tab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 179, 71, 0.18);
+}
+
+.lw-tab-target-id {
+  font-weight: 600;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--lw-accent, #FFB347);
+  text-transform: uppercase;
+}
+
+.lw-tab-back-button {
+  background: none;
+  border: none;
+  color: var(--lw-accent, #FFB347);
+  cursor: pointer;
+  opacity: 0.7;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: opacity 0.15s ease-out;
+}
+
+.lw-tab-back-button:hover {
+  opacity: 1;
+}
+
+.lw-tab-empty {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lw-tab-empty p {
+  margin: 0;
+  font-size: 10px;
+  color: var(--lw-text-muted, rgba(255, 215, 188, 0.55));
+  font-style: italic;
+}
+
+/* ── Apply tab ───────────────────────────────────────────────────────── */
+
+.lw-apply-select-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.lw-apply-select-controls button {
+  background: rgba(255, 179, 71, 0.1);
+  border: 1px solid rgba(255, 179, 71, 0.32);
+  border-radius: 4px;
+  color: var(--lw-accent, #FFB347);
+  padding: 4px 8px;
+  font-size: 10px;
+  cursor: pointer;
+  transition: background 0.15s ease-out;
+}
+
+.lw-apply-select-controls button:hover {
+  background: rgba(255, 179, 71, 0.2);
+}
+
+.lw-apply-candidates {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lw-apply-candidate-row {
+  display: grid;
+  grid-template-columns: 20px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 6px;
+  background: rgba(255, 179, 71, 0.06);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s ease-out;
+}
+
+.lw-apply-candidate-row:hover {
+  background: rgba(255, 179, 71, 0.1);
+}
+
+.lw-apply-candidate-label {
+  font-size: 10px;
+  font-family: "IBM Plex Mono", monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lw-apply-candidate-signals {
+  font-size: 9px;
+  color: var(--lw-text-muted, rgba(255, 215, 188, 0.55));
+  white-space: nowrap;
+}
+
+.lw-apply-submit {
+  background: rgba(255, 179, 71, 0.15);
+  border: 1px solid rgba(255, 179, 71, 0.32);
+  border-radius: 4px;
+  color: var(--lw-accent, #FFB347);
+  padding: 8px 12px;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease-out;
+}
+
+.lw-apply-submit:hover:not(:disabled) {
+  background: rgba(255, 179, 71, 0.25);
+  border-color: rgba(255, 179, 71, 0.5);
+}
+
+.lw-apply-submit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── IDE tab ─────────────────────────────────────────────────────────── */
+
+.lw-ide-source-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lw-ide-source-path {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  color: var(--lw-text-primary, #FFE9D6);
+  word-break: break-all;
+}
+
+.lw-ide-open-button {
+  align-self: flex-start;
+  background: rgba(255, 179, 71, 0.15);
+  border: 1px solid rgba(255, 179, 71, 0.32);
+  border-radius: 4px;
+  color: var(--lw-accent, #FFB347);
+  padding: 6px 10px;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease-out;
+}
+
+.lw-ide-open-button:hover {
+  background: rgba(255, 179, 71, 0.25);
+  border-color: rgba(255, 179, 71, 0.5);
+}
+
+/* ── History tab ─────────────────────────────────────────────────────── */
+
+.lw-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lw-history-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto auto;
+  gap: 6px;
+  align-items: center;
+  padding: 6px;
+  background: rgba(255, 179, 71, 0.06);
+  border-radius: 4px;
+}
+
+.lw-history-token-path {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lw-history-value {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  color: var(--lw-text-primary, #FFE9D6);
+}
+
+.lw-history-timestamp {
+  font-size: 9px;
+  color: var(--lw-text-muted, rgba(255, 215, 188, 0.55));
+  white-space: nowrap;
+}
+
+.lw-history-reset-btn {
+  background: none;
+  border: 1px solid rgba(255, 179, 71, 0.32);
+  border-radius: 4px;
+  color: var(--lw-accent, #FFB347);
+  padding: 3px 7px;
+  font-size: 9px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.15s ease-out;
+  white-space: nowrap;
+}
+
+.lw-history-reset-btn:hover {
+  opacity: 1;
+}
+
+.lw-history-reset-all {
+  background: rgba(255, 179, 71, 0.1);
+  border: 1px solid rgba(255, 179, 71, 0.32);
+  border-radius: 4px;
+  color: var(--lw-accent, #FFB347);
+  padding: 6px 10px;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease-out;
+}
+
+.lw-history-reset-all:hover {
+  background: rgba(255, 179, 71, 0.2);
+}

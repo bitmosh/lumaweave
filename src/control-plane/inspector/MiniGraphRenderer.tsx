@@ -45,12 +45,18 @@ export function MiniGraphRenderer({
   onClose,
   targetDescriptor,
 }: MiniGraphRendererProps) {
+  // Clamp anchor so the 320×320 SVG container stays within the viewport.
+  // Computed before hooks so effects and display both use the same origin.
+  const svgSize = 320;
+  const clampedAnchorX = Math.max(svgSize / 2, Math.min(window.innerWidth - svgSize / 2, anchorX));
+  const clampedAnchorY = Math.max(svgSize / 2, Math.min(window.innerHeight - svgSize / 2, anchorY));
+
   const [spokePositions, setSpokePositions] = useState<SpokePosition[]>([]);
   const [expandedSpokeId, setExpandedSpokeId] = useState<string | null>(null);
   const rafId = useRef<number | null>(null);
   const positionsRef = useRef<SpokePosition[]>([]);
 
-  // Initialize spoke positions in a circle
+  // Initialize spoke positions in a circle around the clamped anchor
   useEffect(() => {
     const positions: SpokePosition[] = [];
 
@@ -61,8 +67,8 @@ export function MiniGraphRenderer({
         positions.push({
           id: spoke.id,
           label: spoke.label ?? spoke.name,
-          x: anchorX + RADIUS * Math.cos(angle),
-          y: anchorY + RADIUS * Math.sin(angle),
+          x: clampedAnchorX + RADIUS * Math.cos(angle),
+          y: clampedAnchorY + RADIUS * Math.sin(angle),
           vx: 0,
           vy: 0,
         });
@@ -74,8 +80,8 @@ export function MiniGraphRenderer({
         positions.push({
           id: `placeholder-${i}`,
           label: "",
-          x: anchorX + RADIUS * Math.cos(rad),
-          y: anchorY + RADIUS * Math.sin(rad),
+          x: clampedAnchorX + RADIUS * Math.cos(rad),
+          y: clampedAnchorY + RADIUS * Math.sin(rad),
           vx: 0,
           vy: 0,
         });
@@ -84,7 +90,7 @@ export function MiniGraphRenderer({
 
     positionsRef.current = positions;
     setSpokePositions(positions);
-  }, [spokes, anchorX, anchorY]);
+  }, [spokes, clampedAnchorX, clampedAnchorY]);
 
   // Physics tick
   useEffect(() => {
@@ -97,9 +103,9 @@ export function MiniGraphRenderer({
       for (let i = 0; i < positions.length; i++) {
         const spoke = positions[i];
 
-        // Attraction to root (gravity + spring)
-        const dx = anchorX - spoke.x;
-        const dy = anchorY - spoke.y;
+        // Attraction to root (gravity + spring) — use clamped origin
+        const dx = clampedAnchorX - spoke.x;
+        const dy = clampedAnchorY - spoke.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
         const targetDist = RADIUS;
 
@@ -152,12 +158,7 @@ export function MiniGraphRenderer({
         cancelAnimationFrame(rafId.current);
       }
     };
-  }, [anchorX, anchorY, spokePositions.length]);
-
-  // Clamp anchor to viewport bounds (keep entire 320x320 container visible)
-  const svgSize = 320;
-  const clampedAnchorX = Math.max(svgSize / 2, Math.min(window.innerWidth - svgSize / 2, anchorX));
-  const clampedAnchorY = Math.max(svgSize / 2, Math.min(window.innerHeight - svgSize / 2, anchorY));
+  }, [clampedAnchorX, clampedAnchorY, spokePositions.length]);
 
   const svgLeft = clampedAnchorX - svgSize / 2;
   const svgTop = clampedAnchorY - svgSize / 2;
