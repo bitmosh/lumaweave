@@ -578,5 +578,98 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       risk: "low",
       notes: "History tab shows submissions sorted by most recent first",
     },
+
+    // === Topbar identity surfaces (v87.2) ===
+
+    {
+      id: "topbar.hexLogo",
+      label: "Hex Logo",
+      surface: "topbar",
+      owner: "topbar/HexLogo.tsx",
+      settingsKey: null,
+      noStorageReason: "Display-only SVG; no settings key",
+      runtimeBinding: {
+        sourceFile: "src/control-plane/topbar/HexLogo.tsx",
+        targetComponent: "Topbar hex logo SVG",
+        liveUpdate: true,
+      },
+      qa: { hasQaCoverage: true },
+      playwright: {
+        testFile: "tests/e2e/topbar-identity.spec.ts",
+        hasCoverage: true,
+      },
+      docs: { hasDocs: false },
+      status: "active",
+      risk: "low",
+      notes: "Theme-adaptive hex SVG. Gradient stops reference Tier 1 primitives via CSS variables; restyles when theme changes.",
+    },
+
+    {
+      id: "topbar.wordmark",
+      label: "Wordmark",
+      surface: "topbar",
+      owner: "topbar/WordmarkBlock.tsx",
+      settingsKey: null,
+      noStorageReason: "Display-only wordmark; no settings key",
+      runtimeBinding: {
+        sourceFile: "src/control-plane/topbar/WordmarkBlock.tsx",
+        targetComponent: "LumaWeave / PANORAMA ATLAS wordmark",
+        liveUpdate: false,
+      },
+      qa: { hasQaCoverage: true },
+      playwright: {
+        testFile: "tests/e2e/topbar-identity.spec.ts",
+        hasCoverage: true,
+      },
+      docs: { hasDocs: false },
+      status: "active",
+      risk: "low",
+      notes: "Static wordmark with gradient text referencing theme CSS variables.",
+    },
+
+    {
+      id: "topbar.statusPill",
+      label: "Status Pill",
+      surface: "topbar",
+      owner: "topbar/StatusPill.tsx",
+      settingsKey: "appearance.theme",
+      runtimeBinding: {
+        sourceFile: "src/control-plane/topbar/StatusPill.tsx",
+        targetComponent: "Active theme name + pulsing dot",
+        liveUpdate: true,
+      },
+      qa: { hasQaCoverage: true },
+      playwright: {
+        testFile: "tests/e2e/topbar-identity.spec.ts",
+        hasCoverage: true,
+      },
+      docs: { hasDocs: false },
+      status: "active",
+      risk: "low",
+      notes: "Shows active theme name. Pulsing dot respects reduceMotion (dual-gate: data-reduce-motion attr + @media prefers-reduced-motion).",
+    },
+
+    {
+      id: "topbar.statusCluster",
+      label: "Status Cluster",
+      surface: "topbar",
+      owner: "topbar/StatusCluster.tsx",
+      settingsKey: null,
+      noStorageReason: "Live graph stats + FPS counter; no settings key",
+      runtimeBinding: {
+        sourceFile: "src/control-plane/topbar/StatusCluster.tsx",
+        targetComponent: "Graph n/e · layout · FPS display",
+        liveUpdate: true,
+      },
+      qa: { hasQaCoverage: true },
+      playwright: {
+        testFile: "tests/e2e/topbar-identity.spec.ts",
+        hasCoverage: true,
+      },
+      docs: { hasDocs: false },
+      status: "active",
+      risk: "low",
+      notes: "Live graph node/edge count via useGraphSourceSummary. Layout state placeholder ('settling') until v89. FPS via 60-frame RAF moving average.",
+    },
   ],
 };
