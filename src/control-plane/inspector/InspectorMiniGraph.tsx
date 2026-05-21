@@ -9,16 +9,8 @@ import { useEffect, useRef, useState } from "react";
 import { useSettingsStore } from "../settings/settings.store";
 import { inspectorSpokeRegistry } from "../../themes/inspectorSpokeRegistry";
 import type { InspectorSpoke } from "../../themes/inspectorSpokeRegistry";
+import type { TargetDescriptor } from "./inspector.types";
 import { MiniGraphRenderer } from "./MiniGraphRenderer";
-
-interface TargetDescriptor {
-  targetId: string;
-  label: string;
-  surface?: string;
-  status?: string;
-  anchorX: number;
-  anchorY: number;
-}
 
 export function InspectorMiniGraph() {
   const [isOpen, setIsOpen] = useState(false);
@@ -111,17 +103,6 @@ export function InspectorMiniGraph() {
     };
   }, [isOpen]);
 
-  // Handle spoke click
-  const handleSpokeClick = (spokeId: string) => {
-    const spoke = inspectorSpokeRegistry.getById(spokeId);
-    if (!spoke) return;
-
-    // Trigger spoke action (v86d.3+ will implement tab rendering)
-    if (spoke.action) {
-      spoke.action();
-    }
-  };
-
   if (!isOpen || !targetDescriptor) {
     return null;
   }
@@ -132,8 +113,8 @@ export function InspectorMiniGraph() {
       anchorX={targetDescriptor.anchorX}
       anchorY={targetDescriptor.anchorY}
       spokes={spokes}
-      onSpokeClick={handleSpokeClick}
       onClose={handleClose}
+      targetDescriptor={targetDescriptor}
     />
   );
 }

@@ -7,6 +7,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { InspectorSpoke } from "../../themes/inspectorSpokeRegistry";
+import type { TargetDescriptor } from "./inspector.types";
 import { RootNode } from "./RootNode";
 import { SpokeNode } from "./SpokeNode";
 
@@ -32,8 +33,8 @@ interface MiniGraphRendererProps {
   anchorX: number;
   anchorY: number;
   spokes: InspectorSpoke[];
-  onSpokeClick?: (spokeId: string) => void;
   onClose?: () => void;
+  targetDescriptor?: TargetDescriptor;
 }
 
 export function MiniGraphRenderer({
@@ -41,10 +42,11 @@ export function MiniGraphRenderer({
   anchorX,
   anchorY,
   spokes,
-  onSpokeClick,
   onClose,
+  targetDescriptor,
 }: MiniGraphRendererProps) {
   const [spokePositions, setSpokePositions] = useState<SpokePosition[]>([]);
+  const [expandedSpokeId, setExpandedSpokeId] = useState<string | null>(null);
   const rafId = useRef<number | null>(null);
   const positionsRef = useRef<SpokePosition[]>([]);
 
@@ -152,14 +154,48 @@ export function MiniGraphRenderer({
     };
   }, [anchorX, anchorY, spokePositions.length]);
 
-  // Clamp anchor to viewport bounds (keep radial visible)
-  const clampedAnchorX = Math.max(RADIUS + 20, Math.min(window.innerWidth - RADIUS - 20, anchorX));
-  const clampedAnchorY = Math.max(RADIUS + 20, Math.min(window.innerHeight - RADIUS - 20, anchorY));
-
+  // Clamp anchor to viewport bounds (keep entire 320x320 container visible)
   const svgSize = 320;
+  const clampedAnchorX = Math.max(svgSize / 2, Math.min(window.innerWidth - svgSize / 2, anchorX));
+  const clampedAnchorY = Math.max(svgSize / 2, Math.min(window.innerHeight - svgSize / 2, anchorY));
+
   const svgLeft = clampedAnchorX - svgSize / 2;
   const svgTop = clampedAnchorY - svgSize / 2;
 
+  // Convert page coordinates to SVG viewBox coordinates (relative to SVG's position)
+  const anchorXInView = clampedAnchorX - svgLeft;
+  const anchorYInView = clampedAnchorY - svgTop;
+
+  // Get expanded spoke if any
+  const expandedSpoke = expandedSpokeId ? spokes.find((s) => s.id === expandedSpokeId) : null;
+  const TabComponent = expandedSpoke?.tabComponent;
+
+  // If a spoke is expanded and has a tab component, show it
+  if (expandedSpokeId && TabComponent && targetDescriptor) {
+    return (
+      <div
+        data-testid="inspector-mini-graph"
+        className="inspector-mini-graph-tab"
+        style={{
+          position: "fixed",
+          left: svgLeft,
+          top: svgTop,
+          width: svgSize,
+          height: svgSize,
+          zIndex: 80,
+          pointerEvents: "auto",
+          overflow: "auto",
+        }}
+      >
+        <TabComponent
+          targetDescriptor={targetDescriptor}
+          onClose={() => setExpandedSpokeId(null)}
+        />
+      </div>
+    );
+  }
+
+  // Ring view (default)
   return (
     <svg
       data-testid="inspector-mini-graph"
@@ -185,10 +221,10 @@ export function MiniGraphRenderer({
       {spokePositions.map((spoke) => (
         <line
           key={`line-${spoke.id}`}
-          x1={clampedAnchorX}
-          y1={clampedAnchorY}
-          x2={spoke.x}
-          y2={spoke.y}
+          x1={anchorXInView}
+          y1={anchorYInView}
+          x2={spoke.x - svgLeft}
+          y2={spoke.y - svgTop}
           stroke="rgba(255, 179, 71, 0.3)"
           strokeWidth="1"
           pointerEvents="none"
@@ -198,8 +234,8 @@ export function MiniGraphRenderer({
       {/* Root node */}
       <RootNode
         label={targetLabel}
-        x={clampedAnchorX}
-        y={clampedAnchorY}
+        x={anchorXInView}
+        y={anchorYInView}
         radius={20}
       />
 
@@ -209,12 +245,12 @@ export function MiniGraphRenderer({
           key={`spoke-${spoke.id}`}
           spokeId={spoke.id}
           label={spoke.label}
-          x={spoke.x}
-          y={spoke.y}
+          x={spoke.x - svgLeft}
+          y={spoke.y - svgTop}
           radius={14}
           onClick={() => {
-            if (onSpokeClick && !spoke.id.startsWith("placeholder")) {
-              onSpokeClick(spoke.id);
+            if (!spoke.id.startsWith("placeholder")) {
+              setExpandedSpokeId(spoke.id);
             }
           }}
         />
