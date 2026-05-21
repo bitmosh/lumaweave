@@ -154,47 +154,47 @@ export const obsidianAuroraTokens: ThemeRuntimeTokens = {
     starfieldEnabled: true,
     glowIntensity: 0.7,
   },
-  // NEW v86a: Additional token paths (neutral defaults)
+  // v87: aurora-tuned values — crystalline northern lights, slow cadence
   backdrop: {
-    coronaColor: "rgba(139,92,246,0.28)", // TODO(v87): review
-    coronaIntensity: 0.5, // TODO(v87): review
-    flareColor: "rgba(139,92,246,0.4)", // TODO(v87): review
-    starfieldDensity: 0.5, // TODO(v87): review
-    vignetteIntensity: 0.85, // TODO(v87): review
+    coronaColor: "rgba(139,92,246,0.32)",
+    coronaIntensity: 0.55,
+    flareColor: "rgba(52,211,153,0.45)", // aurora-green flash
+    starfieldDensity: 0.65,
+    vignetteIntensity: 0.88,
   },
   node: {
-    sphereHumDuration: 3.0, // TODO(v87): review
-    sphereFlowDuration: 3.0, // TODO(v87): review
-    sphereGlowStrength: 0.8, // TODO(v87): review
+    sphereHumDuration: 5.4,
+    sphereFlowDuration: 5.0,
+    sphereGlowStrength: 0.85,
   },
   edge: {
-    stylePreset: "default", // TODO(v87): review
-    plasmaFlowSpeed: 0.5, // TODO(v87): review
+    stylePreset: "wire",
+    plasmaFlowSpeed: 0.3,
   },
   selection: {
-    haloColor: "rgba(139,92,246,0.5)", // TODO(v87): review
-    haloMaxRadiusRatio: 0.2, // TODO(v87): review
-    glitterDensityScale: 0.8, // TODO(v87): review
-    dimOpacity: 0.2, // TODO(v87): review
+    haloColor: "rgba(139,92,246,0.65)",
+    haloMaxRadiusRatio: 0.22,
+    glitterDensityScale: 0.5,
+    dimOpacity: 0.22,
   },
   bookmark: {
-    alertColor: "#f472b6", // TODO(v87): review
-    pinnedColor: "#8b5cf6", // TODO(v87): review
-    refColor: "#c084fc", // TODO(v87): review
+    alertColor: "#fb7185", // rose-400
+    pinnedColor: "#8b5cf6",
+    refColor: "#34d399", // emerald-400, aurora-green
   },
   panel: {
-    blurAmount: 12, // TODO(v87): review
-    tileHandleColor: "rgba(139,92,246,0.5)", // TODO(v87): review
-    tileGroupOutlineColor: "#8b5cf6", // TODO(v87): review
+    blurAmount: 12,
+    tileHandleColor: "rgba(139,92,246,0.5)",
+    tileGroupOutlineColor: "#8b5cf6",
   },
   inspector: {
-    radialSpokeColor: "#8b5cf6", // TODO(v87): review
-    radialHaloColor: "rgba(139,92,246,0.5)", // TODO(v87): review
+    radialSpokeColor: "#8b5cf6",
+    radialHaloColor: "rgba(139,92,246,0.5)",
   },
   typography: {
-    fontDisplay: "system-ui, sans-serif", // TODO(v87): review
-    fontBody: "system-ui, sans-serif", // TODO(v87): review
-    fontMono: "ui-monospace, monospace", // TODO(v87): review
+    fontDisplay: '"Space Grotesk", system-ui, sans-serif',
+    fontBody: '"IBM Plex Sans", system-ui, sans-serif',
+    fontMono: '"IBM Plex Mono", ui-monospace, monospace',
   },
 };
 
@@ -249,47 +249,47 @@ export const midnightLoomTokens: ThemeRuntimeTokens = {
     starfieldEnabled: true,
     glowIntensity: 0.6,
   },
-  // NEW v86a: Additional token paths (neutral defaults)
+  // v87: candlelight-tuned values — warm amber glow, slow steady warmth
   backdrop: {
-    coronaColor: "rgba(251,191,36,0.28)", // TODO(v87): review
-    coronaIntensity: 0.5, // TODO(v87): review
-    flareColor: "rgba(251,191,36,0.4)", // TODO(v87): review
-    starfieldDensity: 0.5, // TODO(v87): review
-    vignetteIntensity: 0.85, // TODO(v87): review
+    coronaColor: "rgba(251,191,36,0.32)",
+    coronaIntensity: 0.6,
+    flareColor: "rgba(253,186,116,0.5)", // orange-300, warm candlelight
+    starfieldDensity: 0.4,
+    vignetteIntensity: 0.90,
   },
   node: {
-    sphereHumDuration: 3.0, // TODO(v87): review
-    sphereFlowDuration: 3.0, // TODO(v87): review
-    sphereGlowStrength: 0.8, // TODO(v87): review
+    sphereHumDuration: 4.5,
+    sphereFlowDuration: 4.2,
+    sphereGlowStrength: 0.75,
   },
   edge: {
-    stylePreset: "default", // TODO(v87): review
-    plasmaFlowSpeed: 0.5, // TODO(v87): review
+    stylePreset: "ribbon",
+    plasmaFlowSpeed: 0.4,
   },
   selection: {
-    haloColor: "rgba(251,191,36,0.5)", // TODO(v87): review
-    haloMaxRadiusRatio: 0.2, // TODO(v87): review
-    glitterDensityScale: 0.8, // TODO(v87): review
-    dimOpacity: 0.2, // TODO(v87): review
+    haloColor: "rgba(251,191,36,0.65)",
+    haloMaxRadiusRatio: 0.23,
+    glitterDensityScale: 0.6,
+    dimOpacity: 0.20,
   },
   bookmark: {
-    alertColor: "#f97316", // TODO(v87): review
-    pinnedColor: "#fbbf24", // TODO(v87): review
-    refColor: "#f59e0b", // TODO(v87): review
+    alertColor: "#ef4444", // red-500, danger against warm amber
+    pinnedColor: "#fbbf24",
+    refColor: "#7dd3fc", // sky-300, cool contrast to warm amber
   },
   panel: {
-    blurAmount: 12, // TODO(v87): review
-    tileHandleColor: "rgba(251,191,36,0.5)", // TODO(v87): review
-    tileGroupOutlineColor: "#fbbf24", // TODO(v87): review
+    blurAmount: 14,
+    tileHandleColor: "rgba(251,191,36,0.5)",
+    tileGroupOutlineColor: "#fbbf24",
   },
   inspector: {
-    radialSpokeColor: "#fbbf24", // TODO(v87): review
-    radialHaloColor: "rgba(251,191,36,0.5)", // TODO(v87): review
+    radialSpokeColor: "#fbbf24",
+    radialHaloColor: "rgba(251,191,36,0.5)",
   },
   typography: {
-    fontDisplay: "system-ui, sans-serif", // TODO(v87): review
-    fontBody: "system-ui, sans-serif", // TODO(v87): review
-    fontMono: "ui-monospace, monospace", // TODO(v87): review
+    fontDisplay: '"Space Grotesk", system-ui, sans-serif',
+    fontBody: '"IBM Plex Sans", system-ui, sans-serif',
+    fontMono: '"IBM Plex Mono", ui-monospace, monospace',
   },
 };
 
@@ -344,47 +344,47 @@ export const voidCircuitTokens: ThemeRuntimeTokens = {
     starfieldEnabled: true,
     glowIntensity: 1.2,
   },
-  // NEW v86a: Additional token paths (neutral defaults)
+  // v87: cyberpunk-tuned values — high energy, sharp neon, crushing void
   backdrop: {
-    coronaColor: "rgba(236,72,153,0.28)", // TODO(v87): review
-    coronaIntensity: 0.5, // TODO(v87): review
-    flareColor: "rgba(236,72,153,0.4)", // TODO(v87): review
-    starfieldDensity: 0.5, // TODO(v87): review
-    vignetteIntensity: 0.85, // TODO(v87): review
+    coronaColor: "rgba(236,72,153,0.35)",
+    coronaIntensity: 0.75,
+    flareColor: "rgba(6,182,212,0.55)", // cyan-500, contrasting spark
+    starfieldDensity: 0.8,
+    vignetteIntensity: 0.95,
   },
   node: {
-    sphereHumDuration: 3.0, // TODO(v87): review
-    sphereFlowDuration: 3.0, // TODO(v87): review
-    sphereGlowStrength: 0.8, // TODO(v87): review
+    sphereHumDuration: 3.5,
+    sphereFlowDuration: 3.2,
+    sphereGlowStrength: 1.2,
   },
   edge: {
-    stylePreset: "default", // TODO(v87): review
-    plasmaFlowSpeed: 0.5, // TODO(v87): review
+    stylePreset: "plasma",
+    plasmaFlowSpeed: 0.7,
   },
   selection: {
-    haloColor: "rgba(236,72,153,0.5)", // TODO(v87): review
-    haloMaxRadiusRatio: 0.2, // TODO(v87): review
-    glitterDensityScale: 0.8, // TODO(v87): review
-    dimOpacity: 0.2, // TODO(v87): review
+    haloColor: "rgba(236,72,153,0.7)",
+    haloMaxRadiusRatio: 0.28,
+    glitterDensityScale: 1.2,
+    dimOpacity: 0.15,
   },
   bookmark: {
-    alertColor: "#06b6d4", // TODO(v87): review
-    pinnedColor: "#ec4899", // TODO(v87): review
-    refColor: "#22d3ee", // TODO(v87): review
+    alertColor: "#06b6d4", // cyan-500, contrasting alert LED
+    pinnedColor: "#ec4899",
+    refColor: "#22d3ee", // cyan-400, circuit trace
   },
   panel: {
-    blurAmount: 12, // TODO(v87): review
-    tileHandleColor: "rgba(236,72,153,0.5)", // TODO(v87): review
-    tileGroupOutlineColor: "#ec4899", // TODO(v87): review
+    blurAmount: 8,
+    tileHandleColor: "rgba(236,72,153,0.5)",
+    tileGroupOutlineColor: "#ec4899",
   },
   inspector: {
-    radialSpokeColor: "#ec4899", // TODO(v87): review
-    radialHaloColor: "rgba(236,72,153,0.5)", // TODO(v87): review
+    radialSpokeColor: "#ec4899",
+    radialHaloColor: "rgba(236,72,153,0.5)",
   },
   typography: {
-    fontDisplay: "system-ui, sans-serif", // TODO(v87): review
-    fontBody: "system-ui, sans-serif", // TODO(v87): review
-    fontMono: "ui-monospace, monospace", // TODO(v87): review
+    fontDisplay: '"Space Grotesk", system-ui, sans-serif',
+    fontBody: '"IBM Plex Sans", system-ui, sans-serif',
+    fontMono: '"IBM Plex Mono", ui-monospace, monospace',
   },
 };
 
@@ -398,7 +398,7 @@ export const agarthaDreamTokens: ThemeRuntimeTokens = {
     panelBackground: "rgba(255, 255, 255, 0.85)",
     panelBorder: "rgba(168, 85, 247, 0.2)", // purple-500/20
     textPrimary: "#1e1b4b", // indigo-950
-    textMuted: "#6b7280", // gray-500
+    textMuted: "#4b5563", // gray-600, better contrast on light panel
     accent: "#a855f7", // purple-500
     glow: "rgba(168, 85, 247, 0.2)",
   },
@@ -439,47 +439,47 @@ export const agarthaDreamTokens: ThemeRuntimeTokens = {
     starfieldEnabled: false,
     glowIntensity: 0.4,
   },
-  // NEW v86a: Additional token paths (neutral defaults)
+  // v87: light-theme-tuned values — dreamy pastel, minimal glow, inverted backdrop
   backdrop: {
-    coronaColor: "rgba(168,85,247,0.28)", // TODO(v87): review
-    coronaIntensity: 0.5, // TODO(v87): review
-    flareColor: "rgba(168,85,247,0.4)", // TODO(v87): review
-    starfieldDensity: 0.5, // TODO(v87): review
-    vignetteIntensity: 0.85, // TODO(v87): review
+    coronaColor: "rgba(168,85,247,0.18)", // reduced opacity for light bg
+    coronaIntensity: 0.25,
+    flareColor: "rgba(253,230,138,0.4)", // inner-sun amber from colorScale
+    starfieldDensity: 0.0, // starfieldEnabled: false
+    vignetteIntensity: 0.35, // barely any vignette on light theme
   },
   node: {
-    sphereHumDuration: 3.0, // TODO(v87): review
-    sphereFlowDuration: 3.0, // TODO(v87): review
-    sphereGlowStrength: 0.8, // TODO(v87): review
+    sphereHumDuration: 6.0,
+    sphereFlowDuration: 5.5,
+    sphereGlowStrength: 0.4, // matches glowIntensity: 0.4
   },
   edge: {
-    stylePreset: "default", // TODO(v87): review
-    plasmaFlowSpeed: 0.5, // TODO(v87): review
+    stylePreset: "ribbon",
+    plasmaFlowSpeed: 0.25,
   },
   selection: {
-    haloColor: "rgba(168,85,247,0.5)", // TODO(v87): review
-    haloMaxRadiusRatio: 0.2, // TODO(v87): review
-    glitterDensityScale: 0.8, // TODO(v87): review
-    dimOpacity: 0.2, // TODO(v87): review
+    haloColor: "rgba(168,85,247,0.4)",
+    haloMaxRadiusRatio: 0.20,
+    glitterDensityScale: 1.2, // glitterEnabled: true — dreamy sparkle
+    dimOpacity: 0.12, // light bg needs less dimming
   },
   bookmark: {
-    alertColor: "#f472b6", // TODO(v87): review
-    pinnedColor: "#a855f7", // TODO(v87): review
-    refColor: "#c084fc", // TODO(v87): review
+    alertColor: "#ef4444", // red-500, readable danger on light bg
+    pinnedColor: "#a855f7",
+    refColor: "#5eead4", // teal-300, bioluminescent reference
   },
   panel: {
-    blurAmount: 12, // TODO(v87): review
-    tileHandleColor: "rgba(168,85,247,0.5)", // TODO(v87): review
-    tileGroupOutlineColor: "#a855f7", // TODO(v87): review
+    blurAmount: 20,
+    tileHandleColor: "rgba(168,85,247,0.4)",
+    tileGroupOutlineColor: "#a855f7",
   },
   inspector: {
-    radialSpokeColor: "#a855f7", // TODO(v87): review
-    radialHaloColor: "rgba(168,85,247,0.5)", // TODO(v87): review
+    radialSpokeColor: "#a855f7",
+    radialHaloColor: "rgba(168,85,247,0.35)",
   },
   typography: {
-    fontDisplay: "system-ui, sans-serif", // TODO(v87): review
-    fontBody: "system-ui, sans-serif", // TODO(v87): review
-    fontMono: "ui-monospace, monospace", // TODO(v87): review
+    fontDisplay: '"Space Grotesk", system-ui, sans-serif',
+    fontBody: '"IBM Plex Sans", system-ui, sans-serif',
+    fontMono: '"IBM Plex Mono", ui-monospace, monospace',
   },
 };
 
@@ -534,47 +534,47 @@ export const agarthaDuskTokens: ThemeRuntimeTokens = {
     starfieldEnabled: true,
     glowIntensity: 0.5,
   },
-  // NEW v86a: Additional token paths (neutral defaults)
+  // v87: moonlit-tuned values — soft dark indigo, rose bloom, romantic cadence
   backdrop: {
-    coronaColor: "rgba(244,114,182,0.28)", // TODO(v87): review
-    coronaIntensity: 0.5, // TODO(v87): review
-    flareColor: "rgba(244,114,182,0.4)", // TODO(v87): review
-    starfieldDensity: 0.5, // TODO(v87): review
-    vignetteIntensity: 0.85, // TODO(v87): review
+    coronaColor: "rgba(244,114,182,0.30)",
+    coronaIntensity: 0.5,
+    flareColor: "rgba(192,132,252,0.42)", // purple-400, soft moon-haze
+    starfieldDensity: 0.55, // moonlit sky, partially washed
+    vignetteIntensity: 0.85,
   },
   node: {
-    sphereHumDuration: 3.0, // TODO(v87): review
-    sphereFlowDuration: 3.0, // TODO(v87): review
-    sphereGlowStrength: 0.8, // TODO(v87): review
+    sphereHumDuration: 5.0,
+    sphereFlowDuration: 4.8,
+    sphereGlowStrength: 0.6,
   },
   edge: {
-    stylePreset: "default", // TODO(v87): review
-    plasmaFlowSpeed: 0.5, // TODO(v87): review
+    stylePreset: "ribbon",
+    plasmaFlowSpeed: 0.3,
   },
   selection: {
-    haloColor: "rgba(244,114,182,0.5)", // TODO(v87): review
-    haloMaxRadiusRatio: 0.2, // TODO(v87): review
-    glitterDensityScale: 0.8, // TODO(v87): review
-    dimOpacity: 0.2, // TODO(v87): review
+    haloColor: "rgba(244,114,182,0.6)",
+    haloMaxRadiusRatio: 0.22,
+    glitterDensityScale: 0.7,
+    dimOpacity: 0.20,
   },
   bookmark: {
-    alertColor: "#c084fc", // TODO(v87): review
-    pinnedColor: "#f472b6", // TODO(v87): review
-    refColor: "#a78bfa", // TODO(v87): review
+    alertColor: "#fb7185", // rose-400, danger against dark indigo
+    pinnedColor: "#f472b6",
+    refColor: "#a78bfa", // purple-400, moonlit reference
   },
   panel: {
-    blurAmount: 12, // TODO(v87): review
-    tileHandleColor: "rgba(244,114,182,0.5)", // TODO(v87): review
-    tileGroupOutlineColor: "#f472b6", // TODO(v87): review
+    blurAmount: 14,
+    tileHandleColor: "rgba(244,114,182,0.5)",
+    tileGroupOutlineColor: "#f472b6",
   },
   inspector: {
-    radialSpokeColor: "#f472b6", // TODO(v87): review
-    radialHaloColor: "rgba(244,114,182,0.5)", // TODO(v87): review
+    radialSpokeColor: "#f472b6",
+    radialHaloColor: "rgba(244,114,182,0.5)",
   },
   typography: {
-    fontDisplay: "system-ui, sans-serif", // TODO(v87): review
-    fontBody: "system-ui, sans-serif", // TODO(v87): review
-    fontMono: "ui-monospace, monospace", // TODO(v87): review
+    fontDisplay: '"Space Grotesk", system-ui, sans-serif',
+    fontBody: '"IBM Plex Sans", system-ui, sans-serif',
+    fontMono: '"IBM Plex Mono", ui-monospace, monospace',
   },
 };
 
