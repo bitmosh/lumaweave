@@ -22,6 +22,8 @@ import {
   buildGraphologyGraph,
 } from "../graph/renderers/sigma2d/buildGraphologyGraph";
 import { getThemeRuntimeTokens, resolveGraphVisualTokens } from "../themes";
+import { themePrimitives } from "../themes/tokenPrimitives";
+import { themeTargetRegistry } from "../themes/themeTargetRegistry";
 import { ThemeTargetInspectorOverlay } from "../themes/ThemeTargetInspectorOverlay";
 import { InspectorMiniGraph } from "../control-plane/inspector/InspectorMiniGraph";
 import { adaptSelfGraphToSigma } from "../fixtures/self-graph-adapter";
@@ -44,6 +46,8 @@ export function AppShell() {
   useEffect(() => {
     if (import.meta.env.DEV || (window as any).PLAYWRIGHT) {
       (window as any).__lwStore = settingsStore;
+      (window as any).__lwTokenPrimitives = themePrimitives;
+      (window as any).__lwThemeTargetRegistry = themeTargetRegistry;
     }
   }, []);
 
