@@ -3,12 +3,18 @@
  * Registry contract pattern for tileable sections
  */
 
-import { createElement } from "react";
+import { createElement, Suspense, lazy } from "react";
 import type { TileSectionEntry, TileSectionRegistry } from "./tile.types";
 import { PhysicsSectionContent } from "./PhysicsSectionContent";
 import { LabelsSectionContent } from "./LabelsSectionContent";
 import { AppearanceSectionContent } from "./AppearanceSectionContent";
-import { TypographyPlaygroundSection } from "./TypographyPlaygroundSection";
+
+// Lazy to prevent CSS import from breaking Node.js module resolution in Playwright
+const LazyTypographyPlayground = lazy(() =>
+  import("./TypographyPlaygroundSection").then((m) => ({
+    default: m.TypographyPlaygroundSection,
+  }))
+);
 
 const entries: TileSectionEntry[] = [
   {
@@ -51,7 +57,7 @@ const entries: TileSectionEntry[] = [
     defaultWidth: 360,
     defaultHeight: 420,
     collapsible: true,
-    content: () => createElement(TypographyPlaygroundSection),
+    content: () => createElement(Suspense, { fallback: null }, createElement(LazyTypographyPlayground)),
     contentTestId: "typography-playground",
     sourceTestId: "settings-section-typography-playground",
   },
