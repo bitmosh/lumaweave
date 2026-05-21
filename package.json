@@ -18,6 +18,7 @@
     "qa:bundle": "node scripts/validate-qa-bundle.mjs",
     "trace:contracts": "node scripts/validate-contract-trace.mjs",
     "index:system": "node scripts/validate-system-index.mjs",
+    "generate-provenance": "node scripts/generate-provenance-manifest.mjs",
     "modes:control-plane": "node scripts/validate-control-plane-modes.mjs",
     "generate:graph": "node scripts/generate-self-graph.mjs",
     "physics:gwells": "node scripts/validate-gwells.mjs"

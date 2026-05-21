@@ -1,12 +1,12 @@
 /**
- * IDE Tab (v86d.4)
+ * IDE Tab (v86d.5)
  *
- * Shows source location for the inspected target when available.
+ * Shows source location + snippet for the inspected target via provenanceRegistry.
+ * v86d.4 always showed empty state; v86d.5 shows actual code context.
  * Dispatches inspector:open-in-ide event on button click.
- * v86d.5 upgrades with provenance-based code snippets.
  */
 
-import { getThemeTargetById } from "../../../themes/themeTargetRegistry";
+import { getProvenance } from "../../../themes/provenanceRegistry";
 import type { TargetDescriptor } from "../inspector.types";
 import "../styles/color-tab.css";
 
@@ -16,16 +16,17 @@ export interface IdeTabProps {
 }
 
 export function IdeTab({ targetDescriptor, onClose }: IdeTabProps) {
-  const targetEntry = getThemeTargetById(targetDescriptor.targetId);
-  // Source location not yet recorded — provenance system arrives in v86d.5
-  const sourceLocation = (targetEntry as any)?.sourceLocation as
-    | { filePath: string; lineNumber?: number }
-    | undefined;
+  const provenance = getProvenance(targetDescriptor.targetId);
 
   const handleOpenInIde = () => {
-    if (!sourceLocation) return;
+    if (!provenance) return;
     window.dispatchEvent(
-      new CustomEvent("inspector:open-in-ide", { detail: sourceLocation }),
+      new CustomEvent("inspector:open-in-ide", {
+        detail: {
+          filePath: provenance.filePath,
+          lineNumber: provenance.startLine,
+        },
+      }),
     );
   };
 
@@ -40,12 +41,14 @@ export function IdeTab({ targetDescriptor, onClose }: IdeTabProps) {
         )}
       </header>
 
-      {sourceLocation ? (
+      {provenance ? (
         <section className="lw-ide-source-info" data-testid="source-info">
           <div className="lw-ide-source-path">
-            {sourceLocation.filePath}
-            {sourceLocation.lineNumber != null && `:${sourceLocation.lineNumber}`}
+            {provenance.filePath}:{provenance.startLine}
           </div>
+          <pre className="lw-ide-snippet" data-testid="snippet">
+            <code>{provenance.snippet}</code>
+          </pre>
           <button
             className="lw-ide-open-button"
             onClick={handleOpenInIde}
@@ -56,8 +59,8 @@ export function IdeTab({ targetDescriptor, onClose }: IdeTabProps) {
         </section>
       ) : (
         <section className="lw-tab-empty" data-testid="ide-empty">
-          <p>Source location not recorded for this target.</p>
-          <p>Provenance system arrives in v86d.5 — code snippets will display here.</p>
+          <p>No provenance data found for this target.</p>
+          <p>Regenerate the manifest with `npm run generate-provenance` if you recently added this target.</p>
         </section>
       )}
     </div>

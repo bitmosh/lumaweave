@@ -486,6 +486,27 @@
   word-break: break-all;
 }
 
+.lw-ide-snippet {
+  margin: 0;
+  padding: 8px;
+  background: rgba(3, 0, 10, 0.72);
+  border: 1px solid rgba(255, 179, 71, 0.18);
+  border-radius: 4px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 9.5px;
+  line-height: 1.5;
+  color: var(--lw-text-primary, #FFE9D6);
+  overflow-x: auto;
+  white-space: pre;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.lw-ide-snippet code {
+  font-family: inherit;
+  font-size: inherit;
+}
+
 .lw-ide-open-button {
   align-self: flex-start;
   background: rgba(255, 179, 71, 0.15);

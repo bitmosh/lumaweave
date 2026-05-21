@@ -1,0 +1,68 @@
+{
+  "app.shell": {
+    "filePath": "src/app/AppShell.tsx",
+    "startLine": 381,
+    "endLine": 395,
+    "snippet": "\n  return (\n    <TileProvider>\n      <main \n      className=\"h-screen overflow-hidden text-slate-100\"\n      style={{\n        \"--lw-app-bg\": themeTokens.app.background,\n        \"--lw-panel-bg\": themeTokens.app.panelBackground,\n        \"--lw-panel-border\": topbarBorder,\n        \"--lw-text-primary\": topbarText,\n        \"--lw-text-muted\": themeTokens.app.textMuted,\n        \"--lw-accent\": topbarAccent,\n        \"--lw-visual-accent\": topbarAccent,\n        \"--lw-glow\": themeTokens.app.glow,\n        backgroundColor: themeTokens.app.background,\n      } as React.CSSProperties}\n      data-lw-theme-target=\"app.shell\"\n    >\n      <div className=\"grid h-screen grid-rows-[auto_1fr_auto]\">\n        <header\n          className=\"px-6 py-4\""
+  },
+  "topbar.root": {
+    "filePath": "src/app/AppShell.tsx",
+    "startLine": 397,
+    "endLine": 404,
+    "snippet": "      data-lw-theme-target=\"app.shell\"\n    >\n      <div className=\"grid h-screen grid-rows-[auto_1fr_auto]\">\n        <header\n          className=\"px-6 py-4\"\n          style={{\n            borderBottom: `1px solid ${topbarBorder}`,\n            backgroundColor: `${topbarBackground}dd`,\n          } as React.CSSProperties}\n          data-lw-theme-target=\"topbar.root\"\n        >\n          <div className=\"flex items-center justify-between\">\n            <div>\n              <h1"
+  },
+  "graph.frame": {
+    "filePath": "src/app/AppShell.tsx",
+    "startLine": 849,
+    "endLine": 857,
+    "snippet": "            // v86a: settingsTabContent removed\n          />\n\n          <section\n            className=\"relative min-h-0 overflow-hidden\"\n            data-testid={useFixture ? \"self-graph-fixture-loaded\" : \"graph-viewport\"}\n            style={{\n              background: \"radial-gradient(ellipse at center, #0d1929 0%, #060b14 60%, #030508 100%)\",\n            } as React.CSSProperties}\n            data-lw-theme-target=\"graph.frame\"\n            onClick={handleViewportClick}\n          >\n            <div \n              className=\"absolute inset-0\"\n              style={{ backgroundColor: `${themeTokens.app.background}b3` } as React.CSSProperties}"
+  },
+  "mission-control.panel": {
+    "filePath": "src/control-plane/qa/QaPanel.tsx",
+    "startLine": 736,
+    "endLine": 740,
+    "snippet": "  const currentResult = currentStoredResult;\n\n  return (\n    <div\n      className=\"lw-panel flex flex-col h-full text-sm\"\n      data-testid=\"qa-panel\"\n      data-lw-theme-target=\"mission-control.panel\"\n    >\n      {/* Header */}\n      <div className=\"flex-shrink-0 p-3\" style={{ borderBottom: `1px solid ${themePanelBorder}` } as React.CSSProperties}>\n        <div className=\"flex items-center justify-between mb-2\">"
+  },
+  "mission-control.question-card": {
+    "filePath": "src/control-plane/qa/QaPanel.tsx",
+    "startLine": 1412,
+    "endLine": 1417,
+    "snippet": "            {advisoryContent.questions.length > 0 ? (\n              <div className=\"space-y-3 mb-6\">\n                {advisoryContent.questions.map((question) => (\n                  <div\n                    key={question.id}\n                    data-testid={`bandit-question-card-${question.id}`}\n                    className=\"lw-card bg-slate-800/50 rounded p-2 border border-slate-700\"\n                    data-lw-theme-target=\"mission-control.question-card\"\n                  >\n                    <div className=\"text-xs font-medium text-slate-300 mb-1\">{question.prompt}</div>\n                    {question.context && (\n                      <div className=\"text-xs text-slate-500 mb-2\">{question.context}</div>"
+  },
+  "mission-control.proposal-card": {
+    "filePath": "src/control-plane/qa/QaPanel.tsx",
+    "startLine": 1481,
+    "endLine": 1486,
+    "snippet": "            {advisoryContent.proposals.length > 0 ? (\n              <div className=\"space-y-3 mb-6\">\n                {advisoryContent.proposals.map((proposal) => (\n                  <div\n                    key={proposal.id}\n                    data-testid={`bandit-proposal-card-${proposal.id}`}\n                    className=\"lw-card bg-slate-800/50 rounded p-2 border border-slate-700\"\n                    data-lw-theme-target=\"mission-control.proposal-card\"\n                  >\n                    <div className=\"text-xs font-medium text-slate-300 mb-1\">{proposal.title}</div>\n                    <div className=\"text-xs text-slate-400 mb-1\">{proposal.summary}</div>\n                    {proposal.rationale && ("
+  },
+  "mission-control.backlog-card": {
+    "filePath": "src/control-plane/qa/QaPanel.tsx",
+    "startLine": 1542,
+    "endLine": 1547,
+    "snippet": "            {advisoryContent.backlog.length > 0 ? (\n              <div className=\"space-y-2\">\n                {advisoryContent.backlog.map((item, index) => (\n                  <div\n                    key={item.rank}\n                    className=\"lw-card flex items-start gap-2 bg-slate-800/50 rounded p-2 border border-slate-700\"\n                    data-testid={`bandit-backlog-item-${item.rank}`}\n                    data-lw-theme-target=\"mission-control.backlog-card\"\n                  >\n                    <div className=\"text-xs font-mono text-slate-500 mt-0.5\">#{item.rank}</div>\n                    <div className=\"flex-1\">\n                      <div className=\"text-xs font-medium text-slate-300\" data-testid=\"bandit-backlog-title\">{item.title}</div>"
+  },
+  "ignore": {
+    "filePath": "src/control-plane/panels/CollapsibleSection.tsx",
+    "startLine": 111,
+    "endLine": 119,
+    "snippet": "  };\n\n  return (\n    <div\n      data-testid={testId}\n      data-lw-theme-target=\"ignore\"\n      data-tiled-out={tiledOut ? \"true\" : undefined}\n      style={{\n        marginBottom: \"8px\",\n      }}\n      onClickCapture={tiledOut ? (e) => { e.stopPropagation(); e.preventDefault(); } : undefined}\n    >\n      <div style={{ display: \"flex\", alignItems: \"center\", gap: \"6px\", padding: \"6px 8px\", borderBottom: `1px solid ${borderColor}` }}>\n        <button\n          onClick={onToggle}"
+  },
+  "settings.panel": {
+    "filePath": "src/control-plane/panels/ControlDock.tsx",
+    "startLine": 242,
+    "endLine": 242,
+    "snippet": "            Control Plane\n          </h2>\n\n          <div className=\"space-y-4\" data-testid=\"settings-panel\" data-lw-theme-target=\"settings.panel\">\n            <SettingsPanel />\n          </div>\n        </div>"
+  },
+  "inspector.spoke": {
+    "filePath": "src/control-plane/inspector/SpokeNode.tsx",
+    "startLine": 32,
+    "endLine": 37,
+    "snippet": "  const isClickable = !!onClick;\n\n  return (\n    <g\n      data-lw-theme-target=\"inspector.spoke\"\n      data-spoke-id={spokeId}\n      onClick={onClick}\n      style={{ cursor: isClickable ? \"pointer\" : \"default\" }}\n    >\n      {/* Spoke node circle */}\n      <circle\n        cx={x}"
+  },
+  "inspector.root": {
+    "filePath": "src/control-plane/inspector/RootNode.tsx",
+    "startLine": 17,
+    "endLine": 17,
+    "snippet": "\nexport function RootNode({ label, x, y, radius = 20 }: RootNodeProps) {\n  return (\n    <g data-lw-theme-target=\"inspector.root\">\n      {/* Root node circle */}\n      <circle\n        cx={x}"
+  }
+}
