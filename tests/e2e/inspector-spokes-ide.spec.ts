@@ -23,11 +23,11 @@ test.describe("v86d.4 IDE spoke", () => {
     await openIdeTab(page);
   });
 
-  test("ide-tab shows empty state (no source location in v86d.4)", async ({ page }) => {
+  test("ide-tab shows source-info for targets with provenance (v86d.5+)", async ({ page }) => {
     await openIdeTab(page);
-    // Provenance system not yet wired — ide-empty is always shown
-    await expect(page.locator('[data-testid="ide-empty"]')).toBeVisible();
-    await expect(page.locator('[data-testid="source-info"]')).toHaveCount(0);
+    // topbar.root has provenance data — source-info should be shown
+    await expect(page.locator('[data-testid="source-info"]')).toBeVisible();
+    await expect(page.locator('[data-testid="ide-empty"]')).toHaveCount(0);
   });
 
   test("back button returns to ring view", async ({ page }) => {
