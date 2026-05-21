@@ -26,6 +26,7 @@ import { themePrimitives } from "../themes/tokenPrimitives";
 import { themeTargetRegistry } from "../themes/themeTargetRegistry";
 import { ThemeTargetInspectorOverlay } from "../themes/ThemeTargetInspectorOverlay";
 import { InspectorMiniGraph } from "../control-plane/inspector/InspectorMiniGraph";
+import { registerColorSpoke } from "../control-plane/inspector/spokes/registerColorSpoke";
 import { adaptSelfGraphToSigma } from "../fixtures/self-graph-adapter";
 import generatedGraph from "../fixtures/self-graph-generated.json";
 import type { LumaSourceGraph } from "../fixtures/types";
@@ -42,8 +43,12 @@ export function AppShell() {
   const setSetting = useSettingsStore((state) => state.setSetting);
   const { summary, error: summaryError } = useGraphSourceSummary();
 
-  // Expose app state for Playwright tests (dev mode only)
+  // Register spokes and expose app state for Playwright tests (dev mode only)
   useEffect(() => {
+    // Register Color spoke (v86d.3a)
+    registerColorSpoke();
+
+    // Expose app state for Playwright tests (dev mode only)
     if (import.meta.env.DEV || (window as any).PLAYWRIGHT) {
       (window as any).__lwStore = settingsStore;
       (window as any).__lwTokenPrimitives = themePrimitives;

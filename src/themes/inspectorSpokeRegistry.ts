@@ -7,8 +7,9 @@
  * Hybrid shape (v86a fields + v86d packet requirements).
  */
 
-import type { ReactNode } from "react";
+import type { ReactNode, ComponentType } from "react";
 import type { RegistryContract } from "./registryContract.types";
+import type { TargetDescriptor } from "../control-plane/inspector/inspector.types";
 
 export interface InspectorSpoke {
   // v86a fields
@@ -26,6 +27,7 @@ export interface InspectorSpoke {
   parentSpokeId?: string; // null for root spokes; non-null for child spokes
   action?: () => void; // for terminal spokes (e.g., "Open in IDE")
   tabContent?: () => ReactNode; // for spokes that open a tab
+  tabComponent?: ComponentType<{ targetDescriptor: TargetDescriptor; onClose?: () => void }>; // v86d.3a+: tab component with props
 }
 
 class InspectorSpokeRegistry implements RegistryContract<InspectorSpoke, { category?: string }> {

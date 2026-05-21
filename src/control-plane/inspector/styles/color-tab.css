@@ -1,0 +1,212 @@
+/* Color Tab Styles */
+
+.lw-color-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  font-size: 12px;
+  color: var(--lw-text-primary, #FFE9D6);
+  background: linear-gradient(180deg, rgba(34, 12, 52, 0.88), rgba(11, 4, 22, 0.92));
+  border: 1px solid var(--lw-panel-border, rgba(255, 179, 71, 0.32));
+  border-radius: 8px;
+}
+
+.lw-color-tab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 179, 71, 0.18);
+}
+
+.lw-color-tab-target-id {
+  font-weight: 600;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--lw-accent, #FFB347);
+  text-transform: uppercase;
+}
+
+.lw-color-tab-back-button {
+  background: none;
+  border: none;
+  color: var(--lw-accent, #FFB347);
+  cursor: pointer;
+  opacity: 0.7;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: opacity 0.15s ease-out;
+}
+
+.lw-color-tab-back-button:hover:not(:disabled) {
+  opacity: 1;
+}
+
+.lw-color-tab-back-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.lw-color-tab-bindings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lw-color-tab-binding-row {
+  display: grid;
+  grid-template-columns: 1fr 80px 28px;
+  gap: 8px;
+  align-items: center;
+  padding: 6px;
+  background: rgba(255, 179, 71, 0.06);
+  border-radius: 4px;
+}
+
+.lw-color-tab-property-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--lw-accent, #FFB347);
+  text-transform: capitalize;
+}
+
+.lw-color-tab-hex-display {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  color: var(--lw-text-primary, #FFE9D6);
+  text-align: right;
+}
+
+.lw-color-tab-palette-trigger {
+  background: rgba(255, 179, 71, 0.2);
+  border: 1px solid var(--lw-accent, #FFB347);
+  border-radius: 4px;
+  color: var(--lw-accent, #FFB347);
+  cursor: pointer;
+  padding: 4px;
+  font-size: 10px;
+  transition: background 0.15s ease-out;
+}
+
+.lw-color-tab-palette-trigger:hover:not(:disabled) {
+  background: rgba(255, 179, 71, 0.3);
+}
+
+.lw-color-tab-palette-trigger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.lw-color-tab section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lw-color-tab section h3 {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--lw-accent, #FFB347);
+  text-transform: uppercase;
+}
+
+.lw-color-tab-hex input {
+  background: rgba(255, 179, 71, 0.1);
+  border: 1px solid var(--lw-accent, #FFB347);
+  border-radius: 4px;
+  color: var(--lw-text-primary, #FFE9D6);
+  padding: 4px 8px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+}
+
+.lw-color-tab-hex input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.lw-color-tab-eyedropper button {
+  background: rgba(255, 179, 71, 0.2);
+  border: 1px solid var(--lw-accent, #FFB347);
+  border-radius: 4px;
+  color: var(--lw-accent, #FFB347);
+  padding: 6px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.15s ease-out;
+}
+
+.lw-color-tab-eyedropper button:hover:not(:disabled) {
+  background: rgba(255, 179, 71, 0.3);
+}
+
+.lw-color-tab-eyedropper button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.lw-color-tab-palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(24px, 1fr));
+  gap: 6px;
+}
+
+.lw-color-tab-palette-swatch {
+  aspect-ratio: 1;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 179, 71, 0.3);
+  cursor: pointer;
+  transition: border-color 0.15s ease-out;
+}
+
+.lw-color-tab-palette-swatch:hover:not(:disabled) {
+  border-color: rgba(255, 179, 71, 0.6);
+}
+
+.lw-color-tab-palette-swatch:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+.lw-color-tab-empty {
+  margin: 0;
+  font-size: 10px;
+  color: var(--lw-text-muted, rgba(255, 215, 188, 0.55));
+  font-style: italic;
+}
+
+.lw-color-tab-scope-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  gap: 6px;
+}
+
+.lw-color-tab-scope-buttons button {
+  background: rgba(255, 179, 71, 0.1);
+  border: 1px solid var(--lw-accent, #FFB347);
+  border-radius: 4px;
+  color: var(--lw-accent, #FFB347);
+  padding: 6px;
+  font-size: 10px;
+  cursor: pointer;
+  transition: background 0.15s ease-out;
+}
+
+.lw-color-tab-scope-buttons button.active {
+  background: rgba(255, 179, 71, 0.3);
+  border-color: var(--lw-accent, #FFB347);
+}
+
+.lw-color-tab-scope-buttons button:hover:not(:disabled) {
+  background: rgba(255, 179, 71, 0.2);
+}
+
+.lw-color-tab-scope-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
