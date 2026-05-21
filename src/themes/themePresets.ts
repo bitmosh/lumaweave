@@ -5,6 +5,8 @@
  */
 
 import type { ThemePreset, ThemePresetRegistry } from "./theme.types";
+import { getAccessibilityProfile } from "./themeAccessibilityProfile";
+import "./themeThumbnail"; // side-effect: registers window.__lwThemeThumbnail dev probe
 
 export const builtInThemePresets: ThemePreset[] = [
   {
@@ -74,3 +76,9 @@ export const themePresetRegistry: ThemePresetRegistry = {
   updatedAt: new Date().toISOString(),
   presets: builtInThemePresets,
 };
+
+// Warm the accessibility profile cache for all built-in themes at module load
+// so StatusPill never hits a cold cache during render.
+for (const preset of builtInThemePresets) {
+  getAccessibilityProfile(preset.themeId);
+}
