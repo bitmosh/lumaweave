@@ -23,6 +23,7 @@ import {
 } from "../graph/renderers/sigma2d/buildGraphologyGraph";
 import { getThemeRuntimeTokens, resolveGraphVisualTokens } from "../themes";
 import { ThemeTargetInspectorOverlay } from "../themes/ThemeTargetInspectorOverlay";
+import { InspectorMiniGraph } from "../control-plane/inspector/InspectorMiniGraph";
 import { adaptSelfGraphToSigma } from "../fixtures/self-graph-adapter";
 import generatedGraph from "../fixtures/self-graph-generated.json";
 import type { LumaSourceGraph } from "../fixtures/types";
@@ -1142,6 +1143,7 @@ export function AppShell() {
         enabled={themeInspectorEnabled}
         onEnabledChange={setThemeInspectorEnabled}
       />
+      <InspectorMiniGraph />
       <TileLayer />
     </main>
   </TileProvider>

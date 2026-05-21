@@ -1,23 +1,36 @@
 /**
  * Inspector Spoke Registry
- * 
+ *
  * Registry for inspector radial spokes (Geometry, Type, Motion, Layout, etc.).
- * v86a: Empty registry, contract only. v86d/v89 will add spokes.
+ * v86a: Foundation. v86d adds Color, Apply, IDE, History; v89 adds remaining spokes.
+ *
+ * Hybrid shape (v86a fields + v86d packet requirements).
  */
 
+import type { ReactNode } from "react";
 import type { RegistryContract } from "./registryContract.types";
 
 export interface InspectorSpoke {
+  // v86a fields
   id: string;
   name: string;
   description?: string;
   category: string; // "geometry", "type", "motion", "layout", etc.
   enabled: boolean;
   order: number;
+
+  // v86d packet fields
+  label?: string; // display label for radial; falls back to name
+  icon?: string; // optional icon/unicode
+  color?: string; // spoke node color; defaults to theme token
+  parentSpokeId?: string; // null for root spokes; non-null for child spokes
+  action?: () => void; // for terminal spokes (e.g., "Open in IDE")
+  tabContent?: () => ReactNode; // for spokes that open a tab
 }
 
 class InspectorSpokeRegistry implements RegistryContract<InspectorSpoke, { category?: string }> {
   private spokes: Map<string, InspectorSpoke> = new Map();
+  private subscribers: Set<(entries: InspectorSpoke[]) => void> = new Set();
 
   list(): InspectorSpoke[] {
     return Array.from(this.spokes.values()).sort((a, b) => a.order - b.order);
@@ -61,6 +74,19 @@ class InspectorSpokeRegistry implements RegistryContract<InspectorSpoke, { categ
       throw new Error(`Invalid inspector spoke entry: ${validation.errors?.join(", ")}`);
     }
     this.spokes.set(entry.id, entry);
+    this.notifySubscribers();
+  }
+
+  subscribe(listener: (entries: InspectorSpoke[]) => void): () => void {
+    this.subscribers.add(listener);
+    return () => {
+      this.subscribers.delete(listener);
+    };
+  }
+
+  private notifySubscribers(): void {
+    const entries = this.list();
+    this.subscribers.forEach((listener) => listener(entries));
   }
 }
 

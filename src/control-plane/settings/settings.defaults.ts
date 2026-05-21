@@ -38,6 +38,7 @@ export const defaultSettings: StarmapSettings = {
     neighborhoodDepth: 2,
     hoverNodeColor: "#ffffff",
     nodeSize: 1,
+    dimMode: "off",
   },
 
   physics: {
