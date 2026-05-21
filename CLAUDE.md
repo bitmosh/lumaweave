@@ -463,17 +463,20 @@ All significant Discord communication follows this structure.
 - **Pattern**: "Reply 'approve' to proceed"
 - **Wait**: Always wait for response before proceeding
 - **Active Listening Protocol** (REQUIRED):
-  - Upon posting to #approve-this, IMMEDIATELY start a Monitor loop:
-    ```bash
-    count=0; while true; do count=$((count+1)); if [ $((count % 5)) -eq 0 ]; then echo "listening..."; fi; sleep 10; done
-    ```
-    - `persistent: true`, no timeout (runs indefinitely)
-  - Monitor emits "listening..." every 50 seconds (once per 5 cycles, not every poll)
-  - This saves tokens and avoids chat flooding while maintaining active listening
-  - Upon each notification, I call `mcp__plugin_discord_discord__fetch_messages` to check for your response
-  - The 10-second check interval is maintained internally; only output every 50 seconds
-  - Response notifications wake me immediately—no manual checks needed
-- **CRITICAL**: Never post to #approve-this without starting the Monitor. The Monitor IS the approval waiting mechanism.
+  1. **Immediate check**: Call `fetch_messages` (limit=15) on #approve-this RIGHT AFTER posting.
+     Catches instant approvals before any loop starts.
+  2. **Start Monitor loop**: Use the **Monitor tool** (NOT `Bash run_in_background`) on:
+     ```bash
+     while true; do sleep 35; echo "poll"; done
+     ```
+     Monitor streams each `"poll"` emission back as a notification that wakes Claude.
+     `Bash run_in_background` writes to a temp file nobody reads — it is fake monitoring.
+  3. **On each Monitor notification**: Call `fetch_messages` (limit=15). If approved, proceed.
+     If not, keep monitoring.
+  4. **limit=15 always**: Every `fetch_messages` call uses limit≥15 — this prevents
+     the gate-miss bug where approvals were silently skipped.
+- **CRITICAL**: The Monitor tool is the only real monitoring mechanism. Never substitute
+  `Bash run_in_background` for approval waiting.
 
 ### #current-task
 
