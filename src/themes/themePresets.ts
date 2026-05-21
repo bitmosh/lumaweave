@@ -13,6 +13,8 @@ import "./assetRegistry"; // side-effect: registers window.__lwAssetRegistry dev
 import "./themeLineage"; // side-effect: registers window.__lwThemeLineage dev probe
 import "./paletteGeneration"; // side-effect: registers window.__lwPaletteGeneration dev probe
 import "./defineTheme"; // side-effect: registers window.__lwDefineTheme dev probe
+import "./themeSelectableColors"; // side-effect: registers window.__lwThemeSelectableColors dev probe
+import "./colorSuggestionEngine"; // side-effect: registers window.__lwColorSuggestionEngine dev probe
 
 export const builtInThemePresets: ThemePreset[] = [
   {
