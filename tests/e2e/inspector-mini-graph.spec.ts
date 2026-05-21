@@ -59,7 +59,7 @@ test.describe("inspector mini-graph", () => {
     expect(closedDim).toBe(initialDim);
   });
 
-  test("4 placeholder spokes render around root", async ({ page }) => {
+  test("registered spokes render around root", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
@@ -67,6 +67,6 @@ test.describe("inspector mini-graph", () => {
     await target.click({ modifiers: ["Alt", "Shift"] });
 
     const spokes = page.locator('[data-lw-theme-target="inspector.spoke"]');
-    await expect(spokes).toHaveCount(4);
+    await expect(spokes).toHaveCount(1);
   });
 });

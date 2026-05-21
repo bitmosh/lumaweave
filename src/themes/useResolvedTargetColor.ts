@@ -1,18 +1,33 @@
 /**
  * useResolvedTargetColor Hook (v86d.3b)
  *
- * Resolves color overrides for a target token. Uses a window custom event
- * for cross-module notification — immune to Vite HMR module-boundary splits.
+ * Resolves color overrides for a target token. Uses useSyncExternalStore
+ * with a window custom event — immune to Vite HMR module-boundary splits
+ * and React 18 Strict Mode double-invoke edge cases.
  */
 
-import { useReducer, useEffect } from "react";
+import { useSyncExternalStore } from "react";
 import { resolveForTarget } from "./themeOverrideStorage";
 import type { ThemeTokenPath } from "./themeTokenPaths";
 
 const EVENT = "lw:override-change";
 
+declare global {
+  interface Window { __lwOverrideVersion?: number; }
+}
+
 export function notifyOverrideChange(): void {
+  window.__lwOverrideVersion = (window.__lwOverrideVersion ?? 0) + 1;
   window.dispatchEvent(new CustomEvent(EVENT));
+}
+
+function subscribe(callback: () => void): () => void {
+  window.addEventListener(EVENT, callback);
+  return () => window.removeEventListener(EVENT, callback);
+}
+
+function getSnapshot(): number {
+  return window.__lwOverrideVersion ?? 0;
 }
 
 export function useResolvedTargetColor(
@@ -20,14 +35,7 @@ export function useResolvedTargetColor(
   tokenPath: ThemeTokenPath,
   fallback: string,
 ): string {
-  const [, forceUpdate] = useReducer((n: number) => n + 1, 0);
-
-  useEffect(() => {
-    const handler = () => forceUpdate();
-    window.addEventListener(EVENT, handler);
-    return () => window.removeEventListener(EVENT, handler);
-  }, []);
-
+  useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
   const resolved = resolveForTarget(tokenPath, targetId);
   return typeof resolved === "string" ? resolved : fallback;
 }
