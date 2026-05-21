@@ -671,5 +671,28 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       risk: "low",
       notes: "Live graph node/edge count via useGraphSourceSummary. Layout state placeholder ('settling') until v89. FPS via 60-frame RAF moving average.",
     },
+
+    {
+      id: "topbar.wcagBadge",
+      label: "WCAG Contrast Badge",
+      surface: "topbar",
+      owner: "topbar/StatusPill.tsx",
+      settingsKey: null,
+      noStorageReason: "Derived from theme tokens at module load; not a user-controlled setting",
+      runtimeBinding: {
+        sourceFile: "src/control-plane/topbar/StatusPill.tsx",
+        targetComponent: "WCAG level badge in status pill",
+        liveUpdate: true,
+      },
+      qa: { hasQaCoverage: true },
+      playwright: {
+        testFile: "tests/e2e/theme-accessibility-profile.spec.ts",
+        hasCoverage: true,
+      },
+      docs: { hasDocs: false },
+      status: "active",
+      risk: "low",
+      notes: "Shows WCAG AA/AAA/partial for the active theme. Tooltip lists all 4 contrast pairs with ratios. APCA + color-blind sim defer to v93.",
+    },
   ],
 };

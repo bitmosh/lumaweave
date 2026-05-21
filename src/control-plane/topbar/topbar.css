@@ -179,3 +179,28 @@
   accent-color: var(--lw-accent);
   cursor: pointer;
 }
+
+/* WCAG contrast badge */
+.lw-wcag-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid currentColor;
+  background: transparent;
+  cursor: help;
+  opacity: 0.85;
+}
+.lw-wcag-badge.lw-wcag-aaa {
+  color: #4ade80;
+}
+.lw-wcag-badge.lw-wcag-aa {
+  color: #facc15;
+}
+.lw-wcag-badge.lw-wcag-partial {
+  color: #f87171;
+}

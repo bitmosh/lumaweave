@@ -88,6 +88,34 @@ export interface ThemePresetRegistry {
 }
 
 /**
+ * v87.3: Theme accessibility profile (WCAG-only; APCA + color-blind sim defer to v93).
+ */
+export interface ThemeAccessibilityProfile {
+  themeId: string;
+  wcag: {
+    aa: boolean;
+    aaa: boolean;
+    pairs: Array<{
+      label: string;
+      foreground: string;
+      background: string;
+      ratio: number;
+      level: "AAA" | "AA" | "AA-large" | "fail";
+    }>;
+  };
+  apca?: { worst: number; median: number; best: number; passes: boolean };
+  colorBlindSafety?: {
+    deuteranopia: number;
+    protanopia: number;
+    tritanopia: number;
+    achromatopsia: number;
+  };
+  motionIntensity?: number;
+  readingComfort?: number;
+  computedAt: number;
+}
+
+/**
  * Theme runtime tokens
  * Defines visual values for app shell, panels, and graph elements
  */
