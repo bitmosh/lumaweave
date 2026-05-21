@@ -6,7 +6,13 @@
 
 import type { ThemePreset, ThemePresetRegistry } from "./theme.types";
 import { getAccessibilityProfile } from "./themeAccessibilityProfile";
+import { computeThemeHash } from "./themeHash";
+import { themePrimitives } from "./tokenPrimitives";
 import "./themeThumbnail"; // side-effect: registers window.__lwThemeThumbnail dev probe
+import "./assetRegistry"; // side-effect: registers window.__lwAssetRegistry dev probe
+import "./themeLineage"; // side-effect: registers window.__lwThemeLineage dev probe
+import "./paletteGeneration"; // side-effect: registers window.__lwPaletteGeneration dev probe
+import "./defineTheme"; // side-effect: registers window.__lwDefineTheme dev probe
 
 export const builtInThemePresets: ThemePreset[] = [
   {
@@ -81,4 +87,23 @@ export const themePresetRegistry: ThemePresetRegistry = {
 // so StatusPill never hits a cold cache during render.
 for (const preset of builtInThemePresets) {
   getAccessibilityProfile(preset.themeId);
+}
+
+// Compute content hashes for all built-in presets (async, fire-and-forget).
+// Built-in themes have empty lineage — they're origin themes with no parent.
+(async () => {
+  for (const preset of builtInThemePresets) {
+    if (!preset.hash) {
+      preset.hash = await computeThemeHash({
+        primitives: themePrimitives[preset.themeId],
+      });
+    }
+  }
+})();
+
+if (
+  typeof window !== "undefined" &&
+  (import.meta.env.DEV || (window as any).PLAYWRIGHT)
+) {
+  (window as any).__lwBuiltInThemes = builtInThemePresets;
 }

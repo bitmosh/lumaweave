@@ -38,7 +38,7 @@ export interface ThemeAsCodeDefinition {
 /**
  * v86e: Function signature for theme-as-code definitions.
  */
-export type DefineThemeFn = (def: ThemeAsCodeDefinition) => ThemePreset;
+export type DefineThemeFn = (def: ThemeAsCodeDefinition) => Promise<ThemePreset>;
 
 /**
  * Theme preset definition
