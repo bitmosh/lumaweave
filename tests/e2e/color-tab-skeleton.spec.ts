@@ -53,7 +53,7 @@ test.describe("v86d.3a Color spoke skeleton", () => {
     expect(count).toBeGreaterThan(0);
   });
 
-  test("ColorTab palette swatches are disabled in v86d.3a", async ({ page }) => {
+  test("ColorTab palette swatches are clickable and commit colors", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
@@ -62,7 +62,7 @@ test.describe("v86d.3a Color spoke skeleton", () => {
     await page.locator('[data-spoke-id="color"]').click();
 
     const firstSwatch = page.locator('[data-testid="palette"] button').first();
-    await expect(firstSwatch).toBeDisabled();
+    await expect(firstSwatch).not.toBeDisabled();
   });
 
   test("back button returns to ring view", async ({ page }) => {

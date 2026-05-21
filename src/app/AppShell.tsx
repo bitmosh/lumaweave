@@ -24,6 +24,7 @@ import {
 import { getThemeRuntimeTokens, resolveGraphVisualTokens } from "../themes";
 import { themePrimitives } from "../themes/tokenPrimitives";
 import { themeTargetRegistry } from "../themes/themeTargetRegistry";
+import { useResolvedTargetColor } from "../themes/useResolvedTargetColor";
 import { ThemeTargetInspectorOverlay } from "../themes/ThemeTargetInspectorOverlay";
 import { InspectorMiniGraph } from "../control-plane/inspector/InspectorMiniGraph";
 import { registerColorSpoke } from "../control-plane/inspector/spokes/registerColorSpoke";
@@ -193,6 +194,28 @@ export function AppShell() {
     [settings.appearance.theme]
   );
 
+  // Resolve all topbar color bindings with overrides (v86d.3b)
+  const topbarBackground = useResolvedTargetColor(
+    "topbar.root",
+    "app.background" as any,
+    themeTokens.app.background
+  );
+  const topbarBorder = useResolvedTargetColor(
+    "topbar.root",
+    "panel.border" as any,
+    themeTokens.app.panelBorder
+  );
+  const topbarText = useResolvedTargetColor(
+    "topbar.root",
+    "text.primary" as any,
+    themeTokens.app.textPrimary
+  );
+  const topbarAccent = useResolvedTargetColor(
+    "topbar.root",
+    "accent.primary" as any,
+    themeTokens.app.accent
+  );
+
   // Resolve graph visual tokens from theme tokens with settings overrides
   // v86c: Memoize to prevent identity churn on unrelated settings changes
   const resolvedGraphTokens = useMemo(
@@ -354,11 +377,11 @@ export function AppShell() {
       style={{
         "--lw-app-bg": themeTokens.app.background,
         "--lw-panel-bg": themeTokens.app.panelBackground,
-        "--lw-panel-border": themeTokens.app.panelBorder,
-        "--lw-text-primary": themeTokens.app.textPrimary,
+        "--lw-panel-border": topbarBorder,
+        "--lw-text-primary": topbarText,
         "--lw-text-muted": themeTokens.app.textMuted,
-        "--lw-accent": themeTokens.app.accent,
-        "--lw-visual-accent": themeTokens.app.accent,
+        "--lw-accent": topbarAccent,
+        "--lw-visual-accent": topbarAccent,
         "--lw-glow": themeTokens.app.glow,
         backgroundColor: themeTokens.app.background,
       } as React.CSSProperties}
@@ -368,8 +391,8 @@ export function AppShell() {
         <header
           className="px-6 py-4"
           style={{
-            borderBottom: "1px solid rgba(34, 211, 238, 0.15)",
-            backgroundColor: `${themeTokens.app.background}dd`,
+            borderBottom: `1px solid ${topbarBorder}`,
+            backgroundColor: `${topbarBackground}dd`,
           } as React.CSSProperties}
           data-lw-theme-target="topbar.root"
         >
@@ -395,9 +418,9 @@ export function AppShell() {
                   onChange={(e) => setSetting("appearance.theme", e.target.value)}
                   style={{
                     borderRadius: "0.5rem",
-                    border: `1px solid ${themeTokens.app.panelBorder}`,
+                    border: "1px solid var(--lw-panel-border)",
                     backgroundColor: `${themeTokens.app.background}cc`,
-                    color: themeTokens.app.textPrimary,
+                    color: "var(--lw-text-primary)",
                     padding: "0.5rem 0.75rem",
                     fontSize: "0.875rem",
                     fontWeight: 500,
@@ -415,32 +438,32 @@ export function AppShell() {
 
                 <div className="flex items-center gap-4">
                   <label className="flex items-center gap-2 text-sm cursor-pointer">
-                    <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Glitter</span>
+                    <span style={{ color: "var(--lw-text-muted)" } as React.CSSProperties}>Glitter</span>
                     <input
                       type="checkbox"
                       checked={settings.appearance.glitterEnabled}
                       onChange={(e) => setSetting("appearance.glitterEnabled", e.currentTarget.checked)}
                       style={{
                         borderRadius: "0.25rem",
-                        border: `1px solid ${themeTokens.app.panelBorder}`,
+                        border: "1px solid var(--lw-panel-border)",
                         backgroundColor: `${themeTokens.app.background}cc`,
-                        accentColor: themeTokens.app.accent,
+                        accentColor: "var(--lw-accent)",
                         cursor: "pointer",
                       } as React.CSSProperties}
                     />
                   </label>
 
                   <label className="flex items-center gap-2 text-sm cursor-pointer">
-                    <span style={{ color: themeTokens.app.textMuted } as React.CSSProperties}>Reduce Motion</span>
+                    <span style={{ color: "var(--lw-text-muted)" } as React.CSSProperties}>Reduce Motion</span>
                     <input
                       type="checkbox"
                       checked={settings.appearance.reduceMotion}
                       onChange={(e) => setSetting("appearance.reduceMotion", e.currentTarget.checked)}
                       style={{
                         borderRadius: "0.25rem",
-                        border: `1px solid ${themeTokens.app.panelBorder}`,
+                        border: "1px solid var(--lw-panel-border)",
                         backgroundColor: `${themeTokens.app.background}cc`,
-                        accentColor: themeTokens.app.accent,
+                        accentColor: "var(--lw-accent)",
                         cursor: "pointer",
                       } as React.CSSProperties}
                     />
