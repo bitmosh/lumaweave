@@ -1,5 +1,7 @@
 import { useState, useRef } from "react";
 import { SettingsPanel } from "../settings/SettingsPanel";
+import { CollapsibleSection } from "./CollapsibleSection";
+import { TypographyPlaygroundSection } from "./TypographyPlaygroundSection";
 import type { StarmapSettings } from "../settings/settings.schema";
 
 interface ControlDockProps {
@@ -34,6 +36,7 @@ export function ControlDock({
   setSetting: _setSetting,
 }: ControlDockProps) {
   const [isResizing, setIsResizing] = useState(false);
+  const [typographyOpen, setTypographyOpen] = useState(true);
   const resizeStart = useRef(0);
   const widthStart = useRef(width);
 
@@ -241,6 +244,15 @@ export function ControlDock({
 
           <div className="space-y-4" data-testid="settings-panel" data-lw-theme-target="settings.panel">
             <SettingsPanel />
+            <CollapsibleSection
+              title="Typography Playground"
+              testId="settings-section-typography-playground"
+              tileableKey="typography-playground-section"
+              isOpen={typographyOpen}
+              onToggle={() => setTypographyOpen((v) => !v)}
+            >
+              <TypographyPlaygroundSection />
+            </CollapsibleSection>
           </div>
         </div>
       )}

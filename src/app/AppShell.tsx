@@ -43,6 +43,7 @@ import { BookmarkLayer } from "../graph/overlay/BookmarkLayer";
 import { Minimap } from "../graph/overlay/Minimap";
 import { bookmarkRegistry, initializeDemoBookmarks } from "../graph/overlay/bookmarkRegistry";
 import { Topbar } from "../control-plane/topbar/Topbar";
+import { useCrossfadeAppTokens } from "../themes/themeCrossfade";
 
 export function AppShell() {
   const settings = useSettingsStore((state) => state.settings);
@@ -201,6 +202,9 @@ export function AppShell() {
     () => getThemeRuntimeTokens(settings.appearance.theme),
     [settings.appearance.theme]
   );
+
+  // v87.4: Crossfade app token colors on theme switch (300ms, snaps when reduceMotion)
+  const crossfadeTokens = useCrossfadeAppTokens(themeTokens, settings.appearance.reduceMotion);
 
   // Resolve topbar color bindings with overrides (v86d.3b)
   const topbarBorder = useResolvedTargetColor(
@@ -378,20 +382,20 @@ export function AppShell() {
       <main 
       className="h-screen overflow-hidden text-slate-100"
       style={{
-        "--lw-app-bg": themeTokens.app.background,
-        "--lw-panel-bg": themeTokens.app.panelBackground,
+        "--lw-app-bg": crossfadeTokens.app.background,
+        "--lw-panel-bg": crossfadeTokens.app.panelBackground,
         "--lw-panel-border": topbarBorder,
         "--lw-text-primary": topbarText,
-        "--lw-text-muted": themeTokens.app.textMuted,
+        "--lw-text-muted": crossfadeTokens.app.textMuted,
         "--lw-accent": topbarAccent,
         "--lw-visual-accent": topbarAccent,
-        "--lw-glow": themeTokens.app.glow,
+        "--lw-glow": crossfadeTokens.app.glow,
         // Tier 1 primitive color tokens for theme-adaptive components (HexLogo, etc.)
         "--lw-color-flare-500": themePrimitives[settings.appearance.theme]?.color?.flare?.[500] ?? "#FF6B1A",
         "--lw-color-magenta-500": themePrimitives[settings.appearance.theme]?.color?.magenta?.[500] ?? "#FF1F8F",
         "--lw-color-purple-500": themePrimitives[settings.appearance.theme]?.color?.purple?.[500] ?? "#7B2FFF",
         "--lw-color-gold-500": themePrimitives[settings.appearance.theme]?.color?.gold?.[500] ?? "#FFB347",
-        backgroundColor: themeTokens.app.background,
+        backgroundColor: crossfadeTokens.app.background,
       } as React.CSSProperties}
       data-lw-theme-target="app.shell"
     >

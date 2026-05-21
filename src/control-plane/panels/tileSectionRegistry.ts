@@ -8,6 +8,7 @@ import type { TileSectionEntry, TileSectionRegistry } from "./tile.types";
 import { PhysicsSectionContent } from "./PhysicsSectionContent";
 import { LabelsSectionContent } from "./LabelsSectionContent";
 import { AppearanceSectionContent } from "./AppearanceSectionContent";
+import { TypographyPlaygroundSection } from "./TypographyPlaygroundSection";
 
 const entries: TileSectionEntry[] = [
   {
@@ -42,6 +43,17 @@ const entries: TileSectionEntry[] = [
     content: () => createElement(LabelsSectionContent),
     contentTestId: "labels-section-content",
     sourceTestId: "settings-section-labels",
+  },
+  {
+    id: "typography-playground-section",
+    label: "Typography Playground",
+    category: "control-dock",
+    defaultWidth: 360,
+    defaultHeight: 420,
+    collapsible: true,
+    content: () => createElement(TypographyPlaygroundSection),
+    contentTestId: "typography-playground",
+    sourceTestId: "settings-section-typography-playground",
   },
 ];
 

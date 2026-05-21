@@ -68,3 +68,40 @@ if (
 ) {
   (window as any).__lwFontAxisRegistry = fontAxisRegistry;
 }
+
+// v87.4 seed — wght axis for each font loaded in v87.2
+// Ranges match the variable font specs; Google Fonts loads discrete weights
+// by default (see index.html). The playground slider works but snaps between
+// loaded weights until the URL is updated to request a wght range.
+fontAxisRegistry.register({
+  id: "space-grotesk-wght",
+  fontFamily: "Space Grotesk",
+  axis: "wght",
+  axisName: "Weight",
+  min: 300,
+  max: 700,
+  default: 500,
+  step: 1,
+});
+
+fontAxisRegistry.register({
+  id: "ibm-plex-sans-wght",
+  fontFamily: "IBM Plex Sans",
+  axis: "wght",
+  axisName: "Weight",
+  min: 100,
+  max: 700,
+  default: 400,
+  step: 1,
+});
+
+fontAxisRegistry.register({
+  id: "ibm-plex-mono-wght",
+  fontFamily: "IBM Plex Mono",
+  axis: "wght",
+  axisName: "Weight",
+  min: 100,
+  max: 500,
+  default: 400,
+  step: 1,
+});
