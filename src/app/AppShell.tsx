@@ -42,6 +42,7 @@ import { GlitterField } from "../graph/overlay/GlitterField";
 import { BookmarkLayer } from "../graph/overlay/BookmarkLayer";
 import { Minimap } from "../graph/overlay/Minimap";
 import { bookmarkRegistry, initializeDemoBookmarks } from "../graph/overlay/bookmarkRegistry";
+import { Topbar } from "../control-plane/topbar/Topbar";
 
 export function AppShell() {
   const settings = useSettingsStore((state) => state.settings);
@@ -201,12 +202,7 @@ export function AppShell() {
     [settings.appearance.theme]
   );
 
-  // Resolve all topbar color bindings with overrides (v86d.3b)
-  const topbarBackground = useResolvedTargetColor(
-    "topbar.root",
-    "app.background" as any,
-    themeTokens.app.background
-  );
+  // Resolve topbar color bindings with overrides (v86d.3b)
   const topbarBorder = useResolvedTargetColor(
     "topbar.root",
     "panel.border" as any,
@@ -390,96 +386,17 @@ export function AppShell() {
         "--lw-accent": topbarAccent,
         "--lw-visual-accent": topbarAccent,
         "--lw-glow": themeTokens.app.glow,
+        // Tier 1 primitive color tokens for theme-adaptive components (HexLogo, etc.)
+        "--lw-color-flare-500": themePrimitives[settings.appearance.theme]?.color?.flare?.[500] ?? "#FF6B1A",
+        "--lw-color-magenta-500": themePrimitives[settings.appearance.theme]?.color?.magenta?.[500] ?? "#FF1F8F",
+        "--lw-color-purple-500": themePrimitives[settings.appearance.theme]?.color?.purple?.[500] ?? "#7B2FFF",
+        "--lw-color-gold-500": themePrimitives[settings.appearance.theme]?.color?.gold?.[500] ?? "#FFB347",
         backgroundColor: themeTokens.app.background,
       } as React.CSSProperties}
       data-lw-theme-target="app.shell"
     >
       <div className="grid h-screen grid-rows-[auto_1fr_auto]">
-        <header
-          className="px-6 py-4"
-          style={{
-            borderBottom: `1px solid ${topbarBorder}`,
-            backgroundColor: `${topbarBackground}dd`,
-          } as React.CSSProperties}
-          data-lw-theme-target="topbar.root"
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <h1
-                className="text-2xl font-bold"
-                style={{ color: "var(--lw-visual-accent, #22d3ee)" } as React.CSSProperties}
-              >
-                LumaWeave Observatory
-              </h1>
-              <p className="text-sm" style={{ color: "var(--lw-text-muted, #94a3b8)" } as React.CSSProperties}>
-                Local-first luminous architecture workbench
-              </p>
-            </div>
-
-            <div className="flex items-center gap-6">
-              {/* Compact Appearance Controls */}
-              <div className="flex items-center gap-3">
-                <select
-                  data-testid="theme-preset-selector"
-                  value={settings.appearance.theme}
-                  onChange={(e) => setSetting("appearance.theme", e.target.value)}
-                  style={{
-                    borderRadius: "0.5rem",
-                    border: "1px solid var(--lw-panel-border)",
-                    backgroundColor: `${themeTokens.app.background}cc`,
-                    color: "var(--lw-text-primary)",
-                    padding: "0.5rem 0.75rem",
-                    fontSize: "0.875rem",
-                    fontWeight: 500,
-                    cursor: "pointer",
-                    transition: "all 0.15s ease",
-                  } as React.CSSProperties}
-                >
-                  <option value="solar-plasma">Solar Plasma</option>
-                  <option value="obsidian-aurora">Obsidian Aurora</option>
-                  <option value="midnight-loom">Midnight Loom</option>
-                  <option value="void-circuit">Void Circuit</option>
-                  <option value="agartha-dream">Agartha Dream</option>
-                  <option value="agartha-dusk">Agartha Dusk</option>
-                </select>
-
-                <div className="flex items-center gap-4">
-                  <label className="flex items-center gap-2 text-sm cursor-pointer">
-                    <span style={{ color: "var(--lw-text-muted)" } as React.CSSProperties}>Glitter</span>
-                    <input
-                      type="checkbox"
-                      checked={settings.appearance.glitterEnabled}
-                      onChange={(e) => setSetting("appearance.glitterEnabled", e.currentTarget.checked)}
-                      style={{
-                        borderRadius: "0.25rem",
-                        border: "1px solid var(--lw-panel-border)",
-                        backgroundColor: `${themeTokens.app.background}cc`,
-                        accentColor: "var(--lw-accent)",
-                        cursor: "pointer",
-                      } as React.CSSProperties}
-                    />
-                  </label>
-
-                  <label className="flex items-center gap-2 text-sm cursor-pointer">
-                    <span style={{ color: "var(--lw-text-muted)" } as React.CSSProperties}>Reduce Motion</span>
-                    <input
-                      type="checkbox"
-                      checked={settings.appearance.reduceMotion}
-                      onChange={(e) => setSetting("appearance.reduceMotion", e.currentTarget.checked)}
-                      style={{
-                        borderRadius: "0.25rem",
-                        border: "1px solid var(--lw-panel-border)",
-                        backgroundColor: `${themeTokens.app.background}cc`,
-                        accentColor: "var(--lw-accent)",
-                        cursor: "pointer",
-                      } as React.CSSProperties}
-                    />
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
+        <Topbar />
 
         <section
           className="grid min-h-0"
