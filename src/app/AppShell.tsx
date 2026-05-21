@@ -28,6 +28,9 @@ import { useResolvedTargetColor } from "../themes/useResolvedTargetColor";
 import { ThemeTargetInspectorOverlay } from "../themes/ThemeTargetInspectorOverlay";
 import { InspectorMiniGraph } from "../control-plane/inspector/InspectorMiniGraph";
 import { registerColorSpoke } from "../control-plane/inspector/spokes/registerColorSpoke";
+import { registerApplySpoke } from "../control-plane/inspector/spokes/registerApplySpoke";
+import { registerIdeSpoke } from "../control-plane/inspector/spokes/registerIdeSpoke";
+import { registerHistorySpoke } from "../control-plane/inspector/spokes/registerHistorySpoke";
 import { adaptSelfGraphToSigma } from "../fixtures/self-graph-adapter";
 import generatedGraph from "../fixtures/self-graph-generated.json";
 import type { LumaSourceGraph } from "../fixtures/types";
@@ -46,8 +49,11 @@ export function AppShell() {
 
   // Register spokes and expose app state for Playwright tests (dev mode only)
   useEffect(() => {
-    // Register Color spoke (v86d.3a)
+    // Register inspector spokes (v86d.3a+)
     registerColorSpoke();
+    registerApplySpoke();
+    registerIdeSpoke();
+    registerHistorySpoke();
 
     // Expose app state for Playwright tests (dev mode only)
     if (import.meta.env.DEV || (window as any).PLAYWRIGHT) {

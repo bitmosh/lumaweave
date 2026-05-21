@@ -67,6 +67,6 @@ test.describe("inspector mini-graph", () => {
     await target.click({ modifiers: ["Alt", "Shift"] });
 
     const spokes = page.locator('[data-lw-theme-target="inspector.spoke"]');
-    await expect(spokes).toHaveCount(1);
+    await expect(spokes).toHaveCount(4);
   });
 });
