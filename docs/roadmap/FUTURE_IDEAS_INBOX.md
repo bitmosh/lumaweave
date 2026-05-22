@@ -252,6 +252,26 @@ Items here are promoted to the roadmap only when:
 
 ---
 
+## Theme System
+
+- **Selection-aware cluster indicator (post-v89)**
+  v89.3 ships a three-layer override indicator (global / target-kind / target)
+  but omits the cluster ring. The structural gap: `getClusterOverride` and
+  `getClusterOverrides` both require a `clusterAnchor` argument, and no
+  registry mapping exists from `targetId` → current cluster anchor. The
+  `resolveForTarget` API surfaces `clusterAnchor` as a caller-supplied
+  parameter — it is derived from graph selection context at call time, not
+  from a static per-target property in `ThemeTargetContract`.
+
+  What would unlock it: a primitive `getActiveClusterAnchor(targetId): string | null`
+  that resolves from the current graph selection/neighborhood state. Once that
+  primitive exists, `getAllScopeIndicatorState` can add `hasCluster` and the
+  fuchsia ring (#ff5fae) can be added as ring 1 in the concentric indicator.
+
+  Tag: post-v89, depends on cluster-anchor resolution primitive.
+
+---
+
 ## Inbox Management
 
 When an idea graduates to a real roadmap item, move it to BACKLOG_POLICY.md and delete it here. Do not duplicate items between the inbox and the backlog.

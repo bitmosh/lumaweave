@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { getThemeTargetById } from "./themeTargetRegistry";
-import { getTargetOverrides } from "./themeOverrideStorage";
+import { getAllScopeIndicatorState } from "./themeOverrideStorage";
 import {
   installThemeTargetProbeGlobal,
   runAndRecordThemeTargetProbe,
@@ -546,7 +546,15 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
             }}
           >
             {ghostOutlines.map((outline, index) => {
-              const hasTargetOverride = overrideVersion >= 0 && getTargetOverrides(outline.themeTargetId).length > 0;
+              const scopeState = overrideVersion >= 0
+                ? getAllScopeIndicatorState(outline.themeTargetId)
+                : { hasGlobal: false, hasTarget: false, hasTargetKind: false };
+              const anyOverride = scopeState.hasGlobal || scopeState.hasTarget || scopeState.hasTargetKind;
+              const activeScopes = [
+                scopeState.hasGlobal && "global",
+                scopeState.hasTargetKind && "target-kind",
+                scopeState.hasTarget && "target",
+              ].filter(Boolean).join(", ");
               return (
                 <div
                   key={`${outline.themeTargetId}-${index}`}
@@ -582,19 +590,36 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
                   >
                     {outline.themeTargetId}
                   </span>
-                  {hasTargetOverride && (
-                    <div
-                      className="lw-override-indicator"
-                      data-scope="target"
+                  {anyOverride && (
+                    <svg
+                      className="lw-override-indicator-multi"
                       data-testid={`override-indicator-${outline.themeTargetId}`}
-                      title="target scope override"
+                      data-active-scopes={activeScopes}
+                      width="10"
+                      height="10"
+                      viewBox="0 0 10 10"
                       style={{
                         position: "absolute",
                         top: "6px",
                         right: "6px",
                         pointerEvents: "auto",
+                        overflow: "visible",
                       }}
-                    />
+                    >
+                      <title>{`overrides: ${activeScopes}`}</title>
+                      {/* gold — outermost ring: target scope */}
+                      {scopeState.hasTarget && (
+                        <circle cx="5" cy="5" r="4.25" fill="none" stroke="#ffb347" strokeWidth="1.5" />
+                      )}
+                      {/* cyan — middle ring: target-kind scope */}
+                      {scopeState.hasTargetKind && (
+                        <circle cx="5" cy="5" r="2.75" fill="none" stroke="#4facff" strokeWidth="1.5" />
+                      )}
+                      {/* cream — center fill: global scope */}
+                      {scopeState.hasGlobal && (
+                        <circle cx="5" cy="5" r="2" fill="#fff2c5" />
+                      )}
+                    </svg>
                   )}
                 </div>
               );
