@@ -36,7 +36,7 @@ import { applyNodeLabelPolicy,
   type EdgeLabelMode,
 } from "../../visual/applyGraphLabelPolicyToGraphology";
 import { attachCameraController } from "../../overlay/cameraController";
-import { NodeCircleProgram } from "sigma/rendering";
+import { buildNodeProgramClasses } from "../../nodePrograms/nodeProgramRegistry";
 import { applyDialect, type GWController } from "../../../physics/gwells";
 import { installGwellsProbeGlobal } from "./gwellsProbe";
 import { useSettingsStore } from "../../../control-plane/settings/settings.store";
@@ -210,8 +210,7 @@ function SigmaGraphViewComponent({
   const resolvedTokensRef = useRef(resolvedTokens);
   const cleanupProbeRef = useRef<(() => void) | null>(null);
 
-  // v86b: Ref-based uniform pipeline - animation loop updates this ref directly
-  // NodeSphereProgram reads from this ref on its natural render cycle
+  // v90a: Ref-based uniform pipeline — rAF loop writes here; all node programs read on their render cycle.
   const uniformsRef = useRef<{
     time: number;
     hum: number;
@@ -228,8 +227,6 @@ function SigmaGraphViewComponent({
   useEffect(() => {
     resolvedTokensRef.current = resolvedTokens;
   });
-
-  // v86b: Ref-based uniform pipeline - rAF loop updates uniformsRef directly
 
   const [debugInfo, setDebugInfo] = useState<Record<string, string | number>>(
     {},
@@ -276,14 +273,7 @@ function SigmaGraphViewComponent({
     onUpdatePinsRef.current = onUpdatePins;
   }, [onSelectNode, onSetPathTarget, onSelectEdge, onClearSelection, dialectId, activePins, onUpdatePins]);
 
-  // v86b: ref-based uniform pipeline.
-  // Updates uniformsRef.current without triggering React renders.
-  // NodeSphereProgram reads from this ref on its natural render
-  // cycle. See SIGMA_LIFECYCLE_CONTRACT.md § "v86b uniforms —
-  // special treatment."
-  //
-  // Refs for the per-frame values so the rAF tick reads the
-  // latest without invalidating the effect on every prop change.
+  // Refs for per-frame values so the rAF tick reads latest without invalidating the effect.
   const nodeHumRef = useRef(nodeHum);
   const nodeFlowSpeedRef = useRef(nodeFlowSpeed);
   const nodeGlowRef = useRef(nodeGlow);
@@ -414,16 +404,14 @@ function SigmaGraphViewComponent({
       edgeLabelSize: edgeLabelFontSize,
       edgeLabelColor: { color: resolvedTokens.edgeLabelColor.default },
 
-      nodeProgramClasses: {
-        circle: NodeCircleProgram,
-      },
-      defaultNodeType: "circle",
+      nodeProgramClasses: buildNodeProgramClasses(),
+      defaultNodeType: "glass-sphere",
       itemSizesReference: "positions",  // ADD THIS LINE
     });
 
     sigmaRef.current = sigma;
 
-    // v86b: Attach uniformsRef to Sigma instance for NodeSphereProgram to read
+    // v90a: Attach uniformsRef to Sigma instance — all node programs read from this ref.
     (sigma as any).__uniformsRef = uniformsRef;
 
     // v86b: Attach camera controller for eased transitions and state preservation
