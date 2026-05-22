@@ -16,7 +16,7 @@ export function CommandDeckPanel({
       className="rounded-xl p-4"
       style={{
         border: `1px solid ${themePanelBorder}`,
-        backgroundColor: `rgba(var(--lw-panel-bg), 0.7)`,
+        backgroundColor: `rgba(var(--lw-panel-background), 0.7)`,
       }}
     >
       <h3
