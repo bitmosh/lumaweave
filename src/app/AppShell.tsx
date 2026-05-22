@@ -29,6 +29,11 @@ import "../themes/provenanceRegistry";
 import { ThemeTargetInspectorOverlay } from "../themes/ThemeTargetInspectorOverlay";
 import { InspectorMiniGraph } from "../control-plane/inspector/InspectorMiniGraph";
 import { registerColorSpoke } from "../control-plane/inspector/spokes/registerColorSpoke";
+import { registerGeometrySpoke } from "../control-plane/inspector/spokes/registerGeometrySpoke";
+import { registerTypeSpoke } from "../control-plane/inspector/spokes/registerTypeSpoke";
+import { registerMotionSpoke } from "../control-plane/inspector/spokes/registerMotionSpoke";
+import { registerLayoutSpoke } from "../control-plane/inspector/spokes/registerLayoutSpoke";
+import { registerCodeSpoke } from "../control-plane/inspector/spokes/registerCodeSpoke";
 import { registerApplySpoke } from "../control-plane/inspector/spokes/registerApplySpoke";
 import { registerIdeSpoke } from "../control-plane/inspector/spokes/registerIdeSpoke";
 import { registerHistorySpoke } from "../control-plane/inspector/spokes/registerHistorySpoke";
@@ -52,11 +57,16 @@ export function AppShell() {
 
   // Register spokes and expose app state for Playwright tests (dev mode only)
   useEffect(() => {
-    // Register inspector spokes (v86d.3a+)
-    registerColorSpoke();
-    registerApplySpoke();
-    registerIdeSpoke();
-    registerHistorySpoke();
+    // Register inspector spokes — canonical order (v86d.3a+, v89.4)
+    registerColorSpoke();    // order 0
+    registerGeometrySpoke(); // order 1
+    registerTypeSpoke();     // order 2
+    registerMotionSpoke();   // order 3
+    registerLayoutSpoke();   // order 4
+    registerCodeSpoke();     // order 5
+    registerApplySpoke();    // order 6
+    registerIdeSpoke();      // order 7
+    registerHistorySpoke();  // order 8
 
     // Expose app state for Playwright tests (dev mode only)
     if (import.meta.env.DEV || (window as any).PLAYWRIGHT) {
@@ -395,6 +405,10 @@ export function AppShell() {
         "--lw-color-magenta-500": themePrimitives[settings.appearance.theme]?.color?.magenta?.[500] ?? "#FF1F8F",
         "--lw-color-purple-500": themePrimitives[settings.appearance.theme]?.color?.purple?.[500] ?? "#7B2FFF",
         "--lw-color-gold-500": themePrimitives[settings.appearance.theme]?.color?.gold?.[500] ?? "#FFB347",
+        "--lw-inspector-radial-spoke-color": crossfadeTokens.inspector.radialSpokeColor,
+        "--lw-inspector-radial-root-color": crossfadeTokens.inspector.radialSpokeColor,
+        "--lw-inspector-radial-root-border": crossfadeTokens.inspector.radialHaloColor,
+        "--lw-inspector-radial-text": crossfadeTokens.app.textPrimary,
         backgroundColor: crossfadeTokens.app.background,
       } as React.CSSProperties}
       data-lw-theme-target="app.shell"

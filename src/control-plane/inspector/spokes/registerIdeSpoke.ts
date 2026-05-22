@@ -8,7 +8,7 @@ export function registerIdeSpoke(): void {
     label: "IDE",
     category: "appearance",
     enabled: true,
-    order: 2,
+    order: 7,
     icon: "📄",
     color: "inspector.radial.spokeColor",
     tabComponent: IdeTab,

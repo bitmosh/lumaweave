@@ -241,21 +241,26 @@ export function MiniGraphRenderer({
       />
 
       {/* Spoke nodes */}
-      {spokePositions.map((spoke) => (
-        <SpokeNode
-          key={`spoke-${spoke.id}`}
-          spokeId={spoke.id}
-          label={spoke.label}
-          x={spoke.x - svgLeft}
-          y={spoke.y - svgTop}
-          radius={14}
-          onClick={() => {
-            if (!spoke.id.startsWith("placeholder")) {
-              setExpandedSpokeId(spoke.id);
-            }
-          }}
-        />
-      ))}
+      {spokePositions.map((spoke) => {
+        const spokeEntry = spokes.find((s) => s.id === spoke.id);
+        const isPlaceholder = spokeEntry?.status === "placeholder";
+        return (
+          <SpokeNode
+            key={`spoke-${spoke.id}`}
+            spokeId={spoke.id}
+            label={spoke.label}
+            x={spoke.x - svgLeft}
+            y={spoke.y - svgTop}
+            radius={14}
+            isPlaceholder={isPlaceholder}
+            onClick={() => {
+              if (!spoke.id.startsWith("placeholder")) {
+                setExpandedSpokeId(spoke.id);
+              }
+            }}
+          />
+        );
+      })}
     </svg>
   );
 }

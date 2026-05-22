@@ -1,0 +1,79 @@
+.lw-placeholder-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  font-size: 12px;
+  color: var(--lw-text-primary, #FFE9D6);
+  background: linear-gradient(180deg, rgba(34,12,52,0.88), rgba(11,4,22,0.92));
+  border: 1px solid var(--lw-panel-border, rgba(255,179,71,0.32));
+  border-radius: 8px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.lw-placeholder-tab-header {
+  display: flex;
+  justify-content: flex-end;
+  min-height: 20px;
+}
+
+.lw-placeholder-tab-back {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.5);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.lw-placeholder-tab-back:hover {
+  color: rgba(255,255,255,0.85);
+}
+
+.lw-placeholder-tab-message {
+  color: rgba(255,255,255,0.55);
+  font-size: 11px;
+  line-height: 1.5;
+  font-style: italic;
+  margin: 0;
+  padding: 8px;
+  border: 1px solid rgba(255,179,71,0.12);
+  border-radius: 6px;
+  background: rgba(255,255,255,0.02);
+}
+
+.lw-placeholder-tab-paths {
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+}
+
+.lw-placeholder-tab-paths summary {
+  cursor: pointer;
+  color: rgba(255,255,255,0.55);
+  padding: 4px 0;
+  user-select: none;
+}
+
+.lw-placeholder-tab-paths summary:hover {
+  color: rgba(255,255,255,0.75);
+}
+
+.lw-placeholder-tab-paths ul {
+  margin: 6px 0 0 0;
+  padding-left: 16px;
+  list-style: disc;
+}
+
+.lw-placeholder-tab-paths li {
+  margin-bottom: 3px;
+}
+
+.lw-placeholder-tab-paths code {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  color: rgba(255,179,71,0.75);
+  background: rgba(255,179,71,0.06);
+  padding: 1px 4px;
+  border-radius: 3px;
+}

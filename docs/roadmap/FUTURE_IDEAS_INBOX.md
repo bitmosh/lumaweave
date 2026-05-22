@@ -208,6 +208,12 @@ Items here are promoted to the roadmap only when:
 
 - **Playwright suite should fail on console page errors (especially WebGL link failures)** — During v90a, a WebGL shader link error ("loadProgram: error while linking the program: FRAGMENT varying v_position does not match any VERTEX varying") fired on every render and caused Sigma to never initialize, breaking 69 E2E tests. The suite still reported "0 failed" because no test asserted on console error counts — the 69 tests timed out or failed on missing selectors rather than on the underlying cause. Options: (a) global Playwright hook that fails any test where page errors fired (may be too aggressive — some pre-existing benign warnings exist); (b) targeted hook that fails on WebGL link/compile errors specifically; (c) standalone smoke test that asserts the console has no PAGEERROR entries after initial load. Lightest-touch option that catches this class of bug is probably (c). Filed v90a.
 
+- **Extend thumbnail cache invalidation when theme defaults editing lands** — `nodeProgramThumbnails.ts` invalidates on theme switch only (via Zustand settings store subscribe on `appearance.theme`). If a future pass adds in-session editing of theme-level visual defaults (e.g., override of `graph.node.fill` that would change thumbnail colors), cache invalidation needs to extend to cover that case. Currently the only invalidation trigger is the Zustand subscription for theme ID change. Filed v89.4.
+
+- **Type spoke functional implementation requires typography axis token authoring** — v87.4 intentionally kept font-weight as CSS-variable-only; no canonical token paths exist for variable-font axes. Functional Type spoke requires either (a) authoring axis tokens following standard PLANNED → promotion governance, or (b) a contract pass justifying CSS-variable bypass. v89.4 ships Type as placeholder pending that decision. Likely belongs as a dedicated typography spoke arc — possibly numbered alongside v97 hotkey/command palette work or earlier as standalone. Filed v89.4.
+
+- **Inspector hover-preview pattern across spokes** — Currently no spoke implements hover-preview (apply on hover, restore on leave). Geometry spoke in v89.4 ships click-only to maintain consistency with ColorTab. Future polish pass should land hover-preview across Color AND Geometry simultaneously, accounting for performance differences (CSS swap vs. program re-render for shader-based nodes). Filed v89.4.
+
 ---
 
 ## Source Adapters
@@ -271,6 +277,58 @@ Items here are promoted to the roadmap only when:
   fuchsia ring (#ff5fae) can be added as ring 1 in the concentric indicator.
 
   Tag: post-v89, depends on cluster-anchor resolution primitive.
+
+---
+
+### Inspector tests have hidden cold-start dependency on server warmup
+
+  `tests/e2e/v89-4-inspector-radial-full.spec.ts` (and likely other inspector
+  specs) fail consistently when run in isolation against a cold-started
+  Playwright server but pass when run as part of the full suite where the
+  server has been warm for several minutes.
+
+  Mechanism: Alt+Shift+click fires before the app is fully interactive in the
+  cold-server window; the `expect-visible` on `inspector-mini-graph` times out
+  at 5000ms.
+
+  Risk: test reliability depends on parallel-worker scheduling and alphabetical
+  ordering. Will break unpredictably if test ordering shifts or worker count
+  changes in CI.
+
+  Likely fix candidates:
+  - Add explicit "app ready" wait in inspector test setup
+    (`page.waitForSelector` on a known interactive element before any
+    Alt+Shift+click)
+  - Increase timeout on the Alt+Shift+click → inspector visible path
+    specifically
+  - Move inspector tests to a shared setup that warms the app before any test
+    in the file runs
+
+  Diagnosed during v89.4 quest report but predates v89.4. Pre-existing
+  flakiness exposed by isolated-spec runs.
+
+  Tag: test-reliability, inspector, cold-start.
+
+---
+
+### gwells seeder instrumentation log fires before seeding completes
+
+  Observed in console during v89.4 manual verification:
+
+  ```
+  [gwells radialBackbone seeder] nodeCount: 529  min: 0.0  max: 0.0  spread: 0.0
+  Seeded 44 spine positions and 524 total node positions
+  ```
+
+  The instrumentation log reports `min/max/spread` all at `0.0`, then the
+  completion line immediately follows with real numbers. This suggests the
+  diagnostic log fires before the seeder has computed its spread metrics —
+  i.e., it reads initial values before the seeding loop runs.
+
+  Not a functional bug. Fix: move the instrumentation log to after the seeding
+  loop completes so it reports real computed values.
+
+  Tag: polish, gwells, instrumentation.
 
 ---
 

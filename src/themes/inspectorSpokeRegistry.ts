@@ -28,6 +28,11 @@ export interface InspectorSpoke {
   action?: () => void; // for terminal spokes (e.g., "Open in IDE")
   tabContent?: () => ReactNode; // for spokes that open a tab
   tabComponent?: ComponentType<{ targetDescriptor: TargetDescriptor; onClose?: () => void }>; // v86d.3a+: tab component with props
+
+  // v89.4: placeholder support
+  status?: "active" | "placeholder"; // defaults to "active" if omitted
+  intendedTokenPaths?: readonly string[]; // declared target paths for placeholder spokes
+  placeholderMessage?: string; // shown in PlaceholderTab when status is "placeholder"
 }
 
 class InspectorSpokeRegistry implements RegistryContract<InspectorSpoke, { category?: string }> {
