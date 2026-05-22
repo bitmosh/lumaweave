@@ -49,7 +49,11 @@ v55  Graph Theme Application Contract (this — DOM wrapper)
   ↓
 v57  Graph Theme Token Value Application Contract
   ↓
-v58  Graph Theme Token Value Preview Contract (readiness diagnostic)
+v59  Graph Theme First Value Application Contract
+     (live Sigma settings update, canonical path enforcement)
+  ↓
+v60  [PLANNED] Graph Theme CSS Variable Bridge
+     (--lw-graph-* CSS variables on document root)
 ```
 
 ## Forbidden

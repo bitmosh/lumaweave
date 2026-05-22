@@ -95,7 +95,7 @@ Docs-only contract defining the adapter lifecycle, base schema, safety requireme
 Highest-leverage milestone. LumaWeave visualizing its own architecture. First demo surface. First real product screenshot.
 
 **Priority 4 — Sigma Visual Quality**
-The graph still renders in default Sigma colors. The theme contract ladder (v47–v58) is accepted but not yet producing visible custom colors. Closing this gap makes the first demo moment work.
+The graph still renders in default Sigma colors. The theme contract ladder (v49–v59) is accepted but not yet producing visible custom colors on all surfaces. v59 contracts the implementation; closing this gap makes the first demo moment work.
 
 **Priority 5 — Path Corrections**
 Three path references in SOURCE_OF_TRUTH.md and SESSION_AND_STACK.md need updating to match actual file locations. Low risk, one pass.

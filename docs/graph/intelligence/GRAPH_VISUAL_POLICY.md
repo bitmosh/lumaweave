@@ -92,6 +92,8 @@ Node clustering visual (aggregate nodes)
 Canvas post-processing (bloom, fog, depth)
 Audio-reactive node/edge styling
 Direct Sigma.setSetting() calls for visual properties
+  (EXCEPTION: v59 contract authorizes setSetting for defaultNodeColor,
+   defaultEdgeColor, labelColor, edgeLabelColor on theme change)
 ```
 
 ---
