@@ -89,7 +89,7 @@
   position: relative;
   border-radius: 1rem;
   border: 1px solid var(--lw-panel-border, var(--lw-visual-panel-border));
-  background: var(--lw-panel-bg, var(--lw-visual-panel-bg));
+  background: var(--lw-panel-background, var(--lw-visual-panel-bg));
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
@@ -97,8 +97,8 @@
 .lw-card {
   position: relative;
   border-radius: 0.875rem;
-  border: 1px solid var(--lw-card-border, var(--lw-visual-card-border));
-  background: var(--lw-card-bg, var(--lw-visual-card-bg));
+  border: 1px solid var(--lw-panel-border, var(--lw-visual-card-border));
+  background: var(--lw-panel-background, var(--lw-visual-card-bg));
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
 }

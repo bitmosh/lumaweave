@@ -382,14 +382,14 @@ export function AppShell() {
       <main 
       className="h-screen overflow-hidden text-slate-100"
       style={{
-        "--lw-app-bg": crossfadeTokens.app.background,
-        "--lw-panel-bg": crossfadeTokens.app.panelBackground,
+        "--lw-app-background": crossfadeTokens.app.background,
+        "--lw-panel-background": crossfadeTokens.app.panelBackground,
         "--lw-panel-border": topbarBorder,
         "--lw-text-primary": topbarText,
         "--lw-text-muted": crossfadeTokens.app.textMuted,
         "--lw-accent": topbarAccent,
         "--lw-visual-accent": topbarAccent,
-        "--lw-glow": crossfadeTokens.app.glow,
+        "--lw-app-glow": crossfadeTokens.app.glow,
         // Tier 1 primitive color tokens for theme-adaptive components (HexLogo, etc.)
         "--lw-color-flare-500": themePrimitives[settings.appearance.theme]?.color?.flare?.[500] ?? "#FF6B1A",
         "--lw-color-magenta-500": themePrimitives[settings.appearance.theme]?.color?.magenta?.[500] ?? "#FF1F8F",

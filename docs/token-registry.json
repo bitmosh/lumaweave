@@ -35,98 +35,53 @@
   },
   {
     "canonicalPath": "--lw-app-bg",
-    "status": "LEGACY",
+    "status": "MIGRATED",
     "tier": "LEGACY",
     "cssVar": "--lw-app-bg",
     "tsIdentifier": "none",
-    "sources": [
-      {
-        "file": "src/app/AppShell.tsx",
-        "line": 324
-      }
-    ],
-    "consumers": [
-      "src/app/AppShell.tsx"
-    ],
-    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+    "sources": [],
+    "consumers": [],
+    "notes": "Migrated to --lw-app-background in v88c (2026-05-22)"
   },
   {
     "canonicalPath": "--lw-card-bg",
-    "status": "LEGACY",
+    "status": "MIGRATED",
     "tier": "LEGACY",
     "cssVar": "--lw-card-bg",
     "tsIdentifier": "none",
-    "sources": [
-      {
-        "file": "src/styles/lumaweave-visual-handles.css",
-        "line": 101
-      }
-    ],
-    "consumers": [
-      "src/styles/lumaweave-visual-handles.css"
-    ],
-    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+    "sources": [],
+    "consumers": [],
+    "notes": "Migrated to --lw-panel-background in v88c (2026-05-22)"
   },
   {
     "canonicalPath": "--lw-card-border",
-    "status": "LEGACY",
+    "status": "MIGRATED",
     "tier": "LEGACY",
     "cssVar": "--lw-card-border",
     "tsIdentifier": "none",
-    "sources": [
-      {
-        "file": "src/styles/lumaweave-visual-handles.css",
-        "line": 100
-      }
-    ],
-    "consumers": [
-      "src/styles/lumaweave-visual-handles.css"
-    ],
-    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+    "sources": [],
+    "consumers": [],
+    "notes": "Migrated to --lw-panel-border in v88c (2026-05-22)"
   },
   {
     "canonicalPath": "--lw-glow",
-    "status": "LEGACY",
+    "status": "MIGRATED",
     "tier": "LEGACY",
     "cssVar": "--lw-glow",
     "tsIdentifier": "none",
-    "sources": [
-      {
-        "file": "src/app/AppShell.tsx",
-        "line": 331
-      }
-    ],
-    "consumers": [
-      "src/app/AppShell.tsx"
-    ],
-    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+    "sources": [],
+    "consumers": [],
+    "notes": "Migrated to --lw-app-glow in v88c (2026-05-22)"
   },
   {
     "canonicalPath": "--lw-panel-bg",
-    "status": "LEGACY",
+    "status": "MIGRATED",
     "tier": "LEGACY",
     "cssVar": "--lw-panel-bg",
     "tsIdentifier": "none",
-    "sources": [
-      {
-        "file": "src/app/AppShell.tsx",
-        "line": 325
-      },
-      {
-        "file": "src/control-plane/command-deck/CommandDeckPanel.tsx",
-        "line": 19
-      },
-      {
-        "file": "src/styles/lumaweave-visual-handles.css",
-        "line": 92
-      }
-    ],
-    "consumers": [
-      "src/app/AppShell.tsx",
-      "src/control-plane/command-deck/CommandDeckPanel.tsx",
-      "src/styles/lumaweave-visual-handles.css"
-    ],
-    "notes": "[ACTION-NEEDED] CSS custom property - needs conversion to three-tier"
+    "sources": [],
+    "consumers": [],
+    "notes": "Migrated to --lw-panel-background in v88c (2026-05-22)"
   },
   {
     "canonicalPath": "--lw-panel-border",

@@ -210,7 +210,7 @@ Manual QA:
 - `themeTokenPaths.ts` is the source of truth for the canonical/planned split. Read it before any path operation.
 - `theme-override-storage_spec.ts` is the contract spec for override persistence — preserve every assertion that doesn't directly contradict the new scope field.
 - Use `grep` aggressively for `"settings"` references when removing the Settings tab.
-- Browser DevTools for verifying token resolution at runtime: `getComputedStyle(document.documentElement).getPropertyValue('--lw-app-bg')`.
+- Browser DevTools for verifying token resolution at runtime: `getComputedStyle(document.querySelector('main[data-lw-theme-target="app.shell"]')).getPropertyValue('--lw-app-background')`. (Legacy `--lw-app-bg` removed in v88c.)
 - No external research needed — this is mechanical schema and registry work.
 
 ## L. Output Requirements

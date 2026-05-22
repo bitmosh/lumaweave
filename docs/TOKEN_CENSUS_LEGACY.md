@@ -2,15 +2,15 @@
 
 Legacy tokens (CSS custom properties + parallel system tokens).
 
+> **v88c migration (2026-05-22):** The following legacy short-form CSS variable names were
+> migrated to canonical dashed-from-token-path names:
+> `--lw-app-bg` → `--lw-app-background`, `--lw-panel-bg` → `--lw-panel-background`,
+> `--lw-glow` → `--lw-app-glow`, `--lw-card-bg` → `--lw-panel-background`,
+> `--lw-card-border` → `--lw-panel-border`. All writers and consumers updated atomically.
+
 | Token Name | Source Files | Consumer Files | System |
 |---|---|---|---|
 | --lw-accent | src/app/AppShell.tsx:329 | src/app/AppShell.tsx | CSS var |
-| --lw-app-background | src/styles/lumaweave-visual-handles.css:231 | src/styles/lumaweave-visual-handles.css | CSS var |
-| --lw-app-bg | src/app/AppShell.tsx:324 | src/app/AppShell.tsx | CSS var |
-| --lw-card-bg | src/styles/lumaweave-visual-handles.css:101 | src/styles/lumaweave-visual-handles.css | CSS var |
-| --lw-card-border | src/styles/lumaweave-visual-handles.css:100 | src/styles/lumaweave-visual-handles.css | CSS var |
-| --lw-glow | src/app/AppShell.tsx:331 | src/app/AppShell.tsx | CSS var |
-| --lw-panel-bg | src/app/AppShell.tsx:325, src/control-plane/command-deck/CommandDeckPanel.tsx:19, src/styles/lumaweave-visual-handles.css:92 | src/app/AppShell.tsx, src/control-plane/command-deck/CommandDeckPanel.tsx, src/styles/lumaweave-visual-handles.css | CSS var |
 | --lw-panel-border | src/app/AppShell.tsx:326, src/styles/lumaweave-visual-handles.css:91 | src/app/AppShell.tsx, src/styles/lumaweave-visual-handles.css | CSS var |
 | --lw-text-muted | src/app/AppShell.tsx:328, src/app/AppShell.tsx:353, src/styles/lumaweave-visual-handles.css:216, src/styles/lumaweave-visual-handles.css:217 | src/app/AppShell.tsx, src/styles/lumaweave-visual-handles.css | CSS var |
 | --lw-text-primary | src/app/AppShell.tsx:327, src/control-plane/command-deck/CommandDeckPanel.tsx:24, src/control-plane/command-deck/CommandDeckShell.tsx:31, src/control-plane/command-deck/CommandDeckShell.tsx:61, src/control-plane/command-deck/CommandDeckShell.tsx:129, src/control-plane/command-deck/CommandDeckShell.tsx:152, src/control-plane/command-deck/CommandDeckShell.tsx:195 | src/app/AppShell.tsx, src/control-plane/command-deck/CommandDeckPanel.tsx, src/control-plane/command-deck/CommandDeckShell.tsx | CSS var |
