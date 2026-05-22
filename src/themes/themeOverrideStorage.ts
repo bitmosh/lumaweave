@@ -8,6 +8,7 @@
  */
 
 import { CANONICAL_THEME_TOKEN_PATHS, type ThemeTokenPath, type ThemeTokenValue } from "./themeTokenPaths";
+import { getTargetKind } from "./themeTargetRegistry";
 
 export type { ThemeTokenValue } from "./themeTokenPaths";
 
@@ -486,6 +487,30 @@ export function resolveForTarget(
   return undefined;
 }
 
+// v89.3: Cluster scope deliberately omitted. Cluster anchor
+// is selection-derived, not per-target-static. A selection-aware
+// cluster indicator requires a "given targetId, what cluster
+// anchor currently applies" primitive that v89.2 did not ship.
+// Deferred to a future pass alongside that primitive.
+export function getAllScopeIndicatorState(targetId: string): {
+  hasGlobal: boolean;
+  hasTarget: boolean;
+  hasTargetKind: boolean;
+} {
+  const storage = loadOverrides();
+  const hasGlobal = storage.overrides.some((o) => o.scope.kind === "global");
+  const hasTarget = storage.overrides.some(
+    (o) => o.scope.kind === "target" && o.scope.targetId === targetId,
+  );
+  const targetKind = getTargetKind(targetId);
+  const hasTargetKind =
+    targetKind !== undefined &&
+    storage.overrides.some(
+      (o) => o.scope.kind === "target-kind" && o.scope.targetKind === targetKind,
+    );
+  return { hasGlobal, hasTarget, hasTargetKind };
+}
+
 // Expose storage API for testing in DEV/PLAYWRIGHT mode
 if (
   typeof window !== "undefined" &&
@@ -512,5 +537,7 @@ if (
     getClusterOverride,
     removeClusterOverride,
     getClusterOverrides,
+    // v89.3
+    getAllScopeIndicatorState,
   };
 }

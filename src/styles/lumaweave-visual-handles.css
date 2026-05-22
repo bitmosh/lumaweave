@@ -534,3 +534,15 @@ input[type="range"]:focus {
   background: #e879f9;
   box-shadow: 0 0 8px rgba(232, 121, 249, 0.7);
 }
+
+/* v89.3 multi-scope concentric SVG indicator
+   Scope colors (visual-handle constants, not theme tokens — per THEME_TOKEN_PATH_MAP.md):
+     gold  #ffb347 — target scope
+     cyan  #4facff — target-kind scope
+     cream #fff2c5 — global scope
+   Fuchsia (#ff5fae, cluster scope) deferred: see FUTURE_IDEAS_INBOX.md
+   "Selection-aware cluster indicator" */
+.lw-override-indicator-multi {
+  cursor: default;
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.5));
+}

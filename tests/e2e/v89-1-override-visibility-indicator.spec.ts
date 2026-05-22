@@ -60,10 +60,10 @@ test.describe("v89.1 Override Visibility Indicator", () => {
     // Confirm ghost outlines are visible but no indicator dots
     const ghostOutlines = page.getByTestId("theme-target-ghost-outline");
     await expect(ghostOutlines.first()).toBeVisible();
-    await expect(page.locator(".lw-override-indicator")).toHaveCount(0);
+    await expect(page.locator(".lw-override-indicator-multi")).toHaveCount(0);
   });
 
-  test("gold dot appears when target-scoped override is set", async ({ page }) => {
+  test("indicator appears when target-scoped override is set", async ({ page }) => {
     await enableInspector(page);
     await page.waitForSelector('[data-testid="theme-target-ghost-outline"]');
 
@@ -72,7 +72,7 @@ test.describe("v89.1 Override Visibility Indicator", () => {
 
     const indicator = page.getByTestId("override-indicator-app.shell");
     await expect(indicator).toBeVisible();
-    await expect(indicator).toHaveAttribute("data-scope", "target");
+    await expect(indicator).toHaveAttribute("data-active-scopes", "target");
   });
 
   test("indicator disappears when override is removed", async ({ page }) => {
@@ -88,7 +88,7 @@ test.describe("v89.1 Override Visibility Indicator", () => {
     await expect(page.locator('[data-testid="override-indicator-app.shell"]')).toHaveCount(0);
   });
 
-  test("indicator uses correct testid pattern and title attribute", async ({ page }) => {
+  test("indicator uses correct testid pattern and data-active-scopes", async ({ page }) => {
     await enableInspector(page);
     await page.waitForSelector('[data-testid="theme-target-ghost-outline"]');
 
@@ -97,7 +97,6 @@ test.describe("v89.1 Override Visibility Indicator", () => {
 
     const indicator = page.getByTestId("override-indicator-topbar.root");
     await expect(indicator).toBeVisible();
-    await expect(indicator).toHaveAttribute("title", "target scope override");
-    await expect(indicator).toHaveAttribute("data-scope", "target");
+    await expect(indicator).toHaveAttribute("data-active-scopes", "target");
   });
 });
