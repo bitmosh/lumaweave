@@ -1,14 +1,13 @@
 precision mediump float;
 
 varying vec4 v_color;
-varying vec2 v_position;
 
 uniform float u_time;
 uniform float u_glowStrength;
 
 void main() {
   vec2 center = vec2(0.5, 0.5);
-  float dist = distance(v_position, center);
+  float dist = distance(gl_PointCoord, center);
 
   // Discard well outside the outer corona
   if (dist > 0.7) discard;

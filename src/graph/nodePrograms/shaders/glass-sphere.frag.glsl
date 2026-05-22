@@ -1,7 +1,6 @@
 precision mediump float;
 
 varying vec4 v_color;
-varying vec2 v_position;
 
 uniform float u_time;
 uniform float u_hum;
@@ -9,8 +8,9 @@ uniform float u_flowSpeed;
 uniform float u_glowStrength;
 
 void main() {
+  vec2 pos = gl_PointCoord;
   vec2 center = vec2(0.5, 0.5);
-  float dist = distance(v_position, center);
+  float dist = distance(pos, center);
 
   float radius = 0.5;
   float alpha = 1.0 - smoothstep(radius - 0.02, radius, dist);
@@ -18,7 +18,7 @@ void main() {
   if (alpha < 0.01) discard;
 
   vec3 lightDir = normalize(vec3(-1.0, -1.0, 1.0));
-  vec3 normal = normalize(vec3(v_position - center, 1.0));
+  vec3 normal = normalize(vec3(pos - center, 1.0));
   vec3 viewDir = vec3(0.0, 0.0, 1.0);
   vec3 halfDir = normalize(lightDir + viewDir);
   float specular = pow(max(dot(normal, halfDir), 0.0), 32.0);
@@ -28,8 +28,8 @@ void main() {
 
   float angle = u_time * u_flowSpeed;
   vec2 flowed = vec2(
-    cos(angle) * (v_position.x - 0.5) - sin(angle) * (v_position.y - 0.5),
-    sin(angle) * (v_position.x - 0.5) + cos(angle) * (v_position.y - 0.5)
+    cos(angle) * (pos.x - 0.5) - sin(angle) * (pos.y - 0.5),
+    sin(angle) * (pos.x - 0.5) + cos(angle) * (pos.y - 0.5)
   );
   float flowMask = smoothstep(0.05, 0.0, abs(flowed.x * 1.4));
   vec3 flowTint = v_color.rgb * flowMask * 0.45;

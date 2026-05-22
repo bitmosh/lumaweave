@@ -206,6 +206,8 @@ Items here are promoted to the roadmap only when:
 
 - **QA KEY AUTO-INCREMENT** — QA key should auto-increment on every accepted pass without requiring manual rotation. Passes without submitted reports: accepted-unverified (already in docs — needs code implementation). The qa-registry.ts CURRENT_QA_KEY constant and all five bundle files should update automatically as part of the commit acceptance workflow. Consider: a script that reads the last qaKey, increments it, and updates all five files atomically. Priority: medium — reduces manual rotation overhead.
 
+- **Playwright suite should fail on console page errors (especially WebGL link failures)** — During v90a, a WebGL shader link error ("loadProgram: error while linking the program: FRAGMENT varying v_position does not match any VERTEX varying") fired on every render and caused Sigma to never initialize, breaking 69 E2E tests. The suite still reported "0 failed" because no test asserted on console error counts — the 69 tests timed out or failed on missing selectors rather than on the underlying cause. Options: (a) global Playwright hook that fails any test where page errors fired (may be too aggressive — some pre-existing benign warnings exist); (b) targeted hook that fails on WebGL link/compile errors specifically; (c) standalone smoke test that asserts the console has no PAGEERROR entries after initial load. Lightest-touch option that catches this class of bug is probably (c). Filed v90a.
+
 ---
 
 ## Source Adapters
