@@ -503,3 +503,34 @@ input[type="range"]:focus {
   background: var(--lw-visual-accent, rgba(34,211,238,0.9));
   opacity: 0.6;
 }
+
+/* ========================================
+   Override Indicator Dot (v89.1)
+   Rendered inside ghost outlines in ThemeTargetInspectorOverlay.
+   data-scope="target-kind" and "cluster" selectors are ready
+   for v89.3 but won't match anything until those scope runtimes exist.
+   ======================================== */
+
+.lw-override-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+  cursor: default;
+}
+
+.lw-override-indicator[data-scope="target"] {
+  background: var(--lw-accent, #FFB347);
+  box-shadow: 0 0 8px rgba(255, 179, 71, 0.7);
+}
+
+.lw-override-indicator[data-scope="target-kind"] {
+  background: #22d3ee;
+  box-shadow: 0 0 8px rgba(34, 211, 238, 0.7);
+}
+
+.lw-override-indicator[data-scope="cluster"] {
+  background: #e879f9;
+  box-shadow: 0 0 8px rgba(232, 121, 249, 0.7);
+}

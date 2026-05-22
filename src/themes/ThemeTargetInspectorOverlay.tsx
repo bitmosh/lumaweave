@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { getThemeTargetById } from "./themeTargetRegistry";
+import { getTargetOverrides } from "./themeOverrideStorage";
 import {
   installThemeTargetProbeGlobal,
   runAndRecordThemeTargetProbe,
@@ -339,6 +340,9 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
     window.addEventListener("resize", handleResizeOrScroll);
     window.addEventListener("scroll", handleResizeOrScroll, true);
 
+    // Poll at 500ms so override indicator state stays fresh when localStorage changes
+    const overridePollInterval = setInterval(scheduleGhostOutlineUpdate, 500);
+
     const mutationObserver = typeof MutationObserver !== "undefined"
       ? new MutationObserver((mutations) => {
           if (!mutations.length) {
@@ -380,6 +384,7 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("resize", handleResizeOrScroll);
       window.removeEventListener("scroll", handleResizeOrScroll, true);
+      clearInterval(overridePollInterval);
       if (mutationObserver) {
         mutationObserver.disconnect();
       }
@@ -536,43 +541,60 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
               pointerEvents: "none",
             }}
           >
-            {ghostOutlines.map((outline, index) => (
-              <div
-                key={`${outline.themeTargetId}-${index}`}
-                data-testid="theme-target-ghost-outline"
-                style={{
-                  position: "absolute",
-                  top: `${outline.top}px`,
-                  left: `${outline.left}px`,
-                  width: `${outline.width}px`,
-                  height: `${outline.height}px`,
-                  border: "1.5px dashed rgba(14, 165, 233, 0.85)",
-                  boxShadow: "0 0 18px rgba(14, 165, 233, 0.35)",
-                  borderRadius: "12px",
-                  background: "rgba(14, 165, 233, 0.07)",
-                }}
-              >
-                <span
+            {ghostOutlines.map((outline, index) => {
+              const hasTargetOverride = getTargetOverrides(outline.themeTargetId).length > 0;
+              return (
+                <div
+                  key={`${outline.themeTargetId}-${index}`}
+                  data-testid="theme-target-ghost-outline"
                   style={{
                     position: "absolute",
-                    top: "-1.5rem",
-                    left: 0,
-                    padding: "0.2rem 0.5rem",
-                    borderRadius: "9999px",
-                    fontSize: "0.65rem",
-                    fontWeight: 600,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                    backgroundColor: "rgba(15, 23, 42, 0.85)",
-                    color: "rgba(226, 232, 240, 0.9)",
-                    border: "1px solid rgba(14, 165, 233, 0.4)",
-                    pointerEvents: "none",
+                    top: `${outline.top}px`,
+                    left: `${outline.left}px`,
+                    width: `${outline.width}px`,
+                    height: `${outline.height}px`,
+                    border: "1.5px dashed rgba(14, 165, 233, 0.85)",
+                    boxShadow: "0 0 18px rgba(14, 165, 233, 0.35)",
+                    borderRadius: "12px",
+                    background: "rgba(14, 165, 233, 0.07)",
                   }}
                 >
-                  {outline.themeTargetId}
-                </span>
-              </div>
-            ))}
+                  <span
+                    style={{
+                      position: "absolute",
+                      top: "-1.5rem",
+                      left: 0,
+                      padding: "0.2rem 0.5rem",
+                      borderRadius: "9999px",
+                      fontSize: "0.65rem",
+                      fontWeight: 600,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                      backgroundColor: "rgba(15, 23, 42, 0.85)",
+                      color: "rgba(226, 232, 240, 0.9)",
+                      border: "1px solid rgba(14, 165, 233, 0.4)",
+                      pointerEvents: "none",
+                    }}
+                  >
+                    {outline.themeTargetId}
+                  </span>
+                  {hasTargetOverride && (
+                    <div
+                      className="lw-override-indicator"
+                      data-scope="target"
+                      data-testid={`override-indicator-${outline.themeTargetId}`}
+                      title="target scope override"
+                      style={{
+                        position: "absolute",
+                        top: "6px",
+                        right: "6px",
+                        pointerEvents: "auto",
+                      }}
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
 

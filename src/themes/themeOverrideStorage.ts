@@ -366,6 +366,7 @@ if (
     getTargetOverride,
     removeTargetOverride,
     getTargetOverrides,
+    resetAllOverrides,
     resolveForTarget,
     loadOverrides,
     saveOverrides,
