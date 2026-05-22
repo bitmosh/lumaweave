@@ -8,7 +8,7 @@ export function registerApplySpoke(): void {
     label: "Apply",
     category: "appearance",
     enabled: true,
-    order: 1,
+    order: 6,
     icon: "🎯",
     color: "inspector.radial.spokeColor",
     tabComponent: ApplyTab,

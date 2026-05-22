@@ -8,7 +8,7 @@ export function registerHistorySpoke(): void {
     label: "History",
     category: "appearance",
     enabled: true,
-    order: 3,
+    order: 8,
     icon: "🕐",
     color: "inspector.radial.spokeColor",
     tabComponent: HistoryTab,
