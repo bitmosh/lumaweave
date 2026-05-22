@@ -194,6 +194,14 @@ export function getThemeTargetById(themeTargetId: string): ThemeTargetContract |
   return themeTargetMap.get(themeTargetId);
 }
 
+/**
+ * Returns the kind for a target, used as targetKind in resolveForTarget.
+ * v89.2: kind = surface field. More granular kinds can be added later.
+ */
+export function getTargetKind(themeTargetId: string): string | undefined {
+  return themeTargetMap.get(themeTargetId)?.surface;
+}
+
 export function getActiveThemeTargets(): ThemeTargetContract[] {
   return THEME_TARGETS.filter((target) => target.status === "active");
 }

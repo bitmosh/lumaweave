@@ -232,6 +232,139 @@ export function exportGlobalThemeOverrideBundle(): ThemeOverrideBundle {
   };
 }
 
+// --- Target-kind-scoped overrides (v89.2) ---
+
+/**
+ * Set a target-kind-scoped override.
+ * `targetKind` is the target's surface field (panel, topbar, shell, etc.).
+ * All targets with matching surface resolve through this override unless
+ * they have a more specific target-scope override.
+ */
+export function setTargetKindOverride(
+  targetKind: string,
+  tokenPath: ThemeTokenPath,
+  value: ThemeTokenValue,
+): void {
+  const pathValidation = validateTokenPath(tokenPath);
+  if (!pathValidation.isValid) {
+    throw new Error(pathValidation.error);
+  }
+  const valueValidation = validateTokenValue(value);
+  if (!valueValidation.isValid) {
+    throw new Error(valueValidation.error);
+  }
+
+  const storage = loadOverrides();
+  const existingIndex = storage.overrides.findIndex(
+    (o) => o.scope.kind === "target-kind" && o.scope.targetKind === targetKind && o.tokenPath === tokenPath,
+  );
+  if (existingIndex >= 0) {
+    storage.overrides.splice(existingIndex, 1);
+  }
+  storage.overrides.push({
+    tokenPath,
+    value,
+    timestamp: Date.now(),
+    scope: { kind: "target-kind", targetKind },
+  });
+  saveOverrides(storage);
+}
+
+export function getTargetKindOverride(
+  targetKind: string,
+  tokenPath: ThemeTokenPath,
+): ThemeTokenValue | undefined {
+  const storage = loadOverrides();
+  const override = storage.overrides.find(
+    (o) => o.scope.kind === "target-kind" && o.scope.targetKind === targetKind && o.tokenPath === tokenPath,
+  );
+  return override?.value;
+}
+
+export function removeTargetKindOverride(targetKind: string, tokenPath: ThemeTokenPath): void {
+  const storage = loadOverrides();
+  const filtered = storage.overrides.filter(
+    (o) => !(o.scope.kind === "target-kind" && o.scope.targetKind === targetKind && o.tokenPath === tokenPath),
+  );
+  if (filtered.length !== storage.overrides.length) {
+    storage.overrides = filtered;
+    saveOverrides(storage);
+  }
+}
+
+export function getTargetKindOverrides(targetKind: string): ThemeOverride[] {
+  const storage = loadOverrides();
+  return storage.overrides.filter(
+    (o) => o.scope.kind === "target-kind" && o.scope.targetKind === targetKind,
+  );
+}
+
+// --- Cluster-scoped overrides (v89.2) ---
+
+/**
+ * Set a cluster-scoped override.
+ * `clusterAnchor` is a target id or node id whose neighborhood defines the cluster.
+ * For non-graph targets, cluster scope may not be meaningful at resolution time.
+ */
+export function setClusterOverride(
+  clusterAnchor: string,
+  tokenPath: ThemeTokenPath,
+  value: ThemeTokenValue,
+): void {
+  const pathValidation = validateTokenPath(tokenPath);
+  if (!pathValidation.isValid) {
+    throw new Error(pathValidation.error);
+  }
+  const valueValidation = validateTokenValue(value);
+  if (!valueValidation.isValid) {
+    throw new Error(valueValidation.error);
+  }
+
+  const storage = loadOverrides();
+  const existingIndex = storage.overrides.findIndex(
+    (o) => o.scope.kind === "cluster" && o.scope.clusterAnchor === clusterAnchor && o.tokenPath === tokenPath,
+  );
+  if (existingIndex >= 0) {
+    storage.overrides.splice(existingIndex, 1);
+  }
+  storage.overrides.push({
+    tokenPath,
+    value,
+    timestamp: Date.now(),
+    scope: { kind: "cluster", clusterAnchor },
+  });
+  saveOverrides(storage);
+}
+
+export function getClusterOverride(
+  clusterAnchor: string,
+  tokenPath: ThemeTokenPath,
+): ThemeTokenValue | undefined {
+  const storage = loadOverrides();
+  const override = storage.overrides.find(
+    (o) => o.scope.kind === "cluster" && o.scope.clusterAnchor === clusterAnchor && o.tokenPath === tokenPath,
+  );
+  return override?.value;
+}
+
+export function removeClusterOverride(clusterAnchor: string, tokenPath: ThemeTokenPath): void {
+  const storage = loadOverrides();
+  const filtered = storage.overrides.filter(
+    (o) => !(o.scope.kind === "cluster" && o.scope.clusterAnchor === clusterAnchor && o.tokenPath === tokenPath),
+  );
+  if (filtered.length !== storage.overrides.length) {
+    storage.overrides = filtered;
+    saveOverrides(storage);
+  }
+}
+
+export function getClusterOverrides(clusterAnchor: string): ThemeOverride[] {
+  const storage = loadOverrides();
+  return storage.overrides.filter(
+    (o) => o.scope.kind === "cluster" && o.scope.clusterAnchor === clusterAnchor,
+  );
+}
+
 // --- Target-scoped overrides (v86d.1) ---
 
 /**
@@ -370,5 +503,14 @@ if (
     resolveForTarget,
     loadOverrides,
     saveOverrides,
+    // v89.2
+    setTargetKindOverride,
+    getTargetKindOverride,
+    removeTargetKindOverride,
+    getTargetKindOverrides,
+    setClusterOverride,
+    getClusterOverride,
+    removeClusterOverride,
+    getClusterOverrides,
   };
 }
