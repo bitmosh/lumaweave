@@ -116,6 +116,7 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
   const [graphViewportOffsets, setGraphViewportOffsets] = useState<GraphViewportOffsets | null>(null);
   const [ghostOutlines, setGhostOutlines] = useState<GhostOutline[]>([]);
   const [warningBadges, setWarningBadges] = useState<WarningBadge[]>([]);
+  const [overrideVersion, setOverrideVersion] = useState(0);
 
   // Sync hoverEntityRef with hoverEntity state (for pin handler to read latest value)
   useEffect(() => {
@@ -341,7 +342,10 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
     window.addEventListener("scroll", handleResizeOrScroll, true);
 
     // Poll at 500ms so override indicator state stays fresh when localStorage changes
-    const overridePollInterval = setInterval(scheduleGhostOutlineUpdate, 500);
+    const overridePollInterval = setInterval(() => {
+      scheduleGhostOutlineUpdate();
+      setOverrideVersion((v) => v + 1);
+    }, 500);
 
     const mutationObserver = typeof MutationObserver !== "undefined"
       ? new MutationObserver((mutations) => {
@@ -542,7 +546,7 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
             }}
           >
             {ghostOutlines.map((outline, index) => {
-              const hasTargetOverride = getTargetOverrides(outline.themeTargetId).length > 0;
+              const hasTargetOverride = overrideVersion >= 0 && getTargetOverrides(outline.themeTargetId).length > 0;
               return (
                 <div
                   key={`${outline.themeTargetId}-${index}`}
