@@ -167,6 +167,8 @@ export interface ThemeRuntimeTokens {
     sphereHumDuration: number;
     sphereFlowDuration: number;
     sphereGlowStrength: number;
+    /** v90a: default node geometry program ID. Absent = "glass-sphere". */
+    geometryPreset?: string;
   };
   edge: {
     stylePreset: string;

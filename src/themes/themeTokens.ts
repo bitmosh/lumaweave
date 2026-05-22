@@ -71,6 +71,7 @@ export const solarPlasmaTokens: ThemeRuntimeTokens = {
     sphereHumDuration: 4.86,
     sphereFlowDuration: 4.73,
     sphereGlowStrength: 1.0,
+    geometryPreset: "sun",
   },
   edge: {
     stylePreset: "plasma",
@@ -166,6 +167,7 @@ export const obsidianAuroraTokens: ThemeRuntimeTokens = {
     sphereHumDuration: 5.4,
     sphereFlowDuration: 5.0,
     sphereGlowStrength: 0.85,
+    geometryPreset: "glass-sphere",
   },
   edge: {
     stylePreset: "wire",
@@ -261,6 +263,7 @@ export const midnightLoomTokens: ThemeRuntimeTokens = {
     sphereHumDuration: 4.5,
     sphereFlowDuration: 4.2,
     sphereGlowStrength: 0.75,
+    geometryPreset: "glass-sphere",
   },
   edge: {
     stylePreset: "ribbon",
@@ -356,6 +359,7 @@ export const voidCircuitTokens: ThemeRuntimeTokens = {
     sphereHumDuration: 3.5,
     sphereFlowDuration: 3.2,
     sphereGlowStrength: 1.2,
+    geometryPreset: "glass-sphere",
   },
   edge: {
     stylePreset: "plasma",
@@ -451,6 +455,7 @@ export const agarthaDreamTokens: ThemeRuntimeTokens = {
     sphereHumDuration: 6.0,
     sphereFlowDuration: 5.5,
     sphereGlowStrength: 0.4, // matches glowIntensity: 0.4
+    geometryPreset: "glass-sphere",
   },
   edge: {
     stylePreset: "ribbon",
@@ -546,6 +551,7 @@ export const agarthaDuskTokens: ThemeRuntimeTokens = {
     sphereHumDuration: 5.0,
     sphereFlowDuration: 4.8,
     sphereGlowStrength: 0.6,
+    geometryPreset: "glass-sphere",
   },
   edge: {
     stylePreset: "ribbon",

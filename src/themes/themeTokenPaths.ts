@@ -51,7 +51,13 @@ export type ThemeTokenPath =
   | "inspector.radial.haloColor"
   | "typography.font.display"
   | "typography.font.body"
-  | "typography.font.mono";
+  | "typography.font.mono"
+  // v90a graph-visual node attribute — NOT a theme target binding.
+  // Governs default node geometry program per theme.
+  // Exempt from PLANNED → active promotion governance per v90a special-case
+  // acknowledgment: this is a graphology entity attribute resolved via the
+  // graph-visual pipeline, not bound to any ThemeTarget.
+  | "node.geometry.preset";
 
 export type PlannedThemeTokenPath =
   | "app.surface"
@@ -116,9 +122,19 @@ const V86A_PROMOTED_PATHS: readonly ThemeTokenPath[] = [
   "typography.font.mono",
 ] as const;
 
+// v90a: graph-visual canonical paths (special-case, see ThemeTokenPath comment above).
+// These govern graphology entity attributes in the graph-visual pipeline.
+// They are canonical (override storage accepts them) but NOT theme target bindings.
+// Exempt from the PLANNED → active promotion requirement because themes use a
+// sensible default ("glass-sphere") when the field is absent.
+const V90A_GRAPH_VISUAL_PATHS: readonly ThemeTokenPath[] = [
+  "node.geometry.preset",
+] as const;
+
 export const CANONICAL_THEME_TOKEN_PATHS: readonly ThemeTokenPath[] = [
   ...EXISTING_CANONICAL_PATHS,
   ...V86A_PROMOTED_PATHS,
+  ...V90A_GRAPH_VISUAL_PATHS,
 ] as const;
 
 export const PLANNED_THEME_TOKEN_PATHS: readonly PlannedThemeTokenPath[] = [
@@ -144,6 +160,14 @@ export const PROMOTION_HISTORY = [
     promotedAt: "2026-05-08",
     paths: V86A_PROMOTED_PATHS,
     reason: "All six themes populated values; ready for binding.",
+  },
+  {
+    pass: "v90a",
+    promotedAt: "2026-05-22",
+    paths: V90A_GRAPH_VISUAL_PATHS,
+    reason:
+      "Graph-visual node attribute path. Special-case: exempt from PLANNED staging. " +
+      "Themes use 'glass-sphere' default when absent; governance passes without explicit declaration.",
   },
 ] as const;
 
@@ -235,6 +259,10 @@ export function resolveThemeTokenPath(tokens: ThemeRuntimeTokens, path: ThemeTok
       return tokens.typography?.fontBody ?? "";
     case "typography.font.mono":
       return tokens.typography?.fontMono ?? "";
+    // v90a graph-visual path — returns "glass-sphere" default when theme omits the field.
+    // This ensures governance check passes without requiring all themes to declare it.
+    case "node.geometry.preset":
+      return tokens.node?.geometryPreset ?? "glass-sphere";
     default:
       return "";
   }

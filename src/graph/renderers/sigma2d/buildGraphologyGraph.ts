@@ -18,6 +18,9 @@ import { graphVisualTokens } from "../../visual/graphVisualTokens";
 import { computeNodeSize, computeAggregateSize } from "../../../physics/gwells/seederHelpers";
 import { colorSuggestionEngine } from "../../../themes/colorSuggestionEngine";
 import type { ThemeId } from "../../../control-plane/settings/settings.schema";
+import { getThemeRuntimeTokens } from "../../../themes/themeTokens";
+import { resolveThemeTokenPath } from "../../../themes/themeTokenPaths";
+import { resolveNodeProgramId } from "../../nodePrograms/nodeProgramRegistry";
 
 export interface LayoutSettings {
   nodeSize: number;
@@ -56,6 +59,12 @@ export function buildGraphologyGraph(
 
   const baseSize = 10;
 
+  // v90a: Resolve default node geometry program from theme token.
+  const themeTokens = getThemeRuntimeTokens(settings.themeId ?? "solar-plasma");
+  const defaultNodeType = resolveNodeProgramId(
+    resolveThemeTokenPath(themeTokens, "node.geometry.preset") as string | undefined
+  );
+
   nodes.forEach((node) => {
     try {
       // Start at origin — seeder will set deterministic positions
@@ -71,10 +80,11 @@ export function buildGraphologyGraph(
         label: node.label,
         fullLabel: node.label,
         originalLabel: node.label,
-        rawSize: rawSize,  // Pass C8.3: preserve for aggregation
-        size: visualSize * settings.nodeSize,  // Pass C8.3: content-driven sizing
-        baseSize: visualSize,  // Pass C8.3: baseSize is now visual size, not raw size
+        rawSize: rawSize,
+        size: visualSize * settings.nodeSize,
+        baseSize: visualSize,
         color: (node.raw?.color as string) ?? graphVisualTokens.nodeColor.default,
+        type: defaultNodeType,
         nodeType: node.type || "unknown",
         raw: node.raw,
       });

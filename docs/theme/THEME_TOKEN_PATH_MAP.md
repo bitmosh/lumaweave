@@ -157,6 +157,32 @@ Future promotion entries get appended to `PROMOTION_HISTORY` array in `themeToke
 
 ---
 
+## Graph-visual canonical paths (v90a)
+
+These paths govern graphology entity attributes in the graph-visual pipeline. They are
+**not theme target bindings** — no `ThemeTarget` binds to them, and they are not
+resolved through CSS variables. They are authored directly via the override storage
+(`setTargetOverride` / `setGlobalOverride`) using `node.geometry.preset` as the token
+path, and resolved at graph-build time in `buildGraphologyGraph`.
+
+These paths are exempt from the PLANNED → active promotion requirement. Themes default
+to a sensible fallback value when the field is absent; governance passes without
+explicit declaration. This exemption is acknowledged in the `V90A_GRAPH_VISUAL_PATHS`
+comment in `themeTokenPaths.ts`.
+
+| Path | Default | Purpose |
+|------|---------|---------|
+| `node.geometry.preset` | `"glass-sphere"` | Per-theme default node geometry program ID (sun / glass-sphere / crystal / orb / pip) |
+
+Themes that want a non-default geometry declare `node.geometryPreset` in their
+`ThemeRuntimeTokens.node` block. Solar Plasma declares `"sun"`. All other themes
+omit it (resolved as `"glass-sphere"`).
+
+Per-node overrides use the same path via override storage.
+Resolution priority: target override > theme default > `"glass-sphere"` built-in fallback.
+
+---
+
 ## Validation
 
 Two governance functions operate on token paths:

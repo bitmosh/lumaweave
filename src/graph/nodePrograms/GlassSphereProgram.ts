@@ -1,66 +1,43 @@
 import { NodeCircleProgram } from "sigma/rendering";
 import type { Attributes } from "graphology-types";
 
-/**
- * NodeSphereProgram - Custom node renderer that creates a glowing sphere illusion
- *
- * v86b: Extended with 3 new uniforms for interior flow animation:
- * - u_time: driven by rAF in SigmaGraphView
- * - u_hum: appearance.nodeHum (0–2) - radial breathe
- * - u_flowSpeed: appearance.nodeFlowSpeed (0–2) - interior rotating ellipse
- * - u_glowStrength: appearance.nodeGlow (0.2–2) - glow scaling
- *
- * Extends NodeCircleProgram and overrides the fragment shader to add:
- * - Radial alpha mask (circle shape)
- * - Phong specular highlight at fixed angle
- * - Radial glow falloff beyond the circle edge
- * - Inner rim light at bottom-right edge
- * - Hum: radial breathe animation
- * - Flow: interior rotating ellipse animation
- *
- * Uses the parent's vertex shader which provides correct quad-space coordinates.
- * The parent emits v_position in (0,0) to (1,1) quad space, which is the contract
- * the fragment shader was written against.
- *
- * This produces a glowing sphere illusion from flat WebGL quads
- * with the same performance as circles.
- */
-const SPHERE_FRAGMENT_SHADER = `
+// v90a: Renamed from NodeSphereProgram (v86b). Now registered in nodeProgramClasses
+// as "glass-sphere" type. Wired into the active renderer for the first time in v90a.
+//
+// Reads animation uniforms from (this.renderer as any).__uniformsRef?.current.
+// SigmaGraphView attaches this ref to the Sigma instance after construction.
+// Uniform location caching is intentionally avoided — caching across calls causes
+// "UniformLocation is not from the current active Program" errors.
+
+const FRAGMENT_SHADER_SOURCE = `
 precision mediump float;
 
 varying vec4 v_color;
 varying vec2 v_position;
 
-// NEW v86b uniforms
 uniform float u_time;
 uniform float u_hum;
 uniform float u_flowSpeed;
 uniform float u_glowStrength;
 
 void main() {
-  // Distance from center (0,0 to 1,1 quad)
   vec2 center = vec2(0.5, 0.5);
   float dist = distance(v_position, center);
-  
-  // Radial alpha mask - circle shape
+
   float radius = 0.5;
   float alpha = 1.0 - smoothstep(radius - 0.02, radius, dist);
-  
-  // Discard pixels outside circle
+
   if (alpha < 0.01) discard;
-  
-  // Phong specular highlight at fixed angle (top-left light source)
+
   vec3 lightDir = normalize(vec3(-1.0, -1.0, 1.0));
   vec3 normal = normalize(vec3(v_position - center, 1.0));
   vec3 viewDir = vec3(0.0, 0.0, 1.0);
   vec3 halfDir = normalize(lightDir + viewDir);
   float specular = pow(max(dot(normal, halfDir), 0.0), 32.0);
-  
-  // NEW v86b: hum — radial breathe
+
   float humPulse = 0.5 + 0.5 * sin(u_time * u_hum);
   vec3 humTint = v_color.rgb * (0.20 * humPulse);
-  
-  // NEW v86b: flow — interior rotating ellipse
+
   float angle = u_time * u_flowSpeed;
   vec2 flowed = vec2(
     cos(angle) * (v_position.x - 0.5) - sin(angle) * (v_position.y - 0.5),
@@ -68,71 +45,42 @@ void main() {
   );
   float flowMask = smoothstep(0.05, 0.0, abs(flowed.x * 1.4));
   vec3 flowTint = v_color.rgb * flowMask * 0.45;
-  
-  // Radial glow falloff beyond circle edge (now scaled by u_glowStrength)
+
   float glow = smoothstep(radius, radius + 0.15, dist);
   vec3 glowColor = v_color.rgb * u_glowStrength * glow;
-  
-  // Inner rim light at bottom-right edge
+
   vec2 rimDir = normalize(vec2(1.0, 1.0));
   float rim = max(dot(normal, vec3(rimDir, 0.0)), 0.0);
   float rimLight = pow(rim, 3.0) * 0.3;
-  
-  // Combine effects
+
   vec3 finalColor = v_color.rgb + glowColor + vec3(specular) + vec3(rimLight)
                   + humTint + flowTint;
   gl_FragColor = vec4(finalColor, v_color.a * alpha);
 }
 `;
 
-export default class NodeSphereProgram<
+export default class GlassSphereProgram<
   N extends Attributes = Attributes,
   E extends Attributes = Attributes,
   G extends Attributes = Attributes
 > extends NodeCircleProgram<N, E, G> {
-  private uniformValues: {
-    u_time: number;
-    u_hum: number;
-    u_flowSpeed: number;
-    u_glowStrength: number;
-  } = {
-    u_time: 0,
-    u_hum: 0.7,
-    u_flowSpeed: 0.55,
-    u_glowStrength: 1.0,
-  };
-
-  setUniform(name: string, value: number): void {
-    if (name in this.uniformValues) {
-      (this.uniformValues as any)[name] = value;
-    }
-  }
-
-  // v86b: Override setUniforms to set GL uniforms per frame.
-  // Uniform locations MUST be fetched per call — they are tied to
-  // the specific shader program currently bound. Caching them
-  // across calls causes "UniformLocation is not from the current
-  // active Program" errors and eventual context loss.
   setUniforms(params: any, programInfo: any): void {
     super.setUniforms(params, programInfo);
 
     const { gl, program } = programInfo;
 
-    // Fetch fresh uniform locations every call
     const uTime = gl.getUniformLocation(program, "u_time");
     const uHum = gl.getUniformLocation(program, "u_hum");
     const uFlowSpeed = gl.getUniformLocation(program, "u_flowSpeed");
     const uGlowStrength = gl.getUniformLocation(program, "u_glowStrength");
 
-    // Read uniforms from ref (replaces previous getSetting path)
     const uniforms = (this.renderer as any).__uniformsRef?.current ?? {
       time: 0,
-      hum: this.uniformValues.u_hum,
-      flowSpeed: this.uniformValues.u_flowSpeed,
-      glowStrength: this.uniformValues.u_glowStrength,
+      hum: 0.7,
+      flowSpeed: 0.55,
+      glowStrength: 1.0,
     };
 
-    // Only set if location exists in current program
     if (uTime !== null) gl.uniform1f(uTime, uniforms.time);
     if (uHum !== null) gl.uniform1f(uHum, uniforms.hum);
     if (uFlowSpeed !== null) gl.uniform1f(uFlowSpeed, uniforms.flowSpeed);
@@ -143,7 +91,7 @@ export default class NodeSphereProgram<
     const definition = super.getDefinition();
     return {
       ...definition,
-      FRAGMENT_SHADER_SOURCE: SPHERE_FRAGMENT_SHADER,
+      FRAGMENT_SHADER_SOURCE,
     };
   }
 }
