@@ -16,10 +16,13 @@ import type {
 } from "../../schema/graph.types";
 import { graphVisualTokens } from "../../visual/graphVisualTokens";
 import { computeNodeSize, computeAggregateSize } from "../../../physics/gwells/seederHelpers";
+import { colorSuggestionEngine } from "../../../themes/colorSuggestionEngine";
+import type { ThemeId } from "../../../control-plane/settings/settings.schema";
 
 export interface LayoutSettings {
   nodeSize: number;
-  nodeColorScale?: string[]; // theme-driven
+  nodeColorScale?: string[]; // legacy fallback
+  themeId?: ThemeId;
 }
 
 export interface GraphBuildResult {
@@ -165,30 +168,39 @@ export function buildGraphologyGraph(
   //   }
   // });
 
-  // Apply theme-driven color scale by centrality rank
-  if (settings.nodeColorScale &&
-      settings.nodeColorScale.length > 0) {
+  // Apply color suggestion engine picks per node
+  if (settings.themeId) {
+    graph.forEachNode((nodeId) => {
+      const color = colorSuggestionEngine.pick("node-primary", {
+        contextKey: nodeId,
+        themeId: settings.themeId!,
+        neighbors: [],
+      });
+      graph.setNodeAttribute(nodeId, "color", color);
+      // Update raw.color so resetGraphStyles preserves it
+      const attrs = graph.getNodeAttributes(nodeId);
+      graph.setNodeAttribute(nodeId, "raw", {
+        ...(attrs.raw as object ?? {}),
+        color,
+      });
+      // When node deletion lands, call colorSuggestionEngine.release(nodeId) here.
+    });
+  } else if (settings.nodeColorScale && settings.nodeColorScale.length > 0) {
+    // Legacy fallback: centrality-ranked color scale (used when themeId not provided)
     const scale = settings.nodeColorScale;
     const scaleLen = scale.length;
-
-    // Sort nodes by centrality score
     const sortedNodes = graph.nodes().sort((a, b) => {
       const ca = (centralityScores[a] ?? 0) as number;
       const cb = (centralityScores[b] ?? 0) as number;
-      return ca - cb; // ascending: low → high
+      return ca - cb;
     });
-
     sortedNodes.forEach((nodeId, rank) => {
       const scaleIndex = Math.min(
-        Math.floor(
-          (rank / Math.max(sortedNodes.length - 1, 1))
-          * scaleLen
-        ),
+        Math.floor((rank / Math.max(sortedNodes.length - 1, 1)) * scaleLen),
         scaleLen - 1
       );
       const color = scale[scaleIndex];
       graph.setNodeAttribute(nodeId, "color", color);
-      // Update raw.color so resetGraphStyles preserves it
       const attrs = graph.getNodeAttributes(nodeId);
       graph.setNodeAttribute(nodeId, "raw", {
         ...(attrs.raw as object ?? {}),

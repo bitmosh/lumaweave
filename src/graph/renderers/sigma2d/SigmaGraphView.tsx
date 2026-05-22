@@ -39,6 +39,7 @@ import { attachCameraController } from "../../overlay/cameraController";
 import { NodeCircleProgram } from "sigma/rendering";
 import { applyDialect, type GWController } from "../../../physics/gwells";
 import { installGwellsProbeGlobal } from "./gwellsProbe";
+import { useSettingsStore } from "../../../control-plane/settings/settings.store";
 
 // Pass C9.1: Module-level helper for resolving drag scope
 function resolveDragSet(
@@ -324,10 +325,16 @@ function SigmaGraphViewComponent({
 
     // Debounce only the graph rebuild
     debounceRef.current = setTimeout(() => {
-      const { graph, diagnostics } = buildGraphologyGraph(nodes, edges, settings);
+      const themeId = useSettingsStore.getState().settings.appearance.theme;
+      const { graph, diagnostics } = buildGraphologyGraph(nodes, edges, { ...settings, themeId });
 
       // Store graph for gwells controller updates
       graphRef.current = graph;
+
+      // Expose the rendering graph as a dev probe for tests
+      if (typeof window !== "undefined" && (import.meta.env.DEV || (window as any).PLAYWRIGHT)) {
+        (window as any).__lwGraphologyGraph = graph;
+      }
 
       // Clear solar orbit attributes on rebuild
       graph.forEachNode((nodeId) => {
