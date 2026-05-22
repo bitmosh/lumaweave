@@ -18,6 +18,7 @@ references:
   - link.network.layer.3
   - graph.theme.application.contract
   - graph.theme.runtime.application.contract
+  - contract.graph.theme.first.value.application
   - graph.visual.theme.mapping.contract
 tags:
   - theme
@@ -202,7 +203,7 @@ settingsKey       persisted state path for controls
 - Tier source files (Tier 1/2/3 declarations) — see `tokenPrimitives.ts`, `tokenSemantics.ts`, `tokenComponents.ts`
 - Cross-system invariants — see [Theme Token Compatibility](theme.token.compatibility)
 - Graph element-to-token mapping — see [Layer 3: Graph Visual Theme Mapping](link.network.layer.3) and [Graph Visual Theme Mapping Contract](graph.visual.theme.mapping.contract)
-- Runtime application of token values — see [Graph Theme Application Contract](graph.theme.application.contract)
+- Runtime application of token values — see [Graph Theme Application Contract](graph.theme.application.contract) and [Graph Theme First Value Application Contract](contract.graph.theme.first.value.application)
 
 ---
 
