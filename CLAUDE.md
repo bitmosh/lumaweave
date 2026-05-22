@@ -445,6 +445,38 @@ pass" or "auto-approve everything for this session." When they do,
 override the defaults for that session only. Default restrictions
 resume at the next session.
 
+## Wait Cadences
+
+Two distinct wait patterns. They apply at different moments and are
+not substitutes for each other.
+
+### Approval gate waits (formal)
+
+Trigger: any post to #approve-this.
+
+Pattern: 35s Monitor loop + immediate `fetch_messages` (limit=15) right
+after posting + `fetch_messages` (limit=15) on every Monitor notification.
+Full protocol documented in the **#approve-this** section below.
+
+Why: gate-miss-safe. User may be away from the keyboard; a shorter poll
+just burns prompt-cache budget without improving safety.
+
+**Never substitute a shorter poll for approval gates.**
+
+### Within-pass listening (informal)
+
+Trigger: any mid-pass moment where Claude is waiting on user direction
+that is NOT a formal approval — e.g., between phases, after a STOP
+report, while the user is deciding scope or verifying something in the
+browser.
+
+Pattern: ~3–5s informal polling via Monitor heartbeat + `fetch_messages`.
+While waiting, respond only with "listening". No narration, no
+re-summarizing prior work, no pre-explaining next steps.
+
+Why: keyboard-present user shouldn't see chatter while thinking.
+Responsive presence, not gate safety.
+
 ## Discord messaging protocol
 
 All significant Discord communication follows this structure.
