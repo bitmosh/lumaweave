@@ -488,6 +488,40 @@ All significant Discord communication follows this structure.
 - #current-task: `1506440945128701955`
 - #brainstorm: `1506441106869583932`
 
+### Discord operations use the MCP server ONLY
+
+Discord posting, fetching, and monitoring all go through the Discord
+MCP server. Never substitute:
+- Raw HTTP calls / curl / fetch
+- Webhooks
+- Any other path
+
+If the Discord MCP is unreachable or a call fails: STOP and report.
+Do not fall back to alternatives. Tool-identity drift (Claude reaching
+for HTTP because the MCP "feels unavailable") is a known failure mode.
+
+### Channel references use IDs
+
+Channel IDs (numeric, listed above) are the primary identifier in tool
+calls. Channel names (#approve-this, #current-task, etc.) are for
+human readability and prompt text only.
+
+If a tool call requires a channel and you find yourself uncertain which
+channel ID maps to which name: STOP and re-read the channel map above.
+Do not guess.
+
+### "Unknown Channel" and similar failures
+
+If any Discord MCP call returns "Unknown Channel", "channel not found",
+or any equivalent: STOP and report to #notifications (using a channel
+ID you've just verified against the map). Include:
+- The attempted operation
+- The channel reference used
+- The exact error
+
+Do not silently retry with a different channel reference. Recovery
+without surfacing the failure masks frequency and prevents diagnosis.
+
 ### #approve-this
 
 - **Purpose**: Approval gate for destructive operations
