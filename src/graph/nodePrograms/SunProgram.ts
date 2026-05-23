@@ -10,13 +10,16 @@ const FRAGMENT_SHADER_SOURCE = `
 precision mediump float;
 
 varying vec4 v_color;
+varying vec2 v_diffVector;
+varying float v_radius;
 
 uniform float u_time;
 uniform float u_glowStrength;
 
 void main() {
+  vec2 pointCoord = v_diffVector / (v_radius * 2.0) + 0.5;
   vec2 center = vec2(0.5, 0.5);
-  float dist = distance(gl_PointCoord, center);
+  float dist = distance(pointCoord, center);
 
   if (dist > 0.7) discard;
 
@@ -36,6 +39,11 @@ void main() {
   float totalAlpha = clamp(bodyAlpha + coronaAlpha, 0.0, 1.0);
 
   if (totalAlpha < 0.01) discard;
+
+  #ifdef PICKING_MODE
+  gl_FragColor = v_color;
+  return;
+  #endif
 
   vec3 coreColor = mix(vec3(1.0, 0.95, 0.7), v_color.rgb, smoothstep(0.0, 0.18, dist));
   vec3 coronaColor = v_color.rgb * (corona1 + corona2 * 0.6);

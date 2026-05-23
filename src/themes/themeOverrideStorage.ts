@@ -86,9 +86,21 @@ export function loadOverrides(): ThemeOverrideStorage {
       return pathValidation.isValid && valueValidation.isValid;
     });
     
+    // One-time migration: remove stale target-scoped node.geometry.preset entries
+    const cleaned = validOverrides.filter(
+      (o) => !(o.tokenPath === "node.geometry.preset" && o.scope.kind === "target"),
+    );
+    if (cleaned.length !== validOverrides.length) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: STORAGE_VERSION, overrides: cleaned }));
+      } catch {
+        // ignore
+      }
+    }
+
     return {
       version: STORAGE_VERSION,
-      overrides: validOverrides,
+      overrides: cleaned,
     };
   } catch (error) {
     console.error("Failed to load theme overrides:", error);

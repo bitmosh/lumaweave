@@ -332,6 +332,36 @@ Items here are promoted to the roadmap only when:
 
 ---
 
+---
+
+### Visible-rendering test coverage for node programs
+
+  v90a's GlassSphereProgram (and all 4 sibling programs) rendered all nodes
+  invisible from v90a landing through v89.4 close — undetected by Playwright
+  because tests verify node existence and attribute values, not whether nodes
+  are visibly rendered. Console PAGEERROR check also missed it: the shader
+  compiled and ran; it just discarded every fragment.
+
+  Root cause was `gl_PointCoord` (point-sprite UV) used in fragment shaders
+  that extend NodeCircleProgram (a GL_TRIANGLES renderer). In triangle mode,
+  `gl_PointCoord` returns (0,0) — every discard condition triggered.
+
+  This is the third "tests pass while reality is broken" finding in three days:
+  - v90a: WebGL varying errors (silent shader compilation)
+  - v89.4: Radial label contrast failure on Agartha Dream (no contrast test)
+  - v90b: Invisible nodes (Playwright asserts existence, not visual rendering)
+
+  Possible fix candidates:
+  (a) Visual regression test using Playwright screenshot diff on a known canonical graph
+  (b) Pixel-sampling assertion: after rendering, sample N points where nodes should be,
+      assert non-background pixel count > threshold
+  (c) Programmatic Sigma instrumentation: expose fragment-discarded ratio per program,
+      assert below a threshold in tests
+
+  Tag: quality-gate, WebGL, node-programs, testing.
+
+---
+
 ## Inbox Management
 
 When an idea graduates to a real roadmap item, move it to BACKLOG_POLICY.md and delete it here. Do not duplicate items between the inbox and the backlog.
