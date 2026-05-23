@@ -8,7 +8,7 @@ domain: roadmap
 cluster: violet
 agent_readable: true
 include_in_self_graph: false
-last_updated: 2026-05-15
+last_updated: 2026-05-23
 tags:
   - future
   - ideas
@@ -212,6 +212,24 @@ Items here are promoted to the roadmap only when:
 
 - **Type spoke functional implementation requires typography axis token authoring** — v87.4 intentionally kept font-weight as CSS-variable-only; no canonical token paths exist for variable-font axes. Functional Type spoke requires either (a) authoring axis tokens following standard PLANNED → promotion governance, or (b) a contract pass justifying CSS-variable bypass. v89.4 ships Type as placeholder pending that decision. Likely belongs as a dedicated typography spoke arc — possibly numbered alongside v97 hotkey/command palette work or earlier as standalone. Filed v89.4.
 
+- **Audit {} / [] truthy guards that trigger unnecessary recomputation**
+  During the v90b cycling diagnostic, `engine.ts` line 491 treated `{}` as a
+  truthy signal to re-run the gwells seed function — because `if (partial.someParam)`
+  is always truthy for an empty object. This caused re-render storms on every
+  geometry preset click. The bug was fixed in v90b via `useMemo` in AppShell, but
+  the broader pattern (truthy guard on an object that can legitimately be `{}`)
+  may exist elsewhere in the gwells engine and related physics subsystems.
+
+  Recommended pass: scan gwells `engine.ts`, `applyDialect`, and `seedFunctionRegistry`
+  for `if (x.someParam)` or `if (x.someParam &&` where the value is an object or
+  array type. Replace with explicit emptiness checks (`Object.keys(x).length > 0`
+  or `x.length > 0`) for any guard that gates expensive recomputation.
+
+  Suggested arc: v93 physics dialect work, or whenever a second re-render storm
+  surfaces in the gwells engine.
+
+  Tag: gwells, performance, truthy-guard, re-render.
+
 - **Inspector hover-preview pattern across spokes** — Currently no spoke implements hover-preview (apply on hover, restore on leave). Geometry spoke in v89.4 ships click-only to maintain consistency with ColorTab. Future polish pass should land hover-preview across Color AND Geometry simultaneously, accounting for performance differences (CSS swap vs. program re-render for shader-based nodes). Filed v89.4.
 
 ---
@@ -261,6 +279,29 @@ Items here are promoted to the roadmap only when:
 ---
 
 ## Theme System
+
+- **Per-node geometry overrides (real per-node scope, not theme-target scope)**
+  v89.4's Geometry spoke originally exposed a "This" scope option that wrote
+  target-scoped overrides — but those scoped to whatever theme target the
+  inspector was opened on (e.g. topbar.root), not to the graph node the user
+  was trying to style. v90b removed the broken "This" UI; the Geometry spoke
+  is now global-only.
+
+  A real per-node geometry override system requires:
+  (a) a write path keyed on graph node id, not theme target id
+  (b) Sigma read path that resolves per-node overrides before falling back to
+      the global default, consuming them at nodeProgramClasses resolution time
+  (c) UI for selecting individual nodes from within the Geometry spoke or via
+      a separate entry point (e.g. right-click on a node in the graph)
+
+  Cross-reference: `docs/theme/GEOMETRY_POLISHES.md` tracks the related
+  "GeometryTab scope indicator" polish item (currently a single "All nodes"
+  label affordance that stands in until the per-node system lands).
+
+  Suggested arc: v95+ once the broader inspector and theme override system
+  has matured past the v90 node program foundation.
+
+  Tag: geometry, per-node, theme-override, inspector.
 
 - **Selection-aware cluster indicator (post-v89)**
   v89.3 ships a three-layer override indicator (global / target-kind / target)
