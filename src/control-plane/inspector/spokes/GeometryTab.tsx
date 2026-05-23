@@ -9,7 +9,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { TargetDescriptor } from "../inspector.types";
 import { getThumbnail } from "../nodeProgramThumbnails";
-import { setTargetOverride, setGlobalOverride, resolveForTarget } from "../../../themes/themeOverrideStorage";
+import { setGlobalOverride, getGlobalOverride } from "../../../themes/themeOverrideStorage";
 import { notifyOverrideChange } from "../../../themes/useResolvedTargetColor";
 import { useSettingsStore } from "../../settings/settings.store";
 import type { NodeProgramId } from "../../../graph/nodePrograms/types";
@@ -28,19 +28,14 @@ export interface GeometryTabProps {
   onClose?: () => void;
 }
 
-export function GeometryTab({ targetDescriptor, onClose }: GeometryTabProps) {
+export function GeometryTab({ targetDescriptor: _targetDescriptor, onClose }: GeometryTabProps) {
   const themeId = useSettingsStore((state) => state.settings.appearance.theme);
-  const [currentScope, setCurrentScope] = useState<"this" | "all">("this");
   const [activePreset, setActivePreset] = useState<string | undefined>(
-    () => resolveForTarget("node.geometry.preset", targetDescriptor.targetId) as string | undefined,
+    () => getGlobalOverride("node.geometry.preset") as string | undefined,
   );
 
   const commitPreset = (presetId: NodeProgramId) => {
-    if (currentScope === "this") {
-      setTargetOverride(targetDescriptor.targetId, "node.geometry.preset", presetId);
-    } else {
-      setGlobalOverride("node.geometry.preset", presetId);
-    }
+    setGlobalOverride("node.geometry.preset", presetId);
     setActivePreset(presetId);
     notifyOverrideChange();
   };
@@ -68,25 +63,6 @@ export function GeometryTab({ targetDescriptor, onClose }: GeometryTabProps) {
           />
         ))}
       </div>
-
-      <section className="lw-geometry-tab-scope" data-testid="geometry-scope-picker">
-        <div className="lw-geometry-tab-scope-buttons">
-          <button
-            className={currentScope === "this" ? "active" : ""}
-            aria-pressed={currentScope === "this"}
-            onClick={() => setCurrentScope("this")}
-          >
-            This
-          </button>
-          <button
-            className={currentScope === "all" ? "active" : ""}
-            aria-pressed={currentScope === "all"}
-            onClick={() => setCurrentScope("all")}
-          >
-            All
-          </button>
-        </div>
-      </section>
     </div>
   );
 }

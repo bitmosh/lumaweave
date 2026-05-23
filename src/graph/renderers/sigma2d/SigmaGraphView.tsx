@@ -36,10 +36,11 @@ import { applyNodeLabelPolicy,
   type EdgeLabelMode,
 } from "../../visual/applyGraphLabelPolicyToGraphology";
 import { attachCameraController } from "../../overlay/cameraController";
-import { buildNodeProgramClasses } from "../../nodePrograms/nodeProgramRegistry";
+import { buildNodeProgramClasses, resolveNodeProgramId } from "../../nodePrograms/nodeProgramRegistry";
 import { applyDialect, type GWController } from "../../../physics/gwells";
 import { installGwellsProbeGlobal } from "./gwellsProbe";
 import { useSettingsStore } from "../../../control-plane/settings/settings.store";
+import { getGlobalOverride } from "../../../themes/themeOverrideStorage";
 
 // Pass C9.1: Module-level helper for resolving drag scope
 function resolveDragSet(
@@ -468,7 +469,6 @@ function SigmaGraphViewComponent({
         gwellsControllerRef.current = applyDialect(graph, dialectId);
         // Pass C9.1: apply any pins for this dialect
         gwellsControllerRef.current?.applyPins(activePinsRef.current);
-        console.log(`[gwells] started controller with dialect '${dialectId}'`);
       } catch (err) {
         console.error(`[gwells] failed to apply dialect '${dialectId}':`, err);
       }
@@ -779,7 +779,6 @@ useEffect(() => {
       // Pass C9.1: apply pins for the new dialect (unfixes old pins,
       // applies new ones via the graph-level __gwellsPinnedSet)
       gwellsControllerRef.current?.applyPins(activePinsRef.current);
-      console.log(`[gwells] switched to dialect '${dialectId}'`);
     } catch (err) {
       console.error(`[gwells] failed to apply dialect '${dialectId}':`, err);
     }
@@ -819,6 +818,28 @@ useEffect(() => {
   });
   sigma.refresh();
 }, [nodeSize]);
+
+// v90b: Geometry preset override reactivity — wire lw:override-change to Sigma node type.
+// Only fires when a global geometry override exists. Skips when overrideValue is undefined
+// (covers target-scoped writes and non-geometry override changes) to avoid resetting all
+// nodes to the theme default on every color/other override-change event.
+useEffect(() => {
+  const handler = () => {
+    const sigma = sigmaRef.current;
+    if (!sigma) return;
+    const overrideValue = getGlobalOverride("node.geometry.preset");
+    if (overrideValue === undefined) return;
+    const graph = sigma.getGraph();
+    const programId = resolveNodeProgramId(overrideValue as string);
+    graph.forEachNode((nodeId) => {
+      graph.setNodeAttribute(nodeId, "type", programId);
+    });
+    sigma.refresh({ skipIndexation: false });
+  };
+
+  window.addEventListener("lw:override-change", handler);
+  return () => window.removeEventListener("lw:override-change", handler);
+}, []); // no dep array — handler reads refs at call time via sigmaRef.current
 
 // Compute and highlight shortest path when pathTargetId changes
 useEffect(() => {

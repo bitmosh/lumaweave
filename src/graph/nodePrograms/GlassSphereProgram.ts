@@ -13,6 +13,8 @@ const FRAGMENT_SHADER_SOURCE = `
 precision mediump float;
 
 varying vec4 v_color;
+varying vec2 v_diffVector;
+varying float v_radius;
 
 uniform float u_time;
 uniform float u_hum;
@@ -20,7 +22,7 @@ uniform float u_flowSpeed;
 uniform float u_glowStrength;
 
 void main() {
-  vec2 pos = gl_PointCoord;
+  vec2 pos = v_diffVector / (v_radius * 2.0) + 0.5;
   vec2 center = vec2(0.5, 0.5);
   float dist = distance(pos, center);
 
@@ -28,6 +30,11 @@ void main() {
   float alpha = 1.0 - smoothstep(radius - 0.02, radius, dist);
 
   if (alpha < 0.01) discard;
+
+  #ifdef PICKING_MODE
+  gl_FragColor = v_color;
+  return;
+  #endif
 
   vec3 lightDir = normalize(vec3(-1.0, -1.0, 1.0));
   vec3 normal = normalize(vec3(pos - center, 1.0));

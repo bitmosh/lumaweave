@@ -36,7 +36,7 @@ export function BookmarkLayer({ alertColor, pinnedColor, refColor, onTogglePinne
               }
               // Existing behavior for alert/ref bookmarks
               if (bookmark.targetNodeId) {
-                console.log("Navigate to:", bookmark.targetNodeId);
+                // TODO: navigate to targetNodeId when graph navigation is implemented
               }
             }}
           />

@@ -42,8 +42,8 @@ export const NODE_PROGRAM_REGISTRY: readonly NodeProgramEntry[] = [
   {
     id: "crystal",
     label: "Crystal",
-    description: "GlassSphere variant: slow hum, fast spin, strong glow.",
-    status: "stub",
+    description: "Faceted, refractive geometry with sharp specular highlights. Decision nodes, formal types.",
+    status: "active",
     programClass: CrystalProgram as unknown as NodeProgramConstructor,
   },
   {

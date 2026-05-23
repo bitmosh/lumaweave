@@ -305,9 +305,16 @@ export function AppShell() {
     });
   };
 
-  // Determine which graph data to use
-  const graphNodes = useFixture ? adaptedFixture.nodes : summary.normalizedNodes;
-  const graphEdges = useFixture ? adaptedFixture.edges : summary.normalizedEdges;
+  // Determine which graph data to use — memoized to preserve reference equality
+  // across re-renders caused by unrelated state changes (e.g. override-change events).
+  const graphNodes = useMemo(
+    () => (useFixture ? adaptedFixture.nodes : summary.normalizedNodes),
+    [useFixture, adaptedFixture.nodes, summary.normalizedNodes],
+  );
+  const graphEdges = useMemo(
+    () => (useFixture ? adaptedFixture.edges : summary.normalizedEdges),
+    [useFixture, adaptedFixture.edges, summary.normalizedEdges],
+  );
 
   const selectedNode = selectedNodeId
     ? graphNodes?.find((node) => node.id === selectedNodeId) || null

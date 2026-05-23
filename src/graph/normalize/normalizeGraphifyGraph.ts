@@ -246,14 +246,6 @@ export function normalizeGraphifyGraph(
   const rawNodes = extractRawNodes(rawGraph);
   const rawEdges = extractRawEdges(rawGraph);
 
-  // Debug: log schema detection
-  console.log("Detected Graphify schema", {
-    nodePath: "graph.nodes",
-    edgePath: "graph.links",
-    rawNodeCount: rawNodes.length,
-    rawEdgeCount: rawEdges.length,
-  });
-
   if (rawNodes.length === 0) {
     warnings.push("No nodes found in raw graph");
   }
@@ -330,15 +322,6 @@ export function normalizeGraphifyGraph(
     }
   });
 
-  // Debug: log normalization results
-  console.log("Detected Graphify schema", {
-    nodePath: "graph.nodes",
-    edgePath: "graph.links",
-    rawNodeCount: rawNodes.length,
-    rawEdgeCount: rawEdges.length,
-    normalizedNodeCount: nodes.length,
-    normalizedEdgeCount: edges.length,
-  });
 
   return { nodes, edges, warnings };
 }

@@ -21,6 +21,7 @@ import type { ThemeId } from "../../../control-plane/settings/settings.schema";
 import { getThemeRuntimeTokens } from "../../../themes/themeTokens";
 import { resolveThemeTokenPath } from "../../../themes/themeTokenPaths";
 import { resolveNodeProgramId } from "../../nodePrograms/nodeProgramRegistry";
+import { getGlobalOverride } from "../../../themes/themeOverrideStorage";
 
 export interface LayoutSettings {
   nodeSize: number;
@@ -59,10 +60,13 @@ export function buildGraphologyGraph(
 
   const baseSize = 10;
 
-  // v90a: Resolve default node geometry program from theme token.
+  // v90b: Resolve node geometry program: theme default → global override wins.
+  // Override is read here so rebuilds (nodes/edges change) preserve the user's active preset.
   const themeTokens = getThemeRuntimeTokens(settings.themeId ?? "solar-plasma");
+  const themeGeometryDefault = resolveThemeTokenPath(themeTokens, "node.geometry.preset") as string | undefined;
+  const geometryOverride = getGlobalOverride("node.geometry.preset");
   const defaultNodeType = resolveNodeProgramId(
-    resolveThemeTokenPath(themeTokens, "node.geometry.preset") as string | undefined
+    (geometryOverride as string | undefined) ?? themeGeometryDefault
   );
 
   nodes.forEach((node) => {
@@ -93,29 +97,6 @@ export function buildGraphologyGraph(
     }
   });
 
-  // INSTRUMENTATION: vP-physics-instrument-positions
-  {
-    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-    graph.forEachNode((id) => {
-      const attrs = graph.getNodeAttributes(id);
-      const x = attrs.x as number;
-      const y = attrs.y as number;
-      if (x < minX) minX = x;
-      if (x > maxX) maxX = x;
-      if (y < minY) minY = y;
-      if (y > maxY) maxY = y;
-    });
-    console.log("[LW-INSTR seed]", {
-      callSite: new Error().stack?.split("\n")[2]?.trim() ?? "unknown",
-      nodeCount: nodes.length,
-      layoutScale: Math.sqrt(nodes.length) * 50,
-      minX: minX.toFixed(1),
-      maxX: maxX.toFixed(1),
-      minY: minY.toFixed(1),
-      maxY: maxY.toFixed(1),
-      spread: { x: (maxX - minX).toFixed(1), y: (maxY - minY).toFixed(1) },
-    });
-  }
 
   edges.forEach((edge) => {
     try {
