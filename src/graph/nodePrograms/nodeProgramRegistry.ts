@@ -56,8 +56,8 @@ export const NODE_PROGRAM_REGISTRY: readonly NodeProgramEntry[] = [
   {
     id: "pip",
     label: "Pip",
-    description: "GlassSphere variant: minimal animation, tight glow. Leaf nodes.",
-    status: "stub",
+    description: "Flat minimal dot, intentionally small and quiet. Leaf nodes, low-importance entities, dense clusters.",
+    status: "active",
     programClass: PipProgram as unknown as NodeProgramConstructor,
   },
 ] as const;
