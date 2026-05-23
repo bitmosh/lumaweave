@@ -247,10 +247,16 @@ export function AppShell() {
   ) as 1 | 2 | 3 | 4;
 
   // Pass C4: Derive active dialect's seedParamOverrides for live tuning
-  const activeSeedParamOverrides = (settings.physics.seedParamOverrides?.[settings.physics.dialectId] ?? {}) as Record<string, unknown>;
+  const activeSeedParamOverrides = useMemo(
+    () => (settings.physics.seedParamOverrides?.[settings.physics.dialectId] ?? {}) as Record<string, unknown>,
+    [settings.physics.seedParamOverrides, settings.physics.dialectId],
+  );
 
   // Pass C9.1: Derive active dialect's pin map
-  const activePins = (settings.physics.pins?.[settings.physics.dialectId] ?? {}) as Record<string, { x: number; y: number; z?: number }>;
+  const activePins = useMemo(
+    () => (settings.physics.pins?.[settings.physics.dialectId] ?? {}) as Record<string, { x: number; y: number; z?: number }>,
+    [settings.physics.pins, settings.physics.dialectId],
+  );
 
   // v86b: Click halo state — single active halo, overridden by rapid clicks
   const [clickHalo, setClickHalo] = useState<{
