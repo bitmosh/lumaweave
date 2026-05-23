@@ -49,8 +49,8 @@ export const NODE_PROGRAM_REGISTRY: readonly NodeProgramEntry[] = [
   {
     id: "orb",
     label: "Orb",
-    description: "GlassSphere variant: deep hum, slow flow, muted presence.",
-    status: "stub",
+    description: "Soft luminous breathing sphere with gentle halo bloom. Ambient, data-presence, and background nodes.",
+    status: "active",
     programClass: OrbProgram as unknown as NodeProgramConstructor,
   },
   {

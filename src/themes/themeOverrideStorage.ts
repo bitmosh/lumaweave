@@ -98,9 +98,40 @@ export function loadOverrides(): ThemeOverrideStorage {
       }
     }
 
+    // Generalized dedup: collapse all duplicates per (scope, tokenPath) key, keep most-recent
+    const dedupKey = (o: ThemeOverride): string => {
+      switch (o.scope.kind) {
+        case "global": return `global::${o.tokenPath}`;
+        case "target": return `target::${o.scope.targetId}::${o.tokenPath}`;
+        case "target-kind": return `target-kind::${o.scope.targetKind}::${o.tokenPath}`;
+        case "cluster": return `cluster::${o.scope.clusterAnchor}::${o.tokenPath}`;
+      }
+    };
+
+    const byKey = new Map<string, ThemeOverride>();
+    for (const o of cleaned) {
+      const key = dedupKey(o);
+      const existing = byKey.get(key);
+      if (!existing || o.timestamp > existing.timestamp) {
+        byKey.set(key, o);
+      }
+    }
+    const deduped = Array.from(byKey.values());
+
+    if (deduped.length !== cleaned.length) {
+      try {
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({ version: STORAGE_VERSION, overrides: deduped }),
+        );
+      } catch {
+        // ignore
+      }
+    }
+
     return {
       version: STORAGE_VERSION,
-      overrides: cleaned,
+      overrides: deduped,
     };
   } catch (error) {
     console.error("Failed to load theme overrides:", error);
@@ -129,20 +160,20 @@ export function setGlobalOverride(tokenPath: ThemeTokenPath, value: ThemeTokenVa
   if (!pathValidation.isValid) {
     throw new Error(pathValidation.error);
   }
-  
+
   const valueValidation = validateTokenValue(value);
   if (!valueValidation.isValid) {
     throw new Error(valueValidation.error);
   }
-  
+
   const storage = loadOverrides();
-  
+
   // Remove existing override for this token path if present
   const existingIndex = storage.overrides.findIndex((o) => o.tokenPath === tokenPath);
   if (existingIndex >= 0) {
     storage.overrides.splice(existingIndex, 1);
   }
-  
+
   // Add new override
   storage.overrides.push({
     tokenPath,
@@ -150,7 +181,7 @@ export function setGlobalOverride(tokenPath: ThemeTokenPath, value: ThemeTokenVa
     timestamp: Date.now(),
     scope: { kind: "global" }, // v86a: only global scope implemented
   });
-  
+
   saveOverrides(storage);
 }
 

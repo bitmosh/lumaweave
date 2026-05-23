@@ -1,8 +1,10 @@
 import { NodeCircleProgram } from "sigma/rendering";
 import type { Attributes } from "graphology-types";
 
-// v90a: Orb variant — GlassSphere shader with deep hum, slow flow, muted glow.
-// Visually: heavy, slow-breathing presence. Suits data/source nodes.
+// v90c: Orb hand-tuned shader — promoted from stub to active.
+// Visual character: soft luminous breathing sphere with gentle halo bloom.
+// Distinct from glass-sphere (no flow spin), crystal (no facets/edge darkening),
+// sun (no corona rings). Suits ambient, data-presence, and background nodes.
 
 const FRAGMENT_SHADER_SOURCE = `
 precision mediump float;
@@ -12,18 +14,22 @@ varying vec2 v_diffVector;
 varying float v_radius;
 
 uniform float u_time;
-uniform float u_hum;
-uniform float u_flowSpeed;
-uniform float u_glowStrength;
+uniform float u_breatheSpeed;
+uniform float u_haloStrength;
 
 void main() {
-  vec2 pos = v_diffVector / (v_radius * 2.0) + 0.5;
+  vec2 uv = v_diffVector / (v_radius * 2.0) + 0.5;
   vec2 center = vec2(0.5, 0.5);
-  float dist = distance(pos, center);
+  vec2 offset = uv - center;
+  float dist = length(offset);
 
-  float radius = 0.5;
-  float alpha = 1.0 - smoothstep(radius - 0.02, radius, dist);
+  float radius = 0.46;
+  float haloOuter = 0.63;
 
+  float sphereAlpha = 1.0 - smoothstep(radius - 0.02, radius + 0.01, dist);
+  float haloMask = smoothstep(haloOuter, radius + 0.02, dist);
+  float haloAlpha = haloMask * 0.30;
+  float alpha = max(sphereAlpha, haloAlpha);
   if (alpha < 0.01) discard;
 
   #ifdef PICKING_MODE
@@ -31,32 +37,21 @@ void main() {
   return;
   #endif
 
-  vec3 lightDir = normalize(vec3(-1.0, -1.0, 1.0));
-  vec3 normal = normalize(vec3(pos - center, 1.0));
+  vec2 n2 = offset / max(dist, 0.001) * min(dist / radius, 1.0);
+  vec3 normal = normalize(vec3(n2, sqrt(max(0.0, 1.0 - dot(n2, n2)))));
   vec3 viewDir = vec3(0.0, 0.0, 1.0);
-  vec3 halfDir = normalize(lightDir + viewDir);
-  float specular = pow(max(dot(normal, halfDir), 0.0), 32.0);
 
-  float humPulse = 0.5 + 0.5 * sin(u_time * u_hum);
-  vec3 humTint = v_color.rgb * (0.20 * humPulse);
+  vec3 lightDir = normalize(vec3(-0.35, -0.55, 1.2));
+  float diffuse = max(dot(normal, lightDir), 0.0) * 0.60;
+  float softSpec = pow(max(dot(normal, normalize(lightDir + viewDir)), 0.0), 16.0) * 0.28;
 
-  float angle = u_time * u_flowSpeed;
-  vec2 flowed = vec2(
-    cos(angle) * (pos.x - 0.5) - sin(angle) * (pos.y - 0.5),
-    sin(angle) * (pos.x - 0.5) + cos(angle) * (pos.y - 0.5)
-  );
-  float flowMask = smoothstep(0.05, 0.0, abs(flowed.x * 1.4));
-  vec3 flowTint = v_color.rgb * flowMask * 0.45;
+  float breathe = 0.88 + 0.12 * sin(u_time * u_breatheSpeed);
+  float core = smoothstep(0.32, 0.0, dist) * 0.22;
 
-  float glow = smoothstep(radius, radius + 0.15, dist);
-  vec3 glowColor = v_color.rgb * u_glowStrength * glow;
+  vec3 haloColor = v_color.rgb * haloMask * u_haloStrength;
+  vec3 baseColor = v_color.rgb * (0.52 + diffuse) * breathe;
+  vec3 finalColor = baseColor + vec3(softSpec + core) + haloColor;
 
-  vec2 rimDir = normalize(vec2(1.0, 1.0));
-  float rim = max(dot(normal, vec3(rimDir, 0.0)), 0.0);
-  float rimLight = pow(rim, 3.0) * 0.3;
-
-  vec3 finalColor = v_color.rgb + glowColor + vec3(specular) + vec3(rimLight)
-                  + humTint + flowTint;
   gl_FragColor = vec4(finalColor, v_color.a * alpha);
 }
 `;
@@ -72,21 +67,18 @@ export default class OrbProgram<
     const { gl, program } = programInfo;
 
     const uTime = gl.getUniformLocation(program, "u_time");
-    const uHum = gl.getUniformLocation(program, "u_hum");
-    const uFlowSpeed = gl.getUniformLocation(program, "u_flowSpeed");
-    const uGlowStrength = gl.getUniformLocation(program, "u_glowStrength");
+    const uBreatheSpeed = gl.getUniformLocation(program, "u_breatheSpeed");
+    const uHaloStrength = gl.getUniformLocation(program, "u_haloStrength");
 
     const uniforms = (this.renderer as any).__uniformsRef?.current ?? {
       time: 0,
-      hum: 1.4,
-      flowSpeed: 0.2,
-      glowStrength: 0.6,
+      breatheSpeed: 1.2,
+      haloStrength: 0.5,
     };
 
     if (uTime !== null) gl.uniform1f(uTime, uniforms.time);
-    if (uHum !== null) gl.uniform1f(uHum, uniforms.hum);
-    if (uFlowSpeed !== null) gl.uniform1f(uFlowSpeed, uniforms.flowSpeed);
-    if (uGlowStrength !== null) gl.uniform1f(uGlowStrength, uniforms.glowStrength);
+    if (uBreatheSpeed !== null) gl.uniform1f(uBreatheSpeed, uniforms.breatheSpeed ?? 1.2);
+    if (uHaloStrength !== null) gl.uniform1f(uHaloStrength, uniforms.haloStrength ?? 0.5);
   }
 
   getDefinition() {

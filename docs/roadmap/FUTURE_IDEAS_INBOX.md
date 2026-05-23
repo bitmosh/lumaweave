@@ -362,6 +362,23 @@ Items here are promoted to the roadmap only when:
 
 ---
 
+## Storage Migration Framework
+
+**Storage migration framework — ongoing self-healing, not one-shot**
+
+`loadOverrides()` currently has ad-hoc migrations bolted on: first a one-shot target-scope cleanup
+(v90b), then a generalized dedup migration (v90c). As more bug classes surface across future versions,
+the migrations will accumulate inline in a single function, each one-shot and non-composable.
+
+Worth designing a proper migration framework: versioned migration handlers, each idempotent, each able
+to detect and self-heal a specific class of stale state. Migrations run on every load in version order.
+Completed migrations become no-ops cheaply. New bug classes get a new migration handler rather than
+inline code in `loadOverrides()`.
+
+Tag: storage, migrations, infrastructure, self-healing.
+
+---
+
 ## Inbox Management
 
 When an idea graduates to a real roadmap item, move it to BACKLOG_POLICY.md and delete it here. Do not duplicate items between the inbox and the backlog.
