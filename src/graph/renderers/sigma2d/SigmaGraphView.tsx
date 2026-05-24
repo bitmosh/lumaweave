@@ -539,7 +539,7 @@ function SigmaGraphViewComponent({
     const g = graphRef.current;
     if (g && g.hasEdge(edge)) {
       g.setEdgeAttribute(edge, "_hoverFactor", 1.0);
-      sigma.refresh({ skipIndexation: true });
+      sigma.scheduleRender();
     }
   });
 
@@ -548,7 +548,7 @@ function SigmaGraphViewComponent({
     const g = graphRef.current;
     if (g && g.hasEdge(edge)) {
       g.setEdgeAttribute(edge, "_hoverFactor", 0.0);
-      sigma.refresh({ skipIndexation: true });
+      sigma.scheduleRender();
     }
   });
 
@@ -843,7 +843,7 @@ useEffect(() => {
     const baseSize = attrs.baseSize as number;
     graph.setNodeAttribute(node, "size", baseSize * nodeSize);
   });
-  sigma.refresh();
+  sigma.refresh({ skipIndexation: true });
 }, [nodeSize]);
 
 // v90b: Geometry preset override reactivity — wire lw:override-change to Sigma node type.
@@ -917,7 +917,7 @@ useEffect(() => {
     });
   }
 
-  sigma.refresh();
+  sigma.refresh({ skipIndexation: true });
 
 }, [pathTargetId, selectedNodeId]);
 
@@ -1027,7 +1027,7 @@ useEffect(() => {
       }
     }
 
-    sigma.refresh();
+    sigma.refresh({ skipIndexation: true });
   }, [selectedNodeId, selectedEdgeId, neighborhoodDepth, hoverNodeColor, edgeLabelFontSize, pinnedHighlightActive, activePins, resolvedTokens, nodeLabelMode, edgeLabelMode, maxEdgeLabelLength, showLabelsOnHover]);
 
   // Hover-only effect — targeted delta, no full graph reset
@@ -1070,7 +1070,7 @@ useEffect(() => {
       }
     }
 
-    sigma.refresh();
+    sigma.scheduleRender();
   }, [hoveredNodeId, hoveredEdgeId]); // intentional: selection/style changes handled by selection effect above
 
   // Edge label font size live update effect
@@ -1079,7 +1079,7 @@ useEffect(() => {
     if (!sigma) return;
 
     sigma.setSetting("edgeLabelSize", edgeLabelFontSize);
-    sigma.refresh();
+    sigma.refresh({ skipIndexation: true });
   }, [edgeLabelFontSize]);
 
   // Node label font size live update effect
@@ -1088,7 +1088,7 @@ useEffect(() => {
     if (!sigma) return;
 
     sigma.setSetting("labelSize", nodeLabelFontSize);
-    sigma.refresh();
+    sigma.refresh({ skipIndexation: true });
   }, [nodeLabelFontSize]);
 
   return (
