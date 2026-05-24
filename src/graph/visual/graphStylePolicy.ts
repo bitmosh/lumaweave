@@ -296,6 +296,139 @@ function clearHoverStyles(graph: Graph): void {
 }
 
 /**
+ * Determine the correct non-hover style for a specific node given current selection state.
+ * Used by applyHoverDelta to revert a previously-hovered node without a full graph pass.
+ */
+function resolveNodePreHoverStyle(
+  graph: Graph,
+  nodeId: string,
+  state: GraphInteractionState,
+  tokens: ResolvedGraphVisualTokens,
+): { color: string; size: number } {
+  const { selectedNodeId, selectedEdgeId, neighborhoodDepth } = state;
+  const attrs = graph.getNodeAttributes(nodeId);
+  const baseSize =
+    typeof attrs.baseSize === "number"
+      ? attrs.baseSize
+      : typeof attrs.size === "number"
+        ? attrs.size
+        : 10;
+
+  if (selectedNodeId === nodeId) {
+    return { color: tokens.nodeColor.selected, size: baseSize * tokens.nodeSizeMultiplier.selected };
+  }
+
+  if (selectedEdgeId) {
+    const nb = getRelationshipNeighborhood(graph, selectedEdgeId);
+    if (nodeId === nb.sourceId || nodeId === nb.targetId) {
+      return { color: tokens.nodeColor.relationshipEndpoint, size: baseSize * tokens.nodeSizeMultiplier.relationshipEndpoint };
+    }
+    if (neighborhoodDepth >= 2 && nb.secondaryNodeIds.includes(nodeId)) {
+      return { color: tokens.nodeColor.secondary, size: baseSize * tokens.nodeSizeMultiplier.secondary };
+    }
+    if (neighborhoodDepth >= 3 && nb.tertiaryNodeIds.includes(nodeId)) {
+      return { color: tokens.nodeColor.tertiary, size: baseSize * tokens.nodeSizeMultiplier.tertiary };
+    }
+  }
+
+  if (selectedNodeId) {
+    const nb = getNodeNeighborhood(graph, selectedNodeId);
+    if (neighborhoodDepth >= 2 && nb.directNeighborNodeIds.includes(nodeId)) {
+      return { color: tokens.nodeColor.secondary, size: baseSize * tokens.nodeSizeMultiplier.secondary };
+    }
+    if (neighborhoodDepth >= 3 && nb.tertiaryNodeIds.includes(nodeId)) {
+      return { color: tokens.nodeColor.tertiary, size: baseSize * tokens.nodeSizeMultiplier.tertiary };
+    }
+  }
+
+  const clusterColor = (attrs.raw?.color as string) ?? tokens.nodeColor.default;
+  const isSun = attrs.isSun as boolean;
+  const isIsolated = attrs.isIsolated as boolean;
+  if (isSun) return { color: clusterColor, size: (attrs.baseSize as number) * 1.8 };
+  if (isIsolated) return { color: clusterColor, size: baseSize * 0.75 };
+  return { color: clusterColor, size: baseSize };
+}
+
+/**
+ * Determine the correct non-hover style for a specific edge given current selection state.
+ * Used by applyHoverDelta to revert a previously-hovered edge without a full graph pass.
+ */
+function resolveEdgePreHoverStyle(
+  graph: Graph,
+  edgeId: string,
+  state: GraphInteractionState,
+  tokens: ResolvedGraphVisualTokens,
+): { color: string; size: number } {
+  const { selectedEdgeId, selectedNodeId, neighborhoodDepth } = state;
+  const attrs = graph.getEdgeAttributes(edgeId);
+  const rawColor = (attrs.raw as any)?.color;
+
+  if (selectedEdgeId === edgeId) {
+    return { color: tokens.edgeColor.selected, size: tokens.edgeSize.selected };
+  }
+
+  if (selectedEdgeId) {
+    const nb = getRelationshipNeighborhood(graph, selectedEdgeId);
+    if (neighborhoodDepth >= 2 && nb.secondaryEdgeIds.includes(edgeId)) {
+      return { color: tokens.edgeColor.secondary, size: tokens.edgeSize.secondary };
+    }
+    if (neighborhoodDepth >= 3 && nb.tertiaryEdgeIds.includes(edgeId)) {
+      return { color: tokens.edgeColor.tertiary, size: tokens.edgeSize.tertiary };
+    }
+  }
+
+  if (selectedNodeId) {
+    const nb = getNodeNeighborhood(graph, selectedNodeId);
+    if (neighborhoodDepth >= 2 && nb.directEdgeIds.includes(edgeId)) {
+      return { color: tokens.edgeColor.selected, size: tokens.edgeSize.selected };
+    }
+    if (neighborhoodDepth >= 3 && nb.secondaryEdgeIds.includes(edgeId)) {
+      return { color: tokens.edgeColor.secondary, size: tokens.edgeSize.secondary };
+    }
+  }
+
+  return { color: rawColor ?? tokens.edgeColor.default, size: tokens.edgeSize.default };
+}
+
+/**
+ * Apply hover-only style delta without iterating the full graph.
+ * Reverts the previously-hovered item to its correct non-hover style,
+ * then applies hover styles to the newly-hovered item.
+ * O(neighborhood_size) per call vs O(graph_size) for a full reset.
+ */
+export function applyHoverDelta(
+  graph: Graph,
+  previousHover: { nodeId: string | null; edgeId: string | null },
+  nextHover: { nodeId: string | null; edgeId: string | null },
+  state: GraphInteractionState,
+  options: StylePolicyOptions,
+  tokens: ResolvedGraphVisualTokens,
+): void {
+  if (previousHover.nodeId && previousHover.nodeId !== state.selectedNodeId && graph.hasNode(previousHover.nodeId)) {
+    const { color, size } = resolveNodePreHoverStyle(graph, previousHover.nodeId, state, tokens);
+    graph.setNodeAttribute(previousHover.nodeId, "color", color);
+    graph.setNodeAttribute(previousHover.nodeId, "size", size);
+    graph.setNodeAttribute(previousHover.nodeId, "labelColor", undefined);
+  }
+
+  if (previousHover.edgeId && previousHover.edgeId !== state.selectedEdgeId && graph.hasEdge(previousHover.edgeId)) {
+    const { color, size } = resolveEdgePreHoverStyle(graph, previousHover.edgeId, state, tokens);
+    graph.setEdgeAttribute(previousHover.edgeId, "color", color);
+    graph.setEdgeAttribute(previousHover.edgeId, "size", size);
+  }
+
+  if (nextHover.nodeId && nextHover.nodeId !== state.selectedNodeId && graph.hasNode(nextHover.nodeId)) {
+    graph.setNodeAttribute(nextHover.nodeId, "color", options.hoverNodeColor);
+    graph.setNodeAttribute(nextHover.nodeId, "labelColor", tokens.nodeLabelColor.hover);
+  }
+
+  if (nextHover.edgeId && nextHover.edgeId !== state.selectedEdgeId && graph.hasEdge(nextHover.edgeId)) {
+    graph.setEdgeAttribute(nextHover.edgeId, "color", tokens.edgeColor.hovered);
+    graph.setEdgeAttribute(nextHover.edgeId, "size", tokens.edgeSize.hovered);
+  }
+}
+
+/**
  * Apply complete styling policy
  * Returns void (styles are applied directly to graph)
  */

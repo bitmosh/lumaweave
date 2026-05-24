@@ -23,7 +23,7 @@ import {
 } from "./selectionNeighborhood";
 import { CollapsiblePanel } from "../../../control-plane/panels/CollapsiblePanel";
 import { graphVisualTokens } from "../../visual/graphVisualTokens";
-import { applyGraphStylePolicy } from "../../visual/graphStylePolicy";
+import { applyGraphStylePolicy, applyHoverDelta } from "../../visual/graphStylePolicy";
 import {
   type GraphInteractionState,
   type StylePolicyOptions,
@@ -211,6 +211,12 @@ function SigmaGraphViewComponent({
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resolvedTokensRef = useRef(resolvedTokens);
   const cleanupProbeRef = useRef<(() => void) | null>(null);
+  const hoveredNodeIdRef = useRef<string | null>(null);
+  const hoveredEdgeIdRef = useRef<string | null>(null);
+  const selectedNodeIdRef = useRef<string | null>(null);
+  const selectedEdgeIdRef = useRef<string | null>(null);
+  const prevHoverRef = useRef<{ nodeId: string | null; edgeId: string | null }>({ nodeId: null, edgeId: null });
+  const preLabelHoverRef = useRef<string>("");
 
   // v90a: Ref-based uniform pipeline — rAF loop writes here; all node programs read on their render cycle.
   const uniformsRef = useRef<{
@@ -263,6 +269,12 @@ function SigmaGraphViewComponent({
   >("none");
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [hoveredEdgeId, setHoveredEdgeId] = useState<string | null>(null);
+
+  // Sync hover/selection refs in render body so effects always read the latest values
+  hoveredNodeIdRef.current = hoveredNodeId;
+  hoveredEdgeIdRef.current = hoveredEdgeId;
+  selectedNodeIdRef.current = selectedNodeId;
+  selectedEdgeIdRef.current = selectedEdgeId;
 
   useEffect(() => {
     onSelectNodeRef.current = onSelectNode;
@@ -909,34 +921,6 @@ useEffect(() => {
 
 }, [pathTargetId, selectedNodeId]);
 
-// Clear path highlighting when selection is cleared
-useEffect(() => {
-  const sigma = sigmaRef.current;
-  const graph = graphRef.current;
-  if (!sigma || !graph) return;
-  if (selectedNodeId !== null) return; // Only clear when deselected
-
-  // Reset all node and edge colors by reapplying style policy
-  applyGraphStylePolicy(
-    graph,
-    {
-      selectedNodeId,
-      selectedEdgeId,
-      hoveredNodeId,
-      hoveredEdgeId,
-      neighborhoodDepth: Math.floor(neighborhoodDepth || 2) as 1 | 2 | 3,
-    },
-    {
-      hoverNodeColor: hoverNodeColor || (resolvedTokensRef.current?.nodeColor?.hover ?? graphVisualTokens.nodeColor.hover),
-      edgeLabelFontSize: edgeLabelFontSize || 13,
-      pinnedHighlightActive,
-    },
-    resolvedTokensRef.current
-  );
-  sigma.refresh();
-
-}, [selectedNodeId, selectedEdgeId, neighborhoodDepth, hoveredNodeId, hoveredEdgeId, hoverNodeColor, edgeLabelFontSize, pinnedHighlightActive, activePins]);
-
 // ResizeObserver to handle container size changes
 useEffect(() => {
   if (!containerRef.current) return;
@@ -959,33 +943,29 @@ useEffect(() => {
   };
 }, []);
 
-// Single selection styling effect - uses graph visual policy system
+// Selection styling + label policy effect
+  // hover state read via refs so this effect does not fire on every mouse-move
   useEffect(() => {
     const sigma = sigmaRef.current;
     if (!sigma) return;
-
     const graph = sigma.getGraph();
 
-    // Build interaction state for policy
     const interactionState: GraphInteractionState = {
       selectedNodeId,
       selectedEdgeId,
-      hoveredNodeId,
-      hoveredEdgeId,
+      hoveredNodeId: hoveredNodeIdRef.current,
+      hoveredEdgeId: hoveredEdgeIdRef.current,
       neighborhoodDepth: Math.floor(neighborhoodDepth || 2) as 1 | 2 | 3,
     };
 
-    // Build style options for policy
     const styleOptions: StylePolicyOptions = {
       hoverNodeColor,
       edgeLabelFontSize,
       pinnedHighlightActive,
     };
 
-    // Apply complete styling policy (reset + selection + hover)
     applyGraphStylePolicy(graph, interactionState, styleOptions, resolvedTokens);
 
-    // Update neighborhood info for debug panel (policy doesn't handle this)
     if (selectedEdgeId) {
       const neighborhood = getRelationshipNeighborhood(graph, selectedEdgeId);
       setNeighborhoodInfo({
@@ -994,36 +974,19 @@ useEffect(() => {
         secondaryEdgeCount: neighborhood.secondaryEdgeIds.length,
         secondaryNodeCount: neighborhood.secondaryNodeIds.length,
       });
-      setNodeNeighborhoodInfo({
-        directEdgeCount: 0,
-        directNeighborCount: 0,
-      });
+      setNodeNeighborhoodInfo({ directEdgeCount: 0, directNeighborCount: 0 });
     } else if (selectedNodeId) {
       const neighborhood = getNodeNeighborhood(graph, selectedNodeId);
-      setNeighborhoodInfo({
-        sourceId: null,
-        targetId: null,
-        secondaryEdgeCount: 0,
-        secondaryNodeCount: 0,
-      });
+      setNeighborhoodInfo({ sourceId: null, targetId: null, secondaryEdgeCount: 0, secondaryNodeCount: 0 });
       setNodeNeighborhoodInfo({
         directEdgeCount: neighborhood.directEdgeIds.length,
         directNeighborCount: neighborhood.directNeighborNodeIds.length,
       });
     } else {
-      setNeighborhoodInfo({
-        sourceId: null,
-        targetId: null,
-        secondaryEdgeCount: 0,
-        secondaryNodeCount: 0,
-      });
-      setNodeNeighborhoodInfo({
-        directEdgeCount: 0,
-        directNeighborCount: 0,
-      });
+      setNeighborhoodInfo({ sourceId: null, targetId: null, secondaryEdgeCount: 0, secondaryNodeCount: 0 });
+      setNodeNeighborhoodInfo({ directEdgeCount: 0, directNeighborCount: 0 });
     }
 
-    // Update active selection mode for debug panel
     if (selectedEdgeId) {
       setActiveSelectionMode("edge-relationship");
     } else if (selectedNodeId) {
@@ -1038,8 +1001,77 @@ useEffect(() => {
       setActiveSelectionMode("none");
     }
 
+    // Label policy: run without hover so the hover effect owns the label delta
+    const selectionContext: SelectionContext = {
+      selectedNodeId,
+      selectedEdgeId,
+      neighborhoodDepth: Math.floor(neighborhoodDepth || 2) as 1 | 2 | 3,
+      hoveredNodeId: null,
+      hoveredEdgeId: null,
+    };
+    const labelOptions: LegacyLabelPolicyOptions = {
+      maxEdgeLabelLength,
+      showLabelsOnHover,
+      hoverLabelColor: graphVisualTokens.nodeLabelColor.default,
+    };
+    applyNodeLabelPolicy(graph, selectionContext, labelOptions, nodeLabelMode);
+    applyEdgeLabelPolicy(graph, selectionContext, labelOptions, edgeLabelMode);
+
+    // Re-sync label snapshot and hover label after full label reset
+    const currentHoveredId = hoveredNodeIdRef.current;
+    if (currentHoveredId && currentHoveredId !== selectedNodeId && graph.hasNode(currentHoveredId)) {
+      preLabelHoverRef.current = (graph.getNodeAttribute(currentHoveredId, "label") as string) ?? "";
+      if (showLabelsOnHover) {
+        const attrs = graph.getNodeAttributes(currentHoveredId);
+        graph.setNodeAttribute(currentHoveredId, "label", ((attrs.fullLabel ?? attrs.originalLabel ?? "") as string));
+      }
+    }
+
     sigma.refresh();
-  }, [selectedNodeId, selectedEdgeId, neighborhoodDepth, hoveredNodeId, hoveredEdgeId, hoverNodeColor, edgeLabelFontSize, pinnedHighlightActive, activePins, resolvedTokens]);
+  }, [selectedNodeId, selectedEdgeId, neighborhoodDepth, hoverNodeColor, edgeLabelFontSize, pinnedHighlightActive, activePins, resolvedTokens, nodeLabelMode, edgeLabelMode, maxEdgeLabelLength, showLabelsOnHover]);
+
+  // Hover-only effect — targeted delta, no full graph reset
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    const sigma = sigmaRef.current;
+    if (!sigma) return;
+    const graph = sigma.getGraph();
+
+    const prevHover = prevHoverRef.current;
+    const nextHover = { nodeId: hoveredNodeId, edgeId: hoveredEdgeId };
+    prevHoverRef.current = nextHover;
+
+    const hoverState: GraphInteractionState = {
+      selectedNodeId: selectedNodeIdRef.current,
+      selectedEdgeId: selectedEdgeIdRef.current,
+      hoveredNodeId: null,
+      hoveredEdgeId: null,
+      neighborhoodDepth: Math.floor(neighborhoodDepth || 2) as 1 | 2 | 3,
+    };
+
+    applyHoverDelta(
+      graph,
+      prevHover,
+      nextHover,
+      hoverState,
+      { hoverNodeColor, edgeLabelFontSize, pinnedHighlightActive },
+      resolvedTokensRef.current,
+    );
+
+    // Label delta: restore prev node label, snapshot + apply next node hover label
+    if (prevHover.nodeId && prevHover.nodeId !== hoveredNodeId && graph.hasNode(prevHover.nodeId)) {
+      graph.setNodeAttribute(prevHover.nodeId, "label", preLabelHoverRef.current);
+    }
+    if (hoveredNodeId && hoveredNodeId !== selectedNodeIdRef.current && graph.hasNode(hoveredNodeId)) {
+      preLabelHoverRef.current = (graph.getNodeAttribute(hoveredNodeId, "label") as string) ?? "";
+      if (showLabelsOnHover) {
+        const attrs = graph.getNodeAttributes(hoveredNodeId);
+        graph.setNodeAttribute(hoveredNodeId, "label", ((attrs.fullLabel ?? attrs.originalLabel ?? "") as string));
+      }
+    }
+
+    sigma.refresh();
+  }, [hoveredNodeId, hoveredEdgeId]); // intentional: selection/style changes handled by selection effect above
 
   // Edge label font size live update effect
   useEffect(() => {
@@ -1058,33 +1090,6 @@ useEffect(() => {
     sigma.setSetting("labelSize", nodeLabelFontSize);
     sigma.refresh();
   }, [nodeLabelFontSize]);
-
-  // Label policy effect - applies label visibility based on mode and selection
-  useEffect(() => {
-    const sigma = sigmaRef.current;
-    if (!sigma) return;
-
-    const graph = sigma.getGraph();
-
-    const selectionContext: SelectionContext = {
-      selectedNodeId,
-      selectedEdgeId,
-      neighborhoodDepth: Math.floor(neighborhoodDepth || 2) as 1 | 2 | 3,
-      hoveredNodeId,
-      hoveredEdgeId,
-    };
-
-    const labelOptions: LegacyLabelPolicyOptions = {
-      maxEdgeLabelLength,
-      showLabelsOnHover,
-      hoverLabelColor: graphVisualTokens.nodeLabelColor.default, // Token-based hover label color
-    };
-
-    applyNodeLabelPolicy(graph, selectionContext, labelOptions, nodeLabelMode);
-    applyEdgeLabelPolicy(graph, selectionContext, labelOptions, edgeLabelMode);
-
-    sigma.refresh();
-  }, [selectedNodeId, selectedEdgeId, neighborhoodDepth, nodeLabelMode, edgeLabelMode, maxEdgeLabelLength, showLabelsOnHover, hoveredNodeId, hoveredEdgeId]);
 
   return (
     <div className="relative h-full w-full" data-testid="renderer-debug-panel">
