@@ -49,6 +49,9 @@ import { bookmarkRegistry, initializeDemoBookmarks } from "../graph/overlay/book
 import { Topbar } from "../control-plane/topbar/Topbar";
 import { useCrossfadeAppTokens } from "../themes/themeCrossfade";
 
+const EMPTY_OVERRIDES: Record<string, unknown> = {};
+const EMPTY_PINS: Record<string, { x: number; y: number; z?: number }> = {};
+
 export function AppShell() {
   const settings = useSettingsStore((state) => state.settings);
   const setSetting = useSettingsStore((state) => state.setSetting);
@@ -247,13 +250,13 @@ export function AppShell() {
 
   // Pass C4: Derive active dialect's seedParamOverrides for live tuning
   const activeSeedParamOverrides = useMemo(
-    () => (settings.physics.seedParamOverrides?.[settings.physics.dialectId] ?? {}) as Record<string, unknown>,
+    () => (settings.physics.seedParamOverrides?.[settings.physics.dialectId] ?? EMPTY_OVERRIDES) as Record<string, unknown>,
     [settings.physics.seedParamOverrides, settings.physics.dialectId],
   );
 
   // Pass C9.1: Derive active dialect's pin map
   const activePins = useMemo(
-    () => (settings.physics.pins?.[settings.physics.dialectId] ?? {}) as Record<string, { x: number; y: number; z?: number }>,
+    () => (settings.physics.pins?.[settings.physics.dialectId] ?? EMPTY_PINS) as Record<string, { x: number; y: number; z?: number }>,
     [settings.physics.pins, settings.physics.dialectId],
   );
 

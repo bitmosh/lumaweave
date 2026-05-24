@@ -459,13 +459,13 @@ export function applyDialect(
   function applyConfigOverride(partial: Partial<GWDialectConfig>): void {
     // Mutate resolvedConfig in place — closures (resolveWellParams) and
     // the seed function will pick up new values.
-    if (partial.wellOverrides) {
+    if (partial.wellOverrides && Object.keys(partial.wellOverrides).length > 0) {
       resolvedConfig.wellOverrides = {
         ...resolvedConfig.wellOverrides,
         ...partial.wellOverrides,
       };
     }
-    if (partial.interactionOverrides) {
+    if (partial.interactionOverrides && Object.keys(partial.interactionOverrides).length > 0) {
       resolvedConfig.interactionOverrides = {
         ...resolvedConfig.interactionOverrides,
         ...partial.interactionOverrides,
@@ -488,7 +488,7 @@ export function applyDialect(
         });
       }
     }
-    if (partial.seedParams) {
+    if (partial.seedParams && Object.keys(partial.seedParams).length > 0) {
       resolvedConfig.seedParams = {
         ...resolvedConfig.seedParams,
         ...partial.seedParams,
