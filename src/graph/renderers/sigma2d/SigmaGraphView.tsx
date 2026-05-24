@@ -37,6 +37,7 @@ import { applyNodeLabelPolicy,
 } from "../../visual/applyGraphLabelPolicyToGraphology";
 import { attachCameraController } from "../../overlay/cameraController";
 import { buildNodeProgramClasses, resolveNodeProgramId } from "../../nodePrograms/nodeProgramRegistry";
+import PlasmaEdgeProgram from "../../edgePrograms/PlasmaEdgeProgram";
 import { applyDialect, type GWController } from "../../../physics/gwells";
 import { installGwellsProbeGlobal } from "./gwellsProbe";
 import { useSettingsStore } from "../../../control-plane/settings/settings.store";
@@ -397,7 +398,7 @@ function SigmaGraphViewComponent({
 
       defaultNodeColor: resolvedTokens.nodeColor.default,
       defaultEdgeColor: resolvedTokens.edgeColor.default,
-      defaultEdgeType: "line",
+      defaultEdgeType: "plasma",
 
       enableEdgeEvents: true,
 
@@ -405,6 +406,9 @@ function SigmaGraphViewComponent({
       edgeLabelSize: edgeLabelFontSize,
       edgeLabelColor: { color: resolvedTokens.edgeLabelColor.default },
 
+      edgeProgramClasses: {
+        plasma: PlasmaEdgeProgram as unknown as any,
+      },
       nodeProgramClasses: buildNodeProgramClasses(),
       defaultNodeType: "glass-sphere",
       itemSizesReference: "positions",  // ADD THIS LINE
@@ -519,10 +523,21 @@ function SigmaGraphViewComponent({
 
   sigma.on("enterEdge", ({ edge }) => {
     setHoveredEdgeId(edge);
+    // v91: drive per-edge hover blend for PlasmaEdgeProgram
+    const g = graphRef.current;
+    if (g && g.hasEdge(edge)) {
+      g.setEdgeAttribute(edge, "_hoverFactor", 1.0);
+      sigma.refresh({ skipIndexation: true });
+    }
   });
 
-  sigma.on("leaveEdge", () => {
+  sigma.on("leaveEdge", ({ edge }) => {
     setHoveredEdgeId(null);
+    const g = graphRef.current;
+    if (g && g.hasEdge(edge)) {
+      g.setEdgeAttribute(edge, "_hoverFactor", 0.0);
+      sigma.refresh({ skipIndexation: true });
+    }
   });
 
   // Pass C9.2: Ctrl+RightClick on a pinned node clears just that pin.
