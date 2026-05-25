@@ -8,7 +8,7 @@ domain: roadmap
 cluster: violet
 agent_readable: true
 include_in_self_graph: false
-last_updated: 2026-05-23
+last_updated: 2026-05-24
 tags:
   - future
   - ideas
@@ -417,6 +417,39 @@ Completed migrations become no-ops cheaply. New bug classes get a new migration 
 inline code in `loadOverrides()`.
 
 Tag: storage, migrations, infrastructure, self-healing.
+
+---
+
+## Edge Rendering
+
+### Potato mode — degrade PlasmaEdgeProgram for large graphs / reduce-motion
+
+PlasmaEdgeProgram is GPU-expensive: 72 vertices/edge × fbm noise × pulse math per frame.
+On a graph with 500+ edges or on a device with `prefers-reduced-motion: reduce`, this will
+cause frame-rate problems.
+
+Potato mode: detect the reduce-motion media query (or a user toggle in Appearance settings)
+and swap `edgeProgramClasses` for a lightweight alternative (e.g., sigma's built-in
+`EdgeRectangleProgram` or a stripped-down version of PlasmaEdgeProgram with noise and pulse
+disabled). Also consider auto-engaging above a configurable edge-count threshold.
+
+Tag: performance, accessibility, edge-rendering, plasma.
+
+---
+
+### Crossfade extension — smooth transition between edge program types
+
+When the user switches edge types or themes, the graph currently snaps instantly.
+A crossfade would render both programs in separate framebuffers and alpha-blend
+them over ~300ms, giving a smooth dissolve between plasma styles or between plasma
+and a lightweight mode.
+
+Requires sigma's renderer to support multi-pass overlay blending, which it doesn't
+currently expose directly. Possible approach: off-screen canvas blitting with
+`globalAlpha` decay on a `requestAnimationFrame` loop, composited over sigma's
+WebGL canvas.
+
+Tag: animation, UX, edge-rendering, plasma, crossfade.
 
 ---
 

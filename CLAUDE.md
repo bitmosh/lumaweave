@@ -39,6 +39,37 @@ when something feels uncertain.
 These are hard-earned lessons. Honor them unless explicitly told
 otherwise.
 
+## Failure classification
+
+Before patching any failure, classify it. Don't patch from
+vibes. Classification often reveals the correct next action.
+
+Failure classes:
+- Environment Prerequisite — missing browser, package, port
+- Dependency / API Uncertainty — unfamiliar library behavior
+- Selector / Test Harness Mismatch — Playwright can't find
+  what's visibly there
+- Identity / Binding Drift — key mismatches across surfaces
+- Persistence / Reset Bug — state lifecycle wrong
+- Runtime Lifecycle / Regression — visual blank, console error,
+  graph disappearance
+- Obsolete Spec Debt — test targets removed/renamed UI
+- Contract / Registry Drift — registry shape changed without
+  consumer updates
+- Scope Creep — fix requires files outside declared scope
+- Docs / Source-of-Truth Drift — code disagrees with docs
+
+For each failure, report:
+- Input signal
+- Transformation point
+- Expected output
+- Observed output
+- Classification
+- Smallest safe fix
+- Proof after fix
+
+Full router: docs/agent/survival-manual/02_DIAGNOSTIC_ROUTER.md
+
 ### Evidence before fix
 
 Never apply a fix based on a hypothesis without evidence. If a test
@@ -63,6 +94,24 @@ After two attempts, surface the failure to the developer. We may
 need a new hypothesis, a deeper diagnostic, or a different
 approach entirely.
 
+### Cascade detection
+
+If more than 5 tests fail simultaneously, STOP. Do not let
+a cascade run to completion. Do not patch individual failures.
+
+5+ simultaneous failures usually share one root cause. Classify
+the shared signature before any code changes. Report the root
+cause hypothesis to the developer, then wait for direction.
+
+Anti-pattern: patching the first failure, watching three more
+appear, patching those, watching five more appear. By the time
+you've "fixed" twenty tests, you've often made things worse and
+the original root cause is buried.
+
+If the same failure recurs after 2 distinct strategies, stop
+even if total failure count is under 5. That's the two-attempt
+cap firing.
+
 ### STOP gates
 
 When a prompt has explicit STOP-and-report instructions, honor them
@@ -73,6 +122,33 @@ This protects the developer's time. The developer would rather you
 stop early and report than continue and produce work that has to
 be reverted.
 
+Validation:
+  - Typecheck fails after a nontrivial change
+  - Playwright failure count exceeds 5 (cascade)
+  - New test.skip appears
+  - Skipped test count increases unexpectedly
+
+Identity:
+  - QA key surfaces disagree
+  - Report key differs from active checklist key
+
+Contract:
+  - Active control count changes unexpectedly
+  - Registry shape changes without consumer updates
+  - Test/contract count drops without explanation
+
+Scope:
+  - Fix requires files outside declared change list
+  - Docs-only pass starts requiring runtime edits
+  - Implementation requires registry shape changes
+
+Safety:
+  - Command requires sudo/system package changes
+  - Git destructive action would be needed
+  - Tool needs access outside repo scope
+
+Full conditions: docs/agent/survival-manual/06_STOP_CONDITIONS.md
+
 ### Verbatim reporting
 
 When reporting test output, console output, or file contents, paste
@@ -82,6 +158,51 @@ output to diagnose correctly.
 
 If output is very long (thousands of lines), report the relevant
 section verbatim and note what was elided.
+
+**Caveats surface unprompted, not just on request.** If your test
+run reused an existing dev server, say so. If a "matching baseline"
+might have tested the same compiled code as the comparison run,
+say so. If a count "looks clean" but skipped tests increased, say
+so. The developer can't ask about caveats they don't know exist.
+
+A truthful stopped report is better than a false clean report.
+
+## Situation report format
+
+When a STOP condition fires, a cascade is detected, or two
+attempts at a fix fail, post a structured report:
+
+  Situation Report
+  ═══════════════════════════════════════════════════════════
+  Mode: [Recovery / Diagnostic / Planning]
+  Repo: [branch] · [clean / dirty]
+
+  ──────────────────────────────────────
+  CURRENT STATE
+  Files changed: [list or none]
+  Validation:
+    typecheck:      passed / failed
+    Playwright:     N passed, M skipped, K failed
+    test.skip grep: clean / dirty
+    git status:     clean / dirty
+
+  ──────────────────────────────────────
+  FAILURE (if applicable)
+  Exact failing command/test:
+  Failure classification: [from list above]
+  Strategies attempted (max 2 before stopping):
+    1.
+    2.
+  Likely shared root cause:
+  Not-yet-proven assumptions:
+
+  ──────────────────────────────────────
+  SAFE NEXT OPTIONS
+  1.
+  2.
+  3.
+
+Full template: docs/quest/QUEST_TEMPLATE.md
 
 ### Diagnostic pattern: console.log + stack traces
 
@@ -713,3 +834,34 @@ and group architecture.
 
 If this file feels out of date, ask the developer. They (or the
 planning Claude) will tell you what's changed.
+
+## Reference docs (load when relevant)
+
+The following docs are not required reading on every pass but
+should be consulted when their domain is in play:
+
+Operating / governance:
+  docs/agent/protocols/BANDIT_PROTOCOL.md
+  docs/agent/protocols/BANDIT_SELF_SPLIT_PROTOCOL.md
+  docs/agent/brain/BANDIT_QA_PROTOCOL.md
+  docs/agent/protocols/PASS_TRANSITION_PROTOCOL.md
+  docs/agent/protocols/QA_KEY_LIFECYCLE.md
+  docs/agent/protocols/ADVISORY_STATE_MODEL.md
+  docs/agent/protocols/REGISTRY_CONTRACT_PATTERNS.md
+
+Survival manual (diagnostics + debugging):
+  docs/agent/survival-manual/01_TROUBLESHOOTING_DECISION_MATRIX.md
+  docs/agent/survival-manual/02_DIAGNOSTIC_ROUTER.md
+  docs/agent/survival-manual/03_TOOL_USE_TRIGGERS.md
+  docs/agent/survival-manual/04_DEBUGGING_LENSES.md
+  docs/agent/survival-manual/05_FAILURE_REPORT_TEMPLATE.md
+  docs/agent/survival-manual/06_STOP_CONDITIONS.md
+  docs/agent/survival-manual/07_PROMPT_BLOCKS.md
+  docs/agent/survival-manual/08_LUMAWEAVE_AGENT_OPERATING_LOOP.md
+
+Onboarding / multi-agent:
+  docs/agent/onboarding/NEW_AGENT_ONBOARDING.md
+  docs/agent/onboarding/MULTI_AGENT_POLICY.md
+
+Situation reports:
+  docs/quest/QUEST_TEMPLATE.md
