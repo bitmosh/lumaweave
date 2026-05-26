@@ -5,7 +5,11 @@ import { StatusPill } from "./StatusPill";
 import { StatusCluster } from "./StatusCluster";
 import "./topbar.css";
 
-export function Topbar() {
+interface TopbarProps {
+  onOpenSettings?: () => void;
+}
+
+export function Topbar({ onOpenSettings }: TopbarProps) {
   const settings = useSettingsStore((s) => s.settings);
   const setSetting = useSettingsStore((s) => s.setSetting);
 
@@ -51,6 +55,18 @@ export function Topbar() {
             }
           />
         </label>
+        <button
+          type="button"
+          className="lw-topbar-icon-btn"
+          aria-label="Open settings"
+          title="Settings · ⌘,"
+          onClick={onOpenSettings}
+        >
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 1.5l1.2 2 2.3-.5.5 2.3 2 1.2-1.2 2 1.2 2-2 1.2-.5 2.3-2.3-.5L8 14.5l-1.2-2-2.3.5-.5-2.3-2-1.2 1.2-2-1.2-2 2-1.2.5-2.3 2.3.5L8 1.5Zm0 3.7a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6Z" />
+          </svg>
+          <span className="lw-topbar-kbd" style={{ marginLeft: 6 }}>⌘,</span>
+        </button>
       </div>
     </header>
   );
