@@ -1,5 +1,6 @@
 import React from 'react';
 import type { SettingsPanelProps, PanelPosition } from './settingsPanel.types';
+import './SettingsPanel.css';
 
 const DEFAULT_RECT = { left: 140, top: 90, width: 1180, height: 740 };
 const STORE_KEY = 'lw.settings.panel.geometry.v1';

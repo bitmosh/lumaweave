@@ -1,0 +1,1152 @@
+/* SettingsPanel.css
+ * LumaWeave Settings panel — component styles.
+ *
+ * The panel uses three independently opacity-able layers (Pattern 2):
+ *   --lw-settings-bg-opacity      (0..1)  — panel fill
+ *   --lw-settings-chrome-opacity  (0.6..1) — borders, sliders, button frames
+ *   --lw-settings-text-opacity    (1, fixed) — labels, values, headings
+ */
+
+/* ─── Settings panel: tile shell ──────────────────────────────────────── */
+.lw-settings-panel {
+  position: fixed;
+  min-width: 720px;
+  min-height: 480px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  /* The panel root is a transparent positioning shell.
+     The visible fill is drawn by .lw-settings-panel-bg below it. */
+}
+.lw-settings-panel.is-minimized { height: auto !important; min-height: 0; }
+
+.lw-settings-panel-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  background: var(--lw-panel-bg);
+  border: 1px solid color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 100%, transparent);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  box-shadow:
+    0 18px 60px rgba(0,0,0,0.55),
+    0 0 0 1px color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 40%, transparent) inset,
+    0 0 60px color-mix(in oklab, var(--lw-glow) 18%, transparent);
+  opacity: var(--lw-settings-bg-opacity);
+  transition: opacity 220ms ease;
+  pointer-events: none;
+}
+.lw-settings-panel-chrome {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  overflow: hidden;
+  /* NOTE: chrome opacity is applied via the --lw-panel-border-current var
+     (color-mix on borders + opacity on non-text chrome elements). We
+     deliberately do NOT set `opacity` on this wrapper — that would fade
+     text along with the chrome, since CSS nested opacity multiplies. */
+  --lw-panel-border-current: color-mix(in oklab,
+    var(--lw-panel-border) calc(var(--lw-settings-chrome-opacity, 1) * 100%),
+    transparent);
+}
+.lw-settings-panel-chrome > * { color: var(--lw-text-primary); }
+
+/* ─── Title bar ───────────────────────────────────────────────────────── */
+.lw-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--lw-panel-border-current, var(--lw-panel-border));
+  background:
+    linear-gradient(180deg,
+      color-mix(in oklab, var(--lw-accent) 7%, transparent),
+      color-mix(in oklab, var(--lw-app-bg) 26%, transparent));
+  cursor: grab;
+  user-select: none;
+}
+.lw-titlebar:active { cursor: grabbing; }
+.lw-titlebar-grip {
+  width: 14px; height: 14px;
+  display: inline-grid;
+  grid-template-columns: 2px 2px 2px;
+  grid-template-rows: 2px 2px 2px;
+  gap: 2px;
+  align-content: center;
+  justify-content: center;
+  opacity: 0.55;
+}
+.lw-titlebar-grip span {
+  background: currentColor;
+  border-radius: 1px;
+}
+.lw-titlebar-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--lw-text-primary);
+}
+.lw-titlebar-meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--lw-text-muted);
+  letter-spacing: 0.06em;
+}
+.lw-titlebar-spacer { flex: 1; }
+.lw-titlebar-btn {
+  width: 22px; height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  color: var(--lw-text-muted);
+  transition: 100ms;
+}
+.lw-titlebar-btn:hover {
+  background: color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 60%, transparent);
+  color: var(--lw-text-primary);
+}
+.lw-titlebar-btn.is-close:hover { color: var(--lw-color-magenta-500); }
+
+/* ─── Search bar ──────────────────────────────────────────────────────── */
+.lw-searchbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--lw-panel-border-current, var(--lw-panel-border));
+}
+.lw-searchbar-input {
+  flex: 1;
+  background: color-mix(in oklab, var(--lw-app-bg) 40%, transparent);
+  border: 1px solid var(--lw-panel-border-current, var(--lw-panel-border));
+  border-radius: 6px;
+  padding: 7px 10px 7px 32px;
+  color: var(--lw-text-primary);
+  font-size: 12px;
+  outline: none;
+  transition: 120ms;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14' fill='none' stroke='%23a0a0a0' stroke-width='1.4'><circle cx='6' cy='6' r='4'/><path d='m9 9 3 3'/></svg>");
+  background-repeat: no-repeat;
+  background-position: 10px center;
+}
+.lw-searchbar-input:focus {
+  border-color: var(--lw-accent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--lw-accent) 20%, transparent);
+}
+.lw-searchbar-hint {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--lw-text-muted);
+}
+.lw-searchbar-clear {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--lw-text-muted);
+  padding: 3px 6px;
+  border: 1px solid var(--lw-panel-border-current, var(--lw-panel-border));
+  border-radius: 4px;
+}
+.lw-searchbar-clear:hover { color: var(--lw-text-primary); }
+
+/* ─── Body: sidebar + content ─────────────────────────────────────────── */
+.lw-body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+/* Sidebar ----------------------------------------------------------------*/
+.lw-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  padding: 12px 8px;
+  border-right: 1px solid var(--lw-panel-border-current, var(--lw-panel-border));
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+}
+.lw-sidebar.is-collapsed { width: 56px; }
+.lw-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 10px;
+  border-radius: 6px;
+  color: var(--lw-text-muted);
+  transition: 100ms;
+  position: relative;
+  border-left: 2px solid transparent;
+}
+.lw-sidebar-item:hover {
+  color: var(--lw-text-primary);
+  background: color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 50%, transparent);
+}
+.lw-sidebar-item.is-active {
+  color: var(--lw-text-primary);
+  background: color-mix(in oklab, var(--lw-accent) 12%, transparent);
+  border-left-color: var(--lw-accent);
+  box-shadow: inset 0 0 12px color-mix(in oklab, var(--lw-glow) 30%, transparent);
+}
+.lw-sidebar-item.is-active .lw-sidebar-icon { color: var(--lw-accent); }
+.lw-sidebar-item.is-dim { opacity: 0.4; }
+.lw-sidebar-icon { width: 16px; height: 16px; flex-shrink: 0; }
+.lw-sidebar-label { font-size: 12px; font-weight: 500; }
+.lw-sidebar-badge {
+  margin-left: auto;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  padding: 1px 5px;
+  border-radius: 8px;
+  background: var(--lw-accent);
+  color: var(--lw-app-bg);
+  font-weight: 600;
+}
+.is-collapsed .lw-sidebar-label,
+.is-collapsed .lw-sidebar-badge { display: none; }
+.is-collapsed .lw-sidebar-item { justify-content: center; padding: 9px 0; }
+
+/* Content ----------------------------------------------------------------*/
+.lw-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 24px 24px;
+  min-width: 0;
+}
+.lw-content-head {
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 50%, transparent);
+}
+.lw-content-title {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0 0 4px;
+}
+.lw-content-desc {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--lw-text-muted);
+  max-width: 60ch;
+}
+
+/* Sub-section ------------------------------------------------------------*/
+.lw-subsection { margin-bottom: 22px; }
+.lw-subsection-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  cursor: pointer;
+  color: var(--lw-text-muted);
+}
+.lw-subsection-head:hover { color: var(--lw-text-primary); }
+.lw-subsection-chevron {
+  width: 10px; height: 10px;
+  display: inline-block;
+  border-right: 1.4px solid currentColor;
+  border-bottom: 1.4px solid currentColor;
+  transform: rotate(45deg) translate(-2px, -2px);
+  transition: transform 160ms ease;
+}
+.lw-subsection.is-collapsed .lw-subsection-chevron { transform: rotate(-45deg) translate(0, -3px); }
+.lw-subsection-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.lw-subsection-count {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--lw-text-muted);
+  opacity: 0.7;
+  margin-left: auto;
+}
+.lw-subsection-body {
+  padding-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.lw-subsection.is-collapsed .lw-subsection-body { display: none; }
+
+/* ─── SettingsRow ─────────────────────────────────────────────────────── */
+.lw-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 8px;
+  border-bottom: 1px solid color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 40%, transparent);
+  transition: background 100ms;
+}
+.lw-row:last-child { border-bottom: none; }
+.lw-row:hover { background: color-mix(in oklab, var(--lw-panel-bg) 60%, transparent); }
+.lw-row.is-placeholder { opacity: 0.55; }
+.lw-row.is-block {
+  grid-template-columns: 1fr;
+  align-items: stretch;
+}
+.lw-row.is-active-search-match { background: color-mix(in oklab, var(--lw-accent) 6%, transparent); }
+
+.lw-row-meta { min-width: 0; }
+.lw-row-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--lw-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lw-row-desc {
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: var(--lw-text-muted);
+  line-height: 1.4;
+}
+.lw-row-control { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.lw-row-control.is-wide { width: 240px; }
+.lw-row-reset {
+  width: 22px; height: 22px;
+  border-radius: 11px;
+  border: 1px solid var(--lw-panel-border-current, var(--lw-panel-border));
+  color: var(--lw-text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: 120ms;
+  flex-shrink: 0;
+}
+.lw-row-reset:hover {
+  color: var(--lw-color-flare-500);
+  border-color: var(--lw-color-flare-500);
+  background: color-mix(in oklab, var(--lw-color-flare-500) 8%, transparent);
+}
+.lw-row-reset.is-hidden { visibility: hidden; }
+.lw-row-mark {
+  background: linear-gradient(
+    transparent 78%,
+    color-mix(in oklab, var(--lw-accent) 60%, transparent) 78%,
+    color-mix(in oklab, var(--lw-accent) 60%, transparent) 100%
+  );
+  color: inherit;
+}
+.lw-coming-pill {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.10em;
+  padding: 2px 6px;
+  border: 1px solid var(--lw-panel-border-current, var(--lw-panel-border));
+  border-radius: 3px;
+  color: var(--lw-text-muted);
+  text-transform: uppercase;
+}
+
+/* Controls --------------------------------------------------------------- */
+.lw-toggle {
+  position: relative;
+  width: 34px; height: 18px;
+  border-radius: 9px;
+  border: 1px solid var(--lw-panel-border-current, var(--lw-panel-border));
+  background: color-mix(in oklab, var(--lw-app-bg) 60%, transparent);
+  transition: 160ms;
+  flex-shrink: 0;
+}
+.lw-toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--lw-text-muted);
+  transition: 160ms;
+}
+.lw-toggle.is-on {
+  border-color: var(--lw-accent);
+  background: color-mix(in oklab, var(--lw-accent) 30%, transparent);
+}
+.lw-toggle.is-on::after {
+  left: 18px;
+  background: var(--lw-accent);
+  box-shadow: 0 0 6px var(--lw-glow);
+}
+.lw-toggle.is-disabled { opacity: 0.5; cursor: not-allowed; }
+
+.lw-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 18px;
+  background: transparent;
+}
+.lw-slider::-webkit-slider-runnable-track {
+  height: 3px;
+  background: linear-gradient(
+    to right,
+    var(--lw-accent) 0%,
+    var(--lw-accent) var(--p, 50%),
+    color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 70%, transparent) var(--p, 50%),
+    color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 70%, transparent) 100%);
+  border-radius: 2px;
+}
+.lw-slider::-moz-range-track {
+  height: 3px;
+  background: color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 70%, transparent);
+  border-radius: 2px;
+}
+.lw-slider::-moz-range-progress {
+  height: 3px;
+  background: var(--lw-accent);
+  border-radius: 2px;
+}
+.lw-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--lw-accent);
+  margin-top: -4.5px;
+  border: 2px solid var(--lw-app-bg);
+  box-shadow: 0 0 10px var(--lw-glow);
+  cursor: pointer;
+}
+.lw-slider::-moz-range-thumb {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--lw-accent);
+  border: 2px solid var(--lw-app-bg);
+  box-shadow: 0 0 10px var(--lw-glow);
+  cursor: pointer;
+}
+.lw-slider-with-readout { display: flex; align-items: center; gap: 12px; width: 100%; }
+.lw-slider-readout {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--lw-text-primary);
+  min-width: 56px;
+  text-align: right;
+}
+.lw-slider-readout-sub {
+  font-size: 10px;
+  color: var(--lw-text-muted);
+  margin-left: 4px;
+}
+
+.lw-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: color-mix(in oklab, var(--lw-app-bg) 60%, transparent);
+  color: var(--lw-text-primary);
+  border: 1px solid var(--lw-panel-border-current, var(--lw-panel-border));
+  border-radius: 5px;
+  padding: 6px 26px 6px 10px;
+  font-size: 12px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none' stroke='%23a0a0a0' stroke-width='1.5'><path d='m1 1 4 4 4-4'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 9px center;
+}
+.lw-select:focus { outline: none; border-color: var(--lw-accent); }
+
+.lw-segmented {
+  display: inline-flex;
+  border: 1px solid var(--lw-panel-border-current, var(--lw-panel-border));
+  border-radius: 5px;
+  overflow: hidden;
+}
+.lw-segmented button {
+  padding: 5px 11px;
+  font-size: 11.5px;
+  color: var(--lw-text-muted);
+  border-right: 1px solid var(--lw-panel-border-current, var(--lw-panel-border));
+  transition: 100ms;
+}
+.lw-segmented button:last-child { border-right: none; }
+.lw-segmented button:hover { color: var(--lw-text-primary); }
+.lw-segmented button.is-on {
+  background: color-mix(in oklab, var(--lw-accent) 22%, transparent);
+  color: var(--lw-accent);
+}
+
+.lw-btn {
+  font-family: inherit;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid var(--lw-panel-border-current, var(--lw-panel-border));
+  border-radius: 5px;
+  color: var(--lw-text-primary);
+  background: color-mix(in oklab, var(--lw-app-bg) 40%, transparent);
+  transition: 120ms;
+}
+.lw-btn:hover {
+  border-color: var(--lw-accent);
+  background: color-mix(in oklab, var(--lw-accent) 12%, transparent);
+}
+.lw-btn.is-danger:hover {
+  border-color: var(--lw-color-flare-500);
+  color: var(--lw-color-flare-500);
+  background: color-mix(in oklab, var(--lw-color-flare-500) 10%, transparent);
+}
+.lw-btn.is-link {
+  border: none;
+  background: none;
+  color: var(--lw-accent);
+  padding: 4px 6px;
+  font-size: 11px;
+}
+
+.lw-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  padding: 3px 7px;
+  border-radius: 4px;
+  border: 1px solid var(--lw-panel-border-current, var(--lw-panel-border));
+  color: var(--lw-text-muted);
+}
+.lw-chip-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 70%, transparent);
+}
+
+/* ─── Status bar ──────────────────────────────────────────────────────── */
+.lw-statusbar {
+  display: flex;
+  align-items: stretch;
+  border-top: 1px solid var(--lw-panel-border-current, var(--lw-panel-border));
+  background: color-mix(in oklab, var(--lw-app-bg) 30%, transparent);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+.lw-status-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-right: 1px solid var(--lw-panel-border-current, var(--lw-panel-border));
+  color: var(--lw-text-muted);
+}
+.lw-status-section:last-child { border-right: none; }
+.lw-status-section.is-flex { flex: 1; }
+.lw-status-label {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 9.5px;
+  opacity: 0.7;
+}
+.lw-status-value { color: var(--lw-text-primary); }
+.lw-status-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--lw-accent);
+  box-shadow: 0 0 8px var(--lw-glow);
+}
+.lw-status-dot.is-warn { background: var(--lw-color-gold-500); box-shadow: 0 0 8px var(--lw-color-gold-500); }
+.lw-status-dot.is-alert { background: var(--lw-color-flare-500); box-shadow: 0 0 8px var(--lw-color-flare-500); }
+.lw-status-section .lw-opacity-icon { color: var(--lw-text-muted); width: 14px; height: 14px; }
+.lw-status-section.is-opacity { gap: 10px; }
+.lw-status-section.is-opacity .lw-slider { flex: 1; max-width: 320px; min-width: 140px; }
+
+/* ─── Theme picker grid ───────────────────────────────────────────────── */
+.lw-themegrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
+  gap: 12px;
+  padding: 6px 2px 2px;
+}
+.lw-themecard {
+  border: 1px solid var(--lw-panel-border-current, var(--lw-panel-border));
+  border-radius: 7px;
+  padding: 8px;
+  text-align: left;
+  transition: 120ms;
+  background: color-mix(in oklab, var(--lw-app-bg) 40%, transparent);
+}
+.lw-themecard:hover {
+  border-color: var(--lw-accent);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.4),
+              0 0 24px color-mix(in oklab, var(--lw-glow) 30%, transparent);
+}
+.lw-themecard.is-active {
+  border-color: var(--lw-accent);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--lw-accent) 30%, transparent),
+              0 0 24px color-mix(in oklab, var(--lw-glow) 35%, transparent);
+}
+.lw-themecard-thumb {
+  width: 100%;
+  height: 96px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  display: block;
+}
+.lw-themecard-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.lw-themecard-name {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--lw-text-primary);
+}
+.lw-themecard-mood {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--lw-text-muted);
+}
+.lw-themecard-wcag {
+  margin-left: auto;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  padding: 2px 5px;
+  border-radius: 3px;
+  border: 1px solid var(--lw-panel-border-current, var(--lw-panel-border));
+  color: var(--lw-text-muted);
+}
+.lw-themecard-wcag.is-AAA { color: var(--lw-accent); border-color: var(--lw-accent); }
+.lw-themecard-wcag.is-AA  { color: var(--lw-color-gold-500); border-color: var(--lw-color-gold-500); }
+.lw-themecard-wcag.is-partial { color: var(--lw-color-flare-500); border-color: var(--lw-color-flare-500); }
+
+/* ─── Accessibility readout ───────────────────────────────────────────── */
+.lw-a11y-table { display: flex; flex-direction: column; gap: 1px; }
+.lw-a11y-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 6px;
+  border-bottom: 1px solid color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 40%, transparent);
+  font-size: 12px;
+}
+.lw-a11y-row:last-child { border-bottom: none; }
+.lw-a11y-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.lw-a11y-swatch {
+  display: inline-block;
+  width: 36px; height: 16px;
+  border-radius: 3px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px;
+  text-align: center;
+  line-height: 16px;
+  flex-shrink: 0;
+}
+.lw-a11y-ratio {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  color: var(--lw-text-primary);
+  min-width: 48px;
+  text-align: right;
+}
+.lw-a11y-level {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid currentColor;
+}
+.lw-a11y-level.is-AAA { color: var(--lw-accent); }
+.lw-a11y-level.is-AA  { color: var(--lw-color-gold-500); }
+.lw-a11y-level.is-AA-large { color: var(--lw-text-muted); }
+.lw-a11y-level.is-fail { color: var(--lw-color-flare-500); }
+
+/* ─── Override list ───────────────────────────────────────────────────── */
+.lw-overrides {
+  border: 1px solid color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 50%, transparent);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.lw-override-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) 110px 130px 26px;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-bottom: 1px solid color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 40%, transparent);
+  font-size: 12px;
+}
+.lw-override-row:last-child { border-bottom: none; }
+.lw-override-row:hover { background: color-mix(in oklab, var(--lw-panel-bg) 60%, transparent); }
+.lw-override-path {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--lw-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lw-override-value { display: inline-flex; align-items: center; gap: 6px; }
+.lw-override-scope {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--lw-text-muted);
+  letter-spacing: 0.02em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lw-overrides-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: color-mix(in oklab, var(--lw-app-bg) 30%, transparent);
+  border-top: 1px solid color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 50%, transparent);
+}
+.lw-overrides-count {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  color: var(--lw-text-muted);
+}
+
+/* ─── Drama section ───────────────────────────────────────────────────── */
+.lw-drama {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 18px;
+  align-items: stretch;
+  padding: 4px 2px;
+}
+.lw-drama-master {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--lw-panel-border-current, var(--lw-panel-border));
+  border-radius: 7px;
+  background: color-mix(in oklab, var(--lw-accent) 5%, transparent);
+}
+.lw-drama-title {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+.lw-drama-readout {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--lw-text-muted);
+}
+.lw-drama-readout em { font-style: normal; color: var(--lw-accent); font-weight: 500; }
+.lw-drama-factors {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border: 1px solid color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 50%, transparent);
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+/* ─── Announcement ────────────────────────────────────────────────────── */
+.lw-announcement-host { position: relative; }
+.lw-announcement {
+  position: absolute;
+  right: 18px;
+  bottom: 76px;
+  width: 320px;
+  z-index: 90;
+  border: 1px solid var(--lw-accent);
+  border-radius: 8px;
+  background: var(--lw-panel-bg-solid);
+  padding: 14px;
+  box-shadow: 0 16px 50px rgba(0,0,0,0.6),
+              0 0 24px color-mix(in oklab, var(--lw-glow) 40%, transparent);
+  font-size: 12px;
+}
+.lw-announcement-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.lw-announcement-title {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+}
+.lw-announcement-body { color: var(--lw-text-muted); line-height: 1.55; margin-bottom: 12px; }
+.lw-announcement-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.lw-announcement-check { display: flex; align-items: center; gap: 6px; margin-right: auto; font-size: 11px; color: var(--lw-text-muted); }
+
+/* ─── Resize handles ──────────────────────────────────────────────────── */
+.lw-resize {
+  position: absolute;
+  z-index: 2;
+}
+.lw-resize-e  { top: 16px; bottom: 16px; right: -3px; width: 6px; cursor: ew-resize; }
+.lw-resize-s  { left: 16px; right: 16px; bottom: -3px; height: 6px; cursor: ns-resize; }
+.lw-resize-se { right: -3px; bottom: -3px; width: 14px; height: 14px; cursor: nwse-resize; }
+.lw-resize-sw { left: -3px;  bottom: -3px; width: 14px; height: 14px; cursor: nesw-resize; }
+
+/* ─── Animations ─────────────────────────────────────────────────────── */
+@keyframes lw-fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.lw-anim-in { animation: lw-fade-in 180ms ease both; }
+
+@keyframes lw-pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+.lw-anim-pulse { animation: lw-pulse 1.8s ease-in-out infinite; }
+
+/* ─── Scrollbars ─────────────────────────────────────────────────────── */
+.lw-content::-webkit-scrollbar, .lw-sidebar::-webkit-scrollbar { width: 8px; }
+.lw-content::-webkit-scrollbar-thumb, .lw-sidebar::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 80%, transparent);
+  border-radius: 4px;
+}
+.lw-content::-webkit-scrollbar-track, .lw-sidebar::-webkit-scrollbar-track { background: transparent; }
+
+/* ─── Chrome opacity layer (Pattern 2) ───────────────────────────────────
+   Non-text visual elements fade with the opacity slider while text stays
+   crisp. We can't put `opacity` on a wrapper (it would multiply down to
+   text), so we apply it to specific non-text chrome surfaces here, and
+   we fade borders via the --lw-panel-border-current var (defined on
+   .lw-settings-panel-chrome). */
+.lw-settings-panel-chrome :where(
+  .lw-toggle,
+  .lw-slider,
+  .lw-status-dot,
+  .lw-subsection-chevron,
+  .lw-titlebar-grip,
+  .lw-row-reset,
+  .lw-themecard-thumb,
+  .lw-chip-color,
+  .lw-a11y-swatch,
+  .lw-resize,
+  .lw-opacity-tick,
+  .lw-opacity-icon,
+  .lw-searchbar-input
+) {
+  opacity: var(--lw-settings-chrome-opacity, 1);
+}
+
+/* ─── Opacity slider tick marks ─────────────────────────────────────────── */
+.lw-opacity-slider-wrap {
+  flex: 1;
+  max-width: 320px;
+  min-width: 140px;
+  position: relative;
+  padding-bottom: 6px;
+}
+.lw-opacity-slider-wrap .lw-slider {
+  width: 100%;
+  max-width: none;
+  display: block;
+}
+.lw-opacity-ticks {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 0;
+  height: 8px;
+  pointer-events: none;
+}
+.lw-opacity-tick {
+  position: absolute;
+  width: 1px;
+  height: 4px;
+  margin-left: -0.5px;
+  background: var(--lw-text-muted);
+  opacity: 0.45;
+  pointer-events: auto;
+  cursor: pointer;
+  padding: 0;
+  border: none;
+  transition: 100ms;
+}
+.lw-opacity-tick:hover { opacity: 1; height: 6px; background: var(--lw-accent); }
+.lw-opacity-tick:first-child, .lw-opacity-tick:last-child { height: 6px; opacity: 0.7; }
+
+/* ─── Radial inspector preview ────────────────────────────────────────── */
+.lw-radial-frame {
+  position: relative;
+  border: 1px solid color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 60%, transparent);
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 50% 55%,
+      color-mix(in oklab, var(--lw-color-magenta-500) 20%, transparent),
+      transparent 55%),
+    radial-gradient(circle at 50% 50%,
+      color-mix(in oklab, var(--lw-color-purple-500) 16%, transparent),
+      transparent 65%);
+  padding: 18px 18px 12px;
+  overflow: visible;
+}
+.lw-radial-stage {
+  position: relative;
+  margin: 0 auto;
+}
+.lw-radial-rings {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+}
+@keyframes lw-radial-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.lw-radial-rings.is-spinning {
+  animation: lw-radial-spin 30s linear infinite;
+}
+.lw-radial-center {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in oklab, var(--lw-accent) 70%, transparent);
+  background:
+    radial-gradient(circle at 38% 32%,
+      color-mix(in oklab, #ffffff 30%, var(--lw-color-flare-500)) 0%,
+      var(--lw-color-flare-500) 35%,
+      color-mix(in oklab, var(--lw-color-flare-500) 50%, var(--lw-app-bg)) 80%);
+  box-shadow:
+    0 0 18px color-mix(in oklab, var(--lw-glow) 60%, transparent),
+    0 0 0 1px color-mix(in oklab, var(--lw-accent) 40%, transparent),
+    0 4px 14px rgba(0,0,0,0.4);
+  color: var(--lw-app-bg);
+  display: grid; place-items: center;
+  cursor: pointer;
+  transition: 160ms;
+  z-index: 4;
+}
+.lw-radial-center:hover { transform: translate(-50%, -50%) scale(1.05); }
+.lw-radial-center.is-active {
+  background: var(--lw-app-bg);
+  color: var(--lw-color-flare-500);
+  box-shadow:
+    0 0 0 2px var(--lw-color-flare-500),
+    0 0 24px color-mix(in oklab, var(--lw-color-flare-500) 50%, transparent);
+}
+.lw-radial-spoke {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 80%, transparent);
+  background: radial-gradient(circle at 40% 35%,
+    color-mix(in oklab, var(--lw-panel-bg-solid) 90%, white 8%),
+    color-mix(in oklab, var(--lw-app-bg) 85%, black 12%));
+  color: var(--lw-text-primary);
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.4),
+    0 0 0 1px color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 50%, transparent) inset;
+  transition: transform 160ms ease, box-shadow 160ms ease, opacity 200ms ease;
+  z-index: 3;
+}
+.lw-radial-spoke:hover {
+  transform: translate(-50%, -50%) scale(1.06);
+  border-color: var(--lw-accent);
+  box-shadow:
+    0 4px 14px rgba(0,0,0,0.5),
+    0 0 14px color-mix(in oklab, var(--lw-glow) 50%, transparent),
+    0 0 0 1px var(--lw-accent) inset;
+}
+.lw-radial-spoke.is-open {
+  border-color: var(--lw-accent);
+  background: radial-gradient(circle at 40% 35%,
+    color-mix(in oklab, var(--lw-panel-bg-solid) 85%, var(--lw-accent) 12%),
+    color-mix(in oklab, var(--lw-app-bg) 85%, var(--lw-accent) 8%));
+  box-shadow:
+    0 6px 20px rgba(0,0,0,0.55),
+    0 0 22px color-mix(in oklab, var(--lw-glow) 60%, transparent),
+    0 0 0 1.5px var(--lw-accent) inset;
+}
+.lw-radial-spoke.is-dim {
+  opacity: 0.32;
+  filter: saturate(0.6);
+}
+.lw-radial-spoke-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--lw-text-muted);
+  text-align: center;
+  line-height: 1.05;
+  max-width: 62px;
+  white-space: normal;
+  word-break: keep-all;
+  hyphens: none;
+}
+.lw-radial-spoke.is-open .lw-radial-spoke-label { color: var(--lw-accent); }
+.lw-radial-spoke-tag {
+  position: absolute;
+  top: 4px; right: 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px;
+  color: var(--lw-color-gold-500);
+}
+.lw-radial-submenu {
+  position: absolute;
+  width: 220px;
+  border: 1px solid color-mix(in oklab, var(--lw-accent) 60%, transparent);
+  background: color-mix(in oklab, var(--lw-panel-bg-solid) 92%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 8px;
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.55),
+    0 0 24px color-mix(in oklab, var(--lw-glow) 50%, transparent);
+  overflow: hidden;
+  z-index: 5;
+  opacity: 1;
+}
+.lw-radial-submenu-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-bottom: 1px solid color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 60%, transparent);
+  color: var(--lw-accent);
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+}
+.lw-radial-submenu-stub-id {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: var(--lw-text-muted);
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+}
+.lw-radial-submenu-body { padding: 10px; }
+.lw-radial-hotkey {
+  margin: 14px auto 0;
+  max-width: 360px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 60%, transparent);
+  border-radius: 6px;
+  padding: 5px 10px;
+  background: color-mix(in oklab, var(--lw-app-bg) 50%, transparent);
+}
+.lw-radial-caption {
+  margin: 10px auto 0;
+  max-width: 460px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--lw-text-muted);
+  line-height: 1.55;
+}
+.lw-radial-caption code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  background: color-mix(in oklab, var(--lw-app-bg) 60%, transparent);
+  padding: 1px 6px;
+  border-radius: 3px;
+  color: var(--lw-text-primary);
+}
+
+/* ─── Hotkey rebind row ──────────────────────────────────────────────── */
+.lw-hotkey-frame {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 60%, transparent);
+  border-radius: 6px;
+  background: color-mix(in oklab, var(--lw-app-bg) 30%, transparent);
+}
+.lw-hotkey-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  border: 1px solid var(--lw-panel-border-current, var(--lw-panel-border));
+  border-radius: 6px;
+  background: color-mix(in oklab, var(--lw-app-bg) 60%, transparent);
+}
+.lw-hotkey-pill.is-capturing {
+  border-color: var(--lw-accent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--lw-accent) 18%, transparent);
+}
+.lw-hotkey-pill.is-captured {
+  border-color: var(--lw-color-gold-500);
+  background: color-mix(in oklab, var(--lw-color-gold-500) 10%, transparent);
+}
+.lw-hotkey-pill-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--lw-text-muted);
+}
+.lw-hotkey-pill-value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--lw-text-primary);
+  letter-spacing: 0.02em;
+}
+.lw-hotkey-hint {
+  margin-top: 10px;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--lw-text-muted);
+  padding: 6px 10px;
+  border-radius: 5px;
+  background: color-mix(in oklab, var(--lw-app-bg) 35%, transparent);
+  border: 1px solid color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 40%, transparent);
+  flex-wrap: wrap;
+}
+.lw-hotkey-hint.is-warn {
+  border-color: color-mix(in oklab, var(--lw-color-flare-500) 50%, transparent);
+  background: color-mix(in oklab, var(--lw-color-flare-500) 6%, transparent);
+}
+
+/* ─── Mirror chip (Display category) ─────────────────────────────────── */
+.lw-mirror-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid color-mix(in oklab, var(--lw-accent) 50%, transparent);
+  background: color-mix(in oklab, var(--lw-accent) 8%, transparent);
+  color: var(--lw-accent);
+  white-space: nowrap;
+}
+
+/* ─── Text utility ────────────────────────────────────────────────────── */
+.lw-text { color: var(--lw-text-primary); }
