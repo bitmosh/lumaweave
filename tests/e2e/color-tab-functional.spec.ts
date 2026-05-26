@@ -1,12 +1,12 @@
 import { test, expect } from "@playwright/test";
+import { openInspectorOnTopbar } from "./helpers/inspector";
 
 test.describe("v86d.3b ColorTab functional", () => {
   test("clicking a binding row makes it active", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await page.locator('[data-spoke-id="color"]').click();
 
     // First binding should be auto-active
@@ -27,8 +27,7 @@ test.describe("v86d.3b ColorTab functional", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await page.locator('[data-spoke-id="color"]').click();
 
     // Get initial hex of first binding
@@ -51,8 +50,7 @@ test.describe("v86d.3b ColorTab functional", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await page.locator('[data-spoke-id="color"]').click();
 
     const hexInput = page.locator('[data-testid="hex-input"]');
@@ -76,8 +74,7 @@ test.describe("v86d.3b ColorTab functional", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await page.locator('[data-spoke-id="color"]').click();
 
     // Verify "This" scope is active by default
@@ -89,8 +86,7 @@ test.describe("v86d.3b ColorTab functional", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await page.locator('[data-spoke-id="color"]').click();
 
     // Click "All" scope button
@@ -108,8 +104,7 @@ test.describe("v86d.3b ColorTab functional", () => {
     // Clear localStorage after page loads
     await page.evaluate(() => localStorage.removeItem("ins-recent-colors"));
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await page.locator('[data-spoke-id="color"]').click();
 
     const hexInput = page.locator('[data-testid="hex-input"]');
@@ -136,8 +131,7 @@ test.describe("v86d.3b ColorTab functional", () => {
     // Clear localStorage after page loads
     await page.evaluate(() => localStorage.removeItem("ins-recent-colors"));
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await page.locator('[data-spoke-id="color"]').click();
 
     const hexInput = page.locator('[data-testid="hex-input"]');
@@ -160,8 +154,7 @@ test.describe("v86d.3b ColorTab functional", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await page.locator('[data-spoke-id="color"]').click();
 
     // Shortcut button should be visible
@@ -173,8 +166,7 @@ test.describe("v86d.3b ColorTab functional", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await page.locator('[data-spoke-id="color"]').click();
 
     // Eyedropper button should be enabled (Chromium has EyeDropper API)
@@ -193,8 +185,7 @@ test.describe("v86d.3b ColorTab functional", () => {
       localStorage.setItem("ins-recent-colors", JSON.stringify(["#ff0000"]));
     });
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await page.locator('[data-spoke-id="color"]').click();
 
     // Click recent swatch

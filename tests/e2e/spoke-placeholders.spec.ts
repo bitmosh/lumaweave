@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openInspectorOnTopbar } from "./helpers/inspector";
 
 const PLACEHOLDER_CONFIG = [
   {
@@ -27,8 +28,7 @@ const PLACEHOLDER_CONFIG = [
 async function openPlaceholderTab(page: import("@playwright/test").Page, spokeId: string) {
   await page.goto("/");
   await page.waitForLoadState("networkidle");
-  const target = page.locator('[data-lw-theme-target="topbar.root"]');
-  await target.click({ modifiers: ["Alt", "Shift"] });
+  await openInspectorOnTopbar(page);
   await expect(page.locator('[data-testid="inspector-mini-graph"]')).toBeVisible();
   await page.locator(`[data-spoke-id="${spokeId}"]`).click();
   await expect(page.locator('[data-testid="placeholder-tab"]')).toBeVisible();

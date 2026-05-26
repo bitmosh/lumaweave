@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openInspectorOnTopbar } from "./helpers/inspector";
 
 // v90d: Pip promoted from stub to active in the node program registry.
 // Tests confirm Pip's registry status, distinct program class, and smoke
@@ -7,8 +8,7 @@ import { test, expect } from "@playwright/test";
 async function openGeometryTab(page: import("@playwright/test").Page) {
   await page.goto("/");
   await page.waitForLoadState("networkidle");
-  const target = page.locator('[data-lw-theme-target="topbar.root"]');
-  await target.click({ modifiers: ["Alt", "Shift"] });
+  await openInspectorOnTopbar(page);
   await expect(page.locator('[data-testid="inspector-mini-graph"]')).toBeVisible();
   await page.locator('[data-spoke-id="geometry"]').click();
   await expect(page.locator('[data-testid="geometry-tab"]')).toBeVisible();

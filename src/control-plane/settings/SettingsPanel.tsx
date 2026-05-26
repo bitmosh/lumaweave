@@ -238,7 +238,7 @@ React.useEffect(() => {
               title="Float"
               onClick={() => {
                 setPosition('floating');
-                const r = readRect() ?? DEFAULT_RECT;
+                const r = readRect() ?? getDefaultRect();
                 setRect({ left: 160, top: 90, width: Math.max(r.width, 1100), height: Math.max(r.height, 700) });
               }}
             >

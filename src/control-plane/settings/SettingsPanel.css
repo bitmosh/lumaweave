@@ -353,7 +353,7 @@
 }
 
 /* Controls --------------------------------------------------------------- */
-.lw-toggle {
+.lw-settings-panel-chrome .lw-toggle {
   position: relative;
   width: 34px; height: 18px;
   border-radius: 9px;
@@ -362,7 +362,7 @@
   transition: 160ms;
   flex-shrink: 0;
 }
-.lw-toggle::after {
+.lw-settings-panel-chrome .lw-toggle::after {
   content: '';
   position: absolute;
   top: 2px;
@@ -373,16 +373,16 @@
   background: var(--lw-text-muted);
   transition: 160ms;
 }
-.lw-toggle.is-on {
+.lw-settings-panel-chrome .lw-toggle.is-on {
   border-color: var(--lw-accent);
   background: color-mix(in oklab, var(--lw-accent) 30%, transparent);
 }
-.lw-toggle.is-on::after {
+.lw-settings-panel-chrome .lw-toggle.is-on::after {
   left: 18px;
   background: var(--lw-accent);
   box-shadow: 0 0 6px var(--lw-glow);
 }
-.lw-toggle.is-disabled { opacity: 0.5; cursor: not-allowed; }
+.lw-settings-panel-chrome .lw-toggle.is-disabled { opacity: 0.5; cursor: not-allowed; }
 
 .lw-slider {
   -webkit-appearance: none;
