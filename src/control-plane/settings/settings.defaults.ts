@@ -1,7 +1,7 @@
 import type { StarmapSettings } from "./settings.schema";
 
 export const defaultSettings: StarmapSettings = {
-  version: 86, // Pass C9.4: bumped from 84 for pinnedHighlightActive migration; v86: FA2 field cleanup
+  version: 87, // v96: added developer.preferredEditor + customEditorTemplate
 
   general: {
     startupProjectId: null,
@@ -82,6 +82,8 @@ export const defaultSettings: StarmapSettings = {
     showDebugPanel: true,
     showFps: false,
     logLevel: "info",
+    preferredEditor: "vscode",
+    customEditorTemplate: "code --goto {path}:{line}",
   },
 
   ui: {

@@ -1,18 +1,19 @@
 /**
- * v86b/vC3.1.1: Synthetic migration chain test
+ * v86b/vC3.1.1/v96: Synthetic migration chain test
  *
- * Tests that the full migration chain from v76 to v86 produces the correct endpoint shape.
+ * Tests that the full migration chain from v76 to v87 produces the correct endpoint shape.
  * This ensures that each migration step in the chain preserves data and adds new fields correctly.
  * Chain includes: v76→v77 (settings tab removal), v77→v78 (tile layout), v78→v79 (appearance defaults),
  * v79→v80 (quality preset fields), v80→v81 (helix removal), v81→v82 (FA2 removal + gwells),
- * v82→v83 (seedParamOverrides), v83→v84 (pins), v84→v85 (pinnedHighlightActive), v85→v86 (FA2 safety net).
+ * v82→v83 (seedParamOverrides), v83→v84 (pins), v84→v85 (pinnedHighlightActive), v85→v86 (FA2 safety net),
+ * v86→v87 (developer.preferredEditor + customEditorTemplate).
  */
 
 import { test, expect } from "@playwright/test";
 import { migrateSettings } from "../../src/control-plane/settings/settings.migrations";
 
 test.describe("settings migration chain", () => {
-  test("v76 → v86 chain produces correct endpoint", () => {
+  test("v76 → v87 chain produces correct endpoint", () => {
     // Synthetic v76 settings object (minimal shape, using any to bypass type checks)
     const v76: any = {
       version: 76,
@@ -36,8 +37,8 @@ test.describe("settings migration chain", () => {
     // Run full migration chain
     const result = migrateSettings(v76);
 
-    // Verify version is current (v86 after gwells migration + hygiene)
-    expect(result.version).toBe(86);
+    // Verify version is current (v87 after ide-integration developer fields)
+    expect(result.version).toBe(87);
 
     // Verify v80 fields are present (v86b additions)
     expect(result.appearance.glitterDensity).toBe("medium");
@@ -81,5 +82,9 @@ test.describe("settings migration chain", () => {
     expect(result.graphView.nodeSize).toBe(10); // Preserved from original
     expect(result.appearance.theme).toBe("midnight");
     expect(result.appearance.accentIntensity).toBe(0.5);
+
+    // Verify v87 fields: developer editor settings added
+    expect(result.developer.preferredEditor).toBe("vscode");
+    expect(result.developer.customEditorTemplate).toBe("code --goto {path}:{line}");
   });
 });

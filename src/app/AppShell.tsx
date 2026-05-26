@@ -37,6 +37,7 @@ import { registerCodeSpoke } from "../control-plane/inspector/spokes/registerCod
 import { registerApplySpoke } from "../control-plane/inspector/spokes/registerApplySpoke";
 import { registerIdeSpoke } from "../control-plane/inspector/spokes/registerIdeSpoke";
 import { registerHistorySpoke } from "../control-plane/inspector/spokes/registerHistorySpoke";
+import { installOpenInIdeListener } from "../control-plane/ide/installOpenInIdeListener";
 import { adaptSelfGraphToSigma } from "../fixtures/self-graph-adapter";
 import generatedGraph from "../fixtures/self-graph-generated.json";
 import type { LumaSourceGraph } from "../fixtures/types";
@@ -72,6 +73,7 @@ export function AppShell() {
     registerApplySpoke();    // order 6
     registerIdeSpoke();      // order 7
     registerHistorySpoke();  // order 8
+    installOpenInIdeListener();
 
     // Expose app state for Playwright tests (dev mode only)
     if (import.meta.env.DEV || (window as any).PLAYWRIGHT) {

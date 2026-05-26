@@ -145,6 +145,14 @@ const MIGRATIONS: Record<number,
     return { ...s, physics } as Partial<StarmapSettings>;
   },
 
+  // v86 → v87: add preferredEditor and customEditorTemplate to developer (v96)
+  87: (s) => {
+    const developer = { ...(s.developer ?? {}) } as any;
+    developer.preferredEditor ??= "vscode";
+    developer.customEditorTemplate ??= "code --goto {path}:{line}";
+    return { ...s, developer } as Partial<StarmapSettings>;
+  },
+
   // v85 → v86: strip FA2-era physics fields (chore/post-gwells-hygiene)
   // Safety net migration - v82 already removed these fields, but this
   // ensures any edge cases or skipped migrations are cleaned up.
