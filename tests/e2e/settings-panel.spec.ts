@@ -14,7 +14,7 @@ const CATEGORY_IDS = [
 async function openPanel(page: import("@playwright/test").Page) {
   await page.goto("/");
   await page.waitForLoadState("networkidle");
-  await page.keyboard.press("Control+Comma");
+  await page.locator('[data-testid="topbar-settings-button"]').click();
   await expect(page.getByTestId("settings-panel-root")).toBeVisible({ timeout: 5000 });
 }
 
@@ -156,7 +156,7 @@ test("settings-panel: geometry persists across reload", async ({ page }) => {
   await page.waitForLoadState("networkidle");
 
   // Reopen — panel should restore to saved position
-  await page.keyboard.press("Control+Comma");
+  await page.locator('[data-testid="topbar-settings-button"]').click();
   await expect(page.getByTestId("settings-panel-root")).toBeVisible({ timeout: 5000 });
   const panel = page.getByTestId("settings-panel-root");
   const restoredBox = await panel.boundingBox();
