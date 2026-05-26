@@ -1,10 +1,13 @@
+import type { CategoryId } from './settingsPanel.types';
+
 export type SettingControl =
   | {
       type: "boolean";
       path: string;
       label: string;
       description?: string;
-      category: string;
+      category: CategoryId;
+      tileVisibleByDefault?: boolean;
       testId?: string;
     }
   | {
@@ -12,7 +15,8 @@ export type SettingControl =
       path: string;
       label: string;
       description?: string;
-      category: string;
+      category: CategoryId;
+      tileVisibleByDefault?: boolean;
       min: number;
       max: number;
       step: number;
@@ -23,7 +27,8 @@ export type SettingControl =
       path: string;
       label: string;
       description?: string;
-      category: string;
+      category: CategoryId;
+      tileVisibleByDefault?: boolean;
       options: Array<{ value: string; label: string }>;
       testId?: string;
     }
@@ -32,14 +37,15 @@ export type SettingControl =
       path: string;
       label: string;
       description?: string;
-      category: string;
+      category: CategoryId;
+      tileVisibleByDefault?: boolean;
       testId?: string;
     };
 
 export const settingsRegistry: SettingControl[] = [
   {
     type: "select",
-    category: "Physics",
+    category: "graph",
     path: "physics.dialectId",
     label: "Gwells Dialect",
     description: "Gwells physics dialect for graph layout.",
@@ -51,7 +57,7 @@ export const settingsRegistry: SettingControl[] = [
   },
   {
     type: "select",
-    category: "Labels",
+    category: "graph",
     path: "labels.nodeLabelMode",
     label: "Node Label Mode",
     options: [
@@ -63,7 +69,7 @@ export const settingsRegistry: SettingControl[] = [
   },
   {
     type: "select",
-    category: "Labels",
+    category: "graph",
     path: "labels.edgeLabelMode",
     label: "Edge Label Mode",
     options: [
@@ -76,7 +82,7 @@ export const settingsRegistry: SettingControl[] = [
   },
   {
     type: "range",
-    category: "Labels",
+    category: "graph",
     path: "labels.maxEdgeLabelLength",
     label: "Max Edge Label Length",
     min: 10,
@@ -85,14 +91,14 @@ export const settingsRegistry: SettingControl[] = [
   },
   {
     type: "boolean",
-    category: "Labels",
+    category: "graph",
     path: "labels.showLabelsOnHover",
     label: "Show Labels On Hover",
     description: "Show node label when hovering over a node.",
   },
   {
     type: "range",
-    category: "Labels",
+    category: "graph",
     path: "labels.edgeLabelFontSize",
     label: "Edge Label Font Size",
     description: "Controls rendered relationship/edge label text size.",
@@ -102,7 +108,7 @@ export const settingsRegistry: SettingControl[] = [
   },
   {
     type: "range",
-    category: "Labels",
+    category: "graph",
     path: "labels.nodeLabelFontSize",
     label: "Node Label Font Size",
     description: "Controls rendered node label text size.",
@@ -112,7 +118,7 @@ export const settingsRegistry: SettingControl[] = [
   },
   {
     type: "range",
-    category: "Graph View",
+    category: "graph",
     path: "graphView.neighborhoodDepth",
     label: "Neighborhood Depth",
     description: "Depth of neighborhood shown when selecting a node. Fractional values fade between depths.",
@@ -122,7 +128,7 @@ export const settingsRegistry: SettingControl[] = [
   },
   {
     type: "text",
-    category: "Graph View",
+    category: "graph",
     path: "graphView.hoverNodeColor",
     label: "Hover Node Color",
     description: "Hex color for node hover highlight. Example: #ffffff",
@@ -132,7 +138,7 @@ export const settingsRegistry: SettingControl[] = [
   // These sit dormant until v89 ControlDock rebuild renders by category.
   {
     type: "select",
-    category: "Theme",
+    category: "theme",
     path: "appearance.theme",
     label: "Theme Preset",
     description: "Active theme.",
@@ -147,7 +153,7 @@ export const settingsRegistry: SettingControl[] = [
   },
   {
     type: "select",
-    category: "Theme",
+    category: "theme",
     path: "appearance.drama",
     label: "Drama",
     description: "Solar Plasma mood preset — multiplier on glow + motion intensity.",
@@ -159,7 +165,7 @@ export const settingsRegistry: SettingControl[] = [
   },
   {
     type: "range",
-    category: "Theme",
+    category: "theme",
     path: "appearance.motionScale",
     label: "Motion Scale",
     description: "Master multiplier on backdrop and effect motion. 0 = still.",
@@ -167,7 +173,7 @@ export const settingsRegistry: SettingControl[] = [
   },
   {
     type: "range",
-    category: "Theme",
+    category: "theme",
     path: "appearance.panelBlur",
     label: "Panel Blur",
     description: "backdrop-filter blur amount on dock and panels.",
@@ -175,7 +181,7 @@ export const settingsRegistry: SettingControl[] = [
   },
   {
     type: "range",
-    category: "Theme",
+    category: "theme",
     path: "appearance.nodeHum",
     label: "Sphere Hum",
     description: "Node interior fade rate.",
@@ -183,7 +189,7 @@ export const settingsRegistry: SettingControl[] = [
   },
   {
     type: "range",
-    category: "Theme",
+    category: "theme",
     path: "appearance.nodeFlowSpeed",
     label: "Sphere Flow Speed",
     description: "Node interior rotational flow speed.",
@@ -191,7 +197,7 @@ export const settingsRegistry: SettingControl[] = [
   },
   {
     type: "range",
-    category: "Theme",
+    category: "theme",
     path: "appearance.nodeGlow",
     label: "Sphere Glow",
     description: "Node halo glow strength.",

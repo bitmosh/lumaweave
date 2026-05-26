@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import { SettingsPanel } from "../settings/SettingsPanel";
 import { CollapsibleSection } from "./CollapsibleSection";
 import { TypographyPlaygroundSection } from "./TypographyPlaygroundSection";
 import type { StarmapSettings } from "../settings/settings.schema";
@@ -243,7 +242,6 @@ export function ControlDock({
           </h2>
 
           <div className="space-y-4" data-testid="settings-panel" data-lw-theme-target="settings.panel">
-            <SettingsPanel />
             <CollapsibleSection
               title="Typography Playground"
               testId="settings-section-typography-playground"

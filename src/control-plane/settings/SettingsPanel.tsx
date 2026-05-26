@@ -1,207 +1,256 @@
-import { settingsRegistry } from "./settings.registry";
-import { useSettingsStore } from "./settings.store";
-import { CollapsibleSection } from "../panels/CollapsibleSection";
-import { PhysicsSectionContent } from "../panels/PhysicsSectionContent";
-import { LabelsSectionContent } from "../panels/LabelsSectionContent";
-import { AppearanceSectionContent } from "../panels/AppearanceSectionContent";
+import React from 'react';
+import type { SettingsPanelProps, PanelPosition } from './settingsPanel.types';
 
-function getNestedValue(obj: any, path: string) {
-  return path.split(".").reduce((cursor, key) => cursor?.[key], obj);
+const DEFAULT_RECT = { left: 140, top: 90, width: 1180, height: 740 };
+const STORE_KEY = 'lw.settings.panel.geometry.v1';
+
+function readRect(): { left: number; top: number; width: number; height: number } | null {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY) || 'null'); } catch { return null; }
 }
 
-export function SettingsPanel() {
-  const settings = useSettingsStore((state) => state.settings);
-  const setSetting = useSettingsStore((state) => state.setSetting);
+export function SettingsPanel({
+  open, onClose, title = 'Settings', subtitle,
+  initialRect, onPositionChange,
+  opacity: _opacity,
+  headerSlot, sidebarSlot, contentSlot, statusBarSlot,
+}: SettingsPanelProps) {
+  const panelRef = React.useRef<HTMLDivElement>(null);
+  const [rect, setRect] = React.useState(() => readRect() ?? initialRect ?? DEFAULT_RECT);
+  const [position, setPosition] = React.useState<PanelPosition>('floating');
+  const [dragHint, setDragHint] = React.useState<'left' | 'right' | null>(null);
+  const [minimized, setMinimized] = React.useState(false);
 
-  const categories = Array.from(
-    new Set(settingsRegistry.map((setting) => setting.category)),
-  );
+  React.useEffect(() => {
+    onPositionChange?.(minimized ? 'minimized' : position);
+  }, [position, minimized, onPositionChange]);
 
-  // Map category names to tile section registry keys
-  const categoryToTileKey: Record<string, string> = {
-    "Physics": "physics-section",
-    "Labels": "labels-section",
-    "Graph View": "appearance-section",
+  React.useEffect(() => {
+    const t = setTimeout(() => {
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(rect)); } catch {}
+    }, 150);
+    return () => clearTimeout(t);
+  }, [rect]);
+
+  // ─── Drag (title bar) ──────────────────────────────────────────────────
+  const startDrag = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).closest('button')) return;
+    e.preventDefault();
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startLeft = rect.left;
+    const startTop = rect.top;
+    const VW = window.innerWidth;
+
+    const move = (ev: MouseEvent) => {
+      const nx = startLeft + (ev.clientX - startX);
+      const ny = startTop + (ev.clientY - startY);
+      if (ev.clientX < 24) setDragHint('left');
+      else if (ev.clientX > VW - 24) setDragHint('right');
+      else setDragHint(null);
+      setRect((r) => ({ ...r, left: nx, top: ny }));
+      if (position !== 'floating' && Math.abs(ev.clientX - startX) > 40) {
+        setPosition('floating');
+      }
+    };
+    const up = (ev: MouseEvent) => {
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseup', up);
+      if (ev.clientX < 24) {
+        setPosition('docked-left');
+        setRect({ left: 0, top: 64, width: 380, height: window.innerHeight - 80 });
+      } else if (ev.clientX > VW - 24) {
+        setPosition('docked-right');
+        setRect({ left: VW - 380, top: 64, width: 380, height: window.innerHeight - 80 });
+      }
+      setDragHint(null);
+    };
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', up);
   };
 
+  // ─── Resize ────────────────────────────────────────────────────────────
+  const startResize = (corner: 'e' | 's' | 'se' | 'sw') => (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const startX = e.clientX, startY = e.clientY;
+    const r0 = rect;
+    const move = (ev: MouseEvent) => {
+      const dx = ev.clientX - startX;
+      const dy = ev.clientY - startY;
+      setRect((r) => {
+        const next = { ...r };
+        if (corner.includes('e')) next.width = Math.max(720, r0.width + dx);
+        if (corner.includes('s')) next.height = Math.max(480, r0.height + dy);
+        if (corner === 'sw') {
+          next.width = Math.max(720, r0.width - dx);
+          next.left = r0.left + dx;
+          next.height = Math.max(480, r0.height + dy);
+        }
+        return next;
+      });
+    };
+    const up = () => {
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseup', up);
+    };
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', up);
+  };
+
+  // ─── Keyboard: Esc to close ────────────────────────────────────────────
+  React.useEffect(() => {
+    if (!open) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        const target = e.target as HTMLElement;
+        if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) return;
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [open, onClose]);
+
+  if (!open) return null;
+
   return (
-    <div className="space-y-5">
-      {categories.map((category) => {
-        const tileableKey = categoryToTileKey[category];
+    <>
+      {dragHint && (
+        <div
+          style={{
+            position: 'fixed', top: 64, bottom: 0,
+            [dragHint === 'left' ? 'left' : 'right']: 0,
+            width: 380,
+            background: 'color-mix(in oklab, var(--lw-accent) 14%, transparent)',
+            border: '1px dashed var(--lw-accent)',
+            borderTop: 'none',
+            borderBottom: 'none',
+            zIndex: 49,
+            pointerEvents: 'none',
+          } as React.CSSProperties}
+        />
+      )}
 
-        // Extracted components for v86c (Option X pattern).
-        const innerContent = category === "Physics"
-          ? <PhysicsSectionContent />
-          : category === "Labels"
-          ? <LabelsSectionContent />
-          : category === "Graph View"
-          ? <AppearanceSectionContent />
-          : (
-            // Defensive fallback for any future category not yet extracted
-            <section
-              className="rounded-xl border border-cyan-400/20 bg-slate-950/70 p-4"
-            >
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-cyan-300">
-                {category}
-              </h3>
+      <div
+        ref={panelRef}
+        data-testid="settings-panel-root"
+        className={'lw-settings-panel' + (minimized ? ' is-minimized' : '')}
+        role="dialog"
+        aria-label="Settings"
+        style={{
+          left: rect.left, top: rect.top,
+          width: rect.width,
+          height: minimized ? undefined : rect.height,
+        }}
+      >
+        <div className="lw-settings-panel-bg" />
+        <div className="lw-settings-panel-chrome">
 
-              <div className="space-y-4">
-                {settingsRegistry
-                  .filter((setting) => setting.category === category)
-                  .map((setting) => {
-                    const value = getNestedValue(settings, setting.path);
-
-                    if (setting.type === "boolean") {
-                      return (
-                        <label
-                          key={setting.path}
-                          className="flex items-start justify-between gap-4 text-sm"
-                        >
-                          <span>
-                            <span className="block text-slate-200">
-                              {setting.label}
-                            </span>
-                            {setting.description ? (
-                              <span className="block text-xs text-slate-500">
-                                {setting.description}
-                              </span>
-                            ) : null}
-                          </span>
-
-                          <input
-                            type="checkbox"
-                            checked={Boolean(value)}
-                            onChange={(event) =>
-                              setSetting(setting.path, event.currentTarget.checked)
-                            }
-                            className="mt-1"
-                          />
-                        </label>
-                      );
-                    }
-
-                    if (setting.type === "range") {
-                      return (
-                        <label key={setting.path} className="block text-sm">
-                          <div className="mb-1 flex justify-between gap-4">
-                            <span className="text-slate-200">{setting.label}</span>
-                            <span className="text-xs text-cyan-300">
-                              {String(value)}
-                            </span>
-                          </div>
-                          {setting.description ? (
-                            <p className="mb-2 text-xs text-slate-500">
-                              {setting.description}
-                            </p>
-                          ) : null}
-                          <input
-                            data-testid={`setting-${setting.path.replace(/\./g, '-')}`}
-                            type="range"
-                            min={setting.min}
-                            max={setting.max}
-                            step={setting.step}
-                            value={Number(value)}
-                            ref={(el) => {
-                              if (!el) return;
-                              const min = Number(el.min) || 0;
-                              const max = Number(el.max) || 100;
-                              const val = Number(el.value);
-                              const pct = ((val - min) / (max - min)) * 100;
-                              el.style.setProperty("--range-progress", `${pct}%`);
-                            }}
-                            onChange={(event) =>
-                              setSetting(
-                                setting.path,
-                                Number(event.currentTarget.value),
-                              )
-                            }
-                            onInput={(e) => {
-                              const input = e.target as HTMLInputElement;
-                              const min = Number(input.min) || 0;
-                              const max = Number(input.max) || 100;
-                              const val = Number(input.value);
-                              const pct = ((val - min) / (max - min)) * 100;
-                              input.style.setProperty(
-                                "--range-progress", `${pct}%`
-                              );
-                            }}
-                            className="w-full"
-                          />
-                        </label>
-                      );
-                    }
-
-                    if (setting.type === "select") {
-                      return (
-                        <label key={setting.path} className="block text-sm">
-                          <span className="mb-1 block text-slate-200">
-                            {setting.label}
-                          </span>
-                          {setting.description ? (
-                            <p className="mb-2 text-xs text-slate-500">
-                              {setting.description}
-                            </p>
-                          ) : null}
-                          <select
-                            data-testid={setting.testId || `setting-${setting.path.replace(/\./g, '-')}`}
-                            value={String(value)}
-                            onChange={(event) =>
-                              setSetting(setting.path, event.currentTarget.value)
-                            }
-                            className="w-full rounded-lg border border-cyan-400/20 bg-slate-900 px-3 py-2 text-slate-100"
-                          >
-                            {setting.options.map((option) => (
-                              <option key={option.value} value={option.value}>
-                                {option.label}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                      );
-                    }
-
-                    if (setting.type === "text") {
-                      return (
-                        <label key={setting.path} className="block text-sm">
-                          <span className="mb-1 block text-slate-200">
-                            {setting.label}
-                          </span>
-                          {setting.description ? (
-                            <p className="mb-2 text-xs text-slate-500">
-                              {setting.description}
-                            </p>
-                          ) : null}
-                          <input
-                            type="text"
-                            value={String(value)}
-                            onChange={(event) =>
-                              setSetting(setting.path, event.currentTarget.value)
-                            }
-                            className="w-full rounded-lg border border-cyan-400/20 bg-slate-900 px-3 py-2 text-slate-100"
-                          />
-                        </label>
-                      );
-                    }
-
-                    return null;
-                  })}
-              </div>
-            </section>
-          );
-
-        return (
-          <CollapsibleSection
-            key={category}
-            title={category}
-            isOpen={true}
-            onToggle={() => {}}
-            testId={`settings-section-${category.toLowerCase().replace(" ", "-")}`}
-            tileableKey={tileableKey}
+          <div
+            data-testid="settings-panel-titlebar"
+            className="lw-titlebar"
+            onMouseDown={startDrag}
           >
-            {innerContent}
-          </CollapsibleSection>
-        );
-      })}
-    </div>
+            <span className="lw-titlebar-title lw-text">{title}</span>
+            {subtitle && <span className="lw-titlebar-meta lw-text">· {subtitle}</span>}
+            <span className="lw-titlebar-spacer" />
+
+            <button
+              type="button"
+              data-testid="settings-panel-dock-left"
+              className="lw-titlebar-btn"
+              aria-label="Dock left"
+              title="Dock to left bank"
+              onClick={() => {
+                setPosition('docked-left');
+                setRect({ left: 0, top: 64, width: 380, height: window.innerHeight - 80 });
+              }}
+            >
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.2">
+                <rect x="1" y="1" width="11" height="11" rx="1" />
+                <rect x="1" y="1" width="4" height="11" fill="currentColor" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              data-testid="settings-panel-dock-right"
+              className="lw-titlebar-btn"
+              aria-label="Dock right"
+              title="Dock to right bank"
+              onClick={() => {
+                setPosition('docked-right');
+                setRect({ left: window.innerWidth - 380, top: 64, width: 380, height: window.innerHeight - 80 });
+              }}
+            >
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.2">
+                <rect x="1" y="1" width="11" height="11" rx="1" />
+                <rect x="8" y="1" width="4" height="11" fill="currentColor" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              className="lw-titlebar-btn"
+              aria-label="Float"
+              title="Float"
+              onClick={() => {
+                setPosition('floating');
+                const r = readRect() ?? DEFAULT_RECT;
+                setRect({ left: 160, top: 90, width: Math.max(r.width, 1100), height: Math.max(r.height, 700) });
+              }}
+            >
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.2">
+                <rect x="2" y="2" width="9" height="9" rx="1" />
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              data-testid="settings-panel-minimize"
+              className="lw-titlebar-btn"
+              aria-label="Minimize"
+              title="Minimize"
+              onClick={() => setMinimized((m) => !m)}
+            >
+              <svg width="11" height="11" viewBox="0 0 11 11" stroke="currentColor" strokeWidth="1.4">
+                <line x1="2" y1="6" x2="9" y2="6" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              data-testid="settings-panel-close"
+              className="lw-titlebar-btn is-close"
+              aria-label="Close"
+              title="Close · esc"
+              onClick={onClose}
+            >
+              <svg width="11" height="11" viewBox="0 0 11 11" stroke="currentColor" strokeWidth="1.4">
+                <line x1="2" y1="2" x2="9" y2="9" />
+                <line x1="9" y1="2" x2="2" y2="9" />
+              </svg>
+            </button>
+          </div>
+
+          {!minimized && (
+            <>
+              {headerSlot}
+              <div className="lw-body">
+                {sidebarSlot}
+                {contentSlot}
+              </div>
+              {statusBarSlot}
+            </>
+          )}
+
+          {!minimized && position === 'floating' && (
+            <>
+              <div className="lw-resize lw-resize-e"  onMouseDown={startResize('e')}  />
+              <div className="lw-resize lw-resize-s"  onMouseDown={startResize('s')}  />
+              <div className="lw-resize lw-resize-se" onMouseDown={startResize('se')} />
+              <div className="lw-resize lw-resize-sw" onMouseDown={startResize('sw')} />
+            </>
+          )}
+        </div>
+      </div>
+    </>
   );
 }

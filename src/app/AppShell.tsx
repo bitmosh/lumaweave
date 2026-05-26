@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 // v86a: SettingsPanel removed - Settings tab removed from left panel
 import { QaPanel } from "../control-plane/qa/QaPanel";
 import { InspectorPanel } from "../control-plane/panels/InspectorPanel";
@@ -47,12 +47,15 @@ import { BookmarkLayer } from "../graph/overlay/BookmarkLayer";
 import { Minimap } from "../graph/overlay/Minimap";
 import { bookmarkRegistry, initializeDemoBookmarks } from "../graph/overlay/bookmarkRegistry";
 import { Topbar } from "../control-plane/topbar/Topbar";
+import { SettingsPanelHost } from "../control-plane/settings/SettingsPanelHost";
+import type { SettingsPanelHostHandle } from "../control-plane/settings/SettingsPanelHost";
 import { useCrossfadeAppTokens } from "../themes/themeCrossfade";
 
 const EMPTY_OVERRIDES: Record<string, unknown> = {};
 const EMPTY_PINS: Record<string, { x: number; y: number; z?: number }> = {};
 
 export function AppShell() {
+  const settingsPanelRef = useRef<SettingsPanelHostHandle>(null);
   const settings = useSettingsStore((state) => state.settings);
   const setSetting = useSettingsStore((state) => state.setSetting);
   const { summary, error: summaryError } = useGraphSourceSummary();
@@ -429,7 +432,7 @@ export function AppShell() {
       data-lw-theme-target="app.shell"
     >
       <div className="grid h-screen grid-rows-[auto_1fr_auto]">
-        <Topbar />
+        <Topbar onOpenSettings={() => settingsPanelRef.current?.toggle()} />
 
         <section
           className="grid min-h-0"
@@ -1123,6 +1126,7 @@ export function AppShell() {
       />
       <InspectorMiniGraph />
       <TileLayer />
+      <SettingsPanelHost ref={settingsPanelRef} />
     </main>
   </TileProvider>
 );

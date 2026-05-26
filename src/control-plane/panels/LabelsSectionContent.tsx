@@ -20,7 +20,7 @@ export function LabelsSectionContent() {
   const setSetting = useSettingsStore((state) => state.setSetting);
 
   const labelsSettings = settingsRegistry.filter(
-    (setting) => setting.category === "Labels",
+    (setting) => setting.category === "graph" && setting.path.startsWith("labels."),
   );
 
   return (

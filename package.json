@@ -21,7 +21,8 @@
     "generate-provenance": "node scripts/generate-provenance-manifest.mjs",
     "modes:control-plane": "node scripts/validate-control-plane-modes.mjs",
     "generate:graph": "node scripts/generate-self-graph.mjs",
-    "physics:gwells": "node scripts/validate-gwells.mjs"
+    "physics:gwells": "node scripts/validate-gwells.mjs",
+    "validate:settings": "node scripts/validate-settings-panel.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
