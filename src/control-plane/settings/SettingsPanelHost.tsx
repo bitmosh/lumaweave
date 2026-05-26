@@ -37,7 +37,7 @@ export const SettingsPanelHost = forwardRef<SettingsPanelHostHandle>(
     // v97: migrate hotkey registration to hotkey registry
     useEffect(() => {
       const handler = (e: KeyboardEvent) => {
-        if ((e.metaKey || e.ctrlKey) && e.key === ',') {
+        if ((e.metaKey || e.ctrlKey) && (e.key === ',' || e.code === 'Comma')) {
           e.preventDefault();
           setIsOpen((v) => !v);
         }
