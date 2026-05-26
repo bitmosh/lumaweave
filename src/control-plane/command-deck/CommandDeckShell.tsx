@@ -1,14 +1,20 @@
+import { perspectiveRegistry } from "../perspectives/perspectiveRegistry";
+import { hotkeyRegistry } from "../commands/hotkey-registry";
+import { commandRegistry } from "../commands/command-registry";
+import { formatBinding } from "../commands/hotkey-utils";
+
 interface CommandDeckShellProps {
   themeAccent: string;
   themeTextMuted: string;
 }
 
-import { perspectiveRegistry } from "../perspectives/perspectiveRegistry";
-
 export function CommandDeckShell({
   themeAccent,
   themeTextMuted,
 }: CommandDeckShellProps) {
+  const activeHotkeys = hotkeyRegistry.getActive();
+  const commands = commandRegistry.getAll();
+
   return (
     <div
       className="rounded-lg p-3"
@@ -74,28 +80,22 @@ export function CommandDeckShell({
             Hotkey Registry
           </h4>
           <div className="mt-2 space-y-2">
-            <div
-              className="rounded px-2 py-1 text-xs"
-              style={{
-                border: `1px solid ${themeAccent}40`,
-                backgroundColor: `${themeAccent}15`,
-                color: themeAccent,
-              }}
-            >
-              <span className="font-semibold">Alt+Shift+I</span>: Inspector
-              Toggle
-            </div>
-            <div
-              className="rounded px-2 py-1 text-xs"
-              style={{
-                border: `1px solid ${themeAccent}40`,
-                backgroundColor: `${themeAccent}15`,
-                color: themeAccent,
-              }}
-            >
-              <span className="font-semibold">Alt+Shift+P</span>: Pin/Unpin
-              Target
-            </div>
+            {activeHotkeys.map((entry) => (
+              <div
+                key={entry.id}
+                className="rounded px-2 py-1 text-xs"
+                data-testid={`hotkey-row-${entry.id}`}
+                style={{
+                  border: `1px solid ${themeAccent}40`,
+                  backgroundColor: `${themeAccent}15`,
+                  color: themeAccent,
+                }}
+              >
+                <span className="font-semibold">{formatBinding(entry.binding)}</span>
+                {": "}
+                {entry.label}
+              </div>
+            ))}
             <p
               className="mt-1 text-xs italic"
               style={{ color: themeTextMuted }}
@@ -113,52 +113,30 @@ export function CommandDeckShell({
             Command Registry
           </h4>
           <div className="mt-2 space-y-2">
-            <div
-              className="rounded px-2 py-2 text-xs"
-              style={{
-                border: `1px solid ${themeAccent}40`,
-                backgroundColor: `${themeAccent}15`,
-              }}
-            >
-              <p
-                className="font-semibold"
-                style={{ color: themeAccent }}
+            {commands.map((cmd) => (
+              <div
+                key={cmd.id}
+                className="rounded px-2 py-2 text-xs"
+                data-testid={`command-row-${cmd.id}`}
+                style={{
+                  border: `1px solid ${themeAccent}40`,
+                  backgroundColor: `${themeAccent}15`,
+                }}
               >
-                Export Theme Override Bundle
-              </p>
-              <p className="mt-1" style={{ color: "var(--lw-text-primary)" }}>
-                Export current theme overrides to a JSON bundle file
-              </p>
-              <p
-                className="mt-1 text-xs italic"
-                style={{ color: themeTextMuted }}
-              >
-                Category: Theme | Status: Eligible
-              </p>
-            </div>
-            <div
-              className="rounded px-2 py-2 text-xs"
-              style={{
-                border: `1px solid ${themeAccent}40`,
-                backgroundColor: `${themeAccent}15`,
-              }}
-            >
-              <p
-                className="font-semibold"
-                style={{ color: themeAccent }}
-              >
-                Toggle Theme Target Inspector
-              </p>
-              <p className="mt-1" style={{ color: "var(--lw-text-primary)" }}>
-                Enable or disable the theme target inspector overlay
-              </p>
-              <p
-                className="mt-1 text-xs italic"
-                style={{ color: themeTextMuted }}
-              >
-                Category: View | Status: Eligible | Shortcut: Alt+Shift+I
-              </p>
-            </div>
+                <p
+                  className="font-semibold"
+                  style={{ color: themeAccent }}
+                >
+                  {cmd.label}
+                </p>
+                <p
+                  className="mt-1 text-xs italic"
+                  style={{ color: themeTextMuted }}
+                >
+                  Category: {cmd.category} | Status: Eligible
+                </p>
+              </div>
+            ))}
             <p
               className="mt-1 text-xs italic"
               style={{ color: themeTextMuted }}

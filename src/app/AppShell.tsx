@@ -38,6 +38,9 @@ import { registerApplySpoke } from "../control-plane/inspector/spokes/registerAp
 import { registerIdeSpoke } from "../control-plane/inspector/spokes/registerIdeSpoke";
 import { registerHistorySpoke } from "../control-plane/inspector/spokes/registerHistorySpoke";
 import { installOpenInIdeListener } from "../control-plane/ide/installOpenInIdeListener";
+import "../control-plane/commands/hotkey-registry.entries";
+import "../control-plane/commands/command-registry.entries";
+import { installGlobalHotkeyListener } from "../control-plane/commands/installGlobalHotkeyListener";
 import { adaptSelfGraphToSigma } from "../fixtures/self-graph-adapter";
 import generatedGraph from "../fixtures/self-graph-generated.json";
 import type { LumaSourceGraph } from "../fixtures/types";
@@ -74,6 +77,7 @@ export function AppShell() {
     registerIdeSpoke();      // order 7
     registerHistorySpoke();  // order 8
     installOpenInIdeListener();
+    installGlobalHotkeyListener();
 
     // Expose app state for Playwright tests (dev mode only)
     if (import.meta.env.DEV || (window as any).PLAYWRIGHT) {

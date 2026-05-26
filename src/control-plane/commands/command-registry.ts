@@ -1,24 +1,17 @@
-import type { StarmapCommand } from "./command.types";
+import type { CommandEntry } from "./command.types";
 
-export const commandRegistry: StarmapCommand[] = [
-  {
-    id: "settings.open",
-    title: "Open Settings",
-    category: "General",
-    shortcut: "Ctrl+,",
-    run: (ctx) => ctx.openSettings(),
+const entries: CommandEntry[] = [];
+
+export const commandRegistry = {
+  register(entry: CommandEntry): void {
+    entries.push(entry);
   },
-  {
-    id: "graph.fit",
-    title: "Fit Graph",
-    category: "Graph",
-    shortcut: "F",
-    run: (ctx) => ctx.fitGraph(),
+
+  getAll(): ReadonlyArray<CommandEntry> {
+    return entries;
   },
-  {
-    id: "graph.resetView",
-    title: "Reset Graph View",
-    category: "Graph",
-    run: (ctx) => ctx.resetView(),
-  },
-];
+};
+
+if (typeof window !== "undefined" && (import.meta.env.DEV || (window as any).PLAYWRIGHT)) {
+  (window as any).__lwCommandRegistry = commandRegistry;
+}
