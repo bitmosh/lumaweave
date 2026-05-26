@@ -24,6 +24,13 @@ export function SettingsPanel({
     onPositionChange?.(minimized ? 'minimized' : position);
   }, [position, minimized, onPositionChange]);
 
+  React.useEffect(() => {
+    const t = setTimeout(() => {
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(rect)); } catch {}
+    }, 150);
+    return () => clearTimeout(t);
+  }, [rect]);
+
   // ─── Drag (title bar) ──────────────────────────────────────────────────
   const startDrag = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest('button')) return;
