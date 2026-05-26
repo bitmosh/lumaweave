@@ -69,7 +69,11 @@ export function SettingsPanel({
       if (ev.clientX < 24) setDragHint('left');
       else if (ev.clientX > VW - 24) setDragHint('right');
       else setDragHint(null);
-      setRect((r) => ({ ...r, left: nx, top: ny }));
+      setRect((r) => ({
+        ...r,
+        left: Math.max(0, Math.min(nx, window.innerWidth - r.width)),
+        top: Math.max(0, Math.min(ny, window.innerHeight - 50)),
+      }));
       if (position !== 'floating' && Math.abs(ev.clientX - startX) > 40) {
         setPosition('floating');
       }

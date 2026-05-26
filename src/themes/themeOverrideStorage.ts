@@ -78,14 +78,20 @@ export function loadOverrides(): ThemeOverrideStorage {
     }
     
     const parsed = JSON.parse(stored) as ThemeOverrideStorage;
-    
+
+    // Normalize missing scope field (pre-v86a data or test fixtures without scope)
+    const rawOverrides = ((parsed.overrides || []) as any[]).map((o: any) => ({
+      ...o,
+      scope: o.scope ?? { kind: 'global' as const },
+    })) as ThemeOverride[];
+
     // Validate version and filter invalid overrides
-    const validOverrides = parsed.overrides.filter((override) => {
+    const validOverrides = rawOverrides.filter((override) => {
       const pathValidation = validateTokenPath(override.tokenPath);
       const valueValidation = validateTokenValue(override.value);
       return pathValidation.isValid && valueValidation.isValid;
     });
-    
+
     // One-time migration: remove stale target-scoped node.geometry.preset entries
     const cleaned = validOverrides.filter(
       (o) => !(o.tokenPath === "node.geometry.preset" && o.scope.kind === "target"),
