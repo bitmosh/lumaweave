@@ -162,6 +162,6 @@ test("settings-panel: geometry persists across reload", async ({ page }) => {
   const restoredBox = await panel.boundingBox();
   if (!restoredBox) throw new Error("No panel box after reload");
   // Position should be close to where we dragged it (within 10px)
-  expect(Math.abs(restoredBox.left - geo.left)).toBeLessThan(10);
-  expect(Math.abs(restoredBox.top - geo.top)).toBeLessThan(10);
+  expect(Math.abs(restoredBox.x - geo.left)).toBeLessThan(10);
+  expect(Math.abs(restoredBox.y - geo.top)).toBeLessThan(10);
 });
