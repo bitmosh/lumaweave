@@ -22,7 +22,7 @@ export function AppearanceSectionContent() {
   const setSetting = useSettingsStore((state) => state.setSetting);
 
   const graphViewSettings = settingsRegistry.filter(
-    (setting) => setting.category === "Graph View",
+    (setting) => setting.category === "graph" && setting.path.startsWith("graphView."),
   );
 
   return (

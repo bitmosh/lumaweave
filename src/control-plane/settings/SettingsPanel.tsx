@@ -2,8 +2,6 @@ import { settingsRegistry } from "./settings.registry";
 import { useSettingsStore } from "./settings.store";
 import { CollapsibleSection } from "../panels/CollapsibleSection";
 import { PhysicsSectionContent } from "../panels/PhysicsSectionContent";
-import { LabelsSectionContent } from "../panels/LabelsSectionContent";
-import { AppearanceSectionContent } from "../panels/AppearanceSectionContent";
 
 function getNestedValue(obj: any, path: string) {
   return path.split(".").reduce((cursor, key) => cursor?.[key], obj);
@@ -19,9 +17,7 @@ export function SettingsPanel() {
 
   // Map category names to tile section registry keys
   const categoryToTileKey: Record<string, string> = {
-    "Physics": "physics-section",
-    "Labels": "labels-section",
-    "Graph View": "appearance-section",
+    "graph": "physics-section",
   };
 
   return (
@@ -30,12 +26,10 @@ export function SettingsPanel() {
         const tileableKey = categoryToTileKey[category];
 
         // Extracted components for v86c (Option X pattern).
-        const innerContent = category === "Physics"
+        // Legacy panel — replaced in OoO Step 7. Category migration: all
+        // Physics/Labels/Graph View entries now use category 'graph'.
+        const innerContent = category === "graph"
           ? <PhysicsSectionContent />
-          : category === "Labels"
-          ? <LabelsSectionContent />
-          : category === "Graph View"
-          ? <AppearanceSectionContent />
           : (
             // Defensive fallback for any future category not yet extracted
             <section

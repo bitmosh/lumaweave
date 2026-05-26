@@ -20,7 +20,7 @@ export function PhysicsSectionContent() {
   const setSetting = useSettingsStore((state) => state.setSetting);
 
   const physicsSettings = settingsRegistry.filter(
-    (setting) => setting.category === "Physics",
+    (setting) => setting.category === "graph" && setting.path.startsWith("physics."),
   );
 
   return (
