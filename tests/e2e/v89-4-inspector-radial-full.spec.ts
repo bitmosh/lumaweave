@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openInspectorOnTopbar } from "./helpers/inspector";
 
 const CANONICAL_SPOKE_ORDER = [
   "color", "geometry", "type", "motion", "layout", "code", "apply", "ide", "history",
@@ -11,8 +12,7 @@ test.describe("v89.4 Inspector Full Radial — 9 spokes", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await expect(page.locator('[data-testid="inspector-mini-graph"]')).toBeVisible();
 
     // All 9 spoke IDs should be present
@@ -25,8 +25,7 @@ test.describe("v89.4 Inspector Full Radial — 9 spokes", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await expect(page.locator('[data-testid="inspector-mini-graph"]')).toBeVisible();
 
     for (const spokeId of PLACEHOLDER_SPOKES) {
@@ -40,8 +39,7 @@ test.describe("v89.4 Inspector Full Radial — 9 spokes", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await expect(page.locator('[data-testid="inspector-mini-graph"]')).toBeVisible();
 
     const geometrySpoke = page.locator('[data-spoke-id="geometry"]');
@@ -54,8 +52,7 @@ test.describe("v89.4 Inspector Full Radial — 9 spokes", () => {
       await page.goto("/");
       await page.waitForLoadState("networkidle");
 
-      const target = page.locator('[data-lw-theme-target="topbar.root"]');
-      await target.click({ modifiers: ["Alt", "Shift"] });
+      await openInspectorOnTopbar(page);
       await expect(page.locator('[data-testid="inspector-mini-graph"]')).toBeVisible();
 
       // Click the placeholder spoke

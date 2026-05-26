@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openInspectorOnTopbar } from "./helpers/inspector";
 
 test.describe("inspector mini-graph", () => {
   test("Alt+Shift+click opens mini-graph", async ({ page }) => {
@@ -10,7 +11,7 @@ test.describe("inspector mini-graph", () => {
     await expect(target).toBeVisible();
 
     // Alt+Shift+click it
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
 
     // Mini-graph should appear
     await expect(page.locator('[data-testid="inspector-mini-graph"]')).toBeVisible();
@@ -20,8 +21,7 @@ test.describe("inspector mini-graph", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
 
     await expect(page.locator('[data-testid="inspector-mini-graph"]')).toBeVisible();
     await page.keyboard.press("Escape");
@@ -38,8 +38,7 @@ test.describe("inspector mini-graph", () => {
       return store.getState().settings.graphView?.dimMode ?? "off";
     });
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
 
     // Dim mode should now be outside-cluster
     const openDim = await page.evaluate(() => {
@@ -63,8 +62,7 @@ test.describe("inspector mini-graph", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
 
     const spokes = page.locator('[data-lw-theme-target="inspector.spoke"]');
     await expect(spokes).toHaveCount(4);

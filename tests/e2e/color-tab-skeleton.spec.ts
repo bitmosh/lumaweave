@@ -1,12 +1,12 @@
 import { test, expect } from "@playwright/test";
+import { openInspectorOnTopbar } from "./helpers/inspector";
 
 test.describe("v86d.3a Color spoke skeleton", () => {
   test("Color spoke appears in mini-graph when opened", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
 
     await expect(page.locator('[data-testid="inspector-mini-graph"]')).toBeVisible();
 
@@ -19,8 +19,7 @@ test.describe("v86d.3a Color spoke skeleton", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
 
     await page.locator('[data-spoke-id="color"]').click();
 
@@ -31,8 +30,7 @@ test.describe("v86d.3a Color spoke skeleton", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await page.locator('[data-spoke-id="color"]').click();
 
     const bindings = page.locator('[data-testid^="binding-"]');
@@ -44,8 +42,7 @@ test.describe("v86d.3a Color spoke skeleton", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await page.locator('[data-spoke-id="color"]').click();
 
     const swatches = page.locator('[data-testid="palette"] button');
@@ -57,8 +54,7 @@ test.describe("v86d.3a Color spoke skeleton", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await page.locator('[data-spoke-id="color"]').click();
 
     const firstSwatch = page.locator('[data-testid="palette"] button').first();
@@ -69,8 +65,7 @@ test.describe("v86d.3a Color spoke skeleton", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await page.locator('[data-spoke-id="color"]').click();
 
     await expect(page.locator('[data-testid="color-tab"]')).toBeVisible();
@@ -85,8 +80,7 @@ test.describe("v86d.3a Color spoke skeleton", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await page.locator('[data-spoke-id="color"]').click();
 
     const scopePicker = page.locator('[data-testid="scope-picker"]');

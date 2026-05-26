@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openInspectorOnTopbar } from "./helpers/inspector";
 
 test.describe("v86d.4 History spoke", () => {
   const TARGET_ID = "topbar.root";
@@ -18,8 +19,7 @@ test.describe("v86d.4 History spoke", () => {
   const openHistoryTab = async (page: any) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
-    const target = page.locator(`[data-lw-theme-target="${TARGET_ID}"]`);
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await expect(page.locator('[data-testid="inspector-mini-graph"]')).toBeVisible();
     await clickHistorySpoke(page);
     await expect(page.locator('[data-testid="history-tab"]')).toBeVisible();
@@ -41,8 +41,7 @@ test.describe("v86d.4 History spoke", () => {
   test("History spoke appears in mini-graph", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
-    const target = page.locator(`[data-lw-theme-target="${TARGET_ID}"]`);
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await expect(page.locator('[data-spoke-id="history"]')).toHaveCount(1);
   });
 
@@ -61,8 +60,7 @@ test.describe("v86d.4 History spoke", () => {
     await page.waitForLoadState("networkidle");
     await seedOverride(page);
 
-    const target = page.locator(`[data-lw-theme-target="${TARGET_ID}"]`);
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await clickHistorySpoke(page);
 
     await expect(page.locator('[data-testid="history-list"]')).toBeVisible();
@@ -74,8 +72,7 @@ test.describe("v86d.4 History spoke", () => {
     await page.waitForLoadState("networkidle");
     await seedOverride(page);
 
-    const target = page.locator(`[data-lw-theme-target="${TARGET_ID}"]`);
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await clickHistorySpoke(page);
 
     await expect(page.locator(`[data-testid="reset-${TOKEN_PATH}"]`)).toBeVisible();
@@ -99,8 +96,7 @@ test.describe("v86d.4 History spoke", () => {
       [TARGET_ID] as [string],
     );
 
-    const target = page.locator(`[data-lw-theme-target="${TARGET_ID}"]`);
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await clickHistorySpoke(page);
 
     await expect(page.locator('[data-testid="history-list"]')).toBeVisible();

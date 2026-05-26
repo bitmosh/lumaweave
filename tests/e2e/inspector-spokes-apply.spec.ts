@@ -1,11 +1,11 @@
 import { test, expect } from "@playwright/test";
+import { openInspectorOnTopbar } from "./helpers/inspector";
 
 test.describe("v86d.4 Apply spoke", () => {
   const openApplyTab = async (page: any) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await expect(page.locator('[data-testid="inspector-mini-graph"]')).toBeVisible();
     await page.locator('[data-spoke-id="apply"]').click();
     await expect(page.locator('[data-testid="apply-tab"]')).toBeVisible();
@@ -14,8 +14,7 @@ test.describe("v86d.4 Apply spoke", () => {
   test("Apply spoke appears in mini-graph", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await expect(page.locator('[data-spoke-id="apply"]')).toHaveCount(1);
   });
 

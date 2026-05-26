@@ -1,12 +1,12 @@
 import { test, expect } from "@playwright/test";
+import { openInspectorOnTopbar } from "./helpers/inspector";
 
 test.describe("v86d.5 IDE spoke with provenance", () => {
   test("IDE tab shows snippet for targets with provenance", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await page.locator('[data-spoke-id="ide"]').click();
 
     await expect(page.locator('[data-testid="snippet"]')).toBeVisible();
@@ -18,8 +18,7 @@ test.describe("v86d.5 IDE spoke with provenance", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await page.locator('[data-spoke-id="ide"]').click();
 
     const snippetText = await page.locator('[data-testid="snippet"]').textContent();
@@ -37,8 +36,7 @@ test.describe("v86d.5 IDE spoke with provenance", () => {
       });
     });
 
-    const target = page.locator('[data-lw-theme-target="topbar.root"]');
-    await target.click({ modifiers: ["Alt", "Shift"] });
+    await openInspectorOnTopbar(page);
     await page.locator('[data-spoke-id="ide"]').click();
     await page.locator('[data-testid="open-in-ide-button"]').click();
 
