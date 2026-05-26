@@ -60,6 +60,7 @@ export function Topbar({ onOpenSettings }: TopbarProps) {
         </label>
         <button
           type="button"
+          data-testid="topbar-settings-button"
           className="lw-topbar-icon-btn"
           aria-label="Open settings"
           title={`Settings · ${kbdHint}`}
