@@ -2,11 +2,32 @@ import React from 'react';
 import type { SettingsPanelProps, PanelPosition } from './settingsPanel.types';
 import './SettingsPanel.css';
 
-const DEFAULT_RECT = { left: 140, top: 90, width: 1180, height: 740 };
+function getDefaultRect() {
+  const w = Math.min(1180, window.innerWidth - 160);
+  const h = Math.min(740, window.innerHeight - 160);
+  return {
+    left: Math.max(0, (window.innerWidth - w) / 2),
+    top: Math.max(0, (window.innerHeight - h) / 2),
+    width: w,
+    height: h,
+  };
+}
 const STORE_KEY = 'lw.settings.panel.geometry.v1';
 
 function readRect(): { left: number; top: number; width: number; height: number } | null {
-  try { return JSON.parse(localStorage.getItem(STORE_KEY) || 'null'); } catch { return null; }
+  try {
+    const stored = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
+    if (!stored) return null;
+    // Sanity check: require AT LEAST 200px of titlebar horizontally visible and
+    // top within viewport, otherwise fall back to default (recenter).
+    const visibleWidth = Math.min(window.innerWidth, stored.left + stored.width) - Math.max(0, stored.left);
+    if (visibleWidth < 200 || stored.top < 0 || stored.top > window.innerHeight - 50) {
+      return null;
+    }
+    return stored;
+  } catch {
+    return null;
+  }
 }
 
 export function SettingsPanel({
@@ -16,7 +37,7 @@ export function SettingsPanel({
   headerSlot, sidebarSlot, contentSlot, statusBarSlot,
 }: SettingsPanelProps) {
   const panelRef = React.useRef<HTMLDivElement>(null);
-  const [rect, setRect] = React.useState(() => readRect() ?? initialRect ?? DEFAULT_RECT);
+  const [rect, setRect] = React.useState(() => readRect() ?? initialRect ?? getDefaultRect());
   const [position, setPosition] = React.useState<PanelPosition>('floating');
   const [dragHint, setDragHint] = React.useState<'left' | 'right' | null>(null);
   const [minimized, setMinimized] = React.useState(false);
@@ -97,6 +118,28 @@ export function SettingsPanel({
     window.addEventListener('mousemove', move);
     window.addEventListener('mouseup', up);
   };
+
+  // Clamp panel back into viewport on browser resize.
+// Doesn't recenter — just nudges any out-of-bounds edges back in.
+React.useEffect(() => {
+  if (!open) return;
+  const handleResize = () => {
+    setRect((r) => {
+      const maxLeft = window.innerWidth - 200;   // keep 200px of titlebar visible
+      const maxTop = window.innerHeight - 50;    // keep titlebar reachable
+      const maxWidth = window.innerWidth - 40;   // 20px breathing room
+      const maxHeight = window.innerHeight - 40;
+      return {
+        left: Math.max(0, Math.min(r.left, maxLeft)),
+        top: Math.max(0, Math.min(r.top, maxTop)),
+        width: Math.min(r.width, maxWidth),
+        height: Math.min(r.height, maxHeight),
+      };
+    });
+  };
+  window.addEventListener('resize', handleResize);
+  return () => window.removeEventListener('resize', handleResize);
+}, [open]);
 
   // ─── Keyboard: Esc to close ────────────────────────────────────────────
   React.useEffect(() => {
