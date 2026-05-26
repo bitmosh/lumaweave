@@ -45,7 +45,7 @@ export interface TileLayoutEntry {
 }
 
 export interface StarmapSettings {
-  version: 86; // Pass C9.4: bumped from 84 for pinnedHighlightActive migration; v86: FA2 field cleanup
+  version: 87; // v96: added developer.preferredEditor + customEditorTemplate
 
   general: {
     startupProjectId: string | null;
@@ -161,6 +161,8 @@ export interface StarmapSettings {
     showDebugPanel: boolean;
     showFps: boolean;
     logLevel: "silent" | "error" | "warn" | "info" | "debug";
+    preferredEditor: "vscode" | "windsurf" | "cursor" | "zed" | "webstorm" | "sublime" | "vim" | "neovim" | "system-default" | "custom";
+    customEditorTemplate: string;
   };
 
   ui: {
