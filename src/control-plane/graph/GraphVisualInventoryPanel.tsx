@@ -17,6 +17,8 @@ import { getAllMotionSafetyEntries } from "../../accessibility/motionSafetyRegis
 import { getAllSyntheticSignals } from "../../audio/syntheticAudioSignal";
 import { getAllMusicReactiveMappings } from "../../audio/musicReactiveMappingRegistry";
 import { getAllAudioSources } from "../../audio/audioSourceRegistry";
+import { lensRegistry } from "../../lens/lensRegistry";
+import { physicsDialectRegistry } from "../../graph/physics/physicsDialectRegistry";
 
 export function GraphVisualInventoryPanel(): React.JSX.Element {
   const elements = getAllGraphViewElements();
@@ -25,6 +27,8 @@ export function GraphVisualInventoryPanel(): React.JSX.Element {
   const syntheticSignals = getAllSyntheticSignals();
   const musicReactiveMappings = getAllMusicReactiveMappings();
   const audioSources = getAllAudioSources();
+  const lensEntries = lensRegistry.list();
+  const dialectEntries = physicsDialectRegistry.list();
   const [detailMode, setDetailMode] = useState<"summary" | "detailed">("summary");
   const [themeEvidenceMode, setThemeEvidenceMode] = useState<boolean>(false);
   const [themeApplicationMode, setThemeApplicationMode] = useState<boolean>(false);
@@ -763,6 +767,123 @@ export function GraphVisualInventoryPanel(): React.JSX.Element {
         {themeMappings.map((mapping, index) => (
           <GraphThemeMappingRow key={`${mapping.graphElementId}-${mapping.canonicalTokenPath}-${index}`} mapping={mapping} />
         ))}
+      </div>
+
+      {/* Lens Registry (v93) */}
+      <div
+        className="mb-4 p-3 border border-purple-200 rounded bg-purple-50"
+        data-testid="lens-registry-section"
+      >
+        <h3 className="text-sm font-semibold text-purple-900 mb-2" data-testid="lens-registry-title">
+          Lens Registry (v93)
+        </h3>
+        <p className="text-xs text-purple-700 mb-3" data-testid="lens-registry-description">
+          Passive inventory of graph viewing lenses. No runtime lens-switching in v93.
+        </p>
+        <div className="space-y-1 text-xs mb-3">
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Registry entries:</span>
+            <span className="font-mono text-purple-800" data-testid="lens-registry-count">
+              {lensEntries.length}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Runtime lens-switching:</span>
+            <span className="font-mono text-red-600 font-semibold" data-testid="lens-registry-runtime-status">
+              none in v93
+            </span>
+          </div>
+        </div>
+        <div className="space-y-2">
+          {lensEntries.map((entry) => (
+            <div
+              key={entry.id}
+              className="p-2 border border-purple-200 rounded bg-white"
+              data-testid="lens-registry-entry-row"
+            >
+              <div className="flex items-center justify-between mb-1">
+                <div className="font-semibold text-gray-800 text-xs" data-testid={`lens-registry-entry-label-${entry.id}`}>
+                  {entry.label}
+                </div>
+                <span
+                  className="text-xs px-2 py-1 rounded bg-green-100 text-green-800"
+                  data-testid={`lens-registry-entry-status-${entry.id}`}
+                >
+                  {entry.status}
+                </span>
+              </div>
+              <div className="text-gray-600 text-xs mb-1" data-testid={`lens-registry-entry-description-${entry.id}`}>
+                {entry.description}
+              </div>
+              <div className="text-xs text-gray-500">
+                <span>Compatible dialects: </span>
+                <span className="font-mono text-purple-800" data-testid={`lens-registry-entry-dialects-${entry.id}`}>
+                  {entry.compatibleDialects.join(", ")}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-2 pt-2 border-t border-purple-300 text-xs text-gray-500 italic" data-testid="lens-registry-notice">
+          Registry is static/read-only inventory. No runtime lens-switching, no graph/Sigma mutation, no active controls.
+        </div>
+      </div>
+
+      {/* Physics Dialect Registry (v93) */}
+      <div
+        className="mb-4 p-3 border border-indigo-200 rounded bg-indigo-50"
+        data-testid="physics-dialect-registry-section"
+      >
+        <h3 className="text-sm font-semibold text-indigo-900 mb-2" data-testid="physics-dialect-registry-title">
+          Physics Dialect Registry (v93)
+        </h3>
+        <p className="text-xs text-indigo-700 mb-3" data-testid="physics-dialect-registry-description">
+          Passive inventory of physics force-model dialects. No runtime dialect-switching in v93.
+        </p>
+        <div className="space-y-1 text-xs mb-3">
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Registry entries:</span>
+            <span className="font-mono text-indigo-800" data-testid="physics-dialect-registry-count">
+              {dialectEntries.length}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Runtime dialect-switching:</span>
+            <span className="font-mono text-red-600 font-semibold" data-testid="physics-dialect-registry-runtime-status">
+              none in v93
+            </span>
+          </div>
+        </div>
+        <div className="space-y-2">
+          {dialectEntries.map((dialect) => (
+            <div
+              key={dialect.id}
+              className="p-2 border border-indigo-200 rounded bg-white"
+              data-testid="physics-dialect-registry-entry-row"
+            >
+              <div className="flex items-center justify-between mb-1">
+                <div className="font-semibold text-gray-800 text-xs" data-testid={`physics-dialect-registry-entry-label-${dialect.id}`}>
+                  {dialect.label}
+                </div>
+                <span
+                  className="text-xs px-2 py-1 rounded bg-blue-100 text-blue-800"
+                  data-testid={`physics-dialect-registry-entry-forcemodel-${dialect.id}`}
+                >
+                  {dialect.forceModel}
+                </span>
+              </div>
+              <div className="text-xs text-gray-500">
+                <span>Compatible lenses: </span>
+                <span className="font-mono text-indigo-800" data-testid={`physics-dialect-registry-entry-lenses-${dialect.id}`}>
+                  {dialect.compatibleWithLenses.join(", ")}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-2 pt-2 border-t border-indigo-300 text-xs text-gray-500 italic" data-testid="physics-dialect-registry-notice">
+          Registry is static/read-only inventory. No runtime dialect-switching, no physics mutation, no active controls.
+        </div>
       </div>
     </div>
   );

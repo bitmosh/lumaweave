@@ -1887,4 +1887,130 @@ test.describe("Graph Visual Inventory", () => {
     const audioMutationControls = panel.getByRole("button", { name: /audio.*mutation|graph.*audio/i });
     await expect(audioMutationControls).not.toBeVisible();
   });
+
+  test("Graph Visual Inventory › Lens Registry (v93) › Section is visible", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const section = panel.getByTestId("lens-registry-section");
+    await expect(section).toBeVisible();
+  });
+
+  test("Graph Visual Inventory › Lens Registry (v93) › Title is visible", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const title = panel.getByTestId("lens-registry-title");
+    await expect(title).toBeVisible();
+    await expect(title).toHaveText("Lens Registry (v93)");
+  });
+
+  test("Graph Visual Inventory › Lens Registry (v93) › Description is visible", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const description = panel.getByTestId("lens-registry-description");
+    await expect(description).toBeVisible();
+    await expect(description).toHaveText(/Passive inventory of graph viewing lenses/);
+  });
+
+  test("Graph Visual Inventory › Lens Registry (v93) › Count is >= 2", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const count = panel.getByTestId("lens-registry-count");
+    await expect(count).toBeVisible();
+    const countText = await count.textContent();
+    expect(parseInt(countText || "0")).toBeGreaterThanOrEqual(2);
+  });
+
+  test("Graph Visual Inventory › Lens Registry (v93) › Runtime switching status is none in v93", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const status = panel.getByTestId("lens-registry-runtime-status");
+    await expect(status).toBeVisible();
+    await expect(status).toHaveText("none in v93");
+  });
+
+  test("Graph Visual Inventory › Lens Registry (v93) › radial-backbone entry is visible", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const label = panel.getByTestId("lens-registry-entry-label-lens.radial-backbone");
+    await expect(label).toBeVisible();
+    await expect(label).toHaveText("Radial Backbone");
+  });
+
+  test("Graph Visual Inventory › Lens Registry (v93) › parallel-spines entry is visible", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const label = panel.getByTestId("lens-registry-entry-label-lens.parallel-spines");
+    await expect(label).toBeVisible();
+    await expect(label).toHaveText("Parallel Spines");
+  });
+
+  test("Graph Visual Inventory › Physics Dialect Registry (v93) › Section is visible", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const section = panel.getByTestId("physics-dialect-registry-section");
+    await expect(section).toBeVisible();
+  });
+
+  test("Graph Visual Inventory › Physics Dialect Registry (v93) › Title is visible", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const title = panel.getByTestId("physics-dialect-registry-title");
+    await expect(title).toBeVisible();
+    await expect(title).toHaveText("Physics Dialect Registry (v93)");
+  });
+
+  test("Graph Visual Inventory › Physics Dialect Registry (v93) › Description is visible", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const description = panel.getByTestId("physics-dialect-registry-description");
+    await expect(description).toBeVisible();
+    await expect(description).toHaveText(/Passive inventory of physics force-model dialects/);
+  });
+
+  test("Graph Visual Inventory › Physics Dialect Registry (v93) › Count is >= 2", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const count = panel.getByTestId("physics-dialect-registry-count");
+    await expect(count).toBeVisible();
+    const countText = await count.textContent();
+    expect(parseInt(countText || "0")).toBeGreaterThanOrEqual(2);
+  });
+
+  test("Graph Visual Inventory › Physics Dialect Registry (v93) › Runtime switching status is none in v93", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const status = panel.getByTestId("physics-dialect-registry-runtime-status");
+    await expect(status).toBeVisible();
+    await expect(status).toHaveText("none in v93");
+  });
+
+  test("Graph Visual Inventory › Physics Dialect Registry (v93) › radial-backbone dialect entry is visible", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const label = panel.getByTestId("physics-dialect-registry-entry-label-dialect.gwells.radial-backbone");
+    await expect(label).toBeVisible();
+    await expect(label).toHaveText("Gwells Radial Backbone");
+  });
+
+  test("Graph Visual Inventory › Physics Dialect Registry (v93) › parallel-spines dialect entry is visible", async ({ page }) => {
+    const panel = page.getByTestId("graph-visual-inventory-panel");
+    await expect(panel).toBeVisible();
+
+    const label = panel.getByTestId("physics-dialect-registry-entry-label-dialect.gwells.parallel-spines");
+    await expect(label).toBeVisible();
+    await expect(label).toHaveText("Gwells Parallel Spines");
+  });
 });

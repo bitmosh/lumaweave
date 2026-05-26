@@ -59,6 +59,44 @@ export const physicsDialectRegistry: PhysicsDialectRegistryContract = {
   },
 };
 
+physicsDialectRegistry.register({
+  id: "dialect.gwells.radial-backbone",
+  label: "Gwells Radial Backbone",
+  forceModel: "gwells",
+  paramSchema: {
+    spineCount: "number",
+    spineAngles: "number[]",
+    spineSpacing: "number",
+    directoryOffset: "number",
+  },
+  compatibleWithLenses: ["lens.radial-backbone"],
+  defaultSettings: {
+    spineCount: 2,
+    spineAngles: [0, 180],
+    spineSpacing: 1200,
+    directoryOffset: 2400,
+  },
+});
+
+physicsDialectRegistry.register({
+  id: "dialect.gwells.parallel-spines",
+  label: "Gwells Parallel Spines",
+  forceModel: "gwells",
+  paramSchema: {
+    spineCount: "number",
+    offsetFromHub: "number",
+    spineSpacing: "number",
+    directoryOffset: "number",
+  },
+  compatibleWithLenses: ["lens.parallel-spines"],
+  defaultSettings: {
+    spineCount: 2,
+    offsetFromHub: 1000,
+    spineSpacing: 1200,
+    directoryOffset: 2400,
+  },
+});
+
 if (
   typeof window !== "undefined" &&
   (import.meta.env.DEV || (window as any).PLAYWRIGHT)
