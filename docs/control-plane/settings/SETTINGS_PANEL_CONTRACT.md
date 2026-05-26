@@ -2,13 +2,13 @@
 id: settings.panel.contract
 title: Settings Panel Contract
 type: contract
-status: draft
+status: accepted
 domain: control-plane
 subdomain: settings
 cluster: violet
 agent_readable: true
 include_in_self_graph: true
-last_updated: 2026-05-25
+last_updated: 2026-05-26
 references:
   - protocol.registry.contract.patterns
   - theme.system.overview
@@ -23,7 +23,7 @@ tags:
 
 # Settings Panel Contract
 
-> **Status:** Draft v2 — not yet accepted. Implementation may not begin until this contract is accepted by Ryan via `#approve-this`.
+> **Status:** Accepted — 2026-05-26. Implementation in progress on `feat/settings-menu-import`.
 >
 > **Predecessor:** The legacy inline `SettingsPanel.tsx` (3-category, lives at `src/control-plane/settings/SettingsPanel.tsx`) is currently unmounted (since v86a removed the Settings left-panel tab) and will be overwritten by this pass.
 
