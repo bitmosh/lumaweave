@@ -3,8 +3,38 @@
  * Reference: (NEW)tile-system.jsx lines 134-204
  */
 
-import type { TileLayoutEntry, TileGroup } from "./tile.types";
+import type { TileLayoutEntry, TileGroup, TileAnchor } from "./tile.types";
 import { defaultFeatureFlags } from "../features/feature-flags";
+
+export function computeAnchorPos(
+  anchor: TileAnchor,
+  w: number,
+  _h: number,
+): { x: number; y: number } {
+  const offset = anchor.offset ?? 80;
+  switch (anchor.edge) {
+    case "left":
+      return { x: 8, y: offset };
+    case "right":
+      return { x: window.innerWidth - w - 8, y: offset };
+    case "top":
+      return { x: offset, y: 64 };
+    case "bottom":
+      return { x: offset, y: window.innerHeight - 400 };
+    case "free":
+      return { x: anchor.x ?? 100, y: anchor.y ?? 100 };
+    default:
+      return { x: 100, y: 100 };
+  }
+}
+
+export function isOffAnchor(
+  tile: TileLayoutEntry,
+  anchor: TileAnchor,
+): boolean {
+  const pos = computeAnchorPos(anchor, tile.w, tile.h);
+  return Math.abs(tile.x - pos.x) > 4 || Math.abs(tile.y - pos.y) > 4;
+}
 
 const COLLAPSED_H = 30;
 const SNAP_TOLERANCE = 75; // strong magnetic snap tolerance

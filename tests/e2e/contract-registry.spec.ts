@@ -147,21 +147,21 @@ test("Theme runtime integrity - theme selector works", async ({ page }) => {
   await expect(themeSelector).toHaveValue("midnight-loom");
 });
 
-test("Theme runtime integrity - glitter toggle updates visual state", async ({ page }) => {
+test("Theme runtime integrity - animation toggle updates visual state", async ({ page }) => {
   await page.goto("/");
 
-  // Find glitter toggle checkbox in top bar
-  const glitterToggle = page.locator("input[type='checkbox']").first();
-  
+  // Find animation toggle in top bar (PillToggle with role="switch")
+  const animationToggle = page.getByTestId("topbar-toggle-animation");
+
   // Get initial state
-  const initialState = await glitterToggle.isChecked();
-  
-  // Toggle glitter
-  await glitterToggle.click();
-  
+  const initialState = await animationToggle.getAttribute("aria-checked");
+
+  // Toggle animation
+  await animationToggle.click();
+
   // Verify state changed
-  const newState = await glitterToggle.isChecked();
-  expect(newState).toBe(!initialState);
+  const newState = await animationToggle.getAttribute("aria-checked");
+  expect(newState).not.toBe(initialState);
 });
 
 test("Advisory tab is visible", async ({ page }) => {

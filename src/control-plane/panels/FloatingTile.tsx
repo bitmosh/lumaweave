@@ -4,10 +4,11 @@
  * Uses window.addEventListener for mousemove/mouseup instead of setPointerCapture
  */
 
+import { useState } from "react";
 import type { TileLayoutEntry, TileGroup } from "./tile.types";
 import { useTileContext } from "./TileProvider";
 import { tileSectionRegistry } from "./tileSectionRegistry";
-import { shouldFlipTile } from "./tileUtils";
+import { shouldFlipTile, isOffAnchor } from "./tileUtils";
 
 const TILE_GRID = 16;
 const COLLAPSED_H = 30;
@@ -23,9 +24,15 @@ interface FloatingTileProps {
 export function FloatingTile({ tile, group }: FloatingTileProps) {
   const ctx = useTileContext();
   const reg = ctx.tiles.get(tile.id);
+  const [anchorMenuOpen, setAnchorMenuOpen] = useState(false);
+
   if (!reg) return null;
 
   const sectionEntry = tileSectionRegistry.getById(tile.sectionKey);
+  const tileLabel = sectionEntry?.label ?? tile.sectionKey;
+
+  const anchor = tile.anchor ?? sectionEntry?.defaultAnchor;
+  const offAnchor = anchor ? isOffAnchor(tile, anchor) : false;
 
   let sectionContent: React.ReactNode = null;
   try {
@@ -193,25 +200,44 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
           {showHeader && (
             <div className="tile-head" onMouseDown={onHeaderDown}>
               <span className="tile-grip">⠿</span>
-              <span className="tile-title">{tile.sectionKey}</span>
+              <span className="tile-title">{tileLabel}</span>
               <span className="tile-spacer"/>
+              {offAnchor && (
+                <span className="tile-anchor-wrap">
+                  <button
+                    className="tile-btn tile-anchor-btn"
+                    title="Anchor options"
+                    onClick={(e) => { e.stopPropagation(); setAnchorMenuOpen(o => !o); }}
+                  >⚓</button>
+                  {anchorMenuOpen && (
+                    <div className="tile-anchor-menu" onMouseDown={e => e.stopPropagation()}>
+                      <button onClick={() => { ctx.setTileAnchor(tile.id); setAnchorMenuOpen(false); }}>
+                        Set anchor here
+                      </button>
+                      <button onClick={() => { ctx.returnToAnchor(tile.id); setAnchorMenuOpen(false); }}>
+                        Return to anchor
+                      </button>
+                    </div>
+                  )}
+                </span>
+              )}
               <button className="tile-btn" title={tile.collapsed ? "Expand" : "Collapse"}
                       onClick={handleToggleCollapsed}>
                 {tile.collapsed ? "▾" : "─"}
               </button>
-              <button className="tile-btn" title="Close" onClick={() => ctx.closeTile(tile.id)}>×</button>
+              <button className="tile-btn" title="Hide" onClick={() => ctx.setTileVisibility(tile.id, false)}>×</button>
             </div>
           )}
           {showSlimStrip && (
             <div className="tile-slim">
               <span className="tile-ungrip" title="Drag to ungroup" onMouseDown={onUngroupDown}>⤴</span>
-              <span className="tile-slim-title">{tile.sectionKey}</span>
+              <span className="tile-slim-title">{tileLabel}</span>
               <span className="tile-spacer"/>
               <button className="tile-btn slim" title={tile.collapsed ? "Expand" : "Collapse"}
                       onClick={handleToggleCollapsed}>
                 {tile.collapsed ? "▾" : "─"}
               </button>
-              <button className="tile-btn slim" title="Close" onClick={() => ctx.closeTile(tile.id)}>×</button>
+              <button className="tile-btn slim" title="Hide" onClick={() => ctx.setTileVisibility(tile.id, false)}>×</button>
             </div>
           )}
         </>
@@ -220,25 +246,44 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
           {showHeader && (
             <div className="tile-head" onMouseDown={onHeaderDown}>
               <span className="tile-grip">⠿</span>
-              <span className="tile-title">{tile.sectionKey}</span>
+              <span className="tile-title">{tileLabel}</span>
               <span className="tile-spacer"/>
+              {offAnchor && (
+                <span className="tile-anchor-wrap">
+                  <button
+                    className="tile-btn tile-anchor-btn"
+                    title="Anchor options"
+                    onClick={(e) => { e.stopPropagation(); setAnchorMenuOpen(o => !o); }}
+                  >⚓</button>
+                  {anchorMenuOpen && (
+                    <div className="tile-anchor-menu" onMouseDown={e => e.stopPropagation()}>
+                      <button onClick={() => { ctx.setTileAnchor(tile.id); setAnchorMenuOpen(false); }}>
+                        Set anchor here
+                      </button>
+                      <button onClick={() => { ctx.returnToAnchor(tile.id); setAnchorMenuOpen(false); }}>
+                        Return to anchor
+                      </button>
+                    </div>
+                  )}
+                </span>
+              )}
               <button className="tile-btn" title={tile.collapsed ? "Expand" : "Collapse"}
                       onClick={handleToggleCollapsed}>
                 {tile.collapsed ? "▾" : "─"}
               </button>
-              <button className="tile-btn" title="Close" onClick={() => ctx.closeTile(tile.id)}>×</button>
+              <button className="tile-btn" title="Hide" onClick={() => ctx.setTileVisibility(tile.id, false)}>×</button>
             </div>
           )}
           {showSlimStrip && (
             <div className="tile-slim">
               <span className="tile-ungrip" title="Drag to ungroup" onMouseDown={onUngroupDown}>⤴</span>
-              <span className="tile-slim-title">{tile.sectionKey}</span>
+              <span className="tile-slim-title">{tileLabel}</span>
               <span className="tile-spacer"/>
               <button className="tile-btn slim" title={tile.collapsed ? "Expand" : "Collapse"}
                       onClick={handleToggleCollapsed}>
                 {tile.collapsed ? "▾" : "─"}
               </button>
-              <button className="tile-btn slim" title="Close" onClick={() => ctx.closeTile(tile.id)}>×</button>
+              <button className="tile-btn slim" title="Hide" onClick={() => ctx.setTileVisibility(tile.id, false)}>×</button>
             </div>
           )}
           {!tile.collapsed && (

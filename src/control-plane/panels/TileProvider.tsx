@@ -19,8 +19,10 @@ import type {
   TileContextState,
   TileContextActions,
   SnapGuide,
+  TileAnchor,
 } from "./tile.types";
 import { tileSectionRegistry } from "./tileSectionRegistry";
+import { computeAnchorPos } from "./tileUtils";
 
 const TILE_GRID = 16;
 
@@ -148,6 +150,46 @@ export function TileProvider({ children }: TileProviderProps) {
     [],
   );
 
+  const setTileVisibility = useCallback(
+    (id: string, visible: boolean) => {
+      writeTiles(
+        getCurrentTiles().map((t) => (t.id === id ? { ...t, visible } : t)),
+      );
+    },
+    [writeTiles],
+  );
+
+  const setTileAnchor = useCallback(
+    (id: string) => {
+      const tile = getCurrentTiles().find((t) => t.id === id);
+      if (!tile) return;
+      const freeAnchor: TileAnchor = { edge: "free", x: tile.x, y: tile.y };
+      writeTiles(
+        getCurrentTiles().map((t) =>
+          t.id === id ? { ...t, anchor: freeAnchor } : t,
+        ),
+      );
+    },
+    [writeTiles],
+  );
+
+  const returnToAnchor = useCallback(
+    (id: string) => {
+      const tile = getCurrentTiles().find((t) => t.id === id);
+      if (!tile) return;
+      const section = tileSectionRegistry.getById(tile.sectionKey);
+      const anchor = tile.anchor ?? section?.defaultAnchor;
+      if (!anchor) return;
+      const pos = computeAnchorPos(anchor, tile.w, tile.h);
+      writeTiles(
+        getCurrentTiles().map((t) =>
+          t.id === id ? { ...t, x: pos.x, y: pos.y } : t,
+        ),
+      );
+    },
+    [writeTiles],
+  );
+
   const contextValue: TileContextState & TileContextActions = {
     tiles: new Map(tiles.map((t) => [t.id, t])),
     maxZ: Math.max(...tiles.map((t) => t.z), 10),
@@ -165,6 +207,9 @@ export function TileProvider({ children }: TileProviderProps) {
     },
     isTiledOut,
     setSnapGuide,
+    setTileVisibility,
+    setTileAnchor,
+    returnToAnchor,
   };
 
   return (

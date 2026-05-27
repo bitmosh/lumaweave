@@ -25,8 +25,8 @@ export function TileLayer() {
         </div>
       ))}
 
-      {/* Render tiles */}
-      {tilesArray.map(tile => {
+      {/* Render tiles (skip hidden tiles) */}
+      {tilesArray.filter(t => t.visible !== false).map(tile => {
         const group = tileToGroup[tile.id] ? groups.find(g => g.tileIds.includes(tileToGroup[tile.id])) : null;
         return (
           <FloatingTile key={tile.id} tile={tile} group={group || null} />

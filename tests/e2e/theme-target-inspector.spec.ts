@@ -109,7 +109,10 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
     await expect(page.locator('[data-lw-theme-target="topbar.root"]').first()).toBeVisible();
     await expect(page.locator('[data-lw-theme-target="mission-control.panel"]').first()).toBeVisible();
     await expect(page.locator('[data-lw-theme-target="graph.frame"]').first()).toBeVisible();
-    await expect(page.locator('[data-lw-theme-target="settings.panel"]').first()).toBeVisible();
+
+    // settings.panel target is on the SettingsPanel dialog — open it first
+    await page.locator('[data-testid="topbar-settings-button"]').click();
+    await expect(page.locator('[data-lw-theme-target="settings.panel"]').first()).toBeVisible({ timeout: 5000 });
   });
 
   test("inspector overlay toggles via hotkey and shows metadata", async ({ page }) => {

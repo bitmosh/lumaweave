@@ -37,11 +37,11 @@ test.describe("settings migration chain", () => {
     // Run full migration chain
     const result = migrateSettings(v76);
 
-    // Verify version is current (v87 after ide-integration developer fields)
-    expect(result.version).toBe(87);
+    // Verify version is current (v88 after glitter→animation rename)
+    expect(result.version).toBe(88);
 
-    // Verify v80 fields are present (v86b additions)
-    expect(result.appearance.glitterDensity).toBe("medium");
+    // Verify v80/v88 fields are present (v86b additions, v88 rename)
+    expect((result.appearance as any).animationDensity).toBe("medium");
     expect(result.appearance.edgePlasmaMode).toBe("animated-overlay");
     expect(result.appearance.backdropMotion).toBe("half");
     expect(result.appearance.nodeHum).toBe(0.7);

@@ -1,4 +1,5 @@
 import type { QaCheckDefinition } from "./qa.types";
+import { FEEDBACK_CHECKS } from "./feedback-checklist";
 
 export const qaCheckDefinitions: QaCheckDefinition[] = [
   // Theme System Phase 1A v9 - Archived
@@ -11256,4 +11257,5 @@ export const qaCheckDefinitions: QaCheckDefinition[] = [
     steps: ["Verify panel has no enabled buttons or interactive controls"],
     required: true,
   },
+  ...FEEDBACK_CHECKS,
 ];

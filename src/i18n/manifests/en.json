@@ -6,6 +6,11 @@
     },
     "toggles": {
       "glitter": "Glitter",
+      "animation": "Animation",
+      "reduceMotion": "Reduce Motion"
+    },
+    "toggle": {
+      "animation": "Animation",
       "reduceMotion": "Reduce Motion"
     },
     "themes": {
@@ -160,6 +165,36 @@
         "flagsDesc": "Feature flag browser lands in v95. Flags are currently managed in the settings store directly.",
         "reset": "Reset",
         "resetDesc": "Clear-all-overrides and reset-all-settings destructive actions land in v95."
+      },
+      "inspector": {
+        "preview": "Preview",
+        "previewDesc": "Live radial inspector preview renders here.",
+        "activation": "Activation",
+        "activationDesc": "Configure inspector activation behavior.",
+        "behavior": "Behavior",
+        "behaviorDesc": "Inspector interaction and display options.",
+        "coming": "Coming later",
+        "comingDesc": "Per-spoke configuration, default scope picker, custom spoke order — v89."
+      }
+    },
+    "advanced": {
+      "graphVisualInventory": {
+        "title": "Graph Visual Inventory",
+        "description": "Registered handles, lenses, and dialects."
+      },
+      "systemIndex": {
+        "title": "System Index",
+        "description": "Internal system registry index."
+      },
+      "commandDeck": {
+        "title": "Command Deck",
+        "description": "Read-only view of registered commands and hotkeys."
+      }
+    },
+    "inspector": {
+      "autoOpen": {
+        "label": "Auto-open on selection",
+        "description": "Open the inspector tile automatically when a node or edge is selected."
       }
     },
     "controls": {
@@ -276,7 +311,14 @@
     "labels_cycleNodeLabelMode": "Cycle Node Label Mode",
     "palette_open": "Open Command Palette",
     "debug_toggleFps": "Toggle FPS Counter",
-    "debug_clearAllOverrides": "Clear All Theme Overrides"
+    "debug_clearAllOverrides": "Clear All Theme Overrides",
+    "view_toggleTile_physics": "Toggle Physics Tile",
+    "view_toggleTile_appearance": "Toggle Appearance Tile",
+    "view_toggleTile_labels": "Toggle Labels Tile",
+    "view_toggleTile_typography": "Toggle Typography Tile",
+    "view_toggleTile_graphSources": "Toggle Graph Sources Tile",
+    "view_toggleTile_graphInspector": "Toggle Graph Inspector Tile",
+    "view_toggleTile_agentChat": "Toggle Agent Chat Tile"
   },
   "themeInspector": {
     "toggleOn": "UI Inspector: ON ({hotkey})",
@@ -316,6 +358,41 @@
       "physics": "Physics",
       "labels": "Labels",
       "debug": "Debug"
+    }
+  },
+  "common": {
+    "on": "on",
+    "off": "off"
+  },
+  "agent": {
+    "chat": {
+      "title": "Agent Chat",
+      "placeholder": {
+        "description": "Local agent chat surface. Wires to the agent infrastructure in a future pass.",
+        "status": "Placeholder — not connected."
+      }
+    }
+  },
+  "feedback": {
+    "panel": {
+      "title": "Feedback & Testing",
+      "description": "Help shape LumaWeave by walking through these questions."
+    }
+  },
+  "statusBar": {
+    "debug": "Debug",
+    "tiles": {
+      "label": "Tiles",
+      "title": "Show tiles"
+    },
+    "controlPlane": "control plane {state}",
+    "controlPlaneOnline": "online",
+    "theme": "theme {themeName}",
+    "animation": "animation {state}",
+    "renderer": "renderer {rendererName}",
+    "uiInspector": {
+      "label": "UI Inspector",
+      "tooltip": "Toggle theme target inspector (Alt+Shift+I)"
     }
   },
   "commandDeck": {

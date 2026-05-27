@@ -45,40 +45,30 @@ test.describe("Theme Selector", () => {
     await expect(themeSelector).toHaveValue("solar-plasma");
   });
 
-  test("glitter toggle exists", async ({ page }) => {
-    const glitterToggle = page.getByLabel("Glitter");
-    await expect(glitterToggle).toBeVisible();
+  test("animation toggle exists", async ({ page }) => {
+    const animationToggle = page.getByTestId("topbar-toggle-animation");
+    await expect(animationToggle).toBeVisible();
   });
 
   test("reduce motion toggle exists", async ({ page }) => {
-    const reduceMotionToggle = page.getByLabel("Reduce Motion");
+    const reduceMotionToggle = page.getByTestId("topbar-toggle-reduce-motion");
     await expect(reduceMotionToggle).toBeVisible();
   });
 
-  test("glitter toggle can be toggled", async ({ page }) => {
-    const glitterToggle = page.getByLabel("Glitter");
-    
-    // Get initial state
-    const initialState = await glitterToggle.isChecked();
-    
-    // Toggle it
-    await glitterToggle.click();
-    
-    // Verify state changed
-    const newState = await glitterToggle.isChecked();
+  test("animation toggle can be toggled", async ({ page }) => {
+    const animationToggle = page.getByTestId("topbar-toggle-animation");
+
+    const initialState = await animationToggle.isChecked();
+    await animationToggle.click();
+    const newState = await animationToggle.isChecked();
     expect(newState).toBe(!initialState);
   });
 
   test("reduce motion toggle can be toggled", async ({ page }) => {
-    const reduceMotionToggle = page.getByLabel("Reduce Motion");
-    
-    // Get initial state
+    const reduceMotionToggle = page.getByTestId("topbar-toggle-reduce-motion");
+
     const initialState = await reduceMotionToggle.isChecked();
-    
-    // Toggle it
     await reduceMotionToggle.click();
-    
-    // Verify state changed
     const newState = await reduceMotionToggle.isChecked();
     expect(newState).toBe(!initialState);
   });

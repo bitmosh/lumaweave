@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
+import { t } from "../../i18n";
 import { qaCheckDefinitions } from "./qa-registry";
+import { FEEDBACK_CHECKLIST_KEY } from "./feedback-checklist";
 import { useQaStore } from "./qa.store";
 import type { BanditProposalDecision, BanditQuestionStatus, QaCheckResult, QaStatus } from "./qa.types";
 import { generateContractSummary } from "../contracts";
@@ -16,8 +18,8 @@ const ACTIVE_CHECKLIST_STORAGE_KEY = "lumaweave-qa-active-checklist";
 const getBacklogStorageKey = (qaKey: string) => `lumaweave-advisory-backlog-order:${qaKey}`;
 const getQuestionAnswerStorageKey = (qaKey: string) => `lumaweave-advisory-question-answers:${qaKey}`;
 const getProposalDecisionsStorageKey = (qaKey: string) => `lumaweave-advisory-proposal-decisions:${qaKey}`;
-const DEFAULT_QA_KEY = "v68";
-const DEFAULT_FEATURE_ID = "graph-control-plane-navigation";
+const DEFAULT_QA_KEY = FEEDBACK_CHECKLIST_KEY;
+const DEFAULT_FEATURE_ID = FEEDBACK_CHECKLIST_KEY;
 const PROPOSAL_DECISION_OPTIONS: readonly BanditProposalDecision[] = [
   "unreviewed",
   "accept-for-future",
@@ -741,7 +743,7 @@ export function QaPanel({
       {/* Header */}
       <div className="flex-shrink-0 p-3" style={{ borderBottom: `1px solid ${themePanelBorder}` } as React.CSSProperties}>
         <div className="flex items-center justify-between mb-2">
-          <h2 className="text-xs font-semibold uppercase tracking-wide" style={{ color: themeTextMuted } as React.CSSProperties}>QA Panel</h2>
+          <h2 className="text-xs font-semibold uppercase tracking-wide" style={{ color: themeTextMuted } as React.CSSProperties}>{t("feedback.panel.title")}</h2>
           <div className="flex items-center gap-2">
             <span
               className="lw-badge text-xs"
