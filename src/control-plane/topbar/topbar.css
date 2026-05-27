@@ -180,6 +180,74 @@
   cursor: pointer;
 }
 
+/* === Pill toggle === */
+.lw-topbar-toggle-stack {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lw-topbar-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--lw-text-muted, rgba(203,213,225,0.55));
+  cursor: pointer;
+  transition: color 120ms, border-color 120ms, background 120ms;
+}
+
+.lw-topbar-icon-btn:hover {
+  color: rgba(255,179,71,0.9);
+  border-color: rgba(255,179,71,0.28);
+  background: rgba(255,179,71,0.06);
+}
+
+.lw-pill-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  font-family: var(--lw-font-mono, "IBM Plex Mono", ui-monospace, monospace);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  border-radius: 999px;
+  border: 1px solid rgba(148,163,184,0.2);
+  background: rgba(11,4,22,0.5);
+  color: var(--lw-text-muted, rgba(203,213,225,0.5));
+  cursor: pointer;
+  transition: color 120ms, border-color 120ms, background 120ms, box-shadow 120ms;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.lw-pill-toggle:hover {
+  color: rgba(255,179,71,0.85);
+  border-color: rgba(255,179,71,0.32);
+  background: rgba(255,179,71,0.06);
+}
+
+.lw-pill-toggle.is-on {
+  color: rgba(255,179,71,0.95);
+  border-color: rgba(255,179,71,0.52);
+  background: rgba(255,179,71,0.10);
+  box-shadow: 0 0 8px rgba(255,179,71,0.18);
+}
+
+.lw-pill-toggle-glyph {
+  font-size: 12px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.lw-pill-toggle-label {
+  /* inherits font/size from parent */
+}
+
 /* WCAG contrast badge */
 .lw-wcag-badge {
   display: inline-block;

@@ -1,8 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 // v86a: SettingsPanel removed - Settings tab removed from left panel
 import { QaPanel } from "../control-plane/qa/QaPanel";
-import { InspectorPanel } from "../control-plane/panels/InspectorPanel";
-import { CollapsiblePanel } from "../control-plane/panels/CollapsiblePanel";
 import { CollapsibleSection } from "../control-plane/panels/CollapsibleSection";
 import { CommandDeckPanel } from "../control-plane/command-deck/CommandDeckPanel";
 import { GraphVisualInventoryPanel } from "../control-plane/graph/GraphVisualInventoryPanel";
@@ -14,9 +12,6 @@ import { TileLayer } from "../control-plane/panels/TileLayer";
 import { useSettingsStore, settingsStore } from "../control-plane/settings/settings.store";
 import { useGraphSourceSummary } from "../graph/ingest/useGraphSourceSummary";
 import { SigmaGraphView } from "../graph/renderers/sigma2d/SigmaGraphView";
-import {
-  getRelationshipNeighborhood,
-} from "../graph/renderers/sigma2d/selectionNeighborhood";
 import {
   buildGraphologyGraph,
 } from "../graph/renderers/sigma2d/buildGraphologyGraph";
@@ -290,7 +285,6 @@ export function AppShell() {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
   const [pathTargetId, setPathTargetId] = useState<string | null>(null);
-  const [inspectorExpanded, setInspectorExpanded] = useState(false);
   const [themeInspectorEnabled, setThemeInspectorEnabled] = useState(false);
 
   // Pass C9.2: pinned highlight mode state (persisted for testability)
@@ -335,39 +329,6 @@ export function AppShell() {
     () => (useFixture ? adaptedFixture.edges : summary.normalizedEdges),
     [useFixture, adaptedFixture.edges, summary.normalizedEdges],
   );
-
-  const selectedNode = selectedNodeId
-    ? graphNodes?.find((node) => node.id === selectedNodeId) || null
-    : null;
-
-  const selectedEdge = selectedEdgeId
-    ? graphEdges?.find((edge) => edge.id === selectedEdgeId) || null
-    : null;
-
-  const selectedEdgeSource = selectedEdge
-    ? graphNodes?.find((node) => node.id === selectedEdge.source) || null
-    : null;
-
-  const selectedEdgeTarget = selectedEdge
-    ? graphNodes?.find((node) => node.id === selectedEdge.target) || null
-    : null;
-
-  // Compute neighborhood for selected edge
-  let secondaryEdgeCount = 0;
-  let secondaryNodeCount = 0;
-
-  if (selectedEdgeId && graphNodes && graphEdges) {
-    const { graph } = buildGraphologyGraph(
-      graphNodes,
-      graphEdges,
-      {
-        nodeSize: settings.graphView.nodeSize,
-      },
-    );
-    const neighborhood = getRelationshipNeighborhood(graph, selectedEdgeId);
-    secondaryEdgeCount = neighborhood.secondaryEdgeIds.length;
-    secondaryNodeCount = neighborhood.secondaryNodeIds.length;
-  }
 
   // Compute component diagnostics for fixture
   let componentDiagnostics = {
@@ -447,11 +408,8 @@ export function AppShell() {
         <section
           className="grid min-h-0"
           style={{
-            gridTemplateColumns: `var(--left-width) 1fr var(--right-width)`,
+            gridTemplateColumns: `var(--left-width) 1fr`,
             "--left-width": settings.ui.leftPanelCollapsed ? "0px" : `${settings.ui.leftPanelWidth}px`,
-            "--right-width": settings.ui.controlDockCollapsed
-              ? `${settings.ui.controlDockCollapsedWidth}px`
-              : `${settings.ui.controlDockWidth}px`,
           } as React.CSSProperties}
         >
           <LeftTabPanel
@@ -876,7 +834,6 @@ export function AppShell() {
                     onSelectNode={(nodeId) => {
                       setSelectedNodeId(nodeId);
                       setSelectedEdgeId(null);
-                      setInspectorExpanded(true);
                     }}
                     onSetPathTarget={(nodeId) => {
                       setPathTargetId(nodeId);
@@ -884,7 +841,6 @@ export function AppShell() {
                     onSelectEdge={(edgeId) => {
                       setSelectedEdgeId(edgeId);
                       setSelectedNodeId(null);
-                      setInspectorExpanded(true);
                     }}
                     onClearSelection={() => {
                       setSelectedNodeId(null);
@@ -892,27 +848,6 @@ export function AppShell() {
                       setPathTargetId(null);
                     }}
                   />
-
-                      {/* Floating Graph Inspector Panel */}
-                      <div className="absolute left-4 top-4 w-80">
-                        <CollapsiblePanel
-                          title="Graph Inspector"
-                          collapsedLabel="Graph Inspector"
-                          expanded={inspectorExpanded}
-                          onExpandedChange={setInspectorExpanded}
-                          className="shadow-2xl shadow-cyan-950/40"
-                        >
-                          <InspectorPanel
-                            selectedNode={selectedNode}
-                            selectedEdge={selectedEdge}
-                            selectedEdgeSource={selectedEdgeSource}
-                            selectedEdgeTarget={selectedEdgeTarget}
-                            secondaryEdgeCount={secondaryEdgeCount}
-                            secondaryNodeCount={secondaryNodeCount}
-                            graphSummary={graphSummary}
-                          />
-                        </CollapsiblePanel>
-                      </div>
 
                       {/* v86b close-1: Click halo */}
                       {clickHalo && (

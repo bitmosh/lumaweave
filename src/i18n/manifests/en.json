@@ -335,6 +335,7 @@
     "reviewForRegistration": "Status: Review for registration",
     "signalsLabel": "Signals ({count}):"
   },
+
   "palette": {
     "ariaLabel": "Command Palette",
     "searchPlaceholder": "Type a command...",
