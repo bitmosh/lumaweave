@@ -1,7 +1,9 @@
 import { test, expect } from "@playwright/test";
+import { openSystemIndex } from "./helpers/tiles";
 
 test("System Index Panel renders", async ({ page }) => {
   await page.goto("/");
+  await openSystemIndex(page);
 
   const systemIndexPanel = page.getByTestId("system-index-panel");
   await expect(systemIndexPanel).toBeVisible();
@@ -9,6 +11,7 @@ test("System Index Panel renders", async ({ page }) => {
 
 test("System Index entry count is visible", async ({ page }) => {
   await page.goto("/");
+  await openSystemIndex(page);
 
   const entryCount = page.getByTestId("system-index-entry-count");
   await expect(entryCount).toBeVisible();
@@ -17,6 +20,7 @@ test("System Index entry count is visible", async ({ page }) => {
 
 test("System Index future docs-only entries render", async ({ page }) => {
   await page.goto("/");
+  await openSystemIndex(page);
 
   const visualGrammarEngine = page.getByTestId("system-index-entry-visual-grammar-engine");
   await expect(visualGrammarEngine).toBeVisible();
@@ -33,6 +37,7 @@ test("System Index future docs-only entries render", async ({ page }) => {
 
 test("System Index forbidden boundaries render for critical entries", async ({ page }) => {
   await page.goto("/");
+  await openSystemIndex(page);
 
   const graphThemeMapping = page.getByTestId(
     "system-index-entry-forbidden-boundaries-graph-theme-mapping-registry",
@@ -57,6 +62,7 @@ test("System Index forbidden boundaries render for critical entries", async ({ p
 
 test("System Index Panel has no dead active controls", async ({ page }) => {
   await page.goto("/");
+  await openSystemIndex(page);
 
   const systemIndexPanel = page.getByTestId("system-index-panel");
 

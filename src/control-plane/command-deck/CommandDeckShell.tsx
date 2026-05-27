@@ -5,13 +5,13 @@ import { formatBinding } from "../hotkeys/hotkey-utils";
 import { t } from "../../i18n";
 
 interface CommandDeckShellProps {
-  themeAccent: string;
-  themeTextMuted: string;
+  themeAccent?: string;
+  themeTextMuted?: string;
 }
 
 export function CommandDeckShell({
-  themeAccent,
-  themeTextMuted,
+  themeAccent = "var(--lw-accent, #FFB347)",
+  themeTextMuted = "var(--lw-text-muted, rgba(255,179,71,0.45))",
 }: CommandDeckShellProps) {
   const activeHotkeys = hotkeyRegistry.getActive();
   const commands = commandRegistry.getAll();

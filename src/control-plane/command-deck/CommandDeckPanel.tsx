@@ -2,15 +2,15 @@ import { CommandDeckShell } from "../command-deck/CommandDeckShell";
 import { t } from "../../i18n";
 
 interface CommandDeckPanelProps {
-  themeAccent: string;
-  themeTextMuted: string;
-  themePanelBorder: string;
+  themeAccent?: string;
+  themeTextMuted?: string;
+  themePanelBorder?: string;
 }
 
 export function CommandDeckPanel({
-  themeAccent,
-  themeTextMuted,
-  themePanelBorder,
+  themeAccent = "var(--lw-accent, #FFB347)",
+  themeTextMuted = "var(--lw-text-muted, rgba(255,179,71,0.45))",
+  themePanelBorder = "rgba(255,179,71,0.32)",
 }: CommandDeckPanelProps) {
   return (
     <div

@@ -1,8 +1,10 @@
 import { test, expect } from "@playwright/test";
+import { openGraphVisualInventory } from "./helpers/tiles";
 
 test.describe("Graph Visual Inventory", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
+    await openGraphVisualInventory(page);
   });
 
   test("Graph Visual Inventory panel is visible", async ({ page }) => {

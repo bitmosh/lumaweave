@@ -307,3 +307,27 @@ commandRegistry.register({
   aliases: ["agent", "chat", "tile"],
   execute: () => toggleTileVisibility("agent-chat-section"),
 });
+
+commandRegistry.register({
+  id: "view.toggleTile.graphVisualInventory",
+  label: "Toggle Graph Visual Inventory Tile",
+  category: "view",
+  aliases: ["inventory", "evidence", "tile"],
+  execute: () => toggleTileVisibility("graph-visual-inventory-section"),
+});
+
+commandRegistry.register({
+  id: "view.toggleTile.systemIndex",
+  label: "Toggle System Index Tile",
+  category: "view",
+  aliases: ["system index", "index", "tile"],
+  execute: () => toggleTileVisibility("system-index-section"),
+});
+
+commandRegistry.register({
+  id: "view.toggleTile.commandDeck",
+  label: "Toggle Command Deck Tile",
+  category: "view",
+  aliases: ["command deck", "deck", "tile"],
+  execute: () => toggleTileVisibility("command-deck-section"),
+});

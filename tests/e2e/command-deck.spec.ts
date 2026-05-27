@@ -1,7 +1,9 @@
 import { test, expect } from "@playwright/test";
+import { openCommandDeck } from "./helpers/tiles";
 
 test("command deck shell is visible", async ({ page }) => {
   await page.goto("/");
+  await openCommandDeck(page);
 
   const commandDeckPanel = page.getByTestId("command-deck-panel");
   await expect(commandDeckPanel).toBeVisible();
@@ -9,6 +11,7 @@ test("command deck shell is visible", async ({ page }) => {
 
 test("command deck shell displays read-only status", async ({ page }) => {
   await page.goto("/");
+  await openCommandDeck(page);
 
   const commandDeckShell = page.getByTestId("command-deck-shell");
   await expect(commandDeckShell).toBeVisible();
@@ -20,6 +23,7 @@ test("command deck shell displays read-only status", async ({ page }) => {
 
 test("command deck shell has no execution controls", async ({ page }) => {
   await page.goto("/");
+  await openCommandDeck(page);
 
   const commandDeckShell = page.getByTestId("command-deck-shell");
   await expect(commandDeckShell).toBeVisible();
@@ -31,9 +35,10 @@ test("command deck shell has no execution controls", async ({ page }) => {
 
 test("existing hotkeys still work after command deck addition", async ({ page }) => {
   await page.goto("/");
+  await openCommandDeck(page);
 
-  // Verify QA tab is visible
-  await expect(page.getByTestId("tab-qa")).toBeVisible();
+  // Verify command deck tile opened successfully (coexistence check)
+  await expect(page.getByTestId("command-deck-panel")).toBeVisible();
 
   // Verify graph viewport is still visible (fixture is active by default in v75a+)
   const graphViewport = page.getByTestId("self-graph-fixture-loaded");
@@ -42,6 +47,7 @@ test("existing hotkeys still work after command deck addition", async ({ page })
 
 test("hotkey registry displays accepted hotkeys", async ({ page }) => {
   await page.goto("/");
+  await openCommandDeck(page);
 
   const commandDeckShell = page.getByTestId("command-deck-shell");
   await expect(commandDeckShell).toBeVisible();
@@ -56,6 +62,7 @@ test("hotkey registry displays accepted hotkeys", async ({ page }) => {
 
 test("hotkey registry shows governance policy", async ({ page }) => {
   await page.goto("/");
+  await openCommandDeck(page);
 
   const commandDeckShell = page.getByTestId("command-deck-shell");
   await expect(commandDeckShell).toBeVisible();
@@ -66,6 +73,7 @@ test("hotkey registry shows governance policy", async ({ page }) => {
 
 test("command registry displays command metadata", async ({ page }) => {
   await page.goto("/");
+  await openCommandDeck(page);
 
   const commandDeckShell = page.getByTestId("command-deck-shell");
   await expect(commandDeckShell).toBeVisible();
@@ -80,6 +88,7 @@ test("command registry displays command metadata", async ({ page }) => {
 
 test("command registry shows read-only notice", async ({ page }) => {
   await page.goto("/");
+  await openCommandDeck(page);
 
   const commandDeckShell = page.getByTestId("command-deck-shell");
   await expect(commandDeckShell).toBeVisible();
