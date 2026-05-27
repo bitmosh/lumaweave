@@ -55,6 +55,7 @@ test("Mission Control tabs are visible", async ({ page }) => {
 
 test("Mission Control Debug tab shows contract summary", async ({ page }) => {
   await page.goto("/");
+  await openQaPanel(page);
 
   // QA panel is in the left dock - use nth(1) to get the main panel
   const qaPanel = page.getByTestId("qa-panel").first();
@@ -85,6 +86,7 @@ test("Mission Control Debug tab shows contract summary", async ({ page }) => {
 
 test("QA status selectors are visible", async ({ page }) => {
   await page.goto("/");
+  await openQaPanel(page);
 
   // QA panel is in the left dock - use nth(1) to get the main panel
   const qaPanel = page.getByTestId("qa-panel").first();
@@ -105,6 +107,7 @@ test("QA status selectors are visible", async ({ page }) => {
 
 test("Copy Last Submission button is visible when submission exists", async ({ page }) => {
   await page.goto("/");
+  await openQaPanel(page);
 
   // QA panel is in the left dock - use nth(1) to get the main panel
   const qaPanel = page.getByTestId("qa-panel").first();
@@ -178,6 +181,7 @@ test("Advisory tab is visible", async ({ page }) => {
 
 test("Bandit Questions render in Advisory tab", async ({ page }) => {
   await page.goto("/");
+  await openQaPanel(page);
 
   // QA panel is in the left dock - use nth(1) to get the main panel
   const qaPanel = page.getByTestId("qa-panel").first();
@@ -194,6 +198,7 @@ test("Bandit Questions render in Advisory tab", async ({ page }) => {
 
 test("Bandit Proposals render in Advisory tab", async ({ page }) => {
   await page.goto("/");
+  await openQaPanel(page);
 
   // QA panel is in the left dock - use nth(1) to get the main panel
   const qaPanel = page.getByTestId("qa-panel").first();

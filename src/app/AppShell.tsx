@@ -637,7 +637,7 @@ export function AppShell() {
                 testId="section-qa-panel"
                 accentColor={themeTokens.app.accent}
                 borderColor={themeTokens.app.panelBorder}
-                tileableKey="qa-section"
+                tileableKey="qa-feedback-section"
               >
                 <div
                   className="rounded-xl p-4"

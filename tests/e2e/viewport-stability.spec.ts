@@ -1,7 +1,9 @@
 import { expect, test } from "@playwright/test";
+import { openQaPanel } from "./helpers/qa";
 
 test("graph remains visible after QA navigation (for multi-check checklists)", async ({ page }) => {
   await page.goto("/");
+  await openQaPanel(page);
 
   await expect(page.getByTestId("tab-qa")).toBeVisible();
 

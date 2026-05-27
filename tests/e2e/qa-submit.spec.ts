@@ -1,7 +1,9 @@
 import { expect, test } from "@playwright/test";
+import { openQaPanel } from "./helpers/qa";
 
 test("QA submit clears working form", async ({ page }) => {
   await page.goto("/");
+  await openQaPanel(page);
 
   const notesBox = page.locator("textarea").first();
   await expect(notesBox).toBeVisible();
