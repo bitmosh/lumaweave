@@ -13,9 +13,10 @@ test.describe("v87.4 Theme crossfade", () => {
     await page.waitForLoadState("networkidle");
 
     // Ensure reduce-motion is off
-    const reduceToggle = page.locator('input[type="checkbox"]').nth(1);
-    if (await reduceToggle.isChecked()) {
-      await reduceToggle.uncheck();
+    const reduceToggle = page.getByTestId("topbar-toggle-reduce-motion");
+    const isOn = await reduceToggle.getAttribute("aria-checked");
+    if (isOn === "true") {
+      await reduceToggle.click();
     }
 
     const before = await page.evaluate(() =>
@@ -41,9 +42,10 @@ test.describe("v87.4 Theme crossfade", () => {
     await page.waitForLoadState("networkidle");
 
     // Enable reduce motion
-    const reduceToggle = page.locator('input[type="checkbox"]').nth(1);
-    if (!(await reduceToggle.isChecked())) {
-      await reduceToggle.check();
+    const reduceToggle = page.getByTestId("topbar-toggle-reduce-motion");
+    const isOn = await reduceToggle.getAttribute("aria-checked");
+    if (isOn !== "true") {
+      await reduceToggle.click();
     }
 
     const before = await page.evaluate(() =>

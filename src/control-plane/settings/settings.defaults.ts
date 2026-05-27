@@ -1,7 +1,7 @@
 import type { StarmapSettings } from "./settings.schema";
 
 export const defaultSettings: StarmapSettings = {
-  version: 87, // v96: added developer.preferredEditor + customEditorTemplate
+  version: 88, // post-v97: glitterEnabled→animationEnabled, glitterDensity→animationDensity
 
   general: {
     startupProjectId: null,
@@ -13,7 +13,7 @@ export const defaultSettings: StarmapSettings = {
     theme: "solar-plasma",
     accentIntensity: 1,
     panelTransparency: 0.82,
-    glitterEnabled: true,
+    animationEnabled: true,
     reduceMotion: false,
     starfieldEnabled: true,
     // NEW v86a defaults
@@ -24,7 +24,7 @@ export const defaultSettings: StarmapSettings = {
     nodeFlowSpeed: 0.55,
     nodeGlow: 1.0,
     // NEW v86b defaults (performance preset coupling)
-    glitterDensity: "medium",
+    animationDensity: "medium",
     edgePlasmaMode: "animated-overlay",
     backdropMotion: "half",
   },
@@ -119,5 +119,10 @@ export const defaultSettings: StarmapSettings = {
       labels: false,
       graphView: false,
     },
+  },
+
+  inspector: {
+    overlayEnabled: false,
+    autoOpenOnSelection: true,
   },
 };

@@ -175,10 +175,8 @@ test.describe("i18n: browser locale attributes", () => {
     await expect(btn).toHaveAttribute("aria-label", "Open settings");
   });
 
-  test("wordmark renders brand name, subtitle, and tagline from manifest", async ({ page }) => {
+  test("wordmark renders brand name from manifest", async ({ page }) => {
     await expect(page.locator(".lw-wordmark-name")).toHaveText("LumaWeave");
-    await expect(page.locator(".lw-wordmark-sub")).toHaveText("PANORAMA ATLAS");
-    await expect(page.locator(".lw-wordmark-tag")).toHaveText("Map. Understand. Build.");
   });
 
   test("status cluster labels come from manifest", async ({ page }) => {

@@ -153,6 +153,20 @@ const MIGRATIONS: Record<number,
     return { ...s, developer } as Partial<StarmapSettings>;
   },
 
+  // v87 → v88: rename glitterEnabled → animationEnabled, glitterDensity → animationDensity (post-v97)
+  88: (s) => {
+    const appearance = { ...(s.appearance ?? {}) } as any;
+    if (appearance.glitterEnabled !== undefined) {
+      appearance.animationEnabled = appearance.glitterEnabled;
+      delete appearance.glitterEnabled;
+    }
+    if (appearance.glitterDensity !== undefined) {
+      appearance.animationDensity = appearance.glitterDensity;
+      delete appearance.glitterDensity;
+    }
+    return { ...s, appearance } as Partial<StarmapSettings>;
+  },
+
   // v85 → v86: strip FA2-era physics fields (chore/post-gwells-hygiene)
   // Safety net migration - v82 already removed these fields, but this
   // ensures any edge cases or skipped migrations are cleaned up.

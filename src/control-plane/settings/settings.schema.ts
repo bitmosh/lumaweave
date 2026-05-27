@@ -45,7 +45,7 @@ export interface TileLayoutEntry {
 }
 
 export interface StarmapSettings {
-  version: 87; // v96: added developer.preferredEditor + customEditorTemplate
+  version: 88; // post-v97: glitterEnabled→animationEnabled, glitterDensity→animationDensity
 
   general: {
     startupProjectId: string | null;
@@ -57,7 +57,7 @@ export interface StarmapSettings {
     theme: ThemeId;
     accentIntensity: number;
     panelTransparency: number;
-    glitterEnabled: boolean;
+    animationEnabled: boolean;
     reduceMotion: boolean;
     starfieldEnabled: boolean;
     // NEW v86a (defaults defined; UI for these is v86e)
@@ -68,7 +68,7 @@ export interface StarmapSettings {
     nodeFlowSpeed: number; // 0–2 sphere flow speed
     nodeGlow: number; // 0.2–2 glow strength
     // NEW v86b (performance preset coupling)
-    glitterDensity: "off" | "low" | "medium" | "high";
+    animationDensity: "off" | "low" | "medium" | "high";
     edgePlasmaMode: "static" | "animated-overlay";
     backdropMotion: "off" | "low" | "half" | "full";
   };
@@ -155,6 +155,11 @@ export interface StarmapSettings {
     particleCap: number;
     maxVisibleLabels: number;
     largeGraphModeThreshold: number;
+  };
+
+  inspector?: {
+    overlayEnabled?: boolean;
+    autoOpenOnSelection?: boolean;
   };
 
   developer: {

@@ -189,20 +189,20 @@ export const handlesetRegistry: HandlesetRegistry = {
     },
 
     {
-      handle: "appearance.glitterEnabled",
-      label: "Glitter Enabled",
+      handle: "appearance.animationEnabled",
+      label: "Animation Enabled",
       category: "Appearance",
-      defaultValue: false,
+      defaultValue: true,
       controlType: "checkbox",
       status: "active",
       binding: {
         sourceFile: "src/control-plane/settings/settings.schema.ts",
-        runtimeTarget: "Not yet wired to renderer",
-        liveUpdate: false,
-        notes: "Glitter effects not yet implemented",
+        runtimeTarget: "GlitterField component (animation toggle)",
+        liveUpdate: true,
+        notes: "Renamed from glitterEnabled in post-v97 pass",
       },
       qa: {
-        manualQA: "Glitter effects not yet implemented - no QA needed",
+        manualQA: "Animation toggle visible in topbar as PillToggle",
       },
       notes: "Enable visual glitter effects (not yet implemented)",
     },

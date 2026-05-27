@@ -1,6 +1,36 @@
 import { commandRegistry } from "./command-registry";
 import { useSettingsStore } from "../settings/settings.store";
 import { paletteController } from "./palette/useCommandPaletteState";
+import { tileSectionRegistry } from "../panels/tileSectionRegistry";
+
+function toggleTileVisibility(sectionKey: string): void {
+  const state = useSettingsStore.getState();
+  const tileLayout: any[] = (state.settings.ui as any)?.tileLayout ?? [];
+  const section = tileSectionRegistry.getById(sectionKey);
+  const entry = tileLayout.find((t: any) => t.sectionKey === sectionKey);
+  const currentVisible = entry ? (entry.visible !== false) : (section?.defaultVisible ?? false);
+  if (entry) {
+    const updated = tileLayout.map((t: any) =>
+      t.sectionKey === sectionKey ? { ...t, visible: !currentVisible } : t
+    );
+    state.setSetting("ui.tileLayout", updated);
+  } else if (!currentVisible && section) {
+    // Tile not yet in layout — create it
+    const id = `tile_${Date.now().toString(36)}`;
+    const newTile = {
+      id,
+      sectionKey,
+      x: 100,
+      y: 100,
+      w: section.defaultWidth,
+      h: section.defaultHeight,
+      collapsed: false,
+      z: 1,
+      visible: true,
+    };
+    state.setSetting("ui.tileLayout", [...tileLayout, newTile]);
+  }
+}
 
 function dispatch(type: string, detail?: unknown) {
   window.dispatchEvent(new CustomEvent(type, { detail }));
@@ -219,4 +249,61 @@ commandRegistry.register({
   description: "Permanently delete all saved theme overrides. Cannot be undone.",
   destructive: true,
   execute: () => dispatch("debug:clearAllOverrides"),
+});
+
+// Tile visibility toggles
+commandRegistry.register({
+  id: "view.toggleTile.physics",
+  label: "Toggle Physics Tile",
+  category: "view",
+  aliases: ["physics", "tile"],
+  execute: () => toggleTileVisibility("physics-section"),
+});
+
+commandRegistry.register({
+  id: "view.toggleTile.appearance",
+  label: "Toggle Appearance Tile",
+  category: "view",
+  aliases: ["appearance", "tile"],
+  execute: () => toggleTileVisibility("appearance-section"),
+});
+
+commandRegistry.register({
+  id: "view.toggleTile.labels",
+  label: "Toggle Labels Tile",
+  category: "view",
+  aliases: ["labels", "tile"],
+  execute: () => toggleTileVisibility("labels-section"),
+});
+
+commandRegistry.register({
+  id: "view.toggleTile.typography",
+  label: "Toggle Typography Tile",
+  category: "view",
+  aliases: ["typography", "tile", "font"],
+  execute: () => toggleTileVisibility("typography-playground-section"),
+});
+
+commandRegistry.register({
+  id: "view.toggleTile.graphSources",
+  label: "Toggle Graph Sources Tile",
+  category: "view",
+  aliases: ["sources", "tile"],
+  execute: () => toggleTileVisibility("graph-sources-section"),
+});
+
+commandRegistry.register({
+  id: "view.toggleTile.graphInspector",
+  label: "Toggle Graph Inspector Tile",
+  category: "view",
+  aliases: ["inspector", "tile"],
+  execute: () => toggleTileVisibility("graph-inspector-section"),
+});
+
+commandRegistry.register({
+  id: "view.toggleTile.agentChat",
+  label: "Toggle Agent Chat Tile",
+  category: "view",
+  aliases: ["agent", "chat", "tile"],
+  execute: () => toggleTileVisibility("agent-chat-section"),
 });

@@ -11,8 +11,6 @@ test.describe("v87.2 Topbar identity", () => {
   test("wordmark renders with correct text", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".lw-wordmark-name")).toHaveText("LumaWeave");
-    await expect(page.locator(".lw-wordmark-sub")).toHaveText("PANORAMA ATLAS");
-    await expect(page.locator(".lw-wordmark-tag")).toHaveText("Map. Understand. Build.");
   });
 
   test("status pill shows active theme name", async ({ page }) => {
@@ -44,8 +42,7 @@ test.describe("v87.2 Topbar identity", () => {
     );
     expect(animationBefore).toBe("lw-pulse");
 
-    // Reduce Motion is the second checkbox
-    await page.locator('input[type="checkbox"]').nth(1).check();
+    await page.getByTestId("topbar-toggle-reduce-motion").click();
 
     const animationAfter = await page.locator(".lw-status-dot").evaluate(
       (el) => window.getComputedStyle(el).animationName

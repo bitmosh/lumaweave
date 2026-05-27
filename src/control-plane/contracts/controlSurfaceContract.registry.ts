@@ -44,14 +44,14 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
     },
 
     {
-      id: "topbar.glitterToggle",
-      label: "Glitter Toggle",
+      id: "topbar.animationToggle",
+      label: "Animation Toggle",
       surface: "topbar",
       owner: "settings.store.ts",
-      settingsKey: "appearance.glitterEnabled",
+      settingsKey: "appearance.animationEnabled",
       runtimeBinding: {
         sourceFile: "src/app/AppShell.tsx",
-        targetComponent: "Top bar glitter checkbox",
+        targetComponent: "Top bar animation pill toggle",
         liveUpdate: true,
       },
       qa: {

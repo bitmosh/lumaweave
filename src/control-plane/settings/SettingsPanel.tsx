@@ -183,6 +183,7 @@ React.useEffect(() => {
       <div
         ref={panelRef}
         data-testid="settings-panel-root"
+        data-lw-theme-target="settings.panel"
         className={'lw-settings-panel' + (minimized ? ' is-minimized' : '')}
         role="dialog"
         aria-label="Settings"

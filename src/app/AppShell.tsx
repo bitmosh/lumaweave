@@ -9,7 +9,6 @@ import { GraphVisualInventoryPanel } from "../control-plane/graph/GraphVisualInv
 import { SystemIndexPanel } from "../control-plane/system-index/SystemIndexPanel";
 import { SourceAdapterPanel } from "../source-adapter/SourceAdapterPanel";
 import { LeftTabPanel } from "../control-plane/panels/LeftTabPanel";
-import { ControlDock } from "../control-plane/panels/ControlDock";
 import { TileProvider } from "../control-plane/panels/TileProvider";
 import { TileLayer } from "../control-plane/panels/TileLayer";
 import { useSettingsStore, settingsStore } from "../control-plane/settings/settings.store";
@@ -56,6 +55,7 @@ import { SettingsPanelHost } from "../control-plane/settings/SettingsPanelHost";
 import type { SettingsPanelHostHandle } from "../control-plane/settings/SettingsPanelHost";
 import { CommandPaletteHost } from "../control-plane/commands/CommandPaletteHost";
 import "../control-plane/commands/palette.css";
+import { StatusBar } from "../control-plane/StatusBar";
 import { useCrossfadeAppTokens } from "../themes/themeCrossfade";
 
 const EMPTY_OVERRIDES: Record<string, unknown> = {};
@@ -132,7 +132,7 @@ export function AppShell() {
   const QUALITY_PRESET_VALUES = {
     potato: {
       reduceMotion: true,
-      glitterDensity: "off" as const,
+      animationDensity: "off" as const,
       edgePlasmaMode: "static" as const,
       backdropMotion: "off" as const,
       motionScale: 0,
@@ -144,7 +144,7 @@ export function AppShell() {
     },
     "large-graph": {
       reduceMotion: true,
-      glitterDensity: "low" as const,
+      animationDensity: "low" as const,
       edgePlasmaMode: "static" as const,
       backdropMotion: "low" as const,
       motionScale: 0.3,
@@ -156,7 +156,7 @@ export function AppShell() {
     },
     balanced: {
       reduceMotion: false,
-      glitterDensity: "medium" as const,
+      animationDensity: "medium" as const,
       edgePlasmaMode: "animated-overlay" as const,
       backdropMotion: "half" as const,
       motionScale: 0.6,
@@ -168,7 +168,7 @@ export function AppShell() {
     },
     beautiful: {
       reduceMotion: false,
-      glitterDensity: "high" as const,
+      animationDensity: "high" as const,
       edgePlasmaMode: "animated-overlay" as const,
       backdropMotion: "full" as const,
       motionScale: 1.0,
@@ -198,7 +198,7 @@ export function AppShell() {
     const current = settings.appearance;
     const differs =
       current.reduceMotion !== vals.reduceMotion ||
-      current.glitterDensity !== vals.glitterDensity ||
+      current.animationDensity !== vals.animationDensity ||
       current.edgePlasmaMode !== vals.edgePlasmaMode ||
       current.backdropMotion !== vals.backdropMotion ||
       current.motionScale !== vals.motionScale ||
@@ -210,7 +210,7 @@ export function AppShell() {
     if (differs) setSetting("performance.qualityPreset", "custom");
   }, [
     settings.appearance.reduceMotion,
-    settings.appearance.glitterDensity,
+    settings.appearance.animationDensity,
     settings.appearance.edgePlasmaMode,
     settings.appearance.backdropMotion,
     settings.appearance.motionScale,
@@ -938,7 +938,7 @@ export function AppShell() {
                               x={viewport.x}
                               y={viewport.y}
                               color={resolvedGraphTokens?.selectionHaloColor ?? "#fbbf24"}
-                              glitterDensity={settings.appearance.glitterDensity ?? "medium"}
+                              glitterDensity={settings.appearance.animationDensity ?? "medium"}
                               reduceMotion={settings.appearance.reduceMotion}
                             />
                           );
@@ -1022,32 +1022,6 @@ export function AppShell() {
             </div>
           </section>
 
-          <ControlDock
-            collapsed={settings.ui.controlDockCollapsed}
-            width={settings.ui.controlDockWidth}
-            collapsedWidth={settings.ui.controlDockCollapsedWidth}
-            sections={settings.ui.controlDockSections}
-            onCollapse={() =>
-              setSetting("ui", {
-                ...settings.ui,
-                controlDockCollapsed: !settings.ui.controlDockCollapsed,
-              })
-            }
-            onSectionToggle={(section) => {
-              setSetting("ui", {
-                ...settings.ui,
-                controlDockSections: {
-                  ...settings.ui.controlDockSections,
-                  [section]: !settings.ui.controlDockSections[section as keyof typeof settings.ui.controlDockSections],
-                },
-              });
-            }}
-            onWidthChange={(width) =>
-              setSetting("ui", { ...settings.ui, controlDockWidth: width })
-            }
-            settings={settings}
-            setSetting={setSetting}
-          />
         </section>
 
         {/* Tiles rendered outside grid, position fixed */}
@@ -1117,18 +1091,7 @@ export function AppShell() {
           </Tile>
         ))} */}
 
-        <footer 
-          className="px-6 py-3 text-xs"
-          style={{
-            borderTop: `1px solid ${themeTokens.app.panelBorder}`,
-            backgroundColor: `${themeTokens.app.background}e6`,
-            color: themeTokens.app.textMuted,
-          } as React.CSSProperties}
-        >
-          Status: control plane online · theme {settings.appearance.theme} ·
-          glitter {settings.appearance.glitterEnabled ? "on" : "off"} ·
-          renderer {settings.graphView.defaultRenderer}
-        </footer>
+        <StatusBar />
       </div>
       <ThemeTargetInspectorOverlay
         enabled={themeInspectorEnabled}

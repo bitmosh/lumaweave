@@ -75,14 +75,14 @@ test.describe("v89.3 Multi-scope override indicator", () => {
 
     await page.evaluate(() => {
       (window as OverrideStorageWindow).__lwThemeOverrideStorage?.setTargetOverride(
-        "settings.panel",
+        "app.shell",
         "panel.background",
         "#ff0000",
       );
     });
     await waitForPoll(page);
 
-    const indicator = page.getByTestId("override-indicator-settings.panel");
+    const indicator = page.getByTestId("override-indicator-app.shell");
     await expect(indicator).toBeVisible();
     await expect(indicator).toHaveAttribute("data-active-scopes", "target");
   });

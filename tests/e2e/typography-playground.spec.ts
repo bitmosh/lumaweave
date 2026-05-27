@@ -1,14 +1,33 @@
 import { test, expect } from "@playwright/test";
+import { setSetting } from "../helpers/app-state";
+
+async function openTypographyPlaygroundTile(page: any) {
+  await setSetting(page, "ui.tileLayout", [
+    {
+      id: "tile_typography_test",
+      sectionKey: "typography-playground-section",
+      x: 100,
+      y: 100,
+      w: 360,
+      h: 420,
+      collapsed: false,
+      z: 1,
+    },
+  ]);
+  await expect(page.locator('[data-testid="typography-playground"]')).toBeVisible({ timeout: 5000 });
+}
 
 test.describe("v87.4 Typography playground", () => {
   test("playground section appears in dock", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
-    await expect(page.locator('[data-testid="typography-playground"]')).toBeVisible();
+    await openTypographyPlaygroundTile(page);
   });
 
   test("three font families render with sliders", async ({ page }) => {
     await page.goto("/");
+    await page.waitForLoadState("networkidle");
+    await openTypographyPlaygroundTile(page);
     await expect(page.locator('[data-testid="playground-family-space-grotesk-wght"]')).toBeVisible();
     await expect(page.locator('[data-testid="playground-family-ibm-plex-sans-wght"]')).toBeVisible();
     await expect(page.locator('[data-testid="playground-family-ibm-plex-mono-wght"]')).toBeVisible();
@@ -16,6 +35,8 @@ test.describe("v87.4 Typography playground", () => {
 
   test("changing weight slider updates sample text font-weight", async ({ page }) => {
     await page.goto("/");
+    await page.waitForLoadState("networkidle");
+    await openTypographyPlaygroundTile(page);
 
     const slider = page.locator('[data-testid="playground-slider-space-grotesk-wght"]');
     // Use native input value setter to bypass React's synthetic event layer
