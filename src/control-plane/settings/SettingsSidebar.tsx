@@ -1,4 +1,9 @@
 import type { CategoryDef, CategoryId } from './settingsPanel.types';
+import { t } from '../../i18n';
+
+function normCatId(id: string) {
+  return id.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase());
+}
 
 interface SidebarProps {
   categories: readonly CategoryDef[];
@@ -20,14 +25,15 @@ export function SettingsSidebar({ categories, activeId, collapsed, matchCounts, 
         const isActive = c.id === activeId;
         const count = matchCounts?.[c.id] ?? null;
         const dim = matchCounts != null && count === 0;
+        const catLabel = t(`settings.panel.categories.${normCatId(c.id)}.label`);
         return (
           <button
             key={c.id}
             type="button"
             role="tab"
             aria-selected={isActive}
-            aria-label={c.label}
-            title={collapsed ? c.label : undefined}
+            aria-label={catLabel}
+            title={collapsed ? catLabel : undefined}
             data-testid={`settings-category-nav-${c.id}`}
             className={'lw-sidebar-item' + (isActive ? ' is-active' : '') + (dim ? ' is-dim' : '')}
             onClick={() => onSelect(c.id)}
@@ -52,7 +58,7 @@ export function SettingsSidebar({ categories, activeId, collapsed, matchCounts, 
                 <path d={c.iconPath} />
               )}
             </svg>
-            {!collapsed && <span className="lw-sidebar-label lw-text">{c.label}</span>}
+            {!collapsed && <span className="lw-sidebar-label lw-text">{catLabel}</span>}
             {!collapsed && count != null && count > 0 && (
               <span className="lw-sidebar-badge">{count}</span>
             )}

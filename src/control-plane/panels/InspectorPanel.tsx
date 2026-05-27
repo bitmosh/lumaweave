@@ -36,7 +36,7 @@ function MetadataRow({
   return (
     <div className="flex justify-between gap-4 text-xs">
       <span className="text-slate-500">{label}:</span>
-      <span className="max-w-56 truncate text-right text-slate-200">
+      <span className="max-w-56 truncate text-end text-slate-200">
         {String(value)}
       </span>
     </div>

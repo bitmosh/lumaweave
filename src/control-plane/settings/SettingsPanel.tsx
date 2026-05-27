@@ -1,5 +1,6 @@
 import React from 'react';
 import type { SettingsPanelProps, PanelPosition } from './settingsPanel.types';
+import { t } from '../../i18n';
 import './SettingsPanel.css';
 
 function getDefaultRect() {
@@ -207,8 +208,8 @@ React.useEffect(() => {
               type="button"
               data-testid="settings-panel-dock-left"
               className="lw-titlebar-btn"
-              aria-label="Dock left"
-              title="Dock to left bank"
+              aria-label={t("settings.panel.buttons.dockLeft")}
+              title={t("settings.panel.buttons.dockLeftTitle")}
               onClick={() => {
                 setPosition('docked-left');
                 setRect({ left: 0, top: 64, width: 380, height: window.innerHeight - 80 });
@@ -223,8 +224,8 @@ React.useEffect(() => {
               type="button"
               data-testid="settings-panel-dock-right"
               className="lw-titlebar-btn"
-              aria-label="Dock right"
-              title="Dock to right bank"
+              aria-label={t("settings.panel.buttons.dockRight")}
+              title={t("settings.panel.buttons.dockRightTitle")}
               onClick={() => {
                 setPosition('docked-right');
                 setRect({ left: window.innerWidth - 380, top: 64, width: 380, height: window.innerHeight - 80 });
@@ -238,8 +239,8 @@ React.useEffect(() => {
             <button
               type="button"
               className="lw-titlebar-btn"
-              aria-label="Float"
-              title="Float"
+              aria-label={t("settings.panel.buttons.float")}
+              title={t("settings.panel.buttons.float")}
               onClick={() => {
                 setPosition('floating');
                 const r = readRect() ?? getDefaultRect();
@@ -255,8 +256,8 @@ React.useEffect(() => {
               type="button"
               data-testid="settings-panel-minimize"
               className="lw-titlebar-btn"
-              aria-label="Minimize"
-              title="Minimize"
+              aria-label={t("settings.panel.buttons.minimize")}
+              title={t("settings.panel.buttons.minimize")}
               onClick={() => setMinimized((m) => !m)}
             >
               <svg width="11" height="11" viewBox="0 0 11 11" stroke="currentColor" strokeWidth="1.4">
@@ -267,8 +268,8 @@ React.useEffect(() => {
               type="button"
               data-testid="settings-panel-close"
               className="lw-titlebar-btn is-close"
-              aria-label="Close"
-              title="Close · esc"
+              aria-label={t("settings.panel.buttons.close")}
+              title={t("settings.panel.buttons.closeTitle")}
               onClick={onClose}
             >
               <svg width="11" height="11" viewBox="0 0 11 11" stroke="currentColor" strokeWidth="1.4">

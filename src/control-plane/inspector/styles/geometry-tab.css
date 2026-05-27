@@ -17,8 +17,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(255,179,71,0.18);
+  padding-block-end: 8px;
+  border-block-end: 1px solid rgba(255,179,71,0.18);
 }
 
 .lw-geometry-tab-title {
@@ -91,8 +91,8 @@
 }
 
 .lw-geometry-tab-scope {
-  padding-top: 6px;
-  border-top: 1px solid rgba(255,179,71,0.12);
+  padding-block-start: 6px;
+  border-block-start: 1px solid rgba(255,179,71,0.12);
 }
 
 .lw-geometry-tab-scope-buttons {

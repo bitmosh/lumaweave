@@ -13,15 +13,10 @@ import { setGlobalOverride, getGlobalOverride } from "../../../themes/themeOverr
 import { notifyOverrideChange } from "../../../themes/useResolvedTargetColor";
 import { useSettingsStore } from "../../settings/settings.store";
 import type { NodeProgramId } from "../../../graph/nodePrograms/types";
+import { t } from "../../../i18n";
 import "../styles/geometry-tab.css";
 
-const PRESETS: { id: NodeProgramId; label: string }[] = [
-  { id: "sun", label: "Sun" },
-  { id: "glass-sphere", label: "Glass" },
-  { id: "crystal", label: "Crystal" },
-  { id: "orb", label: "Orb" },
-  { id: "pip", label: "Pip" },
-];
+const PRESET_IDS: NodeProgramId[] = ["sun", "glass-sphere", "crystal", "orb", "pip"];
 
 export interface GeometryTabProps {
   targetDescriptor: TargetDescriptor;
@@ -43,20 +38,20 @@ export function GeometryTab({ targetDescriptor: _targetDescriptor, onClose }: Ge
   return (
     <div className="lw-geometry-tab" data-testid="geometry-tab">
       <header className="lw-geometry-tab-header">
-        <span className="lw-geometry-tab-title">Geometry</span>
+        <span className="lw-geometry-tab-title">{t("inspector.spokes.geometry.title")}</span>
         {onClose && (
-          <button onClick={onClose} aria-label="back" className="lw-geometry-tab-back">
-            ← back
+          <button onClick={onClose} aria-label={t("inspector.backLabel")} className="lw-geometry-tab-back">
+            {t("inspector.back")}
           </button>
         )}
       </header>
 
       <div className="lw-geometry-tab-grid" data-testid="geometry-preset-grid">
-        {PRESETS.map(({ id, label }) => (
+        {PRESET_IDS.map((id) => (
           <PresetThumbnail
             key={id}
             presetId={id}
-            label={label}
+            label={t(`inspector.spokes.geometry.presets.${id}`)}
             themeId={themeId}
             isActive={activePreset === id}
             onClick={() => commitPreset(id)}

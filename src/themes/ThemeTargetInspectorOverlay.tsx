@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { t } from "../i18n";
 import { getThemeTargetById } from "./themeTargetRegistry";
 import { getAllScopeIndicatorState } from "./themeOverrideStorage";
 import {
@@ -531,7 +532,7 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
           pointerEvents: "none",
         }}
       >
-        UI Inspector: {enabled ? "ON" : "OFF"} ({HOTKEY_LABEL})
+        {enabled ? t("themeInspector.toggleOn", { hotkey: HOTKEY_LABEL }) : t("themeInspector.toggleOff", { hotkey: HOTKEY_LABEL })}
       </div>
 
       <div data-testid="theme-target-inspector-overlay" style={{ pointerEvents: "none" }}>
@@ -687,7 +688,7 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
                     pointerEvents: "none",
                   }}
                 >
-                  <span>Candidate surface</span>
+                  <span>{t("themeInspector.candidateSurface")}</span>
                   <span
                     style={{
                       fontSize: "0.55rem",
@@ -737,7 +738,7 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
                 >
                   {displayEntity.kind === "registered"
                     ? displayEntity.metadata?.label ?? displayEntity.themeTargetId
-                    : "Candidate surface"}
+                    : t("themeInspector.candidateSurface")}
                 </div>
                 {pinnedEntity ? (
                   <span
@@ -751,14 +752,14 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
                       letterSpacing: "0.05em",
                     }}
                   >
-                    Pinned · {PIN_HOTKEY_LABEL}
+                    {t("themeInspector.pinned", { hotkey: PIN_HOTKEY_LABEL })}
                   </span>
                 ) : (
                   <span
                     data-testid="theme-target-pin-hint"
                     style={{ fontSize: "0.65rem", color: "#94a3b8" }}
                   >
-                    {PIN_HOTKEY_LABEL} to pin
+                    {t("themeInspector.pinHint", { hotkey: PIN_HOTKEY_LABEL })}
                   </span>
                 )}
               </div>
@@ -772,30 +773,30 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
                 <dl style={{ fontSize: "0.75rem", lineHeight: 1.5 }}>
                   {displayEntity.metadata?.status && (
                     <div>
-                      <dt style={{ color: "#94a3b8" }}>Status</dt>
+                      <dt style={{ color: "#94a3b8" }}>{t("themeInspector.status")}</dt>
                       <dd>{displayEntity.metadata.status}</dd>
                     </div>
                   )}
 
                   {displayEntity.metadata?.visualHandle && (
                     <div style={{ marginTop: "0.35rem" }}>
-                      <dt style={{ color: "#94a3b8" }}>Visual Handle</dt>
+                      <dt style={{ color: "#94a3b8" }}>{t("themeInspector.visualHandle")}</dt>
                       <dd>{displayEntity.metadata.visualHandle}</dd>
                     </div>
                   )}
 
                   {displayEntity.metadata?.editableProperties.length ? (
                     <div style={{ marginTop: "0.35rem" }}>
-                      <dt style={{ color: "#94a3b8" }}>Editable Props</dt>
+                      <dt style={{ color: "#94a3b8" }}>{t("themeInspector.editableProps")}</dt>
                       <dd>{displayEntity.metadata.editableProperties.join(", ")}</dd>
                     </div>
                   ) : null}
 
                   {hasTokenBindings ? (
                     <div style={{ marginTop: "0.35rem" }}>
-                      <dt style={{ color: "#94a3b8" }}>Token Bindings</dt>
+                      <dt style={{ color: "#94a3b8" }}>{t("themeInspector.tokenBindings")}</dt>
                       <dd>
-                        <ul style={{ paddingLeft: "1rem", margin: 0 }}>
+                        <ul style={{ paddingInlineStart: "1rem", margin: 0 }}>
                           {tokenBindingEntries.map(([property, path]) => (
                             <li key={property}>{`${property}: ${path}`}</li>
                           ))}
@@ -803,7 +804,7 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
                       </dd>
                     </div>
                   ) : (
-                    <div style={{ marginTop: "0.35rem", color: "#fbbf24" }}>No token bindings recorded</div>
+                    <div style={{ marginTop: "0.35rem", color: "#fbbf24" }}>{t("themeInspector.noTokenBindings")}</div>
                   )}
                   
                   {/* Override visibility indicator - shows when target has token bindings */}
@@ -829,15 +830,15 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
                           boxShadow: "0 0 8px rgba(251, 191, 36, 0.6)",
                         }}
                       />
-                      <span style={{ fontSize: "0.7rem", color: "#fbbf24" }}>Has overrides</span>
+                      <span style={{ fontSize: "0.7rem", color: "#fbbf24" }}>{t("themeInspector.hasOverrides")}</span>
                     </div>
                   )}
                 </dl>
               ) : (
                 <div style={{ fontSize: "0.75rem", lineHeight: 1.6 }}>
-                  <div style={{ color: "#fbbf24", marginBottom: "0.35rem" }}>Status: Review for registration</div>
+                  <div style={{ color: "#fbbf24", marginBottom: "0.35rem" }}>{t("themeInspector.reviewForRegistration")}</div>
                   <div>
-                    <span style={{ color: "#94a3b8" }}>Signals ({displayEntity.signals.length}): </span>
+                    <span style={{ color: "#94a3b8" }}>{t("themeInspector.signalsLabel", { count: String(displayEntity.signals.length) })} </span>
                     {displayEntity.signals.join(" · ")}
                   </div>
                 </div>

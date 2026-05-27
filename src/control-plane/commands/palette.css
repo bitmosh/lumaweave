@@ -7,15 +7,15 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 12vh;
+  padding-block-start: 12vh;
   background: rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(4px);
 }
 
 .palette-shell {
   width: 100%;
-  max-width: 600px;
-  max-height: 70vh;
+  max-inline-size: 600px;
+  max-block-size: 70vh;
   display: flex;
   flex-direction: column;
   border-radius: 12px;
@@ -37,7 +37,7 @@
   color: var(--lw-text-primary, #f0f0f0);
   background: transparent;
   border: none;
-  border-bottom: 1px solid var(--lw-panel-border, rgba(255, 255, 255, 0.10));
+  border-block-end: 1px solid var(--lw-panel-border, rgba(255, 255, 255, 0.10));
   outline: none;
 }
 
@@ -50,7 +50,7 @@
   display: flex;
   gap: 4px;
   padding: 6px 12px;
-  border-bottom: 1px solid var(--lw-panel-border, rgba(255, 255, 255, 0.08));
+  border-block-end: 1px solid var(--lw-panel-border, rgba(255, 255, 255, 0.08));
   flex-wrap: wrap;
 }
 
@@ -87,7 +87,7 @@
 }
 
 .palette-section {
-  margin-bottom: 4px;
+  margin-block-end: 4px;
 }
 
 .palette-section-header {
@@ -128,7 +128,7 @@
   display: flex;
   flex-direction: column;
   gap: 1px;
-  min-width: 0;
+  min-inline-size: 0;
 }
 
 .palette-result-label {
@@ -191,8 +191,8 @@
 
 /* Suggestions ("did you mean") */
 .palette-suggestions {
-  border-top: 1px solid var(--lw-panel-border, rgba(255, 255, 255, 0.08));
-  margin-top: 4px;
+  border-block-start: 1px solid var(--lw-panel-border, rgba(255, 255, 255, 0.08));
+  margin-block-start: 4px;
 }
 
 /* Destructive confirm */
@@ -254,7 +254,7 @@
   padding: 6px 16px;
   font-size: 11px;
   color: var(--lw-text-muted, rgba(255, 255, 255, 0.3));
-  border-top: 1px solid var(--lw-panel-border, rgba(255, 255, 255, 0.08));
+  border-block-start: 1px solid var(--lw-panel-border, rgba(255, 255, 255, 0.08));
 }
 
 .palette-hint-bar kbd {

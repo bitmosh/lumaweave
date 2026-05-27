@@ -1,15 +1,7 @@
 import type { CategoryFilter } from "../palette.types";
+import { t } from "../../../../i18n";
 
-const FILTERS: { label: string; value: CategoryFilter }[] = [
-  { label: "All", value: "all" },
-  { label: "View", value: "view" },
-  { label: "Graph", value: "graph" },
-  { label: "Theme", value: "theme" },
-  { label: "Inspector", value: "inspector" },
-  { label: "Physics", value: "physics" },
-  { label: "Labels", value: "labels" },
-  { label: "Debug", value: "debug" },
-];
+const FILTER_VALUES: CategoryFilter[] = ["all", "view", "graph", "theme", "inspector", "physics", "labels", "debug"];
 
 interface PaletteCategoryChipsProps {
   active: CategoryFilter;
@@ -19,15 +11,15 @@ interface PaletteCategoryChipsProps {
 export function PaletteCategoryChips({ active, onChange }: PaletteCategoryChipsProps) {
   return (
     <div className="palette-chips" data-testid="palette-category-chips">
-      {FILTERS.map((f) => (
+      {FILTER_VALUES.map((value) => (
         <button
-          key={f.value}
-          className={`palette-chip${active === f.value ? " palette-chip--active" : ""}`}
-          data-testid={`palette-chip-${f.value}`}
-          onClick={() => onChange(f.value)}
+          key={value}
+          className={`palette-chip${active === value ? " palette-chip--active" : ""}`}
+          data-testid={`palette-chip-${value}`}
+          onClick={() => onChange(value)}
           type="button"
         >
-          {f.label}
+          {t(`palette.categories.${value}`)}
         </button>
       ))}
     </div>

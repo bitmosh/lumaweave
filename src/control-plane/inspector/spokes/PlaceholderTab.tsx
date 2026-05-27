@@ -8,6 +8,7 @@
 
 import { inspectorSpokeRegistry } from "../../../themes/inspectorSpokeRegistry";
 import type { TargetDescriptor } from "../inspector.types";
+import { t } from "../../../i18n";
 import "../styles/placeholder-tab.css";
 
 export interface PlaceholderTabProps {
@@ -32,7 +33,7 @@ export function PlaceholderTab({ targetDescriptor: _targetDescriptor, onClose }:
   // instances use `makePlaceholderTab(id)` below.
   const spokes = inspectorSpokeRegistry.list();
   const placeholder = spokes.find((s) => s.status === "placeholder");
-  const message = placeholder?.placeholderMessage ?? "Coming soon";
+  const message = placeholder ? t(`inspector.spokes.${placeholder.id}.placeholderMessage`) : t("inspector.spokes.placeholder.coming");
   const paths = placeholder?.intendedTokenPaths;
 
   return <PlaceholderContent onClose={onClose} message={message} paths={paths} />;
@@ -41,7 +42,7 @@ export function PlaceholderTab({ targetDescriptor: _targetDescriptor, onClose }:
 export function makePlaceholderTab(spokeId: string) {
   function BoundPlaceholderTab({ targetDescriptor: _td, onClose }: PlaceholderTabProps) {
     const spoke = inspectorSpokeRegistry.getById(spokeId);
-    const message = spoke?.placeholderMessage ?? "Coming soon";
+    const message = spoke ? t(`inspector.spokes.${spokeId}.placeholderMessage`) : t("inspector.spokes.placeholder.coming");
     const paths = spoke?.intendedTokenPaths;
     return <PlaceholderContent onClose={onClose} message={message} paths={paths} />;
   }
@@ -62,8 +63,8 @@ function PlaceholderContent({
     <div className="lw-placeholder-tab" data-testid="placeholder-tab">
       <header className="lw-placeholder-tab-header">
         {onClose && (
-          <button onClick={onClose} aria-label="back" className="lw-placeholder-tab-back">
-            ← back
+          <button onClick={onClose} aria-label={t("inspector.backLabel")} className="lw-placeholder-tab-back">
+            {t("inspector.back")}
           </button>
         )}
       </header>
@@ -74,7 +75,7 @@ function PlaceholderContent({
 
       {paths && paths.length > 0 && (
         <details className="lw-placeholder-tab-paths">
-          <summary data-testid="placeholder-intended-targets">Intended targets</summary>
+          <summary data-testid="placeholder-intended-targets">{t("inspector.spokes.placeholder.intendedTargets")}</summary>
           <ul>
             {paths.map((p) => (
               <li key={p}>

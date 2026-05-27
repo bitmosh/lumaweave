@@ -45,7 +45,7 @@ export function CollapsiblePanel({
       <div className="rounded-lg border border-cyan-400/20 bg-slate-900/80 shadow-xl backdrop-blur-sm">
         <button
           onClick={handleToggle}
-          className="flex w-full items-center justify-between px-3 py-2 text-left transition-colors hover:bg-slate-800/50"
+          className="flex w-full items-center justify-between px-3 py-2 text-start transition-colors hover:bg-slate-800/50"
         >
           <span className="text-sm font-semibold text-cyan-200">
             {isExpanded ? title : collapsedLabel}

@@ -1,5 +1,6 @@
 import type { RankedCommandEntry } from "../palette.types";
 import { isPinned } from "../palettePersistence";
+import { t } from "../../../../i18n";
 
 interface PaletteResultRowProps {
   item: RankedCommandEntry;
@@ -39,7 +40,7 @@ export function PaletteResultRow({
       aria-selected={isSelected}
     >
       <div className="palette-result-main">
-        <span className="palette-result-label">{command.label}</span>
+        <span className="palette-result-label">{t(`commands.${command.id.replace(/\./g, "_")}`) || command.label}</span>
         {command.description && (
           <span className="palette-result-desc">{command.description}</span>
         )}
@@ -55,7 +56,7 @@ export function PaletteResultRow({
           data-testid={`palette-pin-${command.id}`}
           onClick={(e) => { e.stopPropagation(); onPin(command.id); }}
           type="button"
-          aria-label={pinned ? "Unpin" : "Pin"}
+          aria-label={pinned ? t("palette.unpinLabel") : t("palette.pinLabel")}
         >
           {pinned ? "★" : "☆"}
         </button>

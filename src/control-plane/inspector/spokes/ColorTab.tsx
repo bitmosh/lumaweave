@@ -19,6 +19,7 @@ import {
   pushRecentSwatch,
   isValidHex,
 } from "./colorTabUtils";
+import { t } from "../../../i18n";
 import "../styles/color-tab.css";
 
 export interface ColorTabProps {
@@ -85,8 +86,8 @@ export function ColorTab({ targetDescriptor, onClose }: ColorTabProps) {
       <header className="lw-color-tab-header">
         <span className="lw-color-tab-target-id">{targetDescriptor.targetId}</span>
         {onClose && (
-          <button onClick={onClose} aria-label="back" className="lw-color-tab-back-button">
-            ← back
+          <button onClick={onClose} aria-label={t("inspector.backLabel")} className="lw-color-tab-back-button">
+            {t("inspector.back")}
           </button>
         )}
       </header>
@@ -107,7 +108,7 @@ export function ColorTab({ targetDescriptor, onClose }: ColorTabProps) {
         <button
           onClick={handleEyedropper}
           disabled={!eyeDropperAvailable}
-          title={eyeDropperAvailable ? "Pick from screen" : "EyeDropper API not supported"}
+          title={eyeDropperAvailable ? t("inspector.spokes.color.pickFromScreen") : t("inspector.spokes.color.eyedropperUnsupported")}
           data-testid="eyedropper-button"
           className="lw-color-tab-eyedropper-btn"
         >
@@ -116,7 +117,7 @@ export function ColorTab({ targetDescriptor, onClose }: ColorTabProps) {
       </div>
 
       <section className="lw-color-tab-palette" data-testid="palette">
-        <h3>Palette</h3>
+        <h3>{t("inspector.spokes.color.palette")}</h3>
         <div className="lw-color-tab-palette-grid">
           {primitives.map((primitive) => (
             <button
@@ -133,7 +134,7 @@ export function ColorTab({ targetDescriptor, onClose }: ColorTabProps) {
 
       <section className="lw-color-tab-bindings" data-testid="color-bindings">
         {bindings.length === 0 ? (
-          <p className="lw-color-tab-empty">No editable bindings for this target.</p>
+          <p className="lw-color-tab-empty">{t("inspector.spokes.color.noBindings")}</p>
         ) : (
           bindings.map((binding) => (
             <BindingRow
@@ -149,9 +150,9 @@ export function ColorTab({ targetDescriptor, onClose }: ColorTabProps) {
       </section>
 
       <section className="lw-color-tab-recent" data-testid="recent-swatches">
-        <h3>Recent</h3>
+        <h3>{t("inspector.spokes.color.recent")}</h3>
         {recentSwatches.length === 0 ? (
-          <p className="lw-color-tab-empty">No recent colors yet.</p>
+          <p className="lw-color-tab-empty">{t("inspector.spokes.color.noRecent")}</p>
         ) : (
           <div className="lw-color-tab-recent-grid">
             {recentSwatches.map((hex, i) => (
@@ -169,36 +170,36 @@ export function ColorTab({ targetDescriptor, onClose }: ColorTabProps) {
       </section>
 
       <section className="lw-color-tab-scope" data-testid="scope-picker">
-        <h3>Apply to</h3>
+        <h3>{t("inspector.spokes.color.applyTo")}</h3>
         <div className="lw-color-tab-scope-buttons">
           <button
             className={currentScope === "this" ? "active" : ""}
             aria-pressed={currentScope === "this"}
             onClick={() => setCurrentScope("this")}
           >
-            This
+            {t("inspector.spokes.color.scopeThis")}
           </button>
-          <button disabled title="Available in v89">
-            Kind
+          <button disabled title={t("inspector.spokes.color.scopeKindTitle")}>
+            {t("inspector.spokes.color.scopeKind")}
           </button>
-          <button disabled title="Available in v89">
-            Cluster
+          <button disabled title={t("inspector.spokes.color.scopeKindTitle")}>
+            {t("inspector.spokes.color.scopeCluster")}
           </button>
           <button
             className={currentScope === "all" ? "active" : ""}
             aria-pressed={currentScope === "all"}
             onClick={() => setCurrentScope("all")}
           >
-            All
+            {t("inspector.spokes.color.scopeAll")}
           </button>
         </div>
       </section>
 
       {targetKind && activeBinding && (
         <section className="lw-color-tab-shortcuts" data-testid="shortcuts">
-          <h3>Shortcuts</h3>
+          <h3>{t("inspector.spokes.color.shortcuts")}</h3>
           <button onClick={handleApplyToKind} data-testid="apply-to-kind">
-            Apply {activeBinding.property} to all {targetKind}s
+            {t("inspector.spokes.color.applyToKind", { property: activeBinding.property, kind: targetKind })}
           </button>
         </section>
       )}

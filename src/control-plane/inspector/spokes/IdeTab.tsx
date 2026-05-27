@@ -8,6 +8,7 @@
 
 import { getProvenance } from "../../../themes/provenanceRegistry";
 import type { TargetDescriptor } from "../inspector.types";
+import { t } from "../../../i18n";
 import "../styles/color-tab.css";
 
 export interface IdeTabProps {
@@ -35,8 +36,8 @@ export function IdeTab({ targetDescriptor, onClose }: IdeTabProps) {
       <header className="lw-tab-header">
         <span className="lw-tab-target-id">{targetDescriptor.targetId}</span>
         {onClose && (
-          <button onClick={onClose} aria-label="back" className="lw-tab-back-button">
-            ← back
+          <button onClick={onClose} aria-label={t("inspector.backLabel")} className="lw-tab-back-button">
+            {t("inspector.back")}
           </button>
         )}
       </header>
@@ -54,13 +55,13 @@ export function IdeTab({ targetDescriptor, onClose }: IdeTabProps) {
             onClick={handleOpenInIde}
             data-testid="open-in-ide-button"
           >
-            Open in editor
+            {t("inspector.spokes.ide.openInEditor")}
           </button>
         </section>
       ) : (
         <section className="lw-tab-empty" data-testid="ide-empty">
-          <p>No provenance data found for this target.</p>
-          <p>Regenerate the manifest with `npm run generate-provenance` if you recently added this target.</p>
+          <p>{t("inspector.spokes.ide.noProvenance")}</p>
+          <p>{t("inspector.spokes.ide.noProvenanceHint")}</p>
         </section>
       )}
     </div>

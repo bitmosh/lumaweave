@@ -3,6 +3,7 @@ import type { CommandEntry } from "../../command.types";
 import type { PaletteSection, RankedCommandEntry } from "../palette.types";
 import { PaletteSectionHeader } from "./PaletteSectionHeader";
 import { PaletteResultRow } from "./PaletteResultRow";
+import { t } from "../../../../i18n";
 
 interface PaletteResultsListProps {
   sections: PaletteSection[];
@@ -35,7 +36,7 @@ export function PaletteResultsList({
   if (flatItems.length === 0 && suggestions.length === 0) {
     return (
       <div className="palette-empty" data-testid="palette-empty">
-        No results
+        {t("palette.noResults")}
       </div>
     );
   }
@@ -71,7 +72,7 @@ export function PaletteResultsList({
 
       {suggestions.length > 0 && (
         <div className="palette-suggestions" data-testid="palette-suggestions">
-          <PaletteSectionHeader label="Did you mean?" />
+          <PaletteSectionHeader label={t("palette.didYouMean")} />
           {suggestions.map((cmd) => (
             <PaletteResultRow
               key={cmd.id}

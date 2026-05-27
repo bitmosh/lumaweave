@@ -84,7 +84,7 @@ export function ControlDock({
         maxWidth: collapsed ? `${collapsedWidth}px` : `${width}px`,
         display: "flex",
         backgroundColor: "#0f172a",
-        borderLeft: "1px solid rgba(34, 211, 238, 0.1)",
+        borderInlineStart: "1px solid rgba(34, 211, 238, 0.1)",
         position: "relative",
         transition: isResizing ? "none" : "width 0.2s ease",
       }}
@@ -118,7 +118,7 @@ export function ControlDock({
           alignItems: "center",
           padding: "1rem 0.5rem",
           gap: "1rem",
-          borderLeft: collapsed ? "none" : "1px solid #1e293b",
+          borderInlineStart: collapsed ? "none" : "1px solid #1e293b",
           backgroundColor: "#0f172a",
         }}
       >

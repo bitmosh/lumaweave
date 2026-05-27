@@ -8,6 +8,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { InspectorSpoke } from "../../themes/inspectorSpokeRegistry";
 import type { TargetDescriptor } from "./inspector.types";
+import { t } from "../../i18n";
 import { RootNode } from "./RootNode";
 import { SpokeNode } from "./SpokeNode";
 
@@ -66,7 +67,7 @@ export function MiniGraphRenderer({
         const angle = (2 * Math.PI * i) / spokes.length;
         positions.push({
           id: spoke.id,
-          label: spoke.label ?? spoke.name,
+          label: t(`inspector.spokes.${spoke.id}.label`),
           x: clampedAnchorX + RADIUS * Math.cos(angle),
           y: clampedAnchorY + RADIUS * Math.sin(angle),
           vx: 0,

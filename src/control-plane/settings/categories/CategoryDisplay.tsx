@@ -1,20 +1,18 @@
 import { SettingsSubSection } from '../SettingsContent';
+import { t } from '../../../i18n';
 
 export function CategoryDisplay() {
   return (
     <div data-testid="settings-category-content-display" className="space-y-4">
-      <SettingsSubSection id="display.mirrors" label="Mirrors">
+      <SettingsSubSection id="display.mirrors" label={t("settings.sections.display.mirrors")}>
         <p className="text-xs text-slate-500">
-          Display mirrors (Effects, Reduce Motion, Panel Blur, Glow Intensity, Motion Scale)
-          are accessible in Theme. Full mirror surface lands in the Display pass alongside
-          performance mode (v90).
+          {t("settings.sections.display.mirrorsDesc")}
         </p>
       </SettingsSubSection>
 
-      <SettingsSubSection id="display.coming" label="Coming later" defaultCollapsed>
+      <SettingsSubSection id="display.coming" label={t("settings.sections.display.coming")} defaultCollapsed>
         <p className="text-xs text-slate-500">
-          Performance mode (v90) · Particle density (v92) · Detail level slider (v90) ·
-          3D minimap controls (v94).
+          {t("settings.sections.display.comingDesc")}
         </p>
       </SettingsSubSection>
     </div>

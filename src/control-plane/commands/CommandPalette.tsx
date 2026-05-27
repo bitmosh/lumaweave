@@ -10,6 +10,7 @@ import { PaletteCategoryChips } from "./palette/components/PaletteCategoryChips"
 import { PaletteResultsList } from "./palette/components/PaletteResultsList";
 import { PaletteHintBar } from "./palette/components/PaletteHintBar";
 import { PaletteDestructiveConfirm } from "./palette/components/PaletteDestructiveConfirm";
+import { t } from "../../i18n";
 
 interface CommandPaletteProps {
   state: CommandPaletteState;
@@ -68,7 +69,7 @@ export function CommandPalette({ state }: CommandPaletteProps) {
         data-testid="palette-shell"
         role="dialog"
         aria-modal="true"
-        aria-label="Command Palette"
+        aria-label={t("palette.ariaLabel")}
       >
         <PaletteSearchInput
           value={query}

@@ -466,43 +466,43 @@ export function GraphVisualInventoryPanel(): React.JSX.Element {
               <div className="grid grid-cols-4 gap-2 text-xs">
                 <div>
                   <span className="text-gray-500">rms:</span>
-                  <span className="font-mono text-amber-800 ml-1" data-testid={`audio-signal-rms-${signal.id}`}>
+                  <span className="font-mono text-amber-800 ms-1" data-testid={`audio-signal-rms-${signal.id}`}>
                     {signal.channels.rms}
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-500">bass:</span>
-                  <span className="font-mono text-amber-800 ml-1" data-testid={`audio-signal-bass-${signal.id}`}>
+                  <span className="font-mono text-amber-800 ms-1" data-testid={`audio-signal-bass-${signal.id}`}>
                     {signal.channels.bass}
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-500">mid:</span>
-                  <span className="font-mono text-amber-800 ml-1" data-testid={`audio-signal-mid-${signal.id}`}>
+                  <span className="font-mono text-amber-800 ms-1" data-testid={`audio-signal-mid-${signal.id}`}>
                     {signal.channels.mid}
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-500">treble:</span>
-                  <span className="font-mono text-amber-800 ml-1" data-testid={`audio-signal-treble-${signal.id}`}>
+                  <span className="font-mono text-amber-800 ms-1" data-testid={`audio-signal-treble-${signal.id}`}>
                     {signal.channels.treble}
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-500">beat:</span>
-                  <span className="font-mono text-amber-800 ml-1" data-testid={`audio-signal-beat-${signal.id}`}>
+                  <span className="font-mono text-amber-800 ms-1" data-testid={`audio-signal-beat-${signal.id}`}>
                     {signal.channels.beat}
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-500">silence:</span>
-                  <span className="font-mono text-amber-800 ml-1" data-testid={`audio-signal-silence-${signal.id}`}>
+                  <span className="font-mono text-amber-800 ms-1" data-testid={`audio-signal-silence-${signal.id}`}>
                     {signal.channels.silence}
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-500">tempo:</span>
-                  <span className="font-mono text-amber-800 ml-1" data-testid={`audio-signal-tempo-${signal.id}`}>
+                  <span className="font-mono text-amber-800 ms-1" data-testid={`audio-signal-tempo-${signal.id}`}>
                     {signal.channels.tempo}
                   </span>
                 </div>
@@ -558,31 +558,31 @@ export function GraphVisualInventoryPanel(): React.JSX.Element {
               <div className="grid grid-cols-3 gap-2 text-xs">
                 <div>
                   <span className="text-gray-500">Permission:</span>
-                  <span className="font-mono text-emerald-800 ml-1" data-testid={`audio-source-permission-${source.id}`}>
+                  <span className="font-mono text-emerald-800 ms-1" data-testid={`audio-source-permission-${source.id}`}>
                     {source.permission}
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-500">Privacy:</span>
-                  <span className="font-mono text-emerald-800 ml-1" data-testid={`audio-source-privacy-${source.id}`}>
+                  <span className="font-mono text-emerald-800 ms-1" data-testid={`audio-source-privacy-${source.id}`}>
                     {source.privacyRisk}
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-500">Playback:</span>
-                  <span className="font-mono text-red-600 ml-1" data-testid={`audio-source-playback-${source.id}`}>
+                  <span className="font-mono text-red-600 ms-1" data-testid={`audio-source-playback-${source.id}`}>
                     {source.playback}
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-500">Decoding:</span>
-                  <span className="font-mono text-emerald-800 ml-1" data-testid={`audio-source-decoding-${source.id}`}>
+                  <span className="font-mono text-emerald-800 ms-1" data-testid={`audio-source-decoding-${source.id}`}>
                     {source.decoding}
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-500">Visual:</span>
-                  <span className="font-mono text-red-600 ml-1" data-testid={`audio-source-visual-${source.id}`}>
+                  <span className="font-mono text-red-600 ms-1" data-testid={`audio-source-visual-${source.id}`}>
                     {source.visualOutput}
                   </span>
                 </div>
@@ -663,43 +663,43 @@ export function GraphVisualInventoryPanel(): React.JSX.Element {
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div>
                   <span className="text-gray-500">Mode family:</span>
-                  <span className="font-mono text-cyan-800 ml-1" data-testid={`music-reactive-mapping-mode-family-${mapping.id}`}>
+                  <span className="font-mono text-cyan-800 ms-1" data-testid={`music-reactive-mapping-mode-family-${mapping.id}`}>
                     {mapping.modeFamily}
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-500">Audio channel:</span>
-                  <span className="font-mono text-cyan-800 ml-1" data-testid={`music-reactive-mapping-audio-channel-${mapping.id}`}>
+                  <span className="font-mono text-cyan-800 ms-1" data-testid={`music-reactive-mapping-audio-channel-${mapping.id}`}>
                     {mapping.audioChannel}
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-500">Graph target:</span>
-                  <span className="font-mono text-cyan-800 ml-1" data-testid={`music-reactive-mapping-graph-target-${mapping.id}`}>
+                  <span className="font-mono text-cyan-800 ms-1" data-testid={`music-reactive-mapping-graph-target-${mapping.id}`}>
                     {mapping.graphTarget}
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-500">Motion Safety effect:</span>
-                  <span className="font-mono text-cyan-800 ml-1" data-testid={`music-reactive-mapping-motion-safety-${mapping.id}`}>
+                  <span className="font-mono text-cyan-800 ms-1" data-testid={`music-reactive-mapping-motion-safety-${mapping.id}`}>
                     {mapping.motionSafetyEffectId}
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-500">Reduced motion:</span>
-                  <span className="font-mono text-cyan-800 ml-1" data-testid={`music-reactive-mapping-reduced-motion-${mapping.id}`}>
+                  <span className="font-mono text-cyan-800 ms-1" data-testid={`music-reactive-mapping-reduced-motion-${mapping.id}`}>
                     {mapping.reducedMotionBehavior}
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-500">Epilepsy risk:</span>
-                  <span className="font-mono text-cyan-800 ml-1" data-testid={`music-reactive-mapping-epilepsy-risk-${mapping.id}`}>
+                  <span className="font-mono text-cyan-800 ms-1" data-testid={`music-reactive-mapping-epilepsy-risk-${mapping.id}`}>
                     {mapping.epilepsyRisk}
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-500">Future phase:</span>
-                  <span className="font-mono text-cyan-800 ml-1" data-testid={`music-reactive-mapping-future-phase-${mapping.id}`}>
+                  <span className="font-mono text-cyan-800 ms-1" data-testid={`music-reactive-mapping-future-phase-${mapping.id}`}>
                     {mapping.futurePhase}
                   </span>
                 </div>

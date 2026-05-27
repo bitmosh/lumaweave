@@ -69,7 +69,7 @@ export function LeftTabPanel({
           minWidth: "40px",
           maxWidth: "40px",
           backgroundColor: "#0f172a",
-          borderRight: "1px solid rgba(34, 211, 238, 0.1)",
+          borderInlineEnd: "1px solid rgba(34, 211, 238, 0.1)",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
