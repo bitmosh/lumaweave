@@ -1,6 +1,11 @@
 import { useState, useEffect, useMemo, forwardRef, useImperativeHandle } from 'react';
 import { SETTINGS_PANEL_CATEGORIES } from './settingsPanelCategoryRegistry';
 import { settingsRegistry } from './settings.registry';
+import { t } from '../../i18n';
+
+function normCatId(id: string) {
+  return id.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase());
+}
 import type { CategoryId, PanelPosition } from './settingsPanel.types';
 import { SettingsPanel } from './SettingsPanel';
 import { SettingsSidebar } from './SettingsSidebar';
@@ -57,9 +62,10 @@ export const SettingsPanelHost = forwardRef<SettingsPanelHostHandle>(
       if (!q) return null;
       const counts: Record<string, number> = {};
       for (const s of settingsRegistry) {
-        const hit =
-          s.label.toLowerCase().includes(q) ||
-          (s.description ?? '').toLowerCase().includes(q);
+        const pathKey = s.path.replace(/\./g, '_');
+        const label = t(`settings.controls.${pathKey}.label`).toLowerCase();
+        const desc = s.description ? t(`settings.controls.${pathKey}.description`).toLowerCase() : '';
+        const hit = label.includes(q) || desc.includes(q);
         if (hit) {
           counts[s.category] = (counts[s.category] ?? 0) + 1;
         }
@@ -74,12 +80,16 @@ export const SettingsPanelHost = forwardRef<SettingsPanelHostHandle>(
     const sidebarCollapsed =
       position === 'docked-left' || position === 'docked-right';
 
+    const catKey = normCatId(activeCat.id);
+    const catLabel = t(`settings.panel.categories.${catKey}.label`);
+    const catDescription = t(`settings.panel.categories.${catKey}.description`);
+
     return (
       <SettingsPanel
         open={isOpen}
         onClose={() => setIsOpen(false)}
-        title="Settings"
-        subtitle={activeCat.label.toLowerCase()}
+        title={t("settings.panel.title")}
+        subtitle={catLabel.toLowerCase()}
         onPositionChange={setPosition}
         opacity={opacity}
         headerSlot={<SettingsSearchBar value={search} onChange={setSearch} />}
@@ -93,7 +103,7 @@ export const SettingsPanelHost = forwardRef<SettingsPanelHostHandle>(
           />
         }
         contentSlot={
-          <SettingsContent title={activeCat.label} description={activeCat.description}>
+          <SettingsContent title={catLabel} description={catDescription}>
             {activeCategory === 'theme'         && <CategoryTheme />}
             {activeCategory === 'typography'    && <CategoryTypography />}
             {activeCategory === 'graph'         && <CategoryGraph />}

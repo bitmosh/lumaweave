@@ -1,4 +1,5 @@
 import { useRef, useEffect } from 'react';
+import { t } from '../../i18n';
 
 interface SearchBarProps {
   value: string;
@@ -27,14 +28,14 @@ export function SettingsSearchBar({ value, onChange }: SearchBarProps) {
         data-testid="settings-panel-search"
         type="text"
         className="lw-searchbar-input"
-        placeholder="Search settings…  e.g. blur, contrast, font weight"
+        placeholder={t("settings.panel.search.placeholder")}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={(e) => { if (e.key === 'Escape') onChange(''); }}
       />
       {value
-        ? <button type="button" className="lw-searchbar-clear" onClick={() => onChange('')}>clear · esc</button>
-        : <span className="lw-searchbar-hint">⌘F to search</span>}
+        ? <button type="button" className="lw-searchbar-clear" onClick={() => onChange('')}>{t("settings.panel.search.clear")}</button>
+        : <span className="lw-searchbar-hint">{t("settings.panel.search.hint")}</span>}
     </div>
   );
 }

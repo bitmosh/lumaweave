@@ -16,8 +16,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(255, 179, 71, 0.18);
+  padding-block-end: 8px;
+  border-block-end: 1px solid rgba(255, 179, 71, 0.18);
 }
 
 .lw-color-tab-target-id {
@@ -89,7 +89,7 @@
   font-family: "IBM Plex Mono", monospace;
   font-size: 10px;
   color: var(--lw-text-primary, #FFE9D6);
-  text-align: right;
+  text-align: end;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -101,7 +101,7 @@
   height: 12px;
   border-radius: 3px;
   border: 1px solid var(--lw-panel-border);
-  margin-right: 6px;
+  margin-inline-end: 6px;
   vertical-align: middle;
   flex-shrink: 0;
 }
@@ -350,8 +350,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(255, 179, 71, 0.18);
+  padding-block-end: 8px;
+  border-block-end: 1px solid rgba(255, 179, 71, 0.18);
 }
 
 .lw-tab-target-id {
@@ -498,7 +498,7 @@
   color: var(--lw-text-primary, #FFE9D6);
   overflow-x: auto;
   white-space: pre;
-  max-height: 200px;
+  max-block-size: 200px;
   overflow-y: auto;
 }
 

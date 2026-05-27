@@ -275,7 +275,7 @@ input[type="range"]:focus {
   justify-content: space-between;
   padding: 8px 12px;
   background: rgba(30, 41, 59, 0.8);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  border-block-end: 1px solid rgba(148, 163, 184, 0.2);
   cursor: grab;
   user-select: none;
   height: 28px;
@@ -307,7 +307,7 @@ input[type="range"]:focus {
   font-size: 12px;
   padding: 2px 6px;
   border-radius: 2px;
-  margin-left: 4px;
+  margin-inline-start: 4px;
 }
 
 .tile-btn:hover {
@@ -326,7 +326,7 @@ input[type="range"]:focus {
   justify-content: space-between;
   padding: 4px 8px;
   background: rgba(30, 41, 59, 0.6);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  border-block-end: 1px solid rgba(148, 163, 184, 0.15);
   cursor: grab;
   user-select: none;
   height: 24px;
@@ -336,7 +336,7 @@ input[type="range"]:focus {
   font-size: 11px;
   color: #94a3b8;
   cursor: pointer;
-  margin-right: 6px;
+  margin-inline-end: 6px;
 }
 
 .tile-ungroup:hover {
@@ -357,13 +357,13 @@ input[type="range"]:focus {
 
 .tile-resize {
   position: absolute;
-  bottom: 0;
-  right: 0;
+  inset-block-end: 0;
+  inset-inline-end: 0;
   width: 16px;
   height: 16px;
   cursor: nwse-resize;
   background: linear-gradient(135deg, transparent 50%, rgba(148, 163, 184, 0.4) 50%);
-  border-top-left-radius: 4px;
+  border-start-start-radius: 4px;
 }
 
 .group-bar {
@@ -373,7 +373,7 @@ input[type="range"]:focus {
   gap: 6px;
   padding: 0 12px;
   background: rgba(30, 41, 59, 0.8);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  border-block-end: 1px solid rgba(148, 163, 184, 0.2);
   height: 28px;
   cursor: grab;
   user-select: none;
@@ -410,7 +410,7 @@ input[type="range"]:focus {
   font-size: 12px;
   padding: 2px 6px;
   border-radius: 2px;
-  margin-left: 4px;
+  margin-inline-start: 4px;
   transition: background 100ms ease, color 100ms ease;
 }
 

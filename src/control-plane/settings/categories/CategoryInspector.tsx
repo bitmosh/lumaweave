@@ -1,30 +1,30 @@
 import { SettingsSubSection } from '../SettingsContent';
+import { t } from '../../../i18n';
 
 export function CategoryInspector() {
   return (
     <div data-testid="settings-category-content-inspector" className="space-y-4">
-      <SettingsSubSection id="inspector.preview" label="Preview">
+      <SettingsSubSection id="inspector.preview" label={t("settings.sections.inspector.preview")}>
         <p className="text-xs text-slate-500">
-          Live radial inspector preview renders here. Full inspector internals land in v89.
+          {t("settings.sections.inspector.previewDesc")}
         </p>
       </SettingsSubSection>
 
-      <SettingsSubSection id="inspector.activation" label="Activation">
+      <SettingsSubSection id="inspector.activation" label={t("settings.sections.inspector.activation")}>
         <p className="text-xs text-slate-500">
-          Hotkey rebind for radial inspector activation lands in v89 alongside the hotkey registry.
+          {t("settings.sections.inspector.activationDesc")}
         </p>
       </SettingsSubSection>
 
-      <SettingsSubSection id="inspector.behavior" label="Behavior">
+      <SettingsSubSection id="inspector.behavior" label={t("settings.sections.inspector.behavior")}>
         <p className="text-xs text-slate-500">
-          Dim graph while inspecting, persist recent swatches, and draggable inspector
-          panel toggles land in v89.
+          {t("settings.sections.inspector.behaviorDesc")}
         </p>
       </SettingsSubSection>
 
-      <SettingsSubSection id="inspector.coming" label="Coming later" defaultCollapsed>
+      <SettingsSubSection id="inspector.coming" label={t("settings.sections.inspector.coming")} defaultCollapsed>
         <p className="text-xs text-slate-500">
-          Per-spoke configuration, default scope picker, custom spoke order — v89.
+          {t("settings.sections.inspector.comingDesc")}
         </p>
       </SettingsSubSection>
     </div>

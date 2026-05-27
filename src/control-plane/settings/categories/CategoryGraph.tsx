@@ -1,6 +1,7 @@
 import { settingsRegistry } from '../settings.registry';
 import { useSettingsStore } from '../settings.store';
 import { SettingsSubSection } from '../SettingsContent';
+import { t } from '../../../i18n';
 
 function getNestedValue(obj: any, path: string) {
   return path.split('.').reduce((cursor, key) => cursor?.[key], obj);
@@ -17,13 +18,16 @@ export function CategoryGraph() {
 
   function renderControl(setting: typeof graphSettings[number]) {
     const value = getNestedValue(settings, setting.path);
+    const pathKey = setting.path.replace(/\./g, '_');
+    const label = t(`settings.controls.${pathKey}.label`);
+    const desc = setting.description ? t(`settings.controls.${pathKey}.description`) : null;
 
     if (setting.type === 'boolean') {
       return (
         <label key={setting.path} className="flex items-start justify-between gap-4 text-sm">
           <span>
-            <span className="block text-slate-200">{setting.label}</span>
-            {setting.description && <span className="block text-xs text-slate-500">{setting.description}</span>}
+            <span className="block text-slate-200">{label}</span>
+            {desc && <span className="block text-xs text-slate-500">{desc}</span>}
           </span>
           <input
             type="checkbox"
@@ -39,10 +43,10 @@ export function CategoryGraph() {
       return (
         <label key={setting.path} className="block text-sm">
           <div className="mb-1 flex justify-between gap-4">
-            <span className="text-slate-200">{setting.label}</span>
+            <span className="text-slate-200">{label}</span>
             <span className="text-xs text-cyan-300">{String(value)}</span>
           </div>
-          {setting.description && <p className="mb-2 text-xs text-slate-500">{setting.description}</p>}
+          {desc && <p className="mb-2 text-xs text-slate-500">{desc}</p>}
           <input
             data-testid={`setting-${setting.path.replace(/\./g, '-')}`}
             type="range"
@@ -70,8 +74,8 @@ export function CategoryGraph() {
     if (setting.type === 'select') {
       return (
         <label key={setting.path} className="block text-sm">
-          <span className="mb-1 block text-slate-200">{setting.label}</span>
-          {setting.description && <p className="mb-2 text-xs text-slate-500">{setting.description}</p>}
+          <span className="mb-1 block text-slate-200">{label}</span>
+          {desc && <p className="mb-2 text-xs text-slate-500">{desc}</p>}
           <select
             data-testid={setting.testId || `setting-${setting.path.replace(/\./g, '-')}`}
             value={String(value)}
@@ -89,8 +93,8 @@ export function CategoryGraph() {
     if (setting.type === 'text') {
       return (
         <label key={setting.path} className="block text-sm">
-          <span className="mb-1 block text-slate-200">{setting.label}</span>
-          {setting.description && <p className="mb-2 text-xs text-slate-500">{setting.description}</p>}
+          <span className="mb-1 block text-slate-200">{label}</span>
+          {desc && <p className="mb-2 text-xs text-slate-500">{desc}</p>}
           <input
             type="text"
             value={String(value)}
@@ -106,15 +110,15 @@ export function CategoryGraph() {
 
   return (
     <div data-testid="settings-category-content-graph" className="space-y-4">
-      <SettingsSubSection id="graph.physics" label="Physics">
+      <SettingsSubSection id="graph.physics" label={t("settings.sections.graph.physics")}>
         <div className="space-y-4">{physicsSettings.map(renderControl)}</div>
       </SettingsSubSection>
 
-      <SettingsSubSection id="graph.labels" label="Labels">
+      <SettingsSubSection id="graph.labels" label={t("settings.sections.graph.labels")}>
         <div className="space-y-4">{labelsSettings.map(renderControl)}</div>
       </SettingsSubSection>
 
-      <SettingsSubSection id="graph.view" label="Graph View">
+      <SettingsSubSection id="graph.view" label={t("settings.sections.graph.view")}>
         <div className="space-y-4">{graphViewSettings.map(renderControl)}</div>
       </SettingsSubSection>
     </div>

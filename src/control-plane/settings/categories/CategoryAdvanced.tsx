@@ -1,25 +1,24 @@
 import { SettingsSubSection } from '../SettingsContent';
+import { t } from '../../../i18n';
 
 export function CategoryAdvanced() {
   return (
     <div data-testid="settings-category-content-advanced" className="space-y-4">
-      <SettingsSubSection id="advanced.devtools" label="Developer tools">
+      <SettingsSubSection id="advanced.devtools" label={t("settings.sections.advanced.devtools")}>
         <p className="text-xs text-slate-500">
-          Window probe exposure toggle and provenance manifest regeneration land
-          in v95 alongside the Advanced category full implementation.
+          {t("settings.sections.advanced.devtoolsDesc")}
         </p>
       </SettingsSubSection>
 
-      <SettingsSubSection id="advanced.flags" label="Feature flags">
+      <SettingsSubSection id="advanced.flags" label={t("settings.sections.advanced.flags")}>
         <p className="text-xs text-slate-500">
-          Feature flag browser lands in v95. Flags are currently managed
-          in the settings store directly.
+          {t("settings.sections.advanced.flagsDesc")}
         </p>
       </SettingsSubSection>
 
-      <SettingsSubSection id="advanced.reset" label="Reset" defaultCollapsed>
+      <SettingsSubSection id="advanced.reset" label={t("settings.sections.advanced.reset")} defaultCollapsed>
         <p className="text-xs text-slate-500">
-          Clear-all-overrides and reset-all-settings destructive actions land in v95.
+          {t("settings.sections.advanced.resetDesc")}
         </p>
       </SettingsSubSection>
     </div>

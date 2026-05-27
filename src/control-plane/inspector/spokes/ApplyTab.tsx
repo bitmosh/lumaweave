@@ -14,6 +14,7 @@ import {
 } from "../../../themes/themeOverrideStorage";
 import { notifyOverrideChange } from "../../../themes/useResolvedTargetColor";
 import type { TargetDescriptor } from "../inspector.types";
+import { t } from "../../../i18n";
 import "../styles/color-tab.css";
 
 export interface ApplyTabProps {
@@ -66,21 +67,21 @@ export function ApplyTab({ targetDescriptor, onClose }: ApplyTabProps) {
       <header className="lw-tab-header">
         <span className="lw-tab-target-id">{targetDescriptor.targetId}</span>
         {onClose && (
-          <button onClick={onClose} aria-label="back" className="lw-tab-back-button">
-            ← back
+          <button onClick={onClose} aria-label={t("inspector.backLabel")} className="lw-tab-back-button">
+            {t("inspector.back")}
           </button>
         )}
       </header>
 
       {candidates.length === 0 ? (
         <section className="lw-tab-empty" data-testid="apply-empty">
-          <p>No similar targets found.</p>
+          <p>{t("inspector.spokes.apply.noTargets")}</p>
         </section>
       ) : (
         <>
           <div className="lw-apply-select-controls">
-            <button onClick={selectAll} data-testid="select-all">Select all</button>
-            <button onClick={selectNone} data-testid="select-none">Select none</button>
+            <button onClick={selectAll} data-testid="select-all">{t("inspector.spokes.apply.selectAll")}</button>
+            <button onClick={selectNone} data-testid="select-none">{t("inspector.spokes.apply.selectNone")}</button>
           </div>
 
           <section className="lw-apply-candidates" data-testid="candidates">
@@ -108,7 +109,7 @@ export function ApplyTab({ targetDescriptor, onClose }: ApplyTabProps) {
             disabled={selectedIds.size === 0}
             data-testid="apply-selected"
           >
-            Apply to {selectedIds.size} target{selectedIds.size !== 1 ? "s" : ""}
+            {t("inspector.spokes.apply.applyButton", { count: String(selectedIds.size), suffix: selectedIds.size !== 1 ? "s" : "" })}
           </button>
         </>
       )}

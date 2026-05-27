@@ -15,7 +15,7 @@
 .lw-placeholder-tab-header {
   display: flex;
   justify-content: flex-end;
-  min-height: 20px;
+  min-block-size: 20px;
 }
 
 .lw-placeholder-tab-back {
@@ -60,13 +60,13 @@
 }
 
 .lw-placeholder-tab-paths ul {
-  margin: 6px 0 0 0;
-  padding-left: 16px;
+  margin: 6px 0 0;
+  padding-inline-start: 16px;
   list-style: disc;
 }
 
 .lw-placeholder-tab-paths li {
-  margin-bottom: 3px;
+  margin-block-end: 3px;
 }
 
 .lw-placeholder-tab-paths code {

@@ -1,6 +1,7 @@
 import { settingsRegistry } from '../settings.registry';
 import { useSettingsStore } from '../settings.store';
 import { SettingsSubSection } from '../SettingsContent';
+import { t } from '../../../i18n';
 
 function getNestedValue(obj: any, path: string) {
   return path.split('.').reduce((cursor, key) => cursor?.[key], obj);
@@ -14,13 +15,16 @@ export function CategoryTheme() {
 
   function renderControl(setting: typeof themeSettings[number]) {
     const value = getNestedValue(settings, setting.path);
+    const pathKey = setting.path.replace(/\./g, '_');
+    const label = t(`settings.controls.${pathKey}.label`);
+    const desc = setting.description ? t(`settings.controls.${pathKey}.description`) : null;
 
     if (setting.type === 'boolean') {
       return (
         <label key={setting.path} className="flex items-start justify-between gap-4 text-sm">
           <span>
-            <span className="block text-slate-200">{setting.label}</span>
-            {setting.description && <span className="block text-xs text-slate-500">{setting.description}</span>}
+            <span className="block text-slate-200">{label}</span>
+            {desc && <span className="block text-xs text-slate-500">{desc}</span>}
           </span>
           <input
             type="checkbox"
@@ -36,10 +40,10 @@ export function CategoryTheme() {
       return (
         <label key={setting.path} className="block text-sm">
           <div className="mb-1 flex justify-between gap-4">
-            <span className="text-slate-200">{setting.label}</span>
+            <span className="text-slate-200">{label}</span>
             <span className="text-xs text-cyan-300">{String(value)}</span>
           </div>
-          {setting.description && <p className="mb-2 text-xs text-slate-500">{setting.description}</p>}
+          {desc && <p className="mb-2 text-xs text-slate-500">{desc}</p>}
           <input
             data-testid={`setting-${setting.path.replace(/\./g, '-')}`}
             type="range"
@@ -67,8 +71,8 @@ export function CategoryTheme() {
     if (setting.type === 'select') {
       return (
         <label key={setting.path} className="block text-sm">
-          <span className="mb-1 block text-slate-200">{setting.label}</span>
-          {setting.description && <p className="mb-2 text-xs text-slate-500">{setting.description}</p>}
+          <span className="mb-1 block text-slate-200">{label}</span>
+          {desc && <p className="mb-2 text-xs text-slate-500">{desc}</p>}
           <select
             data-testid={`setting-${setting.path.replace(/\./g, '-')}`}
             value={String(value)}
@@ -86,8 +90,8 @@ export function CategoryTheme() {
     if (setting.type === 'text') {
       return (
         <label key={setting.path} className="block text-sm">
-          <span className="mb-1 block text-slate-200">{setting.label}</span>
-          {setting.description && <p className="mb-2 text-xs text-slate-500">{setting.description}</p>}
+          <span className="mb-1 block text-slate-200">{label}</span>
+          {desc && <p className="mb-2 text-xs text-slate-500">{desc}</p>}
           <input
             type="text"
             value={String(value)}
@@ -109,33 +113,33 @@ export function CategoryTheme() {
 
   return (
     <div data-testid="settings-category-content-theme" className="space-y-4">
-      <SettingsSubSection id="theme.preset" label="Preset">
+      <SettingsSubSection id="theme.preset" label={t("settings.sections.theme.preset")}>
         <div className="space-y-4">
           {presetSetting.map(renderControl)}
         </div>
       </SettingsSubSection>
 
-      <SettingsSubSection id="theme.drama" label="Drama">
+      <SettingsSubSection id="theme.drama" label={t("settings.sections.theme.drama")}>
         <div className="space-y-4">
           {dramaSetting.map(renderControl)}
         </div>
       </SettingsSubSection>
 
-      <SettingsSubSection id="theme.intensity" label="Intensity">
+      <SettingsSubSection id="theme.intensity" label={t("settings.sections.theme.intensity")}>
         <div className="space-y-4">
           {intensitySettings.map(renderControl)}
         </div>
       </SettingsSubSection>
 
-      <SettingsSubSection id="theme.overrides" label="Overrides" defaultCollapsed>
+      <SettingsSubSection id="theme.overrides" label={t("settings.sections.theme.overrides")} defaultCollapsed>
         <p className="text-xs text-slate-500">
-          Theme token overrides (via radial inspector) will appear here. Full overrides UI lands in the Theme Menu pass.
+          {t("settings.sections.theme.overridesDesc")}
         </p>
       </SettingsSubSection>
 
-      <SettingsSubSection id="theme.accessibility" label="Accessibility" defaultCollapsed>
+      <SettingsSubSection id="theme.accessibility" label={t("settings.sections.theme.accessibility")} defaultCollapsed>
         <p className="text-xs text-slate-500">
-          WCAG contrast readout for the active theme lands in the Theme Menu pass.
+          {t("settings.sections.theme.accessibilityDesc")}
         </p>
       </SettingsSubSection>
     </div>

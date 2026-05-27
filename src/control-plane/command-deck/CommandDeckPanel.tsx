@@ -1,4 +1,5 @@
 import { CommandDeckShell } from "../command-deck/CommandDeckShell";
+import { t } from "../../i18n";
 
 interface CommandDeckPanelProps {
   themeAccent: string;
@@ -23,7 +24,7 @@ export function CommandDeckPanel({
         className="mb-2 text-sm font-semibold"
         style={{ color: "var(--lw-text-primary)" }}
       >
-        Command Deck
+        {t("commandDeck.title")}
       </h3>
       <div className="min-h-0">
         <CommandDeckShell

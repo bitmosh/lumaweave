@@ -50,7 +50,7 @@
   border-radius: 4px;
   font-size: 14px;
   line-height: 1.5;
-  min-height: 32px;
+  min-block-size: 32px;
   transition: font-weight 100ms ease-out;
 }
 

@@ -1,24 +1,24 @@
 import { SettingsSubSection } from '../SettingsContent';
+import { t } from '../../../i18n';
 
 export function CategoryDataSources() {
   return (
     <div data-testid="settings-category-content-data-sources" className="space-y-4">
-      <SettingsSubSection id="data.active" label="Active source">
+      <SettingsSubSection id="data.active" label={t("settings.sections.dataSources.active")}>
         <p className="text-xs text-slate-500">
-          Source adapter status and loaded graph info lands in v95. For now, the active
-          graph is the self-graph fixture loaded by the Vite plugin on startup.
+          {t("settings.sections.dataSources.activeDesc")}
         </p>
       </SettingsSubSection>
 
-      <SettingsSubSection id="data.adapters" label="Registered adapters">
+      <SettingsSubSection id="data.adapters" label={t("settings.sections.dataSources.adapters")}>
         <p className="text-xs text-slate-500">
-          Adapter activation toggles and connection configuration land in v95.
+          {t("settings.sections.dataSources.adaptersDesc")}
         </p>
       </SettingsSubSection>
 
-      <SettingsSubSection id="data.coming" label="Coming later" defaultCollapsed>
+      <SettingsSubSection id="data.coming" label={t("settings.sections.dataSources.coming")} defaultCollapsed>
         <p className="text-xs text-slate-500">
-          Adapter activation (v95) · Diff triage (v95) · Profile/vault switcher (v97).
+          {t("settings.sections.dataSources.comingDesc")}
         </p>
       </SettingsSubSection>
     </div>

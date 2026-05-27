@@ -186,7 +186,7 @@ function EntryCard({ entry }: { entry: SourceAdapterEntry }): React.JSX.Element 
         {entry.inputPattern.examples.length > 0 && (
           <div className="mt-1 space-y-1">
             {entry.inputPattern.examples.map((example) => (
-              <div key={example} className="text-gray-600 font-mono text-xs pl-2">
+              <div key={example} className="text-gray-600 font-mono text-xs ps-2">
                 {example}
               </div>
             ))}
@@ -199,7 +199,7 @@ function EntryCard({ entry }: { entry: SourceAdapterEntry }): React.JSX.Element 
         <div className="mt-1 space-y-1">
           <div className="text-gray-700 text-xs">
             <span className="font-medium">Node Mappings:</span>
-            <div className="mt-1 pl-2 font-mono text-xs">
+            <div className="mt-1 ps-2 font-mono text-xs">
               {Object.entries(entry.translationSet.nodeMappings).map(([key, value]) => (
                 <div key={key}>{key}: {value}</div>
               ))}
@@ -207,7 +207,7 @@ function EntryCard({ entry }: { entry: SourceAdapterEntry }): React.JSX.Element 
           </div>
           <div className="text-gray-700 text-xs">
             <span className="font-medium">Edge Mappings:</span>
-            <div className="mt-1 pl-2 font-mono text-xs">
+            <div className="mt-1 ps-2 font-mono text-xs">
               {Object.entries(entry.translationSet.edgeMappings).map(([key, value]) => (
                 <div key={key}>{key}: {value}</div>
               ))}

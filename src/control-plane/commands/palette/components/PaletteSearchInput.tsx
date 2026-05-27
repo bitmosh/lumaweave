@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { t } from "../../../../i18n";
 
 interface PaletteSearchInputProps {
   value: string;
@@ -29,7 +30,7 @@ export function PaletteSearchInput({
       data-testid="palette-search-input"
       className="palette-search-input"
       type="text"
-      placeholder="Type a command..."
+      placeholder={t("palette.searchPlaceholder")}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       onKeyDown={(e) => {

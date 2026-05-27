@@ -29,5 +29,315 @@
       "layoutLabel": "layout",
       "fpsLabel": "fps"
     }
+  },
+  "settings": {
+    "panel": {
+      "title": "Settings",
+      "buttons": {
+        "close": "Close",
+        "closeTitle": "Close · esc",
+        "minimize": "Minimize",
+        "dockLeft": "Dock left",
+        "dockLeftTitle": "Dock to left bank",
+        "dockRight": "Dock right",
+        "dockRightTitle": "Dock to right bank",
+        "float": "Float"
+      },
+      "search": {
+        "placeholder": "Search settings…  e.g. blur, contrast, font weight",
+        "clear": "clear · esc",
+        "hint": "⌘F to search"
+      },
+      "statusBar": {
+        "posLabel": "POS",
+        "saveLabel": "SAVE",
+        "opacityLabel": "OPACITY",
+        "opacityAriaLabel": "Panel opacity",
+        "positions": {
+          "floating": "floating",
+          "dockedLeft": "docked-l",
+          "dockedRight": "docked-r",
+          "minimized": "minimized"
+        },
+        "saveStates": {
+          "synced": "synced",
+          "stale": "stale",
+          "diff": "diff",
+          "live": "live"
+        }
+      },
+      "categories": {
+        "theme": {
+          "label": "Theme",
+          "description": "Colors, visual style, and appearance tokens for the workspace."
+        },
+        "typography": {
+          "label": "Typography",
+          "description": "Font families, sizes, and text rendering options."
+        },
+        "graph": {
+          "label": "Graph",
+          "description": "Physics simulation, node sizing, label density, and graph view options."
+        },
+        "inspector": {
+          "label": "Inspector",
+          "description": "Node and edge inspector panel layout, spoke configuration, and detail depth."
+        },
+        "dataSources": {
+          "label": "Data Sources",
+          "description": "Connected repositories, file watchers, and graph data ingestion settings."
+        },
+        "display": {
+          "label": "Display",
+          "description": "Canvas layout, panel visibility, and workspace density preferences."
+        },
+        "accessibility": {
+          "label": "Accessibility",
+          "description": "Motion reduction, contrast, focus indicators, and interaction preferences."
+        },
+        "advanced": {
+          "label": "Advanced",
+          "description": "Developer options, diagnostics, schema version, and experimental features."
+        }
+      }
+    },
+    "sections": {
+      "theme": {
+        "preset": "Preset",
+        "drama": "Drama",
+        "intensity": "Intensity",
+        "overrides": "Overrides",
+        "overridesDesc": "Theme token overrides (via radial inspector) will appear here. Full overrides UI lands in the Theme Menu pass.",
+        "accessibility": "Accessibility",
+        "accessibilityDesc": "WCAG contrast readout for the active theme lands in the Theme Menu pass."
+      },
+      "typography": {
+        "playground": "Variable-font playground",
+        "coming": "Coming later",
+        "comingDesc": "Per-token font role assignment, custom font import, and per-weight overrides are planned for v89+."
+      },
+      "graph": {
+        "physics": "Physics",
+        "labels": "Labels",
+        "view": "Graph View"
+      },
+      "inspector": {
+        "preview": "Preview",
+        "previewDesc": "Live radial inspector preview renders here. Full inspector internals land in v89.",
+        "activation": "Activation",
+        "activationDesc": "Hotkey rebind for radial inspector activation lands in v89 alongside the hotkey registry.",
+        "behavior": "Behavior",
+        "behaviorDesc": "Dim graph while inspecting, persist recent swatches, and draggable inspector panel toggles land in v89.",
+        "coming": "Coming later",
+        "comingDesc": "Per-spoke configuration, default scope picker, custom spoke order — v89."
+      },
+      "dataSources": {
+        "active": "Active source",
+        "activeDesc": "Source adapter status and loaded graph info lands in v95. For now, the active graph is the self-graph fixture loaded by the Vite plugin on startup.",
+        "adapters": "Registered adapters",
+        "adaptersDesc": "Adapter activation toggles and connection configuration land in v95.",
+        "coming": "Coming later",
+        "comingDesc": "Adapter activation (v95) · Diff triage (v95) · Profile/vault switcher (v97)."
+      },
+      "display": {
+        "mirrors": "Mirrors",
+        "mirrorsDesc": "Display mirrors (Effects, Reduce Motion, Panel Blur, Glow Intensity, Motion Scale) are accessible in Theme. Full mirror surface lands in the Display pass alongside performance mode (v90).",
+        "coming": "Coming later",
+        "comingDesc": "Performance mode (v90) · Particle density (v92) · Detail level slider (v90) · 3D minimap controls (v94)."
+      },
+      "accessibility": {
+        "wcag": "WCAG target",
+        "wcagDesc": "Contrast target level and contrast warning toggles land in v93 alongside OKLCH color migration and APCA contrast targets.",
+        "colorblind": "Color-blind simulation",
+        "colorblindDesc": "Deuteranopia, protanopia, tritanopia, achromatopsia simulation modes land in v93.",
+        "coming": "Coming later",
+        "comingDesc": "APCA contrast targets (v93) · Motion intensity floor (v93)."
+      },
+      "advanced": {
+        "devtools": "Developer tools",
+        "devtoolsDesc": "Window probe exposure toggle and provenance manifest regeneration land in v95 alongside the Advanced category full implementation.",
+        "flags": "Feature flags",
+        "flagsDesc": "Feature flag browser lands in v95. Flags are currently managed in the settings store directly.",
+        "reset": "Reset",
+        "resetDesc": "Clear-all-overrides and reset-all-settings destructive actions land in v95."
+      }
+    },
+    "controls": {
+      "appearance_theme": { "label": "Theme Preset", "description": "Active theme." },
+      "appearance_drama": { "label": "Drama", "description": "Solar Plasma mood preset — multiplier on glow + motion intensity." },
+      "appearance_motionScale": { "label": "Motion Scale", "description": "Master multiplier on backdrop and effect motion. 0 = still." },
+      "appearance_panelBlur": { "label": "Panel Blur", "description": "backdrop-filter blur amount on dock and panels." },
+      "appearance_nodeHum": { "label": "Sphere Hum", "description": "Node interior fade rate." },
+      "appearance_nodeFlowSpeed": { "label": "Sphere Flow Speed", "description": "Node interior rotational flow speed." },
+      "appearance_nodeGlow": { "label": "Sphere Glow", "description": "Node halo glow strength." },
+      "physics_dialectId": { "label": "Gwells Dialect", "description": "Gwells physics dialect for graph layout." },
+      "labels_nodeLabelMode": { "label": "Node Label Mode" },
+      "labels_edgeLabelMode": { "label": "Edge Label Mode" },
+      "labels_maxEdgeLabelLength": { "label": "Max Edge Label Length" },
+      "labels_showLabelsOnHover": { "label": "Show Labels On Hover", "description": "Show node label when hovering over a node." },
+      "labels_edgeLabelFontSize": { "label": "Edge Label Font Size", "description": "Controls rendered relationship/edge label text size." },
+      "labels_nodeLabelFontSize": { "label": "Node Label Font Size", "description": "Controls rendered node label text size." },
+      "graphView_neighborhoodDepth": { "label": "Neighborhood Depth", "description": "Depth of neighborhood shown when selecting a node. Fractional values fade between depths." },
+      "graphView_hoverNodeColor": { "label": "Hover Node Color", "description": "Hex color for node hover highlight. Example: #ffffff" }
+    }
+  },
+  "inspector": {
+    "back": "← back",
+    "backLabel": "back",
+    "spokes": {
+      "color": {
+        "label": "Color",
+        "palette": "Palette",
+        "noBindings": "No editable bindings for this target.",
+        "recent": "Recent",
+        "noRecent": "No recent colors yet.",
+        "applyTo": "Apply to",
+        "scopeThis": "This",
+        "scopeKind": "Kind",
+        "scopeCluster": "Cluster",
+        "scopeAll": "All",
+        "scopeKindTitle": "Available in v89",
+        "shortcuts": "Shortcuts",
+        "applyToKind": "Apply {property} to all {kind}s",
+        "pickFromScreen": "Pick from screen",
+        "eyedropperUnsupported": "EyeDropper API not supported"
+      },
+      "apply": {
+        "label": "Apply",
+        "noTargets": "No similar targets found.",
+        "selectAll": "Select all",
+        "selectNone": "Select none",
+        "applyButton": "Apply to {count} target{suffix}"
+      },
+      "geometry": {
+        "label": "Geometry",
+        "title": "Geometry",
+        "presets": {
+          "sun": "Sun",
+          "glass-sphere": "Glass",
+          "crystal": "Crystal",
+          "orb": "Orb",
+          "pip": "Pip"
+        }
+      },
+      "history": {
+        "label": "History",
+        "noEdits": "No edits yet for this target.",
+        "reset": "Reset",
+        "resetAll": "Reset all"
+      },
+      "ide": {
+        "label": "IDE",
+        "openInEditor": "Open in editor",
+        "noProvenance": "No provenance data found for this target.",
+        "noProvenanceHint": "Regenerate the manifest with `npm run generate-provenance` if you recently added this target."
+      },
+      "code": {
+        "label": "Code",
+        "placeholderMessage": "Coming in v98 (Code Spoke arc)"
+      },
+      "layout": {
+        "label": "Layout",
+        "placeholderMessage": "Coming in v93 (Physics Dialect arc)"
+      },
+      "motion": {
+        "label": "Motion",
+        "placeholderMessage": "Coming in v92 (Audio Reactivity arc)"
+      },
+      "type": {
+        "label": "Type",
+        "placeholderMessage": "Coming in future arc (Typography axis token wiring)"
+      },
+      "placeholder": {
+        "coming": "Coming soon",
+        "intendedTargets": "Intended targets"
+      }
+    }
+  },
+  "commands": {
+    "view_openSettings": "Open Settings",
+    "view_toggleInspector": "Toggle Inspector Panel",
+    "view_toggleCommandDeck": "Toggle Command Deck",
+    "view_toggleMinimap": "Toggle Minimap",
+    "view_toggleReduceMotion": "Toggle Reduce Motion",
+    "graph_fit": "Fit Graph to View",
+    "graph_resetView": "Reset Graph View",
+    "graph_toggleIsolatedNodes": "Toggle Isolated Nodes",
+    "graph_toggleLowConfidenceEdges": "Toggle Low Confidence Edges",
+    "graph_cycleDialect": "Cycle Physics Dialect",
+    "theme_exportBundle": "Export Theme Override Bundle",
+    "theme_next": "Next Theme",
+    "theme_openWorkshop": "Open Theme Workshop",
+    "inspector_toggleThemeTargetInspector": "Toggle Theme Target Inspector",
+    "inspector_pinTarget": "Pin/Unpin Target",
+    "inspector_openOnCurrentSelection": "Inspect Current Selection",
+    "physics_resetLayout": "Reset Physics Layout",
+    "physics_togglePinnedHighlight": "Toggle Pinned Highlight",
+    "labels_cycleNodeLabelMode": "Cycle Node Label Mode",
+    "palette_open": "Open Command Palette",
+    "debug_toggleFps": "Toggle FPS Counter",
+    "debug_clearAllOverrides": "Clear All Theme Overrides"
+  },
+  "themeInspector": {
+    "toggleOn": "UI Inspector: ON ({hotkey})",
+    "toggleOff": "UI Inspector: OFF ({hotkey})",
+    "candidateSurface": "Candidate surface",
+    "pinned": "Pinned · {hotkey}",
+    "pinHint": "{hotkey} to pin",
+    "status": "Status",
+    "visualHandle": "Visual Handle",
+    "editableProps": "Editable Props",
+    "tokenBindings": "Token Bindings",
+    "noTokenBindings": "No token bindings recorded",
+    "hasOverrides": "Has overrides",
+    "reviewForRegistration": "Status: Review for registration",
+    "signalsLabel": "Signals ({count}):"
+  },
+  "palette": {
+    "ariaLabel": "Command Palette",
+    "searchPlaceholder": "Type a command...",
+    "noResults": "No results",
+    "didYouMean": "Did you mean?",
+    "pinLabel": "Pin",
+    "unpinLabel": "Unpin",
+    "hintNavigate": "navigate",
+    "hintExecute": "execute",
+    "hintPin": "pin",
+    "hintClose": "close",
+    "confirmRun": "Run {label}? This cannot be undone.",
+    "confirmButton": "Confirm",
+    "cancelButton": "Cancel",
+    "categories": {
+      "all": "All",
+      "view": "View",
+      "graph": "Graph",
+      "theme": "Theme",
+      "inspector": "Inspector",
+      "physics": "Physics",
+      "labels": "Labels",
+      "debug": "Debug"
+    }
+  },
+  "commandDeck": {
+    "title": "Command Deck",
+    "status": "Status",
+    "readOnlyShell": "Read-Only Shell",
+    "contractBoundary": "Contract Boundary",
+    "contractDesc": "Command execution is locked/deferred to v37 or later.",
+    "description": "Description",
+    "descriptionText": "The Command Deck is a discovery surface for available actions. In v36, it displays only passive metadata. No commands can be executed from this interface.",
+    "hotkeyRegistry": "Hotkey Registry",
+    "hotkeyFootnote": "No new hotkeys may be added without registry approval.",
+    "commandRegistry": "Command Registry",
+    "commandCategoryStatus": "Category: {category} | Status: Eligible",
+    "commandFootnote": "Command registry is read-only. No commands can be executed.",
+    "perspectiveSystem": "Perspective System",
+    "perspectiveCategoryStatus": "Category: {category} | Status: {status}",
+    "perspectiveLocked": "Locked in v38 - requires explicit contract",
+    "perspectiveFootnote": "Perspective registry is read-only. No perspective switching.",
+    "changelog36c": "v36c:",
+    "changelog36cText": "Command Registry Metadata",
+    "changelog38": "v38:",
+    "changelog38Text": "Perspective System v0"
   }
 }

@@ -14,6 +14,7 @@ import {
 import type { ThemeOverride } from "../../../themes/themeOverrideStorage";
 import { notifyOverrideChange } from "../../../themes/useResolvedTargetColor";
 import type { TargetDescriptor } from "../inspector.types";
+import { t } from "../../../i18n";
 import "../styles/color-tab.css";
 
 export interface HistoryTabProps {
@@ -52,15 +53,15 @@ export function HistoryTab({ targetDescriptor, onClose }: HistoryTabProps) {
       <header className="lw-tab-header">
         <span className="lw-tab-target-id">{targetDescriptor.targetId}</span>
         {onClose && (
-          <button onClick={onClose} aria-label="back" className="lw-tab-back-button">
-            ← back
+          <button onClick={onClose} aria-label={t("inspector.backLabel")} className="lw-tab-back-button">
+            {t("inspector.back")}
           </button>
         )}
       </header>
 
       {overrides.length === 0 ? (
         <section className="lw-tab-empty" data-testid="history-empty">
-          <p>No edits yet for this target.</p>
+          <p>{t("inspector.spokes.history.noEdits")}</p>
         </section>
       ) : (
         <>
@@ -78,7 +79,7 @@ export function HistoryTab({ targetDescriptor, onClose }: HistoryTabProps) {
                     backgroundColor:
                       typeof o.value === "string" ? o.value : "transparent",
                     border: "1px solid var(--lw-panel-border, rgba(255,179,71,0.32))",
-                    marginRight: 6,
+                    marginInlineEnd: 6,
                     verticalAlign: "middle",
                   }}
                   aria-hidden="true"
@@ -94,7 +95,7 @@ export function HistoryTab({ targetDescriptor, onClose }: HistoryTabProps) {
                   onClick={() => handleReset(o.tokenPath)}
                   data-testid={`reset-${o.tokenPath}`}
                 >
-                  Reset
+                  {t("inspector.spokes.history.reset")}
                 </button>
               </div>
             ))}
@@ -105,7 +106,7 @@ export function HistoryTab({ targetDescriptor, onClose }: HistoryTabProps) {
             onClick={handleResetAll}
             data-testid="reset-all"
           >
-            Reset all
+            {t("inspector.spokes.history.resetAll")}
           </button>
         </>
       )}

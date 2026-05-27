@@ -1,4 +1,5 @@
 import type { CommandEntry } from "../../command.types";
+import { t } from "../../../../i18n";
 
 interface PaletteDestructiveConfirmProps {
   command: CommandEntry;
@@ -14,7 +15,7 @@ export function PaletteDestructiveConfirm({
   return (
     <div className="palette-destructive-confirm" data-testid="palette-destructive-confirm">
       <p className="palette-destructive-label">
-        Run <strong>{command.label}</strong>? This cannot be undone.
+        {t("palette.confirmRun", { label: command.label })}
       </p>
       <div className="palette-destructive-actions">
         <button
@@ -23,7 +24,7 @@ export function PaletteDestructiveConfirm({
           onClick={onConfirm}
           type="button"
         >
-          Confirm
+          {t("palette.confirmButton")}
         </button>
         <button
           className="palette-destructive-cancel-btn"
@@ -31,7 +32,7 @@ export function PaletteDestructiveConfirm({
           onClick={onCancel}
           type="button"
         >
-          Cancel
+          {t("palette.cancelButton")}
         </button>
       </div>
     </div>

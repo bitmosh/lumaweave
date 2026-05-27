@@ -2,6 +2,7 @@ import { perspectiveRegistry } from "../perspectives/perspectiveRegistry";
 import { hotkeyRegistry } from "../hotkeys/hotkey-registry";
 import { commandRegistry } from "../commands/command-registry";
 import { formatBinding } from "../hotkeys/hotkey-utils";
+import { t } from "../../i18n";
 
 interface CommandDeckShellProps {
   themeAccent: string;
@@ -30,13 +31,13 @@ export function CommandDeckShell({
             className="text-xs font-semibold uppercase tracking-wider"
             style={{ color: themeAccent }}
           >
-            Status
+            {t("commandDeck.status")}
           </h4>
           <p
             className="mt-1 text-xs"
             style={{ color: "var(--lw-text-primary)" }}
           >
-            Read-Only Shell
+            {t("commandDeck.readOnlyShell")}
           </p>
         </div>
 
@@ -45,13 +46,13 @@ export function CommandDeckShell({
             className="text-xs font-semibold uppercase tracking-wider"
             style={{ color: themeAccent }}
           >
-            Contract Boundary
+            {t("commandDeck.contractBoundary")}
           </h4>
           <p
             className="mt-1 text-xs"
             style={{ color: themeTextMuted }}
           >
-            Command execution is locked/deferred to v37 or later.
+            {t("commandDeck.contractDesc")}
           </p>
         </div>
 
@@ -60,15 +61,13 @@ export function CommandDeckShell({
             className="text-xs font-semibold uppercase tracking-wider"
             style={{ color: themeAccent }}
           >
-            Description
+            {t("commandDeck.description")}
           </h4>
           <p
             className="mt-1 text-xs"
             style={{ color: "var(--lw-text-primary)" }}
           >
-            The Command Deck is a discovery surface for available actions. In
-            v36, it displays only passive metadata. No commands can be executed
-            from this interface.
+            {t("commandDeck.descriptionText")}
           </p>
         </div>
 
@@ -77,7 +76,7 @@ export function CommandDeckShell({
             className="text-xs font-semibold uppercase tracking-wider"
             style={{ color: themeAccent }}
           >
-            Hotkey Registry
+            {t("commandDeck.hotkeyRegistry")}
           </h4>
           <div className="mt-2 space-y-2">
             {activeHotkeys.map((entry) => (
@@ -100,7 +99,7 @@ export function CommandDeckShell({
               className="mt-1 text-xs italic"
               style={{ color: themeTextMuted }}
             >
-              No new hotkeys may be added without registry approval.
+              {t("commandDeck.hotkeyFootnote")}
             </p>
           </div>
         </div>
@@ -110,7 +109,7 @@ export function CommandDeckShell({
             className="text-xs font-semibold uppercase tracking-wider"
             style={{ color: themeAccent }}
           >
-            Command Registry
+            {t("commandDeck.commandRegistry")}
           </h4>
           <div className="mt-2 space-y-2">
             {commands.map((cmd) => (
@@ -127,13 +126,13 @@ export function CommandDeckShell({
                   className="font-semibold"
                   style={{ color: themeAccent }}
                 >
-                  {cmd.label}
+                  {t(`commands.${cmd.id.replace(/\./g, "_")}`) || cmd.label}
                 </p>
                 <p
                   className="mt-1 text-xs italic"
                   style={{ color: themeTextMuted }}
                 >
-                  Category: {cmd.category} | Status: Eligible
+                  {t("commandDeck.commandCategoryStatus", { category: cmd.category })}
                 </p>
               </div>
             ))}
@@ -141,7 +140,7 @@ export function CommandDeckShell({
               className="mt-1 text-xs italic"
               style={{ color: themeTextMuted }}
             >
-              Command registry is read-only. No commands can be executed.
+              {t("commandDeck.commandFootnote")}
             </p>
           </div>
         </div>
@@ -151,7 +150,7 @@ export function CommandDeckShell({
             className="text-xs font-semibold uppercase tracking-wider"
             style={{ color: themeAccent }}
           >
-            Perspective System
+            {t("commandDeck.perspectiveSystem")}
           </h4>
           <div className="mt-2 space-y-2">
             {perspectiveRegistry.perspectives.map((perspective) => (
@@ -177,14 +176,14 @@ export function CommandDeckShell({
                   className="mt-1 text-xs italic"
                   style={{ color: themeTextMuted }}
                 >
-                  Category: {perspective.category} | Status: {perspective.status}
+                  {t("commandDeck.perspectiveCategoryStatus", { category: perspective.category, status: perspective.status })}
                 </p>
                 {perspective.status === "future" && (
                   <p
                     className="mt-1 text-xs italic"
                     style={{ color: themeAccent }}
                   >
-                    Locked in v38 - requires explicit contract
+                    {t("commandDeck.perspectiveLocked")}
                   </p>
                 )}
               </div>
@@ -193,7 +192,7 @@ export function CommandDeckShell({
               className="mt-1 text-xs italic"
               style={{ color: themeTextMuted }}
             >
-              Perspective registry is read-only. No perspective switching.
+              {t("commandDeck.perspectiveFootnote")}
             </p>
           </div>
         </div>
@@ -206,8 +205,7 @@ export function CommandDeckShell({
             color: themeAccent,
           }}
         >
-          <span className="font-semibold">v36c:</span> Command Registry
-          Metadata
+          <span className="font-semibold">{t("commandDeck.changelog36c")}</span> {t("commandDeck.changelog36cText")}
         </div>
         <div
           className="rounded px-2 py-1 text-xs"
@@ -217,7 +215,7 @@ export function CommandDeckShell({
             color: themeAccent,
           }}
         >
-          <span className="font-semibold">v38:</span> Perspective System v0
+          <span className="font-semibold">{t("commandDeck.changelog38")}</span> {t("commandDeck.changelog38Text")}
         </div>
       </div>
     </div>
