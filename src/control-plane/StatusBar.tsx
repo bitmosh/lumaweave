@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, ReactNode } from "react";
 import { t } from "../i18n";
 import { useSettingsStore } from "./settings/settings.store";
+import { useDebugStore } from "./debug/debug.store";
+import "./StatusBar.css";
 import { useTileContext } from "./panels/TileProvider";
 import { tileSectionRegistry } from "./panels/tileSectionRegistry";
 import { commandRegistry } from "./commands/command-registry";
@@ -61,9 +63,21 @@ function StatusBarPopoverButton({
 
 // ── DebugPopoverContent ────────────────────────────────────────────────────
 
+function DebugRow({ label, value }: { label: string; value: string | number | boolean | null | undefined }) {
+  return (
+    <div className="lw-debug-popover-kv">
+      <span className="lw-debug-popover-key">{label}</span>
+      <span className="lw-debug-popover-val">{value == null ? "–" : String(value)}</span>
+    </div>
+  );
+}
+
 function DebugPopoverContent() {
   const settings = useSettingsStore((s) => s.settings);
   const setSetting = useSettingsStore((s) => s.setSetting);
+  const renderer = useDebugStore((s) => s.renderer);
+  const interaction = useDebugStore((s) => s.interaction);
+  const neighborhood = useDebugStore((s) => s.neighborhood);
 
   return (
     <div
@@ -99,6 +113,27 @@ function DebugPopoverContent() {
         />
         <span>Animation enabled</span>
       </label>
+      <div className="lw-debug-popover-section">Renderer</div>
+      <DebugRow label="nodes in" value={renderer.sigmaInputNodes} />
+      <DebugRow label="edges in" value={renderer.sigmaInputEdges} />
+      <DebugRow label="graph order" value={renderer.graphologyOrder} />
+      <DebugRow label="graph size" value={renderer.graphologySize} />
+      <DebugRow label="node size" value={renderer.currentNodeSize} />
+      <DebugRow label="nbhd depth" value={renderer.neighborhoodDepth} />
+      <DebugRow label="node labels" value={renderer.nodeLabelMode} />
+      <DebugRow label="edge labels" value={renderer.edgeLabelMode} />
+      <DebugRow label="zoom thresh" value={renderer.zoomLabelThreshold} />
+      <div className="lw-debug-popover-section">Interaction</div>
+      <DebugRow label="selection" value={interaction.activeSelectionMode} />
+      <DebugRow label="hover node" value={interaction.hoveredNodeId} />
+      <DebugRow label="hover edge" value={interaction.hoveredEdgeId} />
+      <DebugRow label="selected node" value={interaction.selectedNodeId} />
+      <DebugRow label="selected edge" value={interaction.selectedEdgeId} />
+      <div className="lw-debug-popover-section">Neighborhood</div>
+      <DebugRow label="src" value={neighborhood.sourceId} />
+      <DebugRow label="tgt" value={neighborhood.targetId} />
+      <DebugRow label="2° edges" value={neighborhood.secondaryEdgeCount} />
+      <DebugRow label="2° nodes" value={neighborhood.secondaryNodeCount} />
     </div>
   );
 }

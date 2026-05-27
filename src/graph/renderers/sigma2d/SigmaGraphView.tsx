@@ -21,7 +21,7 @@ import {
   getRelationshipNeighborhood,
   getNodeNeighborhood,
 } from "./selectionNeighborhood";
-import { CollapsiblePanel } from "../../../control-plane/panels/CollapsiblePanel";
+import { useDebugStore } from "../../../control-plane/debug/debug.store";
 import { graphVisualTokens } from "../../visual/graphVisualTokens";
 import { applyGraphStylePolicy, applyHoverDelta } from "../../visual/graphStylePolicy";
 import {
@@ -1091,57 +1091,57 @@ useEffect(() => {
     sigma.refresh({ skipIndexation: true });
   }, [nodeLabelFontSize]);
 
+  const setDebugRenderer = useDebugStore((s) => s.setRenderer);
+  const setDebugInteraction = useDebugStore((s) => s.setInteraction);
+  const setDebugNeighborhood = useDebugStore((s) => s.setNeighborhood);
+  const setDebugNodeNeighborhood = useDebugStore((s) => s.setNodeNeighborhood);
+
+  useEffect(() => {
+    setDebugRenderer({
+      sigmaInputNodes: (debugInfo.sigmaInputNodes as number) ?? null,
+      sigmaInputEdges: (debugInfo.sigmaInputEdges as number) ?? null,
+      graphologyOrder: (debugInfo.graphologyOrder as number) ?? null,
+      graphologySize: (debugInfo.graphologySize as number) ?? null,
+      uniqueX: (debugInfo.uniqueX as number) ?? null,
+      uniqueY: (debugInfo.uniqueY as number) ?? null,
+      minX: (debugInfo.minX as number) ?? null,
+      maxX: (debugInfo.maxX as number) ?? null,
+      minY: (debugInfo.minY as number) ?? null,
+      maxY: (debugInfo.maxY as number) ?? null,
+      currentNodeSize: nodeSize,
+      neighborhoodDepth: neighborhoodDepth ?? null,
+      nodeLabelMode: nodeLabelMode ?? null,
+      edgeLabelMode: edgeLabelMode ?? null,
+      maxEdgeLabelLength: maxEdgeLabelLength ?? null,
+      edgeLabelFontSize: edgeLabelFontSize ?? null,
+      nodeLabelFontSize: nodeLabelFontSize ?? null,
+      showLabelsOnHover: showLabelsOnHover ?? null,
+      zoomLabelThreshold: zoomLabelThreshold ?? null,
+    });
+  }, [debugInfo, nodeSize, neighborhoodDepth, nodeLabelMode, edgeLabelMode, maxEdgeLabelLength, edgeLabelFontSize, nodeLabelFontSize, showLabelsOnHover, zoomLabelThreshold, setDebugRenderer]);
+
+  useEffect(() => {
+    setDebugInteraction({
+      hoveredNodeId,
+      hoveredEdgeId,
+      activeSelectionMode,
+      selectedNodeId,
+      selectedEdgeId: selectedEdgeId ?? null,
+    });
+  }, [hoveredNodeId, hoveredEdgeId, activeSelectionMode, selectedNodeId, selectedEdgeId, setDebugInteraction]);
+
+  useEffect(() => {
+    setDebugNeighborhood(neighborhoodInfo);
+  }, [neighborhoodInfo, setDebugNeighborhood]);
+
+  useEffect(() => {
+    setDebugNodeNeighborhood(nodeNeighborhoodInfo);
+  }, [nodeNeighborhoodInfo, setDebugNodeNeighborhood]);
+
   return (
     <div className="relative h-full w-full" data-testid="renderer-debug-panel">
       <div ref={containerRef} className="absolute inset-0" onContextMenu={(e) => e.preventDefault()} />
 
-      <CollapsiblePanel
-        title="Renderer Debug"
-        collapsedLabel="Debug"
-        defaultExpanded={false}
-        className="absolute left-4 bottom-4 w-80 text-xs shadow-2xl shadow-cyan-950/40"
-      >
-        <div className="space-y-1 text-xs">
-          <DebugRow label="Sigma Input Nodes" value={debugInfo.sigmaInputNodes} />
-          <DebugRow label="Sigma Input Edges" value={debugInfo.sigmaInputEdges} />
-          <DebugRow label="Graphology Order" value={debugInfo.graphologyOrder} />
-          <DebugRow label="Graphology Size" value={debugInfo.graphologySize} />
-          <DebugRow label="Unique X" value={debugInfo.uniqueX} />
-          <DebugRow label="Unique Y" value={debugInfo.uniqueY} />
-          <DebugRow label="Min X" value={debugInfo.minX} />
-          <DebugRow label="Max X" value={debugInfo.maxX} />
-          <DebugRow label="Min Y" value={debugInfo.minY} />
-          <DebugRow label="Max Y" value={debugInfo.maxY} />
-          <DebugRow label="Node Size" value={debugInfo.currentNodeSize} />
-          <DebugRow label="Selected Node" value={selectedNodeId ?? "none"} data-testid="selected-node-debug-row" />
-          <DebugRow label="Selected Edge" value={selectedEdgeId ?? "none"} data-testid="selected-edge-debug-row" />
-          <DebugRow label="Neighborhood Depth" value={neighborhoodDepth} />
-          <DebugRow label="Active Selection Mode" value={activeSelectionMode} />
-          <DebugRow label="Node Label Mode" value={nodeLabelMode} data-testid="node-label-mode-debug-row" />
-          <DebugRow label="Edge Label Mode" value={edgeLabelMode} data-testid="edge-label-mode-debug-row" />
-          <DebugRow label="Max Edge Label Length" value={maxEdgeLabelLength} />
-          <DebugRow label="Edge Label Font Size" value={edgeLabelFontSize} data-testid="edge-label-font-size-debug-row" />
-          <DebugRow label="Node Label Font Size" value={nodeLabelFontSize} data-testid="node-label-font-size-debug-row" />
-          <DebugRow label="Hovered Node" value={hoveredNodeId ?? "none"} data-testid="hovered-node-debug-row" />
-          <DebugRow label="Hovered Edge" value={hoveredEdgeId ?? "none"} data-testid="hovered-edge-debug-row" />
-          <DebugRow label="Show Labels On Hover" value={showLabelsOnHover ? "true" : "false"} />
-          <DebugRow label="Zoom Label Threshold" value={zoomLabelThreshold} />
-          {selectedEdgeId && (
-            <>
-              <DebugRow label="Edge Source" value={neighborhoodInfo.sourceId ?? "none"} />
-              <DebugRow label="Edge Target" value={neighborhoodInfo.targetId ?? "none"} />
-              <DebugRow label="Secondary Edges" value={neighborhoodInfo.secondaryEdgeCount} />
-              <DebugRow label="Secondary Nodes" value={neighborhoodInfo.secondaryNodeCount} />
-            </>
-          )}
-          {selectedNodeId && (
-            <>
-              <DebugRow label="Direct Edges" value={nodeNeighborhoodInfo.directEdgeCount} />
-              <DebugRow label="Direct Neighbors" value={nodeNeighborhoodInfo.directNeighborCount} />
-            </>
-          )}
-        </div>
-      </CollapsiblePanel>
     </div>
   );
 }
@@ -1189,19 +1189,3 @@ const arePropsEqual = (prev: SigmaGraphViewProps, next: SigmaGraphViewProps) => 
 
 export const SigmaGraphView = memo(SigmaGraphViewComponent, arePropsEqual);
 
-function DebugRow({
-  label,
-  value,
-}: {
-  label: string;
-  value: string | number | undefined | null;
-}) {
-  return (
-    <div className="flex justify-between gap-4">
-      <span className="text-slate-500">{label}:</span>
-      <span className="max-w-48 truncate text-end text-slate-200">
-        {value ?? "-"}
-      </span>
-    </div>
-  );
-}
