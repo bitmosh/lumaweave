@@ -1,7 +1,7 @@
 import { perspectiveRegistry } from "../perspectives/perspectiveRegistry";
-import { hotkeyRegistry } from "../commands/hotkey-registry";
+import { hotkeyRegistry } from "../hotkeys/hotkey-registry";
 import { commandRegistry } from "../commands/command-registry";
-import { formatBinding } from "../commands/hotkey-utils";
+import { formatBinding } from "../hotkeys/hotkey-utils";
 
 interface CommandDeckShellProps {
   themeAccent: string;

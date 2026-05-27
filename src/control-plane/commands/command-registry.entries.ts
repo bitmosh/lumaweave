@@ -1,37 +1,81 @@
 import { commandRegistry } from "./command-registry";
 import { useSettingsStore } from "../settings/settings.store";
+import { paletteController } from "./palette/useCommandPaletteState";
 
 function dispatch(type: string, detail?: unknown) {
   window.dispatchEvent(new CustomEvent(type, { detail }));
 }
 
-// General
+// View / Navigation
 commandRegistry.register({
-  id: "settings.open",
+  id: "view.openSettings",
   label: "Open Settings",
-  category: "General",
+  category: "view",
+  aliases: ["settings", "preferences", "config"],
+  description: "Open the settings panel",
   execute: () => dispatch("settings:open"),
+});
+
+commandRegistry.register({
+  id: "view.toggleInspector",
+  label: "Toggle Inspector Panel",
+  category: "view",
+  aliases: ["inspector", "inspect"],
+  description: "Show or hide the inspector panel",
+  execute: () => dispatch("inspector:toggle"),
+});
+
+commandRegistry.register({
+  id: "view.toggleCommandDeck",
+  label: "Toggle Command Deck",
+  category: "view",
+  description: "Show or hide the command deck panel",
+  execute: () => dispatch("view:toggleCommandDeck"),
+});
+
+commandRegistry.register({
+  id: "view.toggleMinimap",
+  label: "Toggle Minimap",
+  category: "view",
+  description: "Show or hide the graph minimap",
+  execute: () => dispatch("view:toggleMinimap"),
+});
+
+commandRegistry.register({
+  id: "view.toggleReduceMotion",
+  label: "Toggle Reduce Motion",
+  category: "view",
+  aliases: ["motion", "animation", "reduce motion"],
+  description: "Enable or disable reduced motion",
+  execute: () => {
+    const { settings, setSetting } = useSettingsStore.getState();
+    setSetting("appearance.reduceMotion", !settings.appearance.reduceMotion);
+  },
 });
 
 // Graph
 commandRegistry.register({
   id: "graph.fit",
   label: "Fit Graph to View",
-  category: "Graph",
+  category: "graph",
+  aliases: ["fit", "zoom to fit"],
+  description: "Fit the graph to fill the viewport",
   execute: () => dispatch("graph:fitView"),
 });
 
 commandRegistry.register({
   id: "graph.resetView",
   label: "Reset Graph View",
-  category: "Graph",
+  category: "graph",
+  description: "Reset the camera to the default position",
   execute: () => dispatch("graph:resetView"),
 });
 
 commandRegistry.register({
   id: "graph.toggleIsolatedNodes",
   label: "Toggle Isolated Nodes",
-  category: "Graph",
+  category: "graph",
+  description: "Show or hide nodes with no edges",
   execute: () => {
     const { settings, setSetting } = useSettingsStore.getState();
     setSetting("graphView.showIsolatedNodes", !settings.graphView.showIsolatedNodes);
@@ -41,70 +85,90 @@ commandRegistry.register({
 commandRegistry.register({
   id: "graph.toggleLowConfidenceEdges",
   label: "Toggle Low Confidence Edges",
-  category: "Graph",
+  category: "graph",
+  description: "Show or hide edges with low confidence scores",
   execute: () => {
     const { settings, setSetting } = useSettingsStore.getState();
     setSetting("graphView.showLowConfidenceEdges", !settings.graphView.showLowConfidenceEdges);
   },
 });
 
+commandRegistry.register({
+  id: "graph.cycleDialect",
+  label: "Cycle Physics Dialect",
+  category: "graph",
+  aliases: ["dialect", "physics layout", "layout"],
+  description: "Switch to the next gwells physics dialect",
+  execute: () => dispatch("graph:cycleDialect"),
+});
+
 // Theme
 commandRegistry.register({
   id: "theme.exportBundle",
   label: "Export Theme Override Bundle",
-  category: "Theme",
+  category: "theme",
+  description: "Export current theme overrides to a JSON bundle file",
   execute: () => dispatch("theme:exportBundle"),
 });
 
-// View
 commandRegistry.register({
-  id: "inspector.toggleThemeTargetInspector",
-  label: "Toggle Theme Target Inspector",
-  category: "View",
-  execute: () => dispatch("inspector:toggleThemeTarget"),
+  id: "theme.next",
+  label: "Next Theme",
+  category: "theme",
+  aliases: ["theme", "switch theme", "change theme"],
+  description: "Cycle to the next available theme",
+  execute: () => dispatch("theme:next"),
 });
 
 commandRegistry.register({
-  id: "view.toggleCommandDeck",
-  label: "Toggle Command Deck",
-  category: "View",
-  execute: () => dispatch("view:toggleCommandDeck"),
-});
-
-commandRegistry.register({
-  id: "view.toggleMinimap",
-  label: "Toggle Minimap",
-  category: "View",
-  execute: () => dispatch("view:toggleMinimap"),
+  id: "theme.openWorkshop",
+  label: "Open Theme Workshop",
+  category: "theme",
+  description: "Open the advanced theme workshop (coming soon)",
+  enabled: () => false,
+  execute: () => {},
 });
 
 // Inspector
 commandRegistry.register({
-  id: "inspector.toggle",
-  label: "Toggle Inspector Panel",
-  category: "Inspector",
-  execute: () => dispatch("inspector:toggle"),
+  id: "inspector.toggleThemeTargetInspector",
+  label: "Toggle Theme Target Inspector",
+  category: "inspector",
+  description: "Enable or disable the theme target inspector overlay",
+  execute: () => dispatch("inspector:toggleThemeTarget"),
 });
 
 commandRegistry.register({
   id: "inspector.pinTarget",
   label: "Pin/Unpin Target",
-  category: "Inspector",
+  category: "inspector",
+  description: "Pin or unpin the currently inspected node",
   execute: () => dispatch("inspector:pinTarget"),
+});
+
+commandRegistry.register({
+  id: "inspector.openOnCurrentSelection",
+  label: "Inspect Current Selection",
+  category: "inspector",
+  aliases: ["inspect selection", "open inspector"],
+  description: "Open the inspector focused on the currently selected node",
+  execute: () => dispatch("inspector:openOnCurrentSelection"),
 });
 
 // Physics
 commandRegistry.register({
   id: "physics.resetLayout",
   label: "Reset Physics Layout",
-  category: "Physics",
+  category: "physics",
+  description: "Reset all nodes to their seed positions",
   execute: () => dispatch("physics:resetLayout"),
 });
 
 commandRegistry.register({
   id: "physics.togglePinnedHighlight",
   label: "Toggle Pinned Highlight",
-  category: "Physics",
+  category: "physics",
+  description: "Dim all nodes except pinned ones",
   execute: () => {
     const { settings, setSetting } = useSettingsStore.getState();
     setSetting("physics.pinnedHighlightActive", !settings.physics.pinnedHighlightActive);
@@ -115,7 +179,8 @@ commandRegistry.register({
 commandRegistry.register({
   id: "labels.cycleNodeLabelMode",
   label: "Cycle Node Label Mode",
-  category: "Labels",
+  category: "labels",
+  description: "Cycle through node label display modes",
   execute: () => {
     const { settings, setSetting } = useSettingsStore.getState();
     const modes = ["off", "selected-neighborhood", "important-only", "all"] as const;
@@ -125,13 +190,33 @@ commandRegistry.register({
   },
 });
 
+// Palette
+commandRegistry.register({
+  id: "palette.open",
+  label: "Open Command Palette",
+  category: "general",
+  aliases: ["command palette", "palette", "commands"],
+  description: "Open the command palette to search and run commands",
+  execute: () => paletteController.open(),
+});
+
 // Debug
 commandRegistry.register({
   id: "debug.toggleFps",
   label: "Toggle FPS Counter",
-  category: "Debug",
+  category: "debug",
+  description: "Show or hide the frames-per-second counter",
   execute: () => {
     const { settings, setSetting } = useSettingsStore.getState();
     setSetting("developer.showFps", !settings.developer.showFps);
   },
+});
+
+commandRegistry.register({
+  id: "debug.clearAllOverrides",
+  label: "Clear All Theme Overrides",
+  category: "debug",
+  description: "Permanently delete all saved theme overrides. Cannot be undone.",
+  destructive: true,
+  execute: () => dispatch("debug:clearAllOverrides"),
 });
