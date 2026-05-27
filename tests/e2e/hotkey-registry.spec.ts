@@ -1,5 +1,5 @@
 /**
- * v97a: Hotkey registry unit tests
+ * v97a/v97b: Hotkey registry unit tests
  *
  * Tests that hotkeyRegistry is populated with the expected entries from
  * hotkey-registry.entries.ts and that hotkey-utils works correctly.
@@ -7,17 +7,17 @@
  */
 
 import { test, expect } from "@playwright/test";
-import { hotkeyRegistry } from "../../src/control-plane/commands/hotkey-registry";
-import "../../src/control-plane/commands/hotkey-registry.entries";
-import { formatBinding } from "../../src/control-plane/commands/hotkey-utils";
+import { hotkeyRegistry } from "../../src/control-plane/hotkeys/hotkey-registry";
+import "../../src/control-plane/hotkeys/hotkey-registry.entries";
+import { formatBinding } from "../../src/control-plane/hotkeys/hotkey-utils";
 
 test.describe("hotkey registry", () => {
-  test("has 11 entries total", () => {
-    expect(hotkeyRegistry.getAll()).toHaveLength(11);
+  test("has 12 entries total", () => {
+    expect(hotkeyRegistry.getAll()).toHaveLength(12);
   });
 
-  test("has 6 active entries", () => {
-    expect(hotkeyRegistry.getActive()).toHaveLength(6);
+  test("has 7 active entries", () => {
+    expect(hotkeyRegistry.getActive()).toHaveLength(7);
   });
 
   test("has 3 native entries", () => {

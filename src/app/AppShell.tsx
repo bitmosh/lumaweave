@@ -38,9 +38,9 @@ import { registerApplySpoke } from "../control-plane/inspector/spokes/registerAp
 import { registerIdeSpoke } from "../control-plane/inspector/spokes/registerIdeSpoke";
 import { registerHistorySpoke } from "../control-plane/inspector/spokes/registerHistorySpoke";
 import { installOpenInIdeListener } from "../control-plane/ide/installOpenInIdeListener";
-import "../control-plane/commands/hotkey-registry.entries";
+import "../control-plane/hotkeys/hotkey-registry.entries";
 import "../control-plane/commands/command-registry.entries";
-import { installGlobalHotkeyListener } from "../control-plane/commands/installGlobalHotkeyListener";
+import { installGlobalHotkeyListener } from "../control-plane/hotkeys/installGlobalHotkeyListener";
 import { adaptSelfGraphToSigma } from "../fixtures/self-graph-adapter";
 import generatedGraph from "../fixtures/self-graph-generated.json";
 import type { LumaSourceGraph } from "../fixtures/types";
@@ -53,6 +53,8 @@ import { bookmarkRegistry, initializeDemoBookmarks } from "../graph/overlay/book
 import { Topbar } from "../control-plane/topbar/Topbar";
 import { SettingsPanelHost } from "../control-plane/settings/SettingsPanelHost";
 import type { SettingsPanelHostHandle } from "../control-plane/settings/SettingsPanelHost";
+import { CommandPaletteHost } from "../control-plane/commands/CommandPaletteHost";
+import "../control-plane/commands/palette.css";
 import { useCrossfadeAppTokens } from "../themes/themeCrossfade";
 
 const EMPTY_OVERRIDES: Record<string, unknown> = {};
@@ -1133,6 +1135,7 @@ export function AppShell() {
       <InspectorMiniGraph />
       <TileLayer />
       <SettingsPanelHost ref={settingsPanelRef} />
+      <CommandPaletteHost />
     </main>
   </TileProvider>
 );

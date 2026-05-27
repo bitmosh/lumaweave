@@ -10,6 +10,14 @@ export const commandRegistry = {
   getAll(): ReadonlyArray<CommandEntry> {
     return entries;
   },
+
+  list(): ReadonlyArray<CommandEntry> {
+    return entries;
+  },
+
+  getById(id: string): CommandEntry | undefined {
+    return entries.find((e) => e.id === id);
+  },
 };
 
 if (typeof window !== "undefined" && (import.meta.env.DEV || (window as any).PLAYWRIGHT)) {

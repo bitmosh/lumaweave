@@ -1,0 +1,264 @@
+/* Command Palette — uses project CSS tokens */
+
+.palette-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 12vh;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+}
+
+.palette-shell {
+  width: 100%;
+  max-width: 600px;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  border: 1px solid var(--lw-panel-border, rgba(255, 255, 255, 0.12));
+  background: var(--lw-panel-bg, #0d1120);
+  box-shadow:
+    0 0 0 1px rgba(255, 179, 71, 0.10) inset,
+    0 24px 48px rgba(0, 0, 0, 0.7),
+    0 0 32px rgba(255, 107, 26, 0.08);
+  overflow: hidden;
+}
+
+/* Search input */
+.palette-search-input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 15px;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  color: var(--lw-text-primary, #f0f0f0);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--lw-panel-border, rgba(255, 255, 255, 0.10));
+  outline: none;
+}
+
+.palette-search-input::placeholder {
+  color: var(--lw-text-muted, rgba(255, 255, 255, 0.35));
+}
+
+/* Category chips */
+.palette-chips {
+  display: flex;
+  gap: 4px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--lw-panel-border, rgba(255, 255, 255, 0.08));
+  flex-wrap: wrap;
+}
+
+.palette-chip {
+  padding: 2px 10px;
+  font-size: 11px;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  letter-spacing: 0.05em;
+  color: var(--lw-text-muted, rgba(255, 255, 255, 0.5));
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: color 0.12s, border-color 0.12s;
+}
+
+.palette-chip:hover {
+  color: var(--lw-text-primary, #f0f0f0);
+  border-color: var(--lw-panel-border, rgba(255, 255, 255, 0.18));
+}
+
+.palette-chip--active {
+  color: var(--lw-accent, #FFB347);
+  border-color: var(--lw-accent, #FFB347);
+}
+
+/* Results list */
+.palette-results-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--lw-panel-border, rgba(255,255,255,0.12)) transparent;
+}
+
+.palette-section {
+  margin-bottom: 4px;
+}
+
+.palette-section-header {
+  padding: 4px 16px 2px;
+  font-size: 10px;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lw-text-muted, rgba(255, 255, 255, 0.4));
+}
+
+/* Result rows */
+.palette-result-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 16px;
+  cursor: pointer;
+  transition: background 0.08s;
+}
+
+.palette-result-row:hover,
+.palette-result-row--selected {
+  background: var(--lw-accent, rgba(255, 179, 71, 0.10));
+  background: rgba(255, 179, 71, 0.08);
+}
+
+.palette-result-row--selected {
+  background: rgba(255, 179, 71, 0.12);
+}
+
+.palette-result-row--destructive .palette-result-label {
+  color: #f87171;
+}
+
+.palette-result-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.palette-result-label {
+  font-size: 13px;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  color: var(--lw-text-primary, #f0f0f0);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.palette-result-desc {
+  font-size: 11px;
+  color: var(--lw-text-muted, rgba(255, 255, 255, 0.45));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.palette-result-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.palette-result-hotkey {
+  padding: 1px 6px;
+  font-size: 10px;
+  font-family: "IBM Plex Mono", monospace;
+  color: var(--lw-text-muted, rgba(255, 255, 255, 0.5));
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 4px;
+}
+
+.palette-pin-btn {
+  font-size: 13px;
+  color: var(--lw-text-muted, rgba(255, 255, 255, 0.3));
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+  transition: color 0.1s;
+}
+
+.palette-pin-btn:hover,
+.palette-pin-btn--active {
+  color: var(--lw-accent, #FFB347);
+}
+
+/* Empty state */
+.palette-empty {
+  padding: 24px 16px;
+  font-size: 13px;
+  text-align: center;
+  color: var(--lw-text-muted, rgba(255, 255, 255, 0.4));
+}
+
+/* Suggestions ("did you mean") */
+.palette-suggestions {
+  border-top: 1px solid var(--lw-panel-border, rgba(255, 255, 255, 0.08));
+  margin-top: 4px;
+}
+
+/* Destructive confirm */
+.palette-destructive-confirm {
+  padding: 20px 20px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.palette-destructive-label {
+  font-size: 13px;
+  color: var(--lw-text-primary, #f0f0f0);
+  line-height: 1.5;
+}
+
+.palette-destructive-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.palette-destructive-confirm-btn {
+  padding: 6px 18px;
+  font-size: 13px;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  color: #fff;
+  background: #dc2626;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.palette-destructive-confirm-btn:hover {
+  background: #b91c1c;
+}
+
+.palette-destructive-cancel-btn {
+  padding: 6px 18px;
+  font-size: 13px;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  color: var(--lw-text-primary, #f0f0f0);
+  background: transparent;
+  border: 1px solid var(--lw-panel-border, rgba(255, 255, 255, 0.18));
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.1s;
+}
+
+.palette-destructive-cancel-btn:hover {
+  border-color: var(--lw-text-muted, rgba(255, 255, 255, 0.4));
+}
+
+/* Hint bar */
+.palette-hint-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 6px 16px;
+  font-size: 11px;
+  color: var(--lw-text-muted, rgba(255, 255, 255, 0.3));
+  border-top: 1px solid var(--lw-panel-border, rgba(255, 255, 255, 0.08));
+}
+
+.palette-hint-bar kbd {
+  font-family: "IBM Plex Mono", monospace;
+  color: var(--lw-text-muted, rgba(255, 255, 255, 0.45));
+  font-size: 10px;
+}

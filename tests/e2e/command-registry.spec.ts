@@ -1,5 +1,5 @@
 /**
- * v97a: Command registry unit tests
+ * v97a/v97b: Command registry unit tests
  *
  * Tests that commandRegistry is populated with the expected entries from
  * command-registry.entries.ts. Pure function tests — no browser required.
@@ -10,8 +10,8 @@ import { commandRegistry } from "../../src/control-plane/commands/command-regist
 import "../../src/control-plane/commands/command-registry.entries";
 
 test.describe("command registry", () => {
-  test("has 15 entries", () => {
-    expect(commandRegistry.getAll()).toHaveLength(15);
+  test("has 22 entries", () => {
+    expect(commandRegistry.getAll()).toHaveLength(22);
   });
 
   test("all entry IDs are unique", () => {
@@ -40,10 +40,10 @@ test.describe("command registry", () => {
 
   test("core commands are present", () => {
     const ids = commandRegistry.getAll().map((c) => c.id);
-    expect(ids).toContain("settings.open");
+    expect(ids).toContain("view.openSettings");
     expect(ids).toContain("graph.fit");
     expect(ids).toContain("graph.resetView");
-    expect(ids).toContain("inspector.toggle");
+    expect(ids).toContain("view.toggleInspector");
     expect(ids).toContain("inspector.pinTarget");
   });
 
@@ -51,7 +51,7 @@ test.describe("command registry", () => {
     const cmd = commandRegistry.getAll().find((c) => c.id === "theme.exportBundle");
     expect(cmd).toBeDefined();
     expect(cmd?.label).toBe("Export Theme Override Bundle");
-    expect(cmd?.category).toBe("Theme");
+    expect(cmd?.category).toBe("theme");
   });
 
   test("Toggle Theme Target Inspector entry exists", () => {
@@ -60,6 +60,28 @@ test.describe("command registry", () => {
       .find((c) => c.id === "inspector.toggleThemeTargetInspector");
     expect(cmd).toBeDefined();
     expect(cmd?.label).toBe("Toggle Theme Target Inspector");
-    expect(cmd?.category).toBe("View");
+    expect(cmd?.category).toBe("inspector");
+  });
+
+  test("destructive commands are flagged", () => {
+    const cmd = commandRegistry.getAll().find((c) => c.id === "debug.clearAllOverrides");
+    expect(cmd).toBeDefined();
+    expect(cmd?.destructive).toBe(true);
+  });
+
+  test("disabled commands have enabled returning false", () => {
+    const cmd = commandRegistry.getAll().find((c) => c.id === "theme.openWorkshop");
+    expect(cmd).toBeDefined();
+    expect(cmd?.enabled?.()).toBe(false);
+  });
+
+  test("getById returns the correct entry", () => {
+    const cmd = commandRegistry.getById("graph.fit");
+    expect(cmd).toBeDefined();
+    expect(cmd?.label).toBe("Fit Graph to View");
+  });
+
+  test("getById returns undefined for unknown id", () => {
+    expect(commandRegistry.getById("nonexistent.command")).toBeUndefined();
   });
 });
