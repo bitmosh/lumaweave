@@ -6,23 +6,29 @@
 import type { TileLayoutEntry, TileGroup, TileAnchor } from "./tile.types";
 import { defaultFeatureFlags } from "../features/feature-flags";
 
+const STATUS_BAR_HEIGHT = 40;
+const TOPBAR_HEIGHT = 64;
+
 export function computeAnchorPos(
   anchor: TileAnchor,
   w: number,
-  _h: number,
+  h: number,
 ): { x: number; y: number } {
   const offset = anchor.offset ?? 80;
+  const maxY = Math.max(TOPBAR_HEIGHT, window.innerHeight - STATUS_BAR_HEIGHT - h - 8);
+  const clampY = (y: number) => Math.max(TOPBAR_HEIGHT, Math.min(y, maxY));
+  const clampX = (x: number) => Math.max(8, Math.min(x, window.innerWidth - w - 8));
   switch (anchor.edge) {
     case "left":
-      return { x: 8, y: offset };
+      return { x: 8, y: clampY(offset) };
     case "right":
-      return { x: window.innerWidth - w - 8, y: offset };
+      return { x: clampX(window.innerWidth - w - 8), y: clampY(offset) };
     case "top":
-      return { x: offset, y: 64 };
+      return { x: clampX(offset), y: TOPBAR_HEIGHT };
     case "bottom":
-      return { x: offset, y: window.innerHeight - 400 };
+      return { x: clampX(offset), y: clampY(window.innerHeight - h - STATUS_BAR_HEIGHT - 8) };
     case "free":
-      return { x: anchor.x ?? 100, y: anchor.y ?? 100 };
+      return { x: clampX(anchor.x ?? 100), y: clampY(anchor.y ?? 100) };
     default:
       return { x: 100, y: 100 };
   }

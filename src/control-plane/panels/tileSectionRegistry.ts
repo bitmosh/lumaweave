@@ -13,6 +13,9 @@ import { GraphSourcesTileContent } from "../graph-sources/GraphSourcesTileConten
 import { GraphInspectorTileContent } from "../inspector/GraphInspectorTileContent";
 import { AgentChatPlaceholder } from "../agent/AgentChatPlaceholder";
 import { QaPanelTileContent } from "../qa/QaPanelTileContent";
+import { GraphVisualInventoryTileContent } from "../graph/GraphVisualInventoryTileContent";
+import { SystemIndexTileContent } from "../system-index/SystemIndexTileContent";
+import { CommandDeckTileContent } from "../command-deck/CommandDeckTileContent";
 
 // Lazy to prevent CSS import from breaking Node.js module resolution in Playwright
 const LazyTypographyPlayground = lazy(() =>
@@ -145,6 +148,53 @@ const entries: TileSectionEntry[] = [
     defaultVisible: false,
     defaultExpanded: true,
     iconGlyph: "📋",
+  },
+
+  // ===== Evidence / inspection tiles =====
+  {
+    id: "graph-visual-inventory-section",
+    label: "Graph Visual Inventory",
+    category: "left-panel",
+    defaultWidth: 400,
+    defaultHeight: 560,
+    collapsible: true,
+    content: () => createElement(GraphVisualInventoryTileContent),
+    contentTestId: "graph-visual-inventory-panel",
+    sourceTestId: undefined,
+    defaultAnchor: { edge: "left", offset: 80 },
+    defaultVisible: false,
+    defaultExpanded: true,
+    iconGlyph: "🗃",
+  },
+  {
+    id: "system-index-section",
+    label: "System Index",
+    category: "left-panel",
+    defaultWidth: 360,
+    defaultHeight: 520,
+    collapsible: true,
+    content: () => createElement(SystemIndexTileContent),
+    contentTestId: "system-index-tile-content",
+    sourceTestId: undefined,
+    defaultAnchor: { edge: "left", offset: 80 },
+    defaultVisible: false,
+    defaultExpanded: true,
+    iconGlyph: "📇",
+  },
+  {
+    id: "command-deck-section",
+    label: "Command Deck",
+    category: "left-panel",
+    defaultWidth: 400,
+    defaultHeight: 560,
+    collapsible: true,
+    content: () => createElement(CommandDeckTileContent),
+    contentTestId: "command-deck-panel",
+    sourceTestId: undefined,
+    defaultAnchor: { edge: "left", offset: 80 },
+    defaultVisible: false,
+    defaultExpanded: true,
+    iconGlyph: "🎛",
   },
 ];
 
