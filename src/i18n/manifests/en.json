@@ -1,0 +1,33 @@
+{
+  "topbar": {
+    "settings": {
+      "ariaLabel": "Open settings",
+      "title": "Settings · {kbd}"
+    },
+    "toggles": {
+      "glitter": "Glitter",
+      "reduceMotion": "Reduce Motion"
+    },
+    "themes": {
+      "solarPlasma": "Solar Plasma",
+      "obsidianAurora": "Obsidian Aurora",
+      "midnightLoom": "Midnight Loom",
+      "voidCircuit": "Void Circuit",
+      "agarthaDream": "Agartha Dream",
+      "agarthaDusk": "Agartha Dusk"
+    },
+    "brand": {
+      "name": "LumaWeave",
+      "subtitle": "PANORAMA ATLAS",
+      "tagline": "Map. Understand. Build."
+    },
+    "hexLogo": {
+      "ariaLabel": "LumaWeave hex logo"
+    },
+    "statusCluster": {
+      "graphLabel": "graph",
+      "layoutLabel": "layout",
+      "fpsLabel": "fps"
+    }
+  }
+}

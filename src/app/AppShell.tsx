@@ -50,6 +50,7 @@ import { GlitterField } from "../graph/overlay/GlitterField";
 import { BookmarkLayer } from "../graph/overlay/BookmarkLayer";
 import { Minimap } from "../graph/overlay/Minimap";
 import { bookmarkRegistry, initializeDemoBookmarks } from "../graph/overlay/bookmarkRegistry";
+import { I18nProvider } from "../i18n";
 import { Topbar } from "../control-plane/topbar/Topbar";
 import { SettingsPanelHost } from "../control-plane/settings/SettingsPanelHost";
 import type { SettingsPanelHostHandle } from "../control-plane/settings/SettingsPanelHost";
@@ -414,6 +415,7 @@ export function AppShell() {
       };
 
   return (
+    <I18nProvider>
     <TileProvider>
       <main 
       className="h-screen overflow-hidden text-slate-100"
@@ -1138,5 +1140,6 @@ export function AppShell() {
       <CommandPaletteHost />
     </main>
   </TileProvider>
+  </I18nProvider>
 );
 }
