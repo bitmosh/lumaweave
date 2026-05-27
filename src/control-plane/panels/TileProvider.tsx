@@ -72,6 +72,46 @@ export function TileProvider({ children }: TileProviderProps) {
     }
   }, [tiles]);
 
+  // First-mount auto-populate from registry defaultVisible entries.
+  // Runs once per browser session (localStorage flag prevents re-populate
+  // after the user closes tiles and reloads).
+  useEffect(() => {
+    const BOOTSTRAP_KEY = "lumaweave-tiles-bootstrapped";
+    if (localStorage.getItem(BOOTSTRAP_KEY)) return;
+
+    const currentTiles = getCurrentTiles();
+    const newTiles: TileLayoutEntry[] = [];
+
+    for (const entry of tileSectionRegistry.list()) {
+      if (!entry.defaultVisible) continue;
+      if (currentTiles.find((t) => t.sectionKey === entry.id)) continue;
+
+      const pos = computeAnchorPos(
+        entry.defaultAnchor,
+        entry.defaultWidth,
+        entry.defaultHeight,
+      );
+
+      newTiles.push({
+        id: `tile_${entry.id}`,
+        sectionKey: entry.id,
+        x: pos.x,
+        y: pos.y,
+        w: entry.defaultWidth,
+        h: entry.defaultHeight,
+        collapsed: !entry.defaultExpanded,
+        z: ++zCounterRef.current,
+        anchor: entry.defaultAnchor,
+      });
+    }
+
+    if (newTiles.length > 0) {
+      writeTiles([...currentTiles, ...newTiles]);
+    }
+    localStorage.setItem(BOOTSTRAP_KEY, "1");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const [snapGuide, setSnapGuide] = useState<SnapGuide | null>(null);
 
   const writeTiles = useCallback(

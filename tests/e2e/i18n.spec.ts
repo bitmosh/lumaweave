@@ -6,6 +6,7 @@
  */
 
 import { test, expect } from "@playwright/test";
+import { clearTiles } from "./helpers/tiles";
 
 // ── Unit: t() function ──────────────────────────────────────────────────────
 
@@ -220,6 +221,7 @@ test.describe("i18n: command palette browser strings", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
+    await clearTiles(page);
     await page.keyboard.press("Control+k");
     await expect(page.getByTestId("palette-shell")).toBeVisible({ timeout: 5000 });
   });

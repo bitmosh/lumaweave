@@ -12,6 +12,7 @@ import { AppearanceSectionContent } from "./AppearanceSectionContent";
 import { GraphSourcesTileContent } from "../graph-sources/GraphSourcesTileContent";
 import { GraphInspectorTileContent } from "../inspector/GraphInspectorTileContent";
 import { AgentChatPlaceholder } from "../agent/AgentChatPlaceholder";
+import { QaPanelTileContent } from "../qa/QaPanelTileContent";
 
 // Lazy to prevent CSS import from breaking Node.js module resolution in Playwright
 const LazyTypographyPlayground = lazy(() =>
@@ -129,6 +130,21 @@ const entries: TileSectionEntry[] = [
     defaultVisible: false,
     defaultExpanded: true,
     iconGlyph: "💬",
+  },
+  {
+    id: "qa-feedback-section",
+    label: "Feedback & Testing",
+    category: "left-panel",
+    defaultWidth: 360,
+    defaultHeight: 600,
+    collapsible: true,
+    content: () => createElement(QaPanelTileContent),
+    contentTestId: "qa-panel-tile-content",
+    sourceTestId: undefined,
+    defaultAnchor: { edge: "left", offset: 80 },
+    defaultVisible: false,
+    defaultExpanded: true,
+    iconGlyph: "📋",
   },
 ];
 

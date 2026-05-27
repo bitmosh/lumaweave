@@ -1,5 +1,4 @@
 import { useGraphSourceSummary } from "../../graph/ingest/useGraphSourceSummary";
-import { SourceAdapterPanel } from "../../source-adapter/SourceAdapterPanel";
 
 export function GraphSourcesTileContent() {
   const { summary } = useGraphSourceSummary();
@@ -36,10 +35,6 @@ export function GraphSourcesTileContent() {
               <span className="text-cyan-400">{summary.normalizedEdgeCount ?? 0}</span>
             </div>
           </div>
-        </div>
-
-        <div data-testid="source-adapter-panel-shell">
-          <SourceAdapterPanel />
         </div>
       </div>
     </div>

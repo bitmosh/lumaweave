@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { clearTiles } from "./helpers/tiles";
 
 const CATEGORY_IDS = [
   "theme",
@@ -14,6 +15,7 @@ const CATEGORY_IDS = [
 async function openPanel(page: import("@playwright/test").Page) {
   await page.goto("/");
   await page.waitForLoadState("networkidle");
+  await clearTiles(page);
   await page.locator('[data-testid="topbar-settings-button"]').click();
   await expect(page.getByTestId("settings-panel-root")).toBeVisible({ timeout: 5000 });
 }

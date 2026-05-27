@@ -20,41 +20,54 @@ function parseQuestionCounterText(text: string | null): { total: number } {
  */
 
 /**
- * Open the QA panel in the left dock
+ * Open the QA / Feedback tile via the Tiles popover in the status bar.
+ *
+ * v98.3: the QA panel is now a registered tile (qa-feedback-section)
+ * with defaultVisible: false. Users open it via the Tiles popover
+ * in the status bar. This helper is idempotent — safe to call multiple
+ * times in a single test.
  */
 export async function openQaPanel(page: Page): Promise<void> {
-  // Check if left panel is collapsed
-  const collapsedPanel = page.getByTestId("left-tab-panel-collapsed");
-  const isCollapsed = await collapsedPanel.isVisible().catch(() => false);
-
-  if (isCollapsed) {
-    // Click QA icon in collapsed panel to expand and switch to QA
-    const qaIcon = page.getByTestId("left-panel-icon-qa");
-    await expect(qaIcon).toBeVisible();
-    await qaIcon.click();
-  } else {
-    // Click QA tab in expanded panel to switch to QA
-    const qaTab = page.getByTestId("tab-qa");
-    await expect(qaTab).toBeVisible();
-    await qaTab.click();
+  // Check if QA tile is already injected (qa-panel-tile-content only appears when
+  // the tile is present — the LeftTabPanel qa-panel wrapper does not have this testid)
+  const qaTileContent = page.getByTestId("qa-panel-tile-content");
+  if (await qaTileContent.isVisible().catch(() => false)) {
+    return;
   }
 
-  // Wait for QA panel to be visible
-  const qaPanel = page.getByTestId("qa-panel").first();
-  await expect(qaPanel).toBeVisible();
+  // Clear all tiles and add only the QA tile at a known non-overlapping position.
+  // Tests that use openQaPanel only need the QA panel — other tiles can be
+  // set up explicitly if a test needs them. This avoids z-index overlap issues
+  // with auto-populated tiles covering QA panel content.
+  // Also mark bootstrap as done to prevent TileProvider auto-populate from
+  // re-adding default-visible tiles after this inject (race with React mount).
+  await page.evaluate(() => {
+    const store = (window as any).__lwStore;
+    if (!store) return;
+    const qaTile = {
+      id: "tile_qa-feedback-section",
+      sectionKey: "qa-feedback-section",
+      x: 300,
+      y: 60,
+      w: 360,
+      h: 600,
+      collapsed: false,
+      z: 10,
+    };
+    store.getState().setSetting("ui.tileLayout", [qaTile]);
+    localStorage.setItem("lumaweave-tiles-bootstrapped", "1");
+  });
+
+  // Wait for tile to render
+  await expect(qaTileContent).toBeVisible({ timeout: 5000 });
 }
 
 /**
- * Navigate to the QA tab in the left panel
- * Use this before any QA content interaction
+ * Navigate to the QA panel (v98.3: delegates to openQaPanel).
+ * Kept for backwards compatibility with test call sites.
  */
 export async function navigateToQaTab(page: Page): Promise<void> {
-  // Click QA tab in expanded left panel to switch to QA content
-  const qaTab = page.getByTestId("tab-qa");
-  await expect(qaTab).toBeVisible();
-  await qaTab.click();
-  // Wait for QA panel content to render
-  await page.waitForTimeout(300);
+  await openQaPanel(page);
 }
 
 /**
