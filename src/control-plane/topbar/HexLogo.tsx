@@ -1,3 +1,5 @@
+import { t } from "../../i18n";
+
 interface HexLogoProps {
   size?: number;
 }
@@ -9,7 +11,7 @@ export function HexLogo({ size = 34 }: HexLogoProps) {
       height={size}
       viewBox="0 0 64 64"
       fill="none"
-      aria-label="LumaWeave hex logo"
+      aria-label={t("topbar.hexLogo.ariaLabel")}
     >
       <defs>
         <linearGradient id="hexFill" x1="0" y1="0" x2="64" y2="64">

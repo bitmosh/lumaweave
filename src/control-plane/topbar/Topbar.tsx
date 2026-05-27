@@ -1,4 +1,5 @@
 import { useSettingsStore } from "../../control-plane/settings/settings.store";
+import { t } from "../../i18n";
 import { HexLogo } from "./HexLogo";
 import { WordmarkBlock } from "./WordmarkBlock";
 import { StatusPill } from "./StatusPill";
@@ -31,15 +32,15 @@ export function Topbar({ onOpenSettings }: TopbarProps) {
           onChange={(e) => setSetting("appearance.theme", e.currentTarget.value)}
           className="lw-theme-select"
         >
-          <option value="solar-plasma">Solar Plasma</option>
-          <option value="obsidian-aurora">Obsidian Aurora</option>
-          <option value="midnight-loom">Midnight Loom</option>
-          <option value="void-circuit">Void Circuit</option>
-          <option value="agartha-dream">Agartha Dream</option>
-          <option value="agartha-dusk">Agartha Dusk</option>
+          <option value="solar-plasma">{t("topbar.themes.solarPlasma")}</option>
+          <option value="obsidian-aurora">{t("topbar.themes.obsidianAurora")}</option>
+          <option value="midnight-loom">{t("topbar.themes.midnightLoom")}</option>
+          <option value="void-circuit">{t("topbar.themes.voidCircuit")}</option>
+          <option value="agartha-dream">{t("topbar.themes.agarthaDream")}</option>
+          <option value="agartha-dusk">{t("topbar.themes.agarthaDusk")}</option>
         </select>
         <label className="lw-toggle">
-          <span>Glitter</span>
+          <span>{t("topbar.toggles.glitter")}</span>
           <input
             type="checkbox"
             checked={settings.appearance.glitterEnabled}
@@ -49,7 +50,7 @@ export function Topbar({ onOpenSettings }: TopbarProps) {
           />
         </label>
         <label className="lw-toggle">
-          <span>Reduce Motion</span>
+          <span>{t("topbar.toggles.reduceMotion")}</span>
           <input
             type="checkbox"
             checked={settings.appearance.reduceMotion}
@@ -62,11 +63,11 @@ export function Topbar({ onOpenSettings }: TopbarProps) {
           type="button"
           data-testid="topbar-settings-button"
           className="lw-topbar-icon-btn"
-          aria-label="Open settings"
-          title={`Settings · ${kbdHint}`}
+          aria-label={t("topbar.settings.ariaLabel")}
+          title={t("topbar.settings.title", { kbd: kbdHint })}
           onClick={onOpenSettings}
         >
-          <span className="lw-topbar-kbd" style={{ marginRight: 6 }}>{kbdHint}</span>
+          <span className="lw-topbar-kbd" style={{ marginInlineEnd: 6 }}>{kbdHint}</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.894.149c-.424.07-.764.383-.929.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.398.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.272-.806.108-1.204-.165-.397-.506-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z" />
             <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />

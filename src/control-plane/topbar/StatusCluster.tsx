@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useGraphSourceSummary } from "../../graph/ingest/useGraphSourceSummary";
+import { t } from "../../i18n";
 
 function useGraphStats() {
   const { summary } = useGraphSourceSummary();
@@ -49,15 +50,15 @@ export function StatusCluster() {
 
   return (
     <div className="lw-status-cluster" data-lw-theme-target="topbar.statusCluster">
-      <span className="lw-cluster-key">graph</span>
+      <span className="lw-cluster-key">{t("topbar.statusCluster.graphLabel")}</span>
       <span className="lw-cluster-val">
         {graphStats.nodeCount}n · {graphStats.edgeCount}e
       </span>
       <span className="lw-cluster-sep">·</span>
-      <span className="lw-cluster-key">layout</span>
+      <span className="lw-cluster-key">{t("topbar.statusCluster.layoutLabel")}</span>
       <span className="lw-cluster-val">{layoutState}</span>
       <span className="lw-cluster-sep">·</span>
-      <span className="lw-cluster-key">fps</span>
+      <span className="lw-cluster-key">{t("topbar.statusCluster.fpsLabel")}</span>
       <span
         className={`lw-cluster-val ${fps >= 50 ? "ok" : fps >= 30 ? "warn" : "bad"}`}
       >
