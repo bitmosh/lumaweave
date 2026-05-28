@@ -10,8 +10,8 @@ import { commandRegistry } from "../../src/control-plane/commands/command-regist
 import "../../src/control-plane/commands/command-registry.entries";
 
 test.describe("command registry", () => {
-  test("has 29 entries", () => {
-    expect(commandRegistry.getAll()).toHaveLength(29);
+  test("has 32 entries", () => {
+    expect(commandRegistry.getAll()).toHaveLength(32);
   });
 
   test("all entry IDs are unique", () => {

@@ -1,18 +1,29 @@
 /**
  * Color Interpolation
  *
- * Linear RGB interpolation between two color strings at time t (0-1).
- * v87.4: hex math only. OKLCH-correct interpolation arrives in v93 via culori.
- * This function is the swap point — v93 replaces the implementation;
- * the signature stays.
+ * v99: delegates to OKLCH-correct interpolation via colorMath.ts (culori).
+ * Signature unchanged; callers (themeCrossfade.ts) require no updates.
  *
- * Handles: "#rrggbb", "#rgb", "rgba(r,g,b,a)", "rgb(r,g,b)".
- * Pass-through (snap at t=0.5) for unparseable values (CSS vars, keywords).
+ * Handles: "#rrggbb", "#rgb", "rgba(r,g,b,a)", "rgb(r,g,b)", and any
+ * CSS color string culori can parse. Pass-through (snap at t=0.5) for
+ * unparseable values (CSS vars, keywords) — same behavior as before.
  */
 
-interface RGBA { r: number; g: number; b: number; a: number }
+import { interpolateOklch } from "./colorMath";
 
-function parseColor(color: string): RGBA | null {
+export function interpolateColor(from: string, to: string, t: number): string {
+  return interpolateOklch(from, to, t);
+}
+
+// ---------------------------------------------------------------------------
+// LEGACY — hex math implementation kept for rollback safety (v99).
+// Remove in a future polish pass once OKLCH has baked in production.
+// ---------------------------------------------------------------------------
+
+interface _RGBA { r: number; g: number; b: number; a: number }
+
+/** @deprecated v99: use interpolateOklch from colorMath.ts */
+function _parseColorHex(color: string): _RGBA | null {
   const trimmed = color.trim();
 
   const hexMatch = trimmed.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
@@ -37,18 +48,20 @@ function parseColor(color: string): RGBA | null {
   return null;
 }
 
-function formatColor(c: RGBA): string {
+/** @deprecated v99: use interpolateOklch from colorMath.ts */
+function _formatColorHex(c: _RGBA): string {
   if (c.a >= 1) {
     return `#${Math.round(c.r).toString(16).padStart(2, "0")}${Math.round(c.g).toString(16).padStart(2, "0")}${Math.round(c.b).toString(16).padStart(2, "0")}`;
   }
   return `rgba(${Math.round(c.r)}, ${Math.round(c.g)}, ${Math.round(c.b)}, ${c.a.toFixed(3)})`;
 }
 
-export function interpolateColor(from: string, to: string, t: number): string {
-  const a = parseColor(from);
-  const b = parseColor(to);
+/** @deprecated v99: use interpolateOklch from colorMath.ts */
+export function interpolateColorHex(from: string, to: string, t: number): string {
+  const a = _parseColorHex(from);
+  const b = _parseColorHex(to);
   if (!a || !b) return t < 0.5 ? from : to;
-  return formatColor({
+  return _formatColorHex({
     r: a.r + (b.r - a.r) * t,
     g: a.g + (b.g - a.g) * t,
     b: a.b + (b.b - a.b) * t,
