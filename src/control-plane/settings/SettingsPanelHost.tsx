@@ -12,14 +12,6 @@ import { SettingsSidebar } from './SettingsSidebar';
 import { SettingsContent } from './SettingsContent';
 import { SettingsSearchBar } from './SettingsSearchBar';
 import { SettingsStatusBar, applyOpacityLayers } from './SettingsStatusBar';
-import { CategoryTheme } from './categories/CategoryTheme';
-import { CategoryTypography } from './categories/CategoryTypography';
-import { CategoryGraph } from './categories/CategoryGraph';
-import { CategoryInspector } from './categories/CategoryInspector';
-import { CategoryDataSources } from './categories/CategoryDataSources';
-import { CategoryDisplay } from './categories/CategoryDisplay';
-import { CategoryAccessibility } from './categories/CategoryAccessibility';
-import { CategoryAdvanced } from './categories/CategoryAdvanced';
 
 export interface SettingsPanelHostHandle {
   toggle: () => void;
@@ -83,6 +75,7 @@ export const SettingsPanelHost = forwardRef<SettingsPanelHostHandle>(
     const catKey = normCatId(activeCat.id);
     const catLabel = t(`settings.panel.categories.${catKey}.label`);
     const catDescription = t(`settings.panel.categories.${catKey}.description`);
+    const ActiveContent = activeCat.content;
 
     return (
       <SettingsPanel
@@ -104,14 +97,7 @@ export const SettingsPanelHost = forwardRef<SettingsPanelHostHandle>(
         }
         contentSlot={
           <SettingsContent title={catLabel} description={catDescription}>
-            {activeCategory === 'theme'         && <CategoryTheme />}
-            {activeCategory === 'typography'    && <CategoryTypography />}
-            {activeCategory === 'graph'         && <CategoryGraph />}
-            {activeCategory === 'inspector'     && <CategoryInspector />}
-            {activeCategory === 'data-sources'  && <CategoryDataSources />}
-            {activeCategory === 'display'       && <CategoryDisplay />}
-            {activeCategory === 'accessibility' && <CategoryAccessibility />}
-            {activeCategory === 'advanced'      && <CategoryAdvanced />}
+            <ActiveContent />
           </SettingsContent>
         }
         statusBarSlot={

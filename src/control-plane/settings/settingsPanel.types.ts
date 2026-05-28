@@ -19,6 +19,7 @@ export interface CategoryDef {
   label: string;
   description: string;
   iconPath: string;
+  content: React.ComponentType;
 }
 
 export interface SettingsPanelGeometry {
