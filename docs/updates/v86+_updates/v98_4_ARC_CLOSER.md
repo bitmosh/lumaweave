@@ -66,6 +66,20 @@ bar. Constants: `STATUS_BAR_HEIGHT = 40`, `TOPBAR_HEIGHT = 64`.
 - The commented-out tile system block in AppShell (`{/* v86a: tile system is v86c */}`)
   can be removed in a future cleanup pass
 
+## v98 cleanup arc — full pass summary
+
+The v98 arc ran four passes, all on 2026-05-27. Goal: retire the "everything in AppShell"
+model by migrating panels to the tile registry and removing LeftTabPanel.
+
+| Pass | Branch / commit | What it did | E2E |
+|---|---|---|---|
+| v98 initial | `1f59c64` | Post-v97 cleanup phases 4–15: debug store, StatusBar CSS, Solar Plasma topbar rules, ControlDock grid artifact fix, Graph Inspector floating panel removed | 8 pre-existing tile-system failures, 0 new |
+| v98.1b | `3e587c2` (rejected) | Recovery pass: StatusBar popover live stats, topbar pill-toggle CSS, AppShell grid cleanup. Rejected by developer — superseded by v98.3 prompt | — |
+| v98.3 | `feat/v98-3-cleanup-completion` | QA feedback tile (`qa-feedback-section`), TileProvider auto-populate with bootstrap flag, `openQaPanel` inject-via-store pattern, `clearTiles` helper, 10+ test files hardened. LeftTabPanel removal deferred — QA tile prerequisite not yet met. | 619 / 38 pre-existing / 10 skip |
+| v98.4 | `ecb11a8` (this pass) | All remaining panels tiled (Graph Visual Inventory, System Index, Command Deck). LeftTabPanel removed from AppShell and deleted. Viewport-aware anchor clamping. 246 tests updated. | 591 / 0 / 11 skip |
+
+The v98 arc is closed. LeftTabPanel is gone from the codebase.
+
 ## Test delta explanation
 
 v98.3: 619 passed, 38 failed, 10 skipped
