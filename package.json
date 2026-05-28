@@ -34,6 +34,7 @@
     "@tauri-apps/plugin-opener": "^2",
     "chromium": "^3.0.3",
     "clsx": "^2.1.1",
+    "culori": "4.0.2",
     "glob": "^13.0.6",
     "graphology": "^0.26.0",
     "graphology-communities-louvain": "^2.0.2",
