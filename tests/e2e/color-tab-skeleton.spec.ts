@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { openInspectorOnTopbar } from "./helpers/inspector";
+import { clearTiles } from "./helpers/tiles";
 
 test.describe("v86d.3a Color spoke skeleton", () => {
   test("Color spoke appears in mini-graph when opened", async ({ page }) => {
@@ -64,6 +65,8 @@ test.describe("v86d.3a Color spoke skeleton", () => {
   test("back button returns to ring view", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
+    await clearTiles(page);
+    await expect(page.getByTestId("tile-layer").locator('[data-tile-id]')).toHaveCount(0);
 
     await openInspectorOnTopbar(page);
     await page.locator('[data-spoke-id="color"]').click();

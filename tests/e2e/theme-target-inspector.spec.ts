@@ -16,7 +16,7 @@ const runRuntimeProbe = async (
   page.evaluate((opts) => (window as ProbeWindow).__lwRunThemeTargetProbe?.(opts) ?? null, options);
 
 const enableInspector = async (page: Page): Promise<void> => {
-  await clearTiles(page);
+  await openQaPanel(page);
   await page.click("body");
   await page.keyboard.press("Alt+Shift+I");
 };
@@ -106,6 +106,7 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
 
   test("data-lw-theme-target attributes exist on shell + mission control + graph", async ({ page }) => {
     await page.goto("/");
+    await openQaPanel(page);
 
     await expect(page.locator('[data-lw-theme-target="app.shell"]').first()).toBeVisible();
     await expect(page.locator('[data-lw-theme-target="topbar.root"]').first()).toBeVisible();
@@ -119,7 +120,7 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
 
   test("inspector overlay toggles via hotkey and shows metadata", async ({ page }) => {
     await page.goto("/");
-    await clearTiles(page);
+    await openQaPanel(page);
 
     const toggleIndicator = page.getByTestId(OVERLAY_TOGGLE);
     await expect(toggleIndicator).toContainText("OFF");
@@ -148,7 +149,7 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
 
   test("overlay can toggle off even if focus is inside Mission Control note", async ({ page }) => {
     await page.goto("/");
-    await clearTiles(page);
+    await openQaPanel(page);
     const toggleIndicator = page.getByTestId(OVERLAY_TOGGLE);
     await expect(toggleIndicator).toContainText("OFF");
     await page.keyboard.press("Alt+Shift+I");
@@ -172,7 +173,7 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
 
   test("fixed metadata panel collapses when cursor leaves registered targets", async ({ page }) => {
     await page.goto("/");
-    await clearTiles(page);
+    await openQaPanel(page);
     const toggleIndicator = page.getByTestId(OVERLAY_TOGGLE);
     await expect(toggleIndicator).toContainText("OFF");
     await page.keyboard.press("Alt+Shift+I");
@@ -227,7 +228,7 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
 
   test("Mission Control toggle keeps UI Inspector state in sync", async ({ page }) => {
     await page.goto("/");
-    await clearTiles(page);
+    await openQaPanel(page);
     await openDebugTab(page);
 
     const debugToggleState = page.getByTestId("theme-inspector-toggle-state");
@@ -253,6 +254,7 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
 
   test("ghost overlay appears only when inspector is enabled", async ({ page }) => {
     await page.goto("/");
+    await openQaPanel(page);
 
     await expect(page.getByTestId("theme-target-ghost-layer")).toHaveCount(0);
 
@@ -273,7 +275,7 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
 
   test("ghost overlay keeps Mission Control interactive", async ({ page }) => {
     await page.goto("/");
-    await clearTiles(page);
+    await openQaPanel(page);
     await openDebugTab(page);
 
     const controlButton = page.getByTestId("theme-inspector-toggle-button");
@@ -645,7 +647,9 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
     await page.goto("/");
     const candidateId = "pin-candidate";
     await createSyntheticCandidate(page, candidateId);
-    await enableInspector(page);
+    // Enable inspector without placing QA tile (tile would overlap the synthetic candidate)
+    await page.click("body");
+    await page.keyboard.press("Alt+Shift+I");
     await waitForWarningLayerToSettle(page);
 
     await page.locator(`#${candidateId}`).hover();

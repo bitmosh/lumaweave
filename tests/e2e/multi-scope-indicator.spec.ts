@@ -1,4 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
+import { openQaPanel } from "./helpers/qa";
 
 type OverrideStorageWindow = Window & {
   __lwThemeOverrideStorage?: {
@@ -34,6 +35,7 @@ test.describe("v89.3 Multi-scope override indicator", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
     await reset(page);
+    await openQaPanel(page);
   });
 
   test.afterEach(async ({ page }) => {

@@ -187,6 +187,7 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
     <div
       className={`tile ${tile.collapsed ? "collapsed" : ""} ${inGroup ? "ingroup" : ""}`}
       data-flipped={flipped}
+      data-tile-id={tile.id}
       style={{ left: tile.x, top: tile.y, width: tile.w, height: realH, zIndex: tile.z }}
       onMouseDown={() => ctx.bringToFront(tile.id)}
     >

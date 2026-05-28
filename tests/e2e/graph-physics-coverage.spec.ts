@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { openQaPanel } from "./helpers/qa";
 
 test.describe("Graph Physics Playwright Coverage", () => {
   test.beforeEach(async ({ page }) => {
@@ -27,8 +28,9 @@ test.describe("Graph Physics Playwright Coverage", () => {
     const canvas = page.locator("canvas").first();
     await expect(canvas).toBeVisible();
 
-    // QA tab should be visible (Mission Control is the QA panel)
-    await expect(page.getByTestId("tab-qa")).toBeVisible();
+    // QA panel (Mission Control) should coexist with the graph
+    await openQaPanel(page);
+    await expect(page.getByTestId("qa-panel-tile-content")).toBeVisible();
   });
 
   test("graph shell remains visible after opening Command Deck", async ({ page }) => {

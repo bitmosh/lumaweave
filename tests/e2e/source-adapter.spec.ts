@@ -1,7 +1,10 @@
 import { test, expect } from "@playwright/test";
+import { openSourceAdapter } from "./helpers/tiles";
 
 test("Source Adapter Panel renders", async ({ page }) => {
   await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  await openSourceAdapter(page);
 
   const sourceAdapterPanel = page.getByTestId("source-adapter-panel");
   await expect(sourceAdapterPanel).toBeVisible();
@@ -9,6 +12,8 @@ test("Source Adapter Panel renders", async ({ page }) => {
 
 test("Source Adapter entry count is visible", async ({ page }) => {
   await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  await openSourceAdapter(page);
 
   const entryCount = page.getByTestId("source-adapter-entry-count");
   await expect(entryCount).toBeVisible();
@@ -17,6 +22,8 @@ test("Source Adapter entry count is visible", async ({ page }) => {
 
 test("Source Adapter self-graph entry renders", async ({ page }) => {
   await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  await openSourceAdapter(page);
 
   const selfGraphEntry = page.getByTestId("source-adapter-entry-self-graph-yaml-frontmatter");
   await expect(selfGraphEntry).toBeVisible();
@@ -24,6 +31,8 @@ test("Source Adapter self-graph entry renders", async ({ page }) => {
 
 test("Source Adapter git-codebase entry renders", async ({ page }) => {
   await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  await openSourceAdapter(page);
 
   const gitCodebaseEntry = page.getByTestId("source-adapter-entry-git-codebase");
   await expect(gitCodebaseEntry).toBeVisible();
@@ -31,6 +40,8 @@ test("Source Adapter git-codebase entry renders", async ({ page }) => {
 
 test("Source Adapter website-url entry renders", async ({ page }) => {
   await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  await openSourceAdapter(page);
 
   const websiteUrlEntry = page.getByTestId("source-adapter-entry-website-url");
   await expect(websiteUrlEntry).toBeVisible();
@@ -38,6 +49,8 @@ test("Source Adapter website-url entry renders", async ({ page }) => {
 
 test("Source Adapter Panel has no dead active controls", async ({ page }) => {
   await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  await openSourceAdapter(page);
 
   const sourceAdapterPanel = page.getByTestId("source-adapter-panel");
 

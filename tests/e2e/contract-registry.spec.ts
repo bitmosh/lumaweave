@@ -34,6 +34,7 @@ type ProbeWindow = Window & {
 
 test("Mission Control tabs are visible", async ({ page }) => {
   await page.goto("/");
+  await openQaPanel(page);
 
   // QA panel is in the left dock
   const qaPanel = page.getByTestId("qa-panel").first();
@@ -169,6 +170,7 @@ test("Theme runtime integrity - animation toggle updates visual state", async ({
 
 test("Advisory tab is visible", async ({ page }) => {
   await page.goto("/");
+  await openQaPanel(page);
 
   // QA panel is in the left dock - use nth(1) to get the main panel
   const qaPanel = page.getByTestId("qa-panel").first();

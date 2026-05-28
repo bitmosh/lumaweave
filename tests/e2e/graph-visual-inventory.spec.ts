@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
-import { openGraphVisualInventory } from "./helpers/tiles";
+import { openGraphVisualInventory, openCommandDeck } from "./helpers/tiles";
+import { openQaPanel } from "./helpers/qa";
 
 test.describe("Graph Visual Inventory", () => {
   test.beforeEach(async ({ page }) => {
@@ -124,12 +125,14 @@ test.describe("Graph Visual Inventory", () => {
   });
 
   test("Command Deck still works", async ({ page }) => {
+    await openCommandDeck(page);
     const commandDeckPanel = page.getByTestId("command-deck-panel");
     await expect(commandDeckPanel).toBeVisible();
   });
 
   test("QA panel still works", async ({ page }) => {
-    await expect(page.getByTestId("tab-qa")).toBeVisible();
+    await openQaPanel(page);
+    await expect(page.getByTestId("qa-panel-tile-content")).toBeVisible();
   });
 
   test("Registry entry count matches inventory row count", async ({ page }) => {

@@ -66,3 +66,7 @@ export async function openSystemIndex(page: Page): Promise<void> {
 export async function openCommandDeck(page: Page): Promise<void> {
   await injectTile(page, "command-deck-section", "tile_command-deck", "command-deck-panel", { w: 400, h: 560 });
 }
+
+export async function openSourceAdapter(page: Page): Promise<void> {
+  await injectTile(page, "source-adapter-section", "tile_source-adapter", "source-adapter-panel", { w: 400, h: 560 });
+}
