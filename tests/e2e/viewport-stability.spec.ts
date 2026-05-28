@@ -5,7 +5,7 @@ test("graph remains visible after QA navigation (for multi-check checklists)", a
   await page.goto("/");
   await openQaPanel(page);
 
-  await expect(page.getByTestId("tab-qa")).toBeVisible();
+  await expect(page.getByTestId("qa-panel-tile-content")).toBeVisible();
 
   // Check if navigation is available (multi-check checklist)
   const nextButton = page.getByRole("button", { name: /next/i });

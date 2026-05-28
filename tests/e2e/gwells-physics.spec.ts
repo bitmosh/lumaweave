@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { getSigmaCameraState } from "../helpers/app-state";
+import { clearTiles } from "./helpers/tiles";
 
 /**
  * Gwells Physics Integration Tests
@@ -566,6 +567,8 @@ test.describe("Gwells Physics Integration", () => {
   });
 
   test("Pass C9.4: Clicking pinned bookmark dims non-pinned nodes", async ({ page }) => {
+    await clearTiles(page);
+    await expect(page.getByTestId("tile-layer").locator('[data-tile-id]')).toHaveCount(0);
     await page.waitForFunction(() => {
       const sigma = (window as any).__lwSigma;
       if (!sigma) return false;
@@ -765,6 +768,8 @@ test.describe("Gwells Physics Integration", () => {
   });
 
   test("Pass C9.4b: Pinning a node while dim mode is active dims the new state", async ({ page }) => {
+    await clearTiles(page);
+    await expect(page.getByTestId("tile-layer").locator('[data-tile-id]')).toHaveCount(0);
     await page.waitForFunction(() => {
       const sigma = (window as any).__lwSigma;
       if (!sigma) return false;

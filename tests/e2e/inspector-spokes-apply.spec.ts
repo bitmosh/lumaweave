@@ -1,10 +1,13 @@
 import { test, expect } from "@playwright/test";
 import { openInspectorOnTopbar } from "./helpers/inspector";
+import { clearTiles } from "./helpers/tiles";
 
 test.describe("v86d.4 Apply spoke", () => {
   const openApplyTab = async (page: any) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
+    await clearTiles(page);
+    await expect(page.getByTestId("tile-layer").locator('[data-tile-id]')).toHaveCount(0);
     await openInspectorOnTopbar(page);
     await expect(page.locator('[data-testid="inspector-mini-graph"]')).toBeVisible();
     await page.locator('[data-spoke-id="apply"]').click();

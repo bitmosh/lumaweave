@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { openInspectorOnTopbar } from "./helpers/inspector";
+import { clearTiles } from "./helpers/tiles";
 
 test.describe("v86d.3b ColorTab functional", () => {
   test("clicking a binding row makes it active", async ({ page }) => {
@@ -26,6 +27,8 @@ test.describe("v86d.3b ColorTab functional", () => {
   test("clicking palette swatch commits color to active binding", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
+    await clearTiles(page);
+    await expect(page.getByTestId("tile-layer").locator('[data-tile-id]')).toHaveCount(0);
 
     await openInspectorOnTopbar(page);
     await page.locator('[data-spoke-id="color"]').click();
@@ -85,6 +88,8 @@ test.describe("v86d.3b ColorTab functional", () => {
   test("scope picker All routes to global override", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
+    await clearTiles(page);
+    await expect(page.getByTestId("tile-layer").locator('[data-tile-id]')).toHaveCount(0);
 
     await openInspectorOnTopbar(page);
     await page.locator('[data-spoke-id="color"]').click();
@@ -127,6 +132,8 @@ test.describe("v86d.3b ColorTab functional", () => {
   test("recent swatches list capped at 8 entries", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
+    await clearTiles(page);
+    await expect(page.getByTestId("tile-layer").locator('[data-tile-id]')).toHaveCount(0);
 
     // Clear localStorage after page loads
     await page.evaluate(() => localStorage.removeItem("ins-recent-colors"));

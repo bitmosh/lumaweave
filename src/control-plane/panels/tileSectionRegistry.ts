@@ -16,6 +16,7 @@ import { QaPanelTileContent } from "../qa/QaPanelTileContent";
 import { GraphVisualInventoryTileContent } from "../graph/GraphVisualInventoryTileContent";
 import { SystemIndexTileContent } from "../system-index/SystemIndexTileContent";
 import { CommandDeckTileContent } from "../command-deck/CommandDeckTileContent";
+import { SourceAdapterTileContent } from "../../source-adapter/SourceAdapterTileContent";
 
 // Lazy to prevent CSS import from breaking Node.js module resolution in Playwright
 const LazyTypographyPlayground = lazy(() =>
@@ -195,6 +196,21 @@ const entries: TileSectionEntry[] = [
     defaultVisible: false,
     defaultExpanded: true,
     iconGlyph: "🎛",
+  },
+  {
+    id: "source-adapter-section",
+    label: "Source Adapters",
+    category: "left-panel",
+    defaultWidth: 400,
+    defaultHeight: 560,
+    collapsible: true,
+    content: () => createElement(SourceAdapterTileContent),
+    contentTestId: "source-adapter-panel",
+    sourceTestId: undefined,
+    defaultAnchor: { edge: "left", offset: 80 },
+    defaultVisible: false,
+    defaultExpanded: true,
+    iconGlyph: "🔌",
   },
 ];
 

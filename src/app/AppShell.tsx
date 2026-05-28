@@ -44,6 +44,7 @@ import { CommandPaletteHost } from "../control-plane/commands/CommandPaletteHost
 import "../control-plane/commands/palette.css";
 import { StatusBar } from "../control-plane/StatusBar";
 import { useCrossfadeAppTokens } from "../themes/themeCrossfade";
+import { useThemeInspectorStore } from "../themes/themeInspectorStore";
 
 const EMPTY_OVERRIDES: Record<string, unknown> = {};
 const EMPTY_PINS: Record<string, { x: number; y: number; z?: number }> = {};
@@ -260,7 +261,8 @@ export function AppShell() {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
   const [pathTargetId, setPathTargetId] = useState<string | null>(null);
-  const [themeInspectorEnabled, setThemeInspectorEnabled] = useState(false);
+  const themeInspectorEnabled = useThemeInspectorStore((s) => s.enabled);
+  const setThemeInspectorEnabled = useThemeInspectorStore((s) => s.setEnabled);
 
   // Pass C9.2: pinned highlight mode state (persisted for testability)
   const pinnedHighlightActive = settings.physics?.pinnedHighlightActive ?? false;

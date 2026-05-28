@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { openInspectorOnTopbar } from "./helpers/inspector";
+import { clearTiles } from "./helpers/tiles";
 
 test.describe("v86d.4 History spoke", () => {
   const TARGET_ID = "topbar.root";
@@ -19,6 +20,7 @@ test.describe("v86d.4 History spoke", () => {
   const openHistoryTab = async (page: any) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
+    await clearTiles(page);
     await openInspectorOnTopbar(page);
     await expect(page.locator('[data-testid="inspector-mini-graph"]')).toBeVisible();
     await clickHistorySpoke(page);
