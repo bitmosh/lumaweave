@@ -667,7 +667,7 @@ hard-throw at boot if any canonical path is missing from a built-in preset.
 Sigma settings that control visual behavior (e.g., `nodeReducer`, `edgeReducer`, renderer
 programs, size settings) remain under the contracts that govern those systems.
 
-Per `GRAPH_VISUAL_POLICY.md`, `Direct Sigma.setSetting() calls for visual properties` are
+Per `GRAPH_SIGMA_AND_RENDERING.md` (supersedes `GRAPH_VISUAL_POLICY.md`), `Direct Sigma.setSetting() calls for visual properties` are
 "Forbidden Without Contract." This contract (v59) is the authorizing contract for
 `sigma.setSetting()` on the four color keys listed above.
 
@@ -822,7 +822,7 @@ v60  [PLANNED] Graph Theme CSS Variable Bridge
 Beyond v60, future contracts may address:
 - Full canonical path coverage for secondary/tertiary interaction colors
 - Audio-reactive color override system (requires Motion Safety gate + contract)
-- Per-node theme override (requires source adapter contract per GRAPH_VISUAL_POLICY.md)
+- Per-node theme override (requires source adapter contract per GRAPH_SIGMA_AND_RENDERING.md)
 - Custom WebGL renderer with theme-aware color injection
 
 ---

@@ -923,7 +923,7 @@ export const advisoryV45: BanditAdvisorySection = {
     {
       id: "v45-contract-exists",
       prompt: "Does the Graph Runtime Boundary Contract exist?",
-      context: "docs/graph/GRAPH_RUNTIME_BOUNDARY_CONTRACT.md should exist with all 20 required sections.",
+      context: "GRAPH_RUNTIME_BOUNDARY_CONTRACT.md archived v100.0.3 — superseded by docs/_v100-rewrites/GRAPH_SIGMA_AND_RENDERING.md.",
       responseType: "choice",
       userResponse: "",
       status: "unanswered",
@@ -1988,7 +1988,7 @@ export const advisoryV40: BanditAdvisorySection = {
     {
       id: "v40-visual-policy-contract-exists",
       prompt: "Does the Graph Visual Policy contract exist?",
-      context: "docs/graph/GRAPH_VISUAL_POLICY.md should exist with all required sections.",
+      context: "GRAPH_VISUAL_POLICY.md archived v100.0.3 — superseded by docs/_v100-rewrites/GRAPH_SIGMA_AND_RENDERING.md.",
       responseType: "choice",
       userResponse: "",
       status: "unanswered",

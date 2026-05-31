@@ -424,7 +424,7 @@ Before this contract can be implemented at runtime:
 
 1. GRAMMAR_LENS_CONTRACT.md must be accepted (this pass)
 2. CROSS_LAYER_OVERRIDE_CACHE_CONTRACT.md must be accepted (already accepted at v73c)
-3. RENDERING_LAYER_ARCHITECTURE.md must be accepted (already accepted at v73c)
+3. GRAPH_SIGMA_AND_RENDERING.md must be accepted (supersedes RENDERING_LAYER_ARCHITECTURE.md, accepted at v73c)
 4. MOTION_SAFETY_AND_EPILEPSY_GUARD_CONTRACT.md must be accepted (already accepted at v60)
 5. GLOBAL_ELEMENT_UPDATE_CONTRACT.md must be written and accepted (for type/global scope)
 

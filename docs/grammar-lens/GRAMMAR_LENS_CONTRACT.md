@@ -55,7 +55,7 @@ This contract governs:
 
 This contract does NOT govern:
 
-- Sigma renderer internals (governed by GRAPH_RUNTIME_BOUNDARY_CONTRACT.md)
+- Sigma renderer internals (governed by GRAPH_SIGMA_AND_RENDERING.md, supersedes GRAPH_RUNTIME_BOUNDARY_CONTRACT.md)
 - Theme token system (governed by GRAPH_THEME_APPLICATION_CONTRACT.md)
 - Motion safety gates (governed by MOTION_SAFETY_AND_EPILEPSY_GUARD_CONTRACT.md)
 - Cross-layer override cache implementation (governed by CROSS_LAYER_OVERRIDE_CACHE_CONTRACT.md)
@@ -403,7 +403,7 @@ Future implementation acceptance criteria (when the overlay is implemented):
 Before this contract can be implemented at runtime:
 
 1. CROSS_LAYER_OVERRIDE_CACHE_CONTRACT.md must be accepted (already accepted at v73c)
-2. RENDERING_LAYER_ARCHITECTURE.md must be accepted (already accepted at v73c)
+2. GRAPH_SIGMA_AND_RENDERING.md must be accepted (supersedes RENDERING_LAYER_ARCHITECTURE.md, accepted at v73c)
 3. MOTION_SAFETY_AND_EPILEPSY_GUARD_CONTRACT.md must be accepted (already accepted at v60)
 4. GLOBAL_ELEMENT_UPDATE_CONTRACT.md must be written and accepted (for type/global scope)
 5. CURSOR_INSPECTOR_CONTRACT.md must be written and accepted (this pass)
