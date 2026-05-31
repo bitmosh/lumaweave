@@ -89,7 +89,7 @@ v78+   Visual Grammar Engine Bootstrap
 Write GRAMMAR_LENS_CONTRACT.md and CURSOR_INSPECTOR_CONTRACT.md before extending the overlay further. The overlay is partially live without formal governance. This is a docs-only pass, low risk, one session.
 
 **Priority 2 — Source Adapter OS Foundation (v74a)**
-Docs-only contract defining the adapter lifecycle, base schema, safety requirements, and forbidden behavior. Target file: `docs/source-adapter/SOURCE_ADAPTER_OS_CONTRACT.md`
+Docs-only contract defining the adapter lifecycle, base schema, safety requirements, and forbidden behavior. Superseded by `docs/_v100-rewrites/SOURCE_ADAPTER.md` (SOURCE_ADAPTER_OS_CONTRACT.md archived v100.0.5).
 
 **Priority 3 — Self-Graph Fixture (v75a/v75b)**
 Highest-leverage milestone. LumaWeave visualizing its own architecture. First demo surface. First real product screenshot.

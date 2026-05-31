@@ -297,14 +297,7 @@ Shipping precursors exist for several VGE concepts: Grammar Lens (`docs/grammar-
 
 Primary:
 ```
-docs/source-adapter/SOURCE_ADAPTER_OS_CONTRACT.md
-docs/source-adapter/SOURCE_ADAPTER_OS_OVERVIEW.md
-docs/source-adapter/NORMALIZED_SOURCE_GRAPH_SCHEMA.md
-docs/source-adapter/INGESTION_SAFETY_AND_QA.md
-docs/source-adapter/SOURCE_ADAPTER_CATALOG.md
-docs/source-adapter/SOURCE_ADAPTER_ROADMAP.md
-docs/source-adapter/TRANSLATION_SET_MODEL.md
-docs/source-adapter/WEBSITE_URL_ADAPTER_V0.md
+docs/_v100-rewrites/SOURCE_ADAPTER.md  (supersedes all source-adapter docs — archived v100.0.5)
 ```
 
 Rules:

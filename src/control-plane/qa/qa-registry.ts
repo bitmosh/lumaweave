@@ -11191,7 +11191,7 @@ export const qaCheckDefinitions: QaCheckDefinition[] = [
     featureName: "Source Adapter Base Registry + Validator",
     qaKey: "v74b",
     title: "Registry contains only documented adapter types with no forbidden behavior",
-    expected: "Registry should only contain documented adapter types from SOURCE_ADAPTER_CATALOG.md with safe, read-only behavior",
+    expected: "Registry should only contain documented adapter types from SOURCE_ADAPTER.md (supersedes SOURCE_ADAPTER_CATALOG.md, archived v100.0.5) with safe, read-only behavior",
     qaVersion: 74,
     active: false,
     steps: ["Verify registry contains only documented adapter types with safe behavior"],

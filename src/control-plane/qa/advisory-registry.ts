@@ -1911,7 +1911,7 @@ export const advisoryV74b: BanditAdvisorySection = {
     {
       id: "v74b-no-forbidden-behavior",
       prompt: "Does the registry contain only documented adapter types with no forbidden behavior?",
-      context: "Registry should only contain documented adapter types from SOURCE_ADAPTER_CATALOG.md with safe, read-only behavior.",
+      context: "Registry should only contain documented adapter types from SOURCE_ADAPTER.md (supersedes SOURCE_ADAPTER_CATALOG.md, archived v100.0.5) with safe, read-only behavior.",
       responseType: "choice",
       userResponse: "",
       status: "unanswered",

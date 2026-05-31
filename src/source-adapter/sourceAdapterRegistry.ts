@@ -4,7 +4,7 @@
  * A searchable registry of source adapters that translate external data sources
  * into the normalized LumaWeave graph format.
  * 
- * Contract: docs/source-adapter/SOURCE_ADAPTER_OS_CONTRACT.md
+ * Contract: docs/_v100-rewrites/SOURCE_ADAPTER.md (supersedes SOURCE_ADAPTER_OS_CONTRACT.md)
  */
 
 // Adapter Types
