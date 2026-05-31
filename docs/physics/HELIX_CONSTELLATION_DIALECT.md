@@ -26,8 +26,8 @@ tags: [physics, helix, dna, constellation, dialect, brand, audio, layout]
 > gwells migration. When this dialect ships, it will be expressed as
 > gwells well types, interactions, and a seed function.
 >
-> See `docs/physics/GRAVITY_WELL_SYSTEM_CONTRACT.md` for the engine
-> that will host this dialect.
+> See `docs/_v100-rewrites/GWELLS_PHYSICS.md` for the engine
+> that will host this dialect (supersedes GRAVITY_WELL_SYSTEM_CONTRACT.md).
 
 ## Overview
 

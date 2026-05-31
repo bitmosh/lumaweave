@@ -27,8 +27,8 @@ tags: [physics, galaxy, orbital, cluster, dialect, audio, layout, complex]
 > inter-cluster repulsion. Implementation is gated on gwells v0
 > acceptance and the subsequent dialect-aware tunable system.
 >
-> See `docs/physics/GRAVITY_WELL_SYSTEM_CONTRACT.md` for the engine
-> that will host this dialect.
+> See `docs/_v100-rewrites/GWELLS_PHYSICS.md` for the engine
+> that will host this dialect (supersedes GRAVITY_WELL_SYSTEM_CONTRACT.md).
 >
 > The "Implementation Approach: D3-force" section below is obsolete.
 > Gwells is the runtime path; D3-force is not used.

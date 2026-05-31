@@ -96,10 +96,7 @@ Rules:
 ## Physics / Gwells
 
 Primary:
-docs/physics/GRAVITY_WELL_SYSTEM_CONTRACT.md
-docs/physics/GWELLS_README.md
-docs/physics/GWELLS_REGISTRY_PATTERNS.md
-docs/physics/GWELLS_DIALECT_RADIAL_BACKBONE.md
+docs/_v100-rewrites/GWELLS_PHYSICS.md  (supersedes GRAVITY_WELL_SYSTEM_CONTRACT.md, GWELLS_README.md, GWELLS_REGISTRY_PATTERNS.md, GWELLS_DIALECT_RADIAL_BACKBONE.md — archived v100.0.4)
 src/physics/gwells/types.ts
 src/physics/gwells/wellTypes.ts
 src/physics/gwells/interactions.ts
@@ -147,7 +144,7 @@ substrate):
 - `docs/physics/CONSTELLATION_MODE_DIALECT.md`
 - `docs/physics/HELIX_CONSTELLATION_DIALECT.md`
 - `docs/physics/GALAXY_MODE_DIALECT.md`
-- `docs/physics/PHYSICS_DIALECT_SYSTEM.md`
+- `docs/_v100-rewrites/GWELLS_PHYSICS.md` (supersedes PHYSICS_DIALECT_SYSTEM.md — archived v100.0.4)
 - `docs/graph/intelligence/CLUSTER_GRAVITY_AND_COLOR_CODED_NEIGHBORHOODS.md`
 
 ---

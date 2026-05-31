@@ -26,8 +26,8 @@ tags: [physics, constellation, starfield, dialect, audio, layout]
 > interactions — likely with a single well type that has high
 > sibling repulsion and low anchor attraction.
 >
-> See `docs/physics/GRAVITY_WELL_SYSTEM_CONTRACT.md` for the engine
-> that will host this dialect.
+> See `docs/_v100-rewrites/GWELLS_PHYSICS.md` for the engine
+> that will host this dialect (supersedes GRAVITY_WELL_SYSTEM_CONTRACT.md).
 
 ## Overview
 

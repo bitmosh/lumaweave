@@ -17,7 +17,7 @@
  * For N=3+: spines distribute around the central axis; some will overlap in
  * the 2D projection until the camera supports rotation.
  *
- * Algorithm and parameter spec: docs/physics/GWELLS_DIALECT_PARALLEL_SPINES.md
+ * Algorithm and parameter spec: docs/_v100-rewrites/GWELLS_PHYSICS.md (supersedes GWELLS_DIALECT_PARALLEL_SPINES.md)
  *
  * Writes node x/y/z positions and __seededSpinePositions graph attr.
  * Deterministic: same input → same output.
