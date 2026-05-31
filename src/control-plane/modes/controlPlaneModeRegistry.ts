@@ -6,7 +6,7 @@
  * Purpose: Prepare for future mode-aware rendering without adding a runtime toggle,
  * hiding evidence, or changing existing UI behavior.
  *
- * Contract: docs/control-plane/HUMAN_MODE_EVIDENCE_MODE_CONTRACT.md
+ * Contract: docs/_v100-rewrites/CONTROL_PLANE_AND_SYSTEM_INDEX.md (supersedes HUMAN_MODE_EVIDENCE_MODE_CONTRACT.md)
  */
 
 export type ControlPlaneModeId = "human" | "evidence" | "debug";
@@ -81,8 +81,7 @@ const HUMAN_MODE: ControlPlaneModeMetadata = {
   ],
   futureUse: "Mode-aware rendering for SystemIndexPanel and future control-plane surfaces",
   relatedContracts: [
-    "docs/control-plane/HUMAN_MODE_EVIDENCE_MODE_CONTRACT.md",
-    "docs/control-plane/SYSTEM_INDEX_REGISTRY_CONTRACT.md",
+    "docs/_v100-rewrites/CONTROL_PLANE_AND_SYSTEM_INDEX.md",
   ],
   tags: ["overview", "readable", "progressive-disclosure"],
 };
@@ -126,8 +125,7 @@ const EVIDENCE_MODE: ControlPlaneModeMetadata = {
   ],
   futureUse: "Default for validation-sensitive surfaces unless migrated to mode-aware rendering",
   relatedContracts: [
-    "docs/control-plane/HUMAN_MODE_EVIDENCE_MODE_CONTRACT.md",
-    "docs/control-plane/SYSTEM_INDEX_REGISTRY_CONTRACT.md",
+    "docs/_v100-rewrites/CONTROL_PLANE_AND_SYSTEM_INDEX.md",
     "docs/control-plane/CONTRACT_TO_CODE_TRACE_MATRIX.md",
   ],
   tags: ["full-evidence", "qa-review", "contract-compliance"],
@@ -169,8 +167,7 @@ const DEBUG_MODE: ControlPlaneModeMetadata = {
   ],
   futureUse: "Internal QA/debug telemetry, Playwright test targeting, validator output inspection",
   relatedContracts: [
-    "docs/control-plane/HUMAN_MODE_EVIDENCE_MODE_CONTRACT.md",
-    "docs/control-plane/SYSTEM_INDEX_REGISTRY_CONTRACT.md",
+    "docs/_v100-rewrites/CONTROL_PLANE_AND_SYSTEM_INDEX.md",
   ],
   tags: ["diagnostic", "internal-qa", "test-targeting"],
 };

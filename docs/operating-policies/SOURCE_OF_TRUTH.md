@@ -215,8 +215,7 @@ Rules:
 
 Primary:
 ```
-docs/control-plane/contracts/SYSTEM_INDEX_REGISTRY_CONTRACT.md
-docs/control-plane/contracts/SYSTEM_INDEX_PANEL_MOUNT_CONTRACT.md
+docs/_v100-rewrites/CONTROL_PLANE_AND_SYSTEM_INDEX.md  (supersedes SYSTEM_INDEX_REGISTRY_CONTRACT.md, SYSTEM_INDEX_PANEL_MOUNT_CONTRACT.md — archived v100.0.6)
 src/system-index/systemIndexRegistry.ts
 src/control-plane/system-index/SystemIndexPanel.tsx
 ```
@@ -233,7 +232,7 @@ Rules:
 
 Primary:
 ```
-docs/control-plane/contracts/HUMAN_MODE_EVIDENCE_MODE_CONTRACT.md
+docs/_v100-rewrites/CONTROL_PLANE_AND_SYSTEM_INDEX.md  (supersedes HUMAN_MODE_EVIDENCE_MODE_CONTRACT.md — archived v100.0.6)
 src/modes/modeMetadataRegistry.ts
 scripts/validate-mode-registry.ts
 ```
@@ -249,11 +248,9 @@ Rules:
 
 Primary:
 ```
+docs/_v100-rewrites/CONTROL_PLANE_AND_SYSTEM_INDEX.md  (supersedes COMMAND_DECK_AND_HOTKEY_REGISTRY_CONTRACT.md, PERSPECTIVE_SYSTEM_CONTRACT.md, GRAPH_CONTROL_PLANE_NAVIGATION_CONTRACT.md — archived v100.0.6)
 src/control-plane/command-deck/*
 src/control-plane/perspectives/*
-docs/control-plane/contracts/COMMAND_DECK_AND_HOTKEY_REGISTRY_CONTRACT.md
-docs/control-plane/contracts/PERSPECTIVE_SYSTEM_CONTRACT.md
-docs/control-plane/contracts/GRAPH_CONTROL_PLANE_NAVIGATION_CONTRACT.md
 ```
 
 Rules:

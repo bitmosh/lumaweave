@@ -1744,7 +1744,7 @@ export const advisoryV68: BanditAdvisorySection = {
     {
       id: "v68-graph-control-plane-navigation-contract-exists",
       prompt: "Does the Graph Control Plane Navigation contract exist?",
-      context: "docs/control-plane/GRAPH_CONTROL_PLANE_NAVIGATION_CONTRACT.md should exist with all required sections for navigation improvements.",
+      context: "GRAPH_CONTROL_PLANE_NAVIGATION_CONTRACT.md archived v100.0.6 — superseded by docs/_v100-rewrites/CONTROL_PLANE_AND_SYSTEM_INDEX.md.",
       responseType: "choice",
       userResponse: "yes",
       status: "answered",
