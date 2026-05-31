@@ -10,28 +10,67 @@
 │  ├──  musicReactiveMappingRegistry.ts
 │  └──  syntheticAudioSignal.ts
 ├──  control-plane
+│  ├──  agent
+│  │  └──  AgentChatPlaceholder.tsx
 │  ├──  command-deck
 │  │  ├──  CommandDeckPanel.tsx
-│  │  └──  CommandDeckShell.tsx
+│  │  ├──  CommandDeckShell.tsx
+│  │  └──  CommandDeckTileContent.tsx
 │  ├──  commands
+│  │  ├──  palette
+│  │  │  ├──  components
+│  │  │  │  ├──  PaletteCategoryChips.tsx
+│  │  │  │  ├──  PaletteDestructiveConfirm.tsx
+│  │  │  │  ├──  PaletteHintBar.tsx
+│  │  │  │  ├──  PaletteResultRow.tsx
+│  │  │  │  ├──  PaletteResultsList.tsx
+│  │  │  │  ├──  PaletteSearchInput.tsx
+│  │  │  │  └──  PaletteSectionHeader.tsx
+│  │  │  ├──  palette.types.ts
+│  │  │  ├──  palettePersistence.ts
+│  │  │  ├──  paletteSearch.ts
+│  │  │  ├──  paletteSuggestions.ts
+│  │  │  └──  useCommandPaletteState.ts
+│  │  ├──  command-registry.entries.ts
 │  │  ├──  command-registry.ts
 │  │  ├──  command.types.ts
-│  │  └──  CommandPalette.tsx
+│  │  ├──  CommandPalette.tsx
+│  │  ├──  CommandPaletteHost.tsx
+│  │  ├──  hotkey-binding.types.ts
+│  │  ├──  hotkey-registry.entries.ts
+│  │  ├──  hotkey-registry.ts
+│  │  ├──  hotkey-utils.ts
+│  │  ├──  installGlobalHotkeyListener.ts
+│  │  └──  palette.css
 │  ├──  contracts
 │  │  ├──  controlSurfaceContract.registry.ts
 │  │  ├──  controlSurfaceContract.types.ts
 │  │  ├──  controlSurfaceContract.utils.ts
 │  │  └──  index.ts
+│  ├──  debug
+│  │  └──  debug.store.ts
 │  ├──  features
 │  │  ├──  feature-flags.ts
 │  │  └──  feature-registry.ts
 │  ├──  graph
-│  │  └──  GraphVisualInventoryPanel.tsx
+│  │  ├──  GraphVisualInventoryPanel.tsx
+│  │  └──  GraphVisualInventoryTileContent.tsx
+│  ├──  graph-sources
+│  │  └──  GraphSourcesTileContent.tsx
 │  ├──  handles
 │  │  ├──  handleset.registry.ts
 │  │  ├──  handleset.types.ts
 │  │  ├──  handleset.utils.ts
 │  │  └──  index.ts
+│  ├──  hotkeys
+│  │  ├──  hotkey-binding.types.ts
+│  │  ├──  hotkey-registry.entries.ts
+│  │  ├──  hotkey-registry.ts
+│  │  ├──  hotkey-utils.ts
+│  │  └──  installGlobalHotkeyListener.ts
+│  ├──  ide
+│  │  ├──  editorTemplateRegistry.ts
+│  │  └──  installOpenInIdeListener.ts
 │  ├──  inspector
 │  │  ├──  spokes
 │  │  │  ├──  ApplyTab.tsx
@@ -54,6 +93,7 @@
 │  │  │  ├──  color-tab.css
 │  │  │  ├──  geometry-tab.css
 │  │  │  └──  placeholder-tab.css
+│  │  ├──  GraphInspectorTileContent.tsx
 │  │  ├──  inspector.types.ts
 │  │  ├──  InspectorMiniGraph.tsx
 │  │  ├──  MiniGraphRenderer.tsx
@@ -66,12 +106,10 @@
 │  │  ├──  AppearanceSectionContent.tsx
 │  │  ├──  CollapsiblePanel.tsx
 │  │  ├──  CollapsibleSection.tsx
-│  │  ├──  ControlDock.tsx
 │  │  ├──  FloatingTile.tsx
 │  │  ├──  HelixTwistSliders.tsx
 │  │  ├──  InspectorPanel.tsx
 │  │  ├──  LabelsSectionContent.tsx
-│  │  ├──  LeftTabPanel.tsx
 │  │  ├──  panel.types.ts
 │  │  ├──  PhysicsSectionContent.tsx
 │  │  ├──  ThemeMappingPanel.tsx
@@ -89,28 +127,51 @@
 │  ├──  presets
 │  ├──  qa
 │  │  ├──  advisory-registry.ts
+│  │  ├──  feedback-checklist.ts
 │  │  ├──  qa-registry.ts
 │  │  ├──  qa.store.ts
 │  │  ├──  qa.types.ts
-│  │  └──  QaPanel.tsx
+│  │  ├──  QaPanel.tsx
+│  │  └──  QaPanelTileContent.tsx
 │  ├──  settings
 │  │  ├──  __tests__
+│  │  ├──  categories
+│  │  │  ├──  CategoryAccessibility.tsx
+│  │  │  ├──  CategoryAdvanced.tsx
+│  │  │  ├──  CategoryDataSources.tsx
+│  │  │  ├──  CategoryDisplay.tsx
+│  │  │  ├──  CategoryGraph.tsx
+│  │  │  ├──  CategoryInspector.tsx
+│  │  │  ├──  CategoryTheme.tsx
+│  │  │  └──  CategoryTypography.tsx
 │  │  ├──  settings.defaults.ts
 │  │  ├──  settings.migrations.ts
 │  │  ├──  settings.registry.ts
 │  │  ├──  settings.schema.ts
 │  │  ├──  settings.store.ts
-│  │  └──  SettingsPanel.tsx
+│  │  ├──  SettingsContent.tsx
+│  │  ├──  SettingsPanel.css
+│  │  ├──  SettingsPanel.tsx
+│  │  ├──  settingsPanel.types.ts
+│  │  ├──  settingsPanelCategoryRegistry.ts
+│  │  ├──  SettingsPanelHost.tsx
+│  │  ├──  SettingsSearchBar.tsx
+│  │  ├──  SettingsSidebar.tsx
+│  │  └──  SettingsStatusBar.tsx
 │  ├──  system-index
 │  │  ├──  SystemIndexPanel.tsx
-│  │  └──  systemIndexRegistry.ts
-│  └──  topbar
-│     ├──  HexLogo.tsx
-│     ├──  StatusCluster.tsx
-│     ├──  StatusPill.tsx
-│     ├──  topbar.css
-│     ├──  Topbar.tsx
-│     └──  WordmarkBlock.tsx
+│  │  ├──  systemIndexRegistry.ts
+│  │  └──  SystemIndexTileContent.tsx
+│  ├──  topbar
+│  │  ├──  HexLogo.tsx
+│  │  ├──  PillToggle.tsx
+│  │  ├──  StatusCluster.tsx
+│  │  ├──  StatusPill.tsx
+│  │  ├──  topbar.css
+│  │  ├──  Topbar.tsx
+│  │  └──  WordmarkBlock.tsx
+│  ├──  StatusBar.css
+│  └──  StatusBar.tsx
 ├──  fixtures
 │  ├──  GRAPH_REPORT.md
 │  ├──  self-graph-adapter.ts
@@ -124,8 +185,7 @@
 │  │  │  └──  plasma.vert.glsl
 │  │  └──  PlasmaEdgeProgram.ts
 │  ├──  edges
-│  │  ├──  edgeStyleRegistry.ts
-│  │  └──  v91-Edge_Plasma_Shaders.html
+│  │  └──  edgeStyleRegistry.ts
 │  ├──  ingest
 │  │  ├──  loadGraphifySource.ts
 │  │  └──  useGraphSourceSummary.ts
@@ -178,6 +238,15 @@
 │  │  └──  graphVisualTypes.ts
 │  ├──  graphViewElementRegistry.ts
 │  └──  graphVisualThemeMappingRegistry.ts
+├──  i18n
+│  ├──  manifests
+│  │  └──  en.json
+│  ├──  I18nProvider.tsx
+│  ├──  index.ts
+│  ├──  locale.ts
+│  ├──  t.ts
+│  ├──  types.ts
+│  └──  useTranslation.ts
 ├──  lens
 │  └──  lensRegistry.ts
 ├──  motion
@@ -200,7 +269,8 @@
 ├──  renderers
 ├──  source-adapter
 │  ├──  SourceAdapterPanel.tsx
-│  └──  sourceAdapterRegistry.ts
+│  ├──  sourceAdapterRegistry.ts
+│  └──  SourceAdapterTileContent.tsx
 ├──  styles
 │  └──  lumaweave-visual-handles.css
 ├──  themes
@@ -208,6 +278,7 @@
 │  ├──  assetBank.types.ts
 │  ├──  assetRegistry.ts
 │  ├──  colorInterpolation.ts
+│  ├──  colorMath.ts
 │  ├──  colorSuggestionEngine.ts
 │  ├──  defineTheme.ts
 │  ├──  fontAxisRegistry.ts
@@ -222,6 +293,7 @@
 │  ├──  themeAccessibilityProfile.ts
 │  ├──  themeCrossfade.ts
 │  ├──  themeHash.ts
+│  ├──  themeInspectorStore.ts
 │  ├──  themeLineage.ts
 │  ├──  themeOverrideStorage.ts
 │  ├──  themePresets.ts
@@ -240,6 +312,8 @@
 │  ├──  typographyRegistry.ts
 │  ├──  useResolvedTargetColor.ts
 │  └──  wcagContrast.ts
+├──  types
+│  └──  culori.d.ts
 ├──  ui
 ├──  App.css
 ├──  App.tsx

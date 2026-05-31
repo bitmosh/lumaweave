@@ -42,9 +42,7 @@
 │  │  ├──  BANDIT_PREVIOUS_TITLE.md
 │  │  ├──  BANDIT_QA_PROTOCOL.md
 │  │  ├──  BANDIT_SELF_MODEL_AND_GROWTH_PROTOCOL.md
-│  │  ├──  BANDIT_WORKING_MEMORY_REFRESHER.md
-│  │  ├──  PRE_DESIGN_SNAPSHOT.md
-│  │  └──  SESSION_V85_SUMMARY.md
+│  │  └──  BANDIT_WORKING_MEMORY_REFRESHER.md
 │  ├──  leveling
 │  │  ├──  BANDIT_CHANGELOG.md
 │  │  ├──  BANDIT_ERROR_LOG.md
@@ -80,16 +78,53 @@
 │  ├──  AUDIO_SOURCE_SYSTEM_CONTRACT.md
 │  ├──  MUSIC_REACTIVE_MAPPING_CONTRACT.md
 │  └──  UNIVERSAL_AUDIO_HANDLE_ROUTING.md
+├──  ChatGPT_files
+│  ├──  ADAVisualizationComponent-m14wkthf.css
+│  ├──  AnimatedMascot-dx2jnhv5.css
+│  ├──  ansi-1f6vhsjh.css
+│  ├──  AssistantMessage-6zxhctcg.css
+│  ├──  Avatar-kw5t2dfu.css
+│  ├──  code-block-dop2czwo.css
+│  ├──  code-block-viewer-bb2wmqiy.css
+│  ├──  components-lqbw9j1t.css
+│  ├──  conversation-small-inwz5kef(1).css
+│  ├──  conversation-small-inwz5kef.css
+│  ├──  cot-message-mbvpc7rn.css
+│  ├──  fullscreen-lxd7vmcm.css
+│  ├──  Image-nnxrmk5d.css
+│  ├──  Input-eusic68p.css
+│  ├──  map-with-entities-hwk5oa65.css
+│  ├──  mapbox-gl-l6rc2zka.css
+│  ├──  payment-cards-skeleton-gmxsietf.css
+│  ├──  Popover-jjzuc9pc.css
+│  ├──  product-variants-ga945uk2.css
+│  ├──  RadioGroup-m8zapj2d.css
+│  ├──  rj.png
+│  ├──  root-iro3dvcy(1).css
+│  ├──  root-iro3dvcy.css
+│  ├──  saved_resource.html
+│  ├──  SegmentedControl-nay8rogw.css
+│  ├──  Select-evd90x7j.css
+│  ├──  silk-hq-jrmbfqt7.css
+│  ├──  src-db6twgyr.css
+│  ├──  table-components-ca43bz4f.css
+│  ├──  TextLink-hyfuyd7n.css
+│  ├──  user-loqx9inc.css
+│  ├──  writing-block-link-actions-k3qnrz57.css
+│  └──  writing-block-provider-mpg98q8r.css
 ├──  control-plane
-│  └──  contracts
-│     ├──  COMMAND_DECK_AND_HOTKEY_REGISTRY_CONTRACT.md
-│     ├──  CONTRACT_TO_CODE_TRACE_MATRIX.md
-│     ├──  GRAPH_CONTROL_PLANE_NAVIGATION_CONTRACT.md
-│     ├──  HUMAN_MODE_EVIDENCE_MODE_CONTRACT.md
-│     ├──  PERSPECTIVE_SYSTEM_CONTRACT.md
-│     ├──  SYSTEM_INDEX_PANEL_MOUNT_CONTRACT.md
-│     ├──  SYSTEM_INDEX_PANEL_ROUTE_DISCOVERY.md
-│     └──  SYSTEM_INDEX_REGISTRY_CONTRACT.md
+│  ├──  contracts
+│  │  ├──  COMMAND_DECK_AND_HOTKEY_REGISTRY_CONTRACT.md
+│  │  ├──  CONTRACT_TO_CODE_TRACE_MATRIX.md
+│  │  ├──  GRAPH_CONTROL_PLANE_NAVIGATION_CONTRACT.md
+│  │  ├──  HUMAN_MODE_EVIDENCE_MODE_CONTRACT.md
+│  │  ├──  PERSPECTIVE_SYSTEM_CONTRACT.md
+│  │  ├──  SYSTEM_INDEX_PANEL_MOUNT_CONTRACT.md
+│  │  ├──  SYSTEM_INDEX_PANEL_ROUTE_DISCOVERY.md
+│  │  └──  SYSTEM_INDEX_REGISTRY_CONTRACT.md
+│  └──  settings
+│     └──  SETTINGS_PANEL_CONTRACT.md
+├──  diagrams
 ├──  grammar-lens
 │  ├──  CURSOR_INSPECTOR_CONTRACT.md
 │  ├──  GHOST_OVERLAY_CURRENT_STATE.md
@@ -122,11 +157,13 @@
 │  └──  PLANNED_HANDLES.md
 ├──  known-bugs
 │  ├──  contract-registry-qa-check-previous-timeout.md
+│  ├──  floating-tile-intercepts-graph-canvas-clicks.md
 │  ├──  gwells-c9-0-drift-back-flake.md
 │  ├──  panel-positioning-real-source-mode.md
 │  ├──  sigma-element-selector-wrong-testid.md
 │  ├──  sigma-label-position-offset.md
-│  └──  Source-adapter-JSON-parse.md
+│  ├──  Source-adapter-JSON-parse.md
+│  └──  tile-anchor-offsets-overlap-status-bar.md
 ├──  layout
 │  ├──  COCKPIT_LAYOUT_OVERVIEW.md
 │  ├──  LENS_NAVIGATION_MODEL.md
@@ -150,7 +187,6 @@
 │  └──  SOURCE_OF_TRUTH.md
 ├──  overview
 │  ├──  DOCS_INDEX.md
-│  ├──  LUMAWEAVE_HIGH_DEF_OVERVIEW.md
 │  └──  PROJECT_TREE.txt
 ├──  physics
 │  ├──  CONSTELLATION_MODE_DIALECT.md
@@ -173,6 +209,8 @@
 ├──  platform
 │  ├──  CREATIVE_PIPELINE_CONCEPT.md
 │  └──  PLATFORM_VISION.md
+├──  prototypes
+│  └──  v91-Edge_Plasma_Shaders.html
 ├──  quest
 │  └──  QUEST_TEMPLATE.md
 ├──  registries
@@ -191,7 +229,6 @@
 │  └──  RENDERING_LAYER_ARCHITECTURE.md
 ├──  roadmap
 │  ├──  BACKLOG_POLICY.md
-│  ├──  DEV_ROADMAP_v86_through_v92.md
 │  └──  FUTURE_IDEAS_INBOX.md
 ├──  screenshots
 │  └──  v86b-runtime.png
@@ -246,29 +283,7 @@
 │  ├──  THEME_TOKEN_PATH_MAP.md
 │  └──  THEME_TOP_BAR_CONTROLS.md
 ├──  updates
-│  └──  v86+_updates
-│     ├──  design-references
-│     │  ├──  (NEW)app.jsx
-│     │  ├──  (NEW)Design_Conversation_Context.odt
-│     │  ├──  (NEW)graph-data.jsx
-│     │  ├──  (NEW)graph-view.jsx
-│     │  ├──  (NEW)inspector-overlay.jsx
-│     │  ├──  (NEW)shell.jsx
-│     │  ├──  (NEW)tile-system.jsx
-│     │  └──  (NEW)tweaks-panel.jsx
-│     ├──  (NEW)LumaWeave_Solar_Plasma_Prototype.html
-│     ├──  (NEW-V86+)lumaweave_integration_audit.html
-│     ├──  (NEW-V86+)V86_BANDIT_MASTER_INDEX.md
-│     ├──  (NEW-V86+)v86_INDEX.md
-│     ├──  (NEW-V86+)v86_ROADMAP.md
-│     ├──  (NEW-V86+)V86_SUPPLEMENT.md
-│     ├──  (NEW-V86+)v86a_FOUNDATION.md
-│     ├──  (NEW-V86+)v86b_VISUAL_TREATMENT.md
-│     ├──  (NEW-V86+)v86c_TILE_SYSTEM.md
-│     ├──  (NEW-V86+)v86d_INSPECTOR_MINI_GRAPH.md
-│     ├──  (NEW-V86+)v86e_COSMETIC_POLISH.md
-│     ├──  v86c_INTEGRATION_AUDIT_PRE_B.md
-│     └──  v86c_LEFT_PANEL_DEFERRAL.md
+│  └──  LUMAWEAVE_CURRENT_STATE.md
 ├──  visual-grammar-engine
 │  ├──  VGE_ASSET_AND_TOKENS.md
 │  ├──  VGE_DIALECT_AND_SAFETY.md
@@ -282,49 +297,11 @@
 │  └──  VR_COMPATIBILITY_CONCEPT.md
 ├──  _docs-tree.md
 ├──  _src-tree.md
+├──  ChatGPT.html
 ├──  e2e-test-coverage-audit.md
 ├──  git-diff.md
 ├──  git-log.md
+├──  LUMAWEAVE_CURRENT_STATE.md
+├──  LUMAWEAVE_CURRENT_STATE.pdf
 ├──  self-graph-adapter.md
-├──  token-registry.json
-├──  TOKEN_CENSUS_CANONICAL.md
-├──  TOKEN_CENSUS_DEAD_CANDIDATES.md
-├──  TOKEN_CENSUS_LEGACY.md
-├──  TOKEN_CENSUS_ORPHANS.md
-├──  v86b-close-1-bookmark-restyle-report.md
-├──  v86b-close-1-followup-type-hygiene-report.md
-├──  v86b-close-1-overlay-mounting-report.md
-├──  v86b-node-render-fix-report.md
-├──  v86b-physics-diagnostic-report.md
-├──  v86b-physics-fix-failure-analysis.md
-├──  v86b-physics-full-audit-report.md
-├──  v86b-physics-gravity-multiplier-report.md
-├──  v86b-physics-instrument-positions-report.md
-├──  v86b-physics-narrow-rebuild-deps-report.md
-├──  v86b-physics-remove-helix-dispatch-report.md
-├──  v86b-physics-remove-noverlap-report.md
-├──  v86b-physics-remove-sunflower-report.md
-├──  v86b-physics-seed-and-defaults-fix-report.md
-├──  v86b-sigma-container-fix-report.md
-├──  v86c-redo-render-refactor-coverage-audit.md
-├──  v86c-redo-render-refactor-r5a-diagnostic.md
-├──  v86c-redo-render-refactor-r5a-validation-report.md
-├──  v86c-redo-render-refactor-r5b-diagnostic.md
-├──  v86c-redo-render-refactor-r5c-effect-audit.md
-├──  v86c-redo-render-refactor-remount-investigation.md
-├──  v86c-redo-self-graph-audit.md
-├──  v86c-redo-self-graph-phase3-followup.md
-├──  v86c-redo-self-graph-phase35-tuning-report.md
-├──  v86c-redo-structural-report.md
-├──  vP-backbone-spacing-investigation.md
-├──  vP-backbone-spacing-report.md
-├──  vP-cluster-aware-physics-rebuild-report.md
-├──  vP-noverlap-dependency-check.md
-├──  vP-noverlap-restoration-report.md
-├──  vP-physics-backbone-seed-fix-report.md
-├──  vP-physics-backbone-seed-report.md
-├──  vP-physics-baseline-reset-investigation.md
-├──  vP-physics-code-audit-investigation.md
-├──  vP-physics-directory-mirror-report.md
-├──  vP-physics-sizing-fix-report.md
-└──  vP-seeder-side-direction-fix-report.md
+└──  token-registry.json

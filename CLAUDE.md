@@ -39,6 +39,64 @@ when something feels uncertain.
 These are hard-earned lessons. Honor them unless explicitly told
 otherwise.
 
+## CRITICAL — Package Installation Safeguard
+
+**Effective: 2026-05-27**
+
+**No package may be installed without Ryan's explicit per-install approval.**
+
+This applies to ALL package managers:
+- `npm install`, `npm i`, `npm add`, `npx <new-package>`
+- `yarn add`, `pnpm add`, `bun add`
+- `pip install`, `pipx install`, `uv add`, `poetry add`
+- `apt install`, `apt-get install`, `dpkg -i`
+- `snap install`, `flatpak install`
+- `brew install`, `port install`
+- `cargo install`, `cargo add`
+- `gem install`, `bundle add`
+- ANY other package installation command
+
+**Why:** Active supply-chain attacks in 2025-2026 (self-replicating worms 
+propagating through legitimate maintainer accounts in npm and other ecosystems) 
+mean even canonical packages can carry credential-stealing payloads. A single 
+unsupervised install can compromise the entire development machine: GitHub 
+tokens, SSH keys, AWS credentials, browser session cookies.
+
+**Required behavior when a dependency seems needed:**
+
+1. **STOP the pass immediately.** Do not proceed with code that requires the 
+   unavailable dependency.
+2. **Post to #current-task** with this exact format:
+[DEPENDENCY REQUEST — REQUIRES MANUAL APPROVAL]
+Package: <name>
+Version: <version requested>
+Source: <npm | pypi | etc>
+Purpose: <why it's needed for this pass>
+Alternatives considered: <what was tried instead>
+Awaiting Ryan to manually install and confirm before continuing.
+3. **Wait.** Do not proceed until Ryan posts confirmation that the package 
+   has been manually installed (after his own vetting).
+4. **Do not suggest alternatives that also require new packages.** If a 
+   substitute approach also needs new deps, that's still a dependency request.
+
+**No exceptions:**
+- "It's a tiny dev dependency" → STOP
+- "It's already in the lockfile" → if it's not actually installed, STOP
+- "We need it for testing only" → STOP
+- "It's from a well-known maintainer" → STOP, that's exactly the attack vector
+- "The user can just install it after" → STOP, don't put unverified install 
+  commands in prompts or code
+
+**What IS allowed without approval:**
+- Using packages already installed and present in `node_modules/` / 
+  `.venv/` / similar
+- Reading `package.json` to understand existing dependencies
+- Suggesting in documentation that a dependency might be useful in the 
+  future (without acting on it)
+
+**If this safeguard conflicts with making progress on a pass:** good. The 
+pass waits. Security takes precedence over velocity.
+
 ## Failure classification
 
 Before patching any failure, classify it. Don't patch from
@@ -584,6 +642,65 @@ just burns prompt-cache budget without improving safety.
 
 **Never substitute a shorter poll for approval gates.**
 
+## Bump Gate Protocol
+
+Invoke: "run the bump gate for <report>" (or just "bump gate <version>").
+This is the review-and-publish flow for turning a #changelog report into a live blog post.
+Bandit owns all Discord posting and the live bump; bumper renders/commits/traces. Bandit
+runs the dry-run, posts a reviewable sample to #approve-this, and acts on the reply.
+
+### Steps
+
+1. DRY RUN. Run `node bin/bumper.js bump --dry` (or `--msg <id>` for a specific report).
+   Capture the output (route source, parsed fields, rendered MDX, git plan). If the dry-run
+   ERRORS (parse fail, route error, validation fail), do NOT post a gate — report the error
+   to #notifications and STOP for fixing. The gate is only for a clean dry-run.
+
+2. POST THE GATE to #approve-this. Format a REVIEWABLE sample (not the raw firehose):
+
+   [Bump gate] <version> — <title>
+   Project: <project> · route: <registry|legacy> · module: <module>
+
+   Post preview:
+     title:       <title>
+     description: <description>
+     module: <module> · version: <version> · status: <status>
+     highlights: <N> · learnings: <M>
+
+   Writes to: <target repo> → <content path>
+   Commit:  <commit message>
+   Push:    <push target>
+
+   Reply with one of:
+     1. approve both        — record to #changelog + live bump to the site
+     2. approve commit only — log the record, skip the live bump
+     3. fix post: <corrections> — apply, re-run dry, re-post this gate
+     4. reject              — neither; report in #current-task
+
+   (Full MDX available on request — reply "show mdx".)
+
+3. MONITOR for the reply using the Active Listening Protocol (see #approve-this section —
+   fetch_messages limit=15 immediately, then the Monitor TOOL, never run_in_background).
+
+4. ACT on the reply:
+   - "approve both" → run the LIVE bump (`node bin/bumper.js bump` [--msg <id>], no --dry).
+     This commits + pushes the post to the blog repo. Then post the PASS COMPLETE record to
+     #changelog (if not already there) and a lifecycle note to #current-task. Confirm the live
+     URL/path in #current-task.
+   - "approve commit only" → post the PASS COMPLETE record to #changelog, do NOT run the live
+     bump. Note in #current-task that the post was logged but not published.
+   - "fix post: <corrections>" → apply the corrections to the report/source, re-run the dry-run,
+     re-post the gate to #approve-this (back to step 2). Loop until approved or rejected.
+   - "reject" → do nothing further; report the rejection in #current-task.
+
+### Notes
+- bumper never posts to Discord itself — it renders, commits, and traces to #debug. Bandit
+  formats and posts the gate, monitors, and runs the live bump. Bumper stays a pure pipeline tool.
+- The dry-run sample in #approve-this is the review surface. The raw dry-run output and the
+  bump trace go to #debug as usual.
+- "fix post" corrections apply to the SOURCE (the #changelog report content or config), then
+  re-render — never hand-edit the rendered MDX, since the next bump would regenerate it.
+
 ### Within-pass listening (informal)
 
 Trigger: any mid-pass moment where Claude is waiting on user direction
@@ -602,8 +719,10 @@ Responsive presence, not gate safety.
 
 All significant Discord communication follows this structure.
 
-### Channel IDs (for MCP access)
+### Channel IDs (for Discord MCP access)
 
+- #changelog: `1509728570367283250`
+- #debug: `1509732470092988478`
 - #approve-this: `1506441138612080680`
 - #notifications: `1506441052826107964`
 - #current-task: `1506440945128701955`
@@ -661,18 +780,102 @@ without surfacing the failure masks frequency and prevents diagnosis.
   3. **On each Monitor notification**: Call `fetch_messages` (limit=15). If approved, proceed.
      If not, keep monitoring.
   4. **limit=15 always**: Every `fetch_messages` call uses limit≥15 — this prevents
-     the gate-miss bug where approvals were silently skipped.
+     the gate-miss bug where approvals were silently skipped.   
 - **CRITICAL**: The Monitor tool is the only real monitoring mechanism. Never substitute
   `Bash run_in_background` for approval waiting.
+
+### If monitoring "looks dead" (approval not being seen)
+Symptom: you posted to #approve-this, you say you're monitoring, but a sent approval
+isn't detected. Cause is almost always one of:
+  - You used `Bash run_in_background` instead of the Monitor tool (fake monitoring).
+  - You skipped the immediate post-fetch and the approval landed before any loop.
+Recovery: immediately call fetch_messages (limit=15) on #approve-this — the approval is
+likely already there. Then restart monitoring with the Monitor TOOL, not run_in_background.
+
+  For any task whose work will become a blog post via bumper, the approval
+happens in TWO independent gates. Do not collapse them.
+
+GATE 1 — merge approval (code).
+  - Before staging: run `git status --short`. Stage ONLY this task's files
+    (use explicit paths or `git add -p` — never `git add -A` blind; stray
+    modifications, doc relocations, and file conversions in the tree are NOT
+    this task's scope and must not be dragged in).
+  - Post the merge preview to #approve-this (branch, deliverables, test counts).
+  - Wait for approval (Active Listening Protocol above).
+  - On approval: merge the feature branch to main. The merge SHA now exists.
+
+GATE 2 — bump approval (the blog post).
+  - AFTER the merge, formulate the bump proposal and post it to #approve-this:
+    (a) the `── PASS COMPLETE ──` report (the exact text that will go to
+        #changelog, with the real merge SHA in Commit), and
+    (b) a `bumper bump --dry` sample showing how the post will render.
+  - Wait for one of four responses:
+    1. "approve commit & reject bump" → post the report to #changelog (the
+       record exists) but do NOT run bumper bump. No blog post is generated.
+    2. "approve both" → post the report to #changelog, then run bumper bump
+       live → blog post committed/pushed to the blog repo.
+    3. "fix post: <corrections>" → apply the pasted corrections to the report/
+       post content, re-run bumper bump --dry, re-post the updated sample to
+       #approve-this, wait again.
+    4. "reject" → neither the #changelog post nor the bump happens. Report the
+       rejection in #current-task.
+  - The #changelog record and the published blog post are DECOUPLED: option 1
+    logs without publishing; option 2 logs and publishes.
+
+Note: bumper's blog-post commit/push (option 2) is a separate operation in the
+blog repo, downstream of and distinct from the feature-branch merge in Gate 1.
 
 ### #current-task
 
 - **Purpose**: Run lifecycle tracking
 - **Content**: 
   - BEGIN: Post when starting a new pass/task with phase name
-  - END: Post when task completes with summary + changelog
+  - END: post AFTER the merge to main completes (the Commit field needs the
+      merge SHA). Sequence: work → review/approval → merge/push → THEN post END.
+      See 'END Format - info' and 'END-Format' below.
 - **Frequency**: Once per major pass/task, beginning and end only
 - **Format**: Concise — phase name, key results, new/modified files
+
+### END Format - info
+
+This report is the INPUT to the blog.bumper pipeline: #current-task → forwarded
+to #changelog → `bumper bump` parses it into a blog post. The field names, the
+`── PASS COMPLETE ·` delimiter, and the `· ` bullet prefix are LOAD-BEARING — a
+parser reads them. Malformed = a broken or missing post, not just an untidy message.
+Fill every field. Do not reword the delimiters or field labels.
+(Project must match an enrolled project / valid module. "blog.bumper" becomes valid once the free-string module change lands.)
+
+### END reports go to #changelog (not forwarded from #current-task)
+
+The PASS COMPLETE report is posted DIRECTLY to #changelog (channel bumper reads
+via report_channel). Do NOT rely on any #current-task → #changelog forwarding —
+there is none. The flow is:
+  - #current-task gets a short lifecycle note (BEGIN / END tracking, for humans).
+  - #changelog gets the full `── PASS COMPLETE ──` report (for bumper to parse + bump).
+Bandit posts to BOTH. The `── PASS COMPLETE ·` delimiter in #changelog IS the bump
+trigger — bumper parses only messages carrying it; anything else in #changelog is ignored.
+
+### END Format
+
+── PASS COMPLETE · <version> · <YYYY-MM-DD> ──────────────────
+
+Title: <one-line human title>
+Summary: <1-2 sentences, what changed and why — this becomes the post description>
+
+Project: <project name — for our work: blog.bumper>
+
+Highlights:
+  · <user-facing / what-changed bullet>
+  · <...>
+
+Learnings:
+  · <insight / why / gotcha bullet>
+  · <...>
+
+Commit: <sha7 of the merge commit>
+
+Tests: <N passed · M failed · K skipped>
+Branch: <clean | branch name>
 
 ### #notifications
 
@@ -806,29 +1009,7 @@ Claude Code posts to #current-task:
 
 ## Project state (current as of v86c stabilization)
 
-**v86c Tile System — STABILIZED**
-
-The tile system has transitioned from rewrite attempts to a simplified
-floating-container model. This is the stable, working state:
-
-- **Physics tile** (Scope B): shipped and working
-- **TiledOutIndicator** extraction: shipped
-- **Right-dock sections** (Scope C-2): labels-section + appearance-section wired and working
-- **Left-panel reorganization**: deferred (C-1 reverted; see `docs/updates/v86+_updates/v86c_LEFT_PANEL_DEFERRAL.md`)
-- **Tile grouping** (feature flag `tileGrouping: false`): disabled.
-  Group code preserved in codebase for future re-enable. Tiles are independent floating containers.
-- **Tile snapping** (feature flag `snap` path): disabled.
-  Tiles drag freely with cursor-precise positions. Snap code preserved in codebase.
-- **Persistence**: Fixed. Tile positions survive page refresh via
-  Zustand `subscribe()` → localStorage sync.
-- **Orphan code cleanup**: Complete. Stale branches deleted; Pass 1A/1B
-  rewrite code removed (preserved in git history).
-
-**Key design decision**: Multiple days spent patching group and snap
-bugs across old and rewritten tile systems. Cost-benefit analysis favored
-simplification (basic floating-container model) with feature flags to
-disable problematic behaviors, pending fresh design pass on snap mechanics
-and group architecture.
+**v99 - OKLCH — STABILIZED**
 
 - Multiple known bugs documented in `docs/known-bugs/`.
 
@@ -847,7 +1028,7 @@ Operating / governance:
   docs/agent/protocols/PASS_TRANSITION_PROTOCOL.md
   docs/agent/protocols/QA_KEY_LIFECYCLE.md
   docs/agent/protocols/ADVISORY_STATE_MODEL.md
-  docs/agent/protocols/REGISTRY_CONTRACT_PATTERNS.md
+  docs/agent/protocols/REGISTRY_AND_LINK_NETWORK.md
 
 Survival manual (diagnostics + debugging):
   docs/agent/survival-manual/01_TROUBLESHOOTING_DECISION_MATRIX.md
