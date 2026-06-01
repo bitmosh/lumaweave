@@ -161,6 +161,10 @@ export interface TileContextActions {
   setTileAnchor: (tileId: string) => void;
   /** Slide the tile to its anchor position with a transition. */
   returnToAnchor: (tileId: string) => void;
+  /** Read all tiles from the live store (bypasses render-snapshot ctx.tiles). Use in event handlers. */
+  getLiveTiles: () => TileLayoutEntry[];
+  /** Read a single tile from the live store by id. Use in event handlers. */
+  getLiveTile: (tileId: string) => TileLayoutEntry | undefined;
 }
 
 /**

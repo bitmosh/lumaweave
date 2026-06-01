@@ -251,6 +251,8 @@ export function TileProvider({ children }: TileProviderProps) {
     setTileVisibility,
     setTileAnchor,
     returnToAnchor,
+    getLiveTiles: getCurrentTiles,
+    getLiveTile: (id: string) => getCurrentTiles().find(t => t.id === id),
   };
 
   return (

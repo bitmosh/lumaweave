@@ -91,18 +91,18 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("pointercancel", onPointerCancel);
 
-      // Snap on release — per-axis edge detection (v101.0.2)
-      const toRect = (t: ReturnType<typeof ctx.tiles.get>): Rect | null => {
+      // Snap on release — per-axis edge detection (v101.0.2a)
+      // Uses getLiveTile/getLiveTiles (live store read) not ctx.tiles (stale render snapshot).
+      const toRect = (t: TileLayoutEntry | undefined): Rect | null => {
         if (!t) return null;
         return { x: t.x, y: t.y, w: t.w, h: t.collapsed ? COLLAPSED_H : t.h };
       };
-      const allTiles = Array.from(ctx.tiles.values());
-      const others = allTiles.filter(t => !groupIds.includes(t.id));
+      const others = ctx.getLiveTiles().filter(t => !groupIds.includes(t.id));
       const targetRects = others.map(t => toRect(t)).filter((r): r is Rect => r !== null);
 
       if (groupTiles.length === 1) {
         // Single tile: snap live position to nearest adjacent edge
-        const liveTile = ctx.tiles.get(tile.id);
+        const liveTile = ctx.getLiveTile(tile.id);
         const movingRect = toRect(liveTile);
         if (movingRect) {
           const res = findSnap(movingRect, targetRects);
@@ -113,7 +113,7 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
       } else {
         // Group: snap bounding-box to nearest adjacent edge, shift all members rigidly
         const liveMembers = groupIds
-          .map(id => ctx.tiles.get(id))
+          .map(id => ctx.getLiveTile(id))
           .filter((t): t is NonNullable<typeof t> => t !== null && t !== undefined);
         if (liveMembers.length > 0) {
           const bx = Math.min(...liveMembers.map(t => t.x));
