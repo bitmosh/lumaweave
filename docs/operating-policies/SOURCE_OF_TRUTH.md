@@ -96,7 +96,7 @@ Rules:
 ## Physics / Gwells
 
 Primary:
-docs/_v100-rewrites/GWELLS_PHYSICS.md  (supersedes GRAVITY_WELL_SYSTEM_CONTRACT.md, GWELLS_README.md, GWELLS_REGISTRY_PATTERNS.md, GWELLS_DIALECT_RADIAL_BACKBONE.md — archived v100.0.4)
+docs/canonical/GWELLS_PHYSICS.md  (supersedes GRAVITY_WELL_SYSTEM_CONTRACT.md, GWELLS_README.md, GWELLS_REGISTRY_PATTERNS.md, GWELLS_DIALECT_RADIAL_BACKBONE.md — archived v100.0.4)
 src/physics/gwells/types.ts
 src/physics/gwells/wellTypes.ts
 src/physics/gwells/interactions.ts
@@ -141,8 +141,8 @@ Retired (do not reintroduce):
 
 Future dialects (concept docs only; gwells provides the implementation
 substrate):
-- `docs/_v100-rewrites/DEFERRED_AND_POST_V1_VISION.md`  (supersedes CONSTELLATION_MODE_DIALECT.md, HELIX_CONSTELLATION_DIALECT.md, GALAXY_MODE_DIALECT.md — archived v100.0.8)
-- `docs/_v100-rewrites/GWELLS_PHYSICS.md` (supersedes PHYSICS_DIALECT_SYSTEM.md — archived v100.0.4)
+- `docs/canonical/DEFERRED_AND_POST_V1_VISION.md`  (supersedes CONSTELLATION_MODE_DIALECT.md, HELIX_CONSTELLATION_DIALECT.md, GALAXY_MODE_DIALECT.md — archived v100.0.8)
+- `docs/canonical/GWELLS_PHYSICS.md` (supersedes PHYSICS_DIALECT_SYSTEM.md — archived v100.0.4)
 - `docs/graph/intelligence/CLUSTER_GRAVITY_AND_COLOR_CODED_NEIGHBORHOODS.md`
 
 ---
@@ -191,7 +191,7 @@ Rules:
 
 Primary:
 ```
-docs/_v100-rewrites/DEFERRED_AND_POST_V1_VISION.md  (supersedes all audio docs — archived v100.0.8)
+docs/canonical/DEFERRED_AND_POST_V1_VISION.md  (supersedes all audio docs — archived v100.0.8)
 src/audio/syntheticAudioSignal.ts
 src/audio/musicReactiveMappingRegistry.ts
 src/audio/audioSourceRegistry.ts
@@ -210,7 +210,7 @@ Rules:
 
 Primary:
 ```
-docs/_v100-rewrites/CONTROL_PLANE_AND_SYSTEM_INDEX.md  (supersedes SYSTEM_INDEX_REGISTRY_CONTRACT.md, SYSTEM_INDEX_PANEL_MOUNT_CONTRACT.md — archived v100.0.6)
+docs/canonical/CONTROL_PLANE_AND_SYSTEM_INDEX.md  (supersedes SYSTEM_INDEX_REGISTRY_CONTRACT.md, SYSTEM_INDEX_PANEL_MOUNT_CONTRACT.md — archived v100.0.6)
 src/system-index/systemIndexRegistry.ts
 src/control-plane/system-index/SystemIndexPanel.tsx
 ```
@@ -227,7 +227,7 @@ Rules:
 
 Primary:
 ```
-docs/_v100-rewrites/CONTROL_PLANE_AND_SYSTEM_INDEX.md  (supersedes HUMAN_MODE_EVIDENCE_MODE_CONTRACT.md — archived v100.0.6)
+docs/canonical/CONTROL_PLANE_AND_SYSTEM_INDEX.md  (supersedes HUMAN_MODE_EVIDENCE_MODE_CONTRACT.md — archived v100.0.6)
 src/modes/modeMetadataRegistry.ts
 scripts/validate-mode-registry.ts
 ```
@@ -243,7 +243,7 @@ Rules:
 
 Primary:
 ```
-docs/_v100-rewrites/CONTROL_PLANE_AND_SYSTEM_INDEX.md  (supersedes COMMAND_DECK_AND_HOTKEY_REGISTRY_CONTRACT.md, PERSPECTIVE_SYSTEM_CONTRACT.md, GRAPH_CONTROL_PLANE_NAVIGATION_CONTRACT.md — archived v100.0.6)
+docs/canonical/CONTROL_PLANE_AND_SYSTEM_INDEX.md  (supersedes COMMAND_DECK_AND_HOTKEY_REGISTRY_CONTRACT.md, PERSPECTIVE_SYSTEM_CONTRACT.md, GRAPH_CONTROL_PLANE_NAVIGATION_CONTRACT.md — archived v100.0.6)
 src/control-plane/command-deck/*
 src/control-plane/perspectives/*
 ```
@@ -270,7 +270,7 @@ Only future Lattica-generated, signed, schema-valid, provenance-attested theme b
 
 Primary:
 ```
-docs/_v100-rewrites/DEFERRED_AND_POST_V1_VISION.md  (supersedes all VGE docs — archived v100.0.8)
+docs/canonical/DEFERRED_AND_POST_V1_VISION.md  (supersedes all VGE docs — archived v100.0.8)
 ```
 
 Status: design-locked / docs-only. No runtime implementation authorized. Implementation gated on Source Adapter OS Reconnect Contract (v74), Synthetic Data Fixtures v0 (v75), and other prerequisites.
@@ -283,7 +283,7 @@ Shipping precursors exist for several VGE concepts: Grammar Lens (`docs/grammar-
 
 Primary:
 ```
-docs/_v100-rewrites/SOURCE_ADAPTER.md  (supersedes all source-adapter docs — archived v100.0.5)
+docs/canonical/SOURCE_ADAPTER.md  (supersedes all source-adapter docs — archived v100.0.5)
 ```
 
 Rules:

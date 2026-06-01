@@ -9,7 +9,7 @@
  * future radial dialects (triple-spine-y, quad-spine-cross,
  * helix-triple, helix-quad).
  *
- * Algorithm and parameter spec: docs/_v100-rewrites/GWELLS_PHYSICS.md (supersedes GWELLS_DIALECT_RADIAL_BACKBONE.md)
+ * Algorithm and parameter spec: docs/canonical/GWELLS_PHYSICS.md (supersedes GWELLS_DIALECT_RADIAL_BACKBONE.md)
  *
  * Writes node x/y positions and __seededSpinePositions graph attr.
  * Deterministic: same input → same output.

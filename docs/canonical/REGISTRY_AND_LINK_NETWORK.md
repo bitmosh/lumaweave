@@ -1,3 +1,22 @@
+---
+id: system.registry.link.network
+title: Registry & Link Network
+cluster: slate
+references:
+  - system.doc.architecture
+  - domain.control.plane.system.index
+tags:
+  - registry
+  - link-network
+  - canonical
+  - v100
+status: canonical
+include_in_self_graph: true
+type: manual
+agent_readable: true
+last_updated: 2026-05-31
+---
+
 # LumaWeave — Registries & the Link Network
 
 **Supersedes:** `REGISTRY_CONTRACT_PATTERNS.md`, `LINK_NETWORK_OVERVIEW.md`, `HANDLESET_CONCEPT.md`, `ACTIVE_HANDLES.md`, `PLANNED_HANDLES.md`, `GRAPH_VIEW_ELEMENT_REGISTRY_CONTRACT.md`, `GRAPH_VIEW_ELEMENT_REGISTRATION_MODEL.md`

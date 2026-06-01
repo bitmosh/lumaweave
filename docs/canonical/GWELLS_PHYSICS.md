@@ -1,3 +1,22 @@
+---
+id: domain.physics.gwells
+title: Gwells Physics
+cluster: lime
+references:
+  - system.doc.architecture
+  - domain.graph.sigma.rendering
+tags:
+  - gwells
+  - physics
+  - canonical
+  - v100
+status: canonical
+include_in_self_graph: true
+type: manual
+agent_readable: true
+last_updated: 2026-05-31
+---
+
 # LumaWeave — Gwells Physics
 
 How LumaWeave positions graph nodes: a custom, registry-driven force-simulation engine. "Gwells" = gravity wells. It is **not** Graphology's ForceAtlas2 — it's a hand-rolled engine where node behavior is composed from typed registry entries (well types, interactions, seed functions, dialects) rather than global tuning knobs.

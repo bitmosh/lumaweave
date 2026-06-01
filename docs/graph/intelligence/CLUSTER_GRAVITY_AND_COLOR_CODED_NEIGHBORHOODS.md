@@ -34,7 +34,7 @@ tags:
 > Cluster-gravity physics will eventually be expressed as a gwells dialect
 > with well types for cluster anchors and orbit members, plus typed
 > interactions for gravity and inter-cluster repulsion. The closest
-> existing dialect concept is Galaxy Mode (see `docs/_v100-rewrites/DEFERRED_AND_POST_V1_VISION.md`, supersedes GALAXY_MODE_DIALECT.md).
+> existing dialect concept is Galaxy Mode (see `docs/canonical/DEFERRED_AND_POST_V1_VISION.md`, supersedes GALAXY_MODE_DIALECT.md).
 >
 > The visual aspects (color-coding, overlap modes, cluster labels) are
 > independent of physics and remain on their own track.
@@ -148,7 +148,7 @@ interface ClusterConfig {
 - Use explicit importance data from graph artifacts
 - Use relationship strength/confidence for boundaries
 - Implement semantic cluster detection (e.g., by file type, module, function)
-- Add cluster-based layout algorithms (implemented as gwells dialects — e.g., Galaxy Mode; see `docs/_v100-rewrites/DEFERRED_AND_POST_V1_VISION.md`)
+- Add cluster-based layout algorithms (implemented as gwells dialects — e.g., Galaxy Mode; see `docs/canonical/DEFERRED_AND_POST_V1_VISION.md`)
 
 ## Explicit Non-Goals for Now
 

@@ -1,3 +1,20 @@
+---
+id: system.doc.template
+title: Domain Doc Template
+cluster: slate
+references:
+  - system.doc.architecture
+tags:
+  - template
+  - canonical
+  - v100
+status: canonical
+include_in_self_graph: true
+type: manual
+agent_readable: true
+last_updated: 2026-05-31
+---
+
 # LumaWeave — Domain Doc Template
 
 The skeleton every canonical domain doc follows (Registry, Theme, Graph, Physics, …). It encodes the present-tense, operating-manual voice and the static/live discipline from `DOC_ARCHITECTURE.md`. Read that first; this is the shape, that is the rule.

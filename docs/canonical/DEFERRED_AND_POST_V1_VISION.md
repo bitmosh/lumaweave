@@ -1,3 +1,26 @@
+---
+id: domain.deferred.post.v1.vision
+title: Deferred & Post-v1 Vision
+cluster: indigo
+references:
+  - system.doc.architecture
+  - domain.theme.token.system
+  - domain.graph.sigma.rendering
+  - domain.physics.gwells
+tags:
+  - vge
+  - audio
+  - deferred
+  - vision
+  - canonical
+  - v100
+status: canonical
+include_in_self_graph: true
+type: manual
+agent_readable: true
+last_updated: 2026-05-31
+---
+
 # LumaWeave — Deferred & Post-v1.0 Vision
 
 The consolidated map of everything designed but deliberately not built yet: the Visual Grammar Engine, audio reactivity, alternate physics dialects, agent familiars, VR, the creative pipeline, and the post-v1.0 feature arcs (terminal, inference, Strudel). This is a **vision doc** — its job is to preserve high-detail design intent and the seams already in code, while being honest that none of it is live. The *when* lives in the roadmap (`LUMAWEAVE_NOW.md`); this is the *what* and *how*.

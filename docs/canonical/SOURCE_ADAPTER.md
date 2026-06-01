@@ -1,3 +1,21 @@
+---
+id: domain.source.adapter
+title: Source Adapter
+cluster: lime
+references:
+  - system.doc.architecture
+  - domain.graph.sigma.rendering
+tags:
+  - source-adapter
+  - canonical
+  - v100
+status: canonical
+include_in_self_graph: true
+type: manual
+agent_readable: true
+last_updated: 2026-05-31
+---
+
 # LumaWeave — Source Adapter
 
 How external data becomes a LumaWeave graph. A **source adapter** translates some source (a codebase, a docs vault, a website, an API spec) into the normalized node/edge shape the renderer consumes. Today one adapter is wired end to end (the self-graph fixture); the rest are a catalogued, validated-by-contract roadmap. This doc covers both, clearly separated.

@@ -372,7 +372,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
         hasCoverage: false,
       },
       docs: {
-        location: "docs/_v100-rewrites/CONTROL_PLANE_AND_SYSTEM_INDEX.md",
+        location: "docs/canonical/CONTROL_PLANE_AND_SYSTEM_INDEX.md",
         hasDocs: true,
       },
       status: "active",
@@ -401,7 +401,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
         hasCoverage: true,
       },
       docs: {
-        location: "docs/_v100-rewrites/CONTROL_PLANE_AND_SYSTEM_INDEX.md",
+        location: "docs/canonical/CONTROL_PLANE_AND_SYSTEM_INDEX.md",
         hasDocs: true,
       },
       status: "active",
@@ -428,7 +428,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
         hasCoverage: false,
       },
       docs: {
-        location: "docs/_v100-rewrites/CONTROL_PLANE_AND_SYSTEM_INDEX.md",
+        location: "docs/canonical/CONTROL_PLANE_AND_SYSTEM_INDEX.md",
         hasDocs: true,
       },
       status: "active",
@@ -457,7 +457,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
         hasCoverage: true,
       },
       docs: {
-        location: "docs/_v100-rewrites/CONTROL_PLANE_AND_SYSTEM_INDEX.md",
+        location: "docs/canonical/CONTROL_PLANE_AND_SYSTEM_INDEX.md",
         hasDocs: true,
       },
       status: "active",
@@ -486,7 +486,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
         hasCoverage: true,
       },
       docs: {
-        location: "docs/_v100-rewrites/CONTROL_PLANE_AND_SYSTEM_INDEX.md",
+        location: "docs/canonical/CONTROL_PLANE_AND_SYSTEM_INDEX.md",
         hasDocs: true,
       },
       status: "active",
@@ -513,7 +513,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
         hasCoverage: false,
       },
       docs: {
-        location: "docs/_v100-rewrites/CONTROL_PLANE_AND_SYSTEM_INDEX.md",
+        location: "docs/canonical/CONTROL_PLANE_AND_SYSTEM_INDEX.md",
         hasDocs: true,
       },
       status: "active",
@@ -542,7 +542,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
         hasCoverage: true,
       },
       docs: {
-        location: "docs/_v100-rewrites/CONTROL_PLANE_AND_SYSTEM_INDEX.md",
+        location: "docs/canonical/CONTROL_PLANE_AND_SYSTEM_INDEX.md",
         hasDocs: true,
       },
       status: "active",
@@ -571,7 +571,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
         hasCoverage: true,
       },
       docs: {
-        location: "docs/_v100-rewrites/CONTROL_PLANE_AND_SYSTEM_INDEX.md",
+        location: "docs/canonical/CONTROL_PLANE_AND_SYSTEM_INDEX.md",
         hasDocs: true,
       },
       status: "active",

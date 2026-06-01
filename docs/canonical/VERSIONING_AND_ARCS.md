@@ -1,3 +1,21 @@
+---
+id: system.versioning.arcs
+title: Versioning & Arcs
+cluster: slate
+references:
+  - system.doc.architecture
+tags:
+  - versioning
+  - arcs
+  - canonical
+  - v100
+status: canonical
+include_in_self_graph: true
+type: manual
+agent_readable: true
+last_updated: 2026-05-31
+---
+
 # LumaWeave — Versioning & Arcs
 
 **Status:** canonical · **Current arc:** v100 (Baseline Refocus) · **Production version:** 0.7.0

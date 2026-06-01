@@ -373,7 +373,7 @@ export function applyDialect(
 
       // C9.5: skip integration if force resolution produced non-finite.
       // Prevents NaN propagation through velocity. See
-      // docs/_v100-rewrites/GWELLS_PHYSICS.md § NaN guards (supersedes GWELLS_ARCHITECTURE.md).
+      // docs/canonical/GWELLS_PHYSICS.md § NaN guards (supersedes GWELLS_ARCHITECTURE.md).
       if (!Number.isFinite(fx) || !Number.isFinite(fy)) {
         continue;
       }

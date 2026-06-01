@@ -1,3 +1,23 @@
+---
+id: domain.control.plane.system.index
+title: Control Plane & System Index
+cluster: slate
+references:
+  - system.doc.architecture
+  - system.registry.link.network
+  - domain.tile.layout.workspace
+tags:
+  - control-plane
+  - system-index
+  - canonical
+  - v100
+status: canonical
+include_in_self_graph: true
+type: manual
+agent_readable: true
+last_updated: 2026-05-31
+---
+
 # LumaWeave — Control Plane & System Index
 
 How users drive LumaWeave: the command system (palette + deck), navigation perspectives, the control-plane render modes, and the System Index — the searchable catalog of the app's own systems. This is the "cockpit" layer: how you find and trigger functionality, and how the app describes itself to itself.

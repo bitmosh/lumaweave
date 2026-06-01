@@ -7,7 +7,7 @@
  * This static registry provides typed metadata for future Registry Explorer UI,
  * LumaWeave Self-Graph Fixture, Source Adapter OS graphing, and governance discovery.
  * 
- * Contract: docs/_v100-rewrites/CONTROL_PLANE_AND_SYSTEM_INDEX.md (supersedes SYSTEM_INDEX_REGISTRY_CONTRACT.md)
+ * Contract: docs/canonical/CONTROL_PLANE_AND_SYSTEM_INDEX.md (supersedes SYSTEM_INDEX_REGISTRY_CONTRACT.md)
  */
 
 // Categories
@@ -161,7 +161,7 @@ const SYSTEM_INDEX_ENTRIES: readonly SystemIndexEntry[] = [
     kind: "contract",
     status: "accepted",
     lifecycle: "accepted",
-    docPaths: ["docs/_v100-rewrites/CONTROL_PLANE_AND_SYSTEM_INDEX.md"],
+    docPaths: ["docs/canonical/CONTROL_PLANE_AND_SYSTEM_INDEX.md"],
     sourcePaths: [],
     testPaths: ["tests/e2e/contract-registry.spec.ts"],
     qaKeys: ["v72"],

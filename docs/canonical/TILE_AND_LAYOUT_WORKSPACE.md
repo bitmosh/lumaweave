@@ -1,3 +1,23 @@
+---
+id: domain.tile.layout.workspace
+title: Tile & Layout Workspace
+cluster: stone
+references:
+  - system.doc.architecture
+  - domain.control.plane.system.index
+tags:
+  - tiles
+  - layout
+  - workspace
+  - canonical
+  - v100
+status: canonical
+include_in_self_graph: true
+type: manual
+agent_readable: true
+last_updated: 2026-05-31
+---
+
 # LumaWeave — Tile & Layout Workspace
 
 How LumaWeave's panels become a rearrangeable workspace: any panel section can be "torn off" into a floating, draggable, snapping tile; tiles group, dock to edges, and persist their positions. Also covers the navigation lens system (designed, not yet built) and the minimap.

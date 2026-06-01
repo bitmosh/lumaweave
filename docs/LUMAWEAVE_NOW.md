@@ -1,3 +1,22 @@
+---
+id: system.lumaweave.now
+title: "LumaWeave — NOW"
+cluster: slate
+include_in_self_graph: true
+references:
+  - system.doc.architecture
+  - system.versioning.arcs
+  - system.registry.link.network
+  - domain.theme.token.system
+  - domain.graph.sigma.rendering
+  - domain.physics.gwells
+  - domain.source.adapter
+  - domain.control.plane.system.index
+  - domain.tile.layout.workspace
+  - domain.deferred.post.v1.vision
+tags: [live-state, now, canonical, v100]
+---
+
 # LumaWeave — NOW
 
 **The single live-state doc.** This is the only doc that changes every pass and the only one that carries a date. Everything here is volatile by design. Concepts and architecture live in the static domain docs (see `DOC_ARCHITECTURE.md`); history lives in the dev-blog / #changelog feed. This doc holds only: where we are, what's next, what's broken.
@@ -29,7 +48,7 @@ v101 Tile migration (react-grid-layout + react-moveable; must fix floating-tile 
 
 ## In flight
 
-- Doc consolidation (v100 phase 0). Canonical rewrites land in `docs/_v100-rewrites/`; final homes decided in v100.0.9.
+- v100.0.9 closer (arc close). Frontmatter normalized, stale state docs archived, refs repointed. .9b pending: arc table update, semver bump 0.7.0 → 0.8.0.
 
 ## Known bugs / paperweights
 
@@ -37,9 +56,8 @@ v101 Tile migration (react-grid-layout + react-moveable; must fix floating-tile 
 - **Source-adapter JSON-404** — Graph Sources live-refresh fetch returns HTML 404 instead of JSON; self-graph renders from fixture. High-priority; can't be on screen at launch.
 - **CI red on all branches incl. main** — must be green before public launch.
 
-## Cleanup debt (for the v100.0.9 closer)
+## Cleanup debt (v100.0.9b remaining)
 
-- Retire `SESSION_AND_STACK.md` (stale vP/v86 state; forward bits → here, history → changelog feed).
-- Strip `status/last_updated/last_pass` frontmatter from all surviving static docs.
-- Dangling refs flagged during passes: `(NEW-V86+)V86_BANDIT_MASTER_INDEX.md`, `REHAUL_LEDGER.md`.
-- Decide final homes for `docs/_v100-rewrites/` contents.
+- Strip `status/last_updated/last_pass` frontmatter from all surviving static docs (.9b).
+- Dangling refs flagged during passes: `(NEW-V86+)V86_BANDIT_MASTER_INDEX.md`, `REHAUL_LEDGER.md` (.9b).
+- Update arc table with all v100.0.1–v100.0.9a commits and real SHAs (.9b).

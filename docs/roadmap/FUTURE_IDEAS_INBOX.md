@@ -62,7 +62,7 @@ Items here are promoted to the roadmap only when:
   repulsion walls. Phase 4: Kepler-accurate orbital mechanics.
   Implementation path: gwells well types (cluster-sun, cluster-orbit)
   + interactions (gravity, sibling-repulsion, inter-cluster-repulsion)
-  + new seed function. See `docs/_v100-rewrites/DEFERRED_AND_POST_V1_VISION.md` for
+  + new seed function. See `docs/canonical/DEFERRED_AND_POST_V1_VISION.md` for
   the visual target (supersedes GALAXY_MODE_DIALECT.md, archived v100.0.8).
   Pre-req: gwells v0 ships. Priority: after the horizontal-linear dialect
   is stable.
@@ -120,7 +120,7 @@ Items here are promoted to the roadmap only when:
   Priority: medium — affects demo experience
   Constraint: 2 layout assertions need updating first
 
-- **Cluster gravity** — hard gravity walls between neighborhoods, nodes orbit within cluster (proto-Galaxy mode). Implementation path: future gwells dialect. See `docs/_v100-rewrites/DEFERRED_AND_POST_V1_VISION.md` (supersedes GALAXY_MODE_DIALECT.md) and docs/graph/intelligence/CLUSTER_GRAVITY_AND_COLOR_CODED_NEIGHBORHOODS.md.
+- **Cluster gravity** — hard gravity walls between neighborhoods, nodes orbit within cluster (proto-Galaxy mode). Implementation path: future gwells dialect. See `docs/canonical/DEFERRED_AND_POST_V1_VISION.md` (supersedes GALAXY_MODE_DIALECT.md) and docs/graph/intelligence/CLUSTER_GRAVITY_AND_COLOR_CODED_NEIGHBORHOODS.md.
 - **Color-coded neighborhoods** — community detection driving brand cluster colors in graph
 - **Edge confidence visualization** — edge thickness or opacity encodes confidence class (observed / inferred / ai-inferred)
 - **Node importance rings** — high-weight nodes rendered with a subtle ring/corona to indicate weight

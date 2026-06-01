@@ -16,13 +16,14 @@
 #   - status_options: error if status is not one of these values
 #
 # ────────────────────────────────────────────────────────────
-# Status vocabulary (locked v86a, 5 values):
+# Status vocabulary (locked v86a, 5 values + canonical added v100.0.9a):
 #
 #   current   — actively maintained, reflects today's reality
 #   accepted  — frozen at acceptance, reference state
 #   complete  — finished work product (e.g. session summary, snapshot)
 #   concept   — design exists, no/limited implementation yet
 #   archived  — removed from active flow, kept for record
+#   canonical — code-derived domain canonical doc (docs/canonical/)
 #
 # ────────────────────────────────────────────────────────────
 # Cluster color palette (locked v86a, 9 colors):
@@ -648,6 +649,50 @@ schemas:
       - cluster
       - domain
       - last_updated
+
+  # ============================================================
+  # CANONICAL DOMAIN DOCS (v100.0.9a — docs/canonical/)
+  # ============================================================
+  # Code-derived, static, one-doc-per-domain. Cluster and id/title/references
+  # are hand-set per-doc; shared fields set here via field_overrides.
+
+  canonical:
+    path_match: '^canonical/'
+    status_options: [canonical]
+    field_overrides:
+      status: canonical
+      include_in_self_graph: true
+      type: manual
+      agent_readable: true
+    last_updated_today: true
+    required_fields:
+      - id
+      - title
+      - status
+      - cluster
+      - include_in_self_graph
+
+  # ============================================================
+  # LUMAWEAVE_NOW — live state doc (docs/LUMAWEAVE_NOW.md)
+  # ============================================================
+  # The single live-state doc. Changes every pass. status: current.
+
+  lumaweave_now:
+    path_match: '^LUMAWEAVE_NOW\.md$'
+    status_options: [current]
+    field_overrides:
+      status: current
+      include_in_self_graph: true
+      type: manual
+      agent_readable: true
+      cluster: slate
+    last_updated_today: true
+    required_fields:
+      - id
+      - title
+      - status
+      - cluster
+      - include_in_self_graph
 
   # ============================================================
   # DOCS-LEVEL META (violet — tooling/infrastructure)

@@ -923,7 +923,7 @@ export const advisoryV45: BanditAdvisorySection = {
     {
       id: "v45-contract-exists",
       prompt: "Does the Graph Runtime Boundary Contract exist?",
-      context: "GRAPH_RUNTIME_BOUNDARY_CONTRACT.md archived v100.0.3 — superseded by docs/_v100-rewrites/GRAPH_SIGMA_AND_RENDERING.md.",
+      context: "GRAPH_RUNTIME_BOUNDARY_CONTRACT.md archived v100.0.3 — superseded by docs/canonical/GRAPH_SIGMA_AND_RENDERING.md.",
       responseType: "choice",
       userResponse: "",
       status: "unanswered",
@@ -1629,7 +1629,7 @@ export const advisoryV66: BanditAdvisorySection = {
     {
       id: "v66-audio-source-contract-exists",
       prompt: "Does the Audio Source System contract exist?",
-      context: "AUDIO_SOURCE_SYSTEM_CONTRACT.md archived v100.0.8 — superseded by docs/_v100-rewrites/DEFERRED_AND_POST_V1_VISION.md.",
+      context: "AUDIO_SOURCE_SYSTEM_CONTRACT.md archived v100.0.8 — superseded by docs/canonical/DEFERRED_AND_POST_V1_VISION.md.",
       responseType: "choice",
       userResponse: "",
       status: "unanswered",
@@ -1744,7 +1744,7 @@ export const advisoryV68: BanditAdvisorySection = {
     {
       id: "v68-graph-control-plane-navigation-contract-exists",
       prompt: "Does the Graph Control Plane Navigation contract exist?",
-      context: "GRAPH_CONTROL_PLANE_NAVIGATION_CONTRACT.md archived v100.0.6 — superseded by docs/_v100-rewrites/CONTROL_PLANE_AND_SYSTEM_INDEX.md.",
+      context: "GRAPH_CONTROL_PLANE_NAVIGATION_CONTRACT.md archived v100.0.6 — superseded by docs/canonical/CONTROL_PLANE_AND_SYSTEM_INDEX.md.",
       responseType: "choice",
       userResponse: "yes",
       status: "answered",
@@ -1988,7 +1988,7 @@ export const advisoryV40: BanditAdvisorySection = {
     {
       id: "v40-visual-policy-contract-exists",
       prompt: "Does the Graph Visual Policy contract exist?",
-      context: "GRAPH_VISUAL_POLICY.md archived v100.0.3 — superseded by docs/_v100-rewrites/GRAPH_SIGMA_AND_RENDERING.md.",
+      context: "GRAPH_VISUAL_POLICY.md archived v100.0.3 — superseded by docs/canonical/GRAPH_SIGMA_AND_RENDERING.md.",
       responseType: "choice",
       userResponse: "",
       status: "unanswered",

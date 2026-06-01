@@ -1,3 +1,22 @@
+---
+id: domain.theme.token.system
+title: Theme & Token System
+cluster: gold
+references:
+  - system.doc.architecture
+  - domain.graph.sigma.rendering
+tags:
+  - theme
+  - tokens
+  - canonical
+  - v100
+status: canonical
+include_in_self_graph: true
+type: manual
+agent_readable: true
+last_updated: 2026-05-31
+---
+
 # LumaWeave — Theme & Token System
 
 How LumaWeave themes everything you see: the token model, how a theme reaches the screen, how users override colors, and how to add or extend themes safely.

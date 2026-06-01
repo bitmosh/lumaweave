@@ -1,3 +1,25 @@
+---
+id: domain.graph.sigma.rendering
+title: Graph, Sigma & Rendering
+cluster: azure
+references:
+  - system.doc.architecture
+  - domain.physics.gwells
+  - domain.theme.token.system
+  - domain.source.adapter
+tags:
+  - graph
+  - sigma
+  - rendering
+  - canonical
+  - v100
+status: canonical
+include_in_self_graph: true
+type: manual
+agent_readable: true
+last_updated: 2026-05-31
+---
+
 # LumaWeave — Graph, Sigma & Rendering
 
 How a set of nodes and edges becomes the living, themed, physics-driven graph on screen: the build pipeline, the Sigma instance lifecycle, the per-node geometry programs, and the policy layers that style, label, and dim the graph.
