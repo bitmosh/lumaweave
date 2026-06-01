@@ -40,7 +40,7 @@ Rework the floating-tile system into a clean, discoverable, snappable workspace.
 | v101.0.4a | Group-as-event engine: `groupId` on TileLayoutEntry, FORM/BREAK on drop, `deriveGroups` replaces `computeGroups`, `tileGrouping` flag removed | `617fc19` |
 | v101.0.4b+c | Model-B drag: body-drag moves single tile (BREAK now reachable); GroupBar snap + reconcile on release; fix minEdgeGap (rectilinear hypot — groups now break when dragged far) | `4c92b3f` |
 | v101.0.5 | Live group-bar preview during drag: bar drops excluded tile at BREAK_TOL threshold while dragging, same geometry as commit — visual-only, no groupId write during drag | `4827acb` |
-| v101.0.6 | Click-through acceptance test — confirms `.tile-layer { pointer-events: none }` (already set) lets graph clicks fall through; closes the arc's named bug | in-progress |
+| v101.0.6 | Click-through acceptance test — confirms `.tile-layer { pointer-events: none }` (already set) lets graph clicks fall through; closes the arc's named bug | `87d3b8d` |
 
 **Snap feel: functional baseline reached** — tiles snap per-axis, don't stick, show gold guide only when armed, and group/break by explicit gesture with live preview. Graph clicks now fall through the tile layer correctly.
 
