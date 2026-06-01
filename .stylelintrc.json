@@ -1,8 +1,13 @@
 {
   "extends": ["stylelint-config-standard"],
-  "plugins": ["stylelint-use-logical"],
+  "plugins": ["stylelint-plugin-logical-css"],
   "rules": {
-    "csstools/use-logical": [true, { "except": ["width", "height"] }],
+    "logical-css/require-logical-properties": [true, {
+      "severity": "warning",
+      "ignore": ["width", "height", "min-width", "max-width", "min-height", "max-height", "overflow-x", "overflow-y"]
+    }],
+    "logical-css/require-logical-keywords": [true, { "severity": "warning" }],
+    "logical-css/require-logical-units": [true, { "severity": "warning" }],
     "color-function-notation": null,
     "color-function-alias-notation": null,
     "alpha-value-notation": null,
