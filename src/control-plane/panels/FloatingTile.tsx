@@ -8,7 +8,7 @@ import { useState } from "react";
 import type { TileLayoutEntry, TileGroup } from "./tile.types";
 import { useTileContext } from "./TileProvider";
 import { tileSectionRegistry } from "./tileSectionRegistry";
-import { shouldFlipTile, isOffAnchor, findSnap, COLLAPSED_H } from "./tileUtils";
+import { shouldFlipTile, isOffAnchor, findSnap, COLLAPSED_H, reconcileMembershipOnDrop } from "./tileUtils";
 import type { Rect } from "./tileUtils";
 
 const TILE_GRID = 16;
@@ -172,6 +172,9 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
           }
         }
       }
+
+      // Reconcile explicit group membership after positions are final (FORM/BREAK).
+      reconcileMembershipOnDrop(groupIds, ctx.getLiveTiles(), ctx.updateTile);
     };
     const onKeyDown = (ev: KeyboardEvent) => {
       if (ev.key === "Escape") onUp();

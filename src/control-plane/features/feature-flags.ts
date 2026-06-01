@@ -8,8 +8,7 @@ export type FeatureFlagId =
   | "agentBeacons"
   | "worldMode"
   | "helixLayouts"
-  | "qaPanel"
-  | "tileGrouping";
+  | "qaPanel";
 
 export const defaultFeatureFlags: Record<FeatureFlagId, boolean> = {
   sigma2dRenderer: true,
@@ -22,5 +21,4 @@ export const defaultFeatureFlags: Record<FeatureFlagId, boolean> = {
   worldMode: false,
   helixLayouts: false,
   qaPanel: true,
-  tileGrouping: false,
 };

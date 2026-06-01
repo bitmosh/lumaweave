@@ -7,13 +7,13 @@
 import { useMemo } from "react";
 import { useTileContext } from "./TileProvider";
 import { FloatingTile } from "./FloatingTile";
-import { computeGroups } from "./tileUtils";
+import { deriveGroups } from "./tileUtils";
 import type { TileGroup } from "./tile.types";
 
 export function TileLayer() {
   const ctx = useTileContext();
   const tilesArray = Array.from(ctx.tiles.values());
-  const { groups, tileToGroup } = useMemo(() => computeGroups(tilesArray), [tilesArray]);
+  const { groups, tileToGroup } = useMemo(() => deriveGroups(tilesArray), [tilesArray]);
 
   return (
     <div className="tile-layer" data-testid="tile-layer">

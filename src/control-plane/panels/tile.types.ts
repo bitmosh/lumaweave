@@ -176,6 +176,11 @@ export interface TileLayoutEntry {
   visible?: boolean;
   /** Persisted anchor position. Defaults to the registry entry's defaultAnchor on first open. */
   anchor?: TileAnchor;
+  /**
+   * Explicit group membership. Tiles sharing a groupId are one snapped cluster.
+   * Set by snap FORM on drop; cleared by drag BREAK. Never inferred from position.
+   */
+  groupId?: string;
 }
 
 /**
