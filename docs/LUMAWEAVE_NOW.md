@@ -41,7 +41,7 @@ tags: [live-state, now, canonical, v100]
 | v100.0.7 | Tile & Layout Workspace canonical doc | `b903727` |
 | v100.0.8 | Deferred / Post-v1 Vision canonical doc | `26ffa69` |
 | v100.0.9a | Closer part A — frontmatter, relocate canonical, archive stale state docs | `00d8829` |
-| v100.0.9b | Closer part B — held docs resolved, registry cleanup, 0.7.0 → 0.8.0 | TBD |
+| v100.0.9b | Closer part B — held docs resolved, registry cleanup, 0.7.0 → 0.8.0 | `10207e8` |
 
 ## Current arc — v101: Tile Migration
 
@@ -53,7 +53,7 @@ v102 Theme menu integration · v103 Minimap · v104 Code spoke · v105 History s
 
 ## In flight
 
-- v100.0.9b committing now (arc closer part B).
+- v100.0.9b landed at `10207e8`. Arc closed.
 
 ## Known bugs / paperweights
 
