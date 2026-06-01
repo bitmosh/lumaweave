@@ -119,3 +119,141 @@ Under `src/source-adapter/` and `src/graph/` unless noted.
 - **Normalizer + shape:** `normalizeGraphifyGraph.ts`, `graph/schema/graph.types.ts` (`LumaWeaveNodeDraft`/`EdgeDraft`, `GraphSourceSummary`)
 - **Source types:** `source-adapter/types.ts` (`LumaSourceGraph`, v0/v1 node/edge types)
 - **UI:** `SourceAdapterPanel.tsx`, `SourceAdapterTileContent.tsx`, `GraphSourcesTileContent.tsx`
+
+---
+
+## Self-Graph Schema Reference
+
+Verbatim schema contract between `generate-self-graph.mjs` (producer) and `self-graph-adapter.ts` (consumer). Supersedes `docs/graph/contracts/SELF_GRAPH_SCHEMA.md` (archived v100.0.9b).
+
+**Versioning policy:** breaking change = bump `schemaVersion`; additive optional fields = backward-compatible, no version bump.
+
+### Top-level structure
+
+```json
+{
+  "schemaVersion": "lumaweave-self-graph/v1",
+  "metadata": { },
+  "nodes": [ ],
+  "edges": [ ]
+}
+```
+
+### Metadata block
+
+```typescript
+type SelfGraphMetadata = {
+  schemaVersion: "lumaweave-self-graph/v1";
+  generatedAt: string;        // ISO 8601 timestamp
+  generator: string;          // e.g., "generate-self-graph@v2"
+  sourceCommit?: string;      // git SHA if available, omit if not
+  sourceTree: string;         // root path the generator scanned, e.g., "./"
+  stats: {
+    nodeCount: number;
+    edgeCount: number;
+    nodesByType: {
+      doc: number;
+      code: number;
+      config: number;
+      fixture: number;
+      spine: number;
+      directory: number;
+    };
+    edgesByType: Record<EdgeType, number>;
+  };
+};
+```
+
+### Node shape
+
+```typescript
+type SelfGraphNodeBase = {
+  id: string;                 // unique stable identifier
+  type: NodeType;
+  label: string;              // short display name (file basename)
+  fullLabel: string;          // longer descriptive name (frontmatter title)
+  path: string;               // repo-relative path
+  cluster: string | null;     // 10-color taxonomy: azure | slate | gold | etc.
+  status: string | null;      // current | accepted | complete | concept | archived
+  tags: string[];
+  size: number;               // line count
+  lastModified: string;       // ISO 8601 date
+  raw: {
+    color?: string;           // explicit color override (hex)
+    dimFactor?: number;       // 0..1, multiplier on default opacity
+    icon?: string;            // future use
+  };
+};
+
+type NodeType = "doc" | "code" | "config" | "fixture" | "spine" | "directory";
+```
+
+**Identity strategy:** `frontmatter.id` if present; fallback `slug(path)`. Code files always use `slug(path)`.
+
+**Visual treatment by type:**
+- Doc nodes: cluster-derived color (no `raw.color` override)
+- Code nodes: `raw.color: "#5a6678"`, `raw.dimFactor: 0.55`
+- Spine nodes: `raw.color: "#9ca3af"`, `raw.dimFactor: 0.8`
+- These are generator recommendations; the render layer may override.
+
+### Edge shape
+
+```typescript
+type SelfGraphEdge = {
+  id: string;                 // "edge-{sourceId}-{targetId}-{type}"
+  source: string;
+  target: string;
+  type: EdgeType;
+  weight: number;             // 0..1
+  bidirectional: boolean;     // default false
+  provenance: {
+    source: ProvenanceSource;
+    detail?: string;
+  };
+  raw?: { label?: string; color?: string; };
+};
+
+type EdgeType =
+  | "explicit-reference"      // frontmatter references:
+  | "wiki-link"               // [[xxx]] in body
+  | "markdown-link"           // [text](path.md)
+  | "code-import"             // import X from "..."
+  | "tag-overlap"             // shared tags (≥2 threshold)
+  | "contains"                // folder → file
+  | "governs"                 // contract/policy → subsystem
+  | "describes";              // doc → code (heuristic)
+
+type ProvenanceSource =
+  | "frontmatter" | "body-parse" | "ast-parse" | "directory-walk"
+  | "heuristic" | "directory-hierarchy" | "spine-to-top-directory"
+  | "directory-leaf" | "spine-direct-leaf" | "spine-fallback";
+```
+
+### Edge weight defaults
+
+| Type | Weight | Notes |
+|------|--------|-------|
+| `explicit-reference` | 1.0 | Highest signal |
+| `code-import` | 0.85 | Architectural backbone |
+| `wiki-link` | 0.7 | Author-curated |
+| `markdown-link` | 0.65 | Author-curated |
+| `governs` | 0.7 | Contract/policy relationship |
+| `describes` | 0.6 | Heuristic |
+| `contains` | 0.5 | Structural, low semantic value |
+| `tag-overlap` | 0.0–0.6 | `min(0.6, sharedTagCount / 4)` |
+
+### Tag-overlap policy
+
+Two nodes share a `tag-overlap` edge if they share ≥2 tags and at least one is "narrow" (not a stopword).
+
+**Stopword list (v1.1):** `["accessibility", "app", "assets", "audio", "code", "control-plane", "current", "doc", "docs", "fixtures", "graph", "registry", "renderers", "source-adapter", "src", "styles", "themes", "ui", "v86", "v87"]`
+
+**Per-node cap:** 5 tag-overlap edges max per node (highest-weight kept).
+
+### Manifest + report companions
+
+Generator writes sibling `manifest.json` and `GRAPH_REPORT.md`. The manifest carries health stats (nodes without cluster, orphaned nodes, broken references). The report is human-readable; both are for inspection only, not runtime consumption.
+
+### Backward compatibility (v0 → v1)
+
+Existing `id`, `label`, `cluster`, `tags` fields preserved. New required fields added in v1: `type`, `path`, `status`, `lastModified`, `size`, `raw`. New edge types are additive. Generator writes v1 from scratch; no legacy migration needed.

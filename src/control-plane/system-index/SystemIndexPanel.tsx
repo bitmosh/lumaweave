@@ -212,18 +212,6 @@ function EntryCard({ entry }: { entry: SystemIndexEntry }): React.JSX.Element {
         </div>
       </div>
 
-      {entry.docPaths.length > 0 && (
-        <div className="mb-2 text-xs">
-          <span className="text-gray-500">Doc Paths:</span>
-          <div className="mt-1 space-y-1">
-            {entry.docPaths.map((path) => (
-              <div key={path} className="text-gray-700 font-mono text-xs">
-                {path}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {entry.sourcePaths.length > 0 && (
         <div className="mb-2 text-xs">

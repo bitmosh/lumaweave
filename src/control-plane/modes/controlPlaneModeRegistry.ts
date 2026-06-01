@@ -126,7 +126,7 @@ const EVIDENCE_MODE: ControlPlaneModeMetadata = {
   futureUse: "Default for validation-sensitive surfaces unless migrated to mode-aware rendering",
   relatedContracts: [
     "docs/canonical/CONTROL_PLANE_AND_SYSTEM_INDEX.md",
-    "docs/control-plane/CONTRACT_TO_CODE_TRACE_MATRIX.md",
+    "scripts/data/CONTRACT_TO_CODE_TRACE_MATRIX.md",
   ],
   tags: ["full-evidence", "qa-review", "contract-compliance"],
 };

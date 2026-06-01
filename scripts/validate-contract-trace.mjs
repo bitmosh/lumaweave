@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const TRACE_MATRIX_PATH = path.join(__dirname, '../docs/control-plane/contracts/CONTRACT_TO_CODE_TRACE_MATRIX.md');
+const TRACE_MATRIX_PATH = path.join(__dirname, 'data/CONTRACT_TO_CODE_TRACE_MATRIX.md');
 
 // ANSI colors
 const colors = {
