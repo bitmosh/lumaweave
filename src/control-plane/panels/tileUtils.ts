@@ -44,7 +44,7 @@ export function isOffAnchor(
 
 export const COLLAPSED_H = 30;
 export const SNAP_TOL = 15;   // px — per-axis edge detection (replaces 75px hypot)
-export const BREAK_TOL = SNAP_TOL * 3; // 45px — used by group-break (v101.0.3+)
+export const BREAK_TOL = SNAP_TOL * 2; // 30px — used by group-break (v101.0.3+)
 
 export type Rect = { x: number; y: number; w: number; h: number };
 export type SnapResult = { x?: number; y?: number } | null;

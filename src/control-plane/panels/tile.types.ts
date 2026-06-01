@@ -75,21 +75,12 @@ export interface TileSectionEntry {
 }
 
 /**
- * Snap guide state (shown during drag as visual feedback)
- * Displays a preview rectangle and edge lines showing where tile will snap
+ * Snap guide state — edge lines shown ONLY when a snap is armed (findSnap returns non-null).
  */
 export interface SnapGuide {
-  /** X position of preview rectangle */
-  previewX: number;
-  /** Y position of preview rectangle */
-  previewY: number;
-  /** Width of preview rectangle */
-  previewW: number;
-  /** Height of preview rectangle */
-  previewH: number;
-  /** X coordinate of vertical edge line (null if no horizontal snap) */
+  /** Screen X of vertical guide line; null if no X snap armed */
   edgeX: number | null;
-  /** Y coordinate of horizontal edge line (null if no vertical snap) */
+  /** Screen Y of horizontal guide line; null if no Y snap armed */
   edgeY: number | null;
 }
 

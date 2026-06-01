@@ -33,9 +33,7 @@ export function TileLayer() {
         );
       })}
 
-      {/* Snap guide overlay disabled — snap behavior disabled in fix/v86c-disable-snap.
-          Re-enable by removing this guard when snap is reimplemented. */}
-      {false && <SnapGuideOverlay />}
+      <SnapGuideOverlay />
     </div>
   );
 }
@@ -184,18 +182,6 @@ function SnapGuideOverlay() {
 
   return (
     <div className="snap-guide-overlay" style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 9999 }}>
-      {/* Preview rectangle — dashed border showing where tile will land */}
-      <div
-        className="snap-guide-preview"
-        style={{
-          position: 'absolute',
-          left: guide.previewX,
-          top: guide.previewY,
-          width: guide.previewW,
-          height: guide.previewH,
-        }}
-      />
-      {/* Vertical edge line */}
       {guide.edgeX !== null && (
         <div
           className="snap-guide-line snap-guide-line-v"
@@ -208,7 +194,6 @@ function SnapGuideOverlay() {
           }}
         />
       )}
-      {/* Horizontal edge line */}
       {guide.edgeY !== null && (
         <div
           className="snap-guide-line snap-guide-line-h"

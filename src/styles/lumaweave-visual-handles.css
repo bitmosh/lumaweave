@@ -492,16 +492,10 @@ input[type="range"]:focus {
    Snap Guide Overlay
    ======================================== */
 
-.snap-guide-preview {
-  border: 1.5px dashed var(--lw-visual-accent, rgba(34,211,238,0.9));
-  border-radius: 8px;
-  background: var(--lw-visual-accent-soft, rgba(34,211,238,0.12));
-  box-shadow: 0 0 8px var(--lw-visual-accent, rgba(34,211,238,0.6));
-}
-
 .snap-guide-line {
-  background: var(--lw-visual-accent, rgba(34,211,238,0.9));
-  opacity: 0.6;
+  background: var(--lw-accent, #FFB347);
+  opacity: 0.75;
+  box-shadow: 0 0 6px var(--lw-accent, #FFB347);
 }
 
 /* ========================================

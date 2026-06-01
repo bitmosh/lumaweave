@@ -53,6 +53,9 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
     const groupTiles = Array.from(ctx.tiles.values()).filter(t => groupIds.includes(t.id));
     const offsets = groupTiles.map(t => ({ id: t.id, dx: t.x - startTilePos.x, dy: t.y - startTilePos.y }));
 
+    // Change-gate for snap guide: only call setSnapGuide when armed state or edge coord changes.
+    let lastGuideKey = "";
+
     let moveCount = 0;
     const onMove = (ev: MouseEvent) => {
       moveCount++;
@@ -72,10 +75,6 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
         detached = false;
       }
 
-      // Snap disabled during drag for smooth movement.
-      // Snap will engage on mouseup if close to another tile.
-      // This prevents the "jumpy" 22px increments during dragging.
-
       // Update positions (group movement preserves offsets)
       const dx = nx - startTilePos.x, dy = ny - startTilePos.y;
       offsets.forEach(o => {
@@ -84,12 +83,55 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
           y: startTilePos.y + o.dy + dy,
         });
       });
+
+      // Armed-only snap guide — reads live positions, fires setSnapGuide only on change.
+      const guideTargets = ctx.getLiveTiles()
+        .filter(t => !groupIds.includes(t.id))
+        .map(t => ({ x: t.x, y: t.y, w: t.w, h: t.collapsed ? COLLAPSED_H : t.h } as Rect));
+
+      let edgeX: number | null = null;
+      let edgeY: number | null = null;
+      let armed = false;
+
+      if (groupTiles.length === 1) {
+        const liveTile = ctx.getLiveTile(tile.id);
+        if (liveTile) {
+          const movingRect: Rect = { x: liveTile.x, y: liveTile.y, w: liveTile.w, h: liveTile.collapsed ? COLLAPSED_H : liveTile.h };
+          const res = findSnap(movingRect, guideTargets);
+          if (res) {
+            armed = true;
+            edgeX = res.x !== undefined ? (res.x > liveTile.x ? res.x + liveTile.w : res.x) : null;
+            edgeY = res.y !== undefined ? res.y : null;
+          }
+        }
+      } else {
+        const liveMembers = groupIds.map(id => ctx.getLiveTile(id)).filter((t): t is NonNullable<typeof t> => t !== null && t !== undefined);
+        if (liveMembers.length > 0) {
+          const bx = Math.min(...liveMembers.map(t => t.x));
+          const by = Math.min(...liveMembers.map(t => t.y));
+          const bw = Math.max(...liveMembers.map(t => t.x + t.w)) - bx;
+          const bh = Math.max(...liveMembers.map(t => t.y + (t.collapsed ? COLLAPSED_H : t.h))) - by;
+          const res = findSnap({ x: bx, y: by, w: bw, h: bh }, guideTargets);
+          if (res) {
+            armed = true;
+            edgeX = res.x !== undefined ? (res.x > bx ? res.x + bw : res.x) : null;
+            edgeY = res.y !== undefined ? res.y : null;
+          }
+        }
+      }
+
+      const guideKey = armed ? `${edgeX},${edgeY}` : "";
+      if (guideKey !== lastGuideKey) {
+        lastGuideKey = guideKey;
+        ctx.setSnapGuide(armed ? { edgeX, edgeY } : null);
+      }
     };
     const onUp = () => {
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("pointercancel", onPointerCancel);
+      ctx.setSnapGuide(null);
 
       // Snap on release — per-axis edge detection (v101.0.2a)
       // Uses getLiveTile/getLiveTiles (live store read) not ctx.tiles (stale render snapshot).

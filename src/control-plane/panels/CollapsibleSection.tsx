@@ -72,10 +72,6 @@ export function CollapsibleSection({
             const resolvedX = candidate.x ?? nx;
             const resolvedY = candidate.y ?? ny;
             const guide: SnapGuide = {
-              previewX: resolvedX,
-              previewY: resolvedY,
-              previewW: createdTile.w,
-              previewH: tileH,
               edgeX: candidate.x !== undefined ? (resolvedX > nx ? resolvedX + createdTile.w : resolvedX) : null,
               edgeY: candidate.y !== undefined ? resolvedY : null,
             };
