@@ -1,7 +1,8 @@
 import { ReactNode } from "react";
 import { useTileContext } from "./TileProvider";
 import { TiledOutIndicator } from "./TiledOutIndicator";
-import { findSnap } from "./tileUtils";
+import { findSnap, COLLAPSED_H } from "./tileUtils";
+import type { Rect } from "./tileUtils";
 import { useSettingsStore } from "../settings/settings.store";
 import type { SnapGuide } from "./tile.types";
 
@@ -61,20 +62,22 @@ export function CollapsibleSection({
         const currentTilesArray = useSettingsStore.getState().settings.ui?.tileLayout ?? [];
         const createdTile = currentTilesArray.find(t => t.id === createdTileId);
         if (createdTile) {
+          const tileH = createdTile.collapsed ? COLLAPSED_H : createdTile.h;
+          const toRect = (t: typeof createdTile): Rect => ({ x: t.x, y: t.y, w: t.w, h: t.collapsed ? COLLAPSED_H : t.h });
           const otherTiles = currentTilesArray.filter(t => t.id !== createdTileId);
-          const projected = { ...createdTile, x: nx, y: ny };
-          const candidate = findSnap(projected, otherTiles);
+          const movingRect: Rect = { x: nx, y: ny, w: createdTile.w, h: tileH };
+          const candidate = findSnap(movingRect, otherTiles.map(toRect));
 
           if (candidate) {
-            const snapX = Math.abs(candidate.x - nx) > 1 ? candidate.x : null;
-            const snapY = Math.abs(candidate.y - ny) > 1 ? candidate.y : null;
+            const resolvedX = candidate.x ?? nx;
+            const resolvedY = candidate.y ?? ny;
             const guide: SnapGuide = {
-              previewX: candidate.x,
-              previewY: candidate.y,
+              previewX: resolvedX,
+              previewY: resolvedY,
               previewW: createdTile.w,
-              previewH: createdTile.h,
-              edgeX: snapX !== null ? (snapX > nx ? candidate.x + createdTile.w : candidate.x) : null,
-              edgeY: snapY !== null ? candidate.y : null,
+              previewH: tileH,
+              edgeX: candidate.x !== undefined ? (resolvedX > nx ? resolvedX + createdTile.w : resolvedX) : null,
+              edgeY: candidate.y !== undefined ? resolvedY : null,
             };
             setSnapGuide(guide);
           } else {
@@ -94,10 +97,12 @@ export function CollapsibleSection({
         const currentTilesArray = useSettingsStore.getState().settings.ui?.tileLayout ?? [];
         const createdTile = currentTilesArray.find(t => t.id === createdTileId);
         if (createdTile) {
+          const toRect = (t: typeof createdTile): Rect => ({ x: t.x, y: t.y, w: t.w, h: t.collapsed ? COLLAPSED_H : t.h });
           const otherTiles = currentTilesArray.filter(t => t.id !== createdTileId);
-          const snapTo = findSnap(createdTile, otherTiles);
+          const movingRect: Rect = toRect(createdTile);
+          const snapTo = findSnap(movingRect, otherTiles.map(toRect));
           if (snapTo) {
-            updateTile(createdTileId, { x: snapTo.x, y: snapTo.y });
+            updateTile(createdTileId, { x: snapTo.x ?? createdTile.x, y: snapTo.y ?? createdTile.y });
           }
         }
       }

@@ -42,8 +42,12 @@ export function isOffAnchor(
   return Math.abs(tile.x - pos.x) > 4 || Math.abs(tile.y - pos.y) > 4;
 }
 
-const COLLAPSED_H = 30;
-const SNAP_TOLERANCE = 75; // strong magnetic snap tolerance
+export const COLLAPSED_H = 30;
+export const SNAP_TOL = 9;    // px — crisp per-axis edge detection (replaces 75px hypot)
+export const BREAK_TOL = SNAP_TOL * 3; // ≈27px — used by group-break (v101.0.3+)
+
+export type Rect = { x: number; y: number; w: number; h: number };
+export type SnapResult = { x?: number; y?: number } | null;
 
 // --- Group computation: tiles snapped edge-to-edge form a group ----
 // BIG RULE: topRow width is computed from CONTIGUOUS top-row tiles, NOT bbox
@@ -103,41 +107,51 @@ export function computeGroups(tiles: TileLayoutEntry[]): { groups: TileGroup[]; 
 }
 
 // --- Find nearest snap target during drag ----
-// Reference: (NEW)tile-system.jsx lines 186-204
-export function findSnap(movingTile: TileLayoutEntry, others: TileLayoutEntry[]): { x: number; y: number } | null {
-  // Snap disabled when grouping is disabled
-  if (!defaultFeatureFlags.tileGrouping) {
-    return null;
+// Per-axis, adjacency-only detection. No Math.hypot, no cross-axis coupling.
+// X-axis candidates gated by Y-overlap; Y-axis candidates gated by X-overlap.
+// Alignment pairings (same-row Y snap) deferred to v101.0.4 per design §7.1.
+export function findSnap(moving: Rect, targets: Rect[]): SnapResult {
+  let bestX: { coord: number; gap: number } | null = null;
+  let bestY: { coord: number; gap: number } | null = null;
+
+  const overlaps = (a0: number, a1: number, b0: number, b1: number) =>
+    a0 < b1 + SNAP_TOL && b0 < a1 + SNAP_TOL;
+
+  for (const t of targets) {
+    const mLeft = moving.x, mRight = moving.x + moving.w;
+    const mTop = moving.y, mBot = moving.y + moving.h;
+    const tLeft = t.x, tRight = t.x + t.w;
+    const tTop = t.y, tBot = t.y + t.h;
+
+    // X candidates — require vertical overlap
+    if (overlaps(mTop, mBot, tTop, tBot)) {
+      bestX = snapCandidate(bestX, mRight, tLeft, tLeft - moving.w);
+      bestX = snapCandidate(bestX, mLeft, tRight, tRight);
+    }
+    // Y candidates — require horizontal overlap
+    if (overlaps(mLeft, mRight, tLeft, tRight)) {
+      bestY = snapCandidate(bestY, mBot, tTop, tTop - moving.h);
+      bestY = snapCandidate(bestY, mTop, tBot, tBot);
+    }
   }
 
-  const snapCandidates: { x: number; y: number; d: number }[] = [];
-  const r = { x: movingTile.x, y: movingTile.y, w: movingTile.w, h: movingTile.collapsed ? COLLAPSED_H : movingTile.h };
-  others.forEach(o => {
-    const or = { x: o.x, y: o.y, w: o.w, h: o.collapsed ? COLLAPSED_H : o.h };
-    // check 4 sides, snap edge-to-edge if close
-    const tryL = { x: or.x - r.w, y: or.y };
-    const tryR = { x: or.x + or.w, y: or.y };
-    const tryT = { x: or.x, y: or.y - r.h };
-    const tryB = { x: or.x, y: or.y + or.h };
-    [tryL, tryR, tryT, tryB].forEach(p => {
-      const d = Math.hypot(p.x - r.x, p.y - r.y);
-      if (d < SNAP_TOLERANCE) {
-        // Edge snaps get 0.6x distance multiplier to make them win strongly
-        snapCandidates.push({ ...p, d: d * 0.6 });
-      }
-    });
+  const out: { x?: number; y?: number } = {};
+  if (bestX !== null) out.x = bestX.coord;
+  if (bestY !== null) out.y = bestY.coord;
+  return (out.x !== undefined || out.y !== undefined) ? out : null;
+}
 
-    // Row alignment: if horizontally adjacent (or near), snap Y to match for group row alignment
-    const xClose = Math.abs((r.x + r.w) - or.x) < SNAP_TOLERANCE || Math.abs((or.x + or.w) - r.x) < SNAP_TOLERANCE;
-    const yDiff = Math.abs(r.y - or.y);
-    if (xClose && yDiff > 0 && yDiff < SNAP_TOLERANCE) {
-      // Row alignment snap gets strong weighting (0.5x) to ensure tiles in same row
-      snapCandidates.push({ x: r.x, y: or.y, d: yDiff * 0.5 });
-    }
-  });
-  if (snapCandidates.length === 0) return null;
-  const best = snapCandidates.reduce((a, b) => a.d < b.d ? a : b);
-  return { x: best.x, y: best.y };
+function snapCandidate(
+  best: { coord: number; gap: number } | null,
+  edge: number,
+  targetEdge: number,
+  correctedOrigin: number,
+): { coord: number; gap: number } | null {
+  const gap = Math.abs(edge - targetEdge);
+  if (gap < SNAP_TOL && (best === null || gap < best.gap)) {
+    return { coord: correctedOrigin, gap };
+  }
+  return best;
 }
 
 // --- Flip-on-overflow mechanic ----

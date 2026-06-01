@@ -234,6 +234,7 @@ export function TileProvider({ children }: TileProviderProps) {
     tiles: new Map(tiles.map((t) => [t.id, t])),
     maxZ: Math.max(...tiles.map((t) => t.z), 10),
     groups: [],
+    tileToGroup: {},
     snapGuide,
     tileOut,
     closeTile,

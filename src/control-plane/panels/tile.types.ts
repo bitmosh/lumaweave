@@ -128,6 +128,8 @@ export interface TileContextState {
   maxZ: number;
   /** Computed groups (runtime only) */
   groups: TileGroup[];
+  /** Map of tile ID → group representative tile ID (runtime only, populated in v101.0.3) */
+  tileToGroup: Record<string, string>;
   /** Active snap guide (shown during drag) */
   snapGuide: SnapGuide | null;
 }
@@ -159,8 +161,6 @@ export interface TileContextActions {
   setTileAnchor: (tileId: string) => void;
   /** Slide the tile to its anchor position with a transition. */
   returnToAnchor: (tileId: string) => void;
-  /** Legacy alias for tileOut (for backward compatibility) */
-  tearOff?: (sectionKey: string, initialX: number, initialY: number) => void;
 }
 
 /**
