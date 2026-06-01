@@ -8,10 +8,10 @@ import { useState } from "react";
 import type { TileLayoutEntry, TileGroup } from "./tile.types";
 import { useTileContext } from "./TileProvider";
 import { tileSectionRegistry } from "./tileSectionRegistry";
-import { shouldFlipTile, isOffAnchor } from "./tileUtils";
+import { shouldFlipTile, isOffAnchor, findSnap, COLLAPSED_H } from "./tileUtils";
+import type { Rect } from "./tileUtils";
 
 const TILE_GRID = 16;
-const COLLAPSED_H = 30;
 const MIN_W = 200, MIN_H = 110;
 
 const snap = (v: number) => Math.round(v / TILE_GRID) * TILE_GRID;
@@ -90,6 +90,46 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
       window.removeEventListener("mouseup", onUp);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("pointercancel", onPointerCancel);
+
+      // Snap on release — per-axis edge detection (v101.0.2)
+      const toRect = (t: ReturnType<typeof ctx.tiles.get>): Rect | null => {
+        if (!t) return null;
+        return { x: t.x, y: t.y, w: t.w, h: t.collapsed ? COLLAPSED_H : t.h };
+      };
+      const allTiles = Array.from(ctx.tiles.values());
+      const others = allTiles.filter(t => !groupIds.includes(t.id));
+      const targetRects = others.map(t => toRect(t)).filter((r): r is Rect => r !== null);
+
+      if (groupTiles.length === 1) {
+        // Single tile: snap live position to nearest adjacent edge
+        const liveTile = ctx.tiles.get(tile.id);
+        const movingRect = toRect(liveTile);
+        if (movingRect) {
+          const res = findSnap(movingRect, targetRects);
+          if (res) {
+            ctx.updateTile(tile.id, { x: res.x ?? movingRect.x, y: res.y ?? movingRect.y });
+          }
+        }
+      } else {
+        // Group: snap bounding-box to nearest adjacent edge, shift all members rigidly
+        const liveMembers = groupIds
+          .map(id => ctx.tiles.get(id))
+          .filter((t): t is NonNullable<typeof t> => t !== null && t !== undefined);
+        if (liveMembers.length > 0) {
+          const bx = Math.min(...liveMembers.map(t => t.x));
+          const by = Math.min(...liveMembers.map(t => t.y));
+          const bw = Math.max(...liveMembers.map(t => t.x + t.w)) - bx;
+          const bh = Math.max(...liveMembers.map(t => t.y + (t.collapsed ? COLLAPSED_H : t.h))) - by;
+          const res = findSnap({ x: bx, y: by, w: bw, h: bh }, targetRects);
+          if (res) {
+            const dx = (res.x ?? bx) - bx;
+            const dy = (res.y ?? by) - by;
+            if (dx !== 0 || dy !== 0) {
+              liveMembers.forEach(m => ctx.updateTile(m.id, { x: m.x + dx, y: m.y + dy }));
+            }
+          }
+        }
+      }
     };
     const onKeyDown = (ev: KeyboardEvent) => {
       if (ev.key === "Escape") onUp();
