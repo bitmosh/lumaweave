@@ -40,10 +40,11 @@ Rework the floating-tile system into a clean, discoverable, snappable workspace.
 | v101.0.4a | Group-as-event engine: `groupId` on TileLayoutEntry, FORM/BREAK on drop, `deriveGroups` replaces `computeGroups`, `tileGrouping` flag removed | `617fc19` |
 | v101.0.4b+c | Model-B drag: body-drag moves single tile (BREAK now reachable); GroupBar snap + reconcile on release; fix minEdgeGap (rectilinear hypot — groups now break when dragged far) | `4c92b3f` |
 | v101.0.5 | Live group-bar preview during drag: bar drops excluded tile at BREAK_TOL threshold while dragging, same geometry as commit — visual-only, no groupId write during drag | `4827acb` |
+| v101.0.6 | Click-through acceptance test — confirms `.tile-layer { pointer-events: none }` (already set) lets graph clicks fall through; closes the arc's named bug | in-progress |
 
-**Snap feel: functional baseline reached** — tiles snap per-axis, don't stick, show gold guide only when armed, and group/break by explicit gesture with live preview.
+**Snap feel: functional baseline reached** — tiles snap per-axis, don't stick, show gold guide only when armed, and group/break by explicit gesture with live preview. Graph clicks now fall through the tile layer correctly.
 
-**Still open in v101:** **floating-tile click-interception fix** + click-through E2E acceptance test (the arc's roadmap-named bug — not yet fixed); broader Solar Plasma tile CSS restyle; logical-property warning cleanup (5 deferred in StatusBar.css); tighten stylelint logical rules warn→error after cleanup.
+**Still open in v101:** broader Solar Plasma tile CSS restyle; logical-property warning cleanup (5 deferred in StatusBar.css); tighten stylelint logical rules warn→error after cleanup.
 
 ## Roadmap (post-v101)
 
@@ -51,8 +52,11 @@ v102 Theme menu integration · v103 Minimap · v104 Code spoke · v105 History s
 
 ## Known bugs / paperweights
 
-- **Floating-tile click-interception** — floating tiles intercept graph-canvas clicks. Open; slated for a dedicated v101 pass with a click-through acceptance test. (`docs/known-bugs/`)
 - **Source-adapter JSON-404** — Graph Sources live-refresh fetch returns HTML 404 instead of JSON; self-graph renders from fixture. High-priority; can't be on screen at launch.
+
+## Recently resolved
+
+- **Floating-tile click-interception** — `.tile-layer { pointer-events: none }` was already set; v101.0.6 added the click-through E2E test that formally closes this bug.
 
 ## Security / dependency debt
 

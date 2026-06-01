@@ -188,3 +188,43 @@ for (const section of tileSectionRegistry.list()) {
     await page.waitForTimeout(200);
   });
 }
+
+// v101.0.6: graph click-through acceptance test
+// Proves that .tile-layer does NOT intercept clicks over empty graph areas.
+// The fix: .tile-layer { pointer-events: none } + .tile { pointer-events: auto }
+// CSS pointer-events affects elementFromPoint — a pointer-events:none element
+// is invisible to it, so it falls through to the element below.
+test("v101.0.6: tile-layer never intercepts clicks (pointer-events: none); tiles stay interactive", async ({ page }) => {
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  await expect(page.getByTestId("tile-layer")).toBeVisible();
+  await expect(page.locator(".tile").first()).toBeVisible({ timeout: 5000 });
+
+  // 1. The tile-layer must NEVER be the top element at any viewport point.
+  //    With pointer-events:none, elementFromPoint skips it and returns the element below.
+  const tileLayerNeverTop = await page.evaluate(() => {
+    const W = window.innerWidth, H = window.innerHeight;
+    for (let x = 5; x < W; x += 60) {
+      for (let y = 5; y < H; y += 60) {
+        const el = document.elementFromPoint(x, y);
+        if (el?.getAttribute("data-testid") === "tile-layer") {
+          return `tile-layer intercepted at (${x},${y})`;
+        }
+      }
+    }
+    return "ok";
+  });
+  expect(tileLayerNeverTop).toBe("ok");
+
+  // 2. Tiles must remain interactive — a tile's center returns an element inside the tile.
+  const tileInteractive = await page.evaluate(() => {
+    const tile = document.querySelector(".tile");
+    if (!tile) return "no-tile";
+    const rect = tile.getBoundingClientRect();
+    const cx = rect.x + rect.width / 2;
+    const cy = rect.y + rect.height / 2;
+    const top = document.elementFromPoint(cx, cy);
+    return tile.contains(top) ? "tile-interactive" : `not-interactive: ${top?.tagName}`;
+  });
+  expect(tileInteractive).toBe("tile-interactive");
+});
