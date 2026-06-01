@@ -38,7 +38,7 @@ Rework the floating-tile system into a clean, discoverable, snappable workspace.
 | v101.0.2b | CI repair — stylelint logical-css (warn), generate:graph step, Node 22 | `f434447` / `09f0e95` |
 | v101.0.3 | Armed-only gold snap guide; drop preview rect; BREAK_TOL = SNAP_TOL*2 | `cdff96c` / `3228a19` |
 | v101.0.4a | Group-as-event engine: `groupId` on TileLayoutEntry, FORM/BREAK on drop, `deriveGroups` replaces `computeGroups`, `tileGrouping` flag removed | `617fc19` |
-| v101.0.4b+c | Model-B drag: body-drag moves single tile (BREAK now reachable); GroupBar snap + reconcile on release; fix minEdgeGap (rectilinear hypot — groups now break when dragged far) | in-progress |
+| v101.0.4b+c | Model-B drag: body-drag moves single tile (BREAK now reachable); GroupBar snap + reconcile on release; fix minEdgeGap (rectilinear hypot — groups now break when dragged far) | `4c92b3f` |
 
 **Snap feel: functional baseline reached** — tiles snap per-axis, don't stick, show gold guide only when armed, and group/break by explicit gesture.
 
