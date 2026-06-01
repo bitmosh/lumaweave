@@ -14,7 +14,10 @@ import type { TileGroup } from "./tile.types";
 export function TileLayer() {
   const ctx = useTileContext();
   const tilesArray = Array.from(ctx.tiles.values());
-  const { groups, tileToGroup } = useMemo(() => deriveGroups(tilesArray), [tilesArray]);
+  const { groups, tileToGroup } = useMemo(
+    () => deriveGroups(tilesArray, { excludeFromGroups: ctx.draggingTileId ?? undefined }),
+    [tilesArray, ctx.draggingTileId],
+  );
 
   return (
     <div className="tile-layer" data-testid="tile-layer">

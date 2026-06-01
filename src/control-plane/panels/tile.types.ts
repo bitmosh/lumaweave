@@ -123,6 +123,8 @@ export interface TileContextState {
   tileToGroup: Record<string, string>;
   /** Active snap guide (shown during drag) */
   snapGuide: SnapGuide | null;
+  /** ID of the tile currently being body-dragged; null when not dragging. Used for live group-bar preview. */
+  draggingTileId: string | null;
 }
 
 /**
@@ -156,6 +158,8 @@ export interface TileContextActions {
   getLiveTiles: () => TileLayoutEntry[];
   /** Read a single tile from the live store by id. Use in event handlers. */
   getLiveTile: (tileId: string) => TileLayoutEntry | undefined;
+  /** Signal that a tile-body drag has started (for live group-bar preview). Clear to null on drag end. */
+  setDraggingTileId: (id: string | null) => void;
 }
 
 /**

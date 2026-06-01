@@ -46,6 +46,7 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
     e.preventDefault();
     e.stopPropagation();
     ctx.bringToFront(tile.id);
+    ctx.setDraggingTileId(tile.id);
     const startX = e.clientX, startY = e.clientY;
     const startTilePos = { x: tile.x, y: tile.y };
     let detached = ungroup;
@@ -135,6 +136,7 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("pointercancel", onPointerCancel);
       ctx.setSnapGuide(null);
+      ctx.setDraggingTileId(null);
 
       // Snap on release — per-axis edge detection (v101.0.2a)
       // Uses getLiveTile/getLiveTiles (live store read) not ctx.tiles (stale render snapshot).

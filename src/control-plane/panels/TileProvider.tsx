@@ -113,6 +113,7 @@ export function TileProvider({ children }: TileProviderProps) {
   }, []);
 
   const [snapGuide, setSnapGuide] = useState<SnapGuide | null>(null);
+  const [draggingTileId, setDraggingTileId] = useState<string | null>(null);
 
   const writeTiles = useCallback(
     (newTiles: TileLayoutEntry[]) => {
@@ -253,6 +254,8 @@ export function TileProvider({ children }: TileProviderProps) {
     returnToAnchor,
     getLiveTiles: getCurrentTiles,
     getLiveTile: (id: string) => getCurrentTiles().find(t => t.id === id),
+    draggingTileId,
+    setDraggingTileId,
   };
 
   return (

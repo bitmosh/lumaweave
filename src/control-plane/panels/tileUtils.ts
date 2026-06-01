@@ -52,11 +52,22 @@ export type SnapResult = { x?: number; y?: number } | null;
 // BIG RULE: topRow width is computed from CONTIGUOUS top-row tiles, NOT bbox
 // Membership (groupId on TileLayoutEntry) is the source of truth;
 // this function only derives the geometry the UI needs.
-export function deriveGroups(tiles: TileLayoutEntry[]): { groups: TileGroup[]; tileToGroup: Record<string, string> } {
-  // Bucket tiles by groupId
+export function deriveGroups(
+  tiles: TileLayoutEntry[],
+  opts?: { excludeFromGroups?: string },
+): { groups: TileGroup[]; tileToGroup: Record<string, string> } {
+  const excludeId = opts?.excludeFromGroups;
+
+  // Bucket tiles by groupId, optionally excluding a dragging tile that has moved out of range.
   const buckets: Record<string, TileLayoutEntry[]> = {};
   for (const t of tiles) {
     if (!t.groupId) continue;
+    // If this tile is being dragged and is the candidate to exclude, check if it's out of range.
+    if (excludeId && t.id === excludeId && t.groupId) {
+      const mates = tiles.filter(m => m.id !== excludeId && m.groupId === t.groupId);
+      const stillNear = mates.some(m => minEdgeGap(t, m) <= BREAK_TOL);
+      if (!stillNear) continue; // exclude from group rendering — visual preview only
+    }
     (buckets[t.groupId] ||= []).push(t);
   }
 
