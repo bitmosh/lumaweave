@@ -98,12 +98,14 @@ function isFlushAdjacent(a: TileLayoutEntry, b: TileLayoutEntry): boolean {
   return (hTouch && yOverlap) || (vTouch && xOverlap);
 }
 
-/** Minimum edge-to-edge gap between two tiles (0 = touching/overlapping). */
+/** Minimum edge-to-edge gap between two tiles (0 = touching/overlapping).
+ *  Uses rectilinear hypot: per-axis separation (0 when ranges overlap), then hypot.
+ *  Fixes the overlap-one-axis case where min(largeGap, 0) incorrectly returned 0. */
 function minEdgeGap(a: TileLayoutEntry, b: TileLayoutEntry): number {
   const ah = tileH(a), bh = tileH(b);
-  const hGap = Math.max(0, a.x < b.x ? b.x - (a.x + a.w) : a.x - (b.x + b.w));
-  const vGap = Math.max(0, a.y < b.y ? b.y - (a.y + ah) : a.y - (b.y + bh));
-  return Math.min(hGap, vGap);
+  const xSep = Math.max(0, b.x - (a.x + a.w), a.x - (b.x + b.w));
+  const ySep = Math.max(0, b.y - (a.y + ah), a.y - (b.y + bh));
+  return Math.hypot(xSep, ySep);
 }
 
 /**

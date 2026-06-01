@@ -7,7 +7,8 @@
 import { useMemo } from "react";
 import { useTileContext } from "./TileProvider";
 import { FloatingTile } from "./FloatingTile";
-import { deriveGroups } from "./tileUtils";
+import { deriveGroups, findSnap, COLLAPSED_H, reconcileMembershipOnDrop } from "./tileUtils";
+import type { Rect } from "./tileUtils";
 import type { TileGroup } from "./tile.types";
 
 export function TileLayer() {
@@ -86,6 +87,35 @@ function GroupBar({ group }: { group: TileGroup }) {
       window.removeEventListener("mouseup", onUp);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("pointercancel", onPointerCancel);
+
+      // Snap cluster bbox to nearest adjacent edge on release.
+      // Uses live positions (getLiveTiles) — not the mousedown snapshot (stale-closure trap).
+      const liveAll = ctx.getLiveTiles();
+      const liveMembers = group.tileIds
+        .map(id => liveAll.find(t => t.id === id))
+        .filter((t): t is NonNullable<typeof t> => t !== undefined);
+
+      if (liveMembers.length > 0) {
+        const toRect = (t: typeof liveMembers[0]): Rect =>
+          ({ x: t.x, y: t.y, w: t.w, h: t.collapsed ? COLLAPSED_H : t.h });
+        const targets = liveAll
+          .filter(t => !group.tileIds.includes(t.id))
+          .map(toRect);
+        const bx = Math.min(...liveMembers.map(t => t.x));
+        const by = Math.min(...liveMembers.map(t => t.y));
+        const bw = Math.max(...liveMembers.map(t => t.x + t.w)) - bx;
+        const bh = Math.max(...liveMembers.map(t => t.y + (t.collapsed ? COLLAPSED_H : t.h))) - by;
+        const res = findSnap({ x: bx, y: by, w: bw, h: bh }, targets);
+        if (res) {
+          const dx = (res.x ?? bx) - bx;
+          const dy = (res.y ?? by) - by;
+          if (dx !== 0 || dy !== 0) {
+            liveMembers.forEach(m => ctx.updateTile(m.id, { x: m.x + dx, y: m.y + dy }));
+          }
+        }
+        // Reconcile group membership after final positions (cluster may have merged with another).
+        reconcileMembershipOnDrop(group.tileIds, ctx.getLiveTiles(), ctx.updateTile);
+      }
     };
 
     const onKeyDown = (ev: KeyboardEvent) => {

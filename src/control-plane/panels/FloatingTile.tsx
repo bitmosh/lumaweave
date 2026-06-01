@@ -49,7 +49,10 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
     const startX = e.clientX, startY = e.clientY;
     const startTilePos = { x: tile.x, y: tile.y };
     let detached = ungroup;
-    const groupIds = (group && !ungroup) ? group.tileIds : [tile.id];
+    // Model B: body-drag moves only this tile, even if grouped.
+    // Whole-group movement is the GroupBar's job. ⤴ (ungroup: true) still fires
+    // the pull-away nudge via `detached` but no longer changes groupIds.
+    const groupIds = [tile.id];
     const groupTiles = Array.from(ctx.tiles.values()).filter(t => groupIds.includes(t.id));
     const offsets = groupTiles.map(t => ({ id: t.id, dx: t.x - startTilePos.x, dy: t.y - startTilePos.y }));
 
