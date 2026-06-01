@@ -1629,7 +1629,7 @@ export const advisoryV66: BanditAdvisorySection = {
     {
       id: "v66-audio-source-contract-exists",
       prompt: "Does the Audio Source System contract exist?",
-      context: "docs/audio/AUDIO_SOURCE_SYSTEM_CONTRACT.md should exist with all 22 required sections.",
+      context: "AUDIO_SOURCE_SYSTEM_CONTRACT.md archived v100.0.8 — superseded by docs/_v100-rewrites/DEFERRED_AND_POST_V1_VISION.md.",
       responseType: "choice",
       userResponse: "",
       status: "unanswered",

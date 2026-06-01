@@ -141,9 +141,7 @@ Retired (do not reintroduce):
 
 Future dialects (concept docs only; gwells provides the implementation
 substrate):
-- `docs/physics/CONSTELLATION_MODE_DIALECT.md`
-- `docs/physics/HELIX_CONSTELLATION_DIALECT.md`
-- `docs/physics/GALAXY_MODE_DIALECT.md`
+- `docs/_v100-rewrites/DEFERRED_AND_POST_V1_VISION.md`  (supersedes CONSTELLATION_MODE_DIALECT.md, HELIX_CONSTELLATION_DIALECT.md, GALAXY_MODE_DIALECT.md — archived v100.0.8)
 - `docs/_v100-rewrites/GWELLS_PHYSICS.md` (supersedes PHYSICS_DIALECT_SYSTEM.md — archived v100.0.4)
 - `docs/graph/intelligence/CLUSTER_GRAVITY_AND_COLOR_CODED_NEIGHBORHOODS.md`
 
@@ -193,10 +191,7 @@ Rules:
 
 Primary:
 ```
-docs/audio/AUDIO_REACTIVITY_CONTRACT.md
-docs/audio/MUSIC_REACTIVE_MAPPING_CONTRACT.md
-docs/audio/AUDIO_SOURCE_SYSTEM_CONTRACT.md
-docs/audio/UNIVERSAL_AUDIO_HANDLE_ROUTING.md
+docs/_v100-rewrites/DEFERRED_AND_POST_V1_VISION.md  (supersedes all audio docs — archived v100.0.8)
 src/audio/syntheticAudioSignal.ts
 src/audio/musicReactiveMappingRegistry.ts
 src/audio/audioSourceRegistry.ts
@@ -275,13 +270,7 @@ Only future Lattica-generated, signed, schema-valid, provenance-attested theme b
 
 Primary:
 ```
-docs/visual-grammar-engine/VGE_OVERVIEW_AND_TERMS.md
-docs/visual-grammar-engine/VGE_GRAMMAR_HANDLE_AND_LENS.md
-docs/visual-grammar-engine/VGE_SIGNAL_LOOM.md
-docs/visual-grammar-engine/VGE_ASSET_AND_TOKENS.md
-docs/visual-grammar-engine/VGE_DIALECT_AND_SAFETY.md
-docs/visual-grammar-engine/VGE_UI_AND_POSITIONING.md
-docs/visual-grammar-engine/VGE_ROADMAP.md
+docs/_v100-rewrites/DEFERRED_AND_POST_V1_VISION.md  (supersedes all VGE docs — archived v100.0.8)
 ```
 
 Status: design-locked / docs-only. No runtime implementation authorized. Implementation gated on Source Adapter OS Reconnect Contract (v74), Synthetic Data Fixtures v0 (v75), and other prerequisites.

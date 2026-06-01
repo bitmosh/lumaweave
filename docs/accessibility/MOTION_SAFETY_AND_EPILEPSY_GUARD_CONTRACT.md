@@ -134,7 +134,7 @@ Every audio-reactive handle mapping must have a registered Motion Safety entry. 
 2. A reduced-motion behavior defined
 3. An epilepsy risk classification
 
-See `docs/audio/AUDIO_REACTIVITY_CONTRACT.md` for the audio side of this relationship.
+See `docs/_v100-rewrites/DEFERRED_AND_POST_V1_VISION.md` for the audio side of this relationship (supersedes AUDIO_REACTIVITY_CONTRACT.md, archived v100.0.8).
 
 ---
 

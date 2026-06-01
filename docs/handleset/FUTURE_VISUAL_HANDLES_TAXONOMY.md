@@ -25,7 +25,7 @@ references:
 
 **Status:** Future concept — no implementation authorized without explicit contracts
 
-This taxonomy describes the full universe of grammar handles that LumaWeave may eventually support. These overlap with the VGE Grammar Handle system in `docs/visual-grammar-engine/VGE_GRAMMAR_HANDLE_AND_LENS.md`.
+This taxonomy describes the full universe of grammar handles that LumaWeave may eventually support. These overlap with the VGE Grammar Handle system (see `docs/_v100-rewrites/DEFERRED_AND_POST_V1_VISION.md`, supersedes `VGE_GRAMMAR_HANDLE_AND_LENS.md`).
 
 ---
 
@@ -124,5 +124,4 @@ ui.topBar.accent             Top bar accent color
 4. The Grammar Lens overlay exposes handles via `data-lw-handle="[handle.path]"` attributes
 5. Audio reactivity subscriptions reference handle paths, not layer-specific properties
 
-See `docs/audio/UNIVERSAL_AUDIO_HANDLE_ROUTING.md` for audio subscription model.
-See `docs/visual-grammar-engine/VGE_GRAMMAR_HANDLE_AND_LENS.md` for the VGE grammar handle contract.
+See `docs/_v100-rewrites/DEFERRED_AND_POST_V1_VISION.md` for audio subscription model and VGE grammar handle contract (supersedes UNIVERSAL_AUDIO_HANDLE_ROUTING.md + VGE_GRAMMAR_HANDLE_AND_LENS.md, archived v100.0.8).
