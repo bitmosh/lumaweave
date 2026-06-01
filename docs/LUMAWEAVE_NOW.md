@@ -37,7 +37,7 @@ Rework the floating-tile system into a clean, discoverable, snappable workspace.
 | v101.0.2a | Snap-back bug fix (drag handlers read live tile positions, not stale closure) | landed |
 | v101.0.2b | CI repair — stylelint logical-css (warn), generate:graph step, Node 22 | `f434447` / `09f0e95` |
 | v101.0.3 | Armed-only gold snap guide; drop preview rect; BREAK_TOL = SNAP_TOL*2 | `cdff96c` / `3228a19` |
-| v101.0.4a | Group-as-event engine: `groupId` on TileLayoutEntry, FORM/BREAK on drop, `deriveGroups` replaces `computeGroups`, `tileGrouping` flag removed | in-progress |
+| v101.0.4a | Group-as-event engine: `groupId` on TileLayoutEntry, FORM/BREAK on drop, `deriveGroups` replaces `computeGroups`, `tileGrouping` flag removed | `617fc19` |
 
 **Snap feel: functional baseline reached** — tiles snap per-axis, don't stick, and show a gold guide line only when a snap is armed.
 
