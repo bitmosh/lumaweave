@@ -1474,3 +1474,32 @@
 .lw-palette-row:hover .lw-palette-chip:hover {
   transform: translateY(-1px);
 }
+
+/* ─── WCAG contrast badge (v102.0.3) ─────────────────────────────────────
+   Status colors are intentional here — green/amber/red conveys accessibility
+   level meaning that cannot be expressed with theme tokens alone. */
+.wcag-badge {
+  border-radius: 3px;
+  font-family: var(--lw-font-mono, "IBM Plex Mono", ui-monospace, monospace);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 2px 5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.wcag-badge--pass {
+  background: color-mix(in oklab, #22c55e 16%, transparent);
+  color: #4ade80;
+}
+
+.wcag-badge--warn {
+  background: color-mix(in oklab, #f59e0b 16%, transparent);
+  color: #fbbf24;
+}
+
+.wcag-badge--fail {
+  background: color-mix(in oklab, #ef4444 16%, transparent);
+  color: #f87171;
+}

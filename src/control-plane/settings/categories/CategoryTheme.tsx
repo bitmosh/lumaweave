@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useSettingsStore } from '../settings.store';
 import { builtInThemePresets } from '../../../themes/themePresets';
 import { getThemeRuntimeTokens } from '../../../themes/themeTokens';
+import { computeWCAGResult } from '../../../themes/wcagContrast';
 import type { CategoryContentProps } from '../settingsPanel.types';
 import type { ThemeId } from '../../settings/settings.schema';
 
@@ -91,7 +92,18 @@ function ThemeCard({
   onApply: () => void;
 }) {
   const tokens = getThemeRuntimeTokens(preset.id as ThemeId);
-  const paletteColors = tokens.graph.nodeColorScale.slice(0, 5);
+  // Identity palette — accent-forward; these are the colors that define this theme's look.
+  // NOTE: thumbnail (ThemeGraphThumb below) correctly keeps nodeColorScale — don't change that.
+  const paletteColors = [
+    tokens.app.accent,
+    tokens.app.background,
+    tokens.app.panelBackground,
+    tokens.app.textPrimary,
+    tokens.app.panelBorder,
+  ];
+  // WCAG badge: textPrimary-on-background. rgba bgs are parsed as opaque RGB (alpha stripped)
+  // — result is an approximation but won't throw; see wcagContrast.ts:parseColor.
+  const contrast = computeWCAGResult(tokens.app.textPrimary, tokens.app.background);
 
   return (
     <button
@@ -111,6 +123,12 @@ function ThemeCard({
       />
       <div className="theme-card-meta">
         <span className="theme-card-name">{preset.name}</span>
+        <span
+          className={`wcag-badge wcag-badge--${contrast.level === 'fail' ? 'fail' : contrast.level === 'AA-large' ? 'warn' : 'pass'}`}
+          title={`WCAG ${contrast.level} · ${contrast.ratio.toFixed(1)}:1 (text on bg)`}
+        >
+          {contrast.level === 'fail' ? '✗' : contrast.level === 'AA-large' ? 'AA*' : contrast.level}
+        </span>
         {isApplied && <span className="theme-card-badge">Active</span>}
         {isSelected && !isApplied && <span className="theme-card-badge theme-card-badge--preview">Selected</span>}
       </div>
