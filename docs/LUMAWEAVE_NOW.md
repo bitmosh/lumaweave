@@ -21,13 +21,27 @@ tags: [live-state, now, canonical, v102]
 
 **The single live-state doc.** This is the only doc that changes every pass and the only one that carries a date. Everything here is volatile by design. Concepts and architecture live in the static domain docs (see `DOC_ARCHITECTURE.md`); history lives in the dev-blog / #changelog feed. This doc holds only: where we are, what's next, what's broken.
 
-**Updated:** 2026-06-02 · **Production version:** 0.9.0 · **Internal arc:** v102 (Theme Menu Integration) · **Last pass:** v101.0.8
+**Updated:** 2026-06-02 · **Production version:** 0.9.0 · **Internal arc:** v103 (Graph Theming) · **Last pass:** v103.0.0
 
 ---
 
-## Current arc — v102: Theme Menu Integration
+## Current arc — v103: Graph Theming
 
-Wire the Claude Design settings UI into the product as a usable theme panel. Tiles snap, group, and look native to the Solar Plasma palette (v101 delivered). This arc takes the theme system from prototype to interactive product.
+Connect the authored-but-unwired cluster-color system to node render. Fix the 4 confirmed disconnects: cluster colors drive node color (replacing rainbow scale-cycling), themes drive edges (replacing hardcoded literal), graphVisualTokens derives from active theme, and graph recolors live on theme switch.
+
+**Design decisions locked (pending D1-D4 sign-off):** absolute cluster colors (stable across themes), mode-based resolver (semantic/mono-shades/custom), cluster color at `raw.color` layer per ownership contract.
+
+| Pass | Work | Commit |
+|---|---|---|
+| v103.0.0 | Arc opener — design only: re-derive + author `GRAPH_COLOR_OWNERSHIP.md` contract, lock cluster-color mapping abstraction, phase plan. D1-D4 sign-off required before .0.1 | in-progress |
+
+**Planned v103 phases:** .0.1 `loadClusterColors()` + resolver · .0.2 cluster node color in builder · .0.3 themed edges · .0.4 recolor on theme change · .0.5 mono-shades + custom modes · .0.6 palette strip + WCAG graph label contrast · closer.
+
+---
+
+## Closed arc — v102: Theme Menu Integration — in progress (Workshop/History/Bookmarks/Export remain)
+
+Wire the Claude Design settings UI into the product as a usable theme panel.
 
 | Pass | Work | Commit |
 |---|---|---|
@@ -37,7 +51,7 @@ Wire the Claude Design settings UI into the product as a usable theme panel. Til
 | v102.0.3 | Theme card identity palette (accent/bg/surface/text/border tokens, not node scale) + WCAG contrast badge (textPrimary-on-bg, level-colored) | `29485c0` |
 | v102.0.4 | WCAG correct-by-construction: culori-based parser, fail replaces AA-large, no silent-black; all 3 callers reconciled; reference-verified; Playwright E2E proof | `a714027` |
 
-**Remaining v102 phases:** Workshop (edit), History, Bookmarks, Export.
+**Remaining v102 phases:** Workshop (edit), History, Bookmarks, Export (may interleave with v103).
 
 ---
 
