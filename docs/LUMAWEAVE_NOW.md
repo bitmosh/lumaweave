@@ -41,7 +41,7 @@ Rework the floating-tile system into a clean, discoverable, snappable workspace.
 | v101.0.4b+c | Model-B drag: body-drag moves single tile (BREAK now reachable); GroupBar snap + reconcile on release; fix minEdgeGap (rectilinear hypot — groups now break when dragged far) | `4c92b3f` |
 | v101.0.5 | Live group-bar preview during drag: bar drops excluded tile at BREAK_TOL threshold while dragging, same geometry as commit — visual-only, no groupId write during drag | `4827acb` |
 | v101.0.6 | Click-through acceptance test — confirms `.tile-layer { pointer-events: none }` (already set) lets graph clicks fall through; closes the arc's named bug | `87d3b8d` |
-| v101.0.7 | Solar Plasma tile restyle — purple gradient bg, gold-tinted borders/shadow, warm fonts; replaces all hardcoded slate hex with `--lw-*` tokens | in-progress |
+| v101.0.7 | Solar Plasma tile restyle — purple gradient bg, gold-tinted borders/shadow, warm fonts; replaces all hardcoded slate hex with `--lw-*` tokens | `ed59266` |
 
 **Snap feel + visual: v101 baseline complete** — tiles snap, group, preview, and look native to the Solar Plasma UI palette. Graph clicks fall through correctly.
 
