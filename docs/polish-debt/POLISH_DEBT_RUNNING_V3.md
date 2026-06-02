@@ -50,3 +50,31 @@ NOTE: omit `status`/`last_updated`/`last_pass`/`version` — those stay banned. 
 **Found:** v100.0.8. Any new doc without the flag is included by default. Combined with item 11, this means frontmatter-less docs are excluded by node-id derivation but the policy is "include unless opted out" — slightly contradictory; worth making the policy explicit.
 **Why it matters:** ambiguous default makes it easy to accidentally include scratch/wip docs or exclude intended ones.
 **Suggested fix:** decide the default explicitly (opt-in vs opt-out) and document it in DOC_ARCHITECTURE.md alongside the structural-frontmatter rule. Status: OPEN (low priority).
+
+---
+
+## Volume 4 — found during v101 (Tile Migration)
+
+### 16. bumper non-FF guard trips auto-push → needs manual rescue
+**Where:** blog.bumper / bitmosh-website repo (not LumaWeave source)
+**Found:** v101.0.6. When another commit lands in the blog repo between `bumper bump --dry` and the live bump, the git push guard fires and the bump exits 1 with the post written-but-not-pushed. Recovery: `git pull --ff-only` + manual `git add/commit/push` in the blog repo. Ryan is tracking bumper polish separately. Status: OPEN (bumper issue — see blog.bumper repo).
+
+### 17. Redundant `stylelint-use-logical` package installed alongside configured `stylelint-plugin-logical-css`
+**Where:** `package.json` devDependencies
+**Found:** v101.0.2b. `stylelint-use-logical` is installed but not configured; `stylelint-plugin-logical-css` is the one actually wired in `.stylelintrc.json`. Unused dependency — uninstall candidate.
+**Suggested fix:** `npm uninstall stylelint-use-logical` (with Ryan approval per package safeguard). Status: OPEN.
+
+### 18. `chromium` → `tmp` high-severity advisory (path traversal)
+**Where:** npm dependency tree
+**Found:** surfaced during v101.0.2b stylelint install. Pre-existing; `chromium@3.0.3` may be a transitive dep of a legacy tool now redundant with Playwright. Do NOT `npm audit fix` blind.
+**Suggested fix:** determine if `chromium@3.0.3` is still needed; if redundant, remove the dep that pulls it in; if needed, await a patch. Slated for v106+ security pass. Status: OPEN.
+
+### 19. 5 deferred stylelint logical-property warnings in StatusBar.css
+**Where:** `src/control-plane/StatusBar.css` (bottom, left, right, max-width×2)
+**Found:** v101.0.2b. Physical CSS properties flagged at warning severity per `stylelint-plugin-logical-css` config. Ignored this pass to avoid a large CSS rewrite.
+**Suggested fix:** replace with logical equivalents (`inset-block-end`, `inset-inline-start`, `end`, `max-inline-size`), then tighten stylelint rule from `warning` → `error`. Status: OPEN.
+
+### 20. SNAP_TOL / BREAK_TOL feel-tuning
+**Where:** `src/control-plane/panels/tileUtils.ts` (lines 45-47)
+**Found:** v101. `SNAP_TOL = 15px`, `BREAK_TOL = SNAP_TOL * 2 = 30px`. Ryan noted SNAP_TOL may want bumping to 20-25px once lived-in; BREAK_TOL multiplier may also need feel-tuning.
+**Suggested fix:** tune after real-world use. Both are exported constants — change in one place. Status: OPEN (tunable, low urgency).

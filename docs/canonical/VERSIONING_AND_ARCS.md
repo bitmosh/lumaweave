@@ -18,7 +18,7 @@ last_updated: 2026-05-31
 
 # LumaWeave — Versioning & Arcs
 
-**Status:** canonical · **Current arc:** v100 (Baseline Refocus) · **Production version:** 0.7.0
+**Status:** canonical · **Current arc:** v102 (Theme Menu Integration) · **Production version:** 0.9.0
 
 The single source of truth for how LumaWeave is versioned, how arcs and passes are numbered, and how a pass becomes a dev-log post. The dev-log pipeline (`blog.bumper`) parses the version tag and rolls passes up by hierarchy level, so strict, monotonic numbering is a hard requirement.
 
