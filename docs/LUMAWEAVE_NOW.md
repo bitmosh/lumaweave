@@ -35,7 +35,7 @@ Connect the authored-but-unwired cluster-color system to node render. Fix the 4 
 |---|---|---|
 | v103.0.0 | Arc opener — design only: re-derive + author `GRAPH_COLOR_OWNERSHIP.md` contract, lock cluster-color mapping abstraction, phase plan. D1-D4 signed off | `b85a004` |
 | v103.0.1 | Cluster-color resolver: `loadClusterColors()` + `resolveClusterColor()` (semantic mode), pure/theme-independent, direct docs/_meta JSON import, 4 Playwright unit tests, NO render wiring | `412eb2e` |
-| v103.0.2 | Wire cluster color into node render — replaces colorSuggestionEngine rotation with resolveClusterColor; raw.color set per ownership contract; rainbow fixed (manual smoke required) | in-progress |
+| v103.0.2 | Wire cluster color into node render — replaces colorSuggestionEngine rotation with resolveClusterColor; raw.color set per ownership contract; rainbow fixed (manual smoke required) | `ae098a3` |
 
 **Planned v103 phases:** .0.3 themed edges · .0.4 recolor on theme change · .0.5 mono-shades + custom modes · .0.6 palette strip + WCAG graph label contrast · closer.
 
