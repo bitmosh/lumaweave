@@ -41,7 +41,7 @@ Connect the authored-but-unwired cluster-color system to node render. Fix the 4 
 
 | v103.0.4 | Live recolor on theme change — new useEffect keyed to resolvedTokens; re-applies style policy in-place; cluster colors stay absolute (D2); all 4 disconnects fixed | `13cbf50` |
 
-| v103.0.5 | WCAG single source of truth — card badge reads getAccessibilityProfile (4-pair, same source as top bar); lw-wcag-* CSS reused; card + top bar cannot drift | in-progress |
+| v103.0.5 | WCAG single source of truth — card badge reads getAccessibilityProfile (4-pair, same source as top bar); lw-wcag-* CSS reused; card + top bar cannot drift | `efab098` |
 
 **Planned v103 phases:** .0.6 palette strip + WCAG graph label contrast · closer.
 
