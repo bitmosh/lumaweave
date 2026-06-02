@@ -108,7 +108,7 @@ export function buildGraphologyGraph(
         fullLabel: relationshipLabel,
         originalLabel: relationshipLabel,
         weight: 1,
-        color: (edge.raw?.color as string) ?? "rgba(100,130,180,0.55)",
+        color: (edge.raw?.color as string) ?? themeTokens.graph.edgeDefault,
         size: (edge.raw?.size as number) ?? 1.5,
         raw: edge.raw,
       });
