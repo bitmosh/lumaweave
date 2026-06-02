@@ -42,7 +42,7 @@ Connect the authored-but-unwired cluster-color system to node render. Fix the 4 
 | v103.0.4 | Live recolor on theme change — new useEffect keyed to resolvedTokens; re-applies style policy in-place; cluster colors stay absolute (D2); all 4 disconnects fixed | `13cbf50` |
 
 | v103.0.5 | WCAG single source of truth — card badge reads getAccessibilityProfile (4-pair, same source as top bar); lw-wcag-* CSS reused; card + top bar cannot drift | `efab098` |
-| v103.0.5b | Accent uses WCAG 1.4.11 non-text criterion (3:1); per-criterion aggregation (aa/aaa); void-circuit + agartha-dream correctly upgrade | in-progress |
+| v103.0.5b | Accent uses WCAG 1.4.11 non-text criterion (3:1); per-criterion aggregation (aa/aaa); void-circuit + agartha-dream correctly upgrade | `8e1406f` |
 
 **Planned v103 phases:** .0.6 palette strip + WCAG graph label contrast · closer.
 
