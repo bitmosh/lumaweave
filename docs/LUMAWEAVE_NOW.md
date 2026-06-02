@@ -41,10 +41,11 @@ Rework the floating-tile system into a clean, discoverable, snappable workspace.
 | v101.0.4b+c | Model-B drag: body-drag moves single tile (BREAK now reachable); GroupBar snap + reconcile on release; fix minEdgeGap (rectilinear hypot — groups now break when dragged far) | `4c92b3f` |
 | v101.0.5 | Live group-bar preview during drag: bar drops excluded tile at BREAK_TOL threshold while dragging, same geometry as commit — visual-only, no groupId write during drag | `4827acb` |
 | v101.0.6 | Click-through acceptance test — confirms `.tile-layer { pointer-events: none }` (already set) lets graph clicks fall through; closes the arc's named bug | `87d3b8d` |
+| v101.0.7 | Solar Plasma tile restyle — purple gradient bg, gold-tinted borders/shadow, warm fonts; replaces all hardcoded slate hex with `--lw-*` tokens | in-progress |
 
-**Snap feel: functional baseline reached** — tiles snap per-axis, don't stick, show gold guide only when armed, and group/break by explicit gesture with live preview. Graph clicks now fall through the tile layer correctly.
+**Snap feel + visual: v101 baseline complete** — tiles snap, group, preview, and look native to the Solar Plasma UI palette. Graph clicks fall through correctly.
 
-**Still open in v101:** broader Solar Plasma tile CSS restyle; logical-property warning cleanup (5 deferred in StatusBar.css); tighten stylelint logical rules warn→error after cleanup.
+**Still open in v101:** logical-property warning cleanup (5 deferred in StatusBar.css); tighten stylelint logical rules warn→error after cleanup. v101 is ready to close (arc-close semver bump 0.8.0 → 0.9.0 is a separate closer pass).
 
 ## Roadmap (post-v101)
 
