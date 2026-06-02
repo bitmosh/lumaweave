@@ -19,6 +19,64 @@ const SUB_AREAS: { id: SubArea; label: string; live: boolean }[] = [
 
 // --- Browse Sub-Area ---
 
+// Node/edge constellation: same fixed layout across all cards — users compare color, not shape.
+// Coords and edges mirrored from the settings-menu-design prototype (theme-menu-categories-1.tsx).
+const THUMB_NODES = [
+  { cx: 30, cy: 32, r: 6 }, { cx: 64, cy: 18, r: 9 }, { cx: 110, cy: 30, r: 5 },
+  { cx: 152, cy: 48, r: 8 }, { cx: 178, cy: 22, r: 4 }, { cx: 44, cy: 70, r: 4 },
+  { cx: 96, cy: 76, r: 11 }, { cx: 138, cy: 88, r: 5 }, { cx: 22, cy: 96, r: 6 },
+  { cx: 72, cy: 110, r: 4 }, { cx: 124, cy: 116, r: 7 }, { cx: 170, cy: 100, r: 5 },
+] as const;
+const THUMB_EDGES: [number, number][] = [
+  [0,1],[1,2],[2,3],[3,4],[1,5],[5,6],[6,3],[6,7],[7,11],[5,9],[6,10],[9,10],[8,5],[8,9],
+];
+
+function ThemeGraphThumb({ themeId, bg0, bg1, edgeColor, nodeColors }: {
+  themeId: string;
+  bg0: string;
+  bg1: string;
+  edgeColor: string;
+  nodeColors: string[];
+}) {
+  const gradId = `tg-${themeId}`;
+  const filterId = `tg-glow-${themeId}`;
+  return (
+    <svg
+      className="lw-themecard-thumb"
+      viewBox="0 0 200 130"
+      preserveAspectRatio="xMidYMid slice"
+      aria-hidden="true"
+    >
+      <defs>
+        <radialGradient id={gradId} cx="50%" cy="55%" r="70%">
+          <stop offset="0%" stopColor={bg0} />
+          <stop offset="100%" stopColor={bg1} />
+        </radialGradient>
+        <filter id={filterId}>
+          <feGaussianBlur stdDeviation="2" />
+        </filter>
+      </defs>
+      <rect width="200" height="130" fill={`url(#${gradId})`} />
+      {THUMB_EDGES.map(([a, b], i) => (
+        <line key={i}
+          x1={THUMB_NODES[a].cx} y1={THUMB_NODES[a].cy}
+          x2={THUMB_NODES[b].cx} y2={THUMB_NODES[b].cy}
+          stroke={edgeColor} strokeWidth="0.8"
+        />
+      ))}
+      {THUMB_NODES.map((n, i) => {
+        const color = nodeColors[i % nodeColors.length];
+        return (
+          <g key={i}>
+            <circle cx={n.cx} cy={n.cy} r={n.r * 1.6} fill={color} opacity="0.35" filter={`url(#${filterId})`} />
+            <circle cx={n.cx} cy={n.cy} r={n.r} fill={color} />
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
 function ThemeCard({
   preset,
   isApplied,
@@ -33,6 +91,7 @@ function ThemeCard({
   onApply: () => void;
 }) {
   const tokens = getThemeRuntimeTokens(preset.id as ThemeId);
+  const paletteColors = tokens.graph.nodeColorScale.slice(0, 5);
 
   return (
     <button
@@ -43,22 +102,22 @@ function ThemeCard({
       title={`${preset.name} — click to preview, double-click to apply`}
       aria-pressed={isApplied}
     >
-      <div
-        className="theme-card-swatch"
-        style={{
-          background: `linear-gradient(135deg, ${tokens.app.background} 0%, ${tokens.app.accent}33 100%)`,
-          borderColor: tokens.app.panelBorder,
-        }}
-      >
-        <span
-          className="theme-card-accent-dot"
-          style={{ background: tokens.app.accent }}
-        />
-      </div>
+      <ThemeGraphThumb
+        themeId={preset.id}
+        bg0={tokens.app.background}
+        bg1={tokens.app.panelBackground}
+        edgeColor={tokens.graph.edgeDefault}
+        nodeColors={tokens.graph.nodeColorScale}
+      />
       <div className="theme-card-meta">
         <span className="theme-card-name">{preset.name}</span>
         {isApplied && <span className="theme-card-badge">Active</span>}
         {isSelected && !isApplied && <span className="theme-card-badge theme-card-badge--preview">Selected</span>}
+      </div>
+      <div className="lw-palette-row theme-card-palette">
+        {paletteColors.map((color, i) => (
+          <span key={i} className="lw-palette-chip" style={{ background: color }} title={color} />
+        ))}
       </div>
     </button>
   );

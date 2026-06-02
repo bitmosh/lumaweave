@@ -33,6 +33,7 @@ Wire the Claude Design settings UI into the product as a usable theme panel. Til
 |---|---|---|
 | v102.0.0 | Arc opener: Lucide icon migration (sidebar), rich Theme category with Browse + Active sub-areas, Model-1 drill-collapse sidebar, 4 stub sub-areas | `1846906` |
 | v102.0.1 | Missing stylesheet for theme menu — Browse card grid, sub-nav tabs, Active token rows, stub placeholder, all Solar Plasma tokens | `b7d8dde` |
+| v102.0.2 | Browse card polish: themed graph thumbnail SVG (real graph tokens), 5-chip palette strip, wider grid (minmax 240px), stronger active sub-nav tab | in-progress |
 
 **Remaining v102 phases:** Workshop (edit), History, Bookmarks, Export.
 
