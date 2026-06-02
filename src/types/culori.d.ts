@@ -44,4 +44,17 @@ declare module "culori" {
     mode?: string,
     options?: Record<string, unknown>,
   ): (t: number) => Color;
+
+  /**
+   * WCAG 2.1 relative luminance of a CSS color string or Color object.
+   * Returns a value in [0, 1]. Returns NaN for unparseable input.
+   */
+  export function wcagLuminance(color: string | Color): number;
+
+  /**
+   * WCAG 2.1 contrast ratio between two colors.
+   * Returns (L1+0.05)/(L2+0.05) where L1 is the lighter luminance.
+   * Returns NaN if either color is unparseable.
+   */
+  export function wcagContrast(a: string | Color, b: string | Color): number;
 }

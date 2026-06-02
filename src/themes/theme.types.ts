@@ -100,7 +100,7 @@ export interface ThemeAccessibilityProfile {
       foreground: string;
       background: string;
       ratio: number;
-      level: "AAA" | "AA" | "AA-large" | "fail";
+      level: "AAA" | "AA" | "fail";
     }>;
   };
   apca?: { worst: number; median: number; best: number; passes: boolean };

@@ -101,8 +101,7 @@ function ThemeCard({
     tokens.app.textPrimary,
     tokens.app.panelBorder,
   ];
-  // WCAG badge: textPrimary-on-background. rgba bgs are parsed as opaque RGB (alpha stripped)
-  // — result is an approximation but won't throw; see wcagContrast.ts:parseColor.
+  // WCAG badge: textPrimary-on-background (both opaque hex — exact result).
   const contrast = computeWCAGResult(tokens.app.textPrimary, tokens.app.background);
 
   return (
@@ -124,10 +123,10 @@ function ThemeCard({
       <div className="theme-card-meta">
         <span className="theme-card-name">{preset.name}</span>
         <span
-          className={`wcag-badge wcag-badge--${contrast.level === 'fail' ? 'fail' : contrast.level === 'AA-large' ? 'warn' : 'pass'}`}
+          className={`wcag-badge wcag-badge--${contrast.level === 'fail' ? 'fail' : 'pass'}`}
           title={`WCAG ${contrast.level} · ${contrast.ratio.toFixed(1)}:1 (text on bg)`}
         >
-          {contrast.level === 'fail' ? '✗' : contrast.level === 'AA-large' ? 'AA*' : contrast.level}
+          {contrast.level === 'fail' ? '✗' : contrast.level}
         </span>
         {isApplied && <span className="theme-card-badge">Active</span>}
         {isSelected && !isApplied && <span className="theme-card-badge theme-card-badge--preview">Selected</span>}
