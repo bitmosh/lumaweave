@@ -16,7 +16,7 @@ import type {
 } from "../../schema/graph.types";
 import { graphVisualTokens } from "../../visual/graphVisualTokens";
 import { computeNodeSize, computeAggregateSize } from "../../../physics/gwells/seederHelpers";
-import { colorSuggestionEngine } from "../../../themes/colorSuggestionEngine";
+import { loadClusterColors, resolveClusterColor } from "../../../themes/clusterColor";
 import type { ThemeId } from "../../../control-plane/settings/settings.schema";
 import { getThemeRuntimeTokens } from "../../../themes/themeTokens";
 import { resolveThemeTokenPath } from "../../../themes/themeTokenPaths";
@@ -159,46 +159,25 @@ export function buildGraphologyGraph(
   //   }
   // });
 
-  // Apply color suggestion engine picks per node
-  if (settings.themeId) {
-    graph.forEachNode((nodeId) => {
-      const color = colorSuggestionEngine.pick("node-primary", {
-        contextKey: nodeId,
-        themeId: settings.themeId!,
-        neighbors: [],
-      });
-      graph.setNodeAttribute(nodeId, "color", color);
-      // Update raw.color so resetGraphStyles preserves it
-      const attrs = graph.getNodeAttributes(nodeId);
-      graph.setNodeAttribute(nodeId, "raw", {
-        ...(attrs.raw as object ?? {}),
-        color,
-      });
-      // When node deletion lands, call colorSuggestionEngine.release(nodeId) here.
+  // Assign node colors from cluster identity (v103.0.2).
+  // Per GRAPH_COLOR_OWNERSHIP.md: cluster color belongs in raw.color (layer 2).
+  // The style layer (resetGraphStyles) reads raw.color first — no other color writes needed.
+  // Fallback for unclustered nodes: themeTokens.graph.nodeDefault (D3 — theme-derived).
+  const clusterPalette = loadClusterColors();
+  const clusterColorMode = { kind: "semantic" as const }; // D4: clusterColorMode setting deferred to .0.5
+  const nodeColorFallback = themeTokens.graph.nodeDefault;
+
+  graph.forEachNode((nodeId) => {
+    const attrs = graph.getNodeAttributes(nodeId);
+    const cluster = (attrs.raw as any)?.cluster as string | undefined;
+    const clusterHex = resolveClusterColor(cluster, clusterColorMode, clusterPalette);
+    const color = clusterHex ?? nodeColorFallback;
+    graph.setNodeAttribute(nodeId, "color", color);
+    graph.setNodeAttribute(nodeId, "raw", {
+      ...(attrs.raw as object ?? {}),
+      color,
     });
-  } else if (settings.nodeColorScale && settings.nodeColorScale.length > 0) {
-    // Legacy fallback: centrality-ranked color scale (used when themeId not provided)
-    const scale = settings.nodeColorScale;
-    const scaleLen = scale.length;
-    const sortedNodes = graph.nodes().sort((a, b) => {
-      const ca = (centralityScores[a] ?? 0) as number;
-      const cb = (centralityScores[b] ?? 0) as number;
-      return ca - cb;
-    });
-    sortedNodes.forEach((nodeId, rank) => {
-      const scaleIndex = Math.min(
-        Math.floor((rank / Math.max(sortedNodes.length - 1, 1)) * scaleLen),
-        scaleLen - 1
-      );
-      const color = scale[scaleIndex];
-      graph.setNodeAttribute(nodeId, "color", color);
-      const attrs = graph.getNodeAttributes(nodeId);
-      graph.setNodeAttribute(nodeId, "raw", {
-        ...(attrs.raw as object ?? {}),
-        color,
-      });
-    });
-  }
+  });
 
   // Find the highest-degree node per cluster (the sun)
   const clusterSuns = new Map<string, string>();
