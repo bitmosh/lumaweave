@@ -1,147 +1,212 @@
-import { settingsRegistry } from '../settings.registry';
+import { useState, useCallback } from 'react';
 import { useSettingsStore } from '../settings.store';
-import { SettingsSubSection } from '../SettingsContent';
-import { t } from '../../../i18n';
+import { builtInThemePresets } from '../../../themes/themePresets';
+import { getThemeRuntimeTokens } from '../../../themes/themeTokens';
+import type { CategoryContentProps } from '../settingsPanel.types';
+import type { ThemeId } from '../../settings/settings.schema';
 
-function getNestedValue(obj: any, path: string) {
-  return path.split('.').reduce((cursor, key) => cursor?.[key], obj);
-}
+// Sub-areas: browse and active are live; others are stubs for later phases.
+type SubArea = 'browse' | 'active' | 'workshop' | 'history' | 'bookmarks' | 'export';
 
-export function CategoryTheme() {
-  const settings = useSettingsStore((state) => state.settings);
-  const setSetting = useSettingsStore((state) => state.setSetting);
+const SUB_AREAS: { id: SubArea; label: string; live: boolean }[] = [
+  { id: 'browse', label: 'Browse', live: true },
+  { id: 'active', label: 'Active', live: true },
+  { id: 'workshop', label: 'Workshop', live: false },
+  { id: 'history', label: 'History', live: false },
+  { id: 'bookmarks', label: 'Bookmarks', live: false },
+  { id: 'export', label: 'Export', live: false },
+];
 
-  const themeSettings = settingsRegistry.filter((s) => s.category === 'theme');
+// --- Browse Sub-Area ---
 
-  function renderControl(setting: typeof themeSettings[number]) {
-    const value = getNestedValue(settings, setting.path);
-    const pathKey = setting.path.replace(/\./g, '_');
-    const label = t(`settings.controls.${pathKey}.label`);
-    const desc = setting.description ? t(`settings.controls.${pathKey}.description`) : null;
-
-    if (setting.type === 'boolean') {
-      return (
-        <label key={setting.path} className="flex items-start justify-between gap-4 text-sm">
-          <span>
-            <span className="block text-slate-200">{label}</span>
-            {desc && <span className="block text-xs text-slate-500">{desc}</span>}
-          </span>
-          <input
-            type="checkbox"
-            checked={Boolean(value)}
-            onChange={(e) => setSetting(setting.path, e.currentTarget.checked)}
-            className="mt-1"
-          />
-        </label>
-      );
-    }
-
-    if (setting.type === 'range') {
-      return (
-        <label key={setting.path} className="block text-sm">
-          <div className="mb-1 flex justify-between gap-4">
-            <span className="text-slate-200">{label}</span>
-            <span className="text-xs text-cyan-300">{String(value)}</span>
-          </div>
-          {desc && <p className="mb-2 text-xs text-slate-500">{desc}</p>}
-          <input
-            data-testid={`setting-${setting.path.replace(/\./g, '-')}`}
-            type="range"
-            min={setting.min}
-            max={setting.max}
-            step={setting.step}
-            value={Number(value)}
-            ref={(el) => {
-              if (!el) return;
-              const pct = ((Number(el.value) - Number(el.min)) / (Number(el.max) - Number(el.min))) * 100;
-              el.style.setProperty('--range-progress', `${pct}%`);
-            }}
-            onChange={(e) => setSetting(setting.path, Number(e.currentTarget.value))}
-            onInput={(e) => {
-              const el = e.target as HTMLInputElement;
-              const pct = ((Number(el.value) - Number(el.min)) / (Number(el.max) - Number(el.min))) * 100;
-              el.style.setProperty('--range-progress', `${pct}%`);
-            }}
-            className="w-full"
-          />
-        </label>
-      );
-    }
-
-    if (setting.type === 'select') {
-      return (
-        <label key={setting.path} className="block text-sm">
-          <span className="mb-1 block text-slate-200">{label}</span>
-          {desc && <p className="mb-2 text-xs text-slate-500">{desc}</p>}
-          <select
-            data-testid={`setting-${setting.path.replace(/\./g, '-')}`}
-            value={String(value)}
-            onChange={(e) => setSetting(setting.path, e.currentTarget.value)}
-            className="w-full rounded-lg border border-cyan-400/20 bg-slate-900 px-3 py-2 text-slate-100"
-          >
-            {setting.options.map((opt) => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
-            ))}
-          </select>
-        </label>
-      );
-    }
-
-    if (setting.type === 'text') {
-      return (
-        <label key={setting.path} className="block text-sm">
-          <span className="mb-1 block text-slate-200">{label}</span>
-          {desc && <p className="mb-2 text-xs text-slate-500">{desc}</p>}
-          <input
-            type="text"
-            value={String(value)}
-            onChange={(e) => setSetting(setting.path, e.currentTarget.value)}
-            className="w-full rounded-lg border border-cyan-400/20 bg-slate-900 px-3 py-2 text-slate-100"
-          />
-        </label>
-      );
-    }
-
-    return null;
-  }
-
-  const presetSetting = themeSettings.filter((s) => s.path === 'appearance.theme');
-  const dramaSetting = themeSettings.filter((s) => s.path === 'appearance.drama');
-  const intensitySettings = themeSettings.filter(
-    (s) => s.path !== 'appearance.theme' && s.path !== 'appearance.drama',
-  );
+function ThemeCard({
+  preset,
+  isApplied,
+  isSelected,
+  onSelect,
+  onApply,
+}: {
+  preset: typeof builtInThemePresets[0];
+  isApplied: boolean;
+  isSelected: boolean;
+  onSelect: () => void;
+  onApply: () => void;
+}) {
+  const tokens = getThemeRuntimeTokens(preset.id as ThemeId);
 
   return (
-    <div data-testid="settings-category-content-theme" className="space-y-4">
-      <SettingsSubSection id="theme.preset" label={t("settings.sections.theme.preset")}>
-        <div className="space-y-4">
-          {presetSetting.map(renderControl)}
+    <button
+      type="button"
+      className={`theme-card${isApplied ? ' theme-card--applied' : ''}${isSelected ? ' theme-card--selected' : ''}`}
+      onClick={onSelect}
+      onDoubleClick={onApply}
+      title={`${preset.name} — click to preview, double-click to apply`}
+      aria-pressed={isApplied}
+    >
+      <div
+        className="theme-card-swatch"
+        style={{
+          background: `linear-gradient(135deg, ${tokens.app.background} 0%, ${tokens.app.accent}33 100%)`,
+          borderColor: tokens.app.panelBorder,
+        }}
+      >
+        <span
+          className="theme-card-accent-dot"
+          style={{ background: tokens.app.accent }}
+        />
+      </div>
+      <div className="theme-card-meta">
+        <span className="theme-card-name">{preset.name}</span>
+        {isApplied && <span className="theme-card-badge">Active</span>}
+        {isSelected && !isApplied && <span className="theme-card-badge theme-card-badge--preview">Selected</span>}
+      </div>
+    </button>
+  );
+}
+
+function BrowseSubArea({ appliedThemeId, onApply }: { appliedThemeId: string; onApply: (id: string) => void }) {
+  const [selectedId, setSelectedId] = useState<string>(appliedThemeId);
+
+  return (
+    <div className="theme-browse">
+      <p className="theme-browse-hint">
+        Click a theme to preview it. Double-click to apply.
+      </p>
+      <div className="theme-browse-grid">
+        {builtInThemePresets.map((preset) => (
+          <ThemeCard
+            key={preset.id}
+            preset={preset}
+            isApplied={preset.id === appliedThemeId}
+            isSelected={preset.id === selectedId}
+            onSelect={() => setSelectedId(preset.id)}
+            onApply={() => onApply(preset.id)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// --- Active Sub-Area ---
+
+function ActiveSubArea({ appliedThemeId }: { appliedThemeId: string }) {
+  const tokens = getThemeRuntimeTokens(appliedThemeId as ThemeId);
+  const preset = builtInThemePresets.find((p) => p.id === appliedThemeId);
+
+  const appTokenEntries = Object.entries(tokens.app) as [string, string][];
+
+  return (
+    <div className="theme-active">
+      <div className="theme-active-header">
+        <span className="theme-active-name">{preset?.name ?? appliedThemeId}</span>
+        <span className="theme-active-id">{appliedThemeId}</span>
+      </div>
+
+      <section className="theme-active-section">
+        <h4 className="theme-active-section-title">Runtime tokens</h4>
+        <div className="theme-active-tokens">
+          {appTokenEntries.map(([key, value]) => (
+            <div key={key} className="theme-token-row">
+              <span
+                className="theme-token-swatch"
+                style={{ background: value }}
+                title={value}
+              />
+              <span className="theme-token-key">{key}</span>
+              <span className="theme-token-value">{value}</span>
+            </div>
+          ))}
         </div>
-      </SettingsSubSection>
+      </section>
 
-      <SettingsSubSection id="theme.drama" label={t("settings.sections.theme.drama")}>
-        <div className="space-y-4">
-          {dramaSetting.map(renderControl)}
-        </div>
-      </SettingsSubSection>
+      {preset && (
+        <section className="theme-active-section">
+          <h4 className="theme-active-section-title">About</h4>
+          <p className="theme-active-desc">{preset.description}</p>
+          {preset.tags && preset.tags.length > 0 && (
+            <div className="theme-active-tags">
+              {preset.tags.map((tag) => (
+                <span key={tag} className="theme-active-tag">{tag}</span>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+    </div>
+  );
+}
 
-      <SettingsSubSection id="theme.intensity" label={t("settings.sections.theme.intensity")}>
-        <div className="space-y-4">
-          {intensitySettings.map(renderControl)}
-        </div>
-      </SettingsSubSection>
+// --- Stub Sub-Area ---
 
-      <SettingsSubSection id="theme.overrides" label={t("settings.sections.theme.overrides")} defaultCollapsed>
-        <p className="text-xs text-slate-500">
-          {t("settings.sections.theme.overridesDesc")}
-        </p>
-      </SettingsSubSection>
+function StubSubArea({ label }: { label: string }) {
+  return (
+    <div className="theme-stub">
+      <span className="theme-stub-label">{label}</span>
+      <p className="theme-stub-coming">Coming in a later v102 phase</p>
+    </div>
+  );
+}
 
-      <SettingsSubSection id="theme.accessibility" label={t("settings.sections.theme.accessibility")} defaultCollapsed>
-        <p className="text-xs text-slate-500">
-          {t("settings.sections.theme.accessibilityDesc")}
-        </p>
-      </SettingsSubSection>
+// --- Main CategoryTheme ---
+
+export function CategoryTheme({ onDrillIn, onDrillOut }: CategoryContentProps) {
+  const [activeSubArea, setActiveSubArea] = useState<SubArea>('browse');
+  const settings = useSettingsStore((s) => s.settings);
+  const setSetting = useSettingsStore((s) => s.setSetting);
+
+  const appliedThemeId = (settings.appearance?.theme ?? 'solar-plasma') as string;
+
+  const handleSubAreaSelect = useCallback((id: SubArea) => {
+    setActiveSubArea(id);
+    onDrillIn?.();
+  }, [onDrillIn]);
+
+  const handleApplyTheme = useCallback((id: string) => {
+    setSetting('appearance', { ...settings.appearance, theme: id as ThemeId });
+  }, [setSetting, settings.appearance]);
+
+  return (
+    <div data-testid="settings-category-content-theme" className="theme-menu">
+      {/* Sub-area navigation */}
+      <nav className="theme-subnav" aria-label="Theme sections">
+        {SUB_AREAS.map((area) => (
+          <button
+            key={area.id}
+            type="button"
+            className={`theme-subnav-btn${activeSubArea === area.id ? ' is-active' : ''}${!area.live ? ' is-stub' : ''}`}
+            onClick={() => handleSubAreaSelect(area.id)}
+            disabled={!area.live}
+            title={!area.live ? 'Coming in a later v102 phase' : undefined}
+          >
+            {area.label}
+          </button>
+        ))}
+      </nav>
+
+      {/* Back link to expand sidebar */}
+      <button
+        type="button"
+        className="theme-subnav-back"
+        onClick={() => onDrillOut?.()}
+        aria-label="Expand category sidebar"
+      >
+        ← All settings
+      </button>
+
+      {/* Sub-area content */}
+      <div className="theme-subnav-content">
+        {activeSubArea === 'browse' && (
+          <BrowseSubArea appliedThemeId={appliedThemeId} onApply={handleApplyTheme} />
+        )}
+        {activeSubArea === 'active' && (
+          <ActiveSubArea appliedThemeId={appliedThemeId} />
+        )}
+        {activeSubArea === 'workshop' && <StubSubArea label="Workshop" />}
+        {activeSubArea === 'history' && <StubSubArea label="History" />}
+        {activeSubArea === 'bookmarks' && <StubSubArea label="Bookmarks" />}
+        {activeSubArea === 'export' && <StubSubArea label="Export" />}
+      </div>
     </div>
   );
 }

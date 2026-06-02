@@ -25,6 +25,7 @@ export const SettingsPanelHost = forwardRef<SettingsPanelHostHandle>(
     const [search, setSearch] = useState('');
     const [opacity, setOpacity] = useState(1);
     const [position, setPosition] = useState<PanelPosition>('floating');
+    const [drilledIn, setDrilledIn] = useState(false);
 
     useImperativeHandle(ref, () => ({
       toggle: () => setIsOpen((v) => !v),
@@ -69,8 +70,9 @@ export const SettingsPanelHost = forwardRef<SettingsPanelHostHandle>(
       SETTINGS_PANEL_CATEGORIES.find((c) => c.id === activeCategory) ??
       SETTINGS_PANEL_CATEGORIES[0];
 
+    // Sidebar collapses when docked OR when drilled into a rich category's sub-area.
     const sidebarCollapsed =
-      position === 'docked-left' || position === 'docked-right';
+      position === 'docked-left' || position === 'docked-right' || drilledIn;
 
     const catKey = normCatId(activeCat.id);
     const catLabel = t(`settings.panel.categories.${catKey}.label`);
@@ -92,12 +94,15 @@ export const SettingsPanelHost = forwardRef<SettingsPanelHostHandle>(
             activeId={activeCategory}
             collapsed={sidebarCollapsed}
             matchCounts={matchCounts}
-            onSelect={setActiveCategory}
+            onSelect={(id) => { setActiveCategory(id); setDrilledIn(false); }}
           />
         }
         contentSlot={
           <SettingsContent title={catLabel} description={catDescription}>
-            <ActiveContent />
+            <ActiveContent
+              onDrillIn={() => setDrilledIn(true)}
+              onDrillOut={() => setDrilledIn(false)}
+            />
           </SettingsContent>
         }
         statusBarSlot={

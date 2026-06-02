@@ -14,12 +14,18 @@ export type PanelPosition =
   | 'docked-right'
   | 'minimized';
 
+export interface CategoryContentProps {
+  onDrillIn?: () => void;
+  onDrillOut?: () => void;
+}
+
 export interface CategoryDef {
   id: CategoryId;
   label: string;
   description: string;
-  iconPath: string;
-  content: React.ComponentType;
+  icon: import('lucide-react').LucideIcon;
+  content: React.ComponentType<CategoryContentProps>;
+  richContent?: boolean;
 }
 
 export interface SettingsPanelGeometry {

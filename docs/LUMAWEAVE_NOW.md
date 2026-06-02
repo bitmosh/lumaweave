@@ -29,7 +29,11 @@ tags: [live-state, now, canonical, v102]
 
 Wire the Claude Design settings UI into the product as a usable theme panel. Tiles snap, group, and look native to the Solar Plasma palette (v101 delivered). This arc takes the theme system from prototype to interactive product.
 
-No passes yet — arc opens with v101.0.8.
+| Pass | Work | Commit |
+|---|---|---|
+| v102.0.0 | Arc opener: Lucide icon migration (sidebar), rich Theme category with Browse + Active sub-areas, Model-1 drill-collapse sidebar, 4 stub sub-areas | in-progress |
+
+**Remaining v102 phases:** Workshop (edit), History, Bookmarks, Export.
 
 ---
 
