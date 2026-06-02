@@ -1151,3 +1151,302 @@
 
 /* ─── Text utility ────────────────────────────────────────────────────── */
 .lw-text { color: var(--lw-text-primary); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Theme menu (CategoryTheme v102.0.0+)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Container */
+.theme-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  block-size: 100%;
+}
+
+/* Sub-navigation tabs */
+.theme-subnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-block-end: 10px;
+  border-block-end: 1px solid var(--lw-panel-border);
+}
+
+.theme-subnav-btn {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: var(--lw-text-muted);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 4px 10px;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.theme-subnav-btn:hover {
+  background: color-mix(in oklab, var(--lw-accent) 10%, transparent);
+  color: var(--lw-text-primary);
+}
+
+.theme-subnav-btn.is-active {
+  background: color-mix(in oklab, var(--lw-accent) 16%, transparent);
+  color: var(--lw-accent);
+}
+
+.theme-subnav-btn.is-stub,
+.theme-subnav-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
+}
+
+.theme-subnav-btn.is-stub:hover,
+.theme-subnav-btn:disabled:hover {
+  background: transparent;
+  color: var(--lw-text-muted);
+}
+
+/* Back link */
+.theme-subnav-back {
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: var(--lw-text-muted);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 2px 0;
+  transition: color 120ms ease;
+}
+
+.theme-subnav-back:hover {
+  color: var(--lw-accent);
+}
+
+/* Sub-area content wrapper */
+.theme-subnav-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* ─── Browse sub-area ─────────────────────────────────────────────────── */
+
+.theme-browse {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.theme-browse-hint {
+  color: var(--lw-text-muted);
+  font-size: 11px;
+  margin: 0;
+}
+
+.theme-browse-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+
+/* Theme card */
+.theme-card {
+  appearance: none;
+  background: var(--lw-panel-bg);
+  border: 1px solid var(--lw-panel-border);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  text-align: start;
+  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+}
+
+.theme-card:hover {
+  border-color: color-mix(in oklab, var(--lw-accent) 50%, transparent);
+  transform: translateY(-1px);
+}
+
+.theme-card--selected {
+  border-color: color-mix(in oklab, var(--lw-accent) 55%, transparent);
+}
+
+.theme-card--applied {
+  border-color: var(--lw-accent);
+  box-shadow: 0 0 8px color-mix(in oklab, var(--lw-glow) 60%, transparent);
+}
+
+/* Swatch preview */
+.theme-card-swatch {
+  aspect-ratio: 16 / 7;
+  border-radius: 6px 6px 0 0;
+  border-block-end: 1px solid;
+  position: relative;
+  overflow: hidden;
+  /* inline bg + borderColor set via style attr */
+}
+
+.theme-card-accent-dot {
+  block-size: 10px;
+  border-radius: 50%;
+  inset-block-end: 8px;
+  inset-inline-end: 8px;
+  position: absolute;
+  inline-size: 10px;
+  /* inline bg set via style attr */
+}
+
+/* Card metadata */
+.theme-card-meta {
+  align-items: center;
+  display: flex;
+  gap: 6px;
+  justify-content: space-between;
+  padding: 8px 10px;
+}
+
+.theme-card-name {
+  color: var(--lw-text-primary);
+  font-family: var(--lw-font-display, "Space Grotesk", system-ui, sans-serif);
+  font-size: 11.5px;
+  font-weight: 500;
+}
+
+.theme-card-badge {
+  background: color-mix(in oklab, var(--lw-accent) 18%, transparent);
+  border-radius: 3px;
+  color: var(--lw-accent);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 2px 5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.theme-card-badge--preview {
+  background: color-mix(in oklab, var(--lw-text-muted) 15%, transparent);
+  color: var(--lw-text-muted);
+}
+
+/* ─── Active sub-area ─────────────────────────────────────────────────── */
+
+.theme-active {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.theme-active-header {
+  align-items: baseline;
+  display: flex;
+  gap: 8px;
+}
+
+.theme-active-name {
+  color: var(--lw-text-primary);
+  font-family: var(--lw-font-display, "Space Grotesk", system-ui, sans-serif);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.theme-active-id {
+  color: var(--lw-text-muted);
+  font-family: var(--lw-font-mono, "IBM Plex Mono", ui-monospace, monospace);
+  font-size: 10px;
+}
+
+.theme-active-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.theme-active-section-title {
+  color: var(--lw-text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.theme-active-tokens {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.theme-token-row {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.theme-token-swatch {
+  block-size: 16px;
+  border: 1px solid var(--lw-panel-border);
+  border-radius: 3px;
+  flex-shrink: 0;
+  inline-size: 16px;
+  /* inline bg set via style attr */
+}
+
+.theme-token-key {
+  color: var(--lw-text-primary);
+  flex: 1;
+  font-size: 11.5px;
+}
+
+.theme-token-value {
+  color: var(--lw-text-muted);
+  font-family: var(--lw-font-mono, "IBM Plex Mono", ui-monospace, monospace);
+  font-size: 10px;
+}
+
+.theme-active-desc {
+  color: var(--lw-text-muted);
+  font-size: 12px;
+  margin: 0;
+}
+
+.theme-active-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-block-start: 4px;
+}
+
+.theme-active-tag {
+  background: color-mix(in oklab, var(--lw-text-muted) 12%, transparent);
+  border-radius: 4px;
+  color: var(--lw-text-muted);
+  font-size: 10px;
+  padding: 2px 6px;
+}
+
+/* ─── Stub sub-area ───────────────────────────────────────────────────── */
+
+.theme-stub {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+  padding: 40px 16px;
+}
+
+.theme-stub-label {
+  color: var(--lw-text-muted);
+  font-family: var(--lw-font-display, "Space Grotesk", system-ui, sans-serif);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.theme-stub-coming {
+  color: color-mix(in oklab, var(--lw-text-muted) 60%, transparent);
+  font-size: 11px;
+  margin: 0;
+}
