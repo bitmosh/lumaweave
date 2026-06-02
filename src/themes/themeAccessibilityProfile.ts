@@ -6,11 +6,13 @@ import type { ThemeId } from "../control-plane/settings/settings.schema";
 const cache = new Map<ThemeId, ThemeAccessibilityProfile>();
 const listeners = new Set<() => void>();
 
+// kind: "text" → evaluated at WCAG 1.4.3 (4.5:1 AA / 7:1 AAA, normal size)
+// kind: "non-text" → evaluated at WCAG 1.4.11 (3:1, single bar, no AAA tier)
 const CONTRAST_PAIRS = [
-  { label: "text on background",       fg: "textPrimary", bg: "background" },
-  { label: "muted text on background", fg: "textMuted",   bg: "background" },
-  { label: "text on panel",            fg: "textPrimary", bg: "panelBackground" },
-  { label: "accent on background",     fg: "accent",      bg: "background" },
+  { label: "text on background",       fg: "textPrimary", bg: "background",      kind: "text"     },
+  { label: "muted text on background", fg: "textMuted",   bg: "background",      kind: "text"     },
+  { label: "text on panel",            fg: "textPrimary", bg: "panelBackground", kind: "text"     },
+  { label: "accent on background",     fg: "accent",      bg: "background",      kind: "non-text" },
 ] as const;
 
 export function computeAccessibilityProfile(themeId: ThemeId): ThemeAccessibilityProfile {
@@ -24,7 +26,7 @@ export function computeAccessibilityProfile(themeId: ThemeId): ThemeAccessibilit
       return { label: pair.label, foreground: fg ?? "?", background: bg ?? "?", ratio: 0, level: "fail" as const };
     }
 
-    const result = computeWCAGResult(fg, bg);
+    const result = computeWCAGResult(fg, bg, pair.kind === "non-text" ? { nonText: true } : undefined);
     return {
       label: pair.label,
       foreground: fg,
@@ -34,8 +36,15 @@ export function computeAccessibilityProfile(themeId: ThemeId): ThemeAccessibilit
     };
   });
 
-  const aa = pairs.every((p) => p.level === "AA" || p.level === "AAA");
-  const aaa = pairs.every((p) => p.level === "AAA");
+  // Per-criterion aggregation (v103.0.5b):
+  //   aa  = every pair passes its own criterion (text ≥4.5, non-text ≥3)
+  //   aaa = every TEXT pair is AAA (≥7) AND every non-text pair passes 3:1
+  // Non-text pairs max at "AA" (no AAA tier in 1.4.11), so using pairs.every(AAA)
+  // would permanently block aaa — even if all text pairs are AAA.
+  const aa  = pairs.every((p) => p.level !== "fail");
+  const aaa = pairs.every((p, i) =>
+    CONTRAST_PAIRS[i].kind === "non-text" ? p.level !== "fail" : p.level === "AAA"
+  );
 
   return {
     themeId,

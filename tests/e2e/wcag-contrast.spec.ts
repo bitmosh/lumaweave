@@ -107,3 +107,29 @@ test("wcagContrast: oklch input — parses without NaN or wrong level", async ({
     expect(result.ratio).toBeGreaterThan(0);
   }
 });
+
+test("wcagContrast: nonText criterion (WCAG 1.4.11) — 3:1 bar, no AAA tier", async ({ page }) => {
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+
+  const results = await page.evaluate(() => {
+    const { getAccessibilityProfile } = (window as any).__lwAccessibilityProfile;
+    // agartha-dream accent/bg = 3.83 → fails text criterion (< 4.5) but passes non-text (≥ 3)
+    // After fix: agartha-dream should be AAA (all text pairs AAA, accent passes 1.4.11)
+    const profile = getAccessibilityProfile("agartha-dream" as any);
+    const accentPair = profile.wcag.pairs[3]; // accent on background — 4th pair
+    return {
+      accentLevel: accentPair.level,
+      accentRatio: accentPair.ratio,
+      aa: profile.wcag.aa,
+      aaa: profile.wcag.aaa,
+    };
+  });
+
+  // agartha-dream accent/bg ≈ 3.83 → non-text: AA (passes 3:1); NOT fail
+  expect(results.accentLevel).toBe("AA");
+  expect(results.accentRatio).toBeGreaterThanOrEqual(3.0);
+  // All text pairs AAA + accent passes non-text 3:1 → theme is AAA
+  expect(results.aaa).toBe(true);
+  expect(results.aa).toBe(true);
+});
