@@ -35,7 +35,7 @@ Wire the Claude Design settings UI into the product as a usable theme panel. Til
 | v102.0.1 | Missing stylesheet for theme menu — Browse card grid, sub-nav tabs, Active token rows, stub placeholder, all Solar Plasma tokens | `b7d8dde` |
 | v102.0.2 | Browse card polish: themed graph thumbnail SVG (real graph tokens), 5-chip palette strip, wider grid (minmax 240px), stronger active sub-nav tab | `6e93401` |
 | v102.0.3 | Theme card identity palette (accent/bg/surface/text/border tokens, not node scale) + WCAG contrast badge (textPrimary-on-bg, level-colored) | `29485c0` |
-| v102.0.4 | WCAG correct-by-construction: culori-based parser, fail replaces AA-large, no silent-black; all 3 callers reconciled; reference-verified; Playwright E2E proof | in-progress |
+| v102.0.4 | WCAG correct-by-construction: culori-based parser, fail replaces AA-large, no silent-black; all 3 callers reconciled; reference-verified; Playwright E2E proof | `a714027` |
 
 **Remaining v102 phases:** Workshop (edit), History, Bookmarks, Export.
 
