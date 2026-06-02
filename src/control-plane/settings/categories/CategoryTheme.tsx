@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { useSettingsStore } from '../settings.store';
 import { builtInThemePresets } from '../../../themes/themePresets';
 import { getThemeRuntimeTokens } from '../../../themes/themeTokens';
-import { computeWCAGResult } from '../../../themes/wcagContrast';
+import { getAccessibilityProfile } from '../../../themes/themeAccessibilityProfile';
 import type { CategoryContentProps } from '../settingsPanel.types';
 import type { ThemeId } from '../../settings/settings.schema';
 
@@ -101,8 +101,15 @@ function ThemeCard({
     tokens.app.textPrimary,
     tokens.app.panelBorder,
   ];
-  // WCAG badge: textPrimary-on-background (both opaque hex — exact result).
-  const contrast = computeWCAGResult(tokens.app.textPrimary, tokens.app.background);
+  // WCAG badge: reads the same source as the top-bar StatusPill — one authority, cannot drift.
+  // getAccessibilityProfile evaluates 4 pairs (text/bg, muted/bg, text/panel, accent/bg).
+  const profile = getAccessibilityProfile(preset.id as ThemeId);
+  const wcagLevel = profile.wcag.aaa ? "aaa" : profile.wcag.aa ? "aa" : "partial";
+  const wcagLabel = profile.wcag.aaa ? "AAA" : profile.wcag.aa ? "AA" : "partial";
+  const weakPairs = profile.wcag.pairs
+    .filter(p => p.level !== "AAA")
+    .map(p => `${p.label}: ${p.ratio.toFixed(2)} (${p.level})`)
+    .join("\n");
 
   return (
     <button
@@ -123,10 +130,10 @@ function ThemeCard({
       <div className="theme-card-meta">
         <span className="theme-card-name">{preset.name}</span>
         <span
-          className={`wcag-badge wcag-badge--${contrast.level === 'fail' ? 'fail' : 'pass'}`}
-          title={`WCAG ${contrast.level} · ${contrast.ratio.toFixed(1)}:1 (text on bg)`}
+          className={`lw-wcag-badge lw-wcag-${wcagLevel}`}
+          title={wcagLabel === "AAA" ? "WCAG AAA — all pairs" : `WCAG ${wcagLabel}\n${weakPairs}`}
         >
-          {contrast.level === 'fail' ? '✗' : contrast.level}
+          {wcagLabel}
         </span>
         {isApplied && <span className="theme-card-badge">Active</span>}
         {isSelected && !isApplied && <span className="theme-card-badge theme-card-badge--preview">Selected</span>}
