@@ -33,7 +33,7 @@ Connect the authored-but-unwired cluster-color system to node render. Fix the 4 
 
 | Pass | Work | Commit |
 |---|---|---|
-| v103.0.0 | Arc opener — design only: re-derive + author `GRAPH_COLOR_OWNERSHIP.md` contract, lock cluster-color mapping abstraction, phase plan. D1-D4 sign-off required before .0.1 | in-progress |
+| v103.0.0 | Arc opener — design only: re-derive + author `GRAPH_COLOR_OWNERSHIP.md` contract, lock cluster-color mapping abstraction, phase plan. D1-D4 signed off | `b85a004` |
 
 **Planned v103 phases:** .0.1 `loadClusterColors()` + resolver · .0.2 cluster node color in builder · .0.3 themed edges · .0.4 recolor on theme change · .0.5 mono-shades + custom modes · .0.6 palette strip + WCAG graph label contrast · closer.
 
