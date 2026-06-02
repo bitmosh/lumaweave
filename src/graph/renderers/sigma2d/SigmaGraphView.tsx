@@ -846,6 +846,34 @@ useEffect(() => {
   sigma.refresh({ skipIndexation: true });
 }, [nodeSize]);
 
+// v103.0.4: Live recolor on theme change — no rebuild.
+// Follows the [dialectId] / [seedParamOverrides] / [activePins] active-mutate pattern.
+// resetGraphStyles reads raw.color first → clustered nodes keep absolute color (D2);
+// edges + no-cluster nodes pick up the new theme's defaults. Selection preserved via
+// current interactionState. Does NOT add theme to [nodes, edges] deps.
+useEffect(() => {
+  const sigma = sigmaRef.current;
+  if (!sigma) return;
+  const graph = sigma.getGraph();
+  const tokens = resolvedTokensRef.current;
+  const interactionState: GraphInteractionState = {
+    selectedNodeId,
+    selectedEdgeId,
+    hoveredNodeId: hoveredNodeIdRef.current,
+    hoveredEdgeId: hoveredEdgeIdRef.current,
+    neighborhoodDepth: Math.floor(neighborhoodDepth || 2) as 1 | 2 | 3,
+  };
+  const styleOptions: StylePolicyOptions = {
+    hoverNodeColor,
+    edgeLabelFontSize,
+    pinnedHighlightActive,
+  };
+  applyGraphStylePolicy(graph, interactionState, styleOptions, tokens);
+  sigma.setSetting("defaultNodeColor", tokens.nodeColor.default);
+  sigma.setSetting("defaultEdgeColor", tokens.edgeColor.default);
+  sigma.refresh();
+}, [resolvedTokens]); // eslint-disable-line react-hooks/exhaustive-deps -- resolvedTokens is the trigger; interactionState/style reconstructed from component scope
+
 // v90b: Geometry preset override reactivity — wire lw:override-change to Sigma node type.
 // Only fires when a global geometry override exists. Skips when overrideValue is undefined
 // (covers target-scoped writes and non-geometry override changes) to avoid resetting all
