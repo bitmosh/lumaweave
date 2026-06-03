@@ -1,14 +1,15 @@
 import { test, expect } from "@playwright/test";
 import { openInspectorOnTopbar } from "./helpers/inspector";
 
+// v105.0.1: IDE spoke merged into Code spoke. 8 spokes remain.
 const CANONICAL_SPOKE_ORDER = [
-  "color", "geometry", "type", "motion", "layout", "code", "apply", "ide", "history",
+  "color", "geometry", "type", "motion", "layout", "code", "apply", "history",
 ];
 
-const PLACEHOLDER_SPOKES = ["type", "motion", "layout", "code"];
+const PLACEHOLDER_SPOKES = ["type", "motion", "layout"];
 
-test.describe("v89.4 Inspector Full Radial — 9 spokes", () => {
-  test("all 9 spokes render in canonical order", async ({ page }) => {
+test.describe("v89.4 Inspector Full Radial — 8 spokes (v105.0.1: IDE merged into Code)", () => {
+  test("all 8 spokes render in canonical order", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 

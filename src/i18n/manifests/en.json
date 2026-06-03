@@ -261,15 +261,11 @@
         "reset": "Reset",
         "resetAll": "Reset all"
       },
-      "ide": {
-        "label": "IDE",
+      "code": {
+        "label": "Code",
         "openInEditor": "Open in editor",
         "noProvenance": "No provenance data found for this target.",
         "noProvenanceHint": "Regenerate the manifest with `npm run generate-provenance` if you recently added this target."
-      },
-      "code": {
-        "label": "Code",
-        "placeholderMessage": "Coming in v98 (Code Spoke arc)"
       },
       "layout": {
         "label": "Layout",

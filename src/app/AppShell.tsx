@@ -22,7 +22,6 @@ import { registerMotionSpoke } from "../control-plane/inspector/spokes/registerM
 import { registerLayoutSpoke } from "../control-plane/inspector/spokes/registerLayoutSpoke";
 import { registerCodeSpoke } from "../control-plane/inspector/spokes/registerCodeSpoke";
 import { registerApplySpoke } from "../control-plane/inspector/spokes/registerApplySpoke";
-import { registerIdeSpoke } from "../control-plane/inspector/spokes/registerIdeSpoke";
 import { registerHistorySpoke } from "../control-plane/inspector/spokes/registerHistorySpoke";
 import { installOpenInIdeListener } from "../control-plane/ide/installOpenInIdeListener";
 import "../control-plane/hotkeys/hotkey-registry.entries";
@@ -64,10 +63,9 @@ export function AppShell() {
     registerTypeSpoke();     // order 2
     registerMotionSpoke();   // order 3
     registerLayoutSpoke();   // order 4
-    registerCodeSpoke();     // order 5
+    registerCodeSpoke();     // order 5 (real feature — was IDE spoke, now Code spoke)
     registerApplySpoke();    // order 6
-    registerIdeSpoke();      // order 7
-    registerHistorySpoke();  // order 8
+    registerHistorySpoke();  // order 7
     installOpenInIdeListener();
     installGlobalHotkeyListener();
 

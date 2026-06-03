@@ -1,5 +1,5 @@
 import { inspectorSpokeRegistry } from "../../../themes/inspectorSpokeRegistry";
-import { makePlaceholderTab } from "./PlaceholderTab";
+import { CodeTab } from "./CodeTab";
 
 export function registerCodeSpoke(): void {
   inspectorSpokeRegistry.register({
@@ -9,11 +9,8 @@ export function registerCodeSpoke(): void {
     category: "code",
     enabled: true,
     order: 5,
-    status: "placeholder",
     icon: "</>",
     color: "inspector.radial.spokeColor",
-    intendedTokenPaths: undefined,
-    placeholderMessage: "Coming in v98 (Code Spoke arc)",
-    tabComponent: makePlaceholderTab("code"),
+    tabComponent: CodeTab,
   });
 }
