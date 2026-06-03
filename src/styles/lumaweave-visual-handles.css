@@ -251,10 +251,10 @@ input[type="range"]:focus {
 
 .tile {
   position: absolute;
-  background: linear-gradient(180deg, rgba(27, 8, 48, 0.92), rgba(11, 4, 22, 0.96));
+  background: linear-gradient(180deg, var(--lw-panel-bg, rgba(27, 8, 48, 0.92)), var(--lw-app-bg, rgba(11, 4, 22, 0.96)));
   border: 1px solid var(--lw-panel-border, rgba(255, 179, 71, 0.18));
   border-radius: 8px;
-  box-shadow: 0 1px 0 rgba(255, 179, 71, 0.12), 0 8px 30px rgba(0, 0, 0, 0.55), 0 0 24px rgba(255, 107, 26, 0.08);
+  box-shadow: 0 1px 0 var(--lw-glow, rgba(255, 179, 71, 0.12)), 0 8px 30px rgba(0, 0, 0, 0.55), 0 0 24px var(--lw-glow, rgba(255, 107, 26, 0.08));
   backdrop-filter: blur(16px) saturate(140%);
   display: flex;
   flex-direction: column;
@@ -275,7 +275,7 @@ input[type="range"]:focus {
   align-items: center;
   justify-content: space-between;
   padding: 8px 12px;
-  background: linear-gradient(180deg, rgba(43, 16, 72, 0.85), rgba(27, 8, 48, 0.75));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--lw-panel-bg, rgba(43, 16, 72, 0.85)) 100%, var(--lw-accent, #FFB347) 10%), var(--lw-panel-bg, rgba(27, 8, 48, 0.75)));
   border-block-end: 1px solid var(--lw-panel-border, rgba(255, 179, 71, 0.18));
   cursor: grab;
   user-select: none;
@@ -311,7 +311,7 @@ input[type="range"]:focus {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.08em;
-  color: var(--lw-text, #e9e4f5);
+  color: var(--lw-text-primary, #e9e4f5);
   font-family: var(--lw-font-display, "Space Grotesk", system-ui, sans-serif);
 }
 
@@ -334,7 +334,7 @@ input[type="range"]:focus {
 }
 
 .tile-btn:hover {
-  background: rgba(255, 179, 71, 0.14);
+  background: color-mix(in srgb, var(--lw-accent, #FFB347) 14%, transparent);
   color: var(--lw-accent, #FFB347);
 }
 
@@ -348,7 +348,7 @@ input[type="range"]:focus {
   align-items: center;
   justify-content: space-between;
   padding: 4px 8px;
-  background: linear-gradient(180deg, rgba(43, 16, 72, 0.75), rgba(27, 8, 48, 0.65));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--lw-panel-bg, rgba(43, 16, 72, 0.75)) 100%, var(--lw-accent, #FFB347) 8%), var(--lw-panel-bg, rgba(27, 8, 48, 0.65)));
   border-block-end: 1px solid var(--lw-panel-border, rgba(255, 179, 71, 0.12));
   cursor: grab;
   user-select: none;
@@ -371,7 +371,7 @@ input[type="range"]:focus {
 .tile-slim-title {
   font-size: 11px;
   font-weight: 500;
-  color: var(--lw-text, #e9e4f5);
+  color: var(--lw-text-primary, #e9e4f5);
   font-family: var(--lw-font-display, "Space Grotesk", system-ui, sans-serif);
 }
 
@@ -379,6 +379,8 @@ input[type="range"]:focus {
   flex: 1;
   overflow: auto;
   padding: 12px;
+  color: var(--lw-text-primary, rgba(241, 245, 249, 0.85));
+  font-family: var(--lw-font-body, "IBM Plex Sans", system-ui, sans-serif);
 }
 
 .tile-resize {
@@ -388,7 +390,7 @@ input[type="range"]:focus {
   width: 16px;
   height: 16px;
   cursor: nwse-resize;
-  background: linear-gradient(135deg, transparent 50%, rgba(255, 179, 71, 0.25) 50%);
+  background: linear-gradient(135deg, transparent 50%, color-mix(in srgb, var(--lw-accent, #FFB347) 25%, transparent) 50%);
   border-start-start-radius: 4px;
 }
 
@@ -398,9 +400,9 @@ input[type="range"]:focus {
   align-items: center;
   gap: 6px;
   padding: 0 12px;
-  background: linear-gradient(180deg, rgba(255, 107, 26, 0.16), rgba(27, 8, 48, 0.88));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--lw-accent, #FF6B1A) 16%, transparent), var(--lw-panel-bg, rgba(27, 8, 48, 0.88)));
   border-block-end: 1px solid var(--lw-panel-border, rgba(255, 179, 71, 0.18));
-  box-shadow: 0 -2px 12px rgba(255, 107, 26, 0.12);
+  box-shadow: 0 -2px 12px var(--lw-glow, rgba(255, 107, 26, 0.12));
   height: 28px;
   cursor: grab;
   user-select: none;
@@ -444,7 +446,7 @@ input[type="range"]:focus {
 }
 
 .group-btn:hover {
-  background: rgba(255, 179, 71, 0.14);
+  background: color-mix(in srgb, var(--lw-accent, #FFB347) 14%, transparent);
   color: var(--lw-accent, #FFB347);
 }
 
@@ -454,7 +456,7 @@ input[type="range"]:focus {
 
 .group-outline {
   position: absolute;
-  border: 2px dashed rgba(14, 165, 233, 0.4);
+  border: 2px dashed color-mix(in srgb, var(--lw-accent, #FFB347) 40%, transparent);
   border-radius: 8px;
   pointer-events: none;
   z-index: 999;
