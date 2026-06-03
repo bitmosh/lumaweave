@@ -38,7 +38,6 @@ interface WarningBadge {
 
 installThemeTargetProbeGlobal();
 
-const HOTKEY_LABEL = "Alt+Shift+I";
 const PIN_HOTKEY_LABEL = "Alt+Shift+P";
 const GRAPH_VIEWPORT_SELECTOR = "[data-testid='self-graph-fixture-loaded']";
 const SIGMA_ELEMENT_SELECTOR = `${GRAPH_VIEWPORT_SELECTOR} canvas, ${GRAPH_VIEWPORT_SELECTOR} svg, ${GRAPH_VIEWPORT_SELECTOR} [data-sigma-element]`;
@@ -515,26 +514,6 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
 
   return (
     <>
-      <div
-        data-testid="theme-target-inspector-toggle-state"
-        style={{
-          position: "fixed",
-          bottom: "1rem",
-          right: "1rem",
-          zIndex: 5000,
-          padding: "0.4rem 0.75rem",
-          borderRadius: "9999px",
-          fontSize: "0.75rem",
-          fontWeight: 600,
-          backgroundColor: enabled ? "rgba(34, 197, 94, 0.12)" : "rgba(15, 23, 42, 0.7)",
-          color: enabled ? "#4ade80" : "#94a3b8",
-          border: `1px solid ${enabled ? "rgba(34, 197, 94, 0.5)" : "rgba(148, 163, 184, 0.35)"}`,
-          pointerEvents: "none",
-        }}
-      >
-        {enabled ? t("themeInspector.toggleOn", { hotkey: HOTKEY_LABEL }) : t("themeInspector.toggleOff", { hotkey: HOTKEY_LABEL })}
-      </div>
-
       <div data-testid="theme-target-inspector-overlay" style={{ pointerEvents: "none" }}>
         {enabled && ghostOutlines.length > 0 && (
           <div
