@@ -9,17 +9,15 @@ export interface MinimapNavigationHandlers {
 const MINIMAP_PAD = 10; // must match MinimapSnapshotCanvas pad constant
 
 /**
- * Inverts a click in the snapshot area to graph coordinates.
+ * Inverts a click in the snapshot area to raw graph coordinates.
  *
- * MinimapSnapshotCanvas projects graph → canvas using a UNIFORM CENTERED scale:
- *   scale   = min((w - pad*2) / gW, (h - pad*2) / gH)   // aspect-fit
- *   offsetX = (w - gW * scale) / 2                       // centered
- *   offsetY = (h - gH * scale) / 2
+ * MinimapSnapshotCanvas (v104.0.6+) projects with Y-flip to match sigma Y↑:
  *   canvasX = offsetX + (graphX - minX) * scale
+ *   canvasY = offsetY + (maxY - graphY) * scale   ← Y-flip
  *
- * Inversion: subtract offset, divide by scale.
- * A naive clickX/w * gW would ignore the centering offset + aspect ratio
- * and send pans to the wrong location near edges.
+ * Inverse (click canvas → graph):
+ *   graphX = minX + (clickX - offsetX) / scale
+ *   graphY = maxY - (clickY - offsetY) / scale    ← Y-flip inverse
  */
 function invertToGraph(
   clickX: number,
@@ -38,16 +36,48 @@ function invertToGraph(
   const offsetY = (areaH - gH * scale) / 2;
   return {
     x: bounds.minX + (clickX - offsetX) / scale,
-    y: bounds.minY + (clickY - offsetY) / scale,
+    y: bounds.maxY - (clickY - offsetY) / scale, // Y-flip: minimap top = large raw Y (sigma top)
   };
 }
 
 /**
- * v104.0.1 — click-to-pan + drag-scrub + wheel-zoom via __lwCameraController.
+ * Compute the camera-space pan delta to center the view on a target raw graph coord.
  *
- * Coordinate space: camera.getState().x/y are in raw graphology node-attribute
- * space (same as MinimapBounds). No sigma.viewportToGraph conversion needed —
- * the inverted graph coords can be passed directly to controller.pan().
+ * camera.getState().x/y are in sigma's NORMALIZED [0,1] space (not raw graph coords).
+ * The normalization is: norm(raw) = 0.5 + (raw - graphCenter) / ratio_norm.
+ * So delta in normalized space = delta in raw space / ratio_norm.
+ *
+ * ratio_norm = max(gW, gH) (from sigma's normalizationFunction source).
+ * currentCenter = sigma.viewportToGraph(vpCenter) = raw graph coords at current view center.
+ */
+function computePanDelta(
+  target: { x: number; y: number },
+  bounds: MinimapBounds,
+): { dx: number; dy: number } | null {
+  const sigma = (window as any).__lwSigma;
+  if (!sigma) return null;
+  const dims = sigma.getDimensions?.() as { width: number; height: number } | undefined;
+  if (!dims?.width || !dims?.height) return null;
+
+  const currentCenter = sigma.viewportToGraph({ x: dims.width / 2, y: dims.height / 2 });
+  const ratioNorm = Math.max(bounds.maxX - bounds.minX, bounds.maxY - bounds.minY) || 1;
+
+  return {
+    dx: (target.x - currentCenter.x) / ratioNorm,
+    dy: (target.y - currentCenter.y) / ratioNorm,
+  };
+}
+
+/**
+ * v104.0.6 — click-to-pan + drag-scrub + wheel-zoom via __lwCameraController.
+ *
+ * Fixes vs v104.0.1:
+ * 1. invertToGraph Y-flip: clicking the top of the minimap now maps to large
+ *    raw Y (sigma top), not small raw Y (was upside-down).
+ * 2. Pan delta in camera (normalized) space: camera.x/y are sigma-normalized,
+ *    NOT raw graph coords. Dividing by ratio_norm converts the raw graph delta
+ *    to normalized camera space. The previous target-camState subtraction mixed
+ *    raw graph and normalized spaces → fly-off.
  *
  * Drag: listeners on window so scrub continues outside the minimap area.
  * Removed on mouseup — no listener leak.
@@ -79,26 +109,22 @@ export function useMinimapNavigation(
       y: ev.clientY - rect.top,
     });
 
-    // Initial click: animated pan to the clicked graph point.
+    // Initial click: animated pan to center the clicked graph point.
     const initial = getClickLocal(e);
     const target = invertToGraph(initial.x, initial.y, areaW, areaH, bounds!);
-    const camState = controller.getState();
-    controller.pan(
-      target.x - camState.x,
-      target.y - camState.y,
-      { animated: true },
-    );
+    const delta = computePanDelta(target, bounds!);
+    if (delta) {
+      controller.pan(delta.dx, delta.dy, { animated: true });
+    }
 
-    // Drag-scrub: instant tracking on mousemove (animated compounds and lags).
+    // Drag-scrub: instant tracking on mousemove.
     const onMove = (ev: MouseEvent) => {
       const localMouse = getClickLocal(ev);
       const scrubTarget = invertToGraph(localMouse.x, localMouse.y, areaW, areaH, bounds!);
-      const state = controller.getState();
-      controller.pan(
-        scrubTarget.x - state.x,
-        scrubTarget.y - state.y,
-        { animated: false },
-      );
+      const scrubDelta = computePanDelta(scrubTarget, bounds!);
+      if (scrubDelta) {
+        controller.pan(scrubDelta.dx, scrubDelta.dy, { animated: false });
+      }
     };
 
     const onUp = () => {

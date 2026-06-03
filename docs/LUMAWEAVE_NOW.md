@@ -37,6 +37,7 @@ Port and activate the minimap overlay prototype. Non-interactive render first (.
 | v104.0.3 | Minimap viewport rect fix: rewrite useMinimapCamera to use sigma.viewportToGraph on viewport corners (was cam.ratio in normalized space — wrong coordinate system); shared projection with snapshot (same scale/offsets/pad); areaSize passed from Minimap.tsx; manual smoke required | `2b00429` |
 | v104.0.4 | Minimap bounds frozen at origin frame: afterRender now drives bounds recompute during layout settle (was count-change only — positions not structural events); delta-stability stop (5 stable ticks at BOUNDS_EPSILON=1.0 ≈ 750ms quiet period); structural events reset settle; manual smoke required | `4184736` |
 | v104.0.5 | Minimap rect real fix: Math.min/max for visMinY/visMaxY (handles sigma Y↑ inversion); sigma.getDimensions() instead of clientWidth (never 0); effect deps [] with refs (no cleanup/setup during settle); manual smoke required | `e4ccbd3` |
+| v104.0.6 | Minimap Y-flip consistent across snapshot/rect/nav: sigma Y↑ (large Y = top) → flip in MinimapSnapshotCanvas + useMinimapCamera projY; pan delta fixed (was raw-graph minus normalized-camera = garbage); invertToGraph Y-flip + ratioNorm conversion; manual smoke required | in-progress |
 
 ---
 

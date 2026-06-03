@@ -94,18 +94,19 @@ export function useMinimapCamera(
       const offsetY = (areaH - gH * scale) / 2;
 
       const projX = (gx: number) => offsetX + (gx - b.minX) * scale;
-      const projY = (gy: number) => offsetY + (gy - b.minY) * scale; // NO flip
+      // Y-flip: sigma Y↑ → minimap canvas Y↓. Matches MinimapSnapshotCanvas.
+      const projY = (gy: number) => offsetY + (b.maxY - gy) * scale;
 
       const leftPx  = projX(visMinX);
       const rightPx = projX(visMaxX);
-      const topPx   = projY(visMinY);
-      const botPx   = projY(visMaxY);
+      const topPx   = projY(visMaxY); // visMaxY → smallest canvas Y (top of minimap)
+      const botPx   = projY(visMinY); // visMinY → largest canvas Y (bottom of minimap)
 
       setRect({
         left:   (leftPx  / areaW) * 100,
-        top:    (topPx   / areaH) * 100,
+        top:    (Math.min(topPx, botPx) / areaH) * 100,
         width:  ((rightPx - leftPx) / areaW) * 100,
-        height: ((botPx   - topPx)  / areaH) * 100,
+        height: (Math.abs(botPx - topPx)  / areaH) * 100,
       });
     };
 

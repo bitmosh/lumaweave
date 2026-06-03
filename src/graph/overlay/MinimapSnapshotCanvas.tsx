@@ -42,9 +42,11 @@ export function MinimapSnapshotCanvas({ snapshotVersion, bounds, size }: Minimap
     const offsetX = (width - gW * scale) / 2;
     const offsetY = (height - gH * scale) / 2;
 
+    // Y-flip: sigma renders with Y↑ (large raw Y = visual top). Flip here so
+    // the minimap snapshot has the same orientation as the main sigma view.
     const project = (x: number, y: number) => ({
       x: offsetX + (x - bounds.minX) * scale,
-      y: offsetY + (y - bounds.minY) * scale,
+      y: offsetY + (bounds.maxY - y) * scale,
     });
 
     ctx.lineWidth = 0.6;
