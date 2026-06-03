@@ -34,6 +34,7 @@ Port and activate the minimap overlay prototype. Non-interactive render first (.
 | v104.0.0 | Port minimap prototype: 8 new files (MinimapShell, MinimapSnapshotCanvas, MinimapViewportRect, MinimapChrome, useMinimapSnapshot, useMinimapCamera, useMinimapNavigation stub, Minimap top-level); settings migration 89→90 adds minimap slice; AppShell wired; 4 theme targets added; design doc version numbers corrected | `e95b158` |
 | v104.0.1 | Minimap navigation: click-to-pan (animated), drag-scrub (instant), wheel-zoom; UNIFORM CENTERED projection inversion (pad=10, same as canvas); window-level drag listeners removed on mouseup; OKLCH audit — already clean; manual smoke required | `c36c49a` |
 | v104.0.2 | Minimap snapshot N0/E0 fix: sigma readiness poll + afterRender count-change detection (only recomputes on structural change, not every frame); stale UI Inspector pill removed from ThemeTargetInspectorOverlay (was covering StatusBar pill); manual smoke required | `0b5c90e` |
+| v104.0.3 | Minimap viewport rect fix: rewrite useMinimapCamera to use sigma.viewportToGraph on viewport corners (was cam.ratio in normalized space — wrong coordinate system); shared projection with snapshot (same scale/offsets/pad); areaSize passed from Minimap.tsx; manual smoke required | in-progress |
 
 ---
 

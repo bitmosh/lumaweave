@@ -14,11 +14,19 @@ import { MinimapViewportRect } from "./MinimapViewportRect";
 import { MinimapHeader, MinimapFooter, MinimapResizeGrip } from "./MinimapChrome";
 import type { MinimapSettings } from "../../control-plane/settings/settings.schema";
 
+// Header=28px, footer=24px — must match MinimapChrome + Minimap.tsx layout.
+const MINIMAP_HEADER_H = 28;
+const MINIMAP_FOOTER_H = 24;
+
 export function Minimap() {
   const settings = useMinimapSettings();
   const setSetting = useSetMinimapSetting();
   const { snapshotVersion, bounds, counts, isRefreshing } = useMinimapSnapshot();
-  const { rect } = useMinimapCamera(bounds);
+  const areaSize = {
+    width: settings.size.width,
+    height: settings.size.height - MINIMAP_HEADER_H - MINIMAP_FOOTER_H,
+  };
+  const { rect } = useMinimapCamera(bounds, areaSize);
 
   if (!settings.visible) return null;
 
