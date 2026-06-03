@@ -31,7 +31,7 @@ Rename IDE spoke → Code spoke, enrich provenance into an "origin story" (regis
 
 | Pass | Work | Commit |
 |---|---|---|
-| v105.0.0 | Provenance manifest sync: 4 minimap targets (minimap.root/header/footer/viewport-rect) added; 3 topbar targets (statusCluster, statusPill, wordmark) also picked up; parity spec GREEN (18 entries); arc baseline established | in-progress |
+| v105.0.0 | Provenance manifest sync: 4 minimap targets (minimap.root/header/footer/viewport-rect) added; 3 topbar targets (statusCluster, statusPill, wordmark) also picked up; parity spec GREEN (18 entries); arc baseline established | `ba85948` |
 
 ---
 
