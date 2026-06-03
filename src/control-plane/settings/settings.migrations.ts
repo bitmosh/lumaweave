@@ -1,4 +1,4 @@
-import { defaultSettings } from "./settings.defaults";
+import { defaultSettings, defaultMinimapSettings } from "./settings.defaults";
 import type { StarmapSettings } from "./settings.schema";
 import { tileSectionRegistry } from "../panels/tileSectionRegistry";
 
@@ -152,6 +152,14 @@ const MIGRATIONS: Record<number,
     developer.preferredEditor ??= "vscode";
     developer.customEditorTemplate ??= "code --goto {path}:{line}";
     return { ...s, developer } as Partial<StarmapSettings>;
+  },
+
+  // v89 → v90: add minimap settings slice (v104.0.0). Additive only.
+  90: (s) => {
+    return {
+      ...s,
+      minimap: (s as any).minimap ?? defaultMinimapSettings,
+    } as Partial<StarmapSettings>;
   },
 
   // v88 → v89: stamp mode + slot-anchor on stored tiles (v103.1.6 — activates the docking engine).

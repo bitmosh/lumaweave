@@ -508,31 +508,8 @@ export function AppShell() {
                         }}
                       />
 
-                      {/* v86b close-1: Minimap */}
-                      {(window as any).__lwSigma && (() => {
-                        const sigma = (window as any).__lwSigma;
-                        try {
-                          let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-                          sigma.getGraph().forEachNode((id: string) => {
-                            const d = sigma.getNodeDisplayData(id);
-                            if (!d) return;
-                            if (d.x < minX) minX = d.x;
-                            if (d.y < minY) minY = d.y;
-                            if (d.x > maxX) maxX = d.x;
-                            if (d.y > maxY) maxY = d.y;
-                          });
-                          if (!isFinite(minX)) return null;
-                          const cam = sigma.getCamera().getState();
-                          return (
-                            <Minimap
-                              graphBounds={{ minX, minY, maxX, maxY }}
-                              viewportBounds={{ x: cam.x, y: cam.y, ratio: cam.ratio }}
-                            />
-                          );
-                        } catch {
-                          return null;
-                        }
-                      })()}
+                      {/* v104.0.0: Minimap — settings-driven, self-managing */}
+                      <Minimap />
                     </>
                   ) : (
                 <div className="flex h-full items-center justify-center">

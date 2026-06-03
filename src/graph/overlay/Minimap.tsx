@@ -1,50 +1,121 @@
 /**
- * Minimap - v86b minimap overlay
- * 
- * Small overview of the graph in bottom-right corner.
- * Shows current viewport rectangle.
+ * v104.0.0: Minimap — overlay panel with snapshot canvas + viewport rect.
+ * Navigation (click-to-pan, drag-scrub, wheel-zoom) ships in v104.0.1.
  */
 
-interface MinimapProps {
-  graphBounds: { minX: number; minY: number; maxX: number; maxY: number };
-  viewportBounds: { x: number; y: number; ratio: number };
-}
+import { useRef } from "react";
+import { useMinimapSettings, useSetMinimapSetting } from "./useMinimapSettings";
+import { useMinimapSnapshot } from "./useMinimapSnapshot";
+import { useMinimapCamera } from "./useMinimapCamera";
+import { useMinimapNavigation } from "./useMinimapNavigation";
+import { MinimapShell, useShellContext, toggleMinimapCollapsed, positionFromAnchor } from "./MinimapShell";
+import { MinimapSnapshotCanvas } from "./MinimapSnapshotCanvas";
+import { MinimapViewportRect } from "./MinimapViewportRect";
+import { MinimapHeader, MinimapFooter, MinimapResizeGrip } from "./MinimapChrome";
+import type { MinimapSettings } from "../../control-plane/settings/settings.schema";
 
-export function Minimap({ graphBounds, viewportBounds }: MinimapProps) {
-  const width = 120;
-  const height = 120;
+export function Minimap() {
+  const settings = useMinimapSettings();
+  const setSetting = useSetMinimapSetting();
+  const { snapshotVersion, bounds, counts, isRefreshing } = useMinimapSnapshot();
+  const { rect } = useMinimapCamera(bounds);
 
-  const graphWidth = graphBounds.maxX - graphBounds.minX;
-  const graphHeight = graphBounds.maxY - graphBounds.minY;
-
-  const scaleX = width / graphWidth;
-  const scaleY = height / graphHeight;
-
-  const viewportX = ((viewportBounds.x - graphBounds.minX) / graphWidth) * width;
-  const viewportY = ((viewportBounds.y - graphBounds.minY) / graphHeight) * height;
-  const viewportW = (width / viewportBounds.ratio) * scaleX;
-  const viewportH = (height / viewportBounds.ratio) * scaleY;
+  if (!settings.visible) return null;
 
   return (
-    <div
-      className="absolute bottom-4 right-4 bg-slate-900/80 backdrop-blur-sm border border-slate-700 rounded-lg"
-      style={{ width, height }}
-    >
-      <div className="relative w-full h-full">
-        {/* Graph bounds */}
-        <div className="absolute inset-0 border border-slate-600" />
-        
-        {/* Viewport rectangle */}
-        <div
-          className="absolute border-2 border-cyan-400 bg-cyan-400/10"
-          style={{
-            left: viewportX,
-            top: viewportY,
-            width: Math.min(viewportW, width),
-            height: Math.min(viewportH, height),
-          }}
-        />
-      </div>
-    </div>
+    <MinimapShell status={isRefreshing ? "refresh" : "idle"}>
+      <MinimapBody
+        snapshotVersion={snapshotVersion}
+        bounds={bounds}
+        viewportRect={rect}
+        counts={counts}
+        isRefreshing={isRefreshing}
+        settings={settings}
+        setSetting={setSetting}
+      />
+    </MinimapShell>
+  );
+}
+
+function MinimapBody({
+  snapshotVersion,
+  bounds,
+  viewportRect,
+  counts,
+  isRefreshing,
+  settings,
+  setSetting,
+}: {
+  snapshotVersion: number;
+  bounds: ReturnType<typeof useMinimapSnapshot>["bounds"];
+  viewportRect: ReturnType<typeof useMinimapCamera>["rect"];
+  counts: ReturnType<typeof useMinimapSnapshot>["counts"];
+  isRefreshing: boolean;
+  settings: MinimapSettings;
+  setSetting: ReturnType<typeof useSetMinimapSetting>;
+}) {
+  const { flipped, collapsed } = useShellContext();
+  const canvasAreaRef = useRef<HTMLDivElement>(null);
+  const nav = useMinimapNavigation(bounds, canvasAreaRef);
+
+  const onCollapseToggle = () => toggleMinimapCollapsed(settings, setSetting, flipped);
+  const onClose = () => setSetting("visible", false);
+  const onSnap = () =>
+    setSetting({
+      position: positionFromAnchor(settings.anchor, settings.size),
+      size: { width: 300, height: 200 },
+      collapsed: false,
+    });
+
+  return (
+    <>
+      <MinimapHeader
+        breadcrumb="radial backbone"
+        status={isRefreshing ? "refreshing" : "fresh"}
+        collapsed={collapsed}
+        flipped={flipped}
+        onCollapse={onCollapseToggle}
+        onClose={onClose}
+        onSnap={onSnap}
+      />
+
+      {!collapsed && (
+        <>
+          <div
+            ref={canvasAreaRef}
+            data-testid="minimap-canvas-area"
+            onMouseDown={nav.onMouseDown}
+            onWheel={nav.onWheel}
+            style={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              top: flipped ? 24 : 28,
+              bottom: flipped ? 28 : 24,
+              overflow: "hidden",
+              cursor: "crosshair",
+            }}
+          >
+            <MinimapSnapshotCanvas
+              snapshotVersion={snapshotVersion}
+              bounds={bounds}
+              size={{
+                width: settings.size.width,
+                height: settings.size.height - 28 - 24,
+              }}
+            />
+            {settings.showViewport && <MinimapViewportRect rect={viewportRect} />}
+            <MinimapResizeGrip />
+          </div>
+
+          <MinimapFooter
+            opacity={settings.opacity}
+            onOpacityChange={(v) => setSetting("opacity", v)}
+            counts={counts}
+            flipped={flipped}
+          />
+        </>
+      )}
+    </>
   );
 }

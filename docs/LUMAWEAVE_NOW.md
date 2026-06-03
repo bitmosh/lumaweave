@@ -25,6 +25,16 @@ tags: [live-state, now, canonical, v103]
 
 ---
 
+## Current arc — v104: Minimap
+
+Port and activate the minimap overlay prototype. Non-interactive render first (.0.0); navigation second (.0.1).
+
+| Pass | Work | Commit |
+|---|---|---|
+| v104.0.0 | Port minimap prototype: 8 new files (MinimapShell, MinimapSnapshotCanvas, MinimapViewportRect, MinimapChrome, useMinimapSnapshot, useMinimapCamera, useMinimapNavigation stub, Minimap top-level); settings migration 89→90 adds minimap slice; AppShell wired; 4 theme targets added; design doc version numbers corrected | in-progress |
+
+---
+
 ## Closed arc — v103: Graph Theming + Tile Docking — CLOSED (0.9.0 → 0.10.0)
 
 Graph theming (.0.x): wired the cluster-color resolver into node render, themed edges and graph recolor on theme switch, WCAG correctness (single-source badge, non-text criterion).

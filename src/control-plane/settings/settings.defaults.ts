@@ -1,7 +1,21 @@
-import type { StarmapSettings } from "./settings.schema";
+import type { StarmapSettings, MinimapSettings } from "./settings.schema";
+
+export const defaultMinimapSettings: MinimapSettings = {
+  visible: true,
+  collapsed: false,
+  position: { x: 0, y: 0 },           // first-mount: hydrated from anchor
+  size: { width: 300, height: 200 },
+  opacity: 0.92,
+  anchor: { edge: "right", offset: 18 },
+  theme: "auto-contrast",
+  showViewport: true,
+  showSelectedNode: true,
+  refreshOnLayoutComplete: true,
+  enableClickToNavigate: false,
+};
 
 export const defaultSettings: StarmapSettings = {
-  version: 89, // v103.1.6: tile mode+slot-anchor migration (activates docking engine)
+  version: 90, // v104.0.0: minimap settings slice added
 
   general: {
     startupProjectId: null,
@@ -125,4 +139,6 @@ export const defaultSettings: StarmapSettings = {
     overlayEnabled: false,
     autoOpenOnSelection: true,
   },
+
+  minimap: defaultMinimapSettings,
 };

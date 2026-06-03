@@ -134,6 +134,53 @@ const THEME_TARGETS: ThemeTargetContract[] = [
     status: "active",
     notes: "Wrapper around Sigma canvas (not Sigma internals)",
   },
+  // v104.0.0: minimap targets — active (shipped)
+  {
+    themeTargetId: "minimap.root",
+    label: "Minimap Panel",
+    surface: "graph",
+    tokenBindings: {
+      background: "panel.background",
+      border: "panel.border",
+    },
+    editableProperties: ["background", "border"],
+    status: "active",
+  },
+  {
+    themeTargetId: "minimap.header",
+    label: "Minimap Header",
+    surface: "graph",
+    tokenBindings: {
+      background: "panel.background",
+      border: "panel.border",
+      text: "text.primary",
+    },
+    editableProperties: ["background", "border", "text"],
+    status: "active",
+  },
+  {
+    themeTargetId: "minimap.footer",
+    label: "Minimap Footer",
+    surface: "graph",
+    tokenBindings: {
+      background: "panel.background",
+      border: "panel.border",
+      text: "text.muted",
+    },
+    editableProperties: ["background", "border", "text"],
+    status: "active",
+  },
+  {
+    themeTargetId: "minimap.viewport-rect",
+    label: "Minimap Viewport Rect",
+    surface: "graph",
+    tokenBindings: {
+      border: "accent.primary",
+      background: "accent.primary",
+    },
+    editableProperties: ["border", "background"],
+    status: "active",
+  },
   // Planned / future targets (no runtime bindings yet)
   {
     themeTargetId: "graph.node.default",

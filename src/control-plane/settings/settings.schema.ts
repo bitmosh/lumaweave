@@ -44,8 +44,32 @@ export interface TileLayoutEntry {
   prevH?: number;
 }
 
+// v104.0.0: MinimapSettings — persisted minimap state.
+// Uses TileAnchor for anchor shape (offset-based; minimap uses its own
+// position handler, not the tile docking engine).
+export interface MinimapAnchor {
+  edge: "left" | "right" | "top" | "bottom" | "free";
+  offset?: number;
+  x?: number;
+  y?: number;
+}
+
+export interface MinimapSettings {
+  visible: boolean;
+  collapsed: boolean;
+  position: { x: number; y: number };
+  size: { width: number; height: number };
+  opacity: number;                    // clamped 0.30..1.00 by MinimapOpacitySlider
+  anchor: MinimapAnchor;
+  theme: "auto-contrast" | "warm-glass" | "cool-glass";
+  showViewport: boolean;
+  showSelectedNode: boolean;
+  refreshOnLayoutComplete: boolean;
+  enableClickToNavigate: boolean;
+}
+
 export interface StarmapSettings {
-  version: 89; // v103.1.6: tile mode+slot-anchor migration (activates docking engine)
+  version: 90; // v104.0.0: minimap settings slice added
 
   general: {
     startupProjectId: string | null;
@@ -211,4 +235,6 @@ export interface StarmapSettings {
       graphView: boolean;
     };
   };
+
+  minimap: MinimapSettings;
 }
