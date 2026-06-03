@@ -8,7 +8,7 @@ import { useState } from "react";
 import type { TileLayoutEntry, TileGroup } from "./tile.types";
 import { useTileContext } from "./TileProvider";
 import { tileSectionRegistry } from "./tileSectionRegistry";
-import { shouldFlipTile, isOffAnchor, findSnap, COLLAPSED_H, reconcileMembershipOnDrop } from "./tileUtils";
+import { shouldFlipTile, isOffAnchor, findSnap, COLLAPSED_H, reconcileMembershipOnDrop, clampToViewport } from "./tileUtils";
 import type { Rect } from "./tileUtils";
 
 const TILE_GRID = 16;
@@ -219,6 +219,45 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
       window.removeEventListener("mouseup", onUp);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("pointercancel", onPointerCancel);
+
+      // v103.1.3: reflow group neighbors on resize release.
+      // The RESIZED tile is the anchor (stays put). Neighbors slide flush to its new edges.
+      // This is inverted from drag release (where the MOVING tile relocates to targets).
+      if (tile.groupId) {
+        const allLive = ctx.getLiveTiles();
+        const resizedLive = allLive.find(t => t.id === tile.id);
+        if (resizedLive) {
+          const resizedRect: Rect = {
+            x: resizedLive.x,
+            y: resizedLive.y,
+            w: resizedLive.w,
+            h: resizedLive.collapsed ? COLLAPSED_H : resizedLive.h,
+          };
+          const viewport = { width: window.innerWidth, height: window.innerHeight };
+          const neighbors = allLive.filter(t => t.groupId === tile.groupId && t.id !== tile.id);
+          for (const neighbor of neighbors) {
+            const neighborRect: Rect = {
+              x: neighbor.x,
+              y: neighbor.y,
+              w: neighbor.w,
+              h: neighbor.collapsed ? COLLAPSED_H : neighbor.h,
+            };
+            const snap = findSnap(neighborRect, [resizedRect]);
+            if (snap) {
+              const nx = snap.x ?? neighbor.x;
+              const ny = snap.y ?? neighbor.y;
+              // Clamp reflowed neighbor to viewport (resized tile growth mustn't push off-screen)
+              const { x: cx, y: cy } = clampToViewport(nx, ny, neighbor.w, neighbor.h, viewport);
+              ctx.updateTile(neighbor.id, { x: cx, y: cy });
+            }
+          }
+          // Recompute group membership/bbox after reflow
+          const groupIds = allLive
+            .filter(t => t.groupId === tile.groupId)
+            .map(t => t.id);
+          reconcileMembershipOnDrop(groupIds, ctx.getLiveTiles(), ctx.updateTile);
+        }
+      }
     };
     const onKeyDown = (ev: KeyboardEvent) => {
       if (ev.key === "Escape") onUp();
