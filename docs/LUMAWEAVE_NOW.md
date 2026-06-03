@@ -43,7 +43,7 @@ Connect the authored-but-unwired cluster-color system to node render. Fix the 4 
 
 | v103.0.5 | WCAG single source of truth — card badge reads getAccessibilityProfile (4-pair, same source as top bar); lw-wcag-* CSS reused; card + top bar cannot drift | `efab098` |
 | v103.0.5b | Accent uses WCAG 1.4.11 non-text criterion (3:1); per-criterion aggregation (aa/aaa); void-circuit + agartha-dream correctly upgrade | `8e1406f` |
-| v103.1.0 | Tile docking schema + resolution layer: `mode: "docked"\|"floating"`, `slot` on TileAnchor, `clampToViewport` + `resolveDockedPosition` + `resolveLivePosition` (pure, viewport-relative, unwired); 9 unit tests including the off-viewport bug proof | in-progress |
+| v103.1.0 | Tile docking schema + resolution layer: `mode: "docked"\|"floating"`, `slot` on TileAnchor, `clampToViewport` + `resolveDockedPosition` + `resolveLivePosition` (pure, viewport-relative, unwired); 9 unit tests including the off-viewport bug proof | `d188038` |
 
 **Planned v103 phases:** .0.6 palette strip + WCAG graph label contrast · closer.
 
