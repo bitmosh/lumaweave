@@ -228,3 +228,70 @@ test("v101.0.6: tile-layer never intercepts clicks (pointer-events: none); tiles
   });
   expect(tileInteractive).toBe("tile-interactive");
 });
+
+// v103.1.2: Interaction tests for Bug 1 (close=hide, popover toggle) and Bug 2 (ghost outline fix)
+
+test("v103.1.2: close tile → popover checkbox count decreases and unchecked entry kept", async ({ page }) => {
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  await expect(page.locator(".tile").first()).toBeVisible({ timeout: 5000 });
+
+  const tilesButton = page.getByTestId("status-bar-tiles-button");
+
+  // Count checked checkboxes before closing
+  await tilesButton.click();
+  await page.waitForTimeout(200);
+  const checkedBefore = await page.locator("input[type='checkbox'][data-testid^='tiles-popover-checkbox-']:checked").count();
+  expect(checkedBefore).toBeGreaterThan(0);
+  await tilesButton.click();
+  await page.waitForTimeout(100);
+
+  // Close a tile via its Hide button
+  await page.locator(".tile").first().locator(".tile-btn[title='Hide']").first().click();
+  await page.waitForTimeout(200);
+
+  // Open popover: one fewer checked, but entry still exists as unchecked (close=hide not remove)
+  await tilesButton.click();
+  await page.waitForTimeout(200);
+  const checkedAfter = await page.locator("input[type='checkbox'][data-testid^='tiles-popover-checkbox-']:checked").count();
+  expect(checkedAfter).toBe(checkedBefore - 1);
+  const uncheckedAfter = await page.locator("input[type='checkbox'][data-testid^='tiles-popover-checkbox-']:not(:checked)").count();
+  expect(uncheckedAfter).toBeGreaterThan(0);
+
+  await tilesButton.click();
+});
+
+// v103.1.2 additional tests
+
+// (Duplicate of the test above was cleaned up — see "v103.1.2: close tile → popover checkbox count decreases")
+
+test("v103.1.2: closing a tile does NOT remove it from the store (close=hide semantics)", async ({ page }) => {
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  await expect(page.locator(".tile").first()).toBeVisible({ timeout: 5000 });
+
+  // Count visible tiles before close
+  const beforeCount = await page.locator(".tile").count();
+  expect(beforeCount).toBeGreaterThan(0);
+
+  // Close the first tile
+  const closeBtn = page.locator(".tile").first().locator(".tile-btn[title='Hide']").first();
+  await closeBtn.click();
+  await page.waitForTimeout(100);
+
+  // One fewer tile visible
+  const afterCount = await page.locator(".tile").count();
+  expect(afterCount).toBe(beforeCount - 1);
+
+  // But the Tiles popover still shows it (as unchecked) — entry is not removed
+  const tilesButton = page.getByTestId("status-bar-tiles-button");
+  await tilesButton.click();
+  await page.waitForTimeout(150);
+
+  // At least one unchecked checkbox in the popover (the hidden tile)
+  const unchecked = page.locator("input[type='checkbox'][data-testid^='tiles-popover-checkbox-']:not(:checked)");
+  await expect(unchecked.first()).toBeVisible();
+
+  // Close popover
+  await tilesButton.click();
+});

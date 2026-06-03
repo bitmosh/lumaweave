@@ -37,23 +37,26 @@ export function TileLayer() {
   const raw = useMemo(() => Array.from(ctx.tiles.values()), [ctx.tiles]);
   const tilesArray = useMemo(() => resolvedTilesArray(raw, viewport), [raw, viewport]);
 
+  // v103.1.2: exclude visible:false tiles from group math so hidden tiles don't ghost.
+  const visibleTiles = useMemo(() => tilesArray.filter(t => t.visible !== false), [tilesArray]);
+
   const { groups, tileToGroup } = useMemo(
-    () => deriveGroups(tilesArray, { excludeFromGroups: ctx.draggingTileId ?? undefined }),
-    [tilesArray, ctx.draggingTileId],
+    () => deriveGroups(visibleTiles, { excludeFromGroups: ctx.draggingTileId ?? undefined }),
+    [visibleTiles, ctx.draggingTileId],
   );
 
   return (
     <div className="tile-layer" data-testid="tile-layer">
-      {/* Render groups */}
+      {/* Render groups — using visibleTiles so hidden tiles don't produce group bars or outlines */}
       {groups.map(group => (
         <div key={group.tileIds.join("-")}>
-          <GroupBar group={group} resolvedTiles={tilesArray} />
-          <GroupOutline group={group} resolvedTiles={tilesArray} />
+          <GroupBar group={group} resolvedTiles={visibleTiles} />
+          <GroupOutline group={group} resolvedTiles={visibleTiles} />
         </div>
       ))}
 
-      {/* Render tiles (skip hidden tiles) */}
-      {tilesArray.filter(t => t.visible !== false).map(tile => {
+      {/* Render tiles (only visible tiles — visibleTiles already filtered) */}
+      {visibleTiles.map(tile => {
         const group = tileToGroup[tile.id] ? groups.find(g => g.tileIds.includes(tileToGroup[tile.id])) : null;
         return (
           <FloatingTile key={tile.id} tile={tile} group={group || null} />
@@ -94,11 +97,12 @@ function GroupBar({ group, resolvedTiles }: { group: TileGroup; resolvedTiles: T
     e.preventDefault();
     e.stopPropagation();
 
-    // v103.1.1: flip any docked group tiles to floating before dragging.
-    // groupTiles already have resolved x/y, so the stored position is correct after the flip.
+    // v103.1.2: flip any docked group tiles to floating, seeding resolved x/y.
+    // t.x/t.y here are the RESOLVED positions (from visibleTiles/resolvedTilesArray),
+    // so writing them alongside mode prevents the tile from jumping to stale stored coords.
     groupTiles.forEach(t => {
       if (t.mode === "docked") {
-        ctx.updateTile(t.id, { mode: "floating" });
+        ctx.updateTile(t.id, { mode: "floating", x: t.x, y: t.y });
       }
     });
 

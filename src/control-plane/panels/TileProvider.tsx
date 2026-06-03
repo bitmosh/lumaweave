@@ -151,16 +151,18 @@ export function TileProvider({ children }: TileProviderProps) {
     [writeTiles],
   );
 
+  // v103.1.2: close = HIDE (visible:false), not remove.
+  // Keeps the entry so the popover checkbox can reflect real state and re-show the tile.
   const closeTile = useCallback(
     (id: string) => {
-      writeTiles(getCurrentTiles().filter((t) => t.id !== id));
+      writeTiles(getCurrentTiles().map((t) => t.id === id ? { ...t, visible: false } : t));
     },
     [writeTiles],
   );
 
   const closeGroup = useCallback(
     (groupIds: string[]) => {
-      writeTiles(getCurrentTiles().filter((t) => !groupIds.includes(t.id)));
+      writeTiles(getCurrentTiles().map((t) => groupIds.includes(t.id) ? { ...t, visible: false } : t));
     },
     [writeTiles],
   );
