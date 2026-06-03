@@ -4,7 +4,7 @@
  * Uses window.addEventListener for mousemove/mouseup instead of setPointerCapture
  */
 
-import { useState } from "react";
+import { GripVertical, RotateCcw } from "lucide-react";
 import type { TileLayoutEntry, TileGroup } from "./tile.types";
 import { useTileContext } from "./TileProvider";
 import { tileSectionRegistry } from "./tileSectionRegistry";
@@ -24,7 +24,6 @@ interface FloatingTileProps {
 export function FloatingTile({ tile, group }: FloatingTileProps) {
   const ctx = useTileContext();
   const reg = ctx.tiles.get(tile.id);
-  const [anchorMenuOpen, setAnchorMenuOpen] = useState(false);
 
   if (!reg) return null;
 
@@ -338,27 +337,16 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
           )}
           {showHeader && (
             <div className="tile-head" onMouseDown={onHeaderDown}>
-              <span className="tile-grip">⠿</span>
               <span className="tile-title">{tileLabel}</span>
+              <span className="tile-head-divider" aria-hidden="true"/>
+              <span className="tile-grip" title="Drag" onMouseDown={onHeaderDown}>
+                <GripVertical size={14} />
+              </span>
               <span className="tile-spacer"/>
               {offAnchor && (
-                <span className="tile-anchor-wrap">
-                  <button
-                    className="tile-btn tile-anchor-btn"
-                    title="Anchor options"
-                    onClick={(e) => { e.stopPropagation(); setAnchorMenuOpen(o => !o); }}
-                  >⚓</button>
-                  {anchorMenuOpen && (
-                    <div className="tile-anchor-menu" onMouseDown={e => e.stopPropagation()}>
-                      <button onClick={() => { ctx.setTileAnchor(tile.id); setAnchorMenuOpen(false); }}>
-                        Set anchor here
-                      </button>
-                      <button onClick={() => { ctx.returnToAnchor(tile.id); setAnchorMenuOpen(false); }}>
-                        Return to anchor
-                      </button>
-                    </div>
-                  )}
-                </span>
+                <button className="tile-btn" title="Return to dock" onClick={() => ctx.returnToAnchor(tile.id)}>
+                  <RotateCcw size={12} />
+                </button>
               )}
               <button className="tile-btn" title={tile.collapsed ? "Expand" : "Collapse"}
                       onClick={handleToggleCollapsed}>
@@ -369,7 +357,9 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
           )}
           {showSlimStrip && (
             <div className="tile-slim">
-              <span className="tile-ungrip" title="Drag to ungroup" onMouseDown={onUngroupDown}>⤴</span>
+              <span className="tile-grip" title="Drag to ungroup" onMouseDown={onUngroupDown}>
+                <GripVertical size={14} />
+              </span>
               <span className="tile-slim-title">{tileLabel}</span>
               <span className="tile-spacer"/>
               <button className="tile-btn slim" title={tile.collapsed ? "Expand" : "Collapse"}
@@ -384,27 +374,16 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
         <>
           {showHeader && (
             <div className="tile-head" onMouseDown={onHeaderDown}>
-              <span className="tile-grip">⠿</span>
               <span className="tile-title">{tileLabel}</span>
+              <span className="tile-head-divider" aria-hidden="true"/>
+              <span className="tile-grip" title="Drag" onMouseDown={onHeaderDown}>
+                <GripVertical size={14} />
+              </span>
               <span className="tile-spacer"/>
               {offAnchor && (
-                <span className="tile-anchor-wrap">
-                  <button
-                    className="tile-btn tile-anchor-btn"
-                    title="Anchor options"
-                    onClick={(e) => { e.stopPropagation(); setAnchorMenuOpen(o => !o); }}
-                  >⚓</button>
-                  {anchorMenuOpen && (
-                    <div className="tile-anchor-menu" onMouseDown={e => e.stopPropagation()}>
-                      <button onClick={() => { ctx.setTileAnchor(tile.id); setAnchorMenuOpen(false); }}>
-                        Set anchor here
-                      </button>
-                      <button onClick={() => { ctx.returnToAnchor(tile.id); setAnchorMenuOpen(false); }}>
-                        Return to anchor
-                      </button>
-                    </div>
-                  )}
-                </span>
+                <button className="tile-btn" title="Return to dock" onClick={() => ctx.returnToAnchor(tile.id)}>
+                  <RotateCcw size={12} />
+                </button>
               )}
               <button className="tile-btn" title={tile.collapsed ? "Expand" : "Collapse"}
                       onClick={handleToggleCollapsed}>
@@ -415,7 +394,9 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
           )}
           {showSlimStrip && (
             <div className="tile-slim">
-              <span className="tile-ungrip" title="Drag to ungroup" onMouseDown={onUngroupDown}>⤴</span>
+              <span className="tile-grip" title="Drag to ungroup" onMouseDown={onUngroupDown}>
+                <GripVertical size={14} />
+              </span>
               <span className="tile-slim-title">{tileLabel}</span>
               <span className="tile-spacer"/>
               <button className="tile-btn slim" title={tile.collapsed ? "Expand" : "Collapse"}

@@ -283,8 +283,28 @@ input[type="range"]:focus {
 }
 
 .tile-grip {
-  font-size: 12px;
+  display: flex;
+  align-items: center;
   color: var(--lw-text-muted, #a28fc0);
+  cursor: grab;
+  opacity: 0.7;
+  padding: 0 2px;
+  flex-shrink: 0;
+}
+
+.tile-grip:hover {
+  opacity: 1;
+  color: var(--lw-accent, #FFB347);
+}
+
+/* Divider between title and drag handle — visual separator */
+.tile-head-divider {
+  display: block;
+  width: 1px;
+  height: 12px;
+  background: var(--lw-panel-border, rgba(255, 179, 71, 0.22));
+  margin-inline: 6px;
+  flex-shrink: 0;
 }
 
 .tile-title {
