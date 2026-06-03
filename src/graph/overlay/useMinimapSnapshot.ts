@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
 
-const SNAPSHOT_DEBOUNCE_MS = 120;
+const SNAPSHOT_DEBOUNCE_MS = 150;
 // How long to poll for __lwSigma before giving up (sigma may mount after minimap).
 const SIGMA_POLL_INTERVAL_MS = 200;
 const SIGMA_POLL_MAX_ATTEMPTS = 30; // 6 seconds total
+
+// Settle detection: stop afterRender-driven recomputes once bounds are stable.
+const BOUNDS_EPSILON = 1.0;   // graph units — negligible positional drift
+const STABLE_NEEDED  = 5;     // consecutive stable ticks × 150ms debounce ≈ 750ms quiet period
 
 export interface MinimapBounds {
   minX: number;
@@ -17,6 +21,16 @@ export interface MinimapSnapshotState {
   bounds: MinimapBounds | null;
   counts: { nodes: number; edges: number };
   isRefreshing: boolean;
+}
+
+function areBoundsStable(a: MinimapBounds | null, b: MinimapBounds | null): boolean {
+  if (!a || !b) return false;
+  return (
+    Math.abs(a.minX - b.minX) < BOUNDS_EPSILON &&
+    Math.abs(a.minY - b.minY) < BOUNDS_EPSILON &&
+    Math.abs(a.maxX - b.maxX) < BOUNDS_EPSILON &&
+    Math.abs(a.maxY - b.maxY) < BOUNDS_EPSILON
+  );
 }
 
 export function useMinimapSnapshot(): MinimapSnapshotState {
@@ -35,21 +49,22 @@ export function useMinimapSnapshot(): MinimapSnapshotState {
     let attempts = 0;
 
     const setup = () => {
-      // Always re-fetch sigma + graph fresh — never cache a stale ref.
       const sigma = (window as any).__lwSigma;
       if (!sigma) return false;
       const graph = sigma.getGraph();
       if (!graph) return false;
 
-      // Clear the sigma-readiness poll (no longer needed).
       if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
 
-      let lastNodeCount = -1; // sentinel: force initial compute
       let pending = false;
 
+      // Settle-detection state.
+      let prevBoundsForStability: MinimapBounds | null = null;
+      let stableCount = 0;
+      let boundsSettled = false;
+
       const computeSnapshot = () => {
-        // Re-fetch the CURRENT graph fresh each time — a graph rebuild swaps the
-        // object out from under a cached reference.
+        // Re-fetch fresh each time — graph rebuild invalidates cached refs.
         const freshSigma = (window as any).__lwSigma;
         if (!freshSigma) return;
         const freshGraph = freshSigma.getGraph();
@@ -70,7 +85,18 @@ export function useMinimapSnapshot(): MinimapSnapshotState {
           ? { minX, minY, maxX, maxY }
           : null;
 
-        lastNodeCount = nodeCount;
+        // Delta-stability check: stop afterRender recomputes once positions settle.
+        if (areBoundsStable(bounds, prevBoundsForStability)) {
+          stableCount++;
+          if (stableCount >= STABLE_NEEDED) {
+            boundsSettled = true;
+            // onAfterRender now bails early; no more per-frame recomputes until
+            // a structural event (source reload, graph rebuild) resets this.
+          }
+        } else {
+          stableCount = 0;
+        }
+        prevBoundsForStability = bounds;
 
         setState((prev) => ({
           snapshotVersion: prev.snapshotVersion + 1,
@@ -85,7 +111,14 @@ export function useMinimapSnapshot(): MinimapSnapshotState {
         }, 400);
       };
 
-      const markDirty = () => {
+      const markDirty = (fromStructural = false) => {
+        if (fromStructural) {
+          // Structural event (source reload, graph rebuild): reset settle state
+          // so afterRender recomputes resume for the new layout.
+          stableCount = 0;
+          boundsSettled = false;
+          prevBoundsForStability = null;
+        }
         pending = true;
         if (debounceTimer) clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
@@ -95,41 +128,32 @@ export function useMinimapSnapshot(): MinimapSnapshotState {
         }, SNAPSHOT_DEBOUNCE_MS);
       };
 
-      // afterRender: only recompute when node count changes (0→N, or structural
-      // change). This avoids over-refresh on camera moves (pan/zoom).
+      // afterRender: drives bounds recompute during layout settle.
+      // Guard: if boundsSettled, skip — no perpetual per-frame recompute.
       const onAfterRender = () => {
-        const freshSigma = (window as any).__lwSigma;
-        if (!freshSigma) return;
-        const freshGraph = freshSigma.getGraph();
-        if (!freshGraph) return;
-        const currentCount = freshGraph.order;
-        if (currentCount !== lastNodeCount) {
-          markDirty();
-        }
+        if (boundsSettled) return;
+        markDirty(false);
       };
 
-      // Initial compute — may be 0 if graph not yet built; afterRender will
-      // trigger when it populates.
+      // Initial compute.
       computeSnapshot();
 
-      // Structural events on the current graph for future live changes.
       const STRUCTURAL_EVENTS = [
         "nodeAdded", "nodeDropped",
         "edgeAdded", "edgeDropped",
         "cleared",
       ];
-      for (const ev of STRUCTURAL_EVENTS) graph.on(ev, markDirty);
+      for (const ev of STRUCTURAL_EVENTS) {
+        graph.on(ev, () => markDirty(true));
+      }
 
-      // afterRender for initial population detection (sigma fires this once the
-      // first frame is drawn with the graph fully built).
       sigma.on("afterRender", onAfterRender);
 
       cleanup = () => {
         if (debounceTimer) clearTimeout(debounceTimer);
         if (refreshFlagTimer) clearTimeout(refreshFlagTimer);
         for (const ev of STRUCTURAL_EVENTS) {
-          // Use fresh graph in case it was rebuilt — try both.
-          try { graph.off(ev, markDirty); } catch { /* already unsubscribed */ }
+          try { graph.off(ev, () => markDirty(true)); } catch { /* ok */ }
         }
         const freshSigma = (window as any).__lwSigma;
         if (freshSigma) {
@@ -140,7 +164,6 @@ export function useMinimapSnapshot(): MinimapSnapshotState {
       return true;
     };
 
-    // Try immediately; if sigma isn't ready yet, poll until it appears.
     if (!setup()) {
       pollTimer = setInterval(() => {
         attempts += 1;
@@ -149,9 +172,7 @@ export function useMinimapSnapshot(): MinimapSnapshotState {
           pollTimer = null;
           return;
         }
-        if (setup()) {
-          // setup() cleared the poll itself.
-        }
+        setup();
       }, SIGMA_POLL_INTERVAL_MS);
     }
 
