@@ -48,16 +48,16 @@ function createDefaultTile(
     ? `tile_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 5)}`
     : `tile_${section.id}`;
 
-  // Use "floating" for now — the bootstrap/reconcile tiles work with offset-based anchor positions.
-  // Full docking (mode:"docked" + slot) requires the docking arc's slot-assignment pass (.1.5+).
-  // atPos-provided tiles are always floating (user placed them explicitly).
-  const mode: "docked" | "floating" = "floating";
+  // v103.1.6: slot-anchor → mode:"docked" (resolver positions it via resolveDockedPosition).
+  // offset-anchor or atPos → mode:"floating" (computeAnchorPos gives a concrete x/y).
+  // atPos-provided tiles (user-initiated tileOut) are always floating.
+  const hasSlotAnchor = typeof section.defaultAnchor?.slot === "number"
+    && (section.defaultAnchor.edge === "left" || section.defaultAnchor.edge === "right");
+  const mode: "docked" | "floating" = (!opts?.atPos && hasSlotAnchor) ? "docked" : "floating";
 
-  const pos = opts?.atPos ?? computeAnchorPos(
-    section.defaultAnchor,
-    section.defaultWidth,
-    section.defaultHeight,
-  );
+  const pos = (mode === "docked")
+    ? { x: 0, y: 0 }  // x/y ignored for docked tiles — resolved each render
+    : (opts?.atPos ?? computeAnchorPos(section.defaultAnchor, section.defaultWidth, section.defaultHeight));
 
   return {
     id,

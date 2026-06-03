@@ -1,7 +1,7 @@
 import type { StarmapSettings } from "./settings.schema";
 
 export const defaultSettings: StarmapSettings = {
-  version: 88, // post-v97: glitterEnabled→animationEnabled, glitterDensity→animationDensity
+  version: 89, // v103.1.6: tile mode+slot-anchor migration (activates docking engine)
 
   general: {
     startupProjectId: null,

@@ -376,3 +376,39 @@ test("v103.1.3: resize grouped tile → neighbor reflowed flush on release (no g
     localStorage.removeItem("lumaweave-tiles-bootstrapped");
   });
 });
+
+// v103.1.6: Docking engine activation — migrated tiles have mode:docked + slot-anchor
+
+test("v103.1.6: default canvas tiles created as mode:docked with slot-anchor", async ({ page }) => {
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+
+  // After bootstrap/reconcile, physics-section should exist as mode:docked (slot-anchor)
+  const tileEntry = await page.evaluate(() => {
+    const store = (window as any).__lwStore;
+    if (!store) return null;
+    const layout = store.getState().settings.ui?.tileLayout ?? [];
+    return layout.find((t: any) => t.sectionKey === "physics-section") ?? null;
+  });
+
+  expect(tileEntry).not.toBeNull();
+  expect(tileEntry.mode).toBe("docked");
+  expect(typeof tileEntry.anchor?.slot).toBe("number");
+  expect(tileEntry.anchor?.edge).toBe("right");
+
+  // The tile should render at the RIGHT edge (x ≈ viewport.width - w - 8)
+  const tileBox = await page.locator('[data-tile-id="tile_physics-section"]').boundingBox();
+  if (tileBox) {
+    const vpWidth = await page.evaluate(() => window.innerWidth);
+    const expectedX = vpWidth - tileEntry.w - 8;
+    // Allow ±2px for rounding
+    expect(Math.abs(tileBox.x - expectedX)).toBeLessThanOrEqual(2);
+  }
+
+  // Cleanup
+  await page.evaluate(() => {
+    const store = (window as any).__lwStore;
+    store?.getState().setSetting("ui.tileLayout", []);
+    localStorage.removeItem("lumaweave-tiles-bootstrapped");
+  });
+});

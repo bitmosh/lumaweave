@@ -1,5 +1,6 @@
 import { defaultSettings } from "./settings.defaults";
 import type { StarmapSettings } from "./settings.schema";
+import { tileSectionRegistry } from "../panels/tileSectionRegistry";
 
 // Migration functions — one per version bump
 // Each takes the previous state, returns updated state
@@ -151,6 +152,53 @@ const MIGRATIONS: Record<number,
     developer.preferredEditor ??= "vscode";
     developer.customEditorTemplate ??= "code --goto {path}:{line}";
     return { ...s, developer } as Partial<StarmapSettings>;
+  },
+
+  // v88 → v89: stamp mode + slot-anchor on stored tiles (v103.1.6 — activates the docking engine).
+  // Canvas tiles (physics/appearance/labels/graph-sources/graph-inspector/typography) get
+  // mode:"docked" + registry slot-anchor so resolveLivePosition routes them through
+  // resolveDockedPosition (viewport-relative, cling-on-resize). Deferred + unknown sections
+  // get mode:"floating" with clamped x/y. visible:false (close=hide) tiles are NOT resurrected.
+  89: (s) => {
+    const tileLayout = (s as any).ui?.tileLayout;
+    if (!Array.isArray(tileLayout) || tileLayout.length === 0) return s;
+
+    const VIEWPORT_W = typeof window !== "undefined" ? window.innerWidth : 1440;
+    const VIEWPORT_H = typeof window !== "undefined" ? window.innerHeight : 900;
+    const MARGIN = 8;
+    const TOPBAR_H = 64;
+
+    const migrated = tileLayout.map((tile: any) => {
+      const section = tileSectionRegistry.getById(tile.sectionKey);
+      const anchor = section?.defaultAnchor as { edge?: string; slot?: number } | undefined;
+      const hasSlotAnchor = anchor && typeof anchor.slot === "number" && (anchor.edge === "left" || anchor.edge === "right");
+
+      if (hasSlotAnchor) {
+        // Canvas tile: stamp mode:docked + registry slot-anchor; discard stale x/y.
+        return {
+          ...tile,
+          mode: "docked",
+          anchor: { edge: anchor!.edge, slot: anchor!.slot },
+          collapsed: tile.collapsed ?? !(section?.defaultExpanded ?? true),
+          // visible is untouched — close=hide (visible:false) must survive migration
+        };
+      }
+
+      // Deferred or unknown: floating with clamped x/y (preserve position as best we can)
+      const w = tile.w ?? (section?.defaultWidth ?? 280);
+      const h = tile.h ?? (section?.defaultHeight ?? 300);
+      const cx = Math.max(MARGIN, Math.min(VIEWPORT_W - w - MARGIN, tile.x ?? MARGIN));
+      const cy = Math.max(TOPBAR_H, Math.min(VIEWPORT_H - h - 40, tile.y ?? TOPBAR_H));
+      return {
+        ...tile,
+        mode: "floating",
+        x: cx,
+        y: cy,
+        collapsed: tile.collapsed ?? !(section?.defaultExpanded ?? true),
+      };
+    });
+
+    return { ...s, ui: { ...(s as any).ui, tileLayout: migrated } } as Partial<StarmapSettings>;
   },
 
   // v87 → v88: rename glitterEnabled → animationEnabled, glitterDensity → animationDensity (post-v97)

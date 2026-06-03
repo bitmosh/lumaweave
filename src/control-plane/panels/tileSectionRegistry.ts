@@ -37,7 +37,7 @@ const entries: TileSectionEntry[] = [
     content: () => createElement(PhysicsSectionContent),
     contentTestId: "dialect-select",
     sourceTestId: "settings-section-physics",
-    defaultAnchor: { edge: "right", offset: 80 },
+    defaultAnchor: { edge: "right", slot: 0 },
     defaultVisible: true,
     defaultExpanded: true,
     iconGlyph: "⚛",
@@ -52,7 +52,7 @@ const entries: TileSectionEntry[] = [
     content: () => createElement(AppearanceSectionContent),
     contentTestId: "appearance-section-content",
     sourceTestId: "settings-section-graph-view",
-    defaultAnchor: { edge: "right", offset: 500 },
+    defaultAnchor: { edge: "right", slot: 1 },
     defaultVisible: true,
     defaultExpanded: true,
     iconGlyph: "🎨",
@@ -67,7 +67,7 @@ const entries: TileSectionEntry[] = [
     content: () => createElement(LabelsSectionContent),
     contentTestId: "labels-section-content",
     sourceTestId: "settings-section-labels",
-    defaultAnchor: { edge: "right", offset: 820 },
+    defaultAnchor: { edge: "right", slot: 2 },
     defaultVisible: true,
     defaultExpanded: true,
     iconGlyph: "🏷",
@@ -83,7 +83,7 @@ const entries: TileSectionEntry[] = [
       createElement(Suspense, { fallback: null }, createElement(LazyTypographyPlayground)),
     contentTestId: "typography-playground",
     sourceTestId: "settings-section-typography-playground",
-    defaultAnchor: { edge: "right", offset: 80 },
+    defaultAnchor: { edge: "right", slot: 3 },
     defaultVisible: false,
     defaultExpanded: true,
     iconGlyph: "Aa",
@@ -100,7 +100,7 @@ const entries: TileSectionEntry[] = [
     content: () => createElement(GraphSourcesTileContent),
     contentTestId: "graph-sources-tile-content",
     sourceTestId: undefined,
-    defaultAnchor: { edge: "left", offset: 80 },
+    defaultAnchor: { edge: "left", slot: 0 },
     defaultVisible: true,
     defaultExpanded: true,
     iconGlyph: "🗂",
@@ -115,11 +115,12 @@ const entries: TileSectionEntry[] = [
     content: () => createElement(GraphInspectorTileContent),
     contentTestId: "graph-inspector-tile-content",
     sourceTestId: undefined,
-    defaultAnchor: { edge: "left", offset: 580 },
+    defaultAnchor: { edge: "left", slot: 1 },
     defaultVisible: true,
     defaultExpanded: true,
     iconGlyph: "🔍",
   },
+  // deferred: candidate for settings advanced-tabs relocation (not a canvas tile by default)
   {
     id: "agent-chat-section",
     label: "Agent Chat",
@@ -135,6 +136,7 @@ const entries: TileSectionEntry[] = [
     defaultExpanded: true,
     iconGlyph: "💬",
   },
+  // deferred: candidate for settings advanced-tabs relocation (not a canvas tile by default)
   {
     id: "qa-feedback-section",
     label: "Feedback & Testing",
@@ -152,6 +154,7 @@ const entries: TileSectionEntry[] = [
   },
 
   // ===== Evidence / inspection tiles =====
+  // deferred: candidate for settings advanced-tabs relocation (not a canvas tile by default)
   {
     id: "graph-visual-inventory-section",
     label: "Graph Visual Inventory",
@@ -167,6 +170,7 @@ const entries: TileSectionEntry[] = [
     defaultExpanded: true,
     iconGlyph: "🗃",
   },
+  // deferred: candidate for settings advanced-tabs relocation (not a canvas tile by default)
   {
     id: "system-index-section",
     label: "System Index",
@@ -182,6 +186,7 @@ const entries: TileSectionEntry[] = [
     defaultExpanded: true,
     iconGlyph: "📇",
   },
+  // deferred: candidate for settings advanced-tabs relocation (not a canvas tile by default)
   {
     id: "command-deck-section",
     label: "Command Deck",
@@ -197,6 +202,7 @@ const entries: TileSectionEntry[] = [
     defaultExpanded: true,
     iconGlyph: "🎛",
   },
+  // deferred: candidate for settings advanced-tabs relocation (not a canvas tile by default)
   {
     id: "source-adapter-section",
     label: "Source Adapters",
