@@ -14,22 +14,27 @@ references:
   - domain.control.plane.system.index
   - domain.tile.layout.workspace
   - domain.deferred.post.v1.vision
-tags: [live-state, now, canonical, v102]
+tags: [live-state, now, canonical, v103]
 ---
 
 # LumaWeave — NOW
 
 **The single live-state doc.** This is the only doc that changes every pass and the only one that carries a date. Everything here is volatile by design. Concepts and architecture live in the static domain docs (see `DOC_ARCHITECTURE.md`); history lives in the dev-blog / #changelog feed. This doc holds only: where we are, what's next, what's broken.
 
-**Updated:** 2026-06-02 · **Production version:** 0.9.0 · **Internal arc:** v103 (Graph Theming) · **Last pass:** v103.0.0
+**Updated:** 2026-06-03 · **Production version:** 0.10.0 · **Internal arc:** v104 (Minimap) · **Last pass:** v103 closer
 
 ---
 
-## Current arc — v103: Graph Theming
+## Closed arc — v103: Graph Theming + Tile Docking — CLOSED (0.9.0 → 0.10.0)
 
-Connect the authored-but-unwired cluster-color system to node render. Fix the 4 confirmed disconnects: cluster colors drive node color (replacing rainbow scale-cycling), themes drive edges (replacing hardcoded literal), graphVisualTokens derives from active theme, and graph recolors live on theme switch.
+Graph theming (.0.x): wired the cluster-color resolver into node render, themed edges and graph recolor on theme switch, WCAG correctness (single-source badge, non-text criterion).
+Tile docking (.1.x): slot-anchor schema, resolution layer, state consistency (close=hide, group-reconcile, drag-flip), resize reflow, entry reconcile, unified tile creation, slot migration (engine now live), chrome + body theming.
 
-**Design decisions locked (pending D1-D4 sign-off):** absolute cluster colors (stable across themes), mode-based resolver (semantic/mono-shades/custom), cluster color at `raw.color` layer per ownership contract.
+**Deferred (noted, not lost):**
+- Tile-content theming + token coverage: promote unmapped paths incl. nodeColorScale/edgeColorScale, unify `--lw-visual-*` CSS → pre-3D arc.
+- 5 mis-homed tile sections (qa-feedback, graph-visual-inventory, system-index, command-deck, source-adapter) → candidates for settings advanced-tabs relocation (future pass).
+
+**Design decisions locked:** absolute cluster colors (stable across themes), mode-based resolver (semantic/mono-shades/custom), cluster color at `raw.color` layer per ownership contract.
 
 | Pass | Work | Commit |
 |---|---|---|
@@ -52,11 +57,11 @@ Connect the authored-but-unwired cluster-color system to node render. Fix the 4 
 | v103.1.6 | Activate docking engine: registry→slot-anchors (6 canvas tiles), settings migration v88→v89 stamps mode:docked+slot-anchor on stored tiles, deferred sections (qa-feedback/visual-inventory/system-index/command-deck/source-adapter) stay floating with deferred comment; createDefaultTile now mode:docked for slot-anchored sections | `ab03f4e` |
 | v103.1.7 | Theme tile chrome + body: all hardcoded rgba/hex literals → --lw tokens; .tile-body gets color:--lw-text-primary + font:--lw-font-body (fixes bland content text); tiles now follow theme switches; hover backgrounds use color-mix; group-outline uses --lw-accent | `c9c39d2` |
 
-**Planned v103 phases:** .0.6 palette strip + WCAG graph label contrast · closer.
+**Arc closed** — v103 closer: `package.json` 0.9.0 → 0.10.0 · 2026-06-03.
 
 ---
 
-## Closed arc — v102: Theme Menu Integration — in progress (Workshop/History/Bookmarks/Export remain)
+## Closed arc — v102: Theme Menu Integration — PARTIAL (Browse + Active shipped; Workshop/History/Bookmarks/Export deferred to v106+)
 
 Wire the Claude Design settings UI into the product as a usable theme panel.
 
@@ -89,7 +94,7 @@ Reworked the floating-tile system: per-axis snap engine, armed guide, explicit g
 | v101.0.5 | Live group-bar preview during drag: bar drops excluded tile at BREAK_TOL threshold — visual-only, no groupId write during drag | `4827acb` |
 | v101.0.6 | Click-through acceptance test — confirms `.tile-layer { pointer-events: none }` lets graph clicks fall through; closes the arc's named bug | `87d3b8d` |
 | v101.0.7 | Solar Plasma tile restyle — purple gradient bg, gold-tinted borders/shadow, warm fonts; replaces all hardcoded slate hex with `--lw-*` tokens | `ed59266` |
-| v101.0.8 | Arc closer — bump 0.8.0 → 0.9.0, recanon roadmap to v102, reconcile polish debt | in-progress |
+| v101.0.8 | Arc closer — bump 0.8.0 → 0.9.0, recanon roadmap to v102, reconcile polish debt | (closed) |
 
 ---
 
@@ -97,11 +102,9 @@ Reworked the floating-tile system: per-axis snap engine, armed guide, explicit g
 
 | Arc | Work |
 |---|---|
-| **v102** | Theme menu integration (Claude Design settings → product) |
-| v103 | Minimap |
-| v104 | Code spoke (live + diff editor) |
-| v105 | History spoke deepening |
-| v106+ | Paperweight punch-list: source-adapter fix, tile CSS theming, pre-1.0 cleanup incl. CI/security green, polish band |
+| **v104** | Minimap |
+| v105 | Code spoke (.0.0: live + diff editor) + History spoke (.1.0: deepening) |
+| v106+ | Paperweight punch-list: source-adapter fix, tile-content theming + token coverage, v102 Workshop/History/Bookmarks/Export, settings advanced-tabs relocation (5 deferred tile sections), pre-1.0 cleanup incl. CI/security green |
 | ~v115–v125 | `1.0.0` initial public release |
 
 ---
