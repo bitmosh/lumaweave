@@ -32,6 +32,7 @@ Port and activate the minimap overlay prototype. Non-interactive render first (.
 | Pass | Work | Commit |
 |---|---|---|
 | v104.0.0 | Port minimap prototype: 8 new files (MinimapShell, MinimapSnapshotCanvas, MinimapViewportRect, MinimapChrome, useMinimapSnapshot, useMinimapCamera, useMinimapNavigation stub, Minimap top-level); settings migration 89→90 adds minimap slice; AppShell wired; 4 theme targets added; design doc version numbers corrected | `e95b158` |
+| v104.0.1 | Minimap navigation: click-to-pan (animated), drag-scrub (instant), wheel-zoom; UNIFORM CENTERED projection inversion (pad=10, same as canvas); window-level drag listeners removed on mouseup; OKLCH audit — already clean; manual smoke required | in-progress |
 
 ---
 
