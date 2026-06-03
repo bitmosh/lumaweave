@@ -14,30 +14,36 @@ references:
   - domain.control.plane.system.index
   - domain.tile.layout.workspace
   - domain.deferred.post.v1.vision
-tags: [live-state, now, canonical, v103]
+tags: [live-state, now, canonical, v104]
 ---
 
 # LumaWeave — NOW
 
 **The single live-state doc.** This is the only doc that changes every pass and the only one that carries a date. Everything here is volatile by design. Concepts and architecture live in the static domain docs (see `DOC_ARCHITECTURE.md`); history lives in the dev-blog / #changelog feed. This doc holds only: where we are, what's next, what's broken.
 
-**Updated:** 2026-06-03 · **Production version:** 0.10.0 · **Internal arc:** v104 (Minimap) · **Last pass:** v103 closer
+**Updated:** 2026-06-03 · **Production version:** 0.11.0 · **Internal arc:** v105 (Code + History) · **Last pass:** v104 closer
 
 ---
 
-## Current arc — v104: Minimap
+## Closed arc — v104: Minimap — CLOSED (0.10.0 → 0.11.0)
 
-Port and activate the minimap overlay prototype. Non-interactive render first (.0.0); navigation second (.0.1).
+Ported the prototype into src/ and iterated through 7 passes to correctness. Final shipped state (confirmed in v104 closer audit):
+- **Snapshot**: structural-event + afterRender-settle subscription; delta-stability bounds tracking; Y-flipped canvas (offsetY + (maxY-y)*scale matches sigma Y↑).
+- **Viewport rect**: viewportToGraph on sigma canvas corners; shared projection (same scale/offsets/pad=10 as snapshot); Y-flip consistent with snapshot.
+- **Navigation**: click-to-pan (animated initial jump), drag-scrub (instant), wheel-zoom; invertToGraph Y-flipped; pan delta in normalized camera space via ratioNorm = max(gW,gH).
+- **Test debt (v106)**: no automated E2E for minimap correctness (snapshot renders, nav pans, rect tracks) — all manual smoke. graph-visual-inventory.spec.ts covers registry status only.
 
 | Pass | Work | Commit |
 |---|---|---|
 | v104.0.0 | Port minimap prototype: 8 new files (MinimapShell, MinimapSnapshotCanvas, MinimapViewportRect, MinimapChrome, useMinimapSnapshot, useMinimapCamera, useMinimapNavigation stub, Minimap top-level); settings migration 89→90 adds minimap slice; AppShell wired; 4 theme targets added; design doc version numbers corrected | `e95b158` |
-| v104.0.1 | Minimap navigation: click-to-pan (animated), drag-scrub (instant), wheel-zoom; UNIFORM CENTERED projection inversion (pad=10, same as canvas); window-level drag listeners removed on mouseup; OKLCH audit — already clean; manual smoke required | `c36c49a` |
-| v104.0.2 | Minimap snapshot N0/E0 fix: sigma readiness poll + afterRender count-change detection (only recomputes on structural change, not every frame); stale UI Inspector pill removed from ThemeTargetInspectorOverlay (was covering StatusBar pill); manual smoke required | `0b5c90e` |
-| v104.0.3 | Minimap viewport rect fix: rewrite useMinimapCamera to use sigma.viewportToGraph on viewport corners (was cam.ratio in normalized space — wrong coordinate system); shared projection with snapshot (same scale/offsets/pad); areaSize passed from Minimap.tsx; manual smoke required | `2b00429` |
-| v104.0.4 | Minimap bounds frozen at origin frame: afterRender now drives bounds recompute during layout settle (was count-change only — positions not structural events); delta-stability stop (5 stable ticks at BOUNDS_EPSILON=1.0 ≈ 750ms quiet period); structural events reset settle; manual smoke required | `4184736` |
-| v104.0.5 | Minimap rect real fix: Math.min/max for visMinY/visMaxY (handles sigma Y↑ inversion); sigma.getDimensions() instead of clientWidth (never 0); effect deps [] with refs (no cleanup/setup during settle); manual smoke required | `e4ccbd3` |
-| v104.0.6 | Minimap Y-flip consistent across snapshot/rect/nav: sigma Y↑ (large Y = top) → flip in MinimapSnapshotCanvas + useMinimapCamera projY; pan delta fixed (was raw-graph minus normalized-camera = garbage); invertToGraph Y-flip + ratioNorm conversion; manual smoke required | `eeb9013` |
+| v104.0.1 | Minimap navigation: click-to-pan (animated), drag-scrub (instant), wheel-zoom; UNIFORM CENTERED projection inversion (pad=10, same as canvas); window-level drag listeners removed on mouseup; OKLCH audit — already clean | `c36c49a` |
+| v104.0.2 | Minimap snapshot N0/E0 fix: sigma readiness poll + afterRender count-change detection; stale UI Inspector pill removed from ThemeTargetInspectorOverlay | `0b5c90e` |
+| v104.0.3 | Minimap viewport rect: rewrite to viewportToGraph + shared projection (was cam.ratio in normalized space); areaSize passed from Minimap.tsx | `2b00429` |
+| v104.0.4 | Minimap bounds frozen at origin frame: afterRender drives bounds recompute during settle; delta-stability stop (5 ticks ≈ 750ms) | `4184736` |
+| v104.0.5 | Minimap rect 3-bug fix: Math.min/max for Y-inversion; sigma.getDimensions(); effect deps [] with refs (no cleanup thrash during settle) | `e4ccbd3` |
+| v104.0.6 | Minimap Y-flip consistent across snapshot/rect/nav: sigma Y↑ flip in all 3 files; pan delta fixed (ratioNorm conversion — was raw-graph minus normalized-camera = fly-off) | `eeb9013` |
+
+**Arc closed** — v104 closer: 0.10.0 → 0.11.0 · 2026-06-03.
 
 ---
 
@@ -118,9 +124,8 @@ Reworked the floating-tile system: per-axis snap engine, armed guide, explicit g
 
 | Arc | Work |
 |---|---|
-| **v104** | Minimap |
-| v105 | Code spoke (.0.0: live + diff editor) + History spoke (.1.0: deepening) |
-| v106+ | Paperweight punch-list: source-adapter fix, tile-content theming + token coverage, v102 Workshop/History/Bookmarks/Export, settings advanced-tabs relocation (5 deferred tile sections), pre-1.0 cleanup incl. CI/security green |
+| **v105** | Code spoke (.0.0: live + diff editor) + History spoke deepening (.1.0) |
+| v106+ | Paperweight punch-list: source-adapter fix, tile-content theming + token coverage, v102 Workshop/History/Bookmarks/Export, settings advanced-tabs relocation (5 deferred tile sections), minimap E2E coverage (test debt from v104), pre-1.0 cleanup incl. CI/security green |
 | ~v115–v125 | `1.0.0` initial public release |
 
 ---
