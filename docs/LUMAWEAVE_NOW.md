@@ -50,7 +50,7 @@ Connect the authored-but-unwired cluster-color system to node render. Fix the 4 
 | v103.1.4 | Unified tile creation (createDefaultTile helper) + reconcile missing default-visible tiles each load; graph-sources + graph-inspector now appear and toggle correctly; tileOut well-formed (mode/anchor/visible) | `0582ed1` |
 | v103.1.5 | Tile header UX: GripVertical lucide handle (replaces ⠿/⤴), RotateCcw return-to-dock (replaces broken anchor menu), title\|divider\|handle layout, popover z-index 10100 (was 200, buried under tiles); manual smoke required | `0165db5` |
 | v103.1.6 | Activate docking engine: registry→slot-anchors (6 canvas tiles), settings migration v88→v89 stamps mode:docked+slot-anchor on stored tiles, deferred sections (qa-feedback/visual-inventory/system-index/command-deck/source-adapter) stay floating with deferred comment; createDefaultTile now mode:docked for slot-anchored sections | `ab03f4e` |
-| v103.1.7 | Theme tile chrome + body: all hardcoded rgba/hex literals → --lw tokens; .tile-body gets color:--lw-text-primary + font:--lw-font-body (fixes bland content text); tiles now follow theme switches; hover backgrounds use color-mix; group-outline uses --lw-accent | in-progress |
+| v103.1.7 | Theme tile chrome + body: all hardcoded rgba/hex literals → --lw tokens; .tile-body gets color:--lw-text-primary + font:--lw-font-body (fixes bland content text); tiles now follow theme switches; hover backgrounds use color-mix; group-outline uses --lw-accent | `c9c39d2` |
 
 **Planned v103 phases:** .0.6 palette strip + WCAG graph label contrast · closer.
 
