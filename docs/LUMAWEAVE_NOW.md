@@ -14,14 +14,24 @@ references:
   - domain.control.plane.system.index
   - domain.tile.layout.workspace
   - domain.deferred.post.v1.vision
-tags: [live-state, now, canonical, v104]
+tags: [live-state, now, canonical, v105]
 ---
 
 # LumaWeave — NOW
 
 **The single live-state doc.** This is the only doc that changes every pass and the only one that carries a date. Everything here is volatile by design. Concepts and architecture live in the static domain docs (see `DOC_ARCHITECTURE.md`); history lives in the dev-blog / #changelog feed. This doc holds only: where we are, what's next, what's broken.
 
-**Updated:** 2026-06-03 · **Production version:** 0.11.0 · **Internal arc:** v105 (Code + History) · **Last pass:** v104 closer
+**Updated:** 2026-06-03 · **Production version:** 0.11.0 · **Internal arc:** v105 (Code Spoke) · **Last pass:** v105.0.0
+
+---
+
+## Current arc — v105: Code Spoke
+
+Rename IDE spoke → Code spoke, enrich provenance into an "origin story" (registration site, token bindings, cross-file reference list), baseline established by syncing provenance manifest.
+
+| Pass | Work | Commit |
+|---|---|---|
+| v105.0.0 | Provenance manifest sync: 4 minimap targets (minimap.root/header/footer/viewport-rect) added; 3 topbar targets (statusCluster, statusPill, wordmark) also picked up; parity spec GREEN (18 entries); arc baseline established | in-progress |
 
 ---
 
