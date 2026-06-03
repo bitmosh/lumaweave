@@ -22,7 +22,7 @@ import type {
   TileAnchor,
 } from "./tile.types";
 import { tileSectionRegistry } from "./tileSectionRegistry";
-import { computeAnchorPos } from "./tileUtils";
+import { computeAnchorPos, resolvedTilesArray } from "./tileUtils";
 
 const TILE_GRID = 16;
 
@@ -252,8 +252,16 @@ export function TileProvider({ children }: TileProviderProps) {
     setTileVisibility,
     setTileAnchor,
     returnToAnchor,
-    getLiveTiles: getCurrentTiles,
-    getLiveTile: (id: string) => getCurrentTiles().find(t => t.id === id),
+    // v103.1.1: resolve positions so event handlers (snap/group drag) see live coords.
+    // viewport read at call time — correct for event handlers, which fire synchronously.
+    getLiveTiles: () => resolvedTilesArray(
+      getCurrentTiles(),
+      { width: window.innerWidth, height: window.innerHeight },
+    ),
+    getLiveTile: (id: string) => resolvedTilesArray(
+      getCurrentTiles(),
+      { width: window.innerWidth, height: window.innerHeight },
+    ).find(t => t.id === id),
     draggingTileId,
     setDraggingTileId,
   };

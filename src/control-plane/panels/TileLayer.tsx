@@ -2,18 +2,41 @@
  * v86c Tile Layer
  * Reference: (NEW)tile-system.jsx lines 474-495
  * Renders floating tiles, group bars, and group outlines
+ *
+ * v103.1.1: All reads of tile x/y now go through resolvedTilesArray so docked tiles
+ * use viewport-derived positions and floating tiles are clamped into viewport bounds.
  */
 
-import { useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useTileContext } from "./TileProvider";
 import { FloatingTile } from "./FloatingTile";
-import { deriveGroups, findSnap, COLLAPSED_H, reconcileMembershipOnDrop } from "./tileUtils";
+import { deriveGroups, findSnap, COLLAPSED_H, reconcileMembershipOnDrop, resolvedTilesArray } from "./tileUtils";
 import type { Rect } from "./tileUtils";
-import type { TileGroup } from "./tile.types";
+import type { TileGroup, TileLayoutEntry } from "./tile.types";
 
 export function TileLayer() {
   const ctx = useTileContext();
-  const tilesArray = Array.from(ctx.tiles.values());
+
+  // v103.1.1: viewport size — debounced resize listener so resolved positions
+  // recompute when the viewport changes (fixes the stranded-off-screen bug).
+  const [viewport, setViewport] = useState({ width: window.innerWidth, height: window.innerHeight });
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    const handler = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => setViewport({ width: window.innerWidth, height: window.innerHeight }), 100);
+    };
+    window.addEventListener("resize", handler);
+    return () => {
+      window.removeEventListener("resize", handler);
+      clearTimeout(timer);
+    };
+  }, []);
+
+  // Resolve positions once, upstream — all downstream reads (deriveGroups, render, snap) see live coords.
+  const raw = useMemo(() => Array.from(ctx.tiles.values()), [ctx.tiles]);
+  const tilesArray = useMemo(() => resolvedTilesArray(raw, viewport), [raw, viewport]);
+
   const { groups, tileToGroup } = useMemo(
     () => deriveGroups(tilesArray, { excludeFromGroups: ctx.draggingTileId ?? undefined }),
     [tilesArray, ctx.draggingTileId],
@@ -24,8 +47,8 @@ export function TileLayer() {
       {/* Render groups */}
       {groups.map(group => (
         <div key={group.tileIds.join("-")}>
-          <GroupBar group={group} />
-          <GroupOutline group={group} />
+          <GroupBar group={group} resolvedTiles={tilesArray} />
+          <GroupOutline group={group} resolvedTiles={tilesArray} />
         </div>
       ))}
 
@@ -44,10 +67,10 @@ export function TileLayer() {
 
 // --- Group bar: horizontal bar above top row of a group ----
 // Reference: (NEW)tile-system.jsx lines 377-395
-function GroupBar({ group }: { group: TileGroup }) {
+function GroupBar({ group, resolvedTiles }: { group: TileGroup; resolvedTiles: TileLayoutEntry[] }) {
   const ctx = useTileContext();
-  const tilesArray = Array.from(ctx.tiles.values());
-  const groupTiles = tilesArray.filter(t => group.tileIds.includes(t.id));
+  // v103.1.1: use resolved tiles (correct x/y for docked tiles)
+  const groupTiles = resolvedTiles.filter(t => group.tileIds.includes(t.id));
 
   // Compute whether all group tiles are currently collapsed
   const allCollapsed = groupTiles.every(t => t.collapsed);
@@ -70,6 +93,15 @@ function GroupBar({ group }: { group: TileGroup }) {
 
     e.preventDefault();
     e.stopPropagation();
+
+    // v103.1.1: flip any docked group tiles to floating before dragging.
+    // groupTiles already have resolved x/y, so the stored position is correct after the flip.
+    groupTiles.forEach(t => {
+      if (t.mode === "docked") {
+        ctx.updateTile(t.id, { mode: "floating" });
+      }
+    });
+
     const startX = e.clientX, startY = e.clientY;
     const startPositions = groupTiles.map(t => ({ id: t.id, x: t.x, y: t.y }));
 
@@ -177,10 +209,9 @@ function GroupBar({ group }: { group: TileGroup }) {
 
 // --- Group outline: per-tile outlines that merge at seams ----
 // Reference: (NEW)tile-system.jsx lines 448-472
-function GroupOutline({ group }: { group: TileGroup }) {
-  const ctx = useTileContext();
-  const tilesArray = Array.from(ctx.tiles.values());
-  const groupTiles = tilesArray.filter(t => group.tileIds.includes(t.id));
+function GroupOutline({ group, resolvedTiles }: { group: TileGroup; resolvedTiles: TileLayoutEntry[] }) {
+  // v103.1.1: use resolved tiles so outlines track correct positions for docked tiles
+  const groupTiles = resolvedTiles.filter(t => group.tileIds.includes(t.id));
   const COLLAPSED_H = 30;
 
   return (

@@ -47,6 +47,15 @@ export function FloatingTile({ tile, group }: FloatingTileProps) {
     e.stopPropagation();
     ctx.bringToFront(tile.id);
     ctx.setDraggingTileId(tile.id);
+
+    // v103.1.1: docked tile being dragged → flip to floating.
+    // tile.x/y is already the RESOLVED position (passed from TileLayer's resolved array),
+    // so the stored position is correct after the flip. This prevents the resolver from
+    // fighting the drag by re-deriving the docked position on subsequent renders.
+    if (tile.mode === "docked") {
+      ctx.updateTile(tile.id, { mode: "floating" });
+    }
+
     const startX = e.clientX, startY = e.clientY;
     const startTilePos = { x: tile.x, y: tile.y };
     let detached = ungroup;

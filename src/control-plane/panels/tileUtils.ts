@@ -155,6 +155,40 @@ export function resolveLivePosition(
 export type Rect = { x: number; y: number; w: number; h: number };
 export type SnapResult = { x?: number; y?: number } | null;
 
+/**
+ * Resolves all tiles' positions through resolveLivePosition in one pass.
+ *
+ * Docked tiles get viewport-relative positions (cannot strand).
+ * Floating/legacy tiles get clamped x/y (rescues stranded tiles).
+ *
+ * Returns a new array of tiles with x/y/h replaced by resolved values.
+ * The original tiles are not mutated.
+ *
+ * Call sites pass { width: window.innerWidth, height: window.innerHeight }.
+ */
+export function resolvedTilesArray(
+  raw: TileLayoutEntry[],
+  viewport: Viewport,
+): TileLayoutEntry[] {
+  // Build per-edge lists of docked tiles for cumulative stacking
+  const dockedByEdge: Record<string, Array<{ slot?: number; h: number; collapsed: boolean }>> = {};
+  for (const t of raw) {
+    if (t.mode === "docked" && t.anchor && t.anchor.edge !== "free" && t.anchor.edge !== "top" && t.anchor.edge !== "bottom") {
+      const edge = t.anchor.edge;
+      if (!dockedByEdge[edge]) dockedByEdge[edge] = [];
+      dockedByEdge[edge].push({ slot: t.anchor.slot, h: t.h, collapsed: t.collapsed });
+    }
+  }
+
+  return raw.map(t => {
+    const edgeTiles = (t.mode === "docked" && t.anchor && t.anchor.edge !== "free")
+      ? (dockedByEdge[t.anchor.edge] ?? []).filter(e => (e.slot ?? 0) !== (t.anchor?.slot ?? 0))
+      : [];
+    const { x, y, h } = resolveLivePosition(t, edgeTiles, viewport);
+    return { ...t, x, y, h };
+  });
+}
+
 // --- Group geometry: derive TileGroup shapes from explicit groupId membership ----
 // BIG RULE: topRow width is computed from CONTIGUOUS top-row tiles, NOT bbox
 // Membership (groupId on TileLayoutEntry) is the source of truth;
