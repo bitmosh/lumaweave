@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { MinimapBounds } from "./useMinimapSnapshot";
 
 export interface MinimapViewportRect {
@@ -11,21 +11,31 @@ export interface MinimapViewportRect {
 const MINIMAP_PAD = 10; // must match MinimapSnapshotCanvas pad constant
 
 /**
- * v104.0.3: Rewritten to use sigma.viewportToGraph on viewport corners.
+ * v104.0.5: Rewritten to correctly project the sigma visible rect onto the
+ * minimap snapshot canvas using the IDENTICAL projection formula.
  *
- * Previous approach used cam.ratio in Sigma's NORMALIZED space as the visible
- * fraction of raw graphology attribute bounds — mismatched coordinate systems
- * caused inverted Y, off-center alignment, and zoom not resizing the rect.
+ * Key fixes vs v104.0.3:
  *
- * This version:
- * 1. Gets the visible graph rectangle by projecting viewport corners through
- *    sigma.viewportToGraph, which returns raw attribute-space coords (same
- *    space as bounds). No ratio math, no normalization mismatch.
- * 2. Projects those corners through the SAME uniform-centered projection that
- *    MinimapSnapshotCanvas uses (same scale, same offsetX/offsetY, same pad).
- *    This aligns the rect with the drawn nodes exactly.
- * 3. areaSize (canvas area pixel dimensions) is passed from Minimap.tsx so
- *    scale + offsets match the snapshot's actual render size.
+ * 1. Math.min/max for visMinX/Y, visMaxX/Y — handles sigma's Y-axis inversion.
+ *    sigma.viewportToGraph({x:0, y:0}) returns the LARGE raw Y (sigma renders
+ *    with Y↑: large Y = visual top). Math.min picks the correct "snapshot top"
+ *    regardless of which viewport corner has which value.
+ *
+ * 2. sigma.getDimensions() instead of container.clientWidth — getDimensions()
+ *    is sigma's own internal canvas size, always available after mount. The
+ *    container.clientWidth can be 0 if the effect runs before DOM layout.
+ *
+ * 3. Bounds + areaSize stored in refs; sigma listener mounted ONCE (effect deps
+ *    []). Previously deps=[bounds, areaSize] caused cleanup/setup on every
+ *    bounds change during settle (every 150ms), and the initial compute() ran
+ *    before sigma had re-rendered → stale/zero dimensions.
+ *
+ * The rect projection MUST be identical to MinimapSnapshotCanvas's:
+ *   scale   = min((areaW - pad*2) / gW, (areaH - pad*2) / gH)  // uniform aspect-fit
+ *   offsetX = (areaW - gW * scale) / 2                          // centered
+ *   offsetY = (areaH - gH * scale) / 2
+ *   canvasX = offsetX + (graphX - bounds.minX) * scale
+ *   canvasY = offsetY + (graphY - bounds.minY) * scale           // NO Y-flip
  */
 export function useMinimapCamera(
   bounds: MinimapBounds | null,
@@ -33,50 +43,69 @@ export function useMinimapCamera(
 ): { rect: MinimapViewportRect | null } {
   const [rect, setRect] = useState<MinimapViewportRect | null>(null);
 
-  useEffect(() => {
-    const sigma = (window as any).__lwSigma;
-    if (!sigma || !bounds || !areaSize) {
-      setRect(null);
-      return;
-    }
+  // Refs so the sigma listener (mounted once) always reads the latest values
+  // without being torn down and recreated on every bounds change.
+  const boundsRef = useRef(bounds);
+  const areaSizeRef = useRef(areaSize);
 
+  boundsRef.current = bounds;
+  areaSizeRef.current = areaSize;
+
+  // Clear rect when required inputs become unavailable.
+  useEffect(() => {
+    if (!bounds || !areaSize) setRect(null);
+  }, [bounds, areaSize]);
+
+  // Main effect: mount sigma listener ONCE. Reads bounds/areaSize from refs.
+  useEffect(() => {
     let rafId = 0;
     let dirty = false;
+    let sigmaRef: unknown = null;
+    let pollTimer: ReturnType<typeof setInterval> | null = null;
 
     const compute = () => {
-      const freshSigma = (window as any).__lwSigma;
-      if (!freshSigma || !bounds || !areaSize) { setRect(null); return; }
+      const s = (window as any).__lwSigma;
+      const b = boundsRef.current;
+      const a = areaSizeRef.current;
+      if (!s || !b || !a) { setRect(null); return; }
 
-      // Viewport corners → graph coords (raw attribute space, same as bounds).
-      const container = freshSigma.getContainer();
-      const vpW = container.clientWidth;
-      const vpH = container.clientHeight;
-      const tl = freshSigma.viewportToGraph({ x: 0, y: 0 });
-      const br = freshSigma.viewportToGraph({ x: vpW, y: vpH });
+      // sigma.getDimensions() = sigma's internal canvas pixel size. Always
+      // valid after mount; more reliable than getContainer().clientWidth.
+      const dims = s.getDimensions?.() as { width: number; height: number } | undefined;
+      const vpW = dims?.width ?? 0;
+      const vpH = dims?.height ?? 0;
+      if (!vpW || !vpH) return;
 
-      // Shared projection with MinimapSnapshotCanvas:
-      //   scale = uniform aspect-fit, offsetX/offsetY = centered
-      const { width: areaW, height: areaH } = areaSize;
-      const gW = bounds.maxX - bounds.minX || 1;
-      const gH = bounds.maxY - bounds.minY || 1;
-      const scale = Math.min(
-        (areaW - MINIMAP_PAD * 2) / gW,
-        (areaH - MINIMAP_PAD * 2) / gH,
-      );
+      // Visible graph rect via viewportToGraph. Math.min/max handles sigma's
+      // Y↑ axis convention (top of viewport = LARGE raw Y = near maxY).
+      const tl = s.viewportToGraph({ x: 0,   y: 0   });
+      const br = s.viewportToGraph({ x: vpW, y: vpH });
+      const visMinX = Math.min(tl.x, br.x);
+      const visMaxX = Math.max(tl.x, br.x);
+      const visMinY = Math.min(tl.y, br.y);
+      const visMaxY = Math.max(tl.y, br.y);
+
+      // Identical projection to MinimapSnapshotCanvas (same scale + offsets).
+      const { width: areaW, height: areaH } = a;
+      const gW = b.maxX - b.minX || 1;
+      const gH = b.maxY - b.minY || 1;
+      const scale   = Math.min((areaW - MINIMAP_PAD * 2) / gW, (areaH - MINIMAP_PAD * 2) / gH);
       const offsetX = (areaW - gW * scale) / 2;
       const offsetY = (areaH - gH * scale) / 2;
 
-      // Project visible corners and normalize to % of area.
-      const rawLeft   = (offsetX + (tl.x - bounds.minX) * scale) / areaW * 100;
-      const rawTop    = (offsetY + (tl.y - bounds.minY) * scale) / areaH * 100;
-      const rawWidth  = Math.abs(br.x - tl.x) * scale / areaW * 100;
-      const rawHeight = Math.abs(br.y - tl.y) * scale / areaH * 100;
+      const projX = (gx: number) => offsetX + (gx - b.minX) * scale;
+      const projY = (gy: number) => offsetY + (gy - b.minY) * scale; // NO flip
+
+      const leftPx  = projX(visMinX);
+      const rightPx = projX(visMaxX);
+      const topPx   = projY(visMinY);
+      const botPx   = projY(visMaxY);
 
       setRect({
-        left:   Math.max(0, Math.min(100, rawLeft)),
-        top:    Math.max(0, Math.min(100, rawTop)),
-        width:  Math.min(100, rawWidth),
-        height: Math.min(100, rawHeight),
+        left:   (leftPx  / areaW) * 100,
+        top:    (topPx   / areaH) * 100,
+        width:  ((rightPx - leftPx) / areaW) * 100,
+        height: ((botPx   - topPx)  / areaH) * 100,
       });
     };
 
@@ -92,13 +121,29 @@ export function useMinimapCamera(
       if (!rafId) rafId = requestAnimationFrame(tick);
     };
 
-    compute();
-    sigma.on("afterRender", onCameraUpdate);
-    return () => {
-      cancelAnimationFrame(rafId);
-      sigma.off("afterRender", onCameraUpdate);
+    const attach = (s: unknown) => {
+      sigmaRef = s;
+      compute();
+      (s as any).on("afterRender", onCameraUpdate);
     };
-  }, [bounds, areaSize]);
+
+    if ((window as any).__lwSigma) {
+      attach((window as any).__lwSigma);
+    } else {
+      pollTimer = setInterval(() => {
+        if ((window as any).__lwSigma) {
+          if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+          attach((window as any).__lwSigma);
+        }
+      }, 200);
+    }
+
+    return () => {
+      if (pollTimer) clearInterval(pollTimer);
+      cancelAnimationFrame(rafId);
+      try { (sigmaRef as any)?.off("afterRender", onCameraUpdate); } catch { /* ok */ }
+    };
+  }, []); // mount once — bounds/areaSize read from refs
 
   return { rect };
 }

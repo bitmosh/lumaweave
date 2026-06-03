@@ -36,6 +36,7 @@ Port and activate the minimap overlay prototype. Non-interactive render first (.
 | v104.0.2 | Minimap snapshot N0/E0 fix: sigma readiness poll + afterRender count-change detection (only recomputes on structural change, not every frame); stale UI Inspector pill removed from ThemeTargetInspectorOverlay (was covering StatusBar pill); manual smoke required | `0b5c90e` |
 | v104.0.3 | Minimap viewport rect fix: rewrite useMinimapCamera to use sigma.viewportToGraph on viewport corners (was cam.ratio in normalized space — wrong coordinate system); shared projection with snapshot (same scale/offsets/pad); areaSize passed from Minimap.tsx; manual smoke required | `2b00429` |
 | v104.0.4 | Minimap bounds frozen at origin frame: afterRender now drives bounds recompute during layout settle (was count-change only — positions not structural events); delta-stability stop (5 stable ticks at BOUNDS_EPSILON=1.0 ≈ 750ms quiet period); structural events reset settle; manual smoke required | `4184736` |
+| v104.0.5 | Minimap rect real fix: Math.min/max for visMinY/visMaxY (handles sigma Y↑ inversion); sigma.getDimensions() instead of clientWidth (never 0); effect deps [] with refs (no cleanup/setup during settle); manual smoke required | in-progress |
 
 ---
 
