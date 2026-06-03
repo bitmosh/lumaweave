@@ -47,6 +47,7 @@ Connect the authored-but-unwired cluster-color system to node render. Fix the 4 
 | v103.1.1 | Wire resolveLivePosition into render + snap/group + resize: resolvedTilesArray upstream in TileLayer, getLiveTiles resolves, debounced resize listener, docked→floating flip on drag; stranded tiles now visible | `79c9636` |
 | v103.1.2 | Tile state consistency: close=hide (visible:false, entry kept), Bug 1 popover toggle fixed, Bug 2 visible:false excluded from deriveGroups/GroupOutline (no ghost), Bug 3 drag-flip seeds resolved x/y; 3 new E2E interaction tests | `8978d17` |
 | v103.1.3 | Group neighbors reflow flush on resize release — resized tile anchors, neighbors slide to close gap; clampToViewport guards against growth pushing neighbor off-screen; 1 E2E flush-assertion | `c31061c` |
+| v103.1.4 | Unified tile creation (createDefaultTile helper) + reconcile missing default-visible tiles each load; graph-sources + graph-inspector now appear and toggle correctly; tileOut well-formed (mode/anchor/visible) | in-progress |
 
 **Planned v103 phases:** .0.6 palette strip + WCAG graph label contrast · closer.
 

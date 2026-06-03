@@ -28,6 +28,52 @@ const TILE_GRID = 16;
 
 const snap = (v: number) => Math.round(v / TILE_GRID) * TILE_GRID;
 
+/**
+ * v103.1.4: Single well-formed tile-creation path.
+ *
+ * Creates a TileLayoutEntry with ALL required fields: mode, anchor, visible.
+ * Used by bootstrap, reconcile, and tileOut so no path creates a malformed tile.
+ *
+ * Default tiles (bootstrap/reconcile): deterministic id "tile_${section.id}", mode:"docked".
+ * User-initiated (tileOut): randomId:true, mode depends on atPos.
+ */
+import type { TileSectionEntry } from "./tile.types";
+
+function createDefaultTile(
+  section: TileSectionEntry,
+  z: number,
+  opts?: { atPos?: { x: number; y: number }; randomId?: boolean },
+): TileLayoutEntry {
+  const id = opts?.randomId
+    ? `tile_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 5)}`
+    : `tile_${section.id}`;
+
+  // Use "floating" for now — the bootstrap/reconcile tiles work with offset-based anchor positions.
+  // Full docking (mode:"docked" + slot) requires the docking arc's slot-assignment pass (.1.5+).
+  // atPos-provided tiles are always floating (user placed them explicitly).
+  const mode: "docked" | "floating" = "floating";
+
+  const pos = opts?.atPos ?? computeAnchorPos(
+    section.defaultAnchor,
+    section.defaultWidth,
+    section.defaultHeight,
+  );
+
+  return {
+    id,
+    sectionKey: section.id,
+    mode,
+    anchor: section.defaultAnchor,
+    visible: true,
+    x: pos.x,
+    y: pos.y,
+    w: section.defaultWidth,
+    h: section.defaultHeight,
+    collapsed: !section.defaultExpanded,
+    z,
+  };
+}
+
 const TileContext = createContext<(TileContextState & TileContextActions) | null>(null);
 
 export function useTileContext() {
@@ -80,35 +126,32 @@ export function TileProvider({ children }: TileProviderProps) {
     if (localStorage.getItem(BOOTSTRAP_KEY)) return;
 
     const currentTiles = getCurrentTiles();
-    const newTiles: TileLayoutEntry[] = [];
-
-    for (const entry of tileSectionRegistry.list()) {
-      if (!entry.defaultVisible) continue;
-      if (currentTiles.find((t) => t.sectionKey === entry.id)) continue;
-
-      const pos = computeAnchorPos(
-        entry.defaultAnchor,
-        entry.defaultWidth,
-        entry.defaultHeight,
-      );
-
-      newTiles.push({
-        id: `tile_${entry.id}`,
-        sectionKey: entry.id,
-        x: pos.x,
-        y: pos.y,
-        w: entry.defaultWidth,
-        h: entry.defaultHeight,
-        collapsed: !entry.defaultExpanded,
-        z: ++zCounterRef.current,
-        anchor: entry.defaultAnchor,
-      });
-    }
+    const newTiles = tileSectionRegistry.list()
+      .filter(entry => entry.defaultVisible)
+      .filter(entry => !currentTiles.some(t => t.sectionKey === entry.id))
+      .map(entry => createDefaultTile(entry, ++zCounterRef.current));
 
     if (newTiles.length > 0) {
       writeTiles([...currentTiles, ...newTiles]);
     }
     localStorage.setItem(BOOTSTRAP_KEY, "1");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // v103.1.4: Reconcile missing default-visible tiles each load (NOT one-time guarded).
+  // Handles registry entries added AFTER the browser's first bootstrap (e.g. graph-sources,
+  // graph-inspector). CRITICAL: only creates tiles with NO entry. An entry with visible:false
+  // (user deliberately closed) is NOT touched — close=hide must be respected.
+  useEffect(() => {
+    const currentTiles = getCurrentTiles();
+    const missing = tileSectionRegistry.list()
+      .filter(entry => entry.defaultVisible)
+      .filter(entry => !currentTiles.some(t => t.sectionKey === entry.id));
+
+    if (missing.length > 0) {
+      const newTiles = missing.map(entry => createDefaultTile(entry, ++zCounterRef.current));
+      writeTiles([...currentTiles, ...newTiles]);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -129,24 +172,19 @@ export function TileProvider({ children }: TileProviderProps) {
       const section = tileSectionRegistry.getById(sectionKey);
       if (!section) return null;
 
-      const id = `tile_${Date.now().toString(36)}_${Math.random()
-        .toString(36)
-        .slice(2, 5)}`;
-      const x = atPos?.x ?? snap(window.innerWidth / 2 - 160);
-      const y = atPos?.y ?? snap(120 + currentTiles.length * 30);
-
-      const newTile: TileLayoutEntry = {
-        id,
-        sectionKey,
-        x,
-        y,
-        w: section.defaultWidth,
-        h: section.defaultHeight,
-        collapsed: false,
-        z: ++zCounterRef.current,
-      };
+      // v103.1.4: use createDefaultTile — well-formed with mode/anchor/visible.
+      // randomId:true for user-initiated tiles (not idempotent by design).
+      // atPos provided → floating; no atPos → docked (if section has defaultAnchor).
+      const effectiveAtPos = atPos ?? (section.defaultAnchor ? undefined : {
+        x: snap(window.innerWidth / 2 - 160),
+        y: snap(120 + currentTiles.length * 30),
+      });
+      const newTile = createDefaultTile(section, ++zCounterRef.current, {
+        atPos: effectiveAtPos,
+        randomId: true,
+      });
       writeTiles([...currentTiles, newTile]);
-      return id;
+      return newTile.id;
     },
     [writeTiles],
   );
