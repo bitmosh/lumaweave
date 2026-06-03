@@ -45,7 +45,7 @@ Connect the authored-but-unwired cluster-color system to node render. Fix the 4 
 | v103.0.5b | Accent uses WCAG 1.4.11 non-text criterion (3:1); per-criterion aggregation (aa/aaa); void-circuit + agartha-dream correctly upgrade | `8e1406f` |
 | v103.1.0 | Tile docking schema + resolution layer: `mode: "docked"\|"floating"`, `slot` on TileAnchor, `clampToViewport` + `resolveDockedPosition` + `resolveLivePosition` (pure, viewport-relative, unwired); 9 unit tests including the off-viewport bug proof | `d188038` |
 | v103.1.1 | Wire resolveLivePosition into render + snap/group + resize: resolvedTilesArray upstream in TileLayer, getLiveTiles resolves, debounced resize listener, docked→floating flip on drag; stranded tiles now visible | `79c9636` |
-| v103.1.2 | Tile state consistency: close=hide (visible:false, entry kept), Bug 1 popover toggle fixed, Bug 2 visible:false excluded from deriveGroups/GroupOutline (no ghost), Bug 3 drag-flip seeds resolved x/y; 2 new E2E interaction tests | in-progress |
+| v103.1.2 | Tile state consistency: close=hide (visible:false, entry kept), Bug 1 popover toggle fixed, Bug 2 visible:false excluded from deriveGroups/GroupOutline (no ghost), Bug 3 drag-flip seeds resolved x/y; 3 new E2E interaction tests | `8978d17` |
 
 **Planned v103 phases:** .0.6 palette strip + WCAG graph label contrast · closer.
 
