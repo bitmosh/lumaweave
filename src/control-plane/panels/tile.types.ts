@@ -13,6 +13,9 @@ export type TileAnchorEdge = "left" | "right" | "top" | "bottom" | "free";
  * Describes where a tile lives when "returned to anchor".
  * Edge anchors use an offset from the top (left/right) or left (top/bottom).
  * Free anchors use explicit x/y viewport coords.
+ *
+ * Docked tiles (v103.1.0+): use { edge: "left"|"right", slot: number }.
+ * slot is the zero-based index down the edge; position is derived from slot + viewport.
  */
 export interface TileAnchor {
   edge: TileAnchorEdge;
@@ -22,6 +25,11 @@ export interface TileAnchor {
   x?: number;
   /** Used when edge === "free" — explicit vertical position. */
   y?: number;
+  /**
+   * Slot index (0, 1, 2…) for docked tiles. Tiles on the same edge are stacked
+   * in slot order from top to bottom. Derived-position tiles only.
+   */
+  slot?: number;
 }
 
 /**
@@ -185,6 +193,15 @@ export interface TileLayoutEntry {
    * Set by snap FORM on drop; cleared by drag BREAK. Never inferred from position.
    */
   groupId?: string;
+  /**
+   * Positioning mode (v103.1.0+):
+   *   "docked"   — position derived from anchor.edge + anchor.slot + live viewport.
+   *                x/y are NEVER the persisted truth; recomputed each render via resolveLivePosition.
+   *                Cannot strand across viewport changes.
+   *   "floating" — x/y persisted, clamped to viewport on load/resize.
+   *                The default for existing tiles (back-compat: undefined treated as "floating").
+   */
+  mode?: "docked" | "floating";
 }
 
 /**

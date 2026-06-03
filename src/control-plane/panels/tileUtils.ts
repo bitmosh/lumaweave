@@ -44,6 +44,113 @@ export function isOffAnchor(
 export const COLLAPSED_H = 30;
 export const SNAP_TOL = 15;   // px — per-axis edge detection (replaces 75px hypot)
 export const BREAK_TOL = SNAP_TOL * 2; // 30px — used by group-break (v101.0.3+)
+export const MARGIN = 8;   // px — minimum gap between tile edge and viewport edge
+export const GAP = 12;     // px — vertical gap between stacked docked tiles
+
+// ─── v103.1.0: Pure viewport-relative resolution (docked/floating model) ───
+
+export interface Viewport { width: number; height: number; }
+
+/**
+ * Clamps a floating tile's position into viewport bounds.
+ * Pure — viewport passed in, NOT read from window (testable, no side effects).
+ *
+ * x ∈ [MARGIN, viewport.width  - w - MARGIN]
+ * y ∈ [TOPBAR_HEIGHT, max(TOPBAR_HEIGHT, viewport.height - STATUS_BAR_HEIGHT - h - GAP)]
+ */
+export function clampToViewport(
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  viewport: Viewport,
+): { x: number; y: number } {
+  const maxX = Math.max(MARGIN, viewport.width  - w - MARGIN);
+  const maxY = Math.max(TOPBAR_HEIGHT, viewport.height - STATUS_BAR_HEIGHT - h - GAP);
+  return {
+    x: Math.max(MARGIN, Math.min(x, maxX)),
+    y: Math.max(TOPBAR_HEIGHT, Math.min(y, maxY)),
+  };
+}
+
+/**
+ * Resolves a docked tile's position from its anchor + slot + viewport.
+ *
+ * Uses cumulative stacking (flush) — tiles on the same edge with lower slots are
+ * measured by their actual height, so variable-height tiles stack without gaps beyond GAP.
+ *
+ * edgeTiles: all OTHER docked tiles on the same edge, sorted by slot ascending.
+ *            Only tiles with slot < this tile's slot contribute to the y offset.
+ *
+ * Returns { x, y, h, overflowed } where:
+ *   h         — possibly-capped tile height (capped to fairShare if edge overflows)
+ *   overflowed — true when the stack exceeds availableH and h would fall below the min floor
+ */
+export function resolveDockedPosition(
+  anchor: TileAnchor,
+  w: number,
+  requestedH: number,
+  edgeTiles: Array<{ slot?: number; h: number; collapsed: boolean }>,
+  viewport: Viewport,
+): { x: number; y: number; h: number; overflowed: boolean } {
+  const thisSlot = anchor.slot ?? 0;
+  const isRight = anchor.edge === "right";
+  const x = isRight ? viewport.width - w - MARGIN : MARGIN;
+
+  // Cumulative y: sum heights of all lower-slot tiles + their gaps
+  const tilesAbove = edgeTiles
+    .filter((t) => (t.slot ?? 0) < thisSlot)
+    .sort((a, b) => (a.slot ?? 0) - (b.slot ?? 0));
+
+  let y = TOPBAR_HEIGHT;
+  for (const t of tilesAbove) {
+    const tileH = t.collapsed ? COLLAPSED_H : t.h;
+    y += tileH + GAP;
+  }
+
+  // Height-cap: available vertical space on this edge
+  const availableH = viewport.height - STATUS_BAR_HEIGHT - TOPBAR_HEIGHT;
+  const MIN_TILE_FLOOR = COLLAPSED_H + 60;
+
+  // Count total tiles on this edge (including this one) to compute fair share
+  const totalEdgeTiles = edgeTiles.length + 1;
+  const totalGaps = (totalEdgeTiles - 1) * GAP;
+  const fairShare = Math.floor((availableH - totalGaps) / totalEdgeTiles);
+
+  let h = requestedH;
+  let overflowed = false;
+  if (fairShare < MIN_TILE_FLOOR) {
+    overflowed = true;
+    h = requestedH; // caller scrolls; don't cap below floor
+  } else if (requestedH > fairShare) {
+    h = fairShare;
+  }
+
+  const clamped = clampToViewport(x, y, w, h, viewport);
+  return { x: clamped.x, y: clamped.y, h, overflowed };
+}
+
+/**
+ * Single entry-point: resolves the live render position for any tile.
+ *
+ * docked   → resolveDockedPosition (viewport-relative, cannot strand)
+ * floating → clampToViewport (clamped to bounds, persisted x/y corrected)
+ *
+ * NOT wired to render this pass — defined + tested here; wired in v103.1.1.
+ */
+export function resolveLivePosition(
+  tile: TileLayoutEntry,
+  edgeTiles: Array<{ slot?: number; h: number; collapsed: boolean }>,
+  viewport: Viewport,
+): { x: number; y: number; h: number } {
+  if (tile.mode === "docked" && tile.anchor) {
+    const result = resolveDockedPosition(tile.anchor, tile.w, tile.h, edgeTiles, viewport);
+    return { x: result.x, y: result.y, h: result.h };
+  }
+  // "floating" or undefined (back-compat: treat as floating)
+  const clamped = clampToViewport(tile.x, tile.y, tile.w, tile.h, viewport);
+  return { x: clamped.x, y: clamped.y, h: tile.h };
+}
 
 export type Rect = { x: number; y: number; w: number; h: number };
 export type SnapResult = { x?: number; y?: number } | null;
@@ -286,4 +393,10 @@ export function shouldFlipTile(
   const inFlipZone = tile.y + tile.h > flipThreshold;
   const hasRoomAbove = tile.y >= tile.h;
   return inFlipZone && hasRoomAbove;
+}
+
+
+// Dev / Playwright probe — exposes resolution functions for browser-eval tests (v103.1.0)
+if (typeof window !== "undefined" && (import.meta.env.DEV || (window as any).PLAYWRIGHT)) {
+  (window as any).__lwTileDocking = { clampToViewport, resolveDockedPosition, resolveLivePosition };
 }
