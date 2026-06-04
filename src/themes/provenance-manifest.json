@@ -1,14 +1,14 @@
 {
   "app.shell": {
     "filePath": "src/app/AppShell.tsx",
-    "startLine": 359,
-    "endLine": 382,
+    "startLine": 357,
+    "endLine": 380,
     "snippet": "  return (\n    <I18nProvider>\n    <TileProvider>\n      <main \n      className=\"h-screen overflow-hidden text-slate-100\"\n      style={{\n        \"--lw-app-background\": crossfadeTokens.app.background,\n        \"--lw-panel-background\": crossfadeTokens.app.panelBackground,\n        \"--lw-panel-border\": topbarBorder,\n        \"--lw-text-primary\": topbarText,\n        \"--lw-text-muted\": crossfadeTokens.app.textMuted,\n        \"--lw-accent\": topbarAccent,\n        \"--lw-visual-accent\": topbarAccent,\n        \"--lw-app-glow\": crossfadeTokens.app.glow,\n        // Tier 1 primitive color tokens for theme-adaptive components (HexLogo, etc.)\n        \"--lw-color-flare-500\": themePrimitives[settings.appearance.theme]?.color?.flare?.[500] ?? \"#FF6B1A\",\n        \"--lw-color-magenta-500\": themePrimitives[settings.appearance.theme]?.color?.magenta?.[500] ?? \"#FF1F8F\",\n        \"--lw-color-purple-500\": themePrimitives[settings.appearance.theme]?.color?.purple?.[500] ?? \"#7B2FFF\",\n        \"--lw-color-gold-500\": themePrimitives[settings.appearance.theme]?.color?.gold?.[500] ?? \"#FFB347\",\n        \"--lw-inspector-radial-spoke-color\": crossfadeTokens.inspector.radialSpokeColor,\n        \"--lw-inspector-radial-root-color\": crossfadeTokens.inspector.radialSpokeColor,\n        \"--lw-inspector-radial-root-border\": crossfadeTokens.inspector.radialHaloColor,\n        \"--lw-inspector-radial-text\": crossfadeTokens.app.textPrimary,\n        backgroundColor: crossfadeTokens.app.background,\n      } as React.CSSProperties}\n      data-lw-theme-target=\"app.shell\"\n    >\n      <div className=\"grid h-screen grid-rows-[auto_1fr_auto]\">\n        <Topbar onOpenSettings={() => settingsPanelRef.current?.toggle()} />\n"
   },
   "graph.frame": {
     "filePath": "src/app/AppShell.tsx",
-    "startLine": 387,
-    "endLine": 395,
+    "startLine": 385,
+    "endLine": 393,
     "snippet": "        <Topbar onOpenSettings={() => settingsPanelRef.current?.toggle()} />\n\n\n          <section\n            className=\"relative min-h-0 overflow-hidden\"\n            data-testid={useFixture ? \"self-graph-fixture-loaded\" : \"graph-viewport\"}\n            style={{\n              background: \"radial-gradient(ellipse at center, #0d1929 0%, #060b14 60%, #030508 100%)\",\n            } as React.CSSProperties}\n            data-lw-theme-target=\"graph.frame\"\n            onClick={handleViewportClick}\n          >\n            <div \n              className=\"absolute inset-0\"\n              style={{ backgroundColor: `${themeTokens.app.background}b3` } as React.CSSProperties}"
   },
   "minimap.viewport-rect": {

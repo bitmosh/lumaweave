@@ -12,7 +12,7 @@
   position: fixed;
   min-inline-size: 720px;
   min-block-size: 480px;
-  z-index: 50;
+  z-index: 1050;
   display: flex;
   flex-direction: column;
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
@@ -924,12 +924,12 @@
     radial-gradient(circle at 38% 32%,
       color-mix(in oklab, #fff 30%, var(--lw-color-flare-500)) 0%,
       var(--lw-color-flare-500) 35%,
-      color-mix(in oklab, var(--lw-color-flare-500) 50%, var(--lw-app-bg)) 80%);
+      color-mix(in oklab, var(--lw-color-flare-500) 50%, var(--lw-app-background, #0b0416)) 80%);
   box-shadow:
-    0 0 18px color-mix(in oklab, var(--lw-glow) 60%, transparent),
+    0 0 18px color-mix(in oklab, var(--lw-app-glow, var(--lw-accent)) 60%, transparent),
     0 0 0 1px color-mix(in oklab, var(--lw-accent) 40%, transparent),
     0 4px 14px rgba(0,0,0,0.4);
-  color: var(--lw-app-bg);
+  color: var(--lw-app-background, #0b0416);
   display: grid; place-items: center;
   cursor: pointer;
   transition: 160ms;
@@ -937,7 +937,7 @@
 }
 .lw-radial-center:hover { transform: translate(-50%, -50%) scale(1.05); }
 .lw-radial-center.is-active {
-  background: var(--lw-app-bg);
+  background: var(--lw-app-background, #0b0416);
   color: var(--lw-color-flare-500);
   box-shadow:
     0 0 0 2px var(--lw-color-flare-500),
@@ -953,38 +953,68 @@
   gap: 2px;
   padding: 6px;
   border-radius: 50%;
-  border: 1px solid color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 80%, transparent);
-  background: radial-gradient(circle at 40% 35%,
-    color-mix(in oklab, var(--lw-panel-bg-solid) 90%, white 8%),
-    color-mix(in oklab, var(--lw-app-bg) 85%, black 12%));
+  border: 1px solid color-mix(in oklab, var(--lw-inspector-radial-spoke-color, var(--lw-accent)) 35%, transparent);
+  background:
+    radial-gradient(circle at 40% 35%,
+      color-mix(in oklab, var(--lw-inspector-radial-spoke-color, var(--lw-accent)) 22%, transparent),
+      color-mix(in oklab, var(--lw-inspector-radial-spoke-color, var(--lw-accent)) 10%, transparent)),
+    var(--lw-panel-background, var(--lw-app-background, #1b0830));
   color: var(--lw-text-primary);
   box-shadow:
-    0 2px 8px rgba(0,0,0,0.4),
-    0 0 0 1px color-mix(in oklab, var(--lw-panel-border-current, var(--lw-panel-border)) 50%, transparent) inset;
+    0 2px 10px rgba(0,0,0,0.55),
+    0 0 0 1px color-mix(in oklab, var(--lw-inspector-radial-spoke-color, var(--lw-accent)) 20%, transparent) inset,
+    0 0 18px rgba(0,0,0,0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   transition: transform 160ms ease, box-shadow 160ms ease, opacity 200ms ease;
   z-index: 3;
 }
 .lw-radial-spoke:hover {
   transform: translate(-50%, -50%) scale(1.06);
-  border-color: var(--lw-accent);
+  border-color: color-mix(in oklab, var(--lw-inspector-radial-spoke-color, var(--lw-accent)) 80%, transparent);
   box-shadow:
     0 4px 14px rgba(0,0,0,0.5),
-    0 0 14px color-mix(in oklab, var(--lw-glow) 50%, transparent),
-    0 0 0 1px var(--lw-accent) inset;
+    0 0 14px color-mix(in oklab, var(--lw-inspector-radial-spoke-color, var(--lw-glow)) 55%, transparent),
+    0 0 0 1px color-mix(in oklab, var(--lw-inspector-radial-spoke-color, var(--lw-accent)) 60%, transparent) inset;
 }
 .lw-radial-spoke.is-open {
-  border-color: var(--lw-accent);
-  background: radial-gradient(circle at 40% 35%,
-    color-mix(in oklab, var(--lw-panel-bg-solid) 85%, var(--lw-accent) 12%),
-    color-mix(in oklab, var(--lw-app-bg) 85%, var(--lw-accent) 8%));
+  border-color: var(--lw-inspector-radial-spoke-color, var(--lw-accent));
+  background:
+    radial-gradient(circle at 40% 35%,
+      color-mix(in oklab, var(--lw-inspector-radial-spoke-color, var(--lw-accent)) 38%, transparent),
+      color-mix(in oklab, var(--lw-inspector-radial-spoke-color, var(--lw-accent)) 18%, transparent)),
+    var(--lw-panel-background, var(--lw-app-background, #1b0830));
   box-shadow:
     0 6px 20px rgba(0,0,0,0.55),
-    0 0 22px color-mix(in oklab, var(--lw-glow) 60%, transparent),
-    0 0 0 1.5px var(--lw-accent) inset;
+    0 0 22px color-mix(in oklab, var(--lw-inspector-radial-spoke-color, var(--lw-glow)) 65%, transparent),
+    0 0 0 1.5px var(--lw-inspector-radial-spoke-color, var(--lw-accent)) inset;
 }
 .lw-radial-spoke.is-dim {
   opacity: 0.32;
   filter: saturate(0.6);
+}
+.lw-radial-spoke.is-placeholder {
+  opacity: 0.42;
+  border-style: dashed;
+  filter: saturate(0.25);
+  cursor: default;
+}
+.lw-radial-spoke.is-placeholder:hover {
+  opacity: 0.55;
+  filter: saturate(0.35);
+  transform: translate(-50%, -50%) scale(1.02);
+  box-shadow:
+    0 2px 10px rgba(0,0,0,0.55),
+    0 0 0 1px color-mix(in oklab, var(--lw-inspector-radial-spoke-color, var(--lw-accent)) 20%, transparent) inset,
+    0 0 8px rgba(0,0,0,0.3);
+}
+.lw-radial-spoke:focus-visible {
+  outline: 2px solid var(--lw-inspector-radial-spoke-color, var(--lw-accent));
+  outline-offset: 3px;
+}
+.lw-radial-center:focus-visible {
+  outline: 2px solid var(--lw-accent);
+  outline-offset: 3px;
 }
 .lw-radial-spoke-label {
   font-family: 'IBM Plex Mono', monospace;
@@ -998,8 +1028,9 @@
   white-space: normal;
   word-break: keep-all;
   hyphens: none;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
 }
-.lw-radial-spoke.is-open .lw-radial-spoke-label { color: var(--lw-accent); }
+.lw-radial-spoke.is-open .lw-radial-spoke-label { color: var(--lw-inspector-radial-spoke-color, var(--lw-accent)); }
 .lw-radial-spoke-tag {
   position: absolute;
   inset-block-start: 4px; inset-inline-end: 6px;
@@ -1007,20 +1038,27 @@
   font-size: 8px;
   color: var(--lw-color-gold-500);
 }
+@keyframes lw-submenu-in {
+  from { opacity: 0; scale: 0.95; }
+  to   { opacity: 1; scale: 1; }
+}
 .lw-radial-submenu {
   position: absolute;
-  width: 220px;
+  width: 240px;
   border: 1px solid color-mix(in oklab, var(--lw-accent) 60%, transparent);
-  background: color-mix(in oklab, var(--lw-panel-bg-solid) 92%, transparent);
+  background: color-mix(in oklab, var(--lw-panel-background, var(--lw-app-background, #1b0830)) 92%, transparent);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-radius: 8px;
   box-shadow:
     0 10px 30px rgba(0,0,0,0.55),
-    0 0 24px color-mix(in oklab, var(--lw-glow) 50%, transparent);
+    0 0 24px color-mix(in oklab, var(--lw-app-glow, var(--lw-accent)) 50%, transparent);
   overflow: hidden;
   z-index: 5;
-  opacity: 1;
+  animation: lw-submenu-in 130ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lw-radial-submenu { animation: none; }
 }
 .lw-radial-submenu-head {
   display: flex;
@@ -1040,7 +1078,11 @@
   letter-spacing: 0.06em;
   text-transform: lowercase;
 }
-.lw-radial-submenu-body { padding: 10px; }
+.lw-radial-submenu-body {
+  padding: 10px;
+  max-height: 320px;
+  overflow-y: auto;
+}
 .lw-radial-hotkey {
   margin: 14px auto 0;
   max-inline-size: 360px;
