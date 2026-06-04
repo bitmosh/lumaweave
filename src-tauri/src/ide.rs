@@ -3,13 +3,26 @@ use std::env;
 
 #[tauri::command]
 pub fn get_project_root() -> Result<String, String> {
-    env::current_dir()
-        .map_err(|e| format!("Failed to get project root: {}", e))
-        .and_then(|path| {
-            path.to_str()
-                .ok_or_else(|| "Project root path is not valid UTF-8".to_string())
-                .map(|s| s.to_string())
-        })
+    let cwd = env::current_dir()
+        .map_err(|e| format!("Failed to get project root: {}", e))?;
+
+    // If CWD is src-tauri/, pop to parent (project root).
+    // Under `tauri dev`, Rust process CWD is src-tauri/; otherwise it's already the root.
+    let root = if cwd.file_name()
+        .and_then(|name| name.to_str())
+        .map(|s| s == "src-tauri")
+        .unwrap_or(false)
+    {
+        cwd.parent()
+            .map(|p| p.to_path_buf())
+            .ok_or_else(|| "src-tauri parent is invalid".to_string())?
+    } else {
+        cwd
+    };
+
+    root.to_str()
+        .map(|s| s.to_string())
+        .ok_or_else(|| "Project root path is not valid UTF-8".to_string())
 }
 
 #[tauri::command]

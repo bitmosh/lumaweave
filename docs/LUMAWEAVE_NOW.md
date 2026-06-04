@@ -21,7 +21,7 @@ tags: [live-state, now, canonical, v105]
 
 **The single live-state doc.** This is the only doc that changes every pass and the only one that carries a date. Everything here is volatile by design. Concepts and architecture live in the static domain docs (see `DOC_ARCHITECTURE.md`); history lives in the dev-blog / #changelog feed. This doc holds only: where we are, what's next, what's broken.
 
-**Updated:** 2026-06-04 · **Production version:** 0.11.0 · **Internal arc:** v105 (Code Spoke) · **Last pass:** v105.0.4
+**Updated:** 2026-06-04 · **Production version:** 0.11.0 · **Internal arc:** v105 (Code Spoke) · **Last pass:** v105.0.5
 
 ---
 
@@ -36,6 +36,7 @@ Rename IDE spoke → Code spoke, enrich provenance into an "origin story" (regis
 | v105.0.2 | E2E reconciliation: stale tests updated (spoke rename, pill removal, migration chain); flaky physics/timing quarantined (test.fixme); 26→9 failures; 3 real regressions flagged (history spoke override-display broken — seeding via __lwThemeOverrideStorage not surfacing in HistoryTab, likely targetId mismatch after new topbar subtargets) | `130c9c3` |
 | v105.0.3 | History spoke regression FIXED — course correction: replace useState-mirror with useSyncExternalStore (matches useResolvedTargetColor pattern). Root cause: useState([]) + useEffect race left first render empty. Fix: derive overrides synchronously in render (lw:override-change fires snapshot change → re-derive). All 7 specs pass (override visible on open, live-updates on reset). Diagnostic logs removed (10 scaffolding tags verified clean). | `e4906ea` |
 | v105.0.4 | Open-in-IDE fixed (hybrid approach): Rust adds get_project_root() command (returns CWD); frontend caches root + resolves relative→absolute paths before buildEditorUrl (keeps URL logic in TS, one source). Relative paths stay portable in manifest, absolute at runtime. Error visibility: catch {} → console.error. Editor picker UI added to debug popover (select for developer.preferredEditor, 10 editors + custom). All paths now absolute. | `34c2860` |
+| v105.0.5 | get_project_root CWD fix: under tauri dev, Rust process CWD is src-tauri/ (not project root). Fix: detect "src-tauri" component, pop to parent if present. Result: absolute paths now correct (/home/boop/Projects/lumaweave/src/..., not .../src-tauri/src/...). Portable (derives dynamically, no hardcoded paths). Rust compiles. Manual smoke: open-in-IDE now opens correct files at correct lines. | `TBD` |
 
 ---
 
