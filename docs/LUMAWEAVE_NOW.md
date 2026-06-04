@@ -21,7 +21,7 @@ tags: [live-state, now, canonical, v105]
 
 **The single live-state doc.** This is the only doc that changes every pass and the only one that carries a date. Everything here is volatile by design. Concepts and architecture live in the static domain docs (see `DOC_ARCHITECTURE.md`); history lives in the dev-blog / #changelog feed. This doc holds only: where we are, what's next, what's broken.
 
-**Updated:** 2026-06-03 · **Production version:** 0.11.0 · **Internal arc:** v105 (Code Spoke) · **Last pass:** v105.0.0
+**Updated:** 2026-06-04 · **Production version:** 0.11.0 · **Internal arc:** v105 (Code Spoke) · **Last pass:** v105.0.3
 
 ---
 
@@ -34,6 +34,7 @@ Rename IDE spoke → Code spoke, enrich provenance into an "origin story" (regis
 | v105.0.0 | Provenance manifest sync: 4 minimap targets (minimap.root/header/footer/viewport-rect) added; 3 topbar targets (statusCluster, statusPill, wordmark) also picked up; parity spec GREEN (18 entries); arc baseline established | `ba85948` |
 | v105.0.1 | Merge IDE spoke → Code spoke: registerIdeSpoke.ts deleted, registerCodeSpoke.ts now the real feature (CodeTab, order 5, </> icon); placeholder Code spoke removed; i18n "ide" block merged into "code"; 9→8 spokes; graph node-type "code" fence held; manual smoke required | `1808f62` |
 | v105.0.2 | E2E reconciliation: stale tests updated (spoke rename, pill removal, migration chain); flaky physics/timing quarantined (test.fixme); 26→9 failures; 3 real regressions flagged (history spoke override-display broken — seeding via __lwThemeOverrideStorage not surfacing in HistoryTab, likely targetId mismatch after new topbar subtargets) | `130c9c3` |
+| v105.0.3 | History spoke regression fix — root cause: HistoryTab useState([]) initialized before useEffect ran, first render always empty. Fix: lazy-init state with useState(() => getTargetOverrides(...)) so data loads synchronously. All 7 history spoke E2E tests pass. Diagnostic logging removed (ThemeTargetInspectorOverlay, SpokeNode, MiniGraphRenderer, themeOverrideStorage). | `d921c41` |
 
 ---
 
