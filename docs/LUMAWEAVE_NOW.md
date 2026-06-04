@@ -14,20 +14,28 @@ references:
   - domain.control.plane.system.index
   - domain.tile.layout.workspace
   - domain.deferred.post.v1.vision
-tags: [live-state, now, canonical, v105]
+tags: [live-state, now, canonical, v106-planned]
 ---
 
 # LumaWeave — NOW
 
 **The single live-state doc.** This is the only doc that changes every pass and the only one that carries a date. Everything here is volatile by design. Concepts and architecture live in the static domain docs (see `DOC_ARCHITECTURE.md`); history lives in the dev-blog / #changelog feed. This doc holds only: where we are, what's next, what's broken.
 
-**Updated:** 2026-06-04 · **Production version:** 0.11.0 · **Internal arc:** v105 (Code Spoke) · **Last pass:** v105.0.5
+**Updated:** 2026-06-04 · **Production version:** 0.12.0 · **Internal arc:** v106 (Radial Redesign — pending) · **Last closed:** v105 (Code Spoke)
 
 ---
 
-## Current arc — v105: Code Spoke
+## Closed arc — v105: Code Spoke — CLOSED (0.11.0 → 0.12.0)
 
-Rename IDE spoke → Code spoke, enrich provenance into an "origin story" (registration site, token bindings, cross-file reference list), baseline established by syncing provenance manifest.
+Rename IDE spoke → Code spoke, establish baseline with provenance-manifest sync, fix regressions (history spoke + open-in-IDE), reconcile E2E suite. Spoke is **functional and demoable** (inspect → Code spoke → source code display + snippet highlighting + file:line preview + "Open in editor" → VS Code with correct path & line). Enrichments (registration site, token bindings, cross-file reference list) **deferred to post-radial-redesign** — the enrichment UI should be built into the new radial wheel design, not the current one.
+
+**Landed state (verified audit):**
+- Code spoke merged: registerCodeSpoke exists, id="code"; registerIdeSpoke.ts deleted; 8 spokes total; no orphaned "ide" label/i18n.
+- Resolver: validates registration (walks to nearest REGISTERED target).
+- Topbar subtargets: all 3 (wordmark/statusPill/statusCluster) registered + inspectable + parent display working.
+- HistoryTab: derives overrides via useSyncExternalStore (matches useResolvedTargetColor pattern), no useState-mirror race.
+- Open-in-IDE: get_project_root pops src-tauri CWD to project root; listener resolves relative→absolute + builds URL; error visibility (console.error); editor picker UI (10 editors + custom).
+- No diagnostic console.logs remain. E2E baseline maintained (v105.0.2 reconciled: only quarantined flaky + pre-existing skips; open-in-IDE manual-smoke-only, Tauri invoke no-ops in Playwright).
 
 | Pass | Work | Commit |
 |---|---|---|
@@ -37,6 +45,17 @@ Rename IDE spoke → Code spoke, enrich provenance into an "origin story" (regis
 | v105.0.3 | History spoke regression FIXED — course correction: replace useState-mirror with useSyncExternalStore (matches useResolvedTargetColor pattern). Root cause: useState([]) + useEffect race left first render empty. Fix: derive overrides synchronously in render (lw:override-change fires snapshot change → re-derive). All 7 specs pass (override visible on open, live-updates on reset). Diagnostic logs removed (10 scaffolding tags verified clean). | `e4906ea` |
 | v105.0.4 | Open-in-IDE fixed (hybrid approach): Rust adds get_project_root() command (returns CWD); frontend caches root + resolves relative→absolute paths before buildEditorUrl (keeps URL logic in TS, one source). Relative paths stay portable in manifest, absolute at runtime. Error visibility: catch {} → console.error. Editor picker UI added to debug popover (select for developer.preferredEditor, 10 editors + custom). All paths now absolute. | `34c2860` |
 | v105.0.5 | get_project_root CWD fix: under tauri dev, Rust process CWD is src-tauri/ (not project root). Fix: detect "src-tauri" component, pop to parent if present. Result: absolute paths now correct (/home/boop/Projects/lumaweave/src/..., not .../src-tauri/src/...). Portable (derives dynamically, no hardcoded paths). Rust compiles. Manual smoke: open-in-IDE now opens correct files at correct lines. | `4d00dc5` |
+
+**Arc closed** — v105 closer: 0.11.0 → 0.12.0 · 2026-06-04. Next: radial wheel visual redesign (v106 — pending).
+
+**Deferred (post-radial-redesign):**
+- **Code spoke enrichments:** registration site (LOW), token bindings (LOW — already inline in registry metadata), cross-file reference list (MEDIUM — multi-select files + line-ranges → open in IDE; needs source-adapter ref-grep).
+
+**Standing deferred items (not lost):**
+- Minimap E2E coverage (test debt — snapshot/nav/rect correctness not automated).
+- Inspectable-Coverage + Token-Hygiene arc (css-handle-report findings: --lw-glow silent failure, orphaned CSS vars, --lw-visual-* static layer, typography vars disconnected, minimap hardcoded node/edge colors, AppShell vars on \<main\> not :root).
+- Tile-content theming + token coverage.
+- 5 mis-homed tile sections → settings advanced-tabs relocation.
 
 ---
 
