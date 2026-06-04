@@ -118,15 +118,13 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
     await expect(page.locator('[data-lw-theme-target="settings.panel"]').first()).toBeVisible({ timeout: 5000 });
   });
 
+  // v104.0.2: the floating HUD pill (theme-target-inspector-toggle-state) was removed.
+  // Tests below no longer assert on the pill indicator — only on overlay functionality.
   test("inspector overlay toggles via hotkey and shows metadata", async ({ page }) => {
     await page.goto("/");
     await openQaPanel(page);
 
-    const toggleIndicator = page.getByTestId(OVERLAY_TOGGLE);
-    await expect(toggleIndicator).toContainText("OFF");
-
     await page.keyboard.press("Alt+Shift+I");
-    await expect(toggleIndicator).toContainText("ON");
 
     const missionControlPanel = page.locator('[data-lw-theme-target="mission-control.panel"]').first();
     await missionControlPanel.hover();
@@ -142,7 +140,6 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
 
     // Toggle off to ensure overlay hides cleanly
     await page.keyboard.press("Alt+Shift+I");
-    await expect(toggleIndicator).toContainText("OFF");
     await expect(page.getByTestId("theme-target-inspector-panel")).toHaveCount(0);
     await expect(page.getByTestId("theme-target-inspector-tooltip")).toHaveCount(0);
   });
@@ -150,10 +147,7 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
   test("overlay can toggle off even if focus is inside Mission Control note", async ({ page }) => {
     await page.goto("/");
     await openQaPanel(page);
-    const toggleIndicator = page.getByTestId(OVERLAY_TOGGLE);
-    await expect(toggleIndicator).toContainText("OFF");
     await page.keyboard.press("Alt+Shift+I");
-    await expect(toggleIndicator).toContainText("ON");
 
     const missionControlPanel = page.locator('[data-lw-theme-target="mission-control.panel"]').first();
     await missionControlPanel.hover();
@@ -166,7 +160,6 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
     }
 
     await page.keyboard.press("Alt+Shift+I");
-    await expect(toggleIndicator).toContainText("OFF");
     await expect(page.getByTestId("theme-target-inspector-panel")).toHaveCount(0);
     await expect(page.getByTestId("theme-target-inspector-tooltip")).toHaveCount(0);
   });
@@ -174,10 +167,7 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
   test("fixed metadata panel collapses when cursor leaves registered targets", async ({ page }) => {
     await page.goto("/");
     await openQaPanel(page);
-    const toggleIndicator = page.getByTestId(OVERLAY_TOGGLE);
-    await expect(toggleIndicator).toContainText("OFF");
     await page.keyboard.press("Alt+Shift+I");
-    await expect(toggleIndicator).toContainText("ON");
 
     const missionControlPanel = page.locator('[data-lw-theme-target="mission-control.panel"]').first();
     await missionControlPanel.hover();
@@ -233,14 +223,11 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
 
     const debugToggleState = page.getByTestId("theme-inspector-toggle-state");
     const controlButton = page.getByTestId("theme-inspector-toggle-button");
-    const hudIndicator = page.getByTestId(OVERLAY_TOGGLE);
 
     await expect(debugToggleState).toContainText("OFF");
-    await expect(hudIndicator).toContainText("OFF");
 
     await controlButton.click();
     await expect(debugToggleState).toContainText("ON");
-    await expect(hudIndicator).toContainText("ON");
 
     const missionControlPanel = page.locator('[data-lw-theme-target="mission-control.panel"]').first();
     await missionControlPanel.hover();
@@ -249,7 +236,6 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
     await controlButton.click();
     await expect(debugToggleState).toContainText("OFF");
     await expect(page.getByTestId("theme-target-inspector-panel")).toHaveCount(0);
-    await expect(hudIndicator).toContainText("OFF");
   });
 
   test("ghost overlay appears only when inspector is enabled", async ({ page }) => {

@@ -37,8 +37,8 @@ test.describe("settings migration chain", () => {
     // Run full migration chain
     const result = migrateSettings(v76);
 
-    // Verify version is current (v88 after glitter→animation rename)
-    expect(result.version).toBe(88);
+    // Verify version is current (v90: v88 glitter→animation, v89 tile docking, v90 minimap)
+    expect(result.version).toBe(90);
 
     // Verify v80/v88 fields are present (v86b additions, v88 rename)
     expect((result.appearance as any).animationDensity).toBe("medium");

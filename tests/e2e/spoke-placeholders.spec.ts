@@ -1,6 +1,8 @@
 import { test, expect } from "@playwright/test";
 import { openInspectorOnTopbar } from "./helpers/inspector";
 
+// v105.0.1: "code" spoke is no longer a placeholder — it's the real Code spoke (active).
+// The entry was removed; only the remaining placeholder spokes are listed here.
 const PLACEHOLDER_CONFIG = [
   {
     id: "type",
@@ -16,11 +18,6 @@ const PLACEHOLDER_CONFIG = [
   {
     id: "layout",
     message: "Coming in v93 (Physics Dialect arc)",
-    hasIntendedPaths: false,
-  },
-  {
-    id: "code",
-    message: "Coming in v98 (Code Spoke arc)",
     hasIntendedPaths: false,
   },
 ];
