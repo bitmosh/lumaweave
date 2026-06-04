@@ -33,7 +33,7 @@ Rename IDE spoke → Code spoke, enrich provenance into an "origin story" (regis
 |---|---|---|
 | v105.0.0 | Provenance manifest sync: 4 minimap targets (minimap.root/header/footer/viewport-rect) added; 3 topbar targets (statusCluster, statusPill, wordmark) also picked up; parity spec GREEN (18 entries); arc baseline established | `ba85948` |
 | v105.0.1 | Merge IDE spoke → Code spoke: registerIdeSpoke.ts deleted, registerCodeSpoke.ts now the real feature (CodeTab, order 5, </> icon); placeholder Code spoke removed; i18n "ide" block merged into "code"; 9→8 spokes; graph node-type "code" fence held; manual smoke required | `1808f62` |
-| v105.0.2 | E2E reconciliation: stale tests updated (spoke rename, pill removal, migration chain); flaky physics/timing quarantined (test.fixme); 26→9 failures; 3 real regressions flagged (history spoke override-display broken — seeding via __lwThemeOverrideStorage not surfacing in HistoryTab, likely targetId mismatch after new topbar subtargets) | in-progress |
+| v105.0.2 | E2E reconciliation: stale tests updated (spoke rename, pill removal, migration chain); flaky physics/timing quarantined (test.fixme); 26→9 failures; 3 real regressions flagged (history spoke override-display broken — seeding via __lwThemeOverrideStorage not surfacing in HistoryTab, likely targetId mismatch after new topbar subtargets) | `130c9c3` |
 
 ---
 
