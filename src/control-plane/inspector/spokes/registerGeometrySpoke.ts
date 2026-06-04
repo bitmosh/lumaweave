@@ -10,7 +10,7 @@ export function registerGeometrySpoke(): void {
     enabled: true,
     order: 1,
     status: "active",
-    icon: "◉",
+    iconPath: "M12 3l8 9-8 9-8-9z",
     color: "inspector.radial.spokeColor",
     intendedTokenPaths: ["node.geometry.preset"],
     tabComponent: GeometryTab,

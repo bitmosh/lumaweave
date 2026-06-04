@@ -17,6 +17,11 @@ export function InspectorMiniGraph() {
   const [targetDescriptor, setTargetDescriptor] = useState<TargetDescriptor | null>(null);
   const [spokes, setSpokes] = useState<InspectorSpoke[]>([]);
 
+  const animationsActive = useSettingsStore(
+    (state) =>
+      state.settings.appearance.animationEnabled && !state.settings.appearance.reduceMotion,
+  );
+
   // Subscribe to spoke registry changes
   useEffect(() => {
     const unsubscribe = inspectorSpokeRegistry.subscribe((entries) => {
@@ -113,6 +118,7 @@ export function InspectorMiniGraph() {
       anchorX={targetDescriptor.anchorX}
       anchorY={targetDescriptor.anchorY}
       spokes={spokes}
+      animationsActive={animationsActive}
       onClose={handleClose}
       targetDescriptor={targetDescriptor}
     />

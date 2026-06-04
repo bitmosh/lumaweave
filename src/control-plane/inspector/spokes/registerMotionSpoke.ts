@@ -10,7 +10,7 @@ export function registerMotionSpoke(): void {
     enabled: true,
     order: 3,
     status: "placeholder",
-    icon: "◌",
+    iconPath: "M3 16c3 0 3-8 6-8s3 8 6 8 3-8 6-8",
     color: "inspector.radial.spokeColor",
     intendedTokenPaths: ["motion.reduce"],
     placeholderMessage: "Coming in v92 (Audio Reactivity arc)",

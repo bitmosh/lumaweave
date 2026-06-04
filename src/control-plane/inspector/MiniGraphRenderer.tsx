@@ -1,32 +1,44 @@
 /**
- * Mini Graph Renderer
+ * Mini Graph Renderer (bb-design)
  *
- * SVG-based inspector radial. Renders root node + spoke nodes with physics.
- * ~30-line rAF physics tick: gravity to root + repulsion from siblings + damping.
+ * HTML div-based radial inspector. 320×320 stage, spokes positioned by CSS,
+ * animated decorative rings, submenu panel alongside the ring (no physics).
+ * Spokes are placed by sorted array index — immune to gaps in order values.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import type { InspectorSpoke } from "../../themes/inspectorSpokeRegistry";
 import type { TargetDescriptor } from "./inspector.types";
-import { t } from "../../i18n";
-import { RootNode } from "./RootNode";
-import { SpokeNode } from "./SpokeNode";
 
-// Physics constants
-const RADIUS = 70;
-const SPRING_K = 0.02;
-const REPULSION_RADIUS = 60;
-const REPULSION_K = 80;
-const DAMPING = 0.85;
-const VELOCITY_THRESHOLD = 0.5;
+const STAGE = 320;
+const CENTER = STAGE / 2;
+const RING_R = 118;
+const RING_BTN = 60;
+const SUB_OFFSET = 47;
+const SUBMENU_W = 240;
+const SUBMENU_MAX_H = 320;
+const VP_MARGIN = 8;
+// Keeps the ring center below the topbar chrome (~44px) so top spokes never spawn behind it.
+const TOPBAR_H = 44;
 
-interface SpokePosition {
-  id: string;
-  label: string;
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
+const angleFor = (index: number, total: number) => (index / total) * 360 - 90;
+
+function SpokeIcon({ spoke, size = 18 }: { spoke: InspectorSpoke; size?: number }) {
+  if (!spoke.iconPath) return null;
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill={spoke.iconFill ? "currentColor" : "none"}
+      stroke="currentColor"
+      strokeWidth={1.7}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d={spoke.iconPath} />
+    </svg>
+  );
 }
 
 interface MiniGraphRendererProps {
@@ -34,6 +46,7 @@ interface MiniGraphRendererProps {
   anchorX: number;
   anchorY: number;
   spokes: InspectorSpoke[];
+  animationsActive: boolean;
   onClose?: () => void;
   targetDescriptor?: TargetDescriptor;
 }
@@ -43,225 +56,202 @@ export function MiniGraphRenderer({
   anchorX,
   anchorY,
   spokes,
+  animationsActive,
   onClose,
   targetDescriptor,
 }: MiniGraphRendererProps) {
-  // Clamp anchor so the 320×320 SVG container stays within the viewport.
-  // Computed before hooks so effects and display both use the same origin.
-  const svgSize = 320;
-  const clampedAnchorX = Math.max(svgSize / 2, Math.min(window.innerWidth - svgSize / 2, anchorX));
-  const clampedAnchorY = Math.max(svgSize / 2, Math.min(window.innerHeight - svgSize / 2, anchorY));
+  const clampedX = Math.max(STAGE / 2, Math.min(window.innerWidth - STAGE / 2, anchorX));
+  const clampedY = Math.max(STAGE / 2 + TOPBAR_H, Math.min(window.innerHeight - STAGE / 2, anchorY));
 
-  const [spokePositions, setSpokePositions] = useState<SpokePosition[]>([]);
-  const [expandedSpokeId, setExpandedSpokeId] = useState<string | null>(null);
-  const rafId = useRef<number | null>(null);
-  const positionsRef = useRef<SpokePosition[]>([]);
+  const [activeSpokeId, setActiveSpokeId] = useState<string | null>(null);
 
-  // Initialize spoke positions in a circle around the clamped anchor
-  useEffect(() => {
-    const positions: SpokePosition[] = [];
+  const activeSpokeIndex = activeSpokeId ? spokes.findIndex((s) => s.id === activeSpokeId) : -1;
+  const activeSpoke = activeSpokeIndex >= 0 ? spokes[activeSpokeIndex] : null;
+  const TabComponent = activeSpoke?.tabComponent ?? null;
+  const ringSpinning = animationsActive && !activeSpoke;
 
-    if (spokes.length > 0) {
-      // Use registered spokes
-      spokes.forEach((spoke, i) => {
-        const angle = (2 * Math.PI * i) / spokes.length;
-        positions.push({
-          id: spoke.id,
-          label: t(`inspector.spokes.${spoke.id}.label`),
-          x: clampedAnchorX + RADIUS * Math.cos(angle),
-          y: clampedAnchorY + RADIUS * Math.sin(angle),
-          vx: 0,
-          vy: 0,
-        });
-      });
+  const handleStageClick = (e: React.MouseEvent) => {
+    const t = e.target as HTMLElement;
+    if (
+      t.closest(".lw-radial-spoke") ||
+      t.closest(".lw-radial-submenu") ||
+      t.closest(".lw-radial-center")
+    )
+      return;
+    if (activeSpokeId) {
+      setActiveSpokeId(null);
     } else {
-      // 4 placeholder slots: 0°, 90°, 180°, 270°
-      [0, 90, 180, 270].forEach((angle, i) => {
-        const rad = (angle * Math.PI) / 180;
-        positions.push({
-          id: `placeholder-${i}`,
-          label: "",
-          x: clampedAnchorX + RADIUS * Math.cos(rad),
-          y: clampedAnchorY + RADIUS * Math.sin(rad),
-          vx: 0,
-          vy: 0,
-        });
-      });
+      onClose?.();
     }
+  };
 
-    positionsRef.current = positions;
-    setSpokePositions(positions);
-  }, [spokes, clampedAnchorX, clampedAnchorY]);
-
-  // Physics tick
-  useEffect(() => {
-    if (spokePositions.length === 0) return;
-
-    const tick = () => {
-      const positions = positionsRef.current;
-      let totalMovement = 0;
-
-      for (let i = 0; i < positions.length; i++) {
-        const spoke = positions[i];
-
-        // Attraction to root (gravity + spring) — use clamped origin
-        const dx = clampedAnchorX - spoke.x;
-        const dy = clampedAnchorY - spoke.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const targetDist = RADIUS;
-
-        if (dist > 0.01) {
-          const springForce = (dist - targetDist) * SPRING_K;
-          spoke.vx += (dx / dist) * springForce;
-          spoke.vy += (dy / dist) * springForce;
-        }
-
-        // Repulsion from other spokes
-        for (let j = 0; j < positions.length; j++) {
-          if (i === j) continue;
-          const other = positions[j];
-          const odx = spoke.x - other.x;
-          const ody = spoke.y - other.y;
-          const odist = Math.sqrt(odx * odx + ody * ody);
-
-          if (odist < REPULSION_RADIUS && odist > 0.01) {
-            const force = REPULSION_K / (odist * odist);
-            spoke.vx += (odx / odist) * force;
-            spoke.vy += (ody / odist) * force;
-          }
-        }
-
-        // Damping
-        spoke.vx *= DAMPING;
-        spoke.vy *= DAMPING;
-
-        // Integrate
-        spoke.x += spoke.vx;
-        spoke.y += spoke.vy;
-
-        totalMovement += Math.abs(spoke.vx) + Math.abs(spoke.vy);
-      }
-
-      setSpokePositions([...positions]);
-
-      // Continue if movement exceeds threshold
-      if (totalMovement > VELOCITY_THRESHOLD) {
-        rafId.current = requestAnimationFrame(tick);
-      } else {
-        rafId.current = null;
-      }
-    };
-
-    rafId.current = requestAnimationFrame(tick);
-
-    return () => {
-      if (rafId.current) {
-        cancelAnimationFrame(rafId.current);
-      }
-    };
-  }, [clampedAnchorX, clampedAnchorY, spokePositions.length]);
-
-  const svgLeft = clampedAnchorX - svgSize / 2;
-  const svgTop = clampedAnchorY - svgSize / 2;
-
-  // Convert page coordinates to SVG viewBox coordinates (relative to SVG's position)
-  const anchorXInView = clampedAnchorX - svgLeft;
-  const anchorYInView = clampedAnchorY - svgTop;
-
-  // Get expanded spoke if any
-  const expandedSpoke = expandedSpokeId ? spokes.find((s) => s.id === expandedSpokeId) : null;
-  const TabComponent = expandedSpoke?.tabComponent;
-
-  // If a spoke is expanded and has a tab component, show it
-  if (expandedSpokeId && TabComponent && targetDescriptor) {
-    return (
-      <div
-        data-testid="inspector-mini-graph"
-        className="inspector-mini-graph-tab"
-        style={{
-          position: "fixed",
-          left: svgLeft,
-          top: svgTop,
-          width: svgSize,
-          height: svgSize,
-          zIndex: 80,
-          pointerEvents: "auto",
-          overflow: "auto",
-        }}
-      >
-        <TabComponent
-          targetDescriptor={targetDescriptor}
-          onClose={() => setExpandedSpokeId(null)}
-        />
-      </div>
-    );
-  }
-
-  // Ring view (default)
   return (
-    <svg
+    <div
       data-testid="inspector-mini-graph"
-      className="inspector-mini-graph"
       style={{
         position: "fixed",
-        left: svgLeft,
-        top: svgTop,
-        width: svgSize,
-        height: svgSize,
-        zIndex: 80,
+        left: clampedX - STAGE / 2,
+        top: clampedY - STAGE / 2,
+        width: STAGE,
+        height: STAGE,
+        zIndex: 1100,
         pointerEvents: "auto",
+        background: [
+          "radial-gradient(circle at 50% 45%, color-mix(in oklab, var(--lw-color-magenta-500) 18%, transparent), transparent 52%)",
+          "radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--lw-color-purple-500) 14%, transparent), transparent 62%)",
+          "radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--lw-app-background, #0b0416) 42%, transparent) 0%, transparent 72%)",
+        ].join(", "),
       }}
-      viewBox={`0 0 ${svgSize} ${svgSize}`}
-      onClick={(e) => {
-        // Clicking outside SVG content closes
-        if (e.target === e.currentTarget && onClose) {
-          onClose();
-        }
-      }}
+      onClick={handleStageClick}
     >
-      {/* Spokes lines from root to each spoke */}
-      {spokePositions.map((spoke) => (
-        <line
-          key={`line-${spoke.id}`}
-          x1={anchorXInView}
-          y1={anchorYInView}
-          x2={spoke.x - svgLeft}
-          y2={spoke.y - svgTop}
-          stroke="rgba(255, 179, 71, 0.3)"
-          strokeWidth="1"
-          pointerEvents="none"
-        />
-      ))}
+      <div className="lw-radial-stage" style={{ width: STAGE, height: STAGE }}>
+        {/* Decorative rings + crosshairs */}
+        <svg
+          className={"lw-radial-rings" + (ringSpinning ? " is-spinning" : "")}
+          width={STAGE}
+          height={STAGE}
+          viewBox={`0 0 ${STAGE} ${STAGE}`}
+        >
+          <g stroke="var(--lw-accent)" strokeWidth="1" fill="none">
+            <circle cx={CENTER} cy={CENTER} r={RING_R} strokeDasharray="3 6" opacity="0.55" />
+            <circle cx={CENTER} cy={CENTER} r={RING_R - 8} strokeDasharray="2 8" opacity="0.35" />
+            {[0, 90, 180, 270].map((deg) => {
+              const a = (deg * Math.PI) / 180;
+              const r1 = 25, r2 = 42;
+              return (
+                <line
+                  key={deg}
+                  x1={CENTER + r1 * Math.cos(a)}
+                  y1={CENTER + r1 * Math.sin(a)}
+                  x2={CENTER + r2 * Math.cos(a)}
+                  y2={CENTER + r2 * Math.sin(a)}
+                  strokeDasharray="2 3"
+                  opacity="0.55"
+                />
+              );
+            })}
+          </g>
+        </svg>
 
-      {/* Root node */}
-      <RootNode
-        label={targetLabel}
-        x={anchorXInView}
-        y={anchorYInView}
-        radius={20}
-      />
+        {/* Center button */}
+        <button
+          type="button"
+          className={"lw-radial-center" + (activeSpoke ? " is-active" : "")}
+          aria-label={activeSpoke ? "Close" : targetLabel}
+          title={activeSpoke ? "Close" : "Click any spoke"}
+          onClick={() => (activeSpoke ? setActiveSpokeId(null) : onClose?.())}
+          style={{ left: CENTER, top: CENTER }}
+        >
+          {activeSpoke ? (
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+            >
+              <line x1="4" y1="4" x2="12" y2="12" />
+              <line x1="12" y1="4" x2="4" y2="12" />
+            </svg>
+          ) : (
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            >
+              <circle cx="8" cy="8" r="2.4" fill="currentColor" />
+            </svg>
+          )}
+        </button>
 
-      {/* Spoke nodes */}
-      {spokePositions.map((spoke) => {
-        const spokeEntry = spokes.find((s) => s.id === spoke.id);
-        const isPlaceholder = spokeEntry?.status === "placeholder";
-        return (
-          <SpokeNode
-            key={`spoke-${spoke.id}`}
-            spokeId={spoke.id}
-            label={spoke.label}
-            x={spoke.x - svgLeft}
-            y={spoke.y - svgTop}
-            radius={14}
-            isPlaceholder={isPlaceholder}
-            onClick={() => {
-              if (!spoke.id.startsWith("placeholder")) {
-                setExpandedSpokeId(spoke.id);
+        {/* Spoke buttons — indexed for even spacing regardless of order gaps */}
+        {spokes.map((spoke, index) => {
+          const isOpen = spoke.id === activeSpokeId;
+          const isDim = !!activeSpoke && !isOpen;
+          const a = (angleFor(index, spokes.length) * Math.PI) / 180;
+          const x = CENTER + RING_R * Math.cos(a);
+          const y = CENTER + RING_R * Math.sin(a);
+
+          return (
+            <button
+              type="button"
+              key={spoke.id}
+              data-spoke-id={spoke.id}
+              data-lw-theme-target="inspector.spoke"
+              data-placeholder={spoke.status === "placeholder" ? "true" : undefined}
+              className={
+                "lw-radial-spoke" +
+                (isOpen ? " is-open" : "") +
+                (isDim ? " is-dim" : "") +
+                (spoke.status === "beta" ? " is-beta" : "") +
+                (spoke.status === "placeholder" ? " is-placeholder" : "")
               }
-            }}
-          />
-        );
-      })}
-    </svg>
+              style={{ left: x, top: y, width: RING_BTN, height: RING_BTN }}
+              onClick={() => setActiveSpokeId(isOpen ? null : spoke.id)}
+              title={(spoke.label ?? spoke.name) + (spoke.status === "beta" ? " · beta" : "")}
+            >
+              <SpokeIcon spoke={spoke} />
+              <span className="lw-radial-spoke-label">{spoke.label ?? spoke.name}</span>
+              {spoke.status === "beta" && <span className="lw-radial-spoke-tag">β</span>}
+            </button>
+          );
+        })}
+
+        {/* Submenu panel — viewport-clamped, no transform */}
+        {activeSpoke && TabComponent && targetDescriptor && (() => {
+          const a = (angleFor(activeSpokeIndex, spokes.length) * Math.PI) / 180;
+          const cosA = Math.cos(a);
+          const sinA = Math.sin(a);
+          const containerLeft = clampedX - STAGE / 2;
+          const containerTop = clampedY - STAGE / 2;
+
+          // Anchor point in viewport coords — SUB_OFFSET outward from the spoke center
+          const anchorVx = containerLeft + CENTER + (RING_R + SUB_OFFSET) * cosA;
+          const anchorVy = containerTop + CENTER + (RING_R + SUB_OFFSET) * sinA;
+
+          // Desired viewport left/top: align the near edge of the submenu with the anchor
+          const desiredLeft = anchorVx + ((-50 + cosA * 50) / 100) * SUBMENU_W;
+          const desiredTop = anchorVy + ((-50 + sinA * 50) / 100) * SUBMENU_MAX_H;
+
+          // Clamp to viewport
+          let subLeft = Math.max(VP_MARGIN, Math.min(window.innerWidth - SUBMENU_W - VP_MARGIN, desiredLeft));
+          let subTop = Math.max(VP_MARGIN, Math.min(window.innerHeight - SUBMENU_MAX_H - VP_MARGIN, desiredTop));
+
+          // Spoke clearance: if clamping pushed the submenu back over the active spoke button, nudge it below
+          const spokeVy = containerTop + CENTER + RING_R * sinA;
+          const spokeClearBot = spokeVy + RING_BTN / 2 + 6;
+          if (subTop < spokeClearBot) {
+            subTop = Math.min(window.innerHeight - SUBMENU_MAX_H - VP_MARGIN, spokeClearBot);
+          }
+
+          return (
+            <div
+              className="lw-radial-submenu"
+              style={{
+                left: subLeft - containerLeft,
+                top: subTop - containerTop,
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="lw-radial-submenu-head">
+                <SpokeIcon spoke={activeSpoke} size={13} />
+                <span>{activeSpoke.label ?? activeSpoke.name}</span>
+              </div>
+              <div className="lw-radial-submenu-body">
+                <TabComponent
+                  targetDescriptor={targetDescriptor}
+                  onClose={() => setActiveSpokeId(null)}
+                />
+              </div>
+            </div>
+          );
+        })()}
+      </div>
+    </div>
   );
 }

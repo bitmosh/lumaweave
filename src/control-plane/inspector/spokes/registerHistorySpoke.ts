@@ -8,8 +8,8 @@ export function registerHistorySpoke(): void {
     label: "History",
     category: "appearance",
     enabled: true,
-    order: 8,
-    icon: "🕐",
+    order: 7,
+    iconPath: "M3 12a9 9 0 1 1 3 6.7M3 19v-6h6M12 7v5l4 2",
     color: "inspector.radial.spokeColor",
     tabComponent: HistoryTab,
   });

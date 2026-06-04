@@ -7,32 +7,29 @@
  * Hybrid shape (v86a fields + v86d packet requirements).
  */
 
-import type { ReactNode, ComponentType } from "react";
+import type { ComponentType } from "react";
 import type { RegistryContract } from "./registryContract.types";
 import type { TargetDescriptor } from "../control-plane/inspector/inspector.types";
 
 export interface InspectorSpoke {
-  // v86a fields
   id: string;
   name: string;
-  description?: string;
-  category: string; // "geometry", "type", "motion", "layout", etc.
+  category: string;
   enabled: boolean;
   order: number;
 
-  // v86d packet fields
-  label?: string; // display label for radial; falls back to name
-  icon?: string; // optional icon/unicode
-  color?: string; // spoke node color; defaults to theme token
-  parentSpokeId?: string; // null for root spokes; non-null for child spokes
-  action?: () => void; // for terminal spokes (e.g., "Open in IDE")
-  tabContent?: () => ReactNode; // for spokes that open a tab
-  tabComponent?: ComponentType<{ targetDescriptor: TargetDescriptor; onClose?: () => void }>; // v86d.3a+: tab component with props
+  label?: string;
+  color?: string;
+  tabComponent?: ComponentType<{ targetDescriptor: TargetDescriptor; onClose?: () => void }>;
 
   // v89.4: placeholder support
-  status?: "active" | "placeholder"; // defaults to "active" if omitted
+  status?: "active" | "placeholder" | "beta"; // defaults to "active" if omitted
   intendedTokenPaths?: readonly string[]; // declared target paths for placeholder spokes
   placeholderMessage?: string; // shown in PlaceholderTab when status is "placeholder"
+
+  // radial icon (bb-design)
+  iconPath?: string; // SVG path data for the spoke icon
+  iconFill?: boolean; // true = fill="currentColor", false/omitted = stroke only
 }
 
 class InspectorSpokeRegistry implements RegistryContract<InspectorSpoke, { category?: string }> {
