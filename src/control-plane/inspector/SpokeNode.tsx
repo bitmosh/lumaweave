@@ -32,12 +32,16 @@ export function SpokeNode({
   const nodeOpacity = isPlaceholder ? 0.4 : 0.7;
   const strokeOpacity = isPlaceholder ? 0.25 : 0.5;
 
+  const handleClick = () => {
+    onClick?.();
+  };
+
   return (
     <g
       data-lw-theme-target="inspector.spoke"
       data-spoke-id={spokeId}
       data-placeholder={isPlaceholder ? "true" : undefined}
-      onClick={onClick}
+      onClick={handleClick}
       style={{ cursor: isClickable ? "pointer" : "default" }}
     >
       {/* Spoke node circle */}

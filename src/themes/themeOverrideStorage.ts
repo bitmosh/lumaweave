@@ -491,7 +491,9 @@ export function removeTargetOverride(targetId: string, tokenPath: ThemeTokenPath
  */
 export function getTargetOverrides(targetId: string): ThemeOverride[] {
   const storage = loadOverrides();
-  return storage.overrides.filter((o) => o.scope.kind === "target" && o.scope.targetId === targetId);
+  const allOverrides = storage.overrides;
+  const matched = allOverrides.filter((o) => o.scope.kind === "target" && o.scope.targetId === targetId);
+  return matched;
 }
 
 /**

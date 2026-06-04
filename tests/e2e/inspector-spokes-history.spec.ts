@@ -13,7 +13,13 @@ test.describe("v86d.4 History spoke", () => {
   const clickHistorySpoke = async (page: any) => {
     await page.evaluate(() => {
       const el = document.querySelector('[data-spoke-id="history"]');
-      el?.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+      console.log("[CLICK] Found history spoke:", !!el, "element:", el?.getAttribute("data-spoke-id"));
+      if (el) {
+        el.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+        console.log("[CLICK] Dispatched click event on history spoke");
+      } else {
+        console.log("[CLICK] HISTORY SPOKE NOT FOUND in DOM!");
+      }
     });
   };
 
@@ -35,6 +41,8 @@ test.describe("v86d.4 History spoke", () => {
           tokenPath,
           "#FF6B1A",
         );
+        const stored = localStorage.getItem("lumaweave-theme-overrides");
+        console.log("[SEED] localStorage after setTargetOverride:", stored);
       },
       [TARGET_ID, TOKEN_PATH] as [string, string],
     );
@@ -58,12 +66,29 @@ test.describe("v86d.4 History spoke", () => {
   });
 
   test("history-tab shows override rows after seeding", async ({ page }) => {
+    const consoleLogs: string[] = [];
+    page.on("console", (msg) => {
+      const text = msg.text();
+      if (text.includes("[") && (text.includes("SEED") || text.includes("LOAD") || text.includes("GET_TARGET") || text.includes("RESOLVER") || text.includes("DIAGNOSTIC") || text.includes("CLICK") || text.includes("RADIAL") || text.includes("SPOKE") || text.includes("TAB_RENDER"))) {
+        consoleLogs.push(text);
+      }
+    });
+
     await page.goto("/");
     await page.waitForLoadState("networkidle");
     await seedOverride(page);
 
+    // Wait a moment for first radial render before clicking inspector
+    await page.waitForTimeout(100);
+
     await openInspectorOnTopbar(page);
+
+    // Wait for radial to render and logs to appear
+    await page.waitForTimeout(100);
+
     await clickHistorySpoke(page);
+
+    console.log("[TEST] All diagnostic logs:", JSON.stringify(consoleLogs, null, 2));
 
     await expect(page.locator('[data-testid="history-list"]')).toBeVisible();
     await expect(page.locator(`[data-testid="history-row-${TOKEN_PATH}"]`)).toBeVisible();
@@ -74,9 +99,16 @@ test.describe("v86d.4 History spoke", () => {
     await page.waitForLoadState("networkidle");
     await seedOverride(page);
 
+    await page.waitForTimeout(100);
+
     await openInspectorOnTopbar(page);
+
+    // Wait for radial to render
+    await page.waitForTimeout(100);
+
     await clickHistorySpoke(page);
 
+    await expect(page.locator('[data-testid="history-tab"]')).toBeVisible();
     await expect(page.locator(`[data-testid="reset-${TOKEN_PATH}"]`)).toBeVisible();
     await page.locator(`[data-testid="reset-${TOKEN_PATH}"]`).click();
 
@@ -98,9 +130,16 @@ test.describe("v86d.4 History spoke", () => {
       [TARGET_ID] as [string],
     );
 
+    await page.waitForTimeout(100);
+
     await openInspectorOnTopbar(page);
+
+    // Wait for radial to render
+    await page.waitForTimeout(100);
+
     await clickHistorySpoke(page);
 
+    await expect(page.locator('[data-testid="history-tab"]')).toBeVisible();
     await expect(page.locator('[data-testid="history-list"]')).toBeVisible();
     await page.locator('[data-testid="reset-all"]').click();
 

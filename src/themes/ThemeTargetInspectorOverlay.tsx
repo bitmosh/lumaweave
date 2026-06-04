@@ -206,7 +206,7 @@ export function ThemeTargetInspectorOverlay({ enabled, onEnabledChange }: ThemeT
       }
       if (current.matches(REGISTERED_TARGET_SELECTOR)) {
         const themeTargetId = current.getAttribute("data-lw-theme-target");
-        if (themeTargetId) {
+        if (themeTargetId && getThemeTargetById(themeTargetId)) {
           return {
             kind: "registered",
             themeTargetId,

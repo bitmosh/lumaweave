@@ -23,7 +23,9 @@ export interface HistoryTabProps {
 }
 
 export function HistoryTab({ targetDescriptor, onClose }: HistoryTabProps) {
-  const [overrides, setOverrides] = useState<ThemeOverride[]>([]);
+  const [overrides, setOverrides] = useState<ThemeOverride[]>(() =>
+    getTargetOverrides(targetDescriptor.targetId)
+  );
 
   const refresh = () => {
     setOverrides(getTargetOverrides(targetDescriptor.targetId));
