@@ -58,6 +58,41 @@ const THEME_TARGETS: ThemeTargetContract[] = [
     status: "active",
   },
   {
+    themeTargetId: "topbar.wordmark",
+    label: "Top Bar Wordmark",
+    surface: "topbar",
+    tokenBindings: {
+      text: "text.primary",
+      accent: "accent.primary",
+    },
+    editableProperties: ["text", "accent"],
+    status: "active",
+  },
+  {
+    themeTargetId: "topbar.statusPill",
+    label: "Top Bar Status Pill",
+    surface: "topbar",
+    tokenBindings: {
+      border: "panel.border",
+      text: "accent.primary",
+      accent: "accent.primary",
+    },
+    editableProperties: ["border", "text", "accent"],
+    status: "active",
+  },
+  {
+    themeTargetId: "topbar.statusCluster",
+    label: "Top Bar Status Cluster",
+    surface: "topbar",
+    tokenBindings: {
+      border: "panel.border",
+      text: "text.primary",
+      accent: "accent.primary",
+    },
+    editableProperties: ["border", "text", "accent"],
+    status: "active",
+  },
+  {
     themeTargetId: "mission-control.panel",
     label: "Mission Control Panel",
     surface: "mission-control",
