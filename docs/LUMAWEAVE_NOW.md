@@ -14,14 +14,41 @@ references:
   - domain.control.plane.system.index
   - domain.tile.layout.workspace
   - domain.deferred.post.v1.vision
-tags: [live-state, now, canonical, v106-planned]
+tags: [live-state, now, canonical, v106-closed]
 ---
 
 # LumaWeave — NOW
 
 **The single live-state doc.** This is the only doc that changes every pass and the only one that carries a date. Everything here is volatile by design. Concepts and architecture live in the static domain docs (see `DOC_ARCHITECTURE.md`); history lives in the dev-blog / #changelog feed. This doc holds only: where we are, what's next, what's broken.
 
-**Updated:** 2026-06-04 · **Production version:** 0.12.0 · **Internal arc:** v106 (Radial Redesign — pending) · **Last closed:** v105 (Code Spoke)
+**Updated:** 2026-06-04 · **Production version:** 0.13.0 · **Internal arc:** v107 (Source Adapters — opening) · **Last closed:** v106 (Radial Inspector Redesign)
+
+---
+
+## Closed arc — v106: Radial Inspector Redesign — CLOSED (0.12.0 → 0.13.0)
+
+Replace the SVG+physics radial inspector with a fixed-position HTML/CSS ring. Spoke buttons are CSS-positioned; the ring stays visible when a spoke opens; tab content renders in a viewport-clamped submenu alongside the ring rather than replacing it. Aurora gradient background, `:focus-visible` rings, submenu pop-in animation. Geometry scope picker adds target-vs-global override routing.
+
+Note: v106.0.4 went broader than typical polish — also included CLAUDE.md restructuring (generic rules moved to `~/Projects/CLAUDE.md`) and the v91 prototype deletion alongside the announced radial items. All intentional; recorded here.
+
+| Pass | Work | Commit |
+|---|---|---|
+| v106.0.1 | MiniGraphRenderer SVG+physics → HTML/CSS rewrite; RootNode.tsx + SpokeNode.tsx deleted; inspectorSpokeRegistry.ts interface stripped (5 unused fields removed, iconPath/iconFill/beta added); all 8 register*.ts gain iconPath SVG paths, lose legacy icon emoji; registerHistorySpoke.ts order 8→7 | `9c3f26d` |
+| v106.0.2 | CSS variable fixes (--lw-glow → --lw-app-glow, --lw-app-bg → --lw-app-background, --lw-panel-bg-solid → --lw-panel-background); aurora gradient on stage; :focus-visible rings on spokes + center button; submenu pop-in animation with prefers-reduced-motion guard | `9c28e0c` |
+| v106.0.3 | GeometryTab scope picker: This → setTargetOverride / All → setGlobalOverride; loadOverrides() migration block removed (was silently stripping target-scope geometry entries on every load); 3 test.fixme → test; all 7 geometry tests pass | `f04b985` |
+| v106.0.4 | CategoryInspector RadialPreviewWidget (settings preview ring); IdeTab.tsx deleted (deprecated since v105.0.1); themeTargetRegistry topbar subtargets committed; CLAUDE.md trimmed to project-specific; v91 prototype deleted | `22ddd2b` |
+| v106.0.5 | Arc closer — semver 0.12.0 → 0.13.0; NOW.md reconcile; landed-state audit | _(this commit)_ |
+
+**Deferred to v107+ (from `docs/prototypes/radial-outstanding-work.md`):**
+- **Q1** ColorTab disabled scope buttons — signal deferred state
+- **Q2** Geometry scope picker label + i18n keys
+- **Q3** CodeTab `.lw-ide-tab` → `.lw-code-tab` class rename
+- **M1** Keyboard navigation — arrow-key ring rotation, focus trap in submenu
+- **M2** ApplyTab 3 skipped tests — DOM fixture needed for candidate rows
+- **M3** HistoryTab global-scope gap — global overrides don't appear per-target
+- **D1–D3** Type / Motion / Layout spokes — blocked on Typography, Audio Reactivity, Physics Dialect arcs
+
+**Arc closed** — v106 closer: 0.12.0 → 0.13.0 · 2026-06-04. Next: v107 (Source Adapters).
 
 ---
 
@@ -158,15 +185,15 @@ Reworked the floating-tile system: per-axis snap engine, armed guide, explicit g
 
 | Arc | Work |
 |---|---|
-| **v105** | Code spoke (.0.0: live + diff editor) + History spoke deepening (.1.0) |
-| v106+ | Paperweight punch-list: source-adapter fix, tile-content theming + token coverage, v102 Workshop/History/Bookmarks/Export, settings advanced-tabs relocation (5 deferred tile sections), minimap E2E coverage (test debt from v104), pre-1.0 cleanup incl. CI/security green |
+| **v107** | Source Adapters (opening) — Tier 0: fix loadGraphifySource plumbing + settings schema + source selector UI (per `docs/prototypes/source-adapter-plan.md`). Clears the source-adapter JSON-404 known bug. |
+| v108+ | Paperweight punch-list: radial deferred (Q1–Q3, M1–M3), v102 Workshop/History/Bookmarks/Export, tile-content theming + token coverage, settings advanced-tabs relocation (5 deferred tile sections), minimap E2E coverage (test debt from v104), pre-1.0 cleanup incl. CI/security green |
 | ~v115–v125 | `1.0.0` initial public release |
 
 ---
 
 ## Known bugs / paperweights
 
-- **Source-adapter JSON-404** — Graph Sources live-refresh fetch returns HTML 404 instead of JSON; self-graph renders from fixture. High-priority; can't be on screen at launch.
+- **Source-adapter JSON-404** — Graph Sources live-refresh fetch returns HTML 404 instead of JSON; self-graph renders from fixture. High-priority; can't be on screen at launch. v107 Tier 0 addresses this.
 
 ## Security / dependency debt
 
@@ -174,8 +201,17 @@ Reworked the floating-tile system: per-axis snap engine, armed guide, explicit g
 - **Redundant `stylelint-use-logical`** installed alongside `stylelint-plugin-logical-css` (the one actually configured) — uninstall the unused one.
 - **5 deferred stylelint logical-property warnings** in StatusBar.css — clean up, then tighten from `warning` → `error`.
 
+## Architectural notes — v106 drift risks
+
+Three known fragility points introduced or surfaced during v106. No action required yet; record so they're visible at the next relevant pass.
+
+- **`InspectorMiniGraph.tsx:50–63` direct settings mutation** — on inspector open, `useSettingsStore.setState(...)` directly sets `graphView.dimMode = "outside-cluster"`, bypassing the normal `setSetting` path. On close, previous value restores from `previousDimModeRef`. If the `graphView.dimMode` schema shape changes, this mutation drifts silently.
+- **`tests/e2e/helpers/inspector.ts:12` click fragility** — `openInspectorOnTopbar` clicks at `(x:8, y:16)`, the far-left logo region. If topbar padding or HexLogo width changes, the helper may start hitting an interactive child and inspector open stops working.
+- **`RadialPreviewWidget` constants duplicated** — `CategoryInspector.tsx:9–13` re-declares STAGE, CENTER, RING_R, RING_BTN, SUB_OFFSET from `MiniGraphRenderer.tsx`. If the layout constants change in the renderer, the settings preview silently drifts out of sync (Q6 — no shared import).
+
 ## Recently resolved
 
+- **Radial inspector SVG+physics** — replaced in v106 with HTML/CSS ring; RootNode.tsx + SpokeNode.tsx deleted; viewport-clamped submenu; aurora gradient; geometry scope picker.
 - **Floating-tile click-interception** — `.tile-layer { pointer-events: none }` was already set; v101.0.6 added the click-through E2E test that formally closes this bug.
 - **CI red on all branches** — FIXED in v101.0.2b. Both jobs (CSS lint + TypeScript) green on Node 22; generate:graph runs before typecheck; self-graph fixture gitignored.
 - **CLAUDE.md context bloat** — split into generic `~/Projects/CLAUDE.md` + shared `DISCORD_PROTOCOL.md` and project-specific `~/Projects/lumaweave/CLAUDE.md`, with dense bodies extracted to `docs/agent/`. Cuts per-pass fixed context substantially.
