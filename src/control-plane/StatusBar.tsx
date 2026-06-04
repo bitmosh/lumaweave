@@ -93,6 +93,25 @@ function DebugPopoverContent() {
         />
         <span>Show FPS counter</span>
       </label>
+      <div className="lw-debug-popover-row" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <label style={{ flex: '0 0 auto' }}>Editor:</label>
+        <select
+          value={settings.developer?.preferredEditor ?? "vscode"}
+          onChange={(e) => setSetting("developer.preferredEditor", e.target.value)}
+          style={{ flex: '1', padding: '4px 8px', fontSize: '12px' }}
+        >
+          <option value="vscode">VS Code</option>
+          <option value="windsurf">Windsurf</option>
+          <option value="cursor">Cursor</option>
+          <option value="zed">Zed</option>
+          <option value="webstorm">WebStorm</option>
+          <option value="sublime">Sublime Text</option>
+          <option value="vim">Vim</option>
+          <option value="neovim">Neovim</option>
+          <option value="system-default">System Default</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
       <label className="lw-debug-popover-row">
         <input
           type="checkbox"
