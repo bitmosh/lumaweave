@@ -34,14 +34,14 @@ test.describe("v89.4 Geometry Spoke", () => {
     await expect(sunBtn).toHaveAttribute("aria-pressed", "true");
   });
 
-  test.fixme("scope picker renders with this and all options", async ({ page }) => {
+  test("scope picker renders with this and all options", async ({ page }) => {
     await openGeometryTab(page);
     await expect(page.locator('[data-testid="geometry-scope-picker"]')).toBeVisible();
     await expect(page.locator('[data-testid="geometry-scope-picker"] button', { hasText: "This" })).toBeVisible();
     await expect(page.locator('[data-testid="geometry-scope-picker"] button', { hasText: "All" })).toBeVisible();
   });
 
-  test.fixme("clicking a preset at 'this' scope writes target override", async ({ page }) => {
+  test("clicking a preset at 'this' scope writes target override", async ({ page }) => {
     await openGeometryTab(page);
 
     // Select "this" scope (default)
@@ -65,7 +65,7 @@ test.describe("v89.4 Geometry Spoke", () => {
     expect(match?.value).toBe("glass-sphere");
   });
 
-  test.fixme("clicking a preset at 'all' scope writes global override", async ({ page }) => {
+  test("clicking a preset at 'all' scope writes global override", async ({ page }) => {
     await openGeometryTab(page);
 
     // Select "all" scope

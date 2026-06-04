@@ -9,7 +9,12 @@
 import { useEffect, useRef, useState } from "react";
 import type { TargetDescriptor } from "../inspector.types";
 import { getThumbnail } from "../nodeProgramThumbnails";
-import { setGlobalOverride, getGlobalOverride } from "../../../themes/themeOverrideStorage";
+import {
+  setGlobalOverride,
+  getGlobalOverride,
+  setTargetOverride,
+  getTargetOverride,
+} from "../../../themes/themeOverrideStorage";
 import { notifyOverrideChange } from "../../../themes/useResolvedTargetColor";
 import { useSettingsStore } from "../../settings/settings.store";
 import type { NodeProgramId } from "../../../graph/nodePrograms/types";
@@ -23,14 +28,29 @@ export interface GeometryTabProps {
   onClose?: () => void;
 }
 
-export function GeometryTab({ targetDescriptor: _targetDescriptor, onClose }: GeometryTabProps) {
+export function GeometryTab({ targetDescriptor, onClose }: GeometryTabProps) {
   const themeId = useSettingsStore((state) => state.settings.appearance.theme);
+  const [scope, setScope] = useState<"all" | "this">("all");
   const [activePreset, setActivePreset] = useState<string | undefined>(
     () => getGlobalOverride("node.geometry.preset") as string | undefined,
   );
 
+  const getActiveForScope = (s: "all" | "this") =>
+    s === "all"
+      ? (getGlobalOverride("node.geometry.preset") as string | undefined)
+      : (getTargetOverride(targetDescriptor.targetId, "node.geometry.preset") as string | undefined);
+
+  const handleScopeChange = (s: "all" | "this") => {
+    setScope(s);
+    setActivePreset(getActiveForScope(s));
+  };
+
   const commitPreset = (presetId: NodeProgramId) => {
-    setGlobalOverride("node.geometry.preset", presetId);
+    if (scope === "all") {
+      setGlobalOverride("node.geometry.preset", presetId);
+    } else {
+      setTargetOverride(targetDescriptor.targetId, "node.geometry.preset", presetId);
+    }
     setActivePreset(presetId);
     notifyOverrideChange();
   };
@@ -57,6 +77,25 @@ export function GeometryTab({ targetDescriptor: _targetDescriptor, onClose }: Ge
             onClick={() => commitPreset(id)}
           />
         ))}
+      </div>
+
+      <div className="lw-geometry-tab-scope" data-testid="geometry-scope-picker">
+        <div className="lw-geometry-tab-scope-buttons">
+          <button
+            aria-pressed={scope === "this"}
+            className={scope === "this" ? "active" : ""}
+            onClick={() => handleScopeChange("this")}
+          >
+            This
+          </button>
+          <button
+            aria-pressed={scope === "all"}
+            className={scope === "all" ? "active" : ""}
+            onClick={() => handleScopeChange("all")}
+          >
+            All
+          </button>
+        </div>
       </div>
     </div>
   );

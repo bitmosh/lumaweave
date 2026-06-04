@@ -92,18 +92,6 @@ export function loadOverrides(): ThemeOverrideStorage {
       return pathValidation.isValid && valueValidation.isValid;
     });
 
-    // One-time migration: remove stale target-scoped node.geometry.preset entries
-    const cleaned = validOverrides.filter(
-      (o) => !(o.tokenPath === "node.geometry.preset" && o.scope.kind === "target"),
-    );
-    if (cleaned.length !== validOverrides.length) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: STORAGE_VERSION, overrides: cleaned }));
-      } catch {
-        // ignore
-      }
-    }
-
     // Generalized dedup: collapse all duplicates per (scope, tokenPath) key, keep most-recent
     const dedupKey = (o: ThemeOverride): string => {
       switch (o.scope.kind) {
@@ -115,7 +103,7 @@ export function loadOverrides(): ThemeOverrideStorage {
     };
 
     const byKey = new Map<string, ThemeOverride>();
-    for (const o of cleaned) {
+    for (const o of validOverrides) {
       const key = dedupKey(o);
       const existing = byKey.get(key);
       if (!existing || o.timestamp > existing.timestamp) {
@@ -124,7 +112,7 @@ export function loadOverrides(): ThemeOverrideStorage {
     }
     const deduped = Array.from(byKey.values());
 
-    if (deduped.length !== cleaned.length) {
+    if (deduped.length !== validOverrides.length) {
       try {
         localStorage.setItem(
           STORAGE_KEY,
