@@ -3,19 +3,29 @@
  *
  * H1 model: shows current overrides for the inspected target.
  * Per-entry Reset and Reset-all affordances.
- * Reactively subscribes to lw:override-change events.
+ * Derives overrides synchronously in render via useSyncExternalStore (matches useResolvedTargetColor pattern).
  */
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import {
   getTargetOverrides,
   removeTargetOverride,
 } from "../../../themes/themeOverrideStorage";
-import type { ThemeOverride } from "../../../themes/themeOverrideStorage";
 import { notifyOverrideChange } from "../../../themes/useResolvedTargetColor";
 import type { TargetDescriptor } from "../inspector.types";
 import { t } from "../../../i18n";
 import "../styles/color-tab.css";
+
+const EVENT = "lw:override-change";
+
+function subscribe(callback: () => void): () => void {
+  window.addEventListener(EVENT, callback);
+  return () => window.removeEventListener(EVENT, callback);
+}
+
+function getSnapshot(): number {
+  return window.__lwOverrideVersion ?? 0;
+}
 
 export interface HistoryTabProps {
   targetDescriptor: TargetDescriptor;
@@ -23,20 +33,12 @@ export interface HistoryTabProps {
 }
 
 export function HistoryTab({ targetDescriptor, onClose }: HistoryTabProps) {
-  const [overrides, setOverrides] = useState<ThemeOverride[]>(() =>
-    getTargetOverrides(targetDescriptor.targetId)
-  );
+  // Subscribe to override changes; snapshot version triggers re-renders
+  useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
-  const refresh = () => {
-    setOverrides(getTargetOverrides(targetDescriptor.targetId));
-  };
-
-  useEffect(() => {
-    refresh();
-    const handler = () => refresh();
-    window.addEventListener("lw:override-change", handler);
-    return () => window.removeEventListener("lw:override-change", handler);
-  }, [targetDescriptor.targetId]);
+  // DERIVE overrides synchronously in render — correct on first render,
+  // re-derived whenever lw:override-change fires (via useSyncExternalStore subscription)
+  const overrides = getTargetOverrides(targetDescriptor.targetId);
 
   const handleReset = (tokenPath: string) => {
     removeTargetOverride(targetDescriptor.targetId, tokenPath as any);
