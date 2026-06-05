@@ -54,6 +54,11 @@ export interface MinimapAnchor {
   y?: number;
 }
 
+export interface SourcesSettings {
+  active: string | null;
+  configurations: Record<string, { inputPath?: string }>;
+}
+
 export interface MinimapSettings {
   visible: boolean;
   collapsed: boolean;
@@ -69,7 +74,7 @@ export interface MinimapSettings {
 }
 
 export interface StarmapSettings {
-  version: 90; // v104.0.0: minimap settings slice added
+  version: 91; // v107.0.1: sources slice added
 
   general: {
     startupProjectId: string | null;
@@ -237,4 +242,5 @@ export interface StarmapSettings {
   };
 
   minimap: MinimapSettings;
+  sources: SourcesSettings;
 }

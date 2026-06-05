@@ -1,4 +1,9 @@
-import type { StarmapSettings, MinimapSettings } from "./settings.schema";
+import type { StarmapSettings, MinimapSettings, SourcesSettings } from "./settings.schema";
+
+export const defaultSources: SourcesSettings = {
+  active: "self-graph-yaml-frontmatter",
+  configurations: {},
+};
 
 export const defaultMinimapSettings: MinimapSettings = {
   visible: true,
@@ -15,7 +20,7 @@ export const defaultMinimapSettings: MinimapSettings = {
 };
 
 export const defaultSettings: StarmapSettings = {
-  version: 90, // v104.0.0: minimap settings slice added
+  version: 91, // v107.0.1: sources slice added
 
   general: {
     startupProjectId: null,
@@ -141,4 +146,5 @@ export const defaultSettings: StarmapSettings = {
   },
 
   minimap: defaultMinimapSettings,
+  sources: defaultSources,
 };

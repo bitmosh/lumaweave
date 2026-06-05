@@ -1,4 +1,4 @@
-import { defaultSettings, defaultMinimapSettings } from "./settings.defaults";
+import { defaultSettings, defaultMinimapSettings, defaultSources } from "./settings.defaults";
 import type { StarmapSettings } from "./settings.schema";
 import { tileSectionRegistry } from "../panels/tileSectionRegistry";
 
@@ -152,6 +152,14 @@ const MIGRATIONS: Record<number,
     developer.preferredEditor ??= "vscode";
     developer.customEditorTemplate ??= "code --goto {path}:{line}";
     return { ...s, developer } as Partial<StarmapSettings>;
+  },
+
+  // v90 → v91: add sources slice (v107.0.1). Additive only.
+  91: (s) => {
+    return {
+      ...s,
+      sources: (s as any).sources ?? defaultSources,
+    } as Partial<StarmapSettings>;
   },
 
   // v89 → v90: add minimap settings slice (v104.0.0). Additive only.
