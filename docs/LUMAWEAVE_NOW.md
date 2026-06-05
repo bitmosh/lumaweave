@@ -14,14 +14,32 @@ references:
   - domain.control.plane.system.index
   - domain.tile.layout.workspace
   - domain.deferred.post.v1.vision
-tags: [live-state, now, canonical, v107-closed]
+tags: [live-state, now, canonical, v107-closed, v108-closed]
 ---
 
 # LumaWeave — NOW
 
 **The single live-state doc.** This is the only doc that changes every pass and the only one that carries a date. Everything here is volatile by design. Concepts and architecture live in the static domain docs (see `DOC_ARCHITECTURE.md`); history lives in the dev-blog / #changelog feed. This doc holds only: where we are, what's next, what's broken.
 
-**Updated:** 2026-06-05 · **Production version:** 0.14.0 · **Internal arc:** v108 (TBD) · **Last closed:** v107 (Source Adapters — Tier 0)
+**Updated:** 2026-06-05 · **Production version:** 0.15.0 · **Internal arc:** v109 (TBD) · **Last closed:** v108 (Source Adapters — Tier 1)
+
+---
+
+## Closed arc — v108: Source Adapters Tier 1 — CLOSED (0.14.0 → 0.15.0)
+
+Connect the self-graph source to the live generator on disk. Replace the HTTP fetch placeholder (always 404) with a Tauri `read_file` command, add a Regenerate button that runs the generator script, and wire `refreshToken` increment to trigger graph re-load.
+
+| Pass | Work | Commit |
+|---|---|---|
+| v108.0.1 | `read_file` Tauri command (`fs.rs`) with `canonicalize → starts_with` path validation; `get_project_root_inner()` extracted as `pub` helper; `loadSelfGraph` rewired to read `src/fixtures/self-graph-generated.json` via Tauri invoke; normalizer switched `normalizeGraphifyGraph → adaptSelfGraphToSigma` (v1 schema — divergence hidden by 404); `src/lib/tauri-invoke.ts` created as invoke wrapper; schema migration 91→92 adds `sources.refreshToken` | `08ac499` |
+| v108.0.2 | `run_script` Tauri command: `ALLOWED_SCRIPTS` allowlist, `spawn_blocking + tokio::time::timeout(60s)`, 10 MB output cap; `tokio = { rt, time }` added to Cargo.toml (Ryan-approved); Regenerate button in GraphSourcesTileContent (`idle/running/success/error`); `__lwTauriMock` shim in `tauri-invoke.ts` (DEV \|\| PLAYWRIGHT gated); `refreshToken` wired to `useGraphSourceSummary` effect deps; 4 new E2E tests | `d66bd50` |
+| v108.0.3 | Arc close — semver 0.14.0 → 0.15.0; NOW.md reconcile | _(this commit)_ |
+
+**Tier 2+ remaining** (Source Adapter program continues):
+- **Tier 2+** — New adapters (markdown-vault, package-dependency, etc.)
+- Registry `registerSourceAdapter()` API deferred to when Tier 2 needs dynamic registration
+
+**Arc closed** — v108 closer: 0.14.0 → 0.15.0 · 2026-06-05. Next: v109 (TBD).
 
 ---
 
@@ -33,14 +51,9 @@ Repair the broken source-adapter plumbing without adding new adapters. Establish
 |---|---|---|
 | v107.0.1 | Settings schema: `SourcesSettings` interface + `sources` field added to `StarmapSettings`; `CURRENT_SCHEMA_VERSION` 90 → 91; migration 91 backfills `defaultSources`; default `active: "self-graph-yaml-frontmatter"` | `4b4815c` |
 | v107.0.2 | `loadSource(adapterId, inputPath)` replaces `loadGraphifySource()`; adapter-routed: null guard → error, unknown → error, candidate → error, self-graph → existing fixture-fetch logic; `useGraphSourceSummary` reads `sources.active` from settings, re-triggers on change; neutral idle initial state | `8a796ac` |
-| v107.0.3 | `SourceAdapterPanel` set-active selector: "Set as active" button on registered entries, disabled when already active, `data-testid` per button + indicator; E2E spec rewritten (full flow: button visibility, click → store update → active indicator); arc close 0.13.0 → 0.14.0 | _(this commit)_ |
+| v107.0.3 | `SourceAdapterPanel` set-active selector: "Set as active" button on registered entries, disabled when already active, `data-testid` per button + indicator; E2E spec rewritten (full flow: button visibility, click → store update → active indicator); arc close 0.13.0 → 0.14.0 | `0f5b399` |
 
-**Tier 1+ remaining** (Source Adapter program continues):
-- **Tier 1** — Self-graph live mode: `read_file` + `run_script` Tauri commands, "Regenerate" button in GraphSourcesTileContent
-- **Tier 2+** — New adapters (markdown-vault, package-dependency, etc.)
-- Registry `registerSourceAdapter()` API deferred to when Tier 2 needs dynamic registration
-
-**Arc closed** — v107 closer: 0.13.0 → 0.14.0 · 2026-06-05. Next: v108 (TBD).
+**Arc closed** — v107 closer: 0.13.0 → 0.14.0 · 2026-06-05. Next: v108 (Source Adapters — Tier 1).
 
 ---
 
