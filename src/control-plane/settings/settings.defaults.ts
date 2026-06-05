@@ -3,6 +3,7 @@ import type { StarmapSettings, MinimapSettings, SourcesSettings } from "./settin
 export const defaultSources: SourcesSettings = {
   active: "self-graph-yaml-frontmatter",
   configurations: {},
+  refreshToken: 0,
 };
 
 export const defaultMinimapSettings: MinimapSettings = {
@@ -20,7 +21,7 @@ export const defaultMinimapSettings: MinimapSettings = {
 };
 
 export const defaultSettings: StarmapSettings = {
-  version: 91, // v107.0.1: sources slice added
+  version: 92, // v108.0.1: sources.refreshToken added
 
   general: {
     startupProjectId: null,

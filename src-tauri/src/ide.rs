@@ -1,26 +1,31 @@
 use tauri_plugin_opener::OpenerExt;
 use std::env;
+use std::path::PathBuf;
 
-#[tauri::command]
-pub fn get_project_root() -> Result<String, String> {
+/// Shared helper: resolves the project root as an absolute PathBuf.
+/// Pops src-tauri/ from CWD when running under `tauri dev`.
+pub fn get_project_root_inner() -> Result<PathBuf, String> {
     let cwd = env::current_dir()
         .map_err(|e| format!("Failed to get project root: {}", e))?;
 
-    // If CWD is src-tauri/, pop to parent (project root).
     // Under `tauri dev`, Rust process CWD is src-tauri/; otherwise it's already the root.
-    let root = if cwd.file_name()
+    if cwd.file_name()
         .and_then(|name| name.to_str())
         .map(|s| s == "src-tauri")
         .unwrap_or(false)
     {
         cwd.parent()
             .map(|p| p.to_path_buf())
-            .ok_or_else(|| "src-tauri parent is invalid".to_string())?
+            .ok_or_else(|| "src-tauri parent is invalid".to_string())
     } else {
-        cwd
-    };
+        Ok(cwd)
+    }
+}
 
-    root.to_str()
+#[tauri::command]
+pub fn get_project_root() -> Result<String, String> {
+    get_project_root_inner()?
+        .to_str()
         .map(|s| s.to_string())
         .ok_or_else(|| "Project root path is not valid UTF-8".to_string())
 }

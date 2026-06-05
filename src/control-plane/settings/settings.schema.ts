@@ -57,6 +57,7 @@ export interface MinimapAnchor {
 export interface SourcesSettings {
   active: string | null;
   configurations: Record<string, { inputPath?: string }>;
+  refreshToken: number; // v108.0.1: incremented on regenerate success to re-trigger useGraphSourceSummary
 }
 
 export interface MinimapSettings {
@@ -74,7 +75,7 @@ export interface MinimapSettings {
 }
 
 export interface StarmapSettings {
-  version: 91; // v107.0.1: sources slice added
+  version: 92; // v108.0.1: sources.refreshToken added
 
   general: {
     startupProjectId: string | null;

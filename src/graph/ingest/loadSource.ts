@@ -1,35 +1,16 @@
 import { getSourceAdapterEntryById } from "../../source-adapter/sourceAdapterRegistry";
-import type {
-  GraphSourceSummary,
-  RawGraphArtifact,
-} from "../schema/graph.types";
-import { normalizeGraphifyGraph } from "../normalize/normalizeGraphifyGraph";
+import type { GraphSourceSummary } from "../schema/graph.types";
+import { adaptSelfGraphToSigma } from "../../fixtures/self-graph-adapter";
+import type { LumaSourceGraph } from "../../fixtures/types";
+import { invoke } from "../../lib/tauri-invoke";
 
-// Self-graph adapter fixture path (Tier 0: live path is Tier 1)
-const SELF_GRAPH_PUBLIC_BASE = "/examples/ai-lab/graphify-out";
-
-function extractNodeCount(graph: RawGraphArtifact): number {
-  const nodes = graph.nodes as unknown;
-  if (Array.isArray(nodes)) return nodes.length;
-  const elements = graph.elements as unknown;
-  if (elements && typeof elements === "object") {
-    const elementNodes = (elements as Record<string, unknown>).nodes;
-    if (Array.isArray(elementNodes)) return elementNodes.length;
+// Module-level lazy cache for the project root (D6 — one Tauri invoke per session).
+let cachedProjectRoot: string | null = null;
+async function getProjectRoot(): Promise<string> {
+  if (cachedProjectRoot === null) {
+    cachedProjectRoot = await invoke<string>("get_project_root");
   }
-  return 0;
-}
-
-function extractEdgeCount(graph: RawGraphArtifact): number {
-  const edges = graph.edges as unknown;
-  if (Array.isArray(edges)) return edges.length;
-  const links = graph.links as unknown;
-  if (Array.isArray(links)) return links.length;
-  const elements = graph.elements as unknown;
-  if (elements && typeof elements === "object") {
-    const elementEdges = (elements as Record<string, unknown>).edges;
-    if (Array.isArray(elementEdges)) return elementEdges.length;
-  }
-  return 0;
+  return cachedProjectRoot;
 }
 
 function errorSummary(
@@ -55,13 +36,17 @@ function errorSummary(
   };
 }
 
+// Convention: self-graph generator writes output to this path relative to project root.
+const SELF_GRAPH_FIXTURE_PATH = "src/fixtures/self-graph-generated.json";
+
 async function loadSelfGraph(_inputPath: string): Promise<GraphSourceSummary> {
-  const baseUrl = SELF_GRAPH_PUBLIC_BASE;
+  // _inputPath is reserved for future user-configurable paths (Tier 2+).
+  // Tier 1 reads from the generator's known output location.
   const summary: GraphSourceSummary = {
     sourceId: "self-graph-yaml-frontmatter",
     label: "Self Graph",
-    sourcePath: baseUrl,
-    publicBaseUrl: baseUrl,
+    sourcePath: "",
+    publicBaseUrl: "",
     status: "loading",
     graphPresent: false,
     manifestPresent: false,
@@ -74,43 +59,21 @@ async function loadSelfGraph(_inputPath: string): Promise<GraphSourceSummary> {
   };
 
   try {
-    const graphResponse = await fetch(`${baseUrl}/graph.json`);
-    if (!graphResponse.ok) {
-      throw new Error(`Failed to load graph.json: ${graphResponse.status}`);
-    }
-    const rawGraph = (await graphResponse.json()) as RawGraphArtifact;
+    const root = await getProjectRoot();
+    const jsonStr = await invoke<string>("read_file", { path: SELF_GRAPH_FIXTURE_PATH });
+    const raw = JSON.parse(jsonStr) as LumaSourceGraph;
+
+    summary.sourcePath = `${root}/${SELF_GRAPH_FIXTURE_PATH}`;
     summary.graphPresent = true;
-    summary.rawGraph = rawGraph;
-    summary.nodeCount = extractNodeCount(rawGraph);
-    summary.edgeCount = extractEdgeCount(rawGraph);
+    summary.nodeCount = raw.nodes.length;
+    summary.edgeCount = raw.edges.length;
 
-    const normalizationResult = normalizeGraphifyGraph(rawGraph);
-    summary.normalizedNodeCount = normalizationResult.nodes.length;
-    summary.normalizedEdgeCount = normalizationResult.edges.length;
-    summary.warnings = normalizationResult.warnings;
-    summary.normalizedNodes = normalizationResult.nodes;
-    summary.normalizedEdges = normalizationResult.edges;
-
-    try {
-      const manifestResponse = await fetch(`${baseUrl}/manifest.json`);
-      if (manifestResponse.ok) {
-        summary.rawManifest = (await manifestResponse.json()) as RawGraphArtifact;
-        summary.manifestPresent = true;
-      }
-    } catch {
-      summary.manifestPresent = false;
-    }
-
-    try {
-      const reportResponse = await fetch(`${baseUrl}/GRAPH_REPORT.md`);
-      if (reportResponse.ok) {
-        summary.rawReportText = await reportResponse.text();
-        summary.reportPresent = true;
-      }
-    } catch {
-      summary.reportPresent = false;
-    }
-
+    const adapted = adaptSelfGraphToSigma(raw);
+    summary.normalizedNodeCount = adapted.nodes.length;
+    summary.normalizedEdgeCount = adapted.edges.length;
+    summary.normalizedNodes = adapted.nodes;
+    summary.normalizedEdges = adapted.edges;
+    summary.warnings = [];
     summary.status = "loaded";
   } catch (error) {
     summary.status = "error";

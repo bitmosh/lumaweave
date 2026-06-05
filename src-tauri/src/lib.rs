@@ -1,3 +1,4 @@
+mod fs;
 mod ide;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
@@ -10,7 +11,12 @@ fn greet(name: &str) -> String {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet, ide::get_project_root, ide::open_in_ide])
+        .invoke_handler(tauri::generate_handler![
+            greet,
+            ide::get_project_root,
+            ide::open_in_ide,
+            fs::read_file,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

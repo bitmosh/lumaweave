@@ -154,6 +154,17 @@ const MIGRATIONS: Record<number,
     return { ...s, developer } as Partial<StarmapSettings>;
   },
 
+  // v91 → v92: add sources.refreshToken (v108.0.1). Additive only.
+  92: (s) => {
+    return {
+      ...s,
+      sources: {
+        ...((s as any).sources ?? defaultSources),
+        refreshToken: (s as any).sources?.refreshToken ?? 0,
+      },
+    } as Partial<StarmapSettings>;
+  },
+
   // v90 → v91: add sources slice (v107.0.1). Additive only.
   91: (s) => {
     return {
