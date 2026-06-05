@@ -1,12 +1,11 @@
 /**
  * Source Adapter Panel
  *
- * A passive/read-only UI surface that displays the Source Adapter Registry.
- *
- * This panel is read-only and does not control any runtime systems.
- * It displays source adapter metadata for evidence and inspection only.
+ * Displays the Source Adapter Registry. Registered adapters can be set as the
+ * active source via the "Set as active" button; candidate adapters are read-only.
  *
  * v74c: Passive Source Adapter Evidence Surface - read-only display of source adapter entries.
+ * v107.0.3: Added set-active selector for registered adapters.
  */
 
 import React from "react";
@@ -14,11 +13,12 @@ import {
   getAllSourceAdapterEntries,
   type SourceAdapterEntry,
 } from "./sourceAdapterRegistry";
+import { useSettingsStore } from "../control-plane/settings/settings.store";
 
 export function SourceAdapterPanel(): React.JSX.Element {
   const entries = getAllSourceAdapterEntries();
+  const activeAdapterId = useSettingsStore((s) => s.settings.sources.active);
 
-  // Calculate summary counts
   const typeCounts = entries.reduce((acc, entry) => {
     acc[entry.adapterType] = (acc[entry.adapterType] || 0) + 1;
     return acc;
@@ -34,10 +34,7 @@ export function SourceAdapterPanel(): React.JSX.Element {
     return acc;
   }, {} as Record<string, number>);
 
-  // Get unique adapter types for grouping
   const adapterTypes = Array.from(new Set(entries.map((e) => e.adapterType))).sort();
-
-  // Helper to create slug for test IDs
   const slugify = (id: string): string => id.replace(/\./g, "-").replace(/_/g, "-");
 
   return (
@@ -137,7 +134,11 @@ export function SourceAdapterPanel(): React.JSX.Element {
             {entries
               .filter((entry) => entry.adapterType === adapterType)
               .map((entry) => (
-                <EntryCard key={entry.adapterId} entry={entry} />
+                <EntryCard
+                  key={entry.adapterId}
+                  entry={entry}
+                  activeAdapterId={activeAdapterId}
+                />
               ))}
           </div>
         </div>
@@ -146,21 +147,53 @@ export function SourceAdapterPanel(): React.JSX.Element {
   );
 }
 
-function EntryCard({ entry }: { entry: SourceAdapterEntry }): React.JSX.Element {
+function EntryCard({
+  entry,
+  activeAdapterId,
+}: {
+  entry: SourceAdapterEntry;
+  activeAdapterId: string | null;
+}): React.JSX.Element {
   const slugify = (id: string): string => id.replace(/\./g, "-").replace(/_/g, "-");
+  const isActive = entry.adapterId === activeAdapterId;
+  const isRegistered = entry.status === "registered";
+
+  function handleSetActive() {
+    useSettingsStore.getState().setSetting("sources.active", entry.adapterId);
+  }
 
   return (
     <div
       className="p-4 border border-gray-200 rounded bg-white"
       data-testid={`source-adapter-entry-${slugify(entry.adapterId)}`}
     >
-      <div className="mb-2">
-        <h4 className="font-semibold text-sm" data-testid={`source-adapter-entry-title-${slugify(entry.adapterId)}`}>
-          {entry.adapterId}
-        </h4>
-        <div className="text-xs text-gray-500" data-testid={`source-adapter-entry-version-${slugify(entry.adapterId)}`}>
-          Version: {entry.adapterVersion}
+      <div className="mb-2 flex items-start justify-between gap-2">
+        <div>
+          <h4 className="font-semibold text-sm" data-testid={`source-adapter-entry-title-${slugify(entry.adapterId)}`}>
+            {entry.adapterId}
+            {isActive && (
+              <span
+                className="ms-2 text-xs font-normal text-green-600"
+                data-testid={`source-adapter-active-indicator-${slugify(entry.adapterId)}`}
+              >
+                active
+              </span>
+            )}
+          </h4>
+          <div className="text-xs text-gray-500" data-testid={`source-adapter-entry-version-${slugify(entry.adapterId)}`}>
+            Version: {entry.adapterVersion}
+          </div>
         </div>
+        {isRegistered && (
+          <button
+            className="shrink-0 text-xs px-2 py-1 rounded border border-gray-300 bg-gray-50 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-default"
+            disabled={isActive}
+            onClick={handleSetActive}
+            data-testid={`source-adapter-set-active-${slugify(entry.adapterId)}`}
+          >
+            {isActive ? "Active" : "Set as active"}
+          </button>
+        )}
       </div>
 
       <div className="mb-2 grid grid-cols-2 gap-2 text-xs">

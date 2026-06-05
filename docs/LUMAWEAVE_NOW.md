@@ -14,14 +14,33 @@ references:
   - domain.control.plane.system.index
   - domain.tile.layout.workspace
   - domain.deferred.post.v1.vision
-tags: [live-state, now, canonical, v106-closed]
+tags: [live-state, now, canonical, v107-closed]
 ---
 
 # LumaWeave — NOW
 
 **The single live-state doc.** This is the only doc that changes every pass and the only one that carries a date. Everything here is volatile by design. Concepts and architecture live in the static domain docs (see `DOC_ARCHITECTURE.md`); history lives in the dev-blog / #changelog feed. This doc holds only: where we are, what's next, what's broken.
 
-**Updated:** 2026-06-04 · **Production version:** 0.13.0 · **Internal arc:** v107 (Source Adapters — opening) · **Last closed:** v106 (Radial Inspector Redesign)
+**Updated:** 2026-06-05 · **Production version:** 0.14.0 · **Internal arc:** v108 (TBD) · **Last closed:** v107 (Source Adapters — Tier 0)
+
+---
+
+## Closed arc — v107: Source Adapters Tier 0 — CLOSED (0.13.0 → 0.14.0)
+
+Repair the broken source-adapter plumbing without adding new adapters. Establishes the settings-driven routing infrastructure so Tier 1+ can plug in live adapters.
+
+| Pass | Work | Commit |
+|---|---|---|
+| v107.0.1 | Settings schema: `SourcesSettings` interface + `sources` field added to `StarmapSettings`; `CURRENT_SCHEMA_VERSION` 90 → 91; migration 91 backfills `defaultSources`; default `active: "self-graph-yaml-frontmatter"` | `4b4815c` |
+| v107.0.2 | `loadSource(adapterId, inputPath)` replaces `loadGraphifySource()`; adapter-routed: null guard → error, unknown → error, candidate → error, self-graph → existing fixture-fetch logic; `useGraphSourceSummary` reads `sources.active` from settings, re-triggers on change; neutral idle initial state | `8a796ac` |
+| v107.0.3 | `SourceAdapterPanel` set-active selector: "Set as active" button on registered entries, disabled when already active, `data-testid` per button + indicator; E2E spec rewritten (full flow: button visibility, click → store update → active indicator); arc close 0.13.0 → 0.14.0 | _(this commit)_ |
+
+**Tier 1+ remaining** (Source Adapter program continues):
+- **Tier 1** — Self-graph live mode: `read_file` + `run_script` Tauri commands, "Regenerate" button in GraphSourcesTileContent
+- **Tier 2+** — New adapters (markdown-vault, package-dependency, etc.)
+- Registry `registerSourceAdapter()` API deferred to when Tier 2 needs dynamic registration
+
+**Arc closed** — v107 closer: 0.13.0 → 0.14.0 · 2026-06-05. Next: v108 (TBD).
 
 ---
 
@@ -185,15 +204,13 @@ Reworked the floating-tile system: per-axis snap engine, armed guide, explicit g
 
 | Arc | Work |
 |---|---|
-| **v107** | Source Adapters (opening) — Tier 0: fix loadGraphifySource plumbing + settings schema + source selector UI (per `docs/prototypes/source-adapter-plan.md`). Clears the source-adapter JSON-404 known bug. |
-| v108+ | Paperweight punch-list: radial deferred (Q1–Q3, M1–M3), v102 Workshop/History/Bookmarks/Export, tile-content theming + token coverage, settings advanced-tabs relocation (5 deferred tile sections), minimap E2E coverage (test debt from v104), pre-1.0 cleanup incl. CI/security green |
+| **v108** | TBD — Source Adapters Tier 1 (self-graph live mode) is the logical next; or a deferred punch-list pass |
+| v108+ | Paperweight punch-list: Source Adapters Tier 1+ (live mode, new adapters), radial deferred (Q1–Q3, M1–M3), v102 Workshop/History/Bookmarks/Export, tile-content theming + token coverage, settings advanced-tabs relocation (5 deferred tile sections), minimap E2E coverage (test debt from v104), pre-1.0 cleanup incl. CI/security green |
 | ~v115–v125 | `1.0.0` initial public release |
 
 ---
 
 ## Known bugs / paperweights
-
-- **Source-adapter JSON-404** — Graph Sources live-refresh fetch returns HTML 404 instead of JSON; self-graph renders from fixture. High-priority; can't be on screen at launch. v107 Tier 0 addresses this.
 
 ## Security / dependency debt
 
@@ -209,8 +226,15 @@ Three known fragility points introduced or surfaced during v106. No action requi
 - **`tests/e2e/helpers/inspector.ts:12` click fragility** — `openInspectorOnTopbar` clicks at `(x:8, y:16)`, the far-left logo region. If topbar padding or HexLogo width changes, the helper may start hitting an interactive child and inspector open stops working.
 - **`RadialPreviewWidget` constants duplicated** — `CategoryInspector.tsx:9–13` re-declares STAGE, CENTER, RING_R, RING_BTN, SUB_OFFSET from `MiniGraphRenderer.tsx`. If the layout constants change in the renderer, the settings preview silently drifts out of sync (Q6 — no shared import).
 
+## Architectural notes — v107 contracts
+
+- **`loadSource` null-guard contract** — `sources.active = null` returns `{ status: "error", error: "No active source configured" }`. Never silent idle. `hasRealSource` evaluates to false → app falls back to fixture as expected.
+- **`useGraphSourceSummary` reactive dependency** — effect fires on `sources.active` and `configurations[id].inputPath` changes. Source switch from the panel retriggers the load immediately.
+- **Self-graph still uses fixture URL (Tier 0)** — `SELF_GRAPH_PUBLIC_BASE = "/examples/ai-lab/graphify-out"` is preserved in `loadSource.ts`. The routing infrastructure is correct; the live path fix is Tier 1.
+
 ## Recently resolved
 
+- **Source-adapter JSON-404** — cleared by v107 Tier 0: `loadGraphifySource` replaced with `loadSource` (adapter-routed, settings-driven); active adapter selectable from `SourceAdapterPanel`.
 - **Radial inspector SVG+physics** — replaced in v106 with HTML/CSS ring; RootNode.tsx + SpokeNode.tsx deleted; viewport-clamped submenu; aurora gradient; geometry scope picker.
 - **Floating-tile click-interception** — `.tile-layer { pointer-events: none }` was already set; v101.0.6 added the click-through E2E test that formally closes this bug.
 - **CI red on all branches** — FIXED in v101.0.2b. Both jobs (CSS lint + TypeScript) green on Node 22; generate:graph runs before typecheck; self-graph fixture gitignored.
