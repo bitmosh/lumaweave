@@ -70,3 +70,7 @@ export async function openCommandDeck(page: Page): Promise<void> {
 export async function openSourceAdapter(page: Page): Promise<void> {
   await injectTile(page, "source-adapter-section", "tile_source-adapter", "source-adapter-panel", { w: 400, h: 560 });
 }
+
+export async function openGraphSources(page: Page): Promise<void> {
+  await injectTile(page, "graph-sources-section", "tile_graph-sources", "graph-sources-tile-content", { w: 360, h: 480 });
+}

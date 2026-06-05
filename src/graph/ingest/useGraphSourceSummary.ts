@@ -28,6 +28,7 @@ export function useGraphSourceSummary() {
     (s) =>
       s.settings.sources.configurations[activeAdapterId ?? ""]?.inputPath ?? "",
   );
+  const refreshToken = useSettingsStore((s) => s.settings.sources.refreshToken);
 
   useEffect(() => {
     let isMounted = true;
@@ -63,7 +64,8 @@ export function useGraphSourceSummary() {
     return () => {
       isMounted = false;
     };
-  }, [activeAdapterId, inputPath]);
+  // refreshToken is incremented by Regenerate button to re-trigger after script runs
+  }, [activeAdapterId, inputPath, refreshToken]);
 
   return { summary, error };
 }
