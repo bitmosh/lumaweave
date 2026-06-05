@@ -1,60 +1,67 @@
-/**
- * LumaWeave Graphify Source Loader
- * Loads Graphify artifact directory and extracts basic stats
- */
-
+import { getSourceAdapterEntryById } from "../../source-adapter/sourceAdapterRegistry";
 import type {
   GraphSourceSummary,
   RawGraphArtifact,
 } from "../schema/graph.types";
 import { normalizeGraphifyGraph } from "../normalize/normalizeGraphifyGraph";
 
-const publicBaseUrl = "/examples/ai-lab/graphify-out";
+// Self-graph adapter fixture path (Tier 0: live path is Tier 1)
+const SELF_GRAPH_PUBLIC_BASE = "/examples/ai-lab/graphify-out";
 
-/**
- * Safely extract node count from various Graphify graph shapes
- */
 function extractNodeCount(graph: RawGraphArtifact): number {
   const nodes = graph.nodes as unknown;
   if (Array.isArray(nodes)) return nodes.length;
-
   const elements = graph.elements as unknown;
   if (elements && typeof elements === "object") {
     const elementNodes = (elements as Record<string, unknown>).nodes;
     if (Array.isArray(elementNodes)) return elementNodes.length;
   }
-
   return 0;
 }
 
-/**
- * Safely extract edge count from various Graphify graph shapes
- */
 function extractEdgeCount(graph: RawGraphArtifact): number {
   const edges = graph.edges as unknown;
   if (Array.isArray(edges)) return edges.length;
-
   const links = graph.links as unknown;
   if (Array.isArray(links)) return links.length;
-
   const elements = graph.elements as unknown;
   if (elements && typeof elements === "object") {
     const elementEdges = (elements as Record<string, unknown>).edges;
     if (Array.isArray(elementEdges)) return elementEdges.length;
   }
-
   return 0;
 }
 
-/**
- * Load Graphify source artifacts and return summary
- */
-export async function loadGraphifySource(): Promise<GraphSourceSummary> {
+function errorSummary(
+  adapterId: string,
+  label: string,
+  message: string,
+): GraphSourceSummary {
+  return {
+    sourceId: adapterId,
+    label,
+    sourcePath: "",
+    publicBaseUrl: "",
+    status: "error",
+    graphPresent: false,
+    manifestPresent: false,
+    reportPresent: false,
+    nodeCount: 0,
+    edgeCount: 0,
+    normalizedNodeCount: 0,
+    normalizedEdgeCount: 0,
+    warnings: [],
+    error: message,
+  };
+}
+
+async function loadSelfGraph(_inputPath: string): Promise<GraphSourceSummary> {
+  const baseUrl = SELF_GRAPH_PUBLIC_BASE;
   const summary: GraphSourceSummary = {
-    sourceId: "ai-lab",
-    label: "AI Lab",
-    sourcePath: "/home/boop/Projects/ai-lab/graphify-out",
-    publicBaseUrl,
+    sourceId: "self-graph-yaml-frontmatter",
+    label: "Self Graph",
+    sourcePath: baseUrl,
+    publicBaseUrl: baseUrl,
     status: "loading",
     graphPresent: false,
     manifestPresent: false,
@@ -67,19 +74,16 @@ export async function loadGraphifySource(): Promise<GraphSourceSummary> {
   };
 
   try {
-    // Load graph.json (required)
-    const graphResponse = await fetch(`${publicBaseUrl}/graph.json`);
+    const graphResponse = await fetch(`${baseUrl}/graph.json`);
     if (!graphResponse.ok) {
       throw new Error(`Failed to load graph.json: ${graphResponse.status}`);
     }
-
     const rawGraph = (await graphResponse.json()) as RawGraphArtifact;
     summary.graphPresent = true;
     summary.rawGraph = rawGraph;
     summary.nodeCount = extractNodeCount(rawGraph);
     summary.edgeCount = extractEdgeCount(rawGraph);
 
-    // Normalize the graph
     const normalizationResult = normalizeGraphifyGraph(rawGraph);
     summary.normalizedNodeCount = normalizationResult.nodes.length;
     summary.normalizedEdgeCount = normalizationResult.edges.length;
@@ -87,27 +91,23 @@ export async function loadGraphifySource(): Promise<GraphSourceSummary> {
     summary.normalizedNodes = normalizationResult.nodes;
     summary.normalizedEdges = normalizationResult.edges;
 
-    // Load manifest.json (optional)
     try {
-      const manifestResponse = await fetch(`${publicBaseUrl}/manifest.json`);
+      const manifestResponse = await fetch(`${baseUrl}/manifest.json`);
       if (manifestResponse.ok) {
         summary.rawManifest = (await manifestResponse.json()) as RawGraphArtifact;
         summary.manifestPresent = true;
       }
     } catch {
-      // manifest.json is optional, ignore errors
       summary.manifestPresent = false;
     }
 
-    // Load GRAPH_REPORT.md (optional)
     try {
-      const reportResponse = await fetch(`${publicBaseUrl}/GRAPH_REPORT.md`);
+      const reportResponse = await fetch(`${baseUrl}/GRAPH_REPORT.md`);
       if (reportResponse.ok) {
         summary.rawReportText = await reportResponse.text();
         summary.reportPresent = true;
       }
     } catch {
-      // GRAPH_REPORT.md is optional, ignore errors
       summary.reportPresent = false;
     }
 
@@ -119,4 +119,34 @@ export async function loadGraphifySource(): Promise<GraphSourceSummary> {
   }
 
   return summary;
+}
+
+export async function loadSource(
+  adapterId: string | null,
+  inputPath: string,
+): Promise<GraphSourceSummary> {
+  if (!adapterId) {
+    return errorSummary("", "Unknown", "No active source configured");
+  }
+
+  const entry = getSourceAdapterEntryById(adapterId);
+  if (!entry) {
+    return errorSummary(adapterId, adapterId, `Unknown adapter: ${adapterId}`);
+  }
+
+  if (entry.status !== "registered") {
+    return errorSummary(
+      adapterId,
+      entry.adapterType,
+      `Adapter "${adapterId}" is not yet implemented`,
+    );
+  }
+
+  // Route to the registered adapter's loader
+  if (adapterId === "self-graph-yaml-frontmatter") {
+    return loadSelfGraph(inputPath);
+  }
+
+  // Fallback for any future registered adapter without a loader yet
+  return errorSummary(adapterId, entry.adapterType, `No loader for adapter: ${adapterId}`);
 }

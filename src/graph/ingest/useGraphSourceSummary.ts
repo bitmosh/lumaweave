@@ -1,31 +1,33 @@
-/**
- * LumaWeave Graph Source Summary Hook
- * React hook to load and manage graph source summary state
- */
-
 import { useEffect, useState } from "react";
+import { useSettingsStore } from "../../control-plane/settings/settings.store";
 import type { GraphSourceSummary } from "../schema/graph.types";
-import { loadGraphifySource } from "./loadGraphifySource";
+import { loadSource } from "./loadSource";
+
+const idleState: GraphSourceSummary = {
+  sourceId: "",
+  label: "",
+  sourcePath: "",
+  publicBaseUrl: "",
+  status: "idle",
+  graphPresent: false,
+  manifestPresent: false,
+  reportPresent: false,
+  nodeCount: 0,
+  edgeCount: 0,
+  normalizedNodeCount: 0,
+  normalizedEdgeCount: 0,
+  warnings: [],
+};
 
 export function useGraphSourceSummary() {
-  const [summary, setSummary] = useState<GraphSourceSummary>({
-    sourceId: "ai-lab",
-    label: "AI Lab",
-    sourcePath: "/home/boop/Projects/ai-lab/graphify-out",
-    publicBaseUrl: "/examples/ai-lab/graphify-out",
-    status: "idle",
-    graphPresent: false,
-    manifestPresent: false,
-    reportPresent: false,
-    nodeCount: 0,
-    edgeCount: 0,
-    normalizedNodeCount: 0,
-    normalizedEdgeCount: 0,
-    warnings: [],
-    normalizedNodes: [],
-    normalizedEdges: [],
-  });
+  const [summary, setSummary] = useState<GraphSourceSummary>(idleState);
   const [error, setError] = useState<string | null>(null);
+
+  const activeAdapterId = useSettingsStore((s) => s.settings.sources.active);
+  const inputPath = useSettingsStore(
+    (s) =>
+      s.settings.sources.configurations[activeAdapterId ?? ""]?.inputPath ?? "",
+  );
 
   useEffect(() => {
     let isMounted = true;
@@ -35,7 +37,7 @@ export function useGraphSourceSummary() {
       setError(null);
 
       try {
-        const result = await loadGraphifySource();
+        const result = await loadSource(activeAdapterId, inputPath);
         if (isMounted) {
           setSummary(result);
           if (result.status === "error") {
@@ -61,7 +63,7 @@ export function useGraphSourceSummary() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [activeAdapterId, inputPath]);
 
   return { summary, error };
 }
