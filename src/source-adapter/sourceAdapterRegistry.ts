@@ -12,6 +12,7 @@
 import type { LoaderFn, SelfGraphConfig } from "./baseSourceAdapter";
 import type { GraphSourceSummary } from "../graph/schema/graph.types";
 import { loadSelfGraph } from "../graph/ingest/loadSelfGraph";
+import { loadMarkdownVault } from "./adapters/markdownVaultAdapter";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -267,12 +268,12 @@ registerSourceAdapter(
     },
     limits: { maxNodes: 2000, maxEdges: 10000, maxDepth: 4, maxFileSize: 52428800, timeoutMs: 45000 },
     qaReportFormat: { requiredFields: ["adapterId", "sourceDescription", "counts", "limits", "safety"] },
-    status: "candidate",
+    status: "registered",
     contractVersion: "v74a",
-    lastUpdated: "2026-05-06T00:00:00Z",
+    lastUpdated: "2026-06-06T00:00:00Z",
     coupling: "external",
   },
-  candidateNoOpLoader,
+  loadMarkdownVault,
 );
 
 registerSourceAdapter(
