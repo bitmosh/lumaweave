@@ -21,7 +21,7 @@ export const defaultMinimapSettings: MinimapSettings = {
 };
 
 export const defaultSettings: StarmapSettings = {
-  version: 92, // v108.0.1: sources.refreshToken added
+  version: 93, // v109.0.1: SourcesSettings.configurations narrowed to AdapterConfig
 
   general: {
     startupProjectId: null,

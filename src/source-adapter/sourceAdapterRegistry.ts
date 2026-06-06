@@ -62,25 +62,30 @@ export interface SourceAdapterEntry {
   adapterId: string;
   adapterType: SourceAdapterType;
   adapterVersion: string;
-  
+
   // Source detection
   inputPattern: InputPattern;
-  
+
   // Translation set
   translationSet: TranslationSet;
-  
+
   // Safety limits
   limits: SafetyLimits;
-  
+
   // QA report format
   qaReportFormat: QAReportFormat;
-  
+
   // Status
   status: AdapterStatus;
-  
+
   // Governance
   contractVersion: string;
   lastUpdated: string;
+
+  // Coupling tier — SDK_SPEC.md §7 forward-compatibility hook.
+  // "external": generic third-party format (default).
+  // "sibling-module": paired module (Cerebra); eligible for future live-integration extensions.
+  coupling?: "external" | "sibling-module";
 }
 
 // Static entries (synthetic/planned adapters from catalog)
@@ -119,6 +124,7 @@ const SOURCE_ADAPTER_ENTRIES: readonly SourceAdapterEntry[] = [
     status: "registered",
     contractVersion: "v74a",
     lastUpdated: "2026-05-06T00:00:00Z",
+    coupling: "external",
   },
   {
     adapterId: "git-codebase",
@@ -157,6 +163,7 @@ const SOURCE_ADAPTER_ENTRIES: readonly SourceAdapterEntry[] = [
     status: "candidate",
     contractVersion: "v74a",
     lastUpdated: "2026-05-06T00:00:00Z",
+    coupling: "external",
   },
   {
     adapterId: "website-url",
@@ -192,6 +199,7 @@ const SOURCE_ADAPTER_ENTRIES: readonly SourceAdapterEntry[] = [
     status: "candidate",
     contractVersion: "v74a",
     lastUpdated: "2026-05-06T00:00:00Z",
+    coupling: "external",
   },
   {
     adapterId: "markdown-vault",
@@ -228,6 +236,7 @@ const SOURCE_ADAPTER_ENTRIES: readonly SourceAdapterEntry[] = [
     status: "candidate",
     contractVersion: "v74a",
     lastUpdated: "2026-05-06T00:00:00Z",
+    coupling: "external",
   },
   {
     adapterId: "openapi-spec",
@@ -264,6 +273,7 @@ const SOURCE_ADAPTER_ENTRIES: readonly SourceAdapterEntry[] = [
     status: "candidate",
     contractVersion: "v74a",
     lastUpdated: "2026-05-06T00:00:00Z",
+    coupling: "external",
   },
   {
     adapterId: "database-schema",
@@ -300,6 +310,7 @@ const SOURCE_ADAPTER_ENTRIES: readonly SourceAdapterEntry[] = [
     status: "candidate",
     contractVersion: "v74a",
     lastUpdated: "2026-05-06T00:00:00Z",
+    coupling: "external",
   },
   {
     adapterId: "package-dependency",
@@ -336,6 +347,7 @@ const SOURCE_ADAPTER_ENTRIES: readonly SourceAdapterEntry[] = [
     status: "candidate",
     contractVersion: "v74a",
     lastUpdated: "2026-05-06T00:00:00Z",
+    coupling: "external",
   },
   {
     adapterId: "cloud-infrastructure",
@@ -373,6 +385,7 @@ const SOURCE_ADAPTER_ENTRIES: readonly SourceAdapterEntry[] = [
     status: "candidate",
     contractVersion: "v74a",
     lastUpdated: "2026-05-06T00:00:00Z",
+    coupling: "external",
   },
   {
     adapterId: "issue-tracker",
@@ -410,6 +423,7 @@ const SOURCE_ADAPTER_ENTRIES: readonly SourceAdapterEntry[] = [
     status: "candidate",
     contractVersion: "v74a",
     lastUpdated: "2026-05-06T00:00:00Z",
+    coupling: "external",
   },
 ] as const;
 

@@ -26,7 +26,8 @@ export function useGraphSourceSummary() {
   const activeAdapterId = useSettingsStore((s) => s.settings.sources.active);
   const inputPath = useSettingsStore(
     (s) =>
-      s.settings.sources.configurations[activeAdapterId ?? ""]?.inputPath ?? "",
+      (s.settings.sources.configurations[activeAdapterId ?? ""] as { inputPath?: string } | undefined)
+        ?.inputPath ?? "",
   );
   const refreshToken = useSettingsStore((s) => s.settings.sources.refreshToken);
 

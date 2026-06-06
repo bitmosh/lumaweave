@@ -154,6 +154,17 @@ const MIGRATIONS: Record<number,
     return { ...s, developer } as Partial<StarmapSettings>;
   },
 
+  // v92 → v93: configurations narrowed to AdapterConfig (v109.0.1). Additive only.
+  93: (s) => {
+    return {
+      ...s,
+      sources: {
+        ...((s as any).sources ?? defaultSources),
+        configurations: (s as any).sources?.configurations ?? {},
+      },
+    } as Partial<StarmapSettings>;
+  },
+
   // v91 → v92: add sources.refreshToken (v108.0.1). Additive only.
   92: (s) => {
     return {

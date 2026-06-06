@@ -1,3 +1,5 @@
+import type { AdapterConfig } from "../../source-adapter/baseSourceAdapter";
+
 export type ThemeId =
   | "solar-plasma"
   | "obsidian-aurora"
@@ -56,7 +58,7 @@ export interface MinimapAnchor {
 
 export interface SourcesSettings {
   active: string | null;
-  configurations: Record<string, { inputPath?: string }>;
+  configurations: Record<string, AdapterConfig>; // v109.0.1: narrowed from { inputPath?: string }
   refreshToken: number; // v108.0.1: incremented on regenerate success to re-trigger useGraphSourceSummary
 }
 
@@ -75,7 +77,7 @@ export interface MinimapSettings {
 }
 
 export interface StarmapSettings {
-  version: 92; // v108.0.1: sources.refreshToken added
+  version: 93; // v109.0.1: SourcesSettings.configurations narrowed to AdapterConfig
 
   general: {
     startupProjectId: string | null;
