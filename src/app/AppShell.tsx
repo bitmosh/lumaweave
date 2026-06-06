@@ -77,6 +77,13 @@ export function AppShell() {
     }
   }, []);
 
+  // Expose graph source summary for E2E tests (dev/test only)
+  useEffect(() => {
+    if (import.meta.env.DEV || (window as any).PLAYWRIGHT) {
+      (window as any).__lwGraphSummary = summary;
+    }
+  }, [summary]);
+
   // Smart fixture switching:
   // - Build-time injected by Vite define
   // - true when running under Playwright (stable geometry)

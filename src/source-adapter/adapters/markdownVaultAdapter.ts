@@ -4,6 +4,12 @@
  * Locked decisions: D1–D9 per BANDIT_v109_1_markdown_vault.md
  */
 
+// gray-matter uses Buffer.from() to store raw content (file.orig); polyfill for browser context.
+// We never read file.orig, so returning the input unchanged is sufficient.
+if (typeof (globalThis as any).Buffer === "undefined") {
+  (globalThis as any).Buffer = { from: (s: unknown) => s, isBuffer: () => false };
+}
+
 import matter from "gray-matter";
 import { DirectoryAdapter } from "../directoryAdapter";
 import type { AdapterCapabilities, AdapterConfig, MarkdownVaultConfig } from "../baseSourceAdapter";
