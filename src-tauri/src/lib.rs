@@ -17,6 +17,8 @@ pub fn run() {
             ide::open_in_ide,
             fs::read_file,
             fs::run_script,
+            fs::list_files,
+            fs::read_vault_file,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

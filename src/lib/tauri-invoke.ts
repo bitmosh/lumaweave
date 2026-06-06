@@ -7,6 +7,22 @@
  * In browser/Playwright (no Tauri runtime): the dynamic import throws,
  * which propagates as a rejected Promise — callers handle via try/catch.
  */
+export async function invokeListFiles(
+  root: string,
+  extensions: string[],
+  excludePrefixes: string[],
+  maxDepth?: number,
+): Promise<string[]> {
+  return invoke<string[]>("list_files", { root, extensions, excludePrefixes, maxDepth });
+}
+
+export async function invokeReadVaultFile(
+  root: string,
+  relativePath: string,
+): Promise<string> {
+  return invoke<string>("read_vault_file", { root, relativePath });
+}
+
 export async function invoke<T>(cmd: string, args?: Record<string, unknown>): Promise<T> {
   if (
     (import.meta.env.DEV || (window as any).PLAYWRIGHT) &&
