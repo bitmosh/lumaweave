@@ -21,7 +21,7 @@ tags: [live-state, now, canonical, v107-closed, v108-closed]
 
 **The single live-state doc.** This is the only doc that changes every pass and the only one that carries a date. Everything here is volatile by design. Concepts and architecture live in the static domain docs (see `DOC_ARCHITECTURE.md`); history lives in the dev-blog / #changelog feed. This doc holds only: where we are, what's next, what's broken.
 
-**Updated:** 2026-06-05 · **Production version:** 0.15.0 · **Internal arc:** v109 (Source Adapter Platform — open; v109.0 platform complete, v109.1 markdown-vault next) · **Last closed:** v108 (Source Adapters — Tier 1)
+**Updated:** 2026-06-06 · **Production version:** 0.15.0 · **Internal arc:** v109 (Source Adapter Platform — open; v109.0 platform complete, v109.1 markdown-vault complete, v109.2 Cytoscape JSON next) · **Last closed:** v108 (Source Adapters — Tier 1)
 
 ---
 
@@ -38,15 +38,29 @@ Build the platform layer for multiple live adapters. v109.0 ships the SDK, regis
 | v109.0.3 | `list_files` + `read_vault_file` Tauri commands (caller-supplied root, `canonicalize → starts_with` validation, no symlink-follow, depth cap 20/50, defense-in-depth canonicalize-on-each-file); `invokeListFiles`/`invokeReadVaultFile` typed wrappers; `DirectoryAdapter` stubs replaced with real calls | `51e58f6` |
 | v109.0.4 | `adapterConfigFormRegistry` (Map-based form dispatch) + `AdapterConfigForm` (empty-state + registered-form paths); Configuration section under active entry card in `SourceAdapterPanel`; ships empty — forms register in v109.1+ | `182ea67` |
 
-### v109.1–v109.5 — Adapters [NEXT]
+### v109.1 — markdown-vault (Obsidian) [COMPLETE]
+
+| Pass | Work | Commit |
+|---|---|---|
+| v109.1.0 | `MarkdownVaultAdapter`: wikilink resolution (byPath → byFilename → byAlias), tag nodes, frontmatter + inline tags (hex-aware regex), truncation (2000 notes, sort by `updated:` desc); `MarkdownVaultConfigForm` (vault-root input); registered in `sourceAdapterRegistry` + `adapterConfigFormRegistry` | `1b8505b` |
+| v109.1.1 | Fixture vault (`tests/fixtures/markdown-vault/`, 13 notes incl. disambiguation triplet); E2E spec (exact node/edge counts, disambiguation correctness, alias resolution, unresolved warnings); `__lwGraphSummary` window exposure; `Buffer` polyfill for gray-matter in browser context | `46691a3` |
+| v109.1.2 | NOW.md v109.1 complete + SDK_SPEC tag-node convention recorded | _(this commit)_ |
+
+### v109.2–v109.5 — Adapters [NEXT]
 
 | Pass | Work |
 |---|---|
-| **v109.1** | markdown-vault (Obsidian): `MarkdownVaultAdapter`, register form in `adapterConfigFormRegistry`, vault-root text input, `list_files` + `read_vault_file` wired, graph output **[NEXT]** |
-| v109.2 | Cytoscape JSON adapter |
+| **v109.2** | Cytoscape JSON adapter **[NEXT]** |
 | v109.3 | Package-dependency adapter (JSON-only; TOML deferred) |
 | v109.4 | CSV edge-list adapter |
 | v109.5 | Arc close + semver bump 0.15.0 → 0.16.0 + reconcile |
+
+### Architectural notes established in v109.1
+
+- **Tag-node convention:** Adapters MAY emit nodes with `type: "tag"` and `raw.kind: "tag"` for category/tag entities. Tag-node IDs use the `tag:` namespace prefix (`tag:projects/lumaweave`) to avoid collision with file-path-based identifiers. Convention recorded in `SDK_SPEC.md §6`.
+- **Disambiguation rule (wikilink resolution):** When multiple candidates share a filename, `sharedPrefixDepth(linkingPath, candidatePath)` resolves the ambiguity — higher shared folder depth wins; alphabetical tiebreak on full `relativePath`. Observable in E2E via the `LinkByCommonName.md → personal/Project.md` assertion.
+- **Hex-aware inline-tag regex:** `/#(?![0-9a-fA-F]{3,6}\b)([a-zA-Z][a-zA-Z0-9_\-/]*)/g` — rejects CSS hex colors (`#FF0000`, `#abc`) as false-positive tag matches (D7, non-negotiable).
+- **Browser Buffer polyfill:** `gray-matter` calls `Buffer.from(input)` at parse time (for `file.orig`). Inline polyfill in `markdownVaultAdapter.ts` (`{ from: (s) => s, isBuffer: () => false }`) avoids the Node.js global requirement in Vite browser context.
 
 ### Architectural notes established in v109.0
 
