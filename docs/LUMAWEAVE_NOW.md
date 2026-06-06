@@ -21,7 +21,41 @@ tags: [live-state, now, canonical, v107-closed, v108-closed]
 
 **The single live-state doc.** This is the only doc that changes every pass and the only one that carries a date. Everything here is volatile by design. Concepts and architecture live in the static domain docs (see `DOC_ARCHITECTURE.md`); history lives in the dev-blog / #changelog feed. This doc holds only: where we are, what's next, what's broken.
 
-**Updated:** 2026-06-05 · **Production version:** 0.15.0 · **Internal arc:** v109 (TBD) · **Last closed:** v108 (Source Adapters — Tier 1)
+**Updated:** 2026-06-05 · **Production version:** 0.15.0 · **Internal arc:** v109 (Source Adapter Platform — open; v109.0 platform complete, v109.1 markdown-vault next) · **Last closed:** v108 (Source Adapters — Tier 1)
+
+---
+
+## Open arc — v109: Source Adapter Platform — OPEN (0.15.0, semver bump at close)
+
+Build the platform layer for multiple live adapters. v109.0 ships the SDK, registry API, Tauri filesystem commands, and per-adapter settings scaffolding. v109.1–v109.4 wire the four concrete adapters. Arc closes at v109.5 (or whichever pass lands the reconcile + semver bump 0.15.0 → 0.16.0).
+
+### v109.0 — Platform [COMPLETE]
+
+| Pass | Work | Commit |
+|---|---|---|
+| v109.0.1 | SDK interfaces + family bases (`BaseSourceAdapter`, `DirectoryAdapter` stub, `SingleFileAdapter` stub); `AdapterConfig` discriminated union + `LoaderFn`; settings schema 92→93 (`configurations` narrowed to `Record<string, AdapterConfig>`) | `087a10e` |
+| v109.0.2 | `registerSourceAdapter()` API — const-array registry → `entries[]` + `loaderMap Map` + `listeners[]`; `getSourceAdapterLoader`; `buildAdapterConfig.ts` (reads settings store); `loadSelfGraph.ts` extracted; `loadSource(adapterId)` single-param Map dispatch; `useGraphSourceSummary` bridge cleaned | `d26039b` |
+| v109.0.3 | `list_files` + `read_vault_file` Tauri commands (caller-supplied root, `canonicalize → starts_with` validation, no symlink-follow, depth cap 20/50, defense-in-depth canonicalize-on-each-file); `invokeListFiles`/`invokeReadVaultFile` typed wrappers; `DirectoryAdapter` stubs replaced with real calls | `51e58f6` |
+| v109.0.4 | `adapterConfigFormRegistry` (Map-based form dispatch) + `AdapterConfigForm` (empty-state + registered-form paths); Configuration section under active entry card in `SourceAdapterPanel`; ships empty — forms register in v109.1+ | `182ea67` |
+
+### v109.1–v109.5 — Adapters [NEXT]
+
+| Pass | Work |
+|---|---|
+| **v109.1** | markdown-vault (Obsidian): `MarkdownVaultAdapter`, register form in `adapterConfigFormRegistry`, vault-root text input, `list_files` + `read_vault_file` wired, graph output **[NEXT]** |
+| v109.2 | Cytoscape JSON adapter |
+| v109.3 | Package-dependency adapter (JSON-only; TOML deferred) |
+| v109.4 | CSV edge-list adapter |
+| v109.5 | Arc close + semver bump 0.15.0 → 0.16.0 + reconcile |
+
+### Architectural notes established in v109.0
+
+- **Adapter SDK contract:** `~/Projects/future-integration/SDK_SPEC.md`
+- **Sibling-integration deferred vision:** `~/Projects/future-integration/INTEGRATION_FUTURES.md`
+- **Cross-project schema:** `~/Projects/future-integration/SHARED_SCHEMA.md`
+- **`coupling` field on `SourceAdapterEntry`:** `"external"` (all 9 current entries) vs `"sibling-module"` (reserved for future cerebra-vault — not yet registered)
+- **Forward-compat hooks:** `transport: "file" | "live"` + reserved `extensions: {}` in file-envelope adapters
+- **Targeted-test-scope convention:** per-commit verification runs only relevant spec files; full suite is a manual checkpoint at arc close, not a per-commit gate
 
 ---
 
@@ -217,9 +251,26 @@ Reworked the floating-tile system: per-axis snap engine, armed guide, explicit g
 
 | Arc | Work |
 |---|---|
-| **v108** | TBD — Source Adapters Tier 1 (self-graph live mode) is the logical next; or a deferred punch-list pass |
-| v108+ | Paperweight punch-list: Source Adapters Tier 1+ (live mode, new adapters), radial deferred (Q1–Q3, M1–M3), v102 Workshop/History/Bookmarks/Export, tile-content theming + token coverage, settings advanced-tabs relocation (5 deferred tile sections), minimap E2E coverage (test debt from v104), pre-1.0 cleanup incl. CI/security green |
+| **v109** (OPEN) | Source Adapter Platform: v109.1 markdown-vault [NEXT] → v109.2 Cytoscape JSON → v109.3 package-dependency → v109.4 CSV edge-list → v109.5 arc close + 0.15.0 → 0.16.0 |
+| v110 (HIGH) | Test-hardening + suite split — full-suite exceeds Bash 10-min cap; `graph-visual-inventory.spec.ts` dominates; `waitForTimeout` chains need web-first assertions (see Standing deferred below) |
+| v110+ | Paperweight punch-list: radial deferred (Q1–Q3, M1–M3), v102 Workshop/History/Bookmarks/Export, tile-content theming + token coverage, settings advanced-tabs relocation (5 deferred tile sections), minimap E2E coverage (test debt from v104), pre-1.0 cleanup incl. CI/security green |
 | ~v115–v125 | `1.0.0` initial public release |
+
+### Standing deferred
+
+#### v110 candidate (HIGH PRIORITY): Test-hardening + suite split
+
+**Driver:** Full-suite runtime (~9–12 minutes) now exceeds the Bash tool's 10-minute cap, contaminating Bandit verification with timing flakes. Bandit's targeted-test-scope convention works around it per-commit, but full-suite checkpoints (arc closes, regression hunts) require human-run-only.
+
+**Goals:**
+- Split `graph-visual-inventory.spec.ts` (~8.7 min of 9 min total) into smaller files or use `test.describe.parallel()` so it doesn't gate the whole suite
+- Convert `waitForTimeout()` chains in QA helpers (especially `tests/e2e/helpers/qa.ts`) to web-first assertions (`expect.poll`, `toBeVisible({ timeout })`)
+- Audit the timing-sensitive specs that flaked under v109.0.x manual full-suite (color-tab, contract-registry, graph-sources, gwells-physics, settings-panel reload)
+- Restore sub-10-min full-suite so Bandit's Bash-cap verification becomes viable again
+
+**Estimated scope:** ~3–4 hours, multi-pass (audit → `graph-visual-inventory` split → helper-pattern conversions → flaky-spec triage).
+
+**Relationship to v1.0 ship goal:** not strictly required for shipping, but CI green stability matters for the public release. Worth banking before any major feature arc.
 
 ---
 
