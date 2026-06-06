@@ -24,11 +24,6 @@ export function useGraphSourceSummary() {
   const [error, setError] = useState<string | null>(null);
 
   const activeAdapterId = useSettingsStore((s) => s.settings.sources.active);
-  const inputPath = useSettingsStore(
-    (s) =>
-      (s.settings.sources.configurations[activeAdapterId ?? ""] as { inputPath?: string } | undefined)
-        ?.inputPath ?? "",
-  );
   const refreshToken = useSettingsStore((s) => s.settings.sources.refreshToken);
 
   useEffect(() => {
@@ -39,7 +34,7 @@ export function useGraphSourceSummary() {
       setError(null);
 
       try {
-        const result = await loadSource(activeAdapterId, inputPath);
+        const result = await loadSource(activeAdapterId);
         if (isMounted) {
           setSummary(result);
           if (result.status === "error") {
@@ -66,7 +61,7 @@ export function useGraphSourceSummary() {
       isMounted = false;
     };
   // refreshToken is incremented by Regenerate button to re-trigger after script runs
-  }, [activeAdapterId, inputPath, refreshToken]);
+  }, [activeAdapterId, refreshToken]);
 
   return { summary, error };
 }
