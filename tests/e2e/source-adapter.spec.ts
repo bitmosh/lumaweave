@@ -116,6 +116,20 @@ test("Source Adapter set-active click updates settings store and active indicato
   await expect(setActiveBtn).toBeDisabled();
 });
 
+test("Configuration section appears for active entry only", async ({ page }) => {
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  await openSourceAdapter(page);
+
+  // Self-graph is active by default — its card should show the empty-state config section
+  const activeEntry = page.getByTestId("source-adapter-entry-self-graph-yaml-frontmatter");
+  await expect(activeEntry.getByTestId("adapter-config-empty")).toBeVisible();
+
+  // A candidate entry should NOT have a config section
+  const candidateEntry = page.getByTestId("source-adapter-entry-git-codebase");
+  await expect(candidateEntry.getByTestId("adapter-config-empty")).not.toBeVisible();
+});
+
 test("Source Adapter no dead links in panel", async ({ page }) => {
   await page.goto("/");
   await page.waitForLoadState("networkidle");

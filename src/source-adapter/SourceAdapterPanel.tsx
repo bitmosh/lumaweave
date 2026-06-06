@@ -14,6 +14,7 @@ import {
   type SourceAdapterEntry,
 } from "./sourceAdapterRegistry";
 import { useSettingsStore } from "../control-plane/settings/settings.store";
+import { AdapterConfigForm } from "./AdapterConfigForm";
 
 export function SourceAdapterPanel(): React.JSX.Element {
   const entries = getAllSourceAdapterEntries();
@@ -283,6 +284,13 @@ function EntryCard({
           {entry.lastUpdated}
         </div>
       </div>
+
+      {isActive && (
+        <div className="mt-4 border-t border-gray-100 pt-4" data-testid="adapter-config-section">
+          <h4 className="text-xs font-semibold text-gray-500 mb-2">Configuration</h4>
+          <AdapterConfigForm adapterId={entry.adapterId} />
+        </div>
+      )}
     </div>
   );
 }
