@@ -89,8 +89,8 @@
 
 .lw-status-bar-popover {
   position: absolute;
-  bottom: calc(100% + 6px);
-  left: 0;
+  inset-block-end: calc(100% + 6px);
+  inset-inline-start: 0;
   min-width: 220px;
   background: linear-gradient(180deg, rgba(27,8,48,0.97), rgba(11,4,22,0.99));
   border: 1px solid rgba(255,179,71,0.32);
@@ -171,7 +171,7 @@
   font-family: var(--lw-font-mono, "IBM Plex Mono", ui-monospace, monospace);
   font-size: 10px;
   color: rgba(241,245,249,0.75);
-  text-align: right;
+  text-align: end;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

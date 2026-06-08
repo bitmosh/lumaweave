@@ -7,7 +7,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-block-start: 12vh;
+  padding-block-start: 12vb;
   background: rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(4px);
 }
@@ -15,7 +15,7 @@
 .palette-shell {
   width: 100%;
   max-inline-size: 600px;
-  max-block-size: 70vh;
+  max-block-size: 70vb;
   display: flex;
   flex-direction: column;
   border-radius: 12px;
