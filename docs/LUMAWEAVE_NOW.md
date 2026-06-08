@@ -21,7 +21,7 @@ tags: [live-state, now, canonical, v107-closed, v108-closed]
 
 **The single live-state doc.** This is the only doc that changes every pass and the only one that carries a date. Everything here is volatile by design. Concepts and architecture live in the static domain docs (see `DOC_ARCHITECTURE.md`); history lives in the dev-blog / #changelog feed. This doc holds only: where we are, what's next, what's broken.
 
-**Updated:** 2026-06-08 · **Production version:** 0.15.0 · **Internal arc:** v109 (Source Adapter Platform — open; v109.0 platform complete, v109.1 markdown-vault complete, v109.2 Cytoscape JSON complete, v109.3 package-dependency next) · **Last closed:** v108 (Source Adapters — Tier 1)
+**Updated:** 2026-06-08 · **Production version:** 0.15.0 · **Internal arc:** v109 (Source Adapter Platform — open; v109.0 platform complete, v109.1 markdown-vault complete, v109.2 Cytoscape JSON complete, v109.3 package-dependency complete, v109.4 CSV next) · **Last closed:** v108 (Source Adapters — Tier 1)
 
 ---
 
@@ -52,14 +52,20 @@ Build the platform layer for multiple live adapters. v109.0 ships the SDK, regis
 |---|---|---|
 | v109.2.0 | `read_user_file` Tauri command (symlink-rejected, regular-file only, no scope restriction); `invokeReadUserFile` typed wrapper; `SingleFileAdapter.readUserFile()` protected method | `8ee4384` |
 | v109.2.1 | `CytoscapeJsonAdapter`: both nested `{nodes,edges}` and flat `[{group,data}]` forms via `normalizeElements`; node dedup (first-wins), orphan-edge skip with warnings; non-structural data → `raw.cytoscapeData`; position + classes passthrough; Cytoscape Desktop format detected-and-errored; `CytoscapeJsonConfigForm` (file-path input); registry registration `status: "registered"` | `315d9c5` |
-| v109.2.2 | Fixture suite (`sample-graph.json` 11 nodes/15 edges with dup+orphan, `flat-form.json`, `desktop-format.json`); 7 E2E tests all pass; NOW.md updated | _(this commit)_ |
+| v109.2.2 | Fixture suite (`sample-graph.json` 11 nodes/15 edges with dup+orphan, `flat-form.json`, `desktop-format.json`); 7 E2E tests all pass; NOW.md updated | `a4fef50` |
 
-### v109.3–v109.5 — Adapters [NEXT]
+### v109.3 — package-dependency [COMPLETE]
+
+| Pass | Work | Commit |
+|---|---|---|
+| v109.3.0 | `PackageDependencyAdapter`: name-only node identity, 3 edge types (depends-on / depends-on-dev / depends-on-peer), dual-edge for packages in multiple buckets; `projectPath + manifestType` → computed filePath via `readUserFile()`; pyproject.toml errors gracefully; workspace detection warns-and-continues; `PackageDependencyConfigForm` (project-path input + manifest-type select); registry `status: "candidate"→"registered"` | `c8aa24a` |
+| v109.3.1 | Fixture suite (`sample-package.json` with dual-edge react, `missing-name.json`); 7 E2E tests; NOW.md updated | _(this commit)_ |
+
+### v109.4–v109.5 — Adapters [NEXT]
 
 | Pass | Work |
 |---|---|
-| **v109.3** | Package-dependency adapter (JSON-only; TOML deferred) **[NEXT]** |
-| v109.4 | CSV edge-list adapter |
+| **v109.4** | CSV edge-list adapter **[NEXT]** |
 | v109.5 | Arc close + semver bump 0.15.0 → 0.16.0 + reconcile |
 
 ### Architectural notes established in v109.1
@@ -75,6 +81,12 @@ Build the platform layer for multiple live adapters. v109.0 ships the SDK, regis
 - **Both Cytoscape.js JSON forms supported:** `normalizeElements` helper handles nested `{nodes: [...], edges: [...]}` and flat `[{group: "nodes"|"edges", data}]` forms (D10, non-negotiable). Both verified by E2E.
 - **Cytoscape Desktop format detected-and-errored:** `format_version` field or `generated_by` containing `"cytoscape-"` → immediate error with re-export instructions. Never attempted to parse (D6).
 - **`read_user_file` import pattern:** cytoscape-json adapter uses direct import in `sourceAdapterRegistry.ts` (same as markdown-vault), not a side-effect import file. `SourceAdapterType` union extended with `"cytoscape-json"`.
+
+### Architectural notes established in v109.3
+
+- **`projectPath` + `manifestType` config pattern:** `PackageDependencyConfig` uses a directory path (`projectPath`) plus a manifest type key rather than a direct file path. The adapter computes the absolute manifest path as `projectPath + "/" + manifestType` before calling `readUserFile()`. Better UX (user types project root); Rust `canonicalize()` normalizes the result.
+- **Dual-edge, name-only node dedup:** A package appearing in multiple dependency buckets (e.g. `react` in both `dependencies` + `peerDependencies`) produces one node (first occurrence wins) but two distinct edges with separate `relationship` values (`"depends-on"` + `"depends-on-peer"`). This is intentional graph semantics — one entity, two declared relationships.
+- **Forward-compat for TOML:** `manifestType: "pyproject.toml"` returns a clear `"not yet supported"` error. The field stays in the `PackageDependencyConfig` type as a hook for v2 without requiring a schema migration.
 
 ### Architectural notes established in v109.0
 

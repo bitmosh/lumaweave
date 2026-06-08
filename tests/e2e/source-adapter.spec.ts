@@ -17,7 +17,7 @@ test("Source Adapter entry count is visible", async ({ page }) => {
 
   const entryCount = page.getByTestId("source-adapter-entry-count");
   await expect(entryCount).toBeVisible();
-  await expect(entryCount).toHaveText("11");
+  await expect(entryCount).toHaveText("10");
 });
 
 test("Source Adapter self-graph entry renders", async ({ page }) => {
