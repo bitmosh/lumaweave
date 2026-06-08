@@ -16,6 +16,7 @@ pub fn run() {
             ide::get_project_root,
             ide::open_in_ide,
             fs::read_file,
+            fs::read_user_file,
             fs::run_script,
             fs::list_files,
             fs::read_vault_file,

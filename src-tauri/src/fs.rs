@@ -147,6 +147,29 @@ fn walk(
     Ok(())
 }
 
+// Security: caller supplies absolute path. Validate: canonicalizable,
+// regular file (not directory/device), not a symlink. NO scope restriction —
+// the user picked the file via the form; we trust that intent.
+#[tauri::command]
+pub async fn read_user_file(path: String) -> Result<String, String> {
+    let canonical = std::fs::canonicalize(&path)
+        .map_err(|e| format!("Cannot canonicalize path: {e}"))?;
+    // Reject symlinks (caller could have specified one; canonicalize follows them,
+    // but we want to reject even reaching the file through a symlink).
+    let metadata = std::fs::symlink_metadata(&path)
+        .map_err(|e| format!("Cannot stat path: {e}"))?;
+    if metadata.file_type().is_symlink() {
+        return Err(format!("Symlinks not permitted: {path}"));
+    }
+    let final_metadata = std::fs::metadata(&canonical)
+        .map_err(|e| format!("Cannot stat canonical path: {e}"))?;
+    if !final_metadata.is_file() {
+        return Err(format!("Not a regular file: {path}"));
+    }
+    std::fs::read_to_string(&canonical)
+        .map_err(|e| format!("Read failed: {e}"))
+}
+
 // Same shape as read_file but validates against a user-configured root, not project_root.
 #[tauri::command]
 pub async fn read_vault_file(root: String, relative_path: String) -> Result<String, String> {

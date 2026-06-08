@@ -9,7 +9,7 @@
 
 import type { AdapterCapabilities, AdapterConfig, AdapterFamily } from "./baseSourceAdapter";
 import type { GraphSourceSummary } from "../graph/schema/graph.types";
-import { invoke } from "../lib/tauri-invoke";
+import { invoke, invokeReadUserFile } from "../lib/tauri-invoke";
 
 export abstract class SingleFileAdapter {
   abstract readonly adapterId: string;
@@ -23,5 +23,10 @@ export abstract class SingleFileAdapter {
   // Wraps the v108 read_file Tauri command (validates against project root).
   protected async readFile(path: string): Promise<string> {
     return invoke<string>("read_file", { path });
+  }
+
+  // Wraps read_user_file for user-supplied absolute paths (no scope restriction).
+  protected async readUserFile(path: string): Promise<string> {
+    return invokeReadUserFile(path);
   }
 }

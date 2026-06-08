@@ -16,6 +16,10 @@ export async function invokeListFiles(
   return invoke<string[]>("list_files", { root, extensions, excludePrefixes, maxDepth });
 }
 
+export async function invokeReadUserFile(path: string): Promise<string> {
+  return invoke<string>("read_user_file", { path });
+}
+
 export async function invokeReadVaultFile(
   root: string,
   relativePath: string,
