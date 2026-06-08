@@ -13,6 +13,7 @@ import type { LoaderFn, SelfGraphConfig } from "./baseSourceAdapter";
 import type { GraphSourceSummary } from "../graph/schema/graph.types";
 import { loadSelfGraph } from "../graph/ingest/loadSelfGraph";
 import { loadMarkdownVault } from "./adapters/markdownVaultAdapter";
+import { loadCytoscapeJson } from "./adapters/cytoscapeJsonAdapter";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -23,6 +24,7 @@ export type SourceAdapterType =
   | "git-codebase"
   | "website-url"
   | "markdown-vault"
+  | "cytoscape-json"
   | "openapi-spec"
   | "database-schema"
   | "package-dependency"
@@ -274,6 +276,31 @@ registerSourceAdapter(
     coupling: "external",
   },
   loadMarkdownVault,
+);
+
+registerSourceAdapter(
+  {
+    adapterId: "cytoscape-json",
+    adapterType: "cytoscape-json",
+    adapterVersion: "0.1.0",
+    inputPattern: {
+      type: "path",
+      pattern: "**/*.json",
+      examples: ["exports/graph.json", "data/network.json"],
+    },
+    translationSet: {
+      nodeMappings: { "node": "graph.node" },
+      edgeMappings: { "edge": "graph.edge" },
+      defaultConfidence: "observed",
+    },
+    limits: { maxNodes: 2000, maxEdges: 10000, maxDepth: 1, maxFileSize: 52428800, timeoutMs: 30000 },
+    qaReportFormat: { requiredFields: ["adapterId", "sourceDescription", "counts", "limits", "safety"] },
+    status: "registered",
+    contractVersion: "v74a",
+    lastUpdated: "2026-06-08T00:00:00Z",
+    coupling: "external",
+  },
+  loadCytoscapeJson,
 );
 
 registerSourceAdapter(
