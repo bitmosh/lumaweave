@@ -14,6 +14,7 @@ import type { GraphSourceSummary } from "../graph/schema/graph.types";
 import { loadSelfGraph } from "../graph/ingest/loadSelfGraph";
 import { loadMarkdownVault } from "./adapters/markdownVaultAdapter";
 import { loadCytoscapeJson } from "./adapters/cytoscapeJsonAdapter";
+import { loadPackageDependency } from "./adapters/packageDependencyAdapter";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -370,12 +371,12 @@ registerSourceAdapter(
     },
     limits: { maxNodes: 500, maxEdges: 2000, maxDepth: 5, maxFileSize: 1048576, timeoutMs: 15000 },
     qaReportFormat: { requiredFields: ["adapterId", "sourceDescription", "counts", "limits", "safety"] },
-    status: "candidate",
+    status: "registered",
     contractVersion: "v74a",
-    lastUpdated: "2026-05-06T00:00:00Z",
+    lastUpdated: "2026-06-08T00:00:00Z",
     coupling: "external",
   },
-  candidateNoOpLoader,
+  loadPackageDependency,
 );
 
 registerSourceAdapter(
