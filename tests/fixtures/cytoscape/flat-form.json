@@ -1,0 +1,11 @@
+{
+  "elements": [
+    { "group": "nodes", "data": { "id": "a", "label": "Alpha" } },
+    { "group": "nodes", "data": { "id": "b", "label": "Beta" } },
+    { "group": "nodes", "data": { "id": "c", "label": "Gamma" } },
+    { "group": "nodes", "data": { "id": "d", "label": "Delta" } },
+    { "group": "edges", "data": { "id": "ab", "source": "a", "target": "b" } },
+    { "group": "edges", "data": { "id": "bc", "source": "b", "target": "c" } },
+    { "group": "edges", "data": { "id": "cd", "source": "c", "target": "d" } }
+  ]
+}

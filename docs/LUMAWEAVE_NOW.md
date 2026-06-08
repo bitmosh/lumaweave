@@ -21,7 +21,7 @@ tags: [live-state, now, canonical, v107-closed, v108-closed]
 
 **The single live-state doc.** This is the only doc that changes every pass and the only one that carries a date. Everything here is volatile by design. Concepts and architecture live in the static domain docs (see `DOC_ARCHITECTURE.md`); history lives in the dev-blog / #changelog feed. This doc holds only: where we are, what's next, what's broken.
 
-**Updated:** 2026-06-06 · **Production version:** 0.15.0 · **Internal arc:** v109 (Source Adapter Platform — open; v109.0 platform complete, v109.1 markdown-vault complete, v109.2 Cytoscape JSON next) · **Last closed:** v108 (Source Adapters — Tier 1)
+**Updated:** 2026-06-08 · **Production version:** 0.15.0 · **Internal arc:** v109 (Source Adapter Platform — open; v109.0 platform complete, v109.1 markdown-vault complete, v109.2 Cytoscape JSON complete, v109.3 package-dependency next) · **Last closed:** v108 (Source Adapters — Tier 1)
 
 ---
 
@@ -44,14 +44,21 @@ Build the platform layer for multiple live adapters. v109.0 ships the SDK, regis
 |---|---|---|
 | v109.1.0 | `MarkdownVaultAdapter`: wikilink resolution (byPath → byFilename → byAlias), tag nodes, frontmatter + inline tags (hex-aware regex), truncation (2000 notes, sort by `updated:` desc); `MarkdownVaultConfigForm` (vault-root input); registered in `sourceAdapterRegistry` + `adapterConfigFormRegistry` | `1b8505b` |
 | v109.1.1 | Fixture vault (`tests/fixtures/markdown-vault/`, 13 notes incl. disambiguation triplet); E2E spec (exact node/edge counts, disambiguation correctness, alias resolution, unresolved warnings); `__lwGraphSummary` window exposure; `Buffer` polyfill for gray-matter in browser context | `46691a3` |
-| v109.1.2 | NOW.md v109.1 complete + SDK_SPEC tag-node convention recorded | _(this commit)_ |
+| v109.1.2 | NOW.md v109.1 complete + SDK_SPEC tag-node convention recorded | `7d7e976` |
 
-### v109.2–v109.5 — Adapters [NEXT]
+### v109.2 — Cytoscape JSON [COMPLETE]
+
+| Pass | Work | Commit |
+|---|---|---|
+| v109.2.0 | `read_user_file` Tauri command (symlink-rejected, regular-file only, no scope restriction); `invokeReadUserFile` typed wrapper; `SingleFileAdapter.readUserFile()` protected method | `8ee4384` |
+| v109.2.1 | `CytoscapeJsonAdapter`: both nested `{nodes,edges}` and flat `[{group,data}]` forms via `normalizeElements`; node dedup (first-wins), orphan-edge skip with warnings; non-structural data → `raw.cytoscapeData`; position + classes passthrough; Cytoscape Desktop format detected-and-errored; `CytoscapeJsonConfigForm` (file-path input); registry registration `status: "registered"` | `315d9c5` |
+| v109.2.2 | Fixture suite (`sample-graph.json` 11 nodes/15 edges with dup+orphan, `flat-form.json`, `desktop-format.json`); 7 E2E tests all pass; NOW.md updated | _(this commit)_ |
+
+### v109.3–v109.5 — Adapters [NEXT]
 
 | Pass | Work |
 |---|---|
-| **v109.2** | Cytoscape JSON adapter **[NEXT]** |
-| v109.3 | Package-dependency adapter (JSON-only; TOML deferred) |
+| **v109.3** | Package-dependency adapter (JSON-only; TOML deferred) **[NEXT]** |
 | v109.4 | CSV edge-list adapter |
 | v109.5 | Arc close + semver bump 0.15.0 → 0.16.0 + reconcile |
 
@@ -61,6 +68,13 @@ Build the platform layer for multiple live adapters. v109.0 ships the SDK, regis
 - **Disambiguation rule (wikilink resolution):** When multiple candidates share a filename, `sharedPrefixDepth(linkingPath, candidatePath)` resolves the ambiguity — higher shared folder depth wins; alphabetical tiebreak on full `relativePath`. Observable in E2E via the `LinkByCommonName.md → personal/Project.md` assertion.
 - **Hex-aware inline-tag regex:** `/#(?![0-9a-fA-F]{3,6}\b)([a-zA-Z][a-zA-Z0-9_\-/]*)/g` — rejects CSS hex colors (`#FF0000`, `#abc`) as false-positive tag matches (D7, non-negotiable).
 - **Browser Buffer polyfill:** `gray-matter` calls `Buffer.from(input)` at parse time (for `file.orig`). Inline polyfill in `markdownVaultAdapter.ts` (`{ from: (s) => s, isBuffer: () => false }`) avoids the Node.js global requirement in Vite browser context.
+
+### Architectural notes established in v109.2
+
+- **`read_user_file` Tauri command:** New Tauri command for user-supplied absolute paths. Validates: `canonicalize` succeeds, `symlink_metadata` rejects symlinks, `metadata` confirms regular file. No project-root scope restriction — user picked the file. Reusable for v109.3/v109.4. `invokeReadUserFile()` in `tauri-invoke.ts`; `SingleFileAdapter.readUserFile()` as protected base method.
+- **Both Cytoscape.js JSON forms supported:** `normalizeElements` helper handles nested `{nodes: [...], edges: [...]}` and flat `[{group: "nodes"|"edges", data}]` forms (D10, non-negotiable). Both verified by E2E.
+- **Cytoscape Desktop format detected-and-errored:** `format_version` field or `generated_by` containing `"cytoscape-"` → immediate error with re-export instructions. Never attempted to parse (D6).
+- **`read_user_file` import pattern:** cytoscape-json adapter uses direct import in `sourceAdapterRegistry.ts` (same as markdown-vault), not a side-effect import file. `SourceAdapterType` union extended with `"cytoscape-json"`.
 
 ### Architectural notes established in v109.0
 
@@ -265,7 +279,7 @@ Reworked the floating-tile system: per-axis snap engine, armed guide, explicit g
 
 | Arc | Work |
 |---|---|
-| **v109** (OPEN) | Source Adapter Platform: v109.1 markdown-vault [NEXT] → v109.2 Cytoscape JSON → v109.3 package-dependency → v109.4 CSV edge-list → v109.5 arc close + 0.15.0 → 0.16.0 |
+| **v109** (OPEN) | Source Adapter Platform: v109.0–v109.2 complete → **v109.3 package-dependency [NEXT]** → v109.4 CSV edge-list → v109.5 arc close + 0.15.0 → 0.16.0 |
 | v110 (HIGH) | Test-hardening + suite split — full-suite exceeds Bash 10-min cap; `graph-visual-inventory.spec.ts` dominates; `waitForTimeout` chains need web-first assertions (see Standing deferred below) |
 | v110+ | Paperweight punch-list: radial deferred (Q1–Q3, M1–M3), v102 Workshop/History/Bookmarks/Export, tile-content theming + token coverage, settings advanced-tabs relocation (5 deferred tile sections), minimap E2E coverage (test debt from v104), pre-1.0 cleanup incl. CI/security green |
 | ~v115–v125 | `1.0.0` initial public release |
