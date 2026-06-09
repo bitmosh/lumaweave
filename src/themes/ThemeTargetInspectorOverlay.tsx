@@ -39,7 +39,7 @@ interface WarningBadge {
 installThemeTargetProbeGlobal();
 
 const PIN_HOTKEY_LABEL = "Alt+Shift+P";
-const GRAPH_VIEWPORT_SELECTOR = "[data-testid='self-graph-fixture-loaded']";
+const GRAPH_VIEWPORT_SELECTOR = "[data-testid='graph-viewport']";
 const SIGMA_ELEMENT_SELECTOR = `${GRAPH_VIEWPORT_SELECTOR} canvas, ${GRAPH_VIEWPORT_SELECTOR} svg, ${GRAPH_VIEWPORT_SELECTOR} [data-sigma-element]`;
 const REGISTERED_TARGET_SELECTOR = "[data-lw-theme-target]";
 const OVERLAY_ROOT_SELECTOR = "[data-testid='theme-target-inspector-overlay']";

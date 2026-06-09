@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test.describe("ide-integration (v96)", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
-    await page.waitForSelector('[data-testid="self-graph-fixture-loaded"]', { timeout: 15000 });
+    await page.waitForSelector('[data-testid="graph-viewport"]', { timeout: 15000 });
   });
 
   test("inspector:open-in-ide listener installs without console errors", async ({ page }) => {
@@ -13,7 +13,7 @@ test.describe("ide-integration (v96)", () => {
     });
     // Reload to capture any install-time errors with the listener in the fresh hook
     await page.reload();
-    await page.waitForSelector('[data-testid="self-graph-fixture-loaded"]', { timeout: 15000 });
+    await page.waitForSelector('[data-testid="graph-viewport"]', { timeout: 15000 });
     const ideErrors = errors.filter((e) => e.toLowerCase().includes("open-in-ide"));
     expect(ideErrors).toHaveLength(0);
   });

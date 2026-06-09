@@ -394,7 +394,7 @@ export function AppShell() {
 
           <section
             className="relative min-h-0 overflow-hidden"
-            data-testid={useFixture ? "self-graph-fixture-loaded" : "graph-viewport"}
+            data-testid="graph-viewport"
             style={{
               background: "radial-gradient(ellipse at center, #0d1929 0%, #060b14 60%, #030508 100%)",
             } as React.CSSProperties}

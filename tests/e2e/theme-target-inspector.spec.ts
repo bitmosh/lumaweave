@@ -181,13 +181,9 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
     await expect(page.getByTestId("theme-target-inspector-tooltip")).toHaveCount(0);
   });
 
-  test.skip("UI Inspector panel stays inside graph viewport lower-right - SKIP-WITH-DOCUMENTATION: Test correctly identifies real production bug. Panel right edge (1264px) exceeds viewport right boundary (861px) in real source mode. Panel positioning logic in ThemeTargetInspectorOverlay.tsx is broken for real source dimensions. Test uses measured graphBox.width (not hardcoded fixture width) and should be kept to enforce this contract until production bug is fixed. See docs/test-forensics/theme-target-inspector--inspector-panel-stays-inside-graph-viewport.md", async ({ page }) => {
+  test("UI Inspector panel stays inside graph viewport lower-right", async ({ page }) => {
     await page.goto("/");
-
-    const toggleIndicator = page.getByTestId(OVERLAY_TOGGLE);
-    await expect(toggleIndicator).toContainText("OFF");
-    await page.keyboard.press("Alt+Shift+I");
-    await expect(toggleIndicator).toContainText("ON");
+    await enableInspector(page);
 
     const missionControlPanel = page.locator('[data-lw-theme-target="mission-control.panel"]').first();
     await missionControlPanel.hover();
@@ -195,10 +191,7 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
     await expect(panel).toBeVisible();
 
     const panelBox = await panel.boundingBox();
-    const graphBox = await page.locator(
-      "[data-testid='self-graph-fixture-loaded']," +
-      "[data-testid='graph-viewport']"
-    ).first().boundingBox();
+    const graphBox = await page.locator("[data-testid='graph-viewport']").first().boundingBox();
 
     expect(panelBox).not.toBeNull();
     expect(graphBox).not.toBeNull();
@@ -695,7 +688,7 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
     await disableInspector(page);
   });
 
-  test.skip("Sigma/graph primitives cannot be pinned - SKIP-WITH-DOCUMENTATION: Real production bug found. SIGMA_ELEMENT_SELECTOR in ThemeTargetInspectorOverlay.tsx line 42 uses `[data-testid='self-graph-fixture-loaded']` but actual DOM has `data-testid='graph-viewport'` in real source mode. Selector pattern does not match in production, so exclusion logic is broken. Test correctly asserts contract the code does not currently honor. See docs/test-forensics/theme-target-inspector--sigma-graph-primitives-cannot-be-pinned.md", async ({ page }) => {
+  test("Sigma/graph primitives cannot be pinned", async ({ page }) => {
     await page.goto("/");
     await enableInspector(page);
 
@@ -711,8 +704,8 @@ test.describe("Theme Target Registry + Inspector Overlay", () => {
 
       // Test if it matches the SIGMA_ELEMENT_SELECTOR pattern
       // SIGMA_ELEMENT_SELECTOR = `${GRAPH_VIEWPORT_SELECTOR} canvas, ${GRAPH_VIEWPORT_SELECTOR} svg, ${GRAPH_VIEWPORT_SELECTOR} [data-sigma-element]`
-      // where GRAPH_VIEWPORT_SELECTOR = "[data-testid='self-graph-fixture-loaded']"
-      const selectorPattern = "[data-testid='self-graph-fixture-loaded'] canvas, [data-testid='self-graph-fixture-loaded'] svg, [data-testid='self-graph-fixture-loaded'] [data-sigma-element]";
+      // where GRAPH_VIEWPORT_SELECTOR = "[data-testid='graph-viewport']"
+      const selectorPattern = "[data-testid='graph-viewport'] canvas, [data-testid='graph-viewport'] svg, [data-testid='graph-viewport'] [data-sigma-element]";
       const matchesSelector = testCanvas.matches(selectorPattern);
 
       // Cleanup

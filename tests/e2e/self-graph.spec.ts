@@ -6,7 +6,7 @@ test.describe("Self-Graph YAML Parser v75a", () => {
   });
 
   test("graph canvas renders with YAML parser graph loaded", async ({ page }) => {
-    const graphViewport = page.getByTestId("self-graph-fixture-loaded");
+    const graphViewport = page.getByTestId("graph-viewport");
     await expect(graphViewport).toBeVisible();
 
     // Sigma creates multiple canvas layers - check that at least one is visible
@@ -17,7 +17,7 @@ test.describe("Self-Graph YAML Parser v75a", () => {
   test("spot check: docs.folder.operating-policies node present", async ({
     page,
   }) => {
-    const graphViewport = page.getByTestId("self-graph-fixture-loaded");
+    const graphViewport = page.getByTestId("graph-viewport");
     await expect(graphViewport).toBeVisible();
 
     // Verify the graph is rendering with Sigma canvases
@@ -26,7 +26,7 @@ test.describe("Self-Graph YAML Parser v75a", () => {
   });
 
   test("spot check: code.system.graph node present", async ({ page }) => {
-    const graphViewport = page.getByTestId("self-graph-fixture-loaded");
+    const graphViewport = page.getByTestId("graph-viewport");
     await expect(graphViewport).toBeVisible();
 
     // Verify the graph is rendering
@@ -37,7 +37,7 @@ test.describe("Self-Graph YAML Parser v75a", () => {
   test("spot check: docs.file.index.session.and.stack node present", async ({
     page,
   }) => {
-    const graphViewport = page.getByTestId("self-graph-fixture-loaded");
+    const graphViewport = page.getByTestId("graph-viewport");
     await expect(graphViewport).toBeVisible();
 
     // Verify the graph is rendering

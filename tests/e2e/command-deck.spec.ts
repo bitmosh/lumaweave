@@ -41,7 +41,7 @@ test("existing hotkeys still work after command deck addition", async ({ page })
   await expect(page.getByTestId("command-deck-panel")).toBeVisible();
 
   // Verify graph viewport is still visible (fixture is active by default in v75a+)
-  const graphViewport = page.getByTestId("self-graph-fixture-loaded");
+  const graphViewport = page.getByTestId("graph-viewport");
   await expect(graphViewport).toBeVisible();
 });
 
