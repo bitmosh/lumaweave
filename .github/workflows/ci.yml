@@ -39,8 +39,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3]
-        total: [3]
+        shard: [1, 2, 3, 4, 5]
+        total: [5]
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -54,5 +54,5 @@ jobs:
       - name: Generate self-graph fixture
         run: npm run generate:graph
       - name: Run E2E tests (Shard ${{ matrix.shard }}/${{ matrix.total }})
-        run: npm run qa:e2e -- --shard=${{ matrix.shard }}/${{ matrix.total }} --workers=4
+        run: npm run qa:e2e -- --shard=${{ matrix.shard }}/${{ matrix.total }} --workers=4 --timeout=60000
         timeout-minutes: 20
