@@ -76,7 +76,8 @@ export async function navigateToQaTab(page: Page): Promise<void> {
 export async function openAdvisoryTab(page: Page): Promise<void> {
   const advisoryTab = page.getByTestId("qa-tab-advisory");
   await advisoryTab.click();
-  await page.waitForTimeout(150); // wait for content
+  // Web-first: wait for advisory section content to be visible (auto-retries until satisfied or timeout)
+  await expect(page.getByTestId("qa-advisory-section")).toBeVisible({ timeout: 5000 });
 }
 
 /**
@@ -315,6 +316,8 @@ export async function expandSection(
   );
   if (expanded === "false") {
     await toggle.click();
-    await page.waitForTimeout(250);
+    // Web-first: wait for the toggle's aria-expanded to flip to "true"
+    // (auto-retries until satisfied or timeout)
+    await expect(toggle).toHaveAttribute("aria-expanded", "true", { timeout: 5000 });
   }
 }
