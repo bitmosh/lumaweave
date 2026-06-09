@@ -144,6 +144,9 @@ test("settings-panel: geometry persists across reload", async ({ page }) => {
   await page.mouse.down();
   await page.mouse.move(targetLeft + box.width / 2, targetTop + box.height / 2, { steps: 10 });
   await page.mouse.up();
+  // Audited 2026-06-09 (v111.3): legitimate debounce simulation per Playwright best practice
+  // (waiting for a debounced store update to complete, no observable DOM end-state to assert on).
+  // DO NOT convert to web-first assertion — debounce timing is the test's actual subject.
   await page.waitForTimeout(300); // let debounce flush
 
   // Verify localStorage was written

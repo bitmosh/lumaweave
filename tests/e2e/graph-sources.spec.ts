@@ -36,6 +36,8 @@ test("Graph Sources Regenerate button — success path updates refreshToken", as
   await regenBtn.click();
 
   // After success, refreshToken should be incremented
+  // Audited 2026-06-09 (v111.3): correct web-first pattern (polling for store state change).
+  // This was previously listed as a flaker but the implementation is sound.
   await page.waitForFunction(
     (before) => {
       const token = (window as any).__lwStore?.getState().settings.sources.refreshToken ?? 0;

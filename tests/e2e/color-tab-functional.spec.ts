@@ -42,11 +42,8 @@ test.describe("v86d.3b ColorTab functional", () => {
     const swatchColor = await swatch.evaluate((el) => window.getComputedStyle(el).backgroundColor);
     await swatch.click();
 
-    // Verify hex displayed updated (may not be exact match due to RGB->hex conversion,
-    // but should be different from initial)
-    await page.waitForTimeout(100);
-    const newHex = await firstRow.locator(".lw-color-tab-hex-display").textContent();
-    expect(newHex).not.toBe(initialHex);
+    // Web-first: hex display updates after swatch click; auto-retries until value changes.
+    await expect(firstRow.locator(".lw-color-tab-hex-display")).not.toHaveText(initialHex ?? "", { timeout: 5000 });
   });
 
   test("hex input commits on Enter", async ({ page }) => {
@@ -63,14 +60,11 @@ test.describe("v86d.3b ColorTab functional", () => {
     await hexInput.fill("#ff0000");
     await hexInput.press("Enter");
 
+    // Web-first: input clears after Enter commit; auto-retries until cleared.
+    await expect(hexInput).toHaveValue("", { timeout: 5000 });
     // Verify binding row updated (may be RGB converted)
-    await page.waitForTimeout(100);
     const hexDisplay = await firstRow.locator(".lw-color-tab-hex-display").textContent();
     expect(hexDisplay).toBeTruthy();
-
-    // Verify input cleared
-    const inputValue = await hexInput.inputValue();
-    expect(inputValue).toBe("");
   });
 
   test("scope picker This routes to target override", async ({ page }) => {
@@ -122,8 +116,8 @@ test.describe("v86d.3b ColorTab functional", () => {
     await hexInput.fill("#00ff00");
     await hexInput.press("Enter");
 
-    // Verify recent swatches section shows colors
-    await page.waitForTimeout(100);
+    // Web-first: wait until at least 2 recent swatches are visible; auto-retries.
+    await expect(page.locator('[data-testid^="recent-swatch-"]').nth(1)).toBeVisible({ timeout: 5000 });
     const recentSwatches = page.locator('[data-testid^="recent-swatch-"]');
     const count = await recentSwatches.count();
     expect(count).toBeGreaterThanOrEqual(2);
@@ -148,7 +142,8 @@ test.describe("v86d.3b ColorTab functional", () => {
       const hex = `#${String(i).padStart(2, "0")}0000`;
       await hexInput.fill(hex);
       await hexInput.press("Enter");
-      await page.waitForTimeout(50);
+      // Web-first: wait for input to clear before filling the next color.
+      await expect(hexInput).toHaveValue("", { timeout: 5000 });
     }
 
     // Verify only 8 recent swatches shown
@@ -200,11 +195,7 @@ test.describe("v86d.3b ColorTab functional", () => {
     await expect(recentSwatch).toBeVisible();
     await recentSwatch.click();
 
-    // Verify binding updated
-    await page.waitForTimeout(100);
-    const hexDisplay = await page
-      .locator('[data-testid="binding-background"] .lw-color-tab-hex-display')
-      .textContent();
-    expect(hexDisplay).toBeTruthy();
+    // Web-first: binding hex display shows after swatch click; auto-retries.
+    await expect(page.locator('[data-testid="binding-background"] .lw-color-tab-hex-display')).not.toBeEmpty({ timeout: 5000 });
   });
 });

@@ -250,6 +250,11 @@ test.describe("Gwells Physics Integration", () => {
     expect(drift).toBeLessThan(150);  // before C5, drift was 500+ units within 2 seconds
   });
 
+  // FLAKY: Architectural issue under full-suite worker contention.
+  // See docs/known-bugs/gwells-c9-0-drift-back-flake.md for investigation history.
+  // Tolerance-widening tested 2026-05-19 — root cause is rAF/worker contention, not timing.
+  // Deferred from v111 (test infrastructure arc) per audit §1.3.
+  // Real fix requires gwells engine instrumentation under load — out of v1.0 scope.
   test.fixme("Pass C9.0: Dragging a node without modifier drifts back toward seed", async ({ page }) => {
     // Flaky timing-sensitive physics test. v105.0.2: quarantined.
     // Wait for seeder
