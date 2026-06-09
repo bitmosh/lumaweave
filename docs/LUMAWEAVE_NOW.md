@@ -21,13 +21,19 @@ tags: [live-state, now, canonical, v107-closed, v108-closed]
 
 **The single live-state doc.** This is the only doc that changes every pass and the only one that carries a date. Everything here is volatile by design. Concepts and architecture live in the static domain docs (see `DOC_ARCHITECTURE.md`); history lives in the dev-blog / #changelog feed. This doc holds only: where we are, what's next, what's broken.
 
-**Updated:** 2026-06-09 · **Production version:** 0.15.0 · **Internal arc:** v109 (Source Adapter Platform — open; v109.0 platform complete, v109.1 markdown-vault complete, v109.2 Cytoscape JSON complete, v109.3 package-dependency complete, v109.4 CSV edge-list complete, v109.5 arc-close next) · **Last closed:** v108 (Source Adapters — Tier 1)
+**Updated:** 2026-06-09 · **Production version:** 0.16.0 · **Internal arc:** v110 (real-source mode bugs + identity + error boundary — open) · **Last closed:** v109 (Source Adapter Platform)
 
 ---
 
-## Open arc — v109: Source Adapter Platform — OPEN (0.15.0, semver bump at close)
+## Open arc — v110: Real-Source-Mode Bugs + Identity + Error Boundary — OPEN (0.16.0, semver bump at v110.6)
 
-Build the platform layer for multiple live adapters. v109.0 ships the SDK, registry API, Tauri filesystem commands, and per-adapter settings scaffolding. v109.1–v109.4 wire the four concrete adapters. Arc closes at v109.5 (or whichever pass lands the reconcile + semver bump 0.15.0 → 0.16.0).
+Fix the two known production bugs in `ThemeTargetInspectorOverlay` (panel overflow + fixture-testid hardcode) that are currently masked by skipped E2E tests. Add `React.ErrorBoundary` at AppShell root. Rename the app's identity surfaces (window title, dock, About) from "starmap" to "lumaweave". Wire or remove the permanently-hardcoded `"settling"` status in `StatusCluster`. Sub-pass detail: `docs/SHIP_READINESS_ROADMAP.md §3 v110`.
+
+---
+
+## Closed arc — v109: Source Adapter Platform — CLOSED (0.15.0 → 0.16.0)
+
+Built the platform layer for multiple live adapters. v109.0 ships the SDK, registry API, Tauri filesystem commands, and per-adapter settings scaffolding. v109.1–v109.5 wire four concrete adapters and close the arc with registered-bar evaluation and semver bump.
 
 ### v109.0 — Platform [COMPLETE]
 
@@ -68,11 +74,18 @@ Build the platform layer for multiple live adapters. v109.0 ships the SDK, regis
 | v109.4.0 | `CsvEdgeListAdapter`: RFC 4180 character-by-character state machine, header-name and numeric-index column modes, optional label→relationship, skip+warn for malformed rows, hard cap 100 warnings; `CsvEdgeListConfigForm` (6 fields); registered in `sourceAdapterRegistry` + `adapterConfigFormRegistry`; `SourceAdapterType` extended with `"csv-edge-list"`; entry count 10→11 | `734b5d3` |
 | v109.4.1 | Fixture suite (`sample-edges.csv` 8N/10E with self-loop+empty-label, `no-header.csv`, `quoted-fields.csv` RFC 4180 compliance, `malformed.csv` skip+warn); 12 E2E tests; NOW.md updated | _(this commit)_ |
 
-### v109.5 — Arc close [NEXT]
+### v109.5 — Arc close [COMPLETE]
 
-| Pass | Work |
-|---|---|
-| **v109.5** | Arc close + semver bump 0.15.0 → 0.16.0 + reconcile **[NEXT]** |
+| Pass | Work | Commit |
+|---|---|---|
+| v109.5.0 | Registered-bar evaluation: all four adapters (markdown-vault, cytoscape-json, package-dependency, csv-edge-list) evaluated against real-world data via Playwright+mock; all PASS; no downgrades | `741e64f` |
+| v109.5.1 | Formal arc close: semver 0.15.0→0.16.0, NOW.md reconcile, SDK_SPEC coherence (all §10 questions resolved or marked POST-V1.0), KNOWN_SHARP_EDGES +4 entries | _(this commit)_ |
+
+**Adapter ship status (at v109 close):**
+- `markdown-vault` — `status: "registered"` ✓ PASS
+- `cytoscape-json` — `status: "registered"` ✓ PASS
+- `package-dependency` — `status: "registered"` ✓ PASS
+- `csv-edge-list` — `status: "registered"` ✓ PASS
 
 ### Architectural notes established in v109.1
 
@@ -93,6 +106,8 @@ Build the platform layer for multiple live adapters. v109.0 ships the SDK, regis
 - **`projectPath` + `manifestType` config pattern:** `PackageDependencyConfig` uses a directory path (`projectPath`) plus a manifest type key rather than a direct file path. The adapter computes the absolute manifest path as `projectPath + "/" + manifestType` before calling `readUserFile()`. Better UX (user types project root); Rust `canonicalize()` normalizes the result.
 - **Dual-edge, name-only node dedup:** A package appearing in multiple dependency buckets (e.g. `react` in both `dependencies` + `peerDependencies`) produces one node (first occurrence wins) but two distinct edges with separate `relationship` values (`"depends-on"` + `"depends-on-peer"`). This is intentional graph semantics — one entity, two declared relationships.
 - **Forward-compat for TOML:** `manifestType: "pyproject.toml"` returns a clear `"not yet supported"` error. The field stays in the `PackageDependencyConfig` type as a hook for v2 without requiring a schema migration.
+
+**Arc closed** — v109 closer: 0.15.0 → 0.16.0 · 2026-06-09. 17 commits banked (`087a10e` v109.0.1 through v109.5.1). Next: v110 (real-source bugs + identity + error boundary).
 
 ### Architectural notes established in v109.4
 
@@ -304,14 +319,18 @@ Reworked the floating-tile system: per-axis snap engine, armed guide, explicit g
 
 | Arc | Work |
 |---|---|
-| **v109** (OPEN) | Source Adapter Platform: v109.0–v109.4 complete → **v109.5 arc close + 0.15.0 → 0.16.0 [NEXT]** |
-| v110 (HIGH) | Test-hardening + suite split — full-suite exceeds Bash 10-min cap; `graph-visual-inventory.spec.ts` dominates; `waitForTimeout` chains need web-first assertions (see Standing deferred below) |
-| v110+ | Paperweight punch-list: radial deferred (Q1–Q3, M1–M3), v102 Workshop/History/Bookmarks/Export, tile-content theming + token coverage, settings advanced-tabs relocation (5 deferred tile sections), minimap E2E coverage (test debt from v104), pre-1.0 cleanup incl. CI/security green |
+| v109 (CLOSED) | Source Adapter Platform — 17 commits; 4 adapters ship as `registered`; arc closed 2026-06-09 |
+| **v110** (OPEN) | Real-source-mode bugs + identity + error boundary — ThemeTargetInspectorOverlay bugs, ErrorBoundary, identity rename, StatusCluster wire-or-remove; sub-pass detail: `docs/SHIP_READINESS_ROADMAP.md §3 v110` |
+| v111 | Test infrastructure — graph-visual-inventory split, helper-pattern conversions, CI wiring |
+| v112 | UI completeness + dev-artifact-bleed cleanup |
+| v113 | Source adapter UX maturity |
+| v114 | Security + dependency hygiene |
+| v115 | Release build + cold-install QA |
 | ~v115–v125 | `1.0.0` initial public release |
 
 ### Standing deferred
 
-#### v110 candidate (HIGH PRIORITY): Test-hardening + suite split
+#### v111 candidate: Test-hardening + suite split
 
 **Driver:** Full-suite runtime (~9–12 minutes) now exceeds the Bash tool's 10-minute cap, contaminating Bandit verification with timing flakes. Bandit's targeted-test-scope convention works around it per-commit, but full-suite checkpoints (arc closes, regression hunts) require human-run-only.
 

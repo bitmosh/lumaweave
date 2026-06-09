@@ -47,3 +47,60 @@ The selector returns `undefined` consistently (same reference) when the config i
 **First encountered:** v109.0.4 (`AdapterConfigForm.tsx`). Manifested as a frozen browser tab; typecheck and Vite build both passed clean (purely a runtime React loop).
 
 **Related patterns:** any Zustand selector returning an aggregated value — e.g. `(s) => s.items.filter(...)` — the filter result is a new array every call. Same fix: select the raw state, derive in the component body.
+
+## gray-matter `Buffer` polyfill in Tauri/WebKit context
+
+**Symptom:** `markdownVaultAdapter.ts` throws `ReferenceError: Buffer is not defined` at runtime when gray-matter parses a file.
+
+**Cause:** gray-matter calls `Buffer.from(input)` internally when constructing `file.orig`. Node.js's `Buffer` global is not available in WebKit or Vite browser-mode contexts.
+
+**Anti-pattern:** importing gray-matter without a polyfill in a Tauri WebView/Vite browser context.
+
+**Correct pattern:** inline polyfill at the top of the adapter file (before any gray-matter calls):
+```typescript
+if (typeof (globalThis as any).Buffer === "undefined") {
+  (globalThis as any).Buffer = { from: (s: unknown) => s, isBuffer: () => false };
+}
+```
+This satisfies gray-matter's `Buffer.from()` call without pulling in a real Node.js polyfill.
+
+**First encountered:** v109.1.1 (`markdownVaultAdapter.ts`). Manifested as a runtime error on vault load in the dev Tauri app.
+
+## Adapter-loader dependency direction
+
+**Symptom:** circular import or unclear module ownership when wiring up a new adapter.
+
+**Convention:** adapter modules export a loader function; `sourceAdapterRegistry.ts` imports the loader and calls `registerSourceAdapter(entry, loader)`. Never reverse this — an adapter module must not import from `sourceAdapterRegistry.ts` except for types.
+
+**Why:** the registry is the integration point. If adapters import from the registry, a circular dependency forms (registry imports adapter, adapter imports registry).
+
+**Correct pattern:**
+```
+csvEdgeListAdapter.ts  →  (exports loadCsvEdgeList)
+sourceAdapterRegistry.ts  →  import { loadCsvEdgeList } from "./adapters/csvEdgeListAdapter"
+                              registerSourceAdapter(entry, loadCsvEdgeList)
+```
+
+**First established:** v109.0.2. Confirmed consistent across all four v109 adapters.
+
+## Candidate-promotion does NOT change entry count; only fresh registration does
+
+**Symptom:** source-adapter.spec.ts count assertion fails after changing a `"candidate"` entry to `"registered"`.
+
+**Cause:** `entries[]` is populated by `registerSourceAdapter()` calls, regardless of `status`. A candidate entry is already in `entries[]`. Changing its `status` field does not add a new entry — the count is unchanged.
+
+**Anti-pattern:** bumping the count assertion in `source-adapter.spec.ts` when promoting a candidate to registered.
+
+**Correct pattern:** only bump the count assertion when a genuinely new `registerSourceAdapter(...)` call is added (a fresh adapter that wasn't in `entries[]` at all). Promotions from candidate → registered: count stays the same.
+
+**First encountered:** v109.3.1. Count was incorrectly incremented 10→11 for the package-dependency promotion (it was already a candidate); reverted to 10. In v109.4.0 a fresh `csv-edge-list` registration correctly incremented 10→11.
+
+## `SourceAdapterType` union requires manual extension for fresh registrations only
+
+**Symptom:** TypeScript error when constructing a new adapter config with an ID not in the `SourceAdapterType` union.
+
+**Convention:** the `SourceAdapterType` union at `src/source-adapter/sourceAdapterRegistry.ts:24` must be manually extended when a fresh adapter is registered (one with an `adapterId` not previously in the union). Candidate entries that are promoted to registered do NOT need a union change — their ID is already in the union.
+
+**Why not auto-derived:** the union could be inferred from the registry entries at build time, but that would break if the registry file is ever split. Manual extension is deliberate (matches the TypeScript documentation pattern for discriminated unions).
+
+**First encountered:** v109.4.0. Added `"csv-edge-list"` to the union for the fresh registration. Package-dependency (v109.3.0) was a candidate promotion — no union change needed.
