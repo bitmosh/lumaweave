@@ -1,0 +1,6 @@
+source,target,relationship
+alice,bob,knows
+incomplete-row
+,bob,knows
+alice,,knows
+carol,dave,collaborates

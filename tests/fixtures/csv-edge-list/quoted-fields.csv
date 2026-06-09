@@ -1,0 +1,5 @@
+source,target,relationship
+"alice,jr",bob,knows
+bob,"carol ""the great""",knows
+"node
+with-newline",alice,sees

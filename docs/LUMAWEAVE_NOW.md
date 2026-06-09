@@ -21,7 +21,7 @@ tags: [live-state, now, canonical, v107-closed, v108-closed]
 
 **The single live-state doc.** This is the only doc that changes every pass and the only one that carries a date. Everything here is volatile by design. Concepts and architecture live in the static domain docs (see `DOC_ARCHITECTURE.md`); history lives in the dev-blog / #changelog feed. This doc holds only: where we are, what's next, what's broken.
 
-**Updated:** 2026-06-08 · **Production version:** 0.15.0 · **Internal arc:** v109 (Source Adapter Platform — open; v109.0 platform complete, v109.1 markdown-vault complete, v109.2 Cytoscape JSON complete, v109.3 package-dependency complete, v109.4 CSV next) · **Last closed:** v108 (Source Adapters — Tier 1)
+**Updated:** 2026-06-09 · **Production version:** 0.15.0 · **Internal arc:** v109 (Source Adapter Platform — open; v109.0 platform complete, v109.1 markdown-vault complete, v109.2 Cytoscape JSON complete, v109.3 package-dependency complete, v109.4 CSV edge-list complete, v109.5 arc-close next) · **Last closed:** v108 (Source Adapters — Tier 1)
 
 ---
 
@@ -59,14 +59,20 @@ Build the platform layer for multiple live adapters. v109.0 ships the SDK, regis
 | Pass | Work | Commit |
 |---|---|---|
 | v109.3.0 | `PackageDependencyAdapter`: name-only node identity, 3 edge types (depends-on / depends-on-dev / depends-on-peer), dual-edge for packages in multiple buckets; `projectPath + manifestType` → computed filePath via `readUserFile()`; pyproject.toml errors gracefully; workspace detection warns-and-continues; `PackageDependencyConfigForm` (project-path input + manifest-type select); registry `status: "candidate"→"registered"` | `c8aa24a` |
-| v109.3.1 | Fixture suite (`sample-package.json` with dual-edge react, `missing-name.json`); 7 E2E tests; NOW.md updated | _(this commit)_ |
+| v109.3.1 | Fixture suite (`sample-package.json` with dual-edge react, `missing-name.json`); 7 E2E tests; NOW.md updated | `2b02181` |
 
-### v109.4–v109.5 — Adapters [NEXT]
+### v109.4 — CSV edge-list [COMPLETE]
+
+| Pass | Work | Commit |
+|---|---|---|
+| v109.4.0 | `CsvEdgeListAdapter`: RFC 4180 character-by-character state machine, header-name and numeric-index column modes, optional label→relationship, skip+warn for malformed rows, hard cap 100 warnings; `CsvEdgeListConfigForm` (6 fields); registered in `sourceAdapterRegistry` + `adapterConfigFormRegistry`; `SourceAdapterType` extended with `"csv-edge-list"`; entry count 10→11 | `734b5d3` |
+| v109.4.1 | Fixture suite (`sample-edges.csv` 8N/10E with self-loop+empty-label, `no-header.csv`, `quoted-fields.csv` RFC 4180 compliance, `malformed.csv` skip+warn); 12 E2E tests; NOW.md updated | _(this commit)_ |
+
+### v109.5 — Arc close [NEXT]
 
 | Pass | Work |
 |---|---|
-| **v109.4** | CSV edge-list adapter **[NEXT]** |
-| v109.5 | Arc close + semver bump 0.15.0 → 0.16.0 + reconcile |
+| **v109.5** | Arc close + semver bump 0.15.0 → 0.16.0 + reconcile **[NEXT]** |
 
 ### Architectural notes established in v109.1
 
@@ -87,6 +93,13 @@ Build the platform layer for multiple live adapters. v109.0 ships the SDK, regis
 - **`projectPath` + `manifestType` config pattern:** `PackageDependencyConfig` uses a directory path (`projectPath`) plus a manifest type key rather than a direct file path. The adapter computes the absolute manifest path as `projectPath + "/" + manifestType` before calling `readUserFile()`. Better UX (user types project root); Rust `canonicalize()` normalizes the result.
 - **Dual-edge, name-only node dedup:** A package appearing in multiple dependency buckets (e.g. `react` in both `dependencies` + `peerDependencies`) produces one node (first occurrence wins) but two distinct edges with separate `relationship` values (`"depends-on"` + `"depends-on-peer"`). This is intentional graph semantics — one entity, two declared relationships.
 - **Forward-compat for TOML:** `manifestType: "pyproject.toml"` returns a clear `"not yet supported"` error. The field stays in the `PackageDependencyConfig` type as a hook for v2 without requiring a schema migration.
+
+### Architectural notes established in v109.4
+
+- **RFC 4180 character-by-character state machine:** `parseCsv(text, delimiter)` tracks `inQuotes` state to handle embedded delimiters inside quoted fields, `""` escaped double-quotes, and literal newlines inside quoted fields. Trailing all-empty rows filtered. CRLF/LF/lone-CR all treated as line endings.
+- **Column resolution — header-name vs numeric-index:** When `hasHeader: true`, `sourceColumn`/`targetColumn`/`labelColumn` match against header row strings. When `hasHeader: false`, they must be stringified integers (`"0"`, `"1"`, etc.) — non-numeric refs are an immediate error. Index resolution happens once at load time.
+- **Edge ID uses 1-based file row number:** `edge-${fileRowNum}` (counting from 1, skipping header). Stable, human-readable, debuggable in warning messages.
+- **Node cap + post-filter edge coherence:** `HARD_NODE_CAP = 500`. After the graph is built, edges referencing nodes outside `keptIds` are filtered — preserves edge coherence within the capped set.
 
 ### Architectural notes established in v109.0
 
@@ -291,7 +304,7 @@ Reworked the floating-tile system: per-axis snap engine, armed guide, explicit g
 
 | Arc | Work |
 |---|---|
-| **v109** (OPEN) | Source Adapter Platform: v109.0–v109.2 complete → **v109.3 package-dependency [NEXT]** → v109.4 CSV edge-list → v109.5 arc close + 0.15.0 → 0.16.0 |
+| **v109** (OPEN) | Source Adapter Platform: v109.0–v109.4 complete → **v109.5 arc close + 0.15.0 → 0.16.0 [NEXT]** |
 | v110 (HIGH) | Test-hardening + suite split — full-suite exceeds Bash 10-min cap; `graph-visual-inventory.spec.ts` dominates; `waitForTimeout` chains need web-first assertions (see Standing deferred below) |
 | v110+ | Paperweight punch-list: radial deferred (Q1–Q3, M1–M3), v102 Workshop/History/Bookmarks/Export, tile-content theming + token coverage, settings advanced-tabs relocation (5 deferred tile sections), minimap E2E coverage (test debt from v104), pre-1.0 cleanup incl. CI/security green |
 | ~v115–v125 | `1.0.0` initial public release |

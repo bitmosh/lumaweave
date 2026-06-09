@@ -1,0 +1,11 @@
+source,target,relationship
+alice,bob,knows
+bob,carol,knows
+carol,alice,knows
+alice,dave,follows
+dave,eve,follows
+eve,alice,follows
+frank,frank,refers-to-self
+alice,bob,
+gary,helen,collaborates
+helen,alice,knows
