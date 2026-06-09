@@ -1,0 +1,89 @@
+.lw-error-boundary {
+  position: fixed;
+  inset: 0;
+  background: #060b14;
+  color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  z-index: 999999;
+}
+
+.lw-error-boundary-card {
+  max-width: 480px;
+  padding: 2rem;
+  border: 1px solid #2a2f3a;
+  border-radius: 8px;
+  background: #0a1019;
+}
+
+.lw-error-boundary-icon {
+  font-size: 2rem;
+  color: #f59e0b;
+  margin-block-end: 1rem;
+}
+
+.lw-error-boundary-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  color: #f5f5f5;
+}
+
+.lw-error-boundary-body {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0 0 1.5rem;
+  color: #a3a8b3;
+}
+
+.lw-error-boundary-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.lw-error-boundary-button {
+  padding: 0.5rem 1rem;
+  background: #1a1f2a;
+  border: 1px solid #2a2f3a;
+  border-radius: 4px;
+  color: #f5f5f5;
+  font-size: 0.875rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.lw-error-boundary-button:hover {
+  background: #242a36;
+}
+
+.lw-error-boundary-button-primary {
+  background: #f59e0b;
+  color: #060b14;
+  border-color: #f59e0b;
+  font-weight: 500;
+}
+
+.lw-error-boundary-button-primary:hover {
+  background: #d97706;
+  border-color: #d97706;
+}
+
+.lw-error-boundary-button-text {
+  background: transparent;
+  border: none;
+  color: #a3a8b3;
+  padding: 0.5rem;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-family: inherit;
+}
+
+.lw-error-boundary-button-text:hover {
+  color: #f5f5f5;
+}

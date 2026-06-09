@@ -10,12 +10,6 @@ function useGraphStats() {
   };
 }
 
-function useLayoutState(): string {
-  // v87.2 known limitation: FA2 supervisor state not yet exposed.
-  // Returns a static placeholder until layout state store is wired (v89+).
-  return "settling";
-}
-
 function useFPSCounter(): number {
   const [fps, setFps] = useState(60);
   useEffect(() => {
@@ -45,7 +39,6 @@ function useFPSCounter(): number {
 
 export function StatusCluster() {
   const graphStats = useGraphStats();
-  const layoutState = useLayoutState();
   const fps = useFPSCounter();
 
   return (
@@ -54,9 +47,6 @@ export function StatusCluster() {
       <span className="lw-cluster-val">
         {graphStats.nodeCount}n · {graphStats.edgeCount}e
       </span>
-      <span className="lw-cluster-sep">·</span>
-      <span className="lw-cluster-key">{t("topbar.statusCluster.layoutLabel")}</span>
-      <span className="lw-cluster-val">{layoutState}</span>
       <span className="lw-cluster-sep">·</span>
       <span className="lw-cluster-key">{t("topbar.statusCluster.fpsLabel")}</span>
       <span

@@ -1,6 +1,6 @@
 export type PanelZone = "left" | "right" | "bottom";
 
-export type StarmapPanel = {
+export type LumaWeavePanel = {
   id: string;
   title: string;
   zone: PanelZone;

@@ -1,12 +1,12 @@
 import { create } from "zustand";
 import { defaultSettings } from "./settings.defaults";
 import { migrateSettings } from "./settings.migrations";
-import type { StarmapSettings } from "./settings.schema";
+import type { LumaWeaveSettings } from "./settings.schema";
 
 export const CURRENT_SCHEMA_VERSION = 93;
 
 export type SettingsStore = {
-  settings: StarmapSettings;
+  settings: LumaWeaveSettings;
   setSetting: (path: string, value: unknown) => void;
   resetSettings: () => void;
 };
@@ -25,13 +25,13 @@ function setNestedValue(obj: any, path: string, value: unknown) {
 }
 
 // Load settings from localStorage with migration
-function loadSettings(): StarmapSettings {
+function loadSettings(): LumaWeaveSettings {
   try {
     const saved = localStorage.getItem("lumaweave-settings");
     if (!saved) {
       return defaultSettings;
     }
-    const parsed = JSON.parse(saved) as Partial<StarmapSettings>;
+    const parsed = JSON.parse(saved) as Partial<LumaWeaveSettings>;
     const migrated = migrateSettings(parsed);
 
     // Version gate: reject if migration didn't reach current version

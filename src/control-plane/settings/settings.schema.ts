@@ -76,7 +76,7 @@ export interface MinimapSettings {
   enableClickToNavigate: boolean;
 }
 
-export interface StarmapSettings {
+export interface LumaWeaveSettings {
   version: 93; // v109.0.1: SourcesSettings.configurations narrowed to AdapterConfig
 
   general: {

@@ -1,11 +1,11 @@
 import { defaultSettings, defaultMinimapSettings, defaultSources } from "./settings.defaults";
-import type { StarmapSettings } from "./settings.schema";
+import type { LumaWeaveSettings } from "./settings.schema";
 import { tileSectionRegistry } from "../panels/tileSectionRegistry";
 
 // Migration functions — one per version bump
 // Each takes the previous state, returns updated state
 const MIGRATIONS: Record<number,
-  (s: Partial<StarmapSettings>) => Partial<StarmapSettings>
+  (s: Partial<LumaWeaveSettings>) => Partial<LumaWeaveSettings>
 > = {
   // v1 → v2: added gwells dialectId (vP-physics-gwells-integration)
   // deep merge handles new fields automatically
@@ -29,7 +29,7 @@ const MIGRATIONS: Record<number,
     if (Array.isArray(ui.tiledTabs)) {
       ui.tiledTabs = ui.tiledTabs.filter((t: string) => t !== "settings");
     }
-    return { ...s, ui } as Partial<StarmapSettings>;
+    return { ...s, ui } as Partial<LumaWeaveSettings>;
   },
 
   // v77 → v78: tile layout reshape (v86a)
@@ -47,7 +47,7 @@ const MIGRATIONS: Record<number,
       z: 1,
     }));
     ui.tiledTabs = [];
-    return { ...s, ui } as Partial<StarmapSettings>;
+    return { ...s, ui } as Partial<LumaWeaveSettings>;
   },
 
   // v78 → v79: appearance defaults (v86a)
@@ -55,7 +55,7 @@ const MIGRATIONS: Record<number,
     const appearance = { ...(s.appearance ?? {}) } as any;
     appearance.drama ??= "cranked";
     appearance.motionScale ??= 0.6;
-    return { ...s, appearance } as Partial<StarmapSettings>;
+    return { ...s, appearance } as Partial<LumaWeaveSettings>;
   },
 
   // v79 → v80: performance preset coupling fields (v86b)
@@ -64,7 +64,7 @@ const MIGRATIONS: Record<number,
     appearance.glitterDensity ??= "medium";
     appearance.edgePlasmaMode ??= "animated-overlay";
     appearance.backdropMotion ??= "half";
-    return { ...s, appearance } as Partial<StarmapSettings>;
+    return { ...s, appearance } as Partial<LumaWeaveSettings>;
   },
 
   // v80 → v81: remove helix physics dialect (vP-physics-backbone-seed-fix)
@@ -73,7 +73,7 @@ const MIGRATIONS: Record<number,
     if (physics.physicsDialect === "helix") {
       physics.physicsDialect = "default";
     }
-    return { ...s, physics } as Partial<StarmapSettings>;
+    return { ...s, physics } as Partial<LumaWeaveSettings>;
   },
 
   // v81 → v82: remove FA2 fields and add gwells dialectId (Pass C3)
@@ -119,7 +119,7 @@ const MIGRATIONS: Record<number,
       physics.dialectId = "gwells.dialect.radial-backbone";
     }
 
-    return { ...s, physics, graphView } as Partial<StarmapSettings>;
+    return { ...s, physics, graphView } as Partial<LumaWeaveSettings>;
   },
 
   // v82 → v83: add seedParamOverrides field for live tuning (Pass C4)
@@ -135,7 +135,7 @@ const MIGRATIONS: Record<number,
   84: (s) => {
     const physics = { ...(s.physics ?? {}) } as any;
     physics.pins ??= {};
-    return { ...s, physics } as Partial<StarmapSettings>;
+    return { ...s, physics } as Partial<LumaWeaveSettings>;
   },
 
   // v84 → v85: pinnedHighlightActive field added in Pass C9.3,
@@ -143,7 +143,7 @@ const MIGRATIONS: Record<number,
   85: (s) => {
     const physics = { ...(s.physics ?? {}) } as any;
     physics.pinnedHighlightActive ??= false;
-    return { ...s, physics } as Partial<StarmapSettings>;
+    return { ...s, physics } as Partial<LumaWeaveSettings>;
   },
 
   // v86 → v87: add preferredEditor and customEditorTemplate to developer (v96)
@@ -151,7 +151,7 @@ const MIGRATIONS: Record<number,
     const developer = { ...(s.developer ?? {}) } as any;
     developer.preferredEditor ??= "vscode";
     developer.customEditorTemplate ??= "code --goto {path}:{line}";
-    return { ...s, developer } as Partial<StarmapSettings>;
+    return { ...s, developer } as Partial<LumaWeaveSettings>;
   },
 
   // v92 → v93: configurations narrowed to AdapterConfig (v109.0.1). Additive only.
@@ -162,7 +162,7 @@ const MIGRATIONS: Record<number,
         ...((s as any).sources ?? defaultSources),
         configurations: (s as any).sources?.configurations ?? {},
       },
-    } as Partial<StarmapSettings>;
+    } as Partial<LumaWeaveSettings>;
   },
 
   // v91 → v92: add sources.refreshToken (v108.0.1). Additive only.
@@ -173,7 +173,7 @@ const MIGRATIONS: Record<number,
         ...((s as any).sources ?? defaultSources),
         refreshToken: (s as any).sources?.refreshToken ?? 0,
       },
-    } as Partial<StarmapSettings>;
+    } as Partial<LumaWeaveSettings>;
   },
 
   // v90 → v91: add sources slice (v107.0.1). Additive only.
@@ -181,7 +181,7 @@ const MIGRATIONS: Record<number,
     return {
       ...s,
       sources: (s as any).sources ?? defaultSources,
-    } as Partial<StarmapSettings>;
+    } as Partial<LumaWeaveSettings>;
   },
 
   // v89 → v90: add minimap settings slice (v104.0.0). Additive only.
@@ -189,7 +189,7 @@ const MIGRATIONS: Record<number,
     return {
       ...s,
       minimap: (s as any).minimap ?? defaultMinimapSettings,
-    } as Partial<StarmapSettings>;
+    } as Partial<LumaWeaveSettings>;
   },
 
   // v88 → v89: stamp mode + slot-anchor on stored tiles (v103.1.6 — activates the docking engine).
@@ -236,7 +236,7 @@ const MIGRATIONS: Record<number,
       };
     });
 
-    return { ...s, ui: { ...(s as any).ui, tileLayout: migrated } } as Partial<StarmapSettings>;
+    return { ...s, ui: { ...(s as any).ui, tileLayout: migrated } } as Partial<LumaWeaveSettings>;
   },
 
   // v87 → v88: rename glitterEnabled → animationEnabled, glitterDensity → animationDensity (post-v97)
@@ -250,7 +250,7 @@ const MIGRATIONS: Record<number,
       appearance.animationDensity = appearance.glitterDensity;
       delete appearance.glitterDensity;
     }
-    return { ...s, appearance } as Partial<StarmapSettings>;
+    return { ...s, appearance } as Partial<LumaWeaveSettings>;
   },
 
   // v85 → v86: strip FA2-era physics fields (chore/post-gwells-hygiene)
@@ -267,13 +267,13 @@ const MIGRATIONS: Record<number,
     delete physics.linLogMode;
     delete physics.adjustSizes;
     delete physics.barnesHutTheta;
-    return { ...s, physics } as Partial<StarmapSettings>;
+    return { ...s, physics } as Partial<LumaWeaveSettings>;
   },
 };
 
 export function migrateSettings(
-  saved: Partial<StarmapSettings>
-): StarmapSettings {
+  saved: Partial<LumaWeaveSettings>
+): LumaWeaveSettings {
   const savedVersion = saved.version ?? 1;
   const targetVersion = defaultSettings.version;
 

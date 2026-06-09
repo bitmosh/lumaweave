@@ -42,6 +42,8 @@ import { SettingsPanelHost } from "../control-plane/settings/SettingsPanelHost";
 import type { SettingsPanelHostHandle } from "../control-plane/settings/SettingsPanelHost";
 import { CommandPaletteHost } from "../control-plane/commands/CommandPaletteHost";
 import "../control-plane/commands/palette.css";
+import { ErrorBoundary } from "./ErrorBoundary";
+import "./ErrorBoundary.css";
 import { StatusBar } from "../control-plane/StatusBar";
 import { useCrossfadeAppTokens } from "../themes/themeCrossfade";
 import { useThemeInspectorStore } from "../themes/themeInspectorStore";
@@ -359,6 +361,7 @@ export function AppShell() {
       };
 
   return (
+    <ErrorBoundary>
     <I18nProvider>
     <TileProvider>
       <main 
@@ -636,5 +639,6 @@ export function AppShell() {
     </main>
   </TileProvider>
   </I18nProvider>
+  </ErrorBoundary>
 );
 }

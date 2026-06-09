@@ -669,7 +669,7 @@ export const controlSurfaceContractRegistry: ControlSurfaceContractRegistry = {
       docs: { hasDocs: false },
       status: "active",
       risk: "low",
-      notes: "Live graph node/edge count via useGraphSourceSummary. Layout state placeholder ('settling') until v89. FPS via 60-frame RAF moving average.",
+      notes: "Live graph node/edge count via useGraphSourceSummary. FPS via 60-frame RAF moving average.",
     },
 
     {

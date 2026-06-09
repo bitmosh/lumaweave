@@ -1,4 +1,4 @@
-import type { StarmapSettings, MinimapSettings, SourcesSettings } from "./settings.schema";
+import type { LumaWeaveSettings, MinimapSettings, SourcesSettings } from "./settings.schema";
 
 export const defaultSources: SourcesSettings = {
   active: "self-graph-yaml-frontmatter",
@@ -20,7 +20,7 @@ export const defaultMinimapSettings: MinimapSettings = {
   enableClickToNavigate: false,
 };
 
-export const defaultSettings: StarmapSettings = {
+export const defaultSettings: LumaWeaveSettings = {
   version: 93, // v109.0.1: SourcesSettings.configurations narrowed to AdapterConfig
 
   general: {
