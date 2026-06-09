@@ -21,13 +21,35 @@ tags: [live-state, now, canonical, v107-closed, v108-closed]
 
 **The single live-state doc.** This is the only doc that changes every pass and the only one that carries a date. Everything here is volatile by design. Concepts and architecture live in the static domain docs (see `DOC_ARCHITECTURE.md`); history lives in the dev-blog / #changelog feed. This doc holds only: where we are, what's next, what's broken.
 
-**Updated:** 2026-06-09 · **Production version:** 0.16.0 · **Internal arc:** v110 (real-source mode bugs + identity + error boundary — open) · **Last closed:** v109 (Source Adapter Platform)
+**Updated:** 2026-06-09 · **Production version:** 0.17.0 · **Internal arc:** v111 (test infrastructure — per SHIP_READINESS_ROADMAP §3 v111) · **Last closed:** v110 (real-source mode bugs + identity + error boundary)
 
 ---
 
-## Open arc — v110: Real-Source-Mode Bugs + Identity + Error Boundary — OPEN (0.16.0, semver bump at v110.6)
+## Open arc — v111: Test Infrastructure — OPEN (0.17.0)
 
-Fix the two known production bugs in `ThemeTargetInspectorOverlay` (panel overflow + fixture-testid hardcode) that are currently masked by skipped E2E tests. Add `React.ErrorBoundary` at AppShell root. Rename the app's identity surfaces (window title, dock, About) from "starmap" to "lumaweave". Wire or remove the permanently-hardcoded `"settling"` status in `StatusCluster`. Sub-pass detail: `docs/SHIP_READINESS_ROADMAP.md §3 v110`.
+Split `graph-visual-inventory.spec.ts` (~8.7 min, 119 tests) to restore sub-10-min full-suite; convert `waitForTimeout()` chains in QA helpers to web-first assertions; triage 5 named flakers; wire E2E to CI. Sub-pass detail: `docs/SHIP_READINESS_ROADMAP.md §3 v111`.
+
+---
+
+## Closed arc — v110: Real-Source-Mode Bugs + Identity + Error Boundary — CLOSED (0.16.0 → 0.17.0)
+
+Fixed the two production bugs in `ThemeTargetInspectorOverlay` (panel overflow + fixture-testid hardcode), added root-scope `ErrorBoundary`, completed the identity rename (starmap → LumaWeave), removed the hardcoded "settling" layout state. Compressed from the planned 6 sub-passes to 3 commits per blast-radius assessment.
+
+| Pass | Work | Commit |
+|---|---|---|
+| v110.1 | Identity rename (tauri.conf.json productName/identifier/title + 5 TS files StarmapSettings/StarmapPanel → LumaWeaveSettings/LumaWeavePanel); ErrorBoundary at AppShell root (Reload / Reset Settings / Copy error details); StatusCluster: removed useLayoutState() + "settling" layout span | `ebd29ac` |
+| v110.2 | Unified `graph-viewport` testid in ThemeTargetInspectorOverlay + AppShell (was conditional in real-source mode); 10 test renames across 5 E2E files; 2 skipped E2E tests re-enabled in theme-target-inspector.spec.ts | `4755b99` |
+| v110.3 | Arc close — semver 0.16.0 → 0.17.0, NOW.md reconcile, ROADMAP LANDED annotation, KNOWN_SHARP_EDGES +3 entries | _(this commit)_ |
+
+### Architectural notes established in v110
+
+- **Identity rename complete:** `tauri.conf.json` updated (productName `"lumaweave"`, identifier `"com.boop.lumaweave"`, title `"LumaWeave"`). TypeScript: `StarmapSettings` → `LumaWeaveSettings` (4 files); `StarmapPanel` → `LumaWeavePanel` (1 file). Cargo.toml version `0.1.0` does not track main semver — no change needed there.
+- **ErrorBoundary scope: root-only.** `src/app/ErrorBoundary.tsx` wraps the entire React tree at `AppShell`. Per-subsystem boundaries deferred to post-v1.0 (ROADMAP §2.6 lock). Recovery UI: Reload App (primary), Reset Settings (clears `localStorage.removeItem("lumaweave-settings")`), Copy error details. Stark dark `#060b14` / amber styling to distinguish from normal UI.
+- **Panel overflow was downstream of testid bug.** The `ThemeTargetInspectorOverlay` panel overflow in real-source mode was caused entirely by `GRAPH_VIEWPORT_SELECTOR` pointing at the wrong testid. Once the selector was fixed, `graphViewportElement` was found and the offset computation ran correctly — no layout-math change needed.
+- **Skipped tests may carry pre-existing staleness.** Test 184 (`theme-target-inspector.spec.ts`) referenced the floating HUD pill (`theme-target-inspector-toggle-state`) that was removed in v104.0.2. A test that was skipped before a refactor may need structural fixes beyond just removing `.skip`.
+- **StatusCluster `"settling"` removed** (hardcoded since v87.2, never wired). Node count + FPS remain. The layout-state field had zero live consumers since its introduction.
+
+**Arc closed** — v110 closer: 0.16.0 → 0.17.0 · 2026-06-09. 3 commits banked. Next: v111 (test infrastructure).
 
 ---
 
@@ -320,8 +342,8 @@ Reworked the floating-tile system: per-axis snap engine, armed guide, explicit g
 | Arc | Work |
 |---|---|
 | v109 (CLOSED) | Source Adapter Platform — 17 commits; 4 adapters ship as `registered`; arc closed 2026-06-09 |
-| **v110** (OPEN) | Real-source-mode bugs + identity + error boundary — ThemeTargetInspectorOverlay bugs, ErrorBoundary, identity rename, StatusCluster wire-or-remove; sub-pass detail: `docs/SHIP_READINESS_ROADMAP.md §3 v110` |
-| v111 | Test infrastructure — graph-visual-inventory split, helper-pattern conversions, CI wiring |
+| v110 (CLOSED) | Real-source-mode bugs + identity + error boundary — 3 commits; testid unification, ErrorBoundary, identity rename, StatusCluster removed; arc closed 2026-06-09 |
+| **v111** (OPEN) | Test infrastructure — graph-visual-inventory split, helper-pattern conversions, CI wiring |
 | v112 | UI completeness + dev-artifact-bleed cleanup |
 | v113 | Source adapter UX maturity |
 | v114 | Security + dependency hygiene |
@@ -370,6 +392,9 @@ Three known fragility points introduced or surfaced during v106. No action requi
 
 ## Recently resolved
 
+- **`ThemeTargetInspectorOverlay` panel overflow + fixture-testid hardcode** — cleared by v110.2: `GRAPH_VIEWPORT_SELECTOR` unified to `graph-viewport`; `AppShell.tsx` always emits `data-testid="graph-viewport"` regardless of mode. Panel overflow was downstream of the testid bug — no layout-math change needed.
+- **App identity "starmap"** — cleared by v110.1: `tauri.conf.json` updated to `productName: "lumaweave"`, `title: "LumaWeave"`, `identifier: "com.boop.lumaweave"`; TS types renamed `StarmapSettings/StarmapPanel → LumaWeaveSettings/LumaWeavePanel`.
+- **`StatusCluster` hardcoded "settling"** — cleared by v110.1: `useLayoutState()` hook and layout-state span removed; node count + FPS remain.
 - **Source-adapter JSON-404** — cleared by v107 Tier 0: `loadGraphifySource` replaced with `loadSource` (adapter-routed, settings-driven); active adapter selectable from `SourceAdapterPanel`.
 - **Radial inspector SVG+physics** — replaced in v106 with HTML/CSS ring; RootNode.tsx + SpokeNode.tsx deleted; viewport-clamped submenu; aurora gradient; geometry scope picker.
 - **Floating-tile click-interception** — `.tile-layer { pointer-events: none }` was already set; v101.0.6 added the click-through E2E test that formally closes this bug.

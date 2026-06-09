@@ -95,6 +95,36 @@ sourceAdapterRegistry.ts  →  import { loadCsvEdgeList } from "./adapters/csvEd
 
 **First encountered:** v109.3.1. Count was incorrectly incremented 10→11 for the package-dependency promotion (it was already a candidate); reverted to 10. In v109.4.0 a fresh `csv-edge-list` registration correctly incremented 10→11.
 
+## localStorage settings key for ErrorBoundary reset
+
+The `Reset Settings` action in `ErrorBoundary.tsx` calls `localStorage.removeItem("lumaweave-settings")`. The key `"lumaweave-settings"` is the Zustand persist key for the settings store — confirmed in `src/control-plane/settings/settings.store.ts`. If the persist key ever changes, the ErrorBoundary reset handler must change with it.
+
+**Anti-pattern:** using `localStorage.clear()` or a guessed key. The reset must target only the settings key, not all localStorage.
+
+**Why this matters:** the ErrorBoundary fires when the React tree crashes. If the crash is caused by corrupted settings, the reset handler is the only recovery path. A wrong key means "Reset Settings" silently does nothing — the crash loops forever.
+
+**First documented:** v110.1. Key confirmed `"lumaweave-settings"` via `settings.store.ts`.
+
+## Skipped tests can carry pre-existing staleness beyond their documented skip reason
+
+When a test is skipped with a documented bug reason, its body may continue to bitrot during the skip period. The documented bug is just one issue; reopening the test after the fix may reveal additional failures unrelated to the skip reason.
+
+**Example:** `theme-target-inspector.spec.ts` test 184 was skipped for panel-overflow (v110 bug). When re-enabled after the testid fix, it also failed on `getByTestId("theme-target-inspector-toggle-state")` — a floating HUD pill removed in v104.0.2. The skip had masked this second issue for 6+ arcs.
+
+**Pattern:** after removing `.skip`, treat the test as "unreviewed code" — read the full body, not just the section near the documented bug. Check for references to removed testids, renamed helpers, or architectural changes that postdate the skip.
+
+**First encountered:** v110.2.
+
+## Conditional testid anti-pattern — DOM element with two identities
+
+When a DOM element has a conditional testid based on an internal mode flag (e.g. `data-testid={useFixture ? "fixture-id" : "real-id"}`), every test and selector that targets it must handle both values. This creates a split surface: fixture-mode tests use one id, real-source-mode tests use another. Selectors in production code that hardcode one side are silently broken in the other mode.
+
+**Fix:** emit a single canonical testid regardless of mode. In `AppShell.tsx` the graph viewport was `data-testid={useFixture ? "self-graph-fixture-loaded" : "graph-viewport"}`. Unified to `data-testid="graph-viewport"` in v110.2. `GRAPH_VIEWPORT_SELECTOR` in `ThemeTargetInspectorOverlay.tsx` previously hardcoded the fixture id, breaking the overlay in real-source mode.
+
+**Rule:** if a DOM element needs to be identifiable by tests or production code, give it one canonical testid and don't conditionally change it.
+
+**First encountered:** v110.2. Manifest as 2 skipped E2E tests (panel overflow + sigma exclusion) that documented real production-mode failures.
+
 ## `SourceAdapterType` union requires manual extension for fresh registrations only
 
 **Symptom:** TypeScript error when constructing a new adapter config with an ID not in the `SourceAdapterType` union.
