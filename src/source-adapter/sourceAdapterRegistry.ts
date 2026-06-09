@@ -15,6 +15,7 @@ import { loadSelfGraph } from "../graph/ingest/loadSelfGraph";
 import { loadMarkdownVault } from "./adapters/markdownVaultAdapter";
 import { loadCytoscapeJson } from "./adapters/cytoscapeJsonAdapter";
 import { loadPackageDependency } from "./adapters/packageDependencyAdapter";
+import { loadCsvEdgeList } from "./adapters/csvEdgeListAdapter";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -30,7 +31,8 @@ export type SourceAdapterType =
   | "database-schema"
   | "package-dependency"
   | "cloud-infrastructure"
-  | "issue-tracker";
+  | "issue-tracker"
+  | "csv-edge-list";
 
 export type InputPatternType = "url" | "path" | "manifest" | "schema";
 
@@ -377,6 +379,31 @@ registerSourceAdapter(
     coupling: "external",
   },
   loadPackageDependency,
+);
+
+registerSourceAdapter(
+  {
+    adapterId: "csv-edge-list",
+    adapterType: "csv-edge-list",
+    adapterVersion: "0.1.0",
+    inputPattern: {
+      type: "path",
+      pattern: "**/*.csv",
+      examples: ["edges.csv", "graph-export.csv"],
+    },
+    translationSet: {
+      nodeMappings: { "node": "code.entity" },
+      edgeMappings: { "edge": "relates_to" },
+      defaultConfidence: "observed",
+    },
+    limits: { maxNodes: 500, maxEdges: 2000, maxDepth: 1, maxFileSize: 10485760, timeoutMs: 15000 },
+    qaReportFormat: { requiredFields: ["adapterId", "sourceDescription", "counts", "limits", "safety"] },
+    status: "registered",
+    contractVersion: "v74a",
+    lastUpdated: "2026-06-08T00:00:00Z",
+    coupling: "external",
+  },
+  loadCsvEdgeList,
 );
 
 registerSourceAdapter(
