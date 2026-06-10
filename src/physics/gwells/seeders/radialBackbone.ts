@@ -329,8 +329,4 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
   graph.setAttribute("__seededSpinePositions", seededPositions);
   graph.setAttribute("__gwellsSeedPositions", allSeedPositions);
 
-  console.log(
-    `[radialBackbone] Seeded ${seededPositions.size} spine positions and ` +
-    `${allSeedPositions.size} total node positions across ${params.spineCount} spines`
-  );
 }

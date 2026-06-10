@@ -14,7 +14,7 @@ export function registerTypeSpoke(): void {
     iconFill: false,
     color: "inspector.radial.spokeColor",
     intendedTokenPaths: undefined,
-    placeholderMessage: "Coming in future arc (Typography axis token wiring)",
+    placeholderMessage: "Typography controls are in development.",
     tabComponent: makePlaceholderTab("type"),
   });
 }

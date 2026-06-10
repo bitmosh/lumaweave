@@ -269,15 +269,15 @@
       },
       "layout": {
         "label": "Layout",
-        "placeholderMessage": "Coming in v93 (Physics Dialect arc)"
+        "placeholderMessage": "Physics layout controls are in development."
       },
       "motion": {
         "label": "Motion",
-        "placeholderMessage": "Coming in v92 (Audio Reactivity arc)"
+        "placeholderMessage": "Animation and motion controls are in development."
       },
       "type": {
         "label": "Type",
-        "placeholderMessage": "Coming in future arc (Typography axis token wiring)"
+        "placeholderMessage": "Typography controls are in development."
       },
       "placeholder": {
         "coming": "Coming soon",
@@ -365,8 +365,8 @@
     "chat": {
       "title": "Agent Chat",
       "placeholder": {
-        "description": "Local agent chat surface. Wires to the agent infrastructure in a future pass.",
-        "status": "Placeholder — not connected."
+        "description": "Chat with a local AI model.",
+        "status": "Not yet connected — coming in a future update."
       }
     }
   },

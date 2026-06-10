@@ -34,7 +34,7 @@ export function PackageDependencyConfigForm({
         className="w-full rounded border border-gray-600 bg-gray-800 px-2 py-1 text-xs text-gray-100 focus:border-gray-400 focus:outline-none"
       >
         <option value="package.json">package.json (npm / yarn / pnpm)</option>
-        <option value="pyproject.toml" disabled>pyproject.toml (Python — coming soon)</option>
+        <option value="pyproject.toml" disabled>pyproject.toml (Python — not yet supported)</option>
       </select>
     </div>
   );

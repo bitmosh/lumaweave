@@ -591,6 +591,5 @@ export function applyDialect(
     applyPins,
   };
 
-  console.log(`[gwells] applied dialect '${dialect.id}'`);
   return controller;
 }

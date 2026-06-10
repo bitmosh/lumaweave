@@ -348,8 +348,4 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
   graph.setAttribute("__seededSpinePositions", positionsForReducer);
   graph.setAttribute("__gwellsSeedPositions", allSeedPositions);
 
-  console.log(
-    `[parallelSpines] Seeded ${seededPositions.size} spine positions and ` +
-    `${allSeedPositions.size} total node positions across ${params.spineCount} parallel spines`
-  );
 }

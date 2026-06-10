@@ -13,7 +13,7 @@ export function registerMotionSpoke(): void {
     iconPath: "M3 16c3 0 3-8 6-8s3 8 6 8 3-8 6-8",
     color: "inspector.radial.spokeColor",
     intendedTokenPaths: ["motion.reduce"],
-    placeholderMessage: "Coming in v92 (Audio Reactivity arc)",
+    placeholderMessage: "Animation and motion controls are in development.",
     tabComponent: makePlaceholderTab("motion"),
   });
 }

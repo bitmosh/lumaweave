@@ -13,7 +13,7 @@ export function registerLayoutSpoke(): void {
     iconPath: "M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 0h7v7h-7z",
     color: "inspector.radial.spokeColor",
     intendedTokenPaths: undefined,
-    placeholderMessage: "Coming in v93 (Physics Dialect arc)",
+    placeholderMessage: "Physics layout controls are in development.",
     tabComponent: makePlaceholderTab("layout"),
   });
 }

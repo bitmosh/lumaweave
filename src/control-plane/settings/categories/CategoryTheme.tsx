@@ -226,7 +226,7 @@ function StubSubArea({ label }: { label: string }) {
   return (
     <div className="theme-stub">
       <span className="theme-stub-label">{label}</span>
-      <p className="theme-stub-coming">Coming in a later v102 phase</p>
+      <p className="theme-stub-coming">Coming soon</p>
     </div>
   );
 }
@@ -260,7 +260,7 @@ export function CategoryTheme({ onDrillIn, onDrillOut }: CategoryContentProps) {
             className={`theme-subnav-btn${activeSubArea === area.id ? ' is-active' : ''}${!area.live ? ' is-stub' : ''}`}
             onClick={() => handleSubAreaSelect(area.id)}
             disabled={!area.live}
-            title={!area.live ? 'Coming in a later v102 phase' : undefined}
+            title={!area.live ? 'Coming soon' : undefined}
           >
             {area.label}
           </button>

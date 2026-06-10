@@ -154,7 +154,7 @@ commandRegistry.register({
   id: "theme.openWorkshop",
   label: "Open Theme Workshop",
   category: "theme",
-  description: "Open the advanced theme workshop (coming soon)",
+  description: "Open the theme workshop",
   enabled: () => false,
   execute: () => {},
 });

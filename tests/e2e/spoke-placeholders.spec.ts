@@ -6,18 +6,18 @@ import { openInspectorOnTopbar } from "./helpers/inspector";
 const PLACEHOLDER_CONFIG = [
   {
     id: "type",
-    message: "Coming in future arc (Typography axis token wiring)",
+    message: "Typography controls are in development.",
     hasIntendedPaths: false,
   },
   {
     id: "motion",
-    message: "Coming in v92 (Audio Reactivity arc)",
+    message: "Animation and motion controls are in development.",
     hasIntendedPaths: true,
     paths: ["motion.reduce"],
   },
   {
     id: "layout",
-    message: "Coming in v93 (Physics Dialect arc)",
+    message: "Physics layout controls are in development.",
     hasIntendedPaths: false,
   },
 ];
