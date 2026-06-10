@@ -1497,6 +1497,41 @@
   margin: 0;
 }
 
+/* ─── Export sub-area ──────────────────────────────────────────────────── */
+
+.theme-export {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 16px;
+}
+
+.theme-export-hint {
+  color: var(--lw-text-muted);
+  font-size: 11px;
+  margin: 0;
+}
+
+.theme-export-button {
+  background: color-mix(in oklab, var(--lw-accent, #a78bfa) 20%, transparent);
+  border: 1px solid color-mix(in oklab, var(--lw-accent, #a78bfa) 40%, transparent);
+  border-radius: 6px;
+  color: var(--lw-accent, #a78bfa);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 6px 12px;
+  transition: background 120ms ease;
+}
+
+.theme-export-button:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--lw-accent, #a78bfa) 30%, transparent);
+}
+
+.theme-export-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
 /* ─── Palette swatch row — 5 chips (v102.0.2, mirrors theme-menu.css) ── */
 .lw-palette-row {
   display: flex;

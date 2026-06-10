@@ -47,6 +47,7 @@ import "./ErrorBoundary.css";
 import { StatusBar } from "../control-plane/StatusBar";
 import { useCrossfadeAppTokens } from "../themes/themeCrossfade";
 import { useThemeInspectorStore } from "../themes/themeInspectorStore";
+import { exportGlobalThemeOverrideBundle } from "../themes/themeOverrideStorage";
 
 const EMPTY_OVERRIDES: Record<string, unknown> = {};
 const EMPTY_PINS: Record<string, { x: number; y: number; z?: number }> = {};
@@ -292,6 +293,32 @@ export function AppShell() {
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [settings.ui, setSetting]);
+
+  // theme:exportBundle — download global overrides as a JSON file
+  useEffect(() => {
+    function handleExportBundle() {
+      const bundle = exportGlobalThemeOverrideBundle();
+      if (bundle.overrides.length === 0) {
+        console.warn("[theme] exportBundle called with no overrides");
+        return;
+      }
+      const themeId = useSettingsStore.getState().settings.appearance.theme;
+      const timestamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+      const filename = `lumaweave-overrides-${themeId}-${timestamp}.json`;
+      const json = JSON.stringify(bundle, null, 2);
+      const blob = new Blob([json], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+    window.addEventListener("theme:exportBundle", handleExportBundle);
+    return () => window.removeEventListener("theme:exportBundle", handleExportBundle);
+  }, []);
 
   // v86b: Click handler for viewport background — spawns visual halo
   const handleViewportClick = (e: React.MouseEvent<HTMLDivElement>) => {

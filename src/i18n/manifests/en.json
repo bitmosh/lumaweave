@@ -413,5 +413,12 @@
     "changelog36cText": "Command Registry Metadata",
     "changelog38": "v38:",
     "changelog38Text": "Perspective System v0"
+  },
+  "theme": {
+    "export": {
+      "downloadButton": "Download override bundle",
+      "emptyTooltip": "Apply some overrides first.",
+      "scopeHint": "Exports your global theme overrides. Target-specific customizations are not yet included."
+    }
   }
 }

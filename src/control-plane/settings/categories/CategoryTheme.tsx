@@ -1,10 +1,18 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useSyncExternalStore } from 'react';
 import { useSettingsStore } from '../settings.store';
 import { builtInThemePresets } from '../../../themes/themePresets';
 import { getThemeRuntimeTokens } from '../../../themes/themeTokens';
 import { getAccessibilityProfile } from '../../../themes/themeAccessibilityProfile';
+import { hasOverrides } from '../../../themes/themeOverrideStorage';
+import { t } from '../../../i18n/t';
 import type { CategoryContentProps } from '../settingsPanel.types';
 import type { ThemeId } from '../../settings/settings.schema';
+
+const subscribeOverrides = (cb: () => void) => {
+  window.addEventListener("lw:override-change", cb);
+  return () => window.removeEventListener("lw:override-change", cb);
+};
+const snapshotHasOverrides = () => hasOverrides();
 
 // Sub-areas: browse and active are live; others are stubs for later phases.
 type SubArea = 'browse' | 'active' | 'workshop' | 'history' | 'bookmarks' | 'export';
@@ -15,7 +23,7 @@ const SUB_AREAS: { id: SubArea; label: string; live: boolean }[] = [
   { id: 'workshop', label: 'Workshop', live: false },
   { id: 'history', label: 'History', live: false },
   { id: 'bookmarks', label: 'Bookmarks', live: false },
-  { id: 'export', label: 'Export', live: false },
+  { id: 'export', label: 'Export', live: true },
 ];
 
 // --- Browse Sub-Area ---
@@ -220,6 +228,32 @@ function ActiveSubArea({ appliedThemeId }: { appliedThemeId: string }) {
   );
 }
 
+// --- Export Sub-Area ---
+
+function ExportSubArea() {
+  const overridesExist = useSyncExternalStore(subscribeOverrides, snapshotHasOverrides, snapshotHasOverrides);
+
+  function handleClick() {
+    window.dispatchEvent(new CustomEvent("theme:exportBundle"));
+  }
+
+  return (
+    <div className="theme-export">
+      <p className="theme-export-hint">{t("theme.export.scopeHint")}</p>
+      <button
+        type="button"
+        data-testid="theme-export-button"
+        onClick={handleClick}
+        disabled={!overridesExist}
+        title={!overridesExist ? t("theme.export.emptyTooltip") : undefined}
+        className="theme-export-button"
+      >
+        {t("theme.export.downloadButton")}
+      </button>
+    </div>
+  );
+}
+
 // --- Stub Sub-Area ---
 
 function StubSubArea({ label }: { label: string }) {
@@ -288,7 +322,7 @@ export function CategoryTheme({ onDrillIn, onDrillOut }: CategoryContentProps) {
         {activeSubArea === 'workshop' && <StubSubArea label="Workshop" />}
         {activeSubArea === 'history' && <StubSubArea label="History" />}
         {activeSubArea === 'bookmarks' && <StubSubArea label="Bookmarks" />}
-        {activeSubArea === 'export' && <StubSubArea label="Export" />}
+        {activeSubArea === 'export' && <ExportSubArea />}
       </div>
     </div>
   );
