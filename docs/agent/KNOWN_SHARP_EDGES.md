@@ -134,3 +134,95 @@ When a DOM element has a conditional testid based on an internal mode flag (e.g.
 **Why not auto-derived:** the union could be inferred from the registry entries at build time, but that would break if the registry file is ever split. Manual extension is deliberate (matches the TypeScript documentation pattern for discriminated unions).
 
 **First encountered:** v109.4.0. Added `"csv-edge-list"` to the union for the fresh registration. Package-dependency (v109.3.0) was a candidate promotion — no union change needed.
+
+## Playwright: file-level parallelism beats describe-block parallelism for slow spec files
+
+**Symptom:** A spec file with hundreds of tests runs serially, dominating full-suite runtime.
+
+**Cause:** Playwright's default worker pool parallelizes across files, not within them. A 200-test file with `test.describe()` blocks (without `.parallel()`) blocks one worker for the full file's duration.
+
+**Anti-pattern:** Adding `test.describe.parallel()` blocks within the file — works, but harder to measure individual block runtimes and harder to migrate later.
+
+**Correct pattern:** Split the file into multiple spec files along natural feature-area boundaries. Playwright's worker pool fans out across the new files automatically; no config changes needed.
+
+**First encountered:** v111.1 (graph-visual-inventory.spec.ts split into 3 files; ~8.7 min → 2m 58s).
+
+## Playwright: convert waitForTimeout race-condition Band-Aids to web-first assertions
+
+**Symptom:** Tests pass locally but fail intermittently in CI or under worker contention. Arbitrary `await page.waitForTimeout(150)` after a click is the usual code smell.
+
+**Cause:** `waitForTimeout()` is unconditional; the test continues regardless of whether the expected state actually appeared. Under load, the state may take longer than the timeout; the test then asserts on stale DOM.
+
+**Anti-pattern:**
+```typescript
+await button.click();
+await page.waitForTimeout(150);  // hope the panel rendered
+expect(await page.getByTestId("panel").isVisible()).toBe(true);
+```
+
+**Correct pattern:**
+```typescript
+await button.click();
+await expect(page.getByTestId("panel")).toBeVisible({ timeout: 5000 });
+```
+
+The web-first form auto-retries until the condition is met or the timeout fires. Eliminates the race entirely.
+
+**Acceptable waitForTimeout use-cases:**
+- Debounce simulation (waiting for a debounced store update with no observable DOM end-state)
+- Animation completion when the animation has no observable end-state in the DOM
+- Visual regression tests waiting for paint to settle
+
+**First encountered:** v111.2 (qa.ts openAdvisoryTab + expandSection conversions; contract-registry flake resolved as cascade effect).
+
+## Architectural flakes: document in-code with cross-reference, don't skip
+
+**Symptom:** A known-flaky test fails ~1/N runs but passes in isolation. Root cause is architectural (worker contention, engine throttling, race between subsystems) and a real fix is out of arc scope.
+
+**Anti-pattern:** Skip the test with `.skip()` or `.fixme()`. Skipping hides the failure mode; future Claudes or contributors don't see the issue surfaced anywhere they're looking.
+
+**Anti-pattern:** Widening the tolerance (extending timeouts). If the root cause isn't timing variance, tolerance-widening fails to fix the issue and creates a slower test for no gain.
+
+**Correct pattern:** Add a descriptive comment block above the test that names the symptom, the investigation history, the architectural root cause, and a cross-reference to a `docs/known-bugs/` entry. The test continues to run, the flake is honestly visible, and the deferral is auditable.
+
+**First encountered:** v111.3 (gwells-physics.spec.ts C9.0 documentation).
+
+## Flake-fix verification: triple-run stability is the minimum bar
+
+**Symptom:** A test was failing intermittently. Now it passes once after a fix. Has the fix worked?
+
+**Reasoning:** A single pass after a flake-fix is insufficient evidence — flakes are intermittent by definition. The fix might not address the root cause; the test might have passed by luck on the first run.
+
+**Correct pattern:** Run the affected test 3 times in succession after the fix. All 3 must pass without flakes. Report pass/fail per run.
+
+If any of the 3 fails, the fix didn't address the root cause; investigate further before committing.
+
+**First encountered:** v111.2 (contract-registry triple-run after qa.ts conversion), v111.3 (color-tab triple-run after web-first assertion conversion).
+
+## Audit projections about CI runtime must be measured before being treated as locked planning inputs
+
+**Symptom:** An investigation report projects a runtime number (e.g., "5-7 min CI") based on local measurement and a CI-overhead factor. Decisions get locked based on that projection. Implementation reveals the projection was wrong by an order of magnitude.
+
+**Cause:** Local-to-CI extrapolation is unreliable when the workload involves cold-start costs (dev server, browser, JIT compilation, dependency installs). The CI environment is structurally different in ways that linear scaling factors don't capture.
+
+**Anti-pattern:** Treating an audit's CI runtime estimate as a fact suitable for locking a config decision (single runner vs matrix, timeout values, etc.).
+
+**Correct pattern:** Mark CI runtime projections as "estimate pending measurement" in investigation reports. Before locking config decisions that depend on those numbers, do at least one full CI run to confirm the number is approximately right.
+
+**First encountered:** v111.4 saga. Audit projected 4-7 min CI runtime for a single runner; reality was 70-100 min and even a 5-shard matrix with production preview couldn't fit in a 20-min job timeout.
+
+**Mitigation pattern:** When CI configuration depends on runtime projections, make the first attempt explicitly time-boxed and measure rather than commit. Use `continue-on-error: true` temporarily on the first run to gather data without blocking other work, then lock the config based on real measurements.
+
+## When amendments stop converging, pull and defer rather than continue
+
+**Symptom:** A sub-pass requires multiple amendments (3+) to fix what each amendment-cycle's diagnosis claimed would be the resolution. The fix-amend cycle is making local sense but not producing convergent results.
+
+**Cause:** The underlying problem is structurally larger than the sub-pass scope assumed. Each amendment addresses the immediate failure boundary; the next failure boundary has different mechanics that the prior fix didn't address.
+
+**Anti-pattern:** Continuing to amend ("just one more fix"). Each amendment makes local sense; collectively they consume more budget than the work's value, and they obscure the structural insight.
+
+**Correct pattern:** When an amendment cycle produces consecutive non-convergent results, stop. Investigate whether the underlying problem deserves its own arc. If yes, pull the current attempt cleanly, document what was learned in `docs/known-bugs/`, and add an explicit defer entry to the roadmap.
+
+**Distinguishing pull-and-defer from giving up:** the explicit reasoning, the documented learnings, and the dedicated future arc path are what separate engineering discipline from incomplete work. A pull-and-defer commit with a structured bug doc is a deliverable; an unfinished attempt is not.
+
+**First encountered:** v111.4 (CI E2E wiring). Six amendments across `.4`, `.4a`, `.4b`, `.4c`, `.4d`, `.4e` failed to converge. Pull-and-defer at `d2d0cce` documented the investigation, banked the wins, deferred the structural problem to a dedicated future arc.

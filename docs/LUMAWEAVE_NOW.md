@@ -21,13 +21,44 @@ tags: [live-state, now, canonical, v107-closed, v108-closed]
 
 **The single live-state doc.** This is the only doc that changes every pass and the only one that carries a date. Everything here is volatile by design. Concepts and architecture live in the static domain docs (see `DOC_ARCHITECTURE.md`); history lives in the dev-blog / #changelog feed. This doc holds only: where we are, what's next, what's broken.
 
-**Updated:** 2026-06-09 · **Production version:** 0.17.0 · **Internal arc:** v111 (test infrastructure — per SHIP_READINESS_ROADMAP §3 v111) · **Last closed:** v110 (real-source mode bugs + identity + error boundary)
+**Updated:** 2026-06-09 · **Production version:** 0.18.0 · **Internal arc:** v112 (UI completeness + dev-artifact-bleed cleanup — per SHIP_READINESS_ROADMAP §3 v112) · **Last closed:** v111 (test infrastructure)
 
 ---
 
-## Open arc — v111: Test Infrastructure — OPEN (0.17.0)
+## Open arc — v112: UI Completeness + Dev-Artifact-Bleed Cleanup — OPEN (0.18.0)
 
-Split `graph-visual-inventory.spec.ts` (~8.7 min, 119 tests) to restore sub-10-min full-suite; convert `waitForTimeout()` chains in QA helpers to web-first assertions; triage 5 named flakers; wire E2E to CI. Sub-pass detail: `docs/SHIP_READINESS_ROADMAP.md §3 v111`.
+Remove/reframe placeholder inspector spokes, scrub internal arc numbers from user-visible strings, gate dev-only tile sections (QaPanel, AgentChatPlaceholder), triage mis-homed tile sections. Sub-pass detail: `docs/SHIP_READINESS_ROADMAP.md §3 v112`.
+
+---
+
+## Closed arc — v111: Test Infrastructure — CLOSED (0.17.0 → 0.18.0)
+
+Split the slow `graph-visual-inventory.spec.ts` for file-level parallelism; converted `waitForTimeout` Band-Aids in qa.ts helpers to web-first assertions; triaged 5 named flakers (color-tab fixed, 3 documented, gwells C9.0 deferred as architectural). CI E2E wiring attempted across 6 amendments and deferred to a dedicated future arc; v110-era CI state (lint-css + typecheck) retained.
+
+| Sub-pass | Commit | Work |
+|---|---|---|
+| v111.0 | (no commit) | Investigation brief |
+| v111.1 | `cc42b94` | GVI split into 3 files (Core / Probes / Theme) |
+| v111.2 | `fcd79d0` | qa.ts helpers to web-first (openAdvisoryTab + expandSection) |
+| v111.3 | `68e543c` | Flaker triage (color-tab + 3 documented + gwells C9.0 deferred) |
+| v111.4 | `915d6a5` | CI E2E initial wiring (timed out) |
+| v111.4a | `4fedf4f` | Replaced deprecated Playwright action (timed out) |
+| v111.4b | `74bf554` | Timeout increase 15→30 min (timed out) |
+| v111.4c | `2a0702c` | 3-shard matrix (timed out) |
+| v111.4d | `a98156b` | 5-shard matrix (4/5 timed out) |
+| v111.4e | `6c24acf` | Production-preview switch (4/5 timed out) |
+| v111.4-pull | `d2d0cce` | Revert CI E2E, defer to dedicated arc |
+| v111.5 | _(this commit)_ | Arc close — semver 0.17.0 → 0.18.0 + docs reconcile |
+
+### Architectural notes established in v111
+
+- **GVI split pattern:** `graph-visual-inventory.spec.ts` (~8.7 min, 119 tests) split into 3 files (Core/Probes/Theme). Playwright worker pool fans out across files automatically; suite ~8.7 min → 2m 58s for the GVI portion (66% reduction). Full local suite ~3 min after split.
+- **web-first assertion pattern:** `qa.ts` helpers `openAdvisoryTab` and `expandSection` converted from `waitForTimeout` Band-Aids to `expect(...).toBeVisible({ timeout })` and `toHaveAttribute(name, value, { timeout })`. Contract-registry flake resolved as cascade effect.
+- **Architectural-deferral documentation:** gwells C9.0 drift-back flake documented in-code with descriptive comment + cross-ref to `docs/known-bugs/gwells-c9-0-drift-back-flake.md`. Test continues to run; flake is honest and auditable.
+- **CI E2E DEFERRED:** 6 amendments attempted; Vite dev cold-start in CI is structurally too slow; production-preview switch surfaced additional unknowns. Full investigation in `docs/workflows/v111_4e_vite_preview_report.md`; deferral documented in `docs/known-bugs/ci-e2e-vite-cold-start.md`. Local full-suite runs + manual pre-ship gate (ROADMAP §3 v115) cover the v1.0 verification need. CI stays at v110-era state (lint-css + typecheck only).
+- **Cargo.toml at `0.1.0`:** does not track main semver — no Cargo bump at v111 close (same as v110).
+
+**Arc closed** — v111 closer: 0.17.0 → 0.18.0 · 2026-06-09. Next: v112 (UI completeness + dev-artifact-bleed cleanup).
 
 ---
 
@@ -343,28 +374,12 @@ Reworked the floating-tile system: per-axis snap engine, armed guide, explicit g
 |---|---|
 | v109 (CLOSED) | Source Adapter Platform — 17 commits; 4 adapters ship as `registered`; arc closed 2026-06-09 |
 | v110 (CLOSED) | Real-source-mode bugs + identity + error boundary — 3 commits; testid unification, ErrorBoundary, identity rename, StatusCluster removed; arc closed 2026-06-09 |
-| **v111** (OPEN) | Test infrastructure — graph-visual-inventory split, helper-pattern conversions, CI wiring |
-| v112 | UI completeness + dev-artifact-bleed cleanup |
+| v111 (CLOSED) | Test infrastructure — GVI split, qa.ts helpers, flaker triage; CI E2E deferred to dedicated arc; arc closed 2026-06-09 |
+| **v112** (OPEN) | UI completeness + dev-artifact-bleed cleanup |
 | v113 | Source adapter UX maturity |
 | v114 | Security + dependency hygiene |
 | v115 | Release build + cold-install QA |
 | ~v115–v125 | `1.0.0` initial public release |
-
-### Standing deferred
-
-#### v111 candidate: Test-hardening + suite split
-
-**Driver:** Full-suite runtime (~9–12 minutes) now exceeds the Bash tool's 10-minute cap, contaminating Bandit verification with timing flakes. Bandit's targeted-test-scope convention works around it per-commit, but full-suite checkpoints (arc closes, regression hunts) require human-run-only.
-
-**Goals:**
-- Split `graph-visual-inventory.spec.ts` (~8.7 min of 9 min total) into smaller files or use `test.describe.parallel()` so it doesn't gate the whole suite
-- Convert `waitForTimeout()` chains in QA helpers (especially `tests/e2e/helpers/qa.ts`) to web-first assertions (`expect.poll`, `toBeVisible({ timeout })`)
-- Audit the timing-sensitive specs that flaked under v109.0.x manual full-suite (color-tab, contract-registry, graph-sources, gwells-physics, settings-panel reload)
-- Restore sub-10-min full-suite so Bandit's Bash-cap verification becomes viable again
-
-**Estimated scope:** ~3–4 hours, multi-pass (audit → `graph-visual-inventory` split → helper-pattern conversions → flaky-spec triage).
-
-**Relationship to v1.0 ship goal:** not strictly required for shipping, but CI green stability matters for the public release. Worth banking before any major feature arc.
 
 ---
 

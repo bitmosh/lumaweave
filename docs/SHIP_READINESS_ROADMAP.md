@@ -252,19 +252,35 @@ Deviations: per-subsystem ErrorBoundary boundaries remain deferred to post-v1.0 
 
 ### v111 — Test Infrastructure
 
-**Sub-passes:**
-- v111.0 — Investigation brief: audit `graph-visual-inventory.spec.ts` (~8.7min, 119 tests) for natural split boundaries. Audit `tests/e2e/helpers/qa.ts` for `waitForTimeout()` patterns that should become `expect.poll()`. Triage the 5 named flakers (color-tab, contract-registry, graph-sources, gwells-physics, settings-panel).
-- v111.1 — graph-visual-inventory split. Probably 3-5 files by feature area.
-- v111.2 — Helper-pattern conversions to web-first assertions.
-- v111.3 — Flaker triage and fixes.
-- v111.4 — CI wiring: add E2E to CI now that runtime is sub-5-min.
-- v111.5 — Arc close: 0.17.0 → 0.18.0.
+**LANDED:** 2026-06-09
 
-**Driver:** Honest CI signal for every subsequent commit. Test debt has been accumulating since arc count was triple-digit; this is the explicit "pay it down" pass.
+- v111.1 `cc42b94` — graph-visual-inventory split (3 files: Core/Probes/Theme)
+- v111.2 `fcd79d0` — qa.ts helper conversions (openAdvisoryTab, expandSection)
+- v111.3 `68e543c` — flaker triage (color-tab fix + 3 documented + gwells C9.0 deferred)
+- v111.4 + .4a–.4e — CI E2E wiring attempts (6 amendments, none converged)
+- v111.4-pull `d2d0cce` — revert CI E2E, defer to dedicated arc
+- v111.5 `(this SHA)` — arc close, semver 0.17.0 → 0.18.0
 
-**Hard scope cap:** v111 addresses graph-visual-inventory split + 5 named flakers + helper conversions + CI wiring. Anything else (additional flaker patterns surfaced during the arc, broader test hygiene) goes to v111.* sub-passes or post-arc deferred list. Otherwise v111 becomes a multi-arc gravity well.
+**Outcomes:**
+- GVI portion: ~8.7 min → 2m 58s (66% reduction)
+- contract-registry flake resolved via cascade fix in v111.2
+- color-tab animation waits eliminated
+- gwells C9.0 deferred as architectural (engine instrumentation needed, out of v1.0 scope)
+- CI E2E DEFERRED to dedicated arc (post-v1.0); v110-era CI state (lint-css + typecheck) retained
 
-### v112 — UI Completeness + Dev-Artifact-Bleed Cleanup
+**Deviations from planned sub-pass structure:**
+- v111.4 split into 6 amendments (audit projection of CI runtime was wrong by ~10x; structural Vite/CI mismatch surfaced only through measurement)
+- v111.4 pulled entirely after the prod-preview switch (v111.4e) failed CI with 4/5 shards timing out
+- Decision discipline: when amendments stop converging, pull and defer rather than continue past arc-budget
+
+**Audit projection vs reality (the lesson):**
+- Audit (`v111_0_test_infrastructure_report.md` §4) projected 4-7 min CI runtime based on GVI split's local measurement
+- Reality (single-runner): 70-100 min projected; never measured to completion
+- Reality (5-shard matrix with prod-preview): 4/5 shards hit 20-min job timeout
+- Root cause: Vite dev cold-start in CI is structurally slow and not addressed by timeout/shard configuration
+- Real-fix path documented in `docs/known-bugs/ci-e2e-vite-cold-start.md` for a dedicated future arc
+
+### v112 — UI Completeness + Dev-Artifact-Bleed Cleanup [NEXT]
 
 This is where I want to push back on the audit's framing. The audit treated this as "remove from nav as part of cleanup." It's bigger than that — it's information-architecture work.
 
