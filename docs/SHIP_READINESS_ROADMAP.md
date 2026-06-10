@@ -259,7 +259,7 @@ Deviations: per-subsystem ErrorBoundary boundaries remain deferred to post-v1.0 
 - v111.3 `68e543c` — flaker triage (color-tab fix + 3 documented + gwells C9.0 deferred)
 - v111.4 + .4a–.4e — CI E2E wiring attempts (6 amendments, none converged)
 - v111.4-pull `d2d0cce` — revert CI E2E, defer to dedicated arc
-- v111.5 `(this SHA)` — arc close, semver 0.17.0 → 0.18.0
+- v111.5 `35028fe` — arc close, semver 0.17.0 → 0.18.0
 
 **Outcomes:**
 - GVI portion: ~8.7 min → 2m 58s (66% reduction)
