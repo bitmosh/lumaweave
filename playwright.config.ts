@@ -18,11 +18,14 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npm run dev",
+    command: process.env.CI
+      ? "npm run build && npx vite preview --port 1420"
+      : "npm run dev",
     url: "http://localhost:1420",
-    reuseExistingServer: true,
+    reuseExistingServer: !process.env.CI,
     timeout: 120_000,
     env: {
+      // Load-bearing: sets __PLAYWRIGHT__ build-time define (vite.config.ts) → isTestEnv=true in bundle.
       PLAYWRIGHT: "true",
     },
   },
