@@ -1,5 +1,5 @@
 import { inspectorSpokeRegistry } from "../../../themes/inspectorSpokeRegistry";
-import { makePlaceholderTab } from "./PlaceholderTab";
+import { TypeTab } from "./TypeTab";
 
 export function registerTypeSpoke(): void {
   inspectorSpokeRegistry.register({
@@ -9,12 +9,11 @@ export function registerTypeSpoke(): void {
     category: "typography",
     enabled: true,
     order: 2,
-    status: "placeholder",
+    status: "active",
     iconPath: "M5 6h14M12 6v13M9 19h6",
     iconFill: false,
     color: "inspector.radial.spokeColor",
-    intendedTokenPaths: undefined,
     placeholderMessage: "Typography controls are in development.",
-    tabComponent: makePlaceholderTab("type"),
+    tabComponent: TypeTab,
   });
 }

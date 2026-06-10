@@ -277,7 +277,12 @@
       },
       "type": {
         "label": "Type",
-        "placeholderMessage": "Typography controls are in development."
+        "placeholderMessage": "Typography controls are in development.",
+        "displayRole": "Display",
+        "bodyRole": "Body",
+        "monoRole": "Mono",
+        "specimenText": "The quick brown fox jumps over the lazy dog",
+        "fallbackStackLabel": "Fallback"
       },
       "placeholder": {
         "coming": "Coming soon",

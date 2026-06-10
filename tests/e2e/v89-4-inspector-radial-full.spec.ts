@@ -6,7 +6,7 @@ const CANONICAL_SPOKE_ORDER = [
   "color", "geometry", "type", "motion", "layout", "code", "apply", "history",
 ];
 
-const PLACEHOLDER_SPOKES = ["type", "motion", "layout"];
+const PLACEHOLDER_SPOKES = ["motion", "layout"];
 
 test.describe("v89.4 Inspector Full Radial — 8 spokes (v105.0.1: IDE merged into Code)", () => {
   test("all 8 spokes render in canonical order", async ({ page }) => {
