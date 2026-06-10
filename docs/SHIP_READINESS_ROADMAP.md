@@ -354,6 +354,7 @@ Per `~/Projects/future-integration/INTEGRATION_FUTURES.md` §7 do-not-build list
 - **3D rendering** (Three.js / R3F path): post-v1.0 vision; ribbon edge geometry validated; full arc post-1.0
 - **Audio reactivity**: post-v1.0 (the v92 audio-reactivity arc that's been showing as "coming in v92" in inspector strings — explicitly deferred and the user-visible string must be removed in v112)
 - **Typography axis token wiring**: same — deferred and the inspector spoke string must be removed in v112
+- **CI E2E wiring** — deferred to a dedicated post-v1.0 arc. v111 attempted via 6 amendments; Vite dev cold-start in CI is structurally too slow, production-preview switch surfaced additional unknowns. Full investigation in `docs/known-bugs/ci-e2e-vite-cold-start.md`. Local full-suite runs (~3 min) + manual pre-ship gate (per §3 v115) cover the verification need for v1.0. CI E2E becomes a quality-of-life addition, not a ship-readiness blocker.
 
 ### 4.5 The discipline
 
