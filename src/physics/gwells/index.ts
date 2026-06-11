@@ -65,5 +65,17 @@ export {
   getDefaultDialect,
 } from "./dialects";
 
+// Structural resolver — added in C10A
+export type {
+  GWStructuralRole,
+  GWStructuralNodeInfo,
+  GWStructuralGraphInfo,
+} from "./structuralResolver";
+
+export {
+  analyzeGraphStructure,
+  getStructuralRole,
+} from "./structuralResolver";
+
 // Engine — added in Pass C
 export { applyDialect } from "./engine";
