@@ -178,6 +178,11 @@
       }
     },
     "advanced": {
+      "devMode": {
+        "label": "Developer Mode",
+        "description": "Enable internal tools and diagnostics.",
+        "hint": "Reveals QA panels, system indexes, and other internal surfaces useful for debugging or contributing."
+      },
       "graphVisualInventory": {
         "title": "Graph Visual Inventory",
         "description": "Registered handles, lenses, and dialects."

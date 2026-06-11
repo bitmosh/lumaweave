@@ -162,7 +162,8 @@ function DebugPopoverContent() {
 function TilesPopoverContent() {
   const ctx = useTileContext();
   const tileLayout = Array.from(ctx.tiles.values());
-  const sections = tileSectionRegistry.list();
+  const devMode = useSettingsStore((s) => s.settings.developer?.devMode ?? false);
+  const sections = tileSectionRegistry.list().filter((s) => !s.requiresDevMode || devMode);
 
   const isVisible = (sectionKey: string): boolean => {
     const entry = tileLayout.find((t) => t.sectionKey === sectionKey);

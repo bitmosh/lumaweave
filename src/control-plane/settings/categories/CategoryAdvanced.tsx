@@ -8,12 +8,29 @@ import { getThemeRuntimeTokens } from '../../../themes/themeTokens';
 
 export function CategoryAdvanced() {
   const theme = useSettingsStore((s) => s.settings.appearance.theme);
+  const devMode = useSettingsStore((s) => s.settings.developer?.devMode ?? false);
+  const setSetting = useSettingsStore((s) => s.setSetting);
   const tokens = getThemeRuntimeTokens(theme);
   const themeAccent = tokens.app.accent;
   const themeTextMuted = tokens.app.textMuted;
 
   return (
     <div data-testid="settings-category-content-advanced" className="space-y-4">
+      <SettingsSubSection id="advanced.devMode" label={t("settings.advanced.devMode.label")}>
+        <p className="text-xs text-slate-500 mb-2">
+          {t("settings.advanced.devMode.description")}
+        </p>
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={devMode}
+            onChange={(e) => setSetting("developer.devMode", e.target.checked)}
+            data-testid="settings-dev-mode-toggle"
+          />
+          <span className="text-xs text-slate-400">{t("settings.advanced.devMode.hint")}</span>
+        </label>
+      </SettingsSubSection>
+
       <SettingsSubSection id="advanced.devtools" label={t("settings.sections.advanced.devtools")}>
         <p className="text-xs text-slate-500">
           {t("settings.sections.advanced.devtoolsDesc")}

@@ -21,7 +21,7 @@ export const defaultMinimapSettings: MinimapSettings = {
 };
 
 export const defaultSettings: LumaWeaveSettings = {
-  version: 93, // v109.0.1: SourcesSettings.configurations narrowed to AdapterConfig
+  version: 94, // v112.4.0: developer.devMode toggle added
 
   general: {
     startupProjectId: null,
@@ -104,6 +104,7 @@ export const defaultSettings: LumaWeaveSettings = {
     logLevel: "info",
     preferredEditor: "vscode",
     customEditorTemplate: "code --goto {path}:{line}",
+    devMode: false,
   },
 
   ui: {

@@ -77,7 +77,7 @@ export interface MinimapSettings {
 }
 
 export interface LumaWeaveSettings {
-  version: 93; // v109.0.1: SourcesSettings.configurations narrowed to AdapterConfig
+  version: 94; // v112.4.0: developer.devMode toggle added
 
   general: {
     startupProjectId: string | null;
@@ -200,6 +200,7 @@ export interface LumaWeaveSettings {
     logLevel: "silent" | "error" | "warn" | "info" | "debug";
     preferredEditor: "vscode" | "windsurf" | "cursor" | "zed" | "webstorm" | "sublime" | "vim" | "neovim" | "system-default" | "custom";
     customEditorTemplate: string;
+    devMode: boolean; // v112.4.0: gates dev-only tile surfaces
   };
 
   ui: {

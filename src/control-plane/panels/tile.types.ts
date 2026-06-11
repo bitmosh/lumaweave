@@ -80,6 +80,8 @@ export interface TileSectionEntry {
   defaultExpanded: boolean;
   /** Glyph shown in the Tiles popover checkbox list. */
   iconGlyph?: string;
+  /** If true, tile only appears in the Tiles popover when developer.devMode is enabled. */
+  requiresDevMode?: boolean;
 }
 
 /**

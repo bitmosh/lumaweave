@@ -154,6 +154,13 @@ const MIGRATIONS: Record<number,
     return { ...s, developer } as Partial<LumaWeaveSettings>;
   },
 
+  // v93 → v94: developer.devMode added (v112.4.0). Additive only.
+  94: (s) => {
+    const developer = { ...(s.developer ?? {}) } as any;
+    developer.devMode ??= false;
+    return { ...s, developer } as Partial<LumaWeaveSettings>;
+  },
+
   // v92 → v93: configurations narrowed to AdapterConfig (v109.0.1). Additive only.
   93: (s) => {
     return {
