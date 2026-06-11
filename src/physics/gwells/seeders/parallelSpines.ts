@@ -24,7 +24,7 @@
  */
 
 import type { GWSeedFunctionContext, GWHelixTwistRecord } from "../types";
-import { axisOffsetForN, resolveHelixTwist, buildContainsMap, flattenSpinesFromRoot, assignSpinesToAxes, computeFileOrbit, seedGenericFallbackLayout, placeUnseededNodesWithFallback } from "../seederHelpers";
+import { axisOffsetForN, resolveHelixTwist, buildContainsMap, flattenSpinesFromRoot, assignSpinesToAxes, computeFileOrbit, seedGenericFallbackLayout, placeUnseededNodesWithFallback, shouldUseHubRing, computeHubRingRadius, computeHubRingPosition } from "../seederHelpers";
 
 interface ParallelSpinesParams {
   spineCount: number;
@@ -209,34 +209,34 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
 
   const R = axisOffsetForN(params.offsetFromHub, params.spineCount);
   const spineTwist = resolveHelixTwist(params.helixTwist, "spine");
+  const useHubRing = shouldUseHubRing(sortedRoots.length, params.spineCount);
+  const hubRingRadius = computeHubRingRadius(
+    sortedRoots.length,
+    Math.max(params.offsetFromHub, params.spineSpacing, params.directoryOffset),
+  );
+  const rootIndexById = new Map(sortedRoots.map((id, index) => [id, index]));
 
-  // Process each spine
-  for (let spineIndex = 0; spineIndex < params.spineCount; spineIndex++) {
-    const angleDeg = (spineIndex * 360) / params.spineCount;
-    const angleRad = (angleDeg * Math.PI) / 180;
-
-    const rootsForThisAxis = axes[spineIndex];
-
-    // DFS-flatten spine nodes
-    const allSpineNodes: string[] = [];
-    for (const rootId of rootsForThisAxis) {
-      allSpineNodes.push(...flattenSpinesFromRoot(rootId, parentToChildren, graph));
-    }
-
-    // Place spine nodes along the y-axis
-    allSpineNodes.forEach((spineNodeId, nodeIndex) => {
+  function placeParallelSpineRun(
+    spineNodes: string[],
+    angleRad: number,
+    rootOffset: { x: number; y: number; z: number },
+  ): void {
+    spineNodes.forEach((spineNodeId, nodeIndex) => {
       const yAlongSpine = nodeIndex * params.spineSpacing;
 
-      // Apply spine twist: as we walk up the spine, the spine itself rotates around the central axis
       let spineAngleAtThisHeight = angleRad;
       if (spineTwist !== 0) {
         const twistRad = (spineTwist * (yAlongSpine / 100) * Math.PI) / 180;
         spineAngleAtThisHeight = angleRad + twistRad;
       }
 
-      const x = R * Math.cos(spineAngleAtThisHeight);
-      const y = yAlongSpine;
-      const z = R * Math.sin(spineAngleAtThisHeight);
+      const x = useHubRing
+        ? rootOffset.x
+        : R * Math.cos(spineAngleAtThisHeight);
+      const y = rootOffset.y + yAlongSpine;
+      const z = useHubRing
+        ? rootOffset.z + R * Math.sin(spineAngleAtThisHeight)
+        : R * Math.sin(spineAngleAtThisHeight);
 
       graph.setNodeAttribute(spineNodeId, "x", x);
       graph.setNodeAttribute(spineNodeId, "y", y);
@@ -244,30 +244,26 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
       seededPositions.set(spineNodeId, { x, y, z });
       allSeedPositions.set(spineNodeId, { x, y, z });
 
-      // Mark outermost as endpoint
-      if (nodeIndex === allSpineNodes.length - 1) {
+      if (nodeIndex === spineNodes.length - 1) {
         graph.setNodeAttribute(spineNodeId, "isEndpoint", true);
       }
     });
 
-    // Place directories and files for each spine node
-    allSpineNodes.forEach((spineNodeId, nodeIndex) => {
+    spineNodes.forEach((spineNodeId, nodeIndex) => {
       const yAlongSpine = nodeIndex * params.spineSpacing;
       let spineAngleAtThisHeight = angleRad;
       if (spineTwist !== 0) {
         const twistRad = (spineTwist * (yAlongSpine / 100) * Math.PI) / 180;
         spineAngleAtThisHeight = angleRad + twistRad;
       }
-      const spineX = R * Math.cos(spineAngleAtThisHeight);
-      const spineZ = R * Math.sin(spineAngleAtThisHeight);
-      const spineY = yAlongSpine;
+
+      const spinePos = allSeedPositions.get(spineNodeId);
+      if (!spinePos) return;
 
       const children = parentToChildren.get(spineNodeId);
       if (!children) return;
 
       const childArray = Array.from(children).sort();
-
-      // Separate files and directories
       const fileChildren: string[] = [];
       const dirChildren: string[] = [];
 
@@ -284,50 +280,35 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
         ) fileChildren.push(childId);
       });
 
-      // Pass C8.4: static per-axis alternation.
-      // Each spine consumes one alternation slot. Sign is determined by
-      // spine's index along the axis, NOT by which child of which spine.
-      // Empty spines still consume their slot — their direction is reserved
-      // even though no branch renders.
       const axisAlternationSign = (nodeIndex % 2 === 0) ? +1 : -1;
 
-      // Recursive placement for each directory child of this spine node
-      // Pass C8.4: ALL of this spine's directory children and their entire
-      // subtrees inherit the same axisAlternationSign at depth 0.
       dirChildren.forEach((childId) => {
         placeBranchRecursive(
           childId,
-          { x: spineX, y: spineY, z: spineZ },
+          spinePos,
           { dx: 0, dy: 0, dz: 0 },
           0,
-          axisAlternationSign,             // Pass C8.4: sign for this whole spine's subtree
+          axisAlternationSign,
           spineAngleAtThisHeight,
           yAlongSpine,
         );
       });
 
-      // Endpoint / spine-attached files fan out from the spine node
-      // Pass C8.3: Use phyllotaxis spiral sorted by size
       if (fileChildren.length > 0) {
-        // Sort files by raw size ascending — smaller files closer to parent, larger farther
         const sortedFiles = fileChildren.slice().sort((a, b) => {
           const sa = (graph.getNodeAttributes(a) as any).rawSize ?? 0;
           const sb = (graph.getNodeAttributes(b) as any).rawSize ?? 0;
           return sa - sb;
         });
 
-        // Parent's visual size for orbit scaling
         const parentVisualSize = (graph.getNodeAttributes(spineNodeId) as any).size ?? 10;
 
         sortedFiles.forEach((fileId, fileIdx) => {
           const { radius, angleRad } = computeFileOrbit(fileIdx, sortedFiles.length, parentVisualSize);
-          
-          // Add the spine's angle so files fan outward from the spine direction
           const finalAngle = angleRad + spineAngleAtThisHeight;
-
-          const fileX = spineX + radius * Math.cos(finalAngle);
-          const fileY = spineY;
-          const fileZ = spineZ + radius * Math.sin(finalAngle);
+          const fileX = spinePos.x + radius * Math.cos(finalAngle);
+          const fileY = spinePos.y;
+          const fileZ = spinePos.z + radius * Math.sin(finalAngle);
 
           graph.setNodeAttribute(fileId, "x", fileX);
           graph.setNodeAttribute(fileId, "y", fileY);
@@ -336,6 +317,29 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
         });
       }
     });
+  }
+
+  // Process each spine. Small/default graphs keep the legacy central-axis
+  // placement; larger top-level sets offset each root run onto a deterministic ring.
+  for (let spineIndex = 0; spineIndex < params.spineCount; spineIndex++) {
+    const angleDeg = (spineIndex * 360) / params.spineCount;
+    const angleRad = (angleDeg * Math.PI) / 180;
+    const rootsForThisAxis = axes[spineIndex];
+
+    if (useHubRing) {
+      for (const rootId of rootsForThisAxis) {
+        const allSpineNodes = flattenSpinesFromRoot(rootId, parentToChildren, graph);
+        const rootIndex = rootIndexById.get(rootId) ?? 0;
+        const rootOffset = computeHubRingPosition(rootIndex, sortedRoots.length, hubRingRadius);
+        placeParallelSpineRun(allSpineNodes, angleRad, rootOffset);
+      }
+    } else {
+      const allSpineNodes: string[] = [];
+      for (const rootId of rootsForThisAxis) {
+        allSpineNodes.push(...flattenSpinesFromRoot(rootId, parentToChildren, graph));
+      }
+      placeParallelSpineRun(allSpineNodes, angleRad, { x: 0, y: 0, z: 0 });
+    }
   }
 
   placeUnseededNodesWithFallback(graph, allSeedPositions, seededPositions);

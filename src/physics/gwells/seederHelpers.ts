@@ -29,6 +29,32 @@ export function axisOffsetForN(baseOffset: number, N: number): number {
   return baseOffset * Math.max(1, N / 2);
 }
 
+const HUB_RING_THRESHOLD = 4;
+
+export function shouldUseHubRing(topLevelCount: number, spineCount: number): boolean {
+  return topLevelCount >= HUB_RING_THRESHOLD || spineCount >= HUB_RING_THRESHOLD;
+}
+
+export function computeHubRingRadius(count: number, baseSpacing: number): number {
+  if (count <= 1) return 0;
+  const safeSpacing = Math.max(1, baseSpacing);
+  return Math.max(safeSpacing, (safeSpacing * count) / Math.PI);
+}
+
+export function computeHubRingPosition(
+  index: number,
+  count: number,
+  radius: number,
+): { x: number; y: number; z: number } {
+  if (count <= 1 || radius === 0) return { x: 0, y: 0, z: 0 };
+  const angle = (index / count) * Math.PI * 2;
+  return {
+    x: radius * Math.cos(angle),
+    y: radius * Math.sin(angle),
+    z: 0,
+  };
+}
+
 /**
  * Resolves the per-well-type twist value from a helix twist record.
  *

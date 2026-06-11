@@ -16,7 +16,7 @@
  */
 
 import type { GWSeedFunctionContext, GWHelixTwistRecord } from "../types";
-import { resolveHelixTwist, buildContainsMap, flattenSpinesFromRoot, assignSpinesToAxes, computeFileOrbit, seedGenericFallbackLayout, placeUnseededNodesWithFallback } from "../seederHelpers";
+import { resolveHelixTwist, buildContainsMap, flattenSpinesFromRoot, assignSpinesToAxes, computeFileOrbit, seedGenericFallbackLayout, placeUnseededNodesWithFallback, shouldUseHubRing, computeHubRingRadius, computeHubRingPosition } from "../seederHelpers";
 
 interface RadialBackboneParams {
   spineCount: number;
@@ -206,52 +206,47 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
     });
   }
 
-  // Process each spine axis
-  for (let spineIndex = 0; spineIndex < params.spineCount; spineIndex++) {
-    const angleDeg = params.spineAngles[spineIndex];
-    const angleRad = angleDeg * Math.PI / 180;
+  const useHubRing = shouldUseHubRing(sortedRoots.length, params.spineCount);
+  const hubRingRadius = computeHubRingRadius(
+    sortedRoots.length,
+    Math.max(params.spineSpacing, params.directoryOffset),
+  );
+  const rootIndexById = new Map(sortedRoots.map((id, index) => [id, index]));
+
+  function placeSpineRun(
+    spineNodes: string[],
+    angleRad: number,
+    rootOffset: { x: number; y: number; z: number },
+  ): void {
     const spineDirX = Math.cos(angleRad);
     const spineDirY = Math.sin(angleRad);
 
-    const rootsForThisAxis = axes[spineIndex];
-
-    // DFS-flatten all spine nodes for this axis
-    const allSpineNodes: string[] = [];
-    for (const rootId of rootsForThisAxis) {
-      allSpineNodes.push(...flattenSpinesFromRoot(rootId, parentToChildren, graph));
-    }
-
-    // Place spine nodes along the axis
-    allSpineNodes.forEach((spineNodeId, nodeIndex) => {
+    spineNodes.forEach((spineNodeId, nodeIndex) => {
       const dHub = params.offsetFromHub + nodeIndex * params.spineSpacing;
-
-      const spineX = dHub * spineDirX;
-      const spineY = dHub * spineDirY;
+      const spineX = rootOffset.x + dHub * spineDirX;
+      const spineY = rootOffset.y + dHub * spineDirY;
+      const spineZ = rootOffset.z;
 
       graph.setNodeAttribute(spineNodeId, "x", spineX);
       graph.setNodeAttribute(spineNodeId, "y", spineY);
-      graph.setNodeAttribute(spineNodeId, "z", 0);
+      graph.setNodeAttribute(spineNodeId, "z", spineZ);
       seededPositions.set(spineNodeId, { x: spineX, y: spineY });
-      allSeedPositions.set(spineNodeId, { x: spineX, y: spineY, z: 0 });
+      allSeedPositions.set(spineNodeId, { x: spineX, y: spineY, z: spineZ });
 
-      // Mark outermost node as endpoint
-      if (nodeIndex === allSpineNodes.length - 1) {
+      if (nodeIndex === spineNodes.length - 1) {
         graph.setNodeAttribute(spineNodeId, "isEndpoint", true);
       }
     });
 
-    // Place directory children and their file children
-    allSpineNodes.forEach((spineNodeId, nodeIndex) => {
+    spineNodes.forEach((spineNodeId, nodeIndex) => {
       const dHub = params.offsetFromHub + nodeIndex * params.spineSpacing;
-      const spineX = dHub * spineDirX;
-      const spineY = dHub * spineDirY;
+      const spinePos = allSeedPositions.get(spineNodeId);
+      if (!spinePos) return;
 
       const children = parentToChildren.get(spineNodeId);
       if (!children) return;
 
       const childArray = Array.from(children).sort();
-
-      // Separate files and directories
       const fileChildren: string[] = [];
       const dirChildren: string[] = [];
 
@@ -271,58 +266,65 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
         }
       });
 
-      // Pass C8.4: static per-axis alternation.
-      // Each spine consumes one alternation slot. Sign is determined by
-      // spine's index along the axis, NOT by which child of which spine.
-      // Empty spines still consume their slot — their direction is reserved
-      // even though no branch renders.
       const axisAlternationSign = (nodeIndex % 2 === 0) ? +1 : -1;
 
-      // Recursive placement for each directory child of this spine node
-      // Pass C8.4: ALL of this spine's directory children and their entire
-      // subtrees inherit the same axisAlternationSign at depth 0.
       dirChildren.forEach((childId) => {
         placeBranchRecursive(
           childId,
-          { x: spineX, y: spineY, z: 0 },  // start from spine node's position
-          { dx: 0, dy: 0, dz: 0 },         // outwardDir unused at depth=0; computed inside
-          0,                                // depth 0 = first level
-          axisAlternationSign,             // Pass C8.4: sign for this whole spine's subtree
-          angleRad,                         // spine's angle in radial-backbone
-          dHub,                             // distance from hub for helix twist
+          spinePos,
+          { dx: 0, dy: 0, dz: 0 },
+          0,
+          axisAlternationSign,
+          angleRad,
+          dHub,
         );
       });
 
-      // Place file children of spine nodes (endpoint files)
-      // Also place file children of non-endpoint spine nodes (they fan from the spine node)
-      // Pass C8.3: Use phyllotaxis spiral sorted by size
       if (fileChildren.length > 0) {
-        // Sort files by raw size ascending — smaller files closer to parent, larger farther
         const sortedFiles = fileChildren.slice().sort((a, b) => {
           const sa = (graph.getNodeAttributes(a) as any).rawSize ?? 0;
           const sb = (graph.getNodeAttributes(b) as any).rawSize ?? 0;
           return sa - sb;
         });
 
-        // Parent's visual size for orbit scaling
         const parentVisualSize = (graph.getNodeAttributes(spineNodeId) as any).size ?? 10;
 
         sortedFiles.forEach((fileId, fileIdx) => {
           const { radius, angleRad } = computeFileOrbit(fileIdx, sortedFiles.length, parentVisualSize);
-          
-          // Add the spine's axis angle to the phyllotaxis angle so files fan outward from the spine direction
           const finalAngle = angleRad + angleRad;
-
-          const fileX = spineX + radius * Math.cos(finalAngle);
-          const fileY = spineY + radius * Math.sin(finalAngle);
+          const fileX = spinePos.x + radius * Math.cos(finalAngle);
+          const fileY = spinePos.y + radius * Math.sin(finalAngle);
 
           graph.setNodeAttribute(fileId, "x", fileX);
           graph.setNodeAttribute(fileId, "y", fileY);
-          graph.setNodeAttribute(fileId, "z", 0);
-          allSeedPositions.set(fileId, { x: fileX, y: fileY, z: 0 });
+          graph.setNodeAttribute(fileId, "z", spinePos.z);
+          allSeedPositions.set(fileId, { x: fileX, y: fileY, z: spinePos.z });
         });
       }
     });
+  }
+
+  // Process each spine axis. Small/default graphs keep the legacy origin-based
+  // placement; larger top-level sets offset each root run onto a deterministic ring.
+  for (let spineIndex = 0; spineIndex < params.spineCount; spineIndex++) {
+    const angleDeg = params.spineAngles[spineIndex];
+    const angleRad = angleDeg * Math.PI / 180;
+    const rootsForThisAxis = axes[spineIndex];
+
+    if (useHubRing) {
+      for (const rootId of rootsForThisAxis) {
+        const allSpineNodes = flattenSpinesFromRoot(rootId, parentToChildren, graph);
+        const rootIndex = rootIndexById.get(rootId) ?? 0;
+        const rootOffset = computeHubRingPosition(rootIndex, sortedRoots.length, hubRingRadius);
+        placeSpineRun(allSpineNodes, angleRad, rootOffset);
+      }
+    } else {
+      const allSpineNodes: string[] = [];
+      for (const rootId of rootsForThisAxis) {
+        allSpineNodes.push(...flattenSpinesFromRoot(rootId, parentToChildren, graph));
+      }
+      placeSpineRun(allSpineNodes, angleRad, { x: 0, y: 0, z: 0 });
+    }
   }
 
   placeUnseededNodesWithFallback(graph, allSeedPositions, seededPositions);
