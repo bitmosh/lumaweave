@@ -273,7 +273,16 @@
       },
       "motion": {
         "label": "Motion",
-        "placeholderMessage": "Animation and motion controls are in development."
+        "placeholderMessage": "Animation and motion controls are in development.",
+        "reduceMotionLabel": "Reduce Motion",
+        "reduceMotionHint": "Limits non-essential animations and transitions.",
+        "safetyReferenceHeader": "Effect Safety Reference",
+        "classification": {
+          "safe": "Safe",
+          "low": "Low Risk",
+          "moderate": "Moderate Risk",
+          "high": "High Risk"
+        }
       },
       "type": {
         "label": "Type",

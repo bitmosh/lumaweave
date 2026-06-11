@@ -1,5 +1,5 @@
 import { inspectorSpokeRegistry } from "../../../themes/inspectorSpokeRegistry";
-import { makePlaceholderTab } from "./PlaceholderTab";
+import { MotionTab } from "./MotionTab";
 
 export function registerMotionSpoke(): void {
   inspectorSpokeRegistry.register({
@@ -9,11 +9,11 @@ export function registerMotionSpoke(): void {
     category: "motion",
     enabled: true,
     order: 3,
-    status: "placeholder",
+    status: "active",
     iconPath: "M3 16c3 0 3-8 6-8s3 8 6 8 3-8 6-8",
     color: "inspector.radial.spokeColor",
     intendedTokenPaths: ["motion.reduce"],
     placeholderMessage: "Animation and motion controls are in development.",
-    tabComponent: makePlaceholderTab("motion"),
+    tabComponent: MotionTab,
   });
 }
