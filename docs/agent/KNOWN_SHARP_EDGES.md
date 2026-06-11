@@ -226,3 +226,126 @@ If any of the 3 fails, the fix didn't address the root cause; investigate furthe
 **Distinguishing pull-and-defer from giving up:** the explicit reasoning, the documented learnings, and the dedicated future arc path are what separate engineering discipline from incomplete work. A pull-and-defer commit with a structured bug doc is a deliverable; an unfinished attempt is not.
 
 **First encountered:** v111.4 (CI E2E wiring). Six amendments across `.4`, `.4a`, `.4b`, `.4c`, `.4d`, `.4e` failed to converge. Pull-and-defer at `d2d0cce` documented the investigation, banked the wins, deferred the structural problem to a dedicated future arc.
+
+## Reactive UI subscriptions: `useSyncExternalStore` + named lifecycle event
+
+**Symptom:** A UI surface needs to update when external state changes (settings, store, registry). `useState`/`useEffect` with polling is wasteful and laggy; manual subscriptions create cleanup bugs.
+
+**Correct pattern:** `useSyncExternalStore` from React 18+, subscribing to a named lifecycle event:
+
+```tsx
+const overrides = useSyncExternalStore(
+  (callback) => {
+    window.addEventListener("lw:override-change", callback);
+    return () => window.removeEventListener("lw:override-change", callback);
+  },
+  () => themeOverrideStorage.loadOverrides()
+);
+```
+
+**LumaWeave conventions:** lifecycle event names use `lw:` prefix and kebab-case (e.g., `lw:override-change`); events dispatched on `window` NOT `document`; snapshot function reads current state from the external store.
+
+**First encountered:** v112.2 (theme export sub-area's reactive button enable/disable on override count).
+
+## i18n key paths for inspector spokes: `inspector.spokes.<id>.*`, not `inspector.<id>.*`
+
+**Symptom:** An i18n key lookup doesn't resolve — the assumed path `inspector.<id>.*` is wrong; the actual structure is `inspector.spokes.<id>.*`.
+
+**Cause:** Inspector spokes are namespaced under `spokes` because the inspector itself has other concerns (ring rendering, gesture handling) that own the top-level `inspector.*` slot. Each spoke gets its own sub-namespace under `spokes`.
+
+**Pre-flight discipline:** Always grep `en.json` for the existing keys before writing new ones. Don't assume the path from the semantic role.
+
+**First encountered:** v112.3 (Type spoke MVP — initial brief incorrectly assumed `inspector.type.*`; pre-flight caught it as `inspector.spokes.type.*`).
+
+## Registry entry field names need pre-flight verification — don't guess from semantic role
+
+**Symptom:** Code reads `entry.family` or `entry.id` and the field is undefined at runtime, even though the type "should" have it semantically.
+
+**Cause:** Registry entry types use specific field names that may not match the developer's mental model. `TypographyEntry` uses `fontFamily` and `role`, not `family` and `id`.
+
+**Correct pattern:** When writing code that consumes a registry, always grep the registry's source file for the TypeScript type definition and quote exact field names before implementing.
+
+**First encountered:** v112.3 (TypographyEntry uses `fontFamily`/`role`, not `family`/`id`).
+
+## Registry location is not always under the thematically obvious directory
+
+**Symptom:** A registry assumed to be under `src/themes/` is actually under a different namespace (e.g., `src/accessibility/`).
+
+**Cause:** Registries can be thematically related to themes (typography, motion, color) but architecturally belong elsewhere. `motionSafetyRegistry` is accessibility infrastructure (preventing seizures, respecting reduced-motion), even though motion is also "theme-adjacent."
+
+**Correct pattern:** Grep by the registry's actual name (e.g., `motionSafetyRegistry`) across the entire `src/` tree, not just `src/themes/`. Accessibility-adjacent state lives under `src/accessibility/`.
+
+**First encountered:** v112.3a (`motionSafetyRegistry` is at `src/accessibility/`, not `src/themes/`).
+
+## LumaWeave's command-dispatch event bus uses `window`, not `document`
+
+**Symptom:** A new event listener wired to `document.addEventListener(...)` never fires; the dispatch is happening but the listener doesn't see it.
+
+**Cause:** Established LumaWeave convention dispatches custom events on `window`, not `document`. A listener on `document` won't catch them.
+
+**Correct pattern:**
+- Dispatch: `window.dispatchEvent(new CustomEvent("event-name", { detail }))`
+- Listen: `window.addEventListener("event-name", handler)` with matching `removeEventListener` in cleanup
+
+**First encountered:** v112.2 (theme export's event dispatch — initial brief used `document.addEventListener`; pre-flight caught it).
+
+## CSS properties that create stacking contexts trap child z-index — the PARENT's z-index is the relevant value
+
+**Symptom:** A child element with a very high z-index still renders below siblings outside its parent, even though the sibling has a lower z-index.
+
+**Cause:** Properties on a parent that create a new stacking context isolate child z-index values to that context's tier. The child's z-index ranks within the parent's context, not against the page root.
+
+**Properties that create stacking contexts:** `transform`, `opacity < 1`, `filter`, `backdrop-filter`, `will-change: transform/opacity/filter`, `isolation: isolate`, `mask`, `clip-path`, `mix-blend-mode`, `position: fixed/sticky`.
+
+**Correct pattern:** When a child needs to render above siblings outside the parent, check parents for the above properties first. Either raise the parent's z-index or render the child via React Portal outside the parent.
+
+**First encountered:** v112.4.2 (Tiles popover stacking — `.lw-status-bar` had `backdrop-filter` creating a context with z-index 10; popover inside it at z-index 10100 was bounded to that tier. Fix: bump status-bar z-index from 10 to 1001).
+
+## Stylelint: `word-wrap` is deprecated; use `overflow-wrap: break-word`
+
+**Symptom:** `npm run lint:css` flags `word-wrap` as deprecated.
+
+**Cause:** `word-wrap` was renamed to `overflow-wrap` by the CSS Working Group. Browsers accept both for compatibility, but linters flag the old form.
+
+**Correct pattern:** Use `overflow-wrap: break-word` in new CSS. Migrate `word-wrap` usages when touched.
+
+**First encountered:** v112.5b.1 (`agentChat.css` initially used `word-wrap`; stylelint flagged it).
+
+## Schema version bumps require grepping for old version numbers in test assertions
+
+**Symptom:** A schema bump passes typecheck and migration tests, but an unrelated spec fails because it hardcoded the old version number.
+
+**Correct pattern:** When bumping the settings schema, grep test files for the previous version number as a literal (e.g., `grep -rn "toBe(94)" tests/`) and update each hit to the new version. Run all settings-adjacent specs after the bump.
+
+**First encountered:** v112.5b.1 (`settings-dev-mode.spec.ts:63` had `toBe(94)`; needed update to `toBe(95)` when schema bumped to v95).
+
+## Stable internal identifiers vs unstable user-visible labels — keep them separate
+
+**Symptom:** Renaming a UI element touches many files because the "name" is used as a key in registries, i18n maps, test selectors, and analytics events.
+
+**Cause:** Conflating identifier (internal reference) with label (user-visible text). The identifier should be stable; the label can change freely.
+
+**Correct pattern:** When renaming a UI element, change the i18n VALUE, not the i18n KEY PATH. Internal identifiers (registry keys, testids, analytics event names, type discriminators) stay unchanged across UI rename refactors.
+
+**Real-world example:** v112.4.1 renamed Command Deck → Keyboard Shortcuts. The i18n key `tiles.commandDeck.title` and testid `command-deck-section` were unchanged; only the i18n value changed.
+
+**First encountered:** v112.4.1 (Command Deck → Keyboard Shortcuts rename).
+
+## Defensive rendering: empty registry results should skip-render (null), not empty-render
+
+**Symptom:** A UI section renders an empty header or empty list when its data source returns zero items, looking like a bug to users.
+
+**Correct pattern:** When rendering grouped data, check group sizes before rendering headers:
+
+```tsx
+{groups.map((group) => {
+  if (group.items.length === 0) return null;
+  return <GroupHeader title={group.name}>...</GroupHeader>;
+})}
+```
+
+If a classification has zero entries, that classification's header doesn't appear at all. When new entries get added to the empty category later, the header appears automatically — no code change needed.
+
+**Anti-pattern:** Rendering `<h3>High Risk</h3><ul></ul>` when there are zero high-risk items.
+
+**First encountered:** v112.3a (Motion spoke's classification groups — the "high" risk group has zero entries; the component correctly returns null rather than showing an empty High Risk section).

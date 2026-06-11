@@ -280,21 +280,48 @@ Deviations: per-subsystem ErrorBoundary boundaries remain deferred to post-v1.0 
 - Root cause: Vite dev cold-start in CI is structurally slow and not addressed by timeout/shard configuration
 - Real-fix path documented in `docs/known-bugs/ci-e2e-vite-cold-start.md` for a dedicated future arc
 
-### v112 — UI Completeness + Dev-Artifact-Bleed Cleanup [NEXT]
+### v112 — UI Completeness + Content Substitution
 
-This is where I want to push back on the audit's framing. The audit treated this as "remove from nav as part of cleanup." It's bigger than that — it's information-architecture work.
+**LANDED:** 2026-06-11
 
-**Sub-passes:**
-- v112.0 — Investigation brief + IA decisions: what's the inspector ring's actual shape after removing the three placeholder spokes? (Drop to 5? Re-flow to a different design? Add other useful spokes?) Same question for the Theme menu (Workshop/History/Bookmarks/Export removed → "Browse + Active" only — is that the right shape?). These are *design* questions that deserve a brief, not just code edits.
-- v112.1 — Implement the IA decisions (remove or reframe spokes/sub-areas; updated nav shape).
-- v112.2 — Scrub internal arc numbers from user-visible strings throughout. "Coming in v92" → either user-language ("Audio reactivity coming soon") or remove entirely.
-- v112.3 — Dev-tooling tile triage: `QaPanel` (1606 lines, definitely dev-only) → gated. `command-deck` → reframe as user-facing (command palette is core UX). `system-index` → reframe or gate based on usefulness decision. `AgentChatPlaceholder` → remove entirely or feature-flag.
-- v112.4 — Mis-homed tile sections (5 deferred): `qa-feedback`, `graph-visual-inventory`, `system-index`, `command-deck`, `source-adapter`. Each: relocate to settings advanced tab, gate behind dev-mode flag, or promote to proper panel.
-- v112.5 — Arc close: 0.18.0 → 0.19.0.
+| Sub-pass | Commit | Work |
+|---|---|---|
+| v112.0 | (no commit) | Investigation brief — `v112_0_ui_completeness_report.md` |
+| v112.1 | `d5319d8` | String scrub (arc-number bleed) + 3 gwells debug logs removed |
+| v112.2 | `2823b1f` | Theme export sub-area MVP — global overrides as JSON download |
+| v112.3 | `92c6696` | Inspector Type spoke MVP — read-only typography role cards |
+| v112.3a | `874ef58` | Inspector Motion spoke MVP — Reduce Motion toggle + safety reference |
+| ~~v112.4~~ | (skipped) | Bookmarks placeholder — deferred to Theme menu population audit |
+| v112.4.0 | `e5f3847` | Dev-mode settings toggle + tile section gating infrastructure (schema v94) |
+| v112.4.1 | `f661298` | Dev-gate QaPanel + system-index + graph-visual-inventory; Command Deck → Keyboard Shortcuts |
+| v112.4.2 | `d908450` | Tiles popover stacking fix (Case B — backdrop-filter trap) |
+| v112.5a | (no commit) | Investigation + architecture doc — `LUMAWEAVE_POST_V1_FEATURE_ARCHITECTURE.md` |
+| v112.5b.0 | `5eebb91` | InferenceBackend trait + RemoteClient + chat/test_inference_connection Tauri commands |
+| v112.5b.1 | `7dd11bf` | AgentChatTile + Agents settings category + chat UI (schema v95) |
+| v112.6.0 | `b6a3c7f` | Polish sweep — opacity regression verified, status-cluster + i18n.spec.ts:187 fixed |
+| v112.6.1 | _(this commit)_ | Arc close — semver 0.18.0 → 0.19.0 + docs reconcile |
 
-**Driver:** First external users will see these surfaces. Every stub, placeholder, and internal string visible at this stage is a "rough edge" flag. The audit identified the surfaces; v112 makes the design+removal decisions explicitly.
+**Outcomes:**
+- 5 working surfaces graduated from stub to MVP (Theme Export, Type spoke, Motion spoke, dev-mode infrastructure, agent chat)
+- 3 internal tiles dev-gated behind settings toggle (QaPanel, system-index, graph-visual-inventory)
+- Command Deck renamed to user-language "Keyboard Shortcuts"
+- 11 user-visible arc-number-bleed strings scrubbed to user-language equivalents
+- 3 debug `console.log` calls removed from gwells internals
+- First new direct Rust dependency in months: `reqwest` with `rustls-tls` features (~200 lines of Rust for the inference module)
+- First canonical architecture document: `docs/canonical/LUMAWEAVE_POST_V1_FEATURE_ARCHITECTURE.md`
+- Settings schema migrated v93 → v94 → v95 with two sequential additive migrations
+- Polish-debt sweep at close: settings panel opacity regression resolved; status-cluster and i18n.spec.ts:187 pre-existing failures fixed
 
-### v113 — Source Adapter UX Maturity
+**Deviations from planned sub-pass structure:**
+- v112.4 (Bookmarks placeholder) skipped after disambiguating Theme Bookmarks vs. graph FloatingBookmark system; Theme menu population deferred to a dedicated audit
+- v112.4.2 added as hotfix during arc — tiles popover stacking fix (Case B stacking-context trap from backdrop-filter on .lw-status-bar)
+- v112.5 split into v112.5a (investigation + architecture doc) and v112.5b (two-commit implementation: .0 Rust, .1 frontend)
+- v112.6 split into v112.6.0 (polish sweep) and v112.6.1 (arc close)
+
+**Pivot in framing:**
+- Original ROADMAP v112 wording was "remove placeholders" — misleading. Actual work was "substitute honest content for stub content while keeping feature scaffolding intact." Ryan caught the framing error in v112.0 review; the report was rewritten as a per-surface assessment with MVP / honest placeholder / remove decisions per area.
+
+### v113 — Source Adapter UX Maturity [NEXT]
 
 **Sub-passes:**
 - v113.0 — Investigation brief: audit current SourceAdapterPanel UX against "would a real user know how to use this?" Pre-load path validation, error message quality, candidate-vs-registered visual distinction, first-run onboarding.

@@ -21,13 +21,49 @@ tags: [live-state, now, canonical, v107-closed, v108-closed]
 
 **The single live-state doc.** This is the only doc that changes every pass and the only one that carries a date. Everything here is volatile by design. Concepts and architecture live in the static domain docs (see `DOC_ARCHITECTURE.md`); history lives in the dev-blog / #changelog feed. This doc holds only: where we are, what's next, what's broken.
 
-**Updated:** 2026-06-09 · **Production version:** 0.18.0 · **Internal arc:** v112 (UI completeness + dev-artifact-bleed cleanup — per SHIP_READINESS_ROADMAP §3 v112) · **Last closed:** v111 (test infrastructure)
+**Updated:** 2026-06-11 · **Production version:** 0.19.0 · **Internal arc:** v113 (Source adapter UX maturity — per SHIP_READINESS_ROADMAP §3 v113) · **Last closed:** v112 (UI completeness + content substitution)
 
 ---
 
-## Open arc — v112: UI Completeness + Dev-Artifact-Bleed Cleanup — OPEN (0.18.0)
+## Open arc — v113: Source Adapter UX Maturity — OPEN (0.19.0)
 
-Remove/reframe placeholder inspector spokes, scrub internal arc numbers from user-visible strings, gate dev-only tile sections (QaPanel, AgentChatPlaceholder), triage mis-homed tile sections. Sub-pass detail: `docs/SHIP_READINESS_ROADMAP.md §3 v112`.
+Pre-load validation, error message quality, candidate-vs-registered visual distinction, first-run onboarding for the source adapter panel. Sub-pass detail: `docs/SHIP_READINESS_ROADMAP.md §3 v113`.
+
+---
+
+## Closed arc — v112: UI Completeness + Content Substitution — CLOSED (0.18.0 → 0.19.0)
+
+UI completeness framed as content substitution rather than removal — 5 surfaces graduated from stub to MVP, 3 internal tiles dev-gated, first new Rust dep added (`reqwest`), two schema migrations, and a polish-debt sweep at close.
+
+| Sub-pass | Commit | Work |
+|---|---|---|
+| v112.0 | (no commit) | Investigation brief — `v112_0_ui_completeness_report.md` |
+| v112.1 | `d5319d8` | String scrub (arc-number bleed) + 3 gwells debug logs removed |
+| v112.2 | `2823b1f` | Theme export sub-area MVP — global overrides as JSON download |
+| v112.3 | `92c6696` | Inspector Type spoke MVP — read-only typography role cards |
+| v112.3a | `874ef58` | Inspector Motion spoke MVP — Reduce Motion toggle + safety reference |
+| ~~v112.4~~ | (skipped) | Bookmarks placeholder — deferred to Theme menu population audit |
+| v112.4.0 | `e5f3847` | Dev-mode settings toggle + tile section gating infrastructure (schema v94) |
+| v112.4.1 | `f661298` | Dev-gate QaPanel + system-index + graph-visual-inventory; Command Deck → Keyboard Shortcuts |
+| v112.4.2 | `d908450` | Tiles popover stacking fix (Case B — backdrop-filter trap) |
+| v112.5a | (no commit) | Investigation + architecture doc — `LUMAWEAVE_POST_V1_FEATURE_ARCHITECTURE.md` |
+| v112.5b.0 | `5eebb91` | InferenceBackend trait + RemoteClient + chat/test_inference_connection Tauri commands |
+| v112.5b.1 | `7dd11bf` | AgentChatTile + Agents settings category + chat UI (schema v95) |
+| v112.6.0 | `b6a3c7f` | Polish sweep — opacity regression verified, status-cluster + i18n.spec.ts:187 fixed |
+| v112.6.1 | _(this commit)_ | Arc close — semver 0.18.0 → 0.19.0 + docs reconcile |
+
+### Architectural notes established in v112
+
+- **UI completeness pivoted from "remove placeholders" to "substitute honest content."** Original ROADMAP wording was misleading — the actual work was substituting stub content with MVP content where registries had data ready, honest "Coming soon" language where they didn't, and dev-gating internal tooling that wasn't user-facing.
+- **5 working surfaces graduated from stub to MVP:** Theme Export sub-area, Type inspector spoke, Motion inspector spoke, the dev-mode settings infrastructure, and the agent chat surface.
+- **3 internal tiles dev-gated** (QaPanel, system-index, graph-visual-inventory) via a single `requiresDevMode` flag + new schema field + reactive subscription pattern.
+- **First new direct Rust dep in months: `reqwest`** for the agent chat InferenceBackend. Audit-by-eyeball Rust kept within ~200 lines for the new inference module.
+- **LumaWeave's first canonical architecture doc** authored as a v112 deliverable: `docs/canonical/LUMAWEAVE_POST_V1_FEATURE_ARCHITECTURE.md`. Defines the InferenceBackend trait shape, forward-compat hooks for Candle / Cerebra / Strudel, and the chat UI architecture.
+- **Settings schema bumped twice** (v94 for dev mode, v95 for agents.inference). Both with sequential additive migrations.
+- **Polish-debt sweep at arc close** — settings panel opacity regression resolved (binding was intact; backdrop-filter made transparency visually subtler); pre-existing i18n test failures fixed (stale "layout" span assertion removed).
+- **Cargo.toml at `0.1.0`:** does not track main semver — no Cargo bump at v112 close (same as v111, v110).
+
+**Arc closed** — v112 closer: 0.18.0 → 0.19.0 · 2026-06-11. Next: v113 (source adapter UX maturity).
 
 ---
 
