@@ -37,3 +37,17 @@ Status key: OPEN (logged, untriaged) · ACCEPTED (Ryan wants it) · WONTFIX · D
 **Found:** v100.0.2. Governance validates that flat runtime tokens satisfy canonical paths, but nothing enforces that the tier model and the flat tokens express the *same* values. They're maintained in parallel by hand.
 **Why it matters:** edit one, forget the other, and design intent silently diverges from rendered reality with no test catching it.
 **Suggested fix:** either generate the flat tokens from the tier model (single source), or add a validator asserting tier-resolved values equal flat-token values per theme. Status: OPEN.
+
+## ~~Tiles popover stacks beneath floating tiles~~ DONE (v112.4.2)
+- **Surface:** Tiles popover (tile section picker)
+- **Root cause:** Case B stacking context trap — `.lw-status-bar { z-index: 10 }` created a stacking context bounding `.lw-status-bar-popover`'s z-index: 10100 below tile-layer (z-index: 1000).
+- **Fix:** Raised `.lw-status-bar` to `z-index: 1001` (StatusBar.css). Status bar chrome now correctly renders above the tile-layer; popover renders on top of all floating tiles.
+- **First observed:** v112.4 smoke testing (2026-06-10). **Resolved:** v112.4.2 (2026-06-10).
+
+## Settings panel opacity binding regression
+- **Surface:** Settings panel background
+- **Symptom:** Settings panel background no longer responds to opacity setting; other UI elements still respect the setting and transition correctly
+- **Expected:** Background opaque/transparent transition matches other surfaces
+- **Likely cause:** CSS variable binding broke during recent settings-category work — possibly v110.1 StatusCluster cleanup or one of the v112 CategoryAdvanced touches. The setting value still propagates (other elements work); the *settings panel's own background reader* lost its binding.
+- **First observed:** v112.4 smoke testing (2026-06-10)
+- **Triage:** small CSS investigation — grep for the opacity CSS variable in `.settings-panel` selectors, verify the binding is intact
