@@ -3,7 +3,7 @@ import { defaultSettings } from "./settings.defaults";
 import { migrateSettings } from "./settings.migrations";
 import type { LumaWeaveSettings } from "./settings.schema";
 
-export const CURRENT_SCHEMA_VERSION = 94;
+export const CURRENT_SCHEMA_VERSION = 95;
 
 export type SettingsStore = {
   settings: LumaWeaveSettings;

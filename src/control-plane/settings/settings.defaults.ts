@@ -21,7 +21,7 @@ export const defaultMinimapSettings: MinimapSettings = {
 };
 
 export const defaultSettings: LumaWeaveSettings = {
-  version: 94, // v112.4.0: developer.devMode toggle added
+  version: 95, // v112.5b.1: agents.inference config added
 
   general: {
     startupProjectId: null,
@@ -145,6 +145,14 @@ export const defaultSettings: LumaWeaveSettings = {
   inspector: {
     overlayEnabled: false,
     autoOpenOnSelection: true,
+  },
+
+  agents: {
+    inference: {
+      endpoint: "http://localhost:11434/v1",
+      model: "llama3.1",
+      byokKey: "",
+    },
   },
 
   minimap: defaultMinimapSettings,

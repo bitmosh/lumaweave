@@ -154,6 +154,23 @@ const MIGRATIONS: Record<number,
     return { ...s, developer } as Partial<LumaWeaveSettings>;
   },
 
+  // v94 → v95: agents.inference config added (v112.5b.1). Additive only.
+  95: (s) => {
+    const agents = (s as any).agents ?? {};
+    const inference = agents.inference ?? {};
+    return {
+      ...s,
+      agents: {
+        ...agents,
+        inference: {
+          endpoint: inference.endpoint ?? "http://localhost:11434/v1",
+          model: inference.model ?? "llama3.1",
+          byokKey: inference.byokKey ?? "",
+        },
+      },
+    } as Partial<LumaWeaveSettings>;
+  },
+
   // v93 → v94: developer.devMode added (v112.4.0). Additive only.
   94: (s) => {
     const developer = { ...(s.developer ?? {}) } as any;

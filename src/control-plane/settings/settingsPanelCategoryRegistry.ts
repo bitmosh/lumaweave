@@ -8,6 +8,7 @@ import {
   Monitor,
   Accessibility,
   Settings2,
+  Bot,
 } from 'lucide-react';
 import { CategoryTheme } from './categories/CategoryTheme';
 import { CategoryTypography } from './categories/CategoryTypography';
@@ -16,6 +17,7 @@ import { CategoryInspector } from './categories/CategoryInspector';
 import { CategoryDataSources } from './categories/CategoryDataSources';
 import { CategoryDisplay } from './categories/CategoryDisplay';
 import { CategoryAccessibility } from './categories/CategoryAccessibility';
+import { CategoryAgents } from './categories/CategoryAgents';
 import { CategoryAdvanced } from './categories/CategoryAdvanced';
 
 export const SETTINGS_PANEL_CATEGORIES: readonly CategoryDef[] = [
@@ -68,6 +70,13 @@ export const SETTINGS_PANEL_CATEGORIES: readonly CategoryDef[] = [
     description: 'Motion reduction, contrast, focus indicators, and interaction preferences.',
     icon: Accessibility,
     content: CategoryAccessibility,
+  },
+  {
+    id: 'agents',
+    label: 'Agents',
+    description: 'Configure the inference backend for the agent chat tile.',
+    icon: Bot,
+    content: CategoryAgents,
   },
   {
     id: 'advanced',

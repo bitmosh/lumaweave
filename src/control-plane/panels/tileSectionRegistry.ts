@@ -11,7 +11,7 @@ import { LabelsSectionContent } from "./LabelsSectionContent";
 import { AppearanceSectionContent } from "./AppearanceSectionContent";
 import { GraphSourcesTileContent } from "../graph-sources/GraphSourcesTileContent";
 import { GraphInspectorTileContent } from "../inspector/GraphInspectorTileContent";
-import { AgentChatPlaceholder } from "../agent/AgentChatPlaceholder";
+import { AgentChatTile } from "../agent/AgentChatTile";
 import { QaPanelTileContent } from "../qa/QaPanelTileContent";
 import { GraphVisualInventoryTileContent } from "../graph/GraphVisualInventoryTileContent";
 import { SystemIndexTileContent } from "../system-index/SystemIndexTileContent";
@@ -128,8 +128,8 @@ const entries: TileSectionEntry[] = [
     defaultWidth: 360,
     defaultHeight: 560,
     collapsible: true,
-    content: () => createElement(AgentChatPlaceholder),
-    contentTestId: "agent-chat-placeholder",
+    content: () => createElement(AgentChatTile),
+    contentTestId: "agent-chat-tile",
     sourceTestId: undefined,
     defaultAnchor: { edge: "left", offset: 80 },
     defaultVisible: false,

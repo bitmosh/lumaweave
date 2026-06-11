@@ -77,7 +77,7 @@ export interface MinimapSettings {
 }
 
 export interface LumaWeaveSettings {
-  version: 94; // v112.4.0: developer.devMode toggle added
+  version: 95; // v112.5b.1: agents.inference config added
 
   general: {
     startupProjectId: string | null;
@@ -242,6 +242,16 @@ export interface LumaWeaveSettings {
       appearance: boolean;
       labels: boolean;
       graphView: boolean;
+    };
+  };
+
+  agents: {
+    inference: {
+      endpoint: string;  // OpenAI-compatible endpoint URL
+      model: string;     // model name (free-form)
+      byokKey: string;   // optional API key; empty = no Authorization header
+      temperature?: number;
+      maxTokens?: number;
     };
   };
 

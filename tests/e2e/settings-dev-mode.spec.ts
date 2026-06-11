@@ -60,7 +60,7 @@ test.describe("Dev mode settings toggle", () => {
     );
     expect(state.developer).toBeDefined();
     expect(typeof state.developer.devMode).toBe("boolean");
-    expect(state.version).toBe(94);
+    expect(state.version).toBe(95);
   });
 });
 

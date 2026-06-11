@@ -6,6 +6,7 @@ export type CategoryId =
   | 'data-sources'
   | 'display'
   | 'accessibility'
+  | 'agents'
   | 'advanced';
 
 export type PanelPosition =

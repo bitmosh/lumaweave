@@ -202,6 +202,26 @@
         "description": "Open the inspector tile automatically when a node or edge is selected."
       }
     },
+    "agents": {
+      "endpoint": {
+        "label": "Endpoint URL",
+        "hint": "OpenAI-compatible endpoint. Default: http://localhost:11434/v1 (Ollama)."
+      },
+      "model": {
+        "label": "Model",
+        "hint": "Model name as registered with the endpoint."
+      },
+      "apiKey": {
+        "label": "API Key",
+        "hint": "Optional. Required for remote providers. Leave empty for local Ollama.",
+        "warning": "API keys are stored unencrypted in settings for v1.0. OS keychain storage coming in v1.1."
+      },
+      "test": {
+        "label": "Test Connection",
+        "button": "Test Connection",
+        "testing": "Testing…"
+      }
+    },
     "controls": {
       "appearance_theme": { "label": "Theme Preset", "description": "Active theme." },
       "appearance_drama": { "label": "Drama", "description": "Solar Plasma mood preset — multiplier on glow + motion intensity." },
@@ -380,13 +400,12 @@
     "on": "on",
     "off": "off"
   },
-  "agent": {
+  "agents": {
     "chat": {
-      "title": "Agent Chat",
-      "placeholder": {
-        "description": "Chat with a local AI model.",
-        "status": "Not yet connected — coming in a future update."
-      }
+      "emptyState": "Start a conversation",
+      "thinking": "Thinking…",
+      "inputPlaceholder": "Ask the agent…",
+      "sendButton": "Send"
     }
   },
   "feedback": {
