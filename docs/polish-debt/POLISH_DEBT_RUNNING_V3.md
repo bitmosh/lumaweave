@@ -78,3 +78,19 @@ NOTE: omit `status`/`last_updated`/`last_pass`/`version` — those stay banned. 
 **Where:** `src/control-plane/panels/tileUtils.ts` (lines 45-47)
 **Found:** v101. `SNAP_TOL = 15px`, `BREAK_TOL = SNAP_TOL * 2 = 30px`. Ryan noted SNAP_TOL may want bumping to 20-25px once lived-in; BREAK_TOL multiplier may also need feel-tuning.
 **Suggested fix:** tune after real-world use. Both are exported constants — change in one place. Status: OPEN (tunable, low urgency).
+
+## Tiles popover stacks beneath floating tiles
+- **Surface:** Tiles popover (tile section picker)
+- **Symptom:** Popover renders underneath nearby floating tiles; tile list partially or fully obscured depending on tile positions
+- **Expected:** Popover always renders on top of any tile content; it's a control surface, not a participant in the workspace
+- **Likely cause:** Missing high z-index, or a stacking context boundary (transform/opacity on a parent creating a new context)
+- **First observed:** v112.4 smoke testing (2026-06-10)
+- **Triage:** likely small fix — z-index bump or `position: fixed` adjustment
+
+## Settings panel opacity binding regression — DONE
+- **Surface:** Settings panel background
+- **Symptom:** Settings panel background no longer responds to opacity setting; other UI elements still respect the setting and transition correctly
+- **Expected:** Background opaque/transparent transition matches other surfaces
+- **Likely cause:** CSS variable binding broke during recent settings-category work — possibly v110.1 StatusCluster cleanup or one of the v112 CategoryAdvanced touches. The setting value still propagates (other elements work); the *settings panel's own background reader* lost its binding.
+- **First observed:** v112.4 smoke testing (2026-06-10)
+- **Resolution (v112.6.0):** Investigated — binding is intact. `applyOpacityLayers` correctly sets `--lw-settings-bg-opacity` on the panel root; `.lw-settings-panel-bg` reads it via `opacity: var(--lw-settings-bg-opacity)`. Empirically verified: slider at 0.5 → computed opacity 0.5 on the bg element. Likely a visual-perception false alarm — `backdrop-filter: blur` on the bg element makes opacity changes more subtle than plain fills. No code change required. Status: DONE.

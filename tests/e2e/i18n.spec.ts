@@ -184,8 +184,7 @@ test.describe("i18n: browser locale attributes", () => {
     const cluster = page.locator(".lw-status-cluster");
     const keys = cluster.locator(".lw-cluster-key");
     await expect(keys.nth(0)).toHaveText("graph");
-    await expect(keys.nth(1)).toHaveText("layout");
-    await expect(keys.nth(2)).toHaveText("fps");
+    await expect(keys.nth(1)).toHaveText("fps");
   });
 });
 
