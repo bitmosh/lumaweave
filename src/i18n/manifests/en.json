@@ -192,7 +192,7 @@
         "description": "Internal system registry index."
       },
       "commandDeck": {
-        "title": "Command Deck",
+        "title": "Keyboard Shortcuts",
         "description": "Read-only view of registered commands and hotkeys."
       }
     },
@@ -307,7 +307,7 @@
   "commands": {
     "view_openSettings": "Open Settings",
     "view_toggleInspector": "Toggle Inspector Panel",
-    "view_toggleCommandDeck": "Toggle Command Deck",
+    "view_toggleCommandDeck": "Toggle Keyboard Shortcuts",
     "view_toggleMinimap": "Toggle Minimap",
     "view_toggleReduceMotion": "Toggle Reduce Motion",
     "graph_fit": "Fit Graph to View",
@@ -412,7 +412,7 @@
     }
   },
   "commandDeck": {
-    "title": "Command Deck",
+    "title": "Keyboard Shortcuts",
     "status": "Status",
     "readOnlyShell": "Read-Only Shell",
     "contractBoundary": "Contract Boundary",

@@ -127,7 +127,7 @@ test.describe("i18n: palette manifest keys", () => {
   });
 
   test("commandDeck.title resolves", () => {
-    expect(t("commandDeck.title")).toBe("Command Deck");
+    expect(t("commandDeck.title")).toBe("Keyboard Shortcuts");
   });
 });
 

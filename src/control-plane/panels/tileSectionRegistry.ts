@@ -151,6 +151,7 @@ const entries: TileSectionEntry[] = [
     defaultVisible: false,
     defaultExpanded: true,
     iconGlyph: "📋",
+    requiresDevMode: true,
   },
 
   // ===== Evidence / inspection tiles =====
@@ -169,6 +170,7 @@ const entries: TileSectionEntry[] = [
     defaultVisible: false,
     defaultExpanded: true,
     iconGlyph: "🗃",
+    requiresDevMode: true,
   },
   // deferred: candidate for settings advanced-tabs relocation (not a canvas tile by default)
   {
@@ -185,11 +187,12 @@ const entries: TileSectionEntry[] = [
     defaultVisible: false,
     defaultExpanded: true,
     iconGlyph: "📇",
+    requiresDevMode: true,
   },
   // deferred: candidate for settings advanced-tabs relocation (not a canvas tile by default)
   {
     id: "command-deck-section",
-    label: "Command Deck",
+    label: "Keyboard Shortcuts",
     category: "left-panel",
     defaultWidth: 400,
     defaultHeight: 560,

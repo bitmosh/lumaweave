@@ -11,6 +11,14 @@
 
 import { test, expect } from "@playwright/test";
 
+// Reset dev mode after each test so subsequent tests don't inherit it
+test.afterEach(async ({ page }) => {
+  await page.evaluate(() => {
+    const store = (window as any).__lwStore;
+    if (store) store.getState().setSetting("developer.devMode", false);
+  });
+});
+
 // Sets up a fresh tile session with qa-feedback-section visible.
 async function setupWithQaTile(page: any) {
   await page.goto("/");
@@ -19,7 +27,10 @@ async function setupWithQaTile(page: any) {
   // Clear layout + bootstrap flag so we start clean
   await page.evaluate(() => {
     const store = (window as any).__lwStore;
-    if (store) store.getState().setSetting("ui.tileLayout", []);
+    if (store) {
+      store.getState().setSetting("ui.tileLayout", []);
+      store.getState().setSetting("developer.devMode", true);
+    }
     localStorage.removeItem("lumaweave-tiles-bootstrapped");
   });
   await page.waitForTimeout(150);

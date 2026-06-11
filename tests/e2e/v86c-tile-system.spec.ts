@@ -15,6 +15,14 @@
 import { expect, test } from "@playwright/test";
 import { tileSectionRegistry } from "../../src/control-plane/panels/tileSectionRegistry";
 
+// Reset dev mode after each test so subsequent tests don't inherit it
+test.afterEach(async ({ page }) => {
+  await page.evaluate(() => {
+    const store = (window as any).__lwStore;
+    if (store) store.getState().setSetting("developer.devMode", false);
+  });
+});
+
 test("v86c-integration: TileLayer renders", async ({ page }) => {
   await page.goto("/");
 
@@ -44,7 +52,10 @@ test("v98.3: hidden tiles can be opened via Tiles popover", async ({ page }) => 
   // Clear tiles and bootstrap flag so the status bar is unobstructed
   await page.evaluate(() => {
     const store = (window as any).__lwStore;
-    if (store) store.getState().setSetting("ui.tileLayout", []);
+    if (store) {
+      store.getState().setSetting("ui.tileLayout", []);
+      store.getState().setSetting("developer.devMode", true);
+    }
     localStorage.removeItem("lumaweave-tiles-bootstrapped");
   });
   await page.waitForTimeout(150);
@@ -52,7 +63,7 @@ test("v98.3: hidden tiles can be opened via Tiles popover", async ({ page }) => 
   // Open Tiles popover in status bar
   await page.getByTestId("status-bar-tiles-button").click();
 
-  // QA/Feedback tile should be listed and unchecked by default
+  // QA/Feedback tile should be listed (dev mode on) and unchecked by default
   const qaCheckbox = page.getByTestId("tiles-popover-checkbox-qa-feedback-section");
   await expect(qaCheckbox).toBeVisible();
 
