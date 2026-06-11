@@ -120,28 +120,34 @@ export function applyDialect(
   }
 
   const resolvedInteractions: ResolvedInteraction[] = [];
-  for (const interactionId of dialect.activeInteractions) {
-    const interaction = getInteractionById(interactionId);
-    if (!interaction) {
-      if (options.onError) {
-        options.onError(
-          new Error(`[gwells] active interaction '${interactionId}' not found in registry`)
-        );
+
+  function rebuildResolvedInteractions(): void {
+    resolvedInteractions.length = 0;
+    for (const interactionId of dialect!.activeInteractions) {
+      const interaction = getInteractionById(interactionId);
+      if (!interaction) {
+        if (options.onError) {
+          options.onError(
+            new Error(`[gwells] active interaction '${interactionId}' not found in registry`)
+          );
+        }
+        continue;
       }
-      continue;
+      const override = resolvedConfig.interactionOverrides?.[interactionId];
+      resolvedInteractions.push({
+        id: interaction.id,
+        source: interaction.source,
+        target: interaction.target,
+        kind: interaction.kind,
+        strength: override?.strength ?? interaction.strength,
+        range: override?.range ?? interaction.range,
+        idealDistance: override?.idealDistance ?? interaction.idealDistance,
+        requireEdge: interaction.requireEdge,  // NEW (Pass C7)
+      });
     }
-    const override = resolvedConfig.interactionOverrides?.[interactionId];
-    resolvedInteractions.push({
-      id: interaction.id,
-      source: interaction.source,
-      target: interaction.target,
-      kind: interaction.kind,
-      strength: override?.strength ?? interaction.strength,
-      range: override?.range ?? interaction.range,
-      idealDistance: override?.idealDistance ?? interaction.idealDistance,
-      requireEdge: interaction.requireEdge,  // NEW (Pass C7)
-    });
   }
+
+  rebuildResolvedInteractions();
 
   // Step 6b: Build resolved per-well-type parameter table
   function resolveWellParams(wellTypeId: string): GWWellTypeDefaults {
@@ -174,11 +180,17 @@ export function applyDialect(
   }
 
   const resolvedWellParams = new Map<string, GWWellTypeDefaults>();
-  for (const [, wellTypeId] of nodeAssignments) {
-    if (wellTypeId && !resolvedWellParams.has(wellTypeId)) {
-      resolvedWellParams.set(wellTypeId, resolveWellParams(wellTypeId));
+
+  function rebuildResolvedWellParams(): void {
+    resolvedWellParams.clear();
+    for (const [, wellTypeId] of nodeAssignments) {
+      if (wellTypeId && !resolvedWellParams.has(wellTypeId)) {
+        resolvedWellParams.set(wellTypeId, resolveWellParams(wellTypeId));
+      }
     }
   }
+
+  rebuildResolvedWellParams();
 
   // Step 7: Initialize __gwellsState
   const nodeStates = new Map<string, GWNodeState>();
@@ -210,11 +222,15 @@ export function applyDialect(
   // distance is the seeded distance between source and target — not a static
   // well-type default. This makes the spring agree with the seeder's placement.
   const pairIdealDistance = new Map<string, number>();
-  const seedPositions = graph.hasAttribute("__gwellsSeedPositions")
-    ? graph.getAttribute("__gwellsSeedPositions") as Map<string, { x: number; y: number; z?: number }>
-    : null;
 
-  if (seedPositions) {
+  function rebuildPairIdealDistance(): void {
+    pairIdealDistance.clear();
+    const seedPositions = graph.hasAttribute("__gwellsSeedPositions")
+      ? graph.getAttribute("__gwellsSeedPositions") as Map<string, { x: number; y: number; z?: number }>
+      : null;
+
+    if (!seedPositions) return;
+
     // Iterate every potential (source, target) pair for edge-aware spring interactions.
     // The parentOfNode map already tells us each node's parent. For each node in physics
     // state, if its parent participates in a relevant spring interaction, record the seeded
@@ -222,15 +238,16 @@ export function applyDialect(
     for (const [nodeId] of nodeStates) {
       const parentId = parentOfNode.get(nodeId);
       if (!parentId) continue;
-      
+
       const nodeSeed = seedPositions.get(nodeId);
       const parentSeed = seedPositions.get(parentId);
       if (!nodeSeed || !parentSeed) continue;
-      
+
       const dx = parentSeed.x - nodeSeed.x;
       const dy = parentSeed.y - nodeSeed.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
-      
+      if (!Number.isFinite(distance)) continue;
+
       // Store both directions for lookup convenience (the spring iterates source-target,
       // and depending on which direction the interaction is defined, the lookup happens
       // in one direction or the other).
@@ -238,6 +255,8 @@ export function applyDialect(
       pairIdealDistance.set(`${parentId}|${nodeId}`, distance);
     }
   }
+
+  rebuildPairIdealDistance();
 
   // Step 8: Frame loop
   let running = true;
@@ -429,12 +448,21 @@ export function applyDialect(
     }
   }
 
-  function tick() {
-    if (!running) return;
-    if (paused) {
-      rafId = requestAnimationFrame(tick);
-      return;
+  function cancelScheduledFrame(): void {
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
     }
+  }
+
+  function scheduleNextFrame(): void {
+    if (!running || paused || rafId !== null) return;
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function tick() {
+    rafId = null;
+    if (!running || paused) return;
 
     try {
       stepPhysics();
@@ -456,10 +484,10 @@ export function applyDialect(
     }
 
     physicsState.frame += 1;
-    rafId = requestAnimationFrame(tick);
+    scheduleNextFrame();
   }
 
-  rafId = requestAnimationFrame(tick);
+  scheduleNextFrame();
 
   // Pass C4: live config override mechanism
   function applyConfigOverride(partial: Partial<GWDialectConfig>): void {
@@ -470,29 +498,14 @@ export function applyDialect(
         ...resolvedConfig.wellOverrides,
         ...partial.wellOverrides,
       };
+      rebuildResolvedWellParams();
     }
     if (partial.interactionOverrides && Object.keys(partial.interactionOverrides).length > 0) {
       resolvedConfig.interactionOverrides = {
         ...resolvedConfig.interactionOverrides,
         ...partial.interactionOverrides,
       };
-      // Rebuild cached resolvedInteractions array
-      resolvedInteractions.length = 0;
-      for (const interactionId of dialect!.activeInteractions) {
-        const interaction = getInteractionById(interactionId);
-        if (!interaction) continue;
-        const override = resolvedConfig.interactionOverrides?.[interactionId];
-        resolvedInteractions.push({
-          id: interaction.id,
-          source: interaction.source,
-          target: interaction.target,
-          kind: interaction.kind,
-          strength: override?.strength ?? interaction.strength,
-          range: override?.range ?? interaction.range,
-          idealDistance: override?.idealDistance ?? interaction.idealDistance,
-          requireEdge: interaction.requireEdge,  // NEW (Pass C7)
-        });
-      }
+      rebuildResolvedInteractions();
     }
     if (partial.seedParams && Object.keys(partial.seedParams).length > 0) {
       resolvedConfig.seedParams = {
@@ -503,6 +516,7 @@ export function applyDialect(
       if (seedFn) {
         try {
           seedFn.seed({ graph, config: resolvedConfig });
+          rebuildPairIdealDistance();
         } catch (err) {
           const seedErr = err instanceof Error ? err : new Error(String(err));
           if (options.onError) options.onError(seedErr);
@@ -573,23 +587,29 @@ export function applyDialect(
 
     // Persist for next call (and across controllers via the graph)
     graph.setAttribute("__gwellsPinnedSet", currentPinned);
+    rebuildPairIdealDistance();
   }
 
   // Step 9: Return controller
   const controller: GWController = {
     stop: () => {
+      if (!running) return;
       running = false;
-      if (rafId !== null) cancelAnimationFrame(rafId);
-      rafId = null;
+      paused = false;
+      cancelScheduledFrame();
       if (graph.hasAttribute("__gwellsState")) {
         graph.removeAttribute("__gwellsState");
       }
     },
     pause: () => {
+      if (!running || paused) return;
       paused = true;
+      cancelScheduledFrame();
     },
     resume: () => {
+      if (!running || !paused) return;
       paused = false;
+      scheduleNextFrame();
     },
     getDialectId: () => dialect.id,
     getResolvedConfig: () => resolvedConfig,
