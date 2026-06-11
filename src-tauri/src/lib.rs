@@ -1,5 +1,6 @@
 mod fs;
 mod ide;
+pub mod inference;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -20,6 +21,8 @@ pub fn run() {
             fs::run_script,
             fs::list_files,
             fs::read_vault_file,
+            inference::commands::chat,
+            inference::commands::test_inference_connection,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
