@@ -16,7 +16,7 @@
  */
 
 import type { GWSeedFunctionContext, GWHelixTwistRecord } from "../types";
-import { resolveHelixTwist, buildContainsMap, flattenSpinesFromRoot, assignSpinesToAxes, computeFileOrbit } from "../seederHelpers";
+import { resolveHelixTwist, buildContainsMap, flattenSpinesFromRoot, assignSpinesToAxes, computeFileOrbit, seedGenericFallbackLayout, placeUnseededNodesWithFallback } from "../seederHelpers";
 
 interface RadialBackboneParams {
   spineCount: number;
@@ -85,7 +85,7 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
   const { parentToChildren, rootSpineIds } = buildContainsMap(graph);
 
   if (rootSpineIds.length === 0) {
-    console.warn("[radialBackbone] No root spines found, skipping seeding");
+    seedGenericFallbackLayout(graph);
     return;
   }
 
@@ -324,6 +324,8 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
       }
     });
   }
+
+  placeUnseededNodesWithFallback(graph, allSeedPositions, seededPositions);
 
   // Store seeded positions as graph-level attribute for nodeReducer
   graph.setAttribute("__seededSpinePositions", seededPositions);

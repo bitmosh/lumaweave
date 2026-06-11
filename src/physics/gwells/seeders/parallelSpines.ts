@@ -24,7 +24,7 @@
  */
 
 import type { GWSeedFunctionContext, GWHelixTwistRecord } from "../types";
-import { axisOffsetForN, resolveHelixTwist, buildContainsMap, flattenSpinesFromRoot, assignSpinesToAxes, computeFileOrbit } from "../seederHelpers";
+import { axisOffsetForN, resolveHelixTwist, buildContainsMap, flattenSpinesFromRoot, assignSpinesToAxes, computeFileOrbit, seedGenericFallbackLayout, placeUnseededNodesWithFallback } from "../seederHelpers";
 
 interface ParallelSpinesParams {
   spineCount: number;
@@ -77,7 +77,7 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
   const { parentToChildren, rootSpineIds } = buildContainsMap(graph);
 
   if (rootSpineIds.length === 0) {
-    console.warn("[parallelSpines] No root spines found, skipping seeding");
+    seedGenericFallbackLayout(graph);
     return;
   }
 
@@ -337,6 +337,8 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
       }
     });
   }
+
+  placeUnseededNodesWithFallback(graph, allSeedPositions, seededPositions);
 
   // Store seeded positions for nodeReducer
   // Note: nodeReducer currently expects { x, y }; the z is dropped silently for now.

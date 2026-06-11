@@ -5,6 +5,7 @@
  */
 
 import type Graph from "graphology";
+import { analyzeGraphStructure, type GWStructuralNodeInfo } from "./structuralResolver";
 
 /**
  * Computes the axis offset for N spines.
@@ -329,5 +330,238 @@ export function computeAggregateSize(
   return total;
 }
 
+export interface GWSeedPosition {
+  x: number;
+  y: number;
+  z: number;
+}
 
+export interface GWFallbackSeedResult {
+  seededPositions: Map<string, GWSeedPosition>;
+  spinePositions: Map<string, { x: number; y: number }>;
+}
 
+const FALLBACK_COMPONENT_SPACING = 1200;
+const FALLBACK_CONTAINER_RADIUS = 360;
+const FALLBACK_LEAF_RADIUS = 180;
+const FALLBACK_ORPHAN_RADIUS = 900;
+const FALLBACK_GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
+
+function isFiniteSeedPosition(pos: { x: number; y: number; z?: number } | undefined): boolean {
+  return !!pos && Number.isFinite(pos.x) && Number.isFinite(pos.y);
+}
+
+function writeSeedPosition(
+  graph: Graph,
+  nodeId: string,
+  pos: GWSeedPosition,
+  seededPositions: Map<string, GWSeedPosition>,
+  spinePositions: Map<string, { x: number; y: number }>,
+  info: GWStructuralNodeInfo | undefined,
+): void {
+  if (!Number.isFinite(pos.x) || !Number.isFinite(pos.y) || !Number.isFinite(pos.z)) return;
+
+  graph.setNodeAttribute(nodeId, "x", pos.x);
+  graph.setNodeAttribute(nodeId, "y", pos.y);
+  graph.setNodeAttribute(nodeId, "z", pos.z);
+  seededPositions.set(nodeId, pos);
+
+  if (info?.explicitKind === "spine" || info?.role === "spine") {
+    spinePositions.set(nodeId, { x: pos.x, y: pos.y });
+  }
+}
+
+function componentCenter(index: number, count: number): GWSeedPosition {
+  if (count <= 1) return { x: 0, y: 0, z: 0 };
+
+  const radius = Math.max(
+    FALLBACK_COMPONENT_SPACING,
+    (FALLBACK_COMPONENT_SPACING * count) / Math.PI,
+  );
+  const angle = (index / count) * Math.PI * 2;
+
+  return {
+    x: radius * Math.cos(angle),
+    y: radius * Math.sin(angle),
+    z: 0,
+  };
+}
+
+function chooseFallbackAnchor(
+  component: string[],
+  nodes: Map<string, GWStructuralNodeInfo>,
+): string {
+  const byRole = (role: GWStructuralNodeInfo["role"]): string | undefined =>
+    component.find((nodeId) => nodes.get(nodeId)?.role === role);
+
+  const explicitSpine = component.find((nodeId) => nodes.get(nodeId)?.explicitKind === "spine");
+  if (explicitSpine) return explicitSpine;
+
+  return (
+    byRole("spine") ??
+    byRole("root") ??
+    byRole("hub") ??
+    byRole("bridge") ??
+    component
+      .slice()
+      .sort((a, b) => {
+        const da = nodes.get(a)?.totalDegree ?? 0;
+        const db = nodes.get(b)?.totalDegree ?? 0;
+        return db - da || a.localeCompare(b);
+      })[0]
+  );
+}
+
+function averageSeededComponentPosition(
+  component: string[],
+  seededPositions: Map<string, GWSeedPosition>,
+): GWSeedPosition | null {
+  let x = 0;
+  let y = 0;
+  let z = 0;
+  let count = 0;
+
+  for (const nodeId of component) {
+    const pos = seededPositions.get(nodeId);
+    if (!pos || !Number.isFinite(pos.x) || !Number.isFinite(pos.y) || !Number.isFinite(pos.z)) {
+      continue;
+    }
+
+    x += pos.x;
+    y += pos.y;
+    z += pos.z;
+    count += 1;
+  }
+
+  if (count === 0) return null;
+  return { x: x / count, y: y / count, z: z / count };
+}
+
+function offsetAround(
+  center: GWSeedPosition,
+  index: number,
+  count: number,
+  radius: number,
+): GWSeedPosition {
+  const angle = count <= 1 ? 0 : index * FALLBACK_GOLDEN_ANGLE;
+  const scaledRadius = count <= 1
+    ? radius
+    : radius * Math.sqrt((index + 1) / Math.max(count, 1));
+
+  return {
+    x: center.x + scaledRadius * Math.cos(angle),
+    y: center.y + scaledRadius * Math.sin(angle),
+    z: center.z,
+  };
+}
+
+function fallbackRadiusForRole(role: GWStructuralNodeInfo["role"] | undefined): number {
+  if (role === "root" || role === "container" || role === "hub" || role === "bridge") {
+    return FALLBACK_CONTAINER_RADIUS;
+  }
+  if (role === "leaf" || role === "orphan") return FALLBACK_LEAF_RADIUS;
+  return 260;
+}
+
+export function placeUnseededNodesWithFallback(
+  graph: Graph,
+  seededPositions: Map<string, GWSeedPosition>,
+  spinePositions: Map<string, { x: number; y: number }>,
+): void {
+  const structure = analyzeGraphStructure(graph);
+  const targetIds = Array.from(structure.nodes.keys())
+    .filter((nodeId) => !isFiniteSeedPosition(seededPositions.get(nodeId)))
+    .sort();
+
+  if (targetIds.length === 0) return;
+
+  const targetSet = new Set(targetIds);
+  const orphanTargets = targetIds.filter((nodeId) => {
+    const info = structure.nodes.get(nodeId);
+    return info?.role === "orphan" || info?.totalDegree === 0;
+  });
+  const orphanTargetSet = new Set(orphanTargets);
+  const nonOrphanTargets = targetIds.filter((nodeId) => !orphanTargetSet.has(nodeId));
+
+  const nonOrphanComponents = structure.components
+    .map((component, index) => ({ component, index }))
+    .filter(({ component }) =>
+      component.some((nodeId) => targetSet.has(nodeId) && !orphanTargetSet.has(nodeId))
+    );
+
+  nonOrphanComponents.forEach(({ component }, componentPlacementIndex) => {
+    const anchorId = chooseFallbackAnchor(component, structure.nodes);
+    const anchorInfo = structure.nodes.get(anchorId);
+    const center =
+      seededPositions.get(anchorId) ??
+      averageSeededComponentPosition(component, seededPositions) ??
+      componentCenter(componentPlacementIndex, nonOrphanComponents.length);
+
+    if (targetSet.has(anchorId) && !orphanTargetSet.has(anchorId)) {
+      writeSeedPosition(graph, anchorId, center, seededPositions, spinePositions, anchorInfo);
+    }
+
+    const componentTargets = nonOrphanTargets
+      .filter((nodeId) => component.includes(nodeId) && nodeId !== anchorId)
+      .sort();
+    const groupedByBase = new Map<string, string[]>();
+
+    for (const nodeId of componentTargets) {
+      const info = structure.nodes.get(nodeId);
+      const baseId =
+        info?.parentId && isFiniteSeedPosition(seededPositions.get(info.parentId))
+          ? info.parentId
+          : anchorId;
+
+      const group = groupedByBase.get(baseId) ?? [];
+      group.push(nodeId);
+      groupedByBase.set(baseId, group);
+    }
+
+    Array.from(groupedByBase.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .forEach(([baseId, group]) => {
+        const basePos = seededPositions.get(baseId) ?? center;
+        group.sort().forEach((nodeId, nodeIndex) => {
+          const info = structure.nodes.get(nodeId);
+          const radius = fallbackRadiusForRole(info?.role);
+          const pos = offsetAround(basePos, nodeIndex, group.length, radius);
+          writeSeedPosition(graph, nodeId, pos, seededPositions, spinePositions, info);
+        });
+      });
+  });
+
+  if (orphanTargets.length > 0) {
+    const seededValues = Array.from(seededPositions.values());
+    const maxSeedDistance = seededValues.reduce((max, pos) => {
+      const distance = Math.sqrt(pos.x * pos.x + pos.y * pos.y);
+      return Math.max(max, distance);
+    }, 0);
+    const radius = Math.max(FALLBACK_ORPHAN_RADIUS, maxSeedDistance + FALLBACK_ORPHAN_RADIUS);
+
+    orphanTargets.sort().forEach((nodeId, index) => {
+      const info = structure.nodes.get(nodeId);
+      const angle = orphanTargets.length === 1 ? 0 : index * FALLBACK_GOLDEN_ANGLE;
+      const pos = orphanTargets.length === 1 && seededPositions.size === 0
+        ? { x: 0, y: 0, z: 0 }
+        : {
+            x: radius * Math.cos(angle),
+            y: radius * Math.sin(angle),
+            z: 0,
+          };
+      writeSeedPosition(graph, nodeId, pos, seededPositions, spinePositions, info);
+    });
+  }
+}
+
+export function seedGenericFallbackLayout(graph: Graph): GWFallbackSeedResult {
+  const seededPositions = new Map<string, GWSeedPosition>();
+  const spinePositions = new Map<string, { x: number; y: number }>();
+
+  placeUnseededNodesWithFallback(graph, seededPositions, spinePositions);
+
+  graph.setAttribute("__seededSpinePositions", spinePositions);
+  graph.setAttribute("__gwellsSeedPositions", seededPositions);
+
+  return { seededPositions, spinePositions };
+}
