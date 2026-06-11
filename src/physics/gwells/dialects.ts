@@ -11,7 +11,7 @@
  * No engine logic here. Pure data + lookup helpers.
  */
 
-import type { GWDialectEntry, GWStatus } from "./types";
+import type { GWDialectEntry, GWStatus, GWWellAssignmentContext } from "./types";
 
 // Shared active interactions list used by all three dialects.
 const radialBackboneInteractions = [
@@ -71,6 +71,58 @@ const parallelSpinesInteractionOverrides = {
   },
 };
 
+const SPINE_WELL = "gwells.well.spine-linear";
+const DIRECTORY_WELL = "gwells.well.directory-anchor";
+const FILE_WELL = "gwells.well.file-orbit";
+const ENDPOINT_WELL = "gwells.well.endpoint-fan";
+const LEGACY_FILE_KINDS = new Set(["file", "doc", "code", "config", "fixture"]);
+
+function getRecordValue(value: unknown, key: string): unknown {
+  return value && typeof value === "object"
+    ? (value as Record<string, unknown>)[key]
+    : undefined;
+}
+
+function getLegacyNodeKind(attrs: Record<string, unknown>): string | undefined {
+  const nodeType = attrs.nodeType;
+  if (typeof nodeType === "string" && nodeType.length > 0) return nodeType;
+
+  const rawType = getRecordValue(attrs.raw, "type");
+  if (typeof rawType === "string" && rawType.length > 0) return rawType;
+
+  return undefined;
+}
+
+function assignWellTypeFromAttrsAndStructure(
+  nodeId: string,
+  attrs: Record<string, unknown>,
+  context?: GWWellAssignmentContext,
+): string | null {
+  const legacyKind = getLegacyNodeKind(attrs);
+
+  if (legacyKind === "spine") return SPINE_WELL;
+  if (attrs.isEndpoint === true) return ENDPOINT_WELL;
+  if (legacyKind === "directory") return DIRECTORY_WELL;
+  if (legacyKind && LEGACY_FILE_KINDS.has(legacyKind)) return FILE_WELL;
+
+  const role = context?.structure.nodes.get(nodeId)?.role;
+  switch (role) {
+    case "spine":
+      return SPINE_WELL;
+    case "root":
+    case "container":
+    case "hub":
+    case "bridge":
+      return DIRECTORY_WELL;
+    case "leaf":
+    case "orphan":
+      return FILE_WELL;
+    case "unknown":
+    case undefined:
+      return null;
+  }
+}
+
 export const GW_DIALECT_REGISTRY: readonly GWDialectEntry[] = [
   {
     id: "gwells.dialect.radial-backbone",
@@ -82,22 +134,7 @@ export const GW_DIALECT_REGISTRY: readonly GWDialectEntry[] = [
     isDefault: true,
     seedFunctionId: "gwells.seed.radial-backbone",
     wellAssignment: {
-      assign: (_nodeId: string, attrs: Record<string, unknown>): string | null => {
-        if (attrs.nodeType === "spine") return "gwells.well.spine-linear";
-        if (attrs.isEndpoint === true) return "gwells.well.endpoint-fan";
-        if (attrs.nodeType === "directory") return "gwells.well.directory-anchor";
-        // Map all leaf content types to file-orbit
-        if (
-          attrs.nodeType === "file" ||
-          attrs.nodeType === "doc" ||
-          attrs.nodeType === "code" ||
-          attrs.nodeType === "config" ||
-          attrs.nodeType === "fixture"
-        ) {
-          return "gwells.well.file-orbit";
-        }
-        return null;
-      },
+      assign: assignWellTypeFromAttrsAndStructure,
     },
     activeInteractions: radialBackboneInteractions,
     config: {
@@ -127,22 +164,7 @@ export const GW_DIALECT_REGISTRY: readonly GWDialectEntry[] = [
     isDefault: false,
     seedFunctionId: "gwells.seed.parallel-spines",
     wellAssignment: {
-      assign: (_nodeId: string, attrs: Record<string, unknown>): string | null => {
-        if (attrs.nodeType === "spine") return "gwells.well.spine-linear";
-        if (attrs.isEndpoint === true) return "gwells.well.endpoint-fan";
-        if (attrs.nodeType === "directory") return "gwells.well.directory-anchor";
-        // Map all leaf content types to file-orbit
-        if (
-          attrs.nodeType === "file" ||
-          attrs.nodeType === "doc" ||
-          attrs.nodeType === "code" ||
-          attrs.nodeType === "config" ||
-          attrs.nodeType === "fixture"
-        ) {
-          return "gwells.well.file-orbit";
-        }
-        return null;
-      },
+      assign: assignWellTypeFromAttrsAndStructure,
     },
     activeInteractions: radialBackboneInteractions,
     config: {

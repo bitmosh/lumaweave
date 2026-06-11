@@ -17,6 +17,7 @@ export type {
   GWSeedFunctionContext,
   GWSeedFunctionEntry,
   GWWellAssignmentFn,
+  GWWellAssignmentContext,
   GWWellAssignment,
   GWDialectConfig,
   GWDialectEntry,

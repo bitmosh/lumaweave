@@ -11,6 +11,7 @@
 
 // Default import for Graph from graphology (not named export)
 import Graph from "graphology";
+import type { GWStructuralGraphInfo } from "./structuralResolver";
 
 /**
  * Lifecycle status for registry entries.
@@ -188,9 +189,15 @@ export interface GWSeedFunctionEntry {
 /**
  * Predicate function that assigns a well type ID to a node.
  */
+export interface GWWellAssignmentContext {
+  graph: Graph;
+  structure: GWStructuralGraphInfo;
+}
+
 export type GWWellAssignmentFn = (
   nodeId: string,
-  attrs: Record<string, unknown>
+  attrs: Record<string, unknown>,
+  context?: GWWellAssignmentContext
 ) => string | null;
 
 /**

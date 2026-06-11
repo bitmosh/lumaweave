@@ -8,12 +8,14 @@ import type {
   GWNodeState,
   GWPhysicsState,
   GWWellTypeDefaults,
+  GWWellAssignmentContext,
 } from "./types";
 import { GW_ENGINE_DEFAULTS } from "./types";
 import { getDialectById, getDefaultDialect } from "./dialects";
 import { getWellTypeById } from "./wellTypes";
 import { getInteractionById } from "./interactions";
 import { getSeedFunctionById } from "./seedFunctions";
+import { analyzeGraphStructure } from "./structuralResolver";
 
 export function applyDialect(
   graph: Graph,
@@ -73,10 +75,14 @@ export function applyDialect(
   }
 
   // Step 5: Build per-node well assignment cache
+  const assignmentContext: GWWellAssignmentContext = {
+    graph,
+    structure: analyzeGraphStructure(graph),
+  };
   const nodeAssignments = new Map<string, string | null>();
   graph.forEachNode((nodeId, attrs) => {
     try {
-      const wellTypeId = dialect.wellAssignment.assign(nodeId, attrs);
+      const wellTypeId = dialect.wellAssignment.assign(nodeId, attrs, assignmentContext);
       nodeAssignments.set(nodeId, wellTypeId);
     } catch (err) {
       nodeAssignments.set(nodeId, null);
