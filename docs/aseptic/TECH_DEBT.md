@@ -13,13 +13,18 @@ Functional but known-bad implementation choices, deliberate deferrals, and archi
 ---
 id: TD-001
 type: tech_debt
-status: open
+status: resolved
 pass_opened: v0.1.11z
-pass_resolved:
+pass_resolved: v0.1.14
 severity: HIGH
 ---
 
-### TD-001 — GWells dense-step performance ceiling
+### ~~TD-001 — GWells dense-step performance ceiling~~
+
+> **Resolved in v0.1.14** — commit pending. Source-well / target-well indexing removed the all-node interaction scan, and the latest benchmark run brought the 1800-node filesystem fixture down to roughly 1.07 ms average step time with 1.57 ms p95.
+
+<details>
+<summary>Original entry (preserved for history)</summary>
 
 **What it is:** The current benchmark harness confirms the engine can run larger fixtures, but dense filesystem-shaped graphs still have a high per-step cost at the 1800-node scale.
 
@@ -30,6 +35,8 @@ severity: HIGH
 **Trigger:** Address before claiming large-graph interactive readiness, before enabling default GWells use on 1000+ node app graphs, or when a source adapter produces filesystem-shaped graphs near this size.
 
 **Evidence:** `scripts/benchmark-gwells.mjs`; `benchmarks/gwells-latest.json`; latest run of `npm run physics:gwells:bench`.
+
+</details>
 
 ---
 

@@ -20,6 +20,10 @@ import { getInteractionById } from "./interactions";
 import { getSeedFunctionById } from "./seedFunctions";
 import { analyzeGraphStructure } from "./structuralResolver";
 
+function nowMs(): number {
+  return typeof performance !== "undefined" ? performance.now() : Date.now();
+}
+
 export function applyDialect(
   graph: Graph,
   dialectId: string,
@@ -142,6 +146,7 @@ export function applyDialect(
   }
 
   const resolvedInteractions: ResolvedInteraction[] = [];
+  const interactionsBySourceWellType = new Map<string, ResolvedInteraction[]>();
 
   function rebuildResolvedInteractions(): void {
     resolvedInteractions.length = 0;
@@ -224,6 +229,7 @@ export function applyDialect(
 
   // Step 7: Initialize __gwellsState
   const nodeStates = new Map<string, GWNodeState>();
+  const nodeIdsByWellType = new Map<string, string[]>();
   graph.forEachNode((nodeId) => {
     const wellTypeId = nodeAssignments.get(nodeId);
     if (wellTypeId === null || wellTypeId === undefined) return;
@@ -236,6 +242,9 @@ export function applyDialect(
       lastSpeed: 0,
       activeInteractions: [],
     });
+    const bucket = nodeIdsByWellType.get(wellTypeId);
+    if (bucket) bucket.push(nodeId);
+    else nodeIdsByWellType.set(wellTypeId, [nodeId]);
   });
 
   const physicsState: GWPhysicsState = {
@@ -298,26 +307,40 @@ export function applyDialect(
   let rafId: number | null = null;
 
   function stepPhysics(): GWStepResult {
+    const stepStartMs = nowMs();
+    let timingMarkMs = stepStartMs;
+    const splitTiming = (): number => {
+      const nextMarkMs = nowMs();
+      const elapsedMs = nextMarkMs - timingMarkMs;
+      timingMarkMs = nextMarkMs;
+      return elapsedMs;
+    };
+
     let movedNodeCount = 0;
     let maxVelocity = 0;
     let totalVelocity = 0;
     let velocitySampleCount = 0;
     const warnings: string[] = [];
+    let forceInteractionsMs = 0;
+    let auxForcesMs = 0;
+    let integrationMs = 0;
 
-    // Reset activeInteractions for all nodes
+    // Reset activeInteractions for all nodes.
     for (const [, state] of physicsState.nodes) {
       state.activeInteractions.length = 0;
     }
+    const resetMs = splitTiming();
 
-    // NEW: Get seed positions map (set by seed function)
+    // NEW: Get seed positions map (set by seed function).
     const seedPositions = graph.hasAttribute("__gwellsSeedPositions")
       ? graph.getAttribute("__gwellsSeedPositions") as Map<string, { x: number; y: number; z?: number }>
       : null;
+    const seedLookupMs = splitTiming();
 
-    // For each non-pinned node, accumulate forces
+    // For each non-pinned node, accumulate forces.
     for (const [nodeId, state] of physicsState.nodes) {
       if (state.pinned) continue;
-      // Honor Sigma drag convention
+      // Honor Sigma drag convention.
       if (graph.getNodeAttribute(nodeId, "fixed") === true) continue;
 
       const params = resolvedWellParams.get(state.wellTypeId);
@@ -329,97 +352,104 @@ export function applyDialect(
       let fx = 0;
       let fy = 0;
 
-      for (const interaction of resolvedInteractions) {
-        if (interaction.source !== state.wellTypeId) continue;
+      const forceStartMs = nowMs();
+      const sourceInteractions = interactionsBySourceWellType.get(state.wellTypeId);
+      if (sourceInteractions) {
+        for (const interaction of sourceInteractions) {
+          const targetNodeIds = nodeIdsByWellType.get(interaction.target);
+          if (!targetNodeIds || targetNodeIds.length === 0) continue;
 
-        // Find target nodes for this interaction
-        let interactionFired = false;
+          let interactionFired = false;
 
-        for (const [otherId, otherState] of physicsState.nodes) {
-          if (otherId === nodeId) continue;
-          if (otherState.wellTypeId !== interaction.target) continue;
+          for (const otherId of targetNodeIds) {
+            if (otherId === nodeId) continue;
+            const otherState = physicsState.nodes.get(otherId);
+            if (!otherState) continue;
 
-          // Pass C7: edge-aware structural filter
-          if (interaction.requireEdge === "contains-parent") {
-            // Source's parent must be the target
-            if (parentOfNode.get(nodeId) !== otherId) continue;
-          } else if (interaction.requireEdge === "no-contains-parent") {
-            // Source's parent must NOT be the target
-            if (parentOfNode.get(nodeId) === otherId) continue;
-          } else if (interaction.requireEdge === "shared-parent") {
-            // Source and target must share the same parent
-            const sourceParent = parentOfNode.get(nodeId);
-            const otherParent = parentOfNode.get(otherId);
-            if (!sourceParent || sourceParent !== otherParent) continue;
+            // Pass C7: edge-aware structural filter.
+            if (interaction.requireEdge === "contains-parent") {
+              // Source's parent must be the target.
+              if (parentOfNode.get(nodeId) !== otherId) continue;
+            } else if (interaction.requireEdge === "no-contains-parent") {
+              // Source's parent must NOT be the target.
+              if (parentOfNode.get(nodeId) === otherId) continue;
+            } else if (interaction.requireEdge === "shared-parent") {
+              // Source and target must share the same parent.
+              const sourceParent = parentOfNode.get(nodeId);
+              const otherParent = parentOfNode.get(otherId);
+              if (!sourceParent || sourceParent !== otherParent) continue;
+            }
+            // If requireEdge is undefined, no filter applies (legacy behavior).
+
+            const ox = graph.getNodeAttribute(otherId, "x") as number;
+            const oy = graph.getNodeAttribute(otherId, "y") as number;
+            const dx = ox - x;
+            const dy = oy - y;
+            const distSq = dx * dx + dy * dy;
+            const dist = Math.sqrt(distSq) + 0.0001; // avoid div-by-zero
+
+            // Range cutoff.
+            if (interaction.range !== undefined && dist > interaction.range) continue;
+
+            // Force kind dispatch.
+            const { kind, strength, idealDistance } = interaction;
+            let force = 0;
+            let perpComponent = 0;
+
+            switch (kind) {
+              case "attraction": {
+                force = strength;
+                fx += (dx / dist) * force;
+                fy += (dy / dist) * force;
+                interactionFired = true;
+                break;
+              }
+              case "repulsion": {
+                force = strength / Math.max(distSq * 0.01, 0.01);
+                fx -= (dx / dist) * force;
+                fy -= (dy / dist) * force;
+                interactionFired = true;
+                break;
+              }
+              case "spring": {
+                // Pass C8.2: prefer per-pair seeded ideal distance for edge-aware springs.
+                // Falls back to interaction's static idealDistance, then well-type default.
+                const pairKey = [nodeId, otherId].join("|");
+                const pairIdeal = pairIdealDistance.get(pairKey);
+                const ideal = pairIdeal !== undefined
+                  ? pairIdeal
+                  : (idealDistance ?? params.idealDistance);
+                const displacement = dist - ideal;
+                force = strength * params.springStiffness * displacement;
+                fx += (dx / dist) * force;
+                fy += (dy / dist) * force;
+                interactionFired = true;
+                break;
+              }
+              case "linear-alignment": {
+                // Documentary force for C1.
+                interactionFired = true;
+                break;
+              }
+              case "perpendicular": {
+                perpComponent = strength;
+                fx += (-dy / dist) * perpComponent;
+                fy += (dx / dist) * perpComponent;
+                interactionFired = true;
+                break;
+              }
+            }
           }
-          // If requireEdge is undefined, no filter applies (legacy behavior)
 
-          const ox = graph.getNodeAttribute(otherId, "x") as number;
-          const oy = graph.getNodeAttribute(otherId, "y") as number;
-          const dx = ox - x;
-          const dy = oy - y;
-          const distSq = dx * dx + dy * dy;
-          const dist = Math.sqrt(distSq) + 0.0001; // avoid div-by-zero
-
-          // Range cutoff
-          if (interaction.range !== undefined && dist > interaction.range) continue;
-
-          // Force kind dispatch
-          const { kind, strength, idealDistance } = interaction;
-          let force = 0;
-          let perpComponent = 0;
-
-          switch (kind) {
-            case "attraction": {
-              force = strength;
-              fx += (dx / dist) * force;
-              fy += (dy / dist) * force;
-              interactionFired = true;
-              break;
-            }
-            case "repulsion": {
-              force = strength / Math.max(distSq * 0.01, 0.01);
-              fx -= (dx / dist) * force;
-              fy -= (dy / dist) * force;
-              interactionFired = true;
-              break;
-            }
-            case "spring": {
-              // Pass C8.2: prefer per-pair seeded ideal distance for edge-aware springs.
-              // Falls back to interaction's static idealDistance, then well-type default.
-              const pairKey = `${nodeId}|${otherId}`;
-              const pairIdeal = pairIdealDistance.get(pairKey);
-              const ideal = pairIdeal !== undefined
-                ? pairIdeal
-                : (idealDistance ?? params.idealDistance);
-              const displacement = dist - ideal;
-              force = strength * params.springStiffness * displacement;
-              fx += (dx / dist) * force;
-              fy += (dy / dist) * force;
-              interactionFired = true;
-              break;
-            }
-            case "linear-alignment": {
-              // Documentary force for C1
-              interactionFired = true;
-              break;
-            }
-            case "perpendicular": {
-              perpComponent = strength;
-              fx += (-dy / dist) * perpComponent;
-              fy += (dx / dist) * perpComponent;
-              interactionFired = true;
-              break;
-            }
+          if (interactionFired) {
+            state.activeInteractions.push(interaction.id);
           }
-        }
-
-        if (interactionFired) {
-          state.activeInteractions.push(interaction.id);
         }
       }
+      forceInteractionsMs += nowMs() - forceStartMs;
 
-      // Apply center gravity (per-frame pull toward origin)
+      const auxStartMs = nowMs();
+      // Apply center gravity (per-frame pull toward origin).
       if (params.centerGravity && params.centerGravity > 0) {
         const distFromOrigin = Math.sqrt(x * x + y * y) + 0.0001;
         // Pull strength is proportional to centerGravity. Direction is from node toward origin.
@@ -427,7 +457,7 @@ export function applyDialect(
         fy += (-y / distFromOrigin) * params.centerGravity;
       }
 
-      // NEW: Seed-anchor force — pull toward seeded position
+      // NEW: Seed-anchor force — pull toward seeded position.
       if (params.seedAdherence && params.seedAdherence > 0 && seedPositions) {
         const seedPos = seedPositions.get(nodeId);
         if (seedPos) {
@@ -435,16 +465,19 @@ export function applyDialect(
           fy += (seedPos.y - y) * params.seedAdherence;
         }
       }
+      auxForcesMs += nowMs() - auxStartMs;
 
+      const integrationStartMs = nowMs();
       // C9.5: skip integration if force resolution produced non-finite.
       // Prevents NaN propagation through velocity. See
       // docs/canonical/GWELLS_PHYSICS.md § NaN guards (supersedes GWELLS_ARCHITECTURE.md).
       if (!Number.isFinite(fx) || !Number.isFinite(fy)) {
-        warnings.push(`non-finite force skipped for node ${nodeId}`);
+        warnings.push('non-finite force skipped for node ' + nodeId);
+        integrationMs += nowMs() - integrationStartMs;
         continue;
       }
 
-      // Update velocity with damping
+      // Update velocity with damping.
       state.vx = (state.vx + fx) * params.damping;
       state.vy = (state.vy + fy) * params.damping;
 
@@ -462,7 +495,7 @@ export function applyDialect(
         state.vy = Math.sign(state.vy) * MAX_SAFE_VELOCITY;
       }
 
-      // Clamp velocity to maxVelocity (existing clamp, keep for safety)
+      // Clamp velocity to maxVelocity (existing clamp, keep for safety).
       const speed = Math.sqrt(state.vx * state.vx + state.vy * state.vy);
       if (speed > engineConfig.maxVelocity) {
         const scale = engineConfig.maxVelocity / speed;
@@ -472,7 +505,7 @@ export function applyDialect(
 
       state.lastSpeed = Math.sqrt(state.vx * state.vx + state.vy * state.vy);
 
-      // Update position
+      // Update position.
       const newX = x + state.vx;
       const newY = y + state.vy;
 
@@ -482,23 +515,34 @@ export function applyDialect(
       if (!Number.isFinite(newX) || !Number.isFinite(newY)) {
         state.vx = 0;
         state.vy = 0;
-        warnings.push(`non-finite position skipped for node ${nodeId}`);
+        warnings.push('non-finite position skipped for node ' + nodeId);
+        integrationMs += nowMs() - integrationStartMs;
         continue;
       }
-      graph.setNodeAttribute(nodeId, "x", newX);
-      graph.setNodeAttribute(nodeId, "y", newY);
+      graph.setNodeAttribute(nodeId, 'x', newX);
+      graph.setNodeAttribute(nodeId, 'y', newY);
       movedNodeCount += 1;
       maxVelocity = Math.max(maxVelocity, state.lastSpeed);
       totalVelocity += state.lastSpeed;
       velocitySampleCount += 1;
+      integrationMs += nowMs() - integrationStartMs;
     }
 
+    const totalMs = nowMs() - stepStartMs;
     return {
       stepsRun: 1,
       movedNodeCount,
       maxVelocity,
       averageVelocity: velocitySampleCount > 0 ? totalVelocity / velocitySampleCount : 0,
       warnings,
+      timings: {
+        totalMs,
+        resetMs,
+        seedLookupMs,
+        forceInteractionsMs,
+        auxForcesMs,
+        integrationMs,
+      },
     };
   }
 

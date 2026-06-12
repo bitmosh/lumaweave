@@ -299,6 +299,15 @@ function percentile(values, p) {
 
 function measureManualSteps(controller, stepCount) {
   const stepDurations = [];
+  const timingTotals = {
+    totalMs: 0,
+    resetMs: 0,
+    seedLookupMs: 0,
+    forceInteractionsMs: 0,
+    auxForcesMs: 0,
+    integrationMs: 0,
+  };
+  let timingSampleCount = 0;
   let totalMovedNodeCount = 0;
   let maxVelocity = 0;
   let lastAverageVelocity = 0;
@@ -311,9 +320,22 @@ function measureManualSteps(controller, stepCount) {
     maxVelocity = Math.max(maxVelocity, step.value.maxVelocity);
     lastAverageVelocity = step.value.averageVelocity;
     warningCount += step.value.warnings.length;
+
+    if (step.value.timings) {
+      timingSampleCount += 1;
+      for (const key of Object.keys(timingTotals)) {
+        timingTotals[key] += step.value.timings[key] ?? 0;
+      }
+    }
   }
 
   const totalStepMs = stepDurations.reduce((sum, value) => sum + value, 0);
+  const averageTimings = Object.fromEntries(
+    Object.entries(timingTotals).map(([key, value]) => [
+      key,
+      timingSampleCount > 0 ? value / timingSampleCount : null,
+    ]),
+  );
 
   return {
     stepCount,
@@ -327,6 +349,8 @@ function measureManualSteps(controller, stepCount) {
     maxVelocity,
     lastAverageVelocity,
     warningCount,
+    stepTimingSampleCount: timingSampleCount,
+    averageStepTimingsMs: averageTimings,
   };
 }
 
@@ -341,6 +365,8 @@ function printResults(results) {
       "apply",
       "step avg",
       "step p95",
+      "force avg",
+      "integr avg",
       "moved avg",
       "warn",
       "finite",
@@ -356,6 +382,8 @@ function printResults(results) {
       formatMs(result.applyDialectSetupMs),
       formatMs(result.physicsStepAverageMs),
       formatMs(result.physicsStepP95Ms),
+      formatMs(result.physicsStepTimingAverageMs?.forceInteractionsMs ?? null),
+      formatMs(result.physicsStepTimingAverageMs?.integrationMs ?? null),
       String(Math.round(result.averageMovedNodeCount)),
       String(result.warningCount),
       result.finitePositions ? "yes" : "no",
@@ -460,6 +488,13 @@ async function main() {
         maxVelocity: roundMs(manualSteps.maxVelocity),
         lastAverageVelocity: roundMs(manualSteps.lastAverageVelocity),
         warningCount: manualSteps.warningCount,
+        physicsStepTimingSampleCount: manualSteps.stepTimingSampleCount,
+        physicsStepTimingAverageMs: Object.fromEntries(
+          Object.entries(manualSteps.averageStepTimingsMs).map(([key, value]) => [
+            key,
+            value === null ? null : roundMs(value),
+          ]),
+        ),
         totalBenchmarkMs: roundMs(nowMs() - totalStart),
         finitePositions: positionInspection.finitePositions,
         missingPositionCount: positionInspection.missingPositionCount,
