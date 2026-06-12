@@ -101,3 +101,10 @@ temp/
 *.old
 sphere-nodes-screenshot.png
 sphere-nodes-screenshot.png
+
+.codex/
+.playwright-mcp/
+
+# Aseptic local scratch/runtime state
+/aseptic/
+.aseptic/
