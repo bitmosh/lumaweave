@@ -22,6 +22,7 @@
     "modes:control-plane": "node scripts/validate-control-plane-modes.mjs",
     "generate:graph": "node scripts/generate-self-graph.mjs",
     "physics:gwells": "node scripts/validate-gwells.mjs",
+    "physics:gwells:bench": "node scripts/benchmark-gwells.mjs",
     "validate:settings": "node scripts/validate-settings-panel.mjs",
     "lint:css": "stylelint \"src/**/*.css\""
   },

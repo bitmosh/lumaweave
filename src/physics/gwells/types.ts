@@ -339,6 +339,17 @@ export interface GWDebugEvent {
 }
 
 /**
+ * Result from one synchronous physics step.
+ */
+export interface GWStepResult {
+  stepsRun: number;
+  movedNodeCount: number;
+  maxVelocity: number;
+  averageVelocity: number;
+  warnings: string[];
+}
+
+/**
  * Options for applyDialect.
  */
 export interface GWApplyDialectOptions {
@@ -368,6 +379,8 @@ export interface GWController {
   pause: () => void;
   /** Resume after pause. */
   resume: () => void;
+  /** Run one synchronous physics step without scheduling animation frames. */
+  step: () => GWStepResult;
   /** Get the current lifecycle state for this controller. */
   getRuntimeState: () => GWRuntimeState;
   /** Get the current dialect ID. */

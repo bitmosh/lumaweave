@@ -8,6 +8,7 @@ import type {
   GWNodeState,
   GWPhysicsState,
   GWRuntimeState,
+  GWStepResult,
   GWWellTypeDefaults,
   GWWellAssignmentContext,
   GWDebugEvent,
@@ -296,7 +297,13 @@ export function applyDialect(
   let paused = false;
   let rafId: number | null = null;
 
-  function stepPhysics() {
+  function stepPhysics(): GWStepResult {
+    let movedNodeCount = 0;
+    let maxVelocity = 0;
+    let totalVelocity = 0;
+    let velocitySampleCount = 0;
+    const warnings: string[] = [];
+
     // Reset activeInteractions for all nodes
     for (const [, state] of physicsState.nodes) {
       state.activeInteractions.length = 0;
@@ -433,6 +440,7 @@ export function applyDialect(
       // Prevents NaN propagation through velocity. See
       // docs/canonical/GWELLS_PHYSICS.md § NaN guards (supersedes GWELLS_ARCHITECTURE.md).
       if (!Number.isFinite(fx) || !Number.isFinite(fy)) {
+        warnings.push(`non-finite force skipped for node ${nodeId}`);
         continue;
       }
 
@@ -474,10 +482,58 @@ export function applyDialect(
       if (!Number.isFinite(newX) || !Number.isFinite(newY)) {
         state.vx = 0;
         state.vy = 0;
+        warnings.push(`non-finite position skipped for node ${nodeId}`);
         continue;
       }
       graph.setNodeAttribute(nodeId, "x", newX);
       graph.setNodeAttribute(nodeId, "y", newY);
+      movedNodeCount += 1;
+      maxVelocity = Math.max(maxVelocity, state.lastSpeed);
+      totalVelocity += state.lastSpeed;
+      velocitySampleCount += 1;
+    }
+
+    return {
+      stepsRun: 1,
+      movedNodeCount,
+      maxVelocity,
+      averageVelocity: velocitySampleCount > 0 ? totalVelocity / velocitySampleCount : 0,
+      warnings,
+    };
+  }
+
+  function stepOnce(): GWStepResult {
+    if (runtimeState === "stopped" || runtimeState === "error") {
+      return {
+        stepsRun: 0,
+        movedNodeCount: 0,
+        maxVelocity: 0,
+        averageVelocity: 0,
+        warnings: [`cannot step while runtime is ${runtimeState}`],
+      };
+    }
+
+    try {
+      return stepPhysics();
+    } catch (err) {
+      const stepErr = err instanceof Error ? err : new Error(String(err));
+      runtimeState = "error";
+      running = false;
+      paused = false;
+      cancelScheduledFrame();
+      emitDebug("runtime-error", "Manual physics step failed; runtime stopped scheduling", {
+        dialectId: activeDialect.id,
+        message: stepErr.message,
+      });
+      if (options.onError) options.onError(stepErr);
+      else console.warn(`[gwells] manual physics step failed:`, stepErr);
+      return {
+        stepsRun: 0,
+        movedNodeCount: 0,
+        maxVelocity: 0,
+        averageVelocity: 0,
+        warnings: [stepErr.message],
+      };
     }
   }
 
@@ -498,7 +554,8 @@ export function applyDialect(
     if (!running || paused) return;
 
     try {
-      stepPhysics();
+      const stepResult = stepOnce();
+      if (runtimeState === "error" || stepResult.stepsRun === 0) return;
     } catch (err) {
       const stepErr = err instanceof Error ? err : new Error(String(err));
       runtimeState = "error";
@@ -688,6 +745,13 @@ export function applyDialect(
       runtimeState = "running";
       scheduleNextFrame();
       emitDebug("resumed", "GWells runtime resumed", { dialectId: activeDialect.id });
+    },
+    step: () => {
+      const result = stepOnce();
+      if (result.stepsRun > 0) {
+        physicsState.frame += result.stepsRun;
+      }
+      return result;
     },
     getRuntimeState: () => runtimeState,
     getDialectId: () => activeDialect.id,
