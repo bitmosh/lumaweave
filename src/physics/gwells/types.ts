@@ -314,6 +314,31 @@ export const GW_ENGINE_DEFAULTS: GWEngineConfig = {
 };
 
 /**
+ * Current lifecycle state for a GWells controller.
+ *
+ * v0.1.5 keeps this intentionally small. Future profile/runtime work may add
+ * idle, settled, or manual-step states without changing the existing meanings.
+ */
+export type GWRuntimeState = "running" | "paused" | "stopped" | "error";
+
+/**
+ * Optional diagnostic event emitted only when callers provide onDebug.
+ */
+export interface GWDebugEvent {
+  type:
+    | "applied"
+    | "paused"
+    | "resumed"
+    | "stopped"
+    | "seed-rerun"
+    | "cache-rebuild"
+    | "runtime-error"
+    | "warning";
+  message: string;
+  data?: Record<string, unknown>;
+}
+
+/**
  * Options for applyDialect.
  */
 export interface GWApplyDialectOptions {
@@ -329,6 +354,8 @@ export interface GWApplyDialectOptions {
   decoration?: (graph: Graph, frame: number) => void;
   /** Error handler. Called for dialect-not-found and per-frame errors. */
   onError?: (error: Error) => void;
+  /** Optional quiet diagnostics for lifecycle/cache events. */
+  onDebug?: (event: GWDebugEvent) => void;
 }
 
 /**
@@ -341,6 +368,8 @@ export interface GWController {
   pause: () => void;
   /** Resume after pause. */
   resume: () => void;
+  /** Get the current lifecycle state for this controller. */
+  getRuntimeState: () => GWRuntimeState;
   /** Get the current dialect ID. */
   getDialectId: () => string;
   /** Get the current resolved config (dialect + overrides merged). */

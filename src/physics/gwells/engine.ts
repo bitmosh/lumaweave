@@ -7,8 +7,10 @@ import type {
   GWInteractionEntry,
   GWNodeState,
   GWPhysicsState,
+  GWRuntimeState,
   GWWellTypeDefaults,
   GWWellAssignmentContext,
+  GWDebugEvent,
 } from "./types";
 import { GW_ENGINE_DEFAULTS } from "./types";
 import { getDialectById, getDefaultDialect } from "./dialects";
@@ -22,6 +24,23 @@ export function applyDialect(
   dialectId: string,
   options: GWApplyDialectOptions = {}
 ): GWController {
+  let runtimeState: GWRuntimeState = "running";
+
+  function emitDebug(
+    type: GWDebugEvent["type"],
+    message: string,
+    data?: Record<string, unknown>,
+  ): void {
+    if (!options.onDebug) return;
+
+    try {
+      options.onDebug(data ? { type, message, data } : { type, message });
+    } catch (err) {
+      const debugErr = err instanceof Error ? err : new Error(String(err));
+      if (options.onError) options.onError(debugErr);
+    }
+  }
+
   // Step 1: Resolve dialect with fallback
   let dialect = getDialectById(dialectId);
   if (!dialect) {
@@ -40,6 +59,8 @@ export function applyDialect(
     dialect = fallback;
   }
 
+  const activeDialect = dialect;
+
   // Step 2: Engine config merge
   const engineConfig: GWEngineConfig = {
     ...GW_ENGINE_DEFAULTS,
@@ -49,21 +70,21 @@ export function applyDialect(
   // Step 3: Dialect config merge
   const resolvedConfig: GWDialectConfig = {
     wellOverrides: {
-      ...dialect.config.wellOverrides,
+      ...activeDialect.config.wellOverrides,
       ...options.configOverride?.wellOverrides,
     },
     interactionOverrides: {
-      ...dialect.config.interactionOverrides,
+      ...activeDialect.config.interactionOverrides,
       ...options.configOverride?.interactionOverrides,
     },
     seedParams: {
-      ...dialect.config.seedParams,
+      ...activeDialect.config.seedParams,
       ...options.configOverride?.seedParams,
     },
   };
 
   // Step 4: Run seed function
-  const seedFn = getSeedFunctionById(dialect.seedFunctionId);
+  const seedFn = getSeedFunctionById(activeDialect.seedFunctionId);
   if (seedFn) {
     try {
       seedFn.seed({ graph, config: resolvedConfig });
@@ -82,7 +103,7 @@ export function applyDialect(
   const nodeAssignments = new Map<string, string | null>();
   graph.forEachNode((nodeId, attrs) => {
     try {
-      const wellTypeId = dialect.wellAssignment.assign(nodeId, attrs, assignmentContext);
+      const wellTypeId = activeDialect.wellAssignment.assign(nodeId, attrs, assignmentContext);
       nodeAssignments.set(nodeId, wellTypeId);
     } catch (err) {
       nodeAssignments.set(nodeId, null);
@@ -123,7 +144,7 @@ export function applyDialect(
 
   function rebuildResolvedInteractions(): void {
     resolvedInteractions.length = 0;
-    for (const interactionId of dialect!.activeInteractions) {
+    for (const interactionId of activeDialect.activeInteractions) {
       const interaction = getInteractionById(interactionId);
       if (!interaction) {
         if (options.onError) {
@@ -148,6 +169,10 @@ export function applyDialect(
   }
 
   rebuildResolvedInteractions();
+  emitDebug("cache-rebuild", "Resolved interaction cache rebuilt", {
+    dialectId: activeDialect.id,
+    interactionCount: resolvedInteractions.length,
+  });
 
   // Step 6b: Build resolved per-well-type parameter table
   function resolveWellParams(wellTypeId: string): GWWellTypeDefaults {
@@ -191,6 +216,10 @@ export function applyDialect(
   }
 
   rebuildResolvedWellParams();
+  emitDebug("cache-rebuild", "Resolved well parameter cache rebuilt", {
+    dialectId: activeDialect.id,
+    wellTypeCount: resolvedWellParams.size,
+  });
 
   // Step 7: Initialize __gwellsState
   const nodeStates = new Map<string, GWNodeState>();
@@ -209,7 +238,7 @@ export function applyDialect(
   });
 
   const physicsState: GWPhysicsState = {
-    dialectId: dialect.id,
+    dialectId: activeDialect.id,
     frame: 0,
     nodes: nodeStates,
     config: resolvedConfig,
@@ -257,6 +286,10 @@ export function applyDialect(
   }
 
   rebuildPairIdealDistance();
+  emitDebug("cache-rebuild", "Seeded pair ideal distance cache rebuilt", {
+    dialectId: activeDialect.id,
+    pairCount: pairIdealDistance.size,
+  });
 
   // Step 8: Frame loop
   let running = true;
@@ -456,7 +489,7 @@ export function applyDialect(
   }
 
   function scheduleNextFrame(): void {
-    if (!running || paused || rafId !== null) return;
+    if (!running || paused || runtimeState !== "running" || rafId !== null) return;
     rafId = requestAnimationFrame(tick);
   }
 
@@ -468,8 +501,17 @@ export function applyDialect(
       stepPhysics();
     } catch (err) {
       const stepErr = err instanceof Error ? err : new Error(String(err));
+      runtimeState = "error";
+      running = false;
+      paused = false;
+      cancelScheduledFrame();
+      emitDebug("runtime-error", "Physics step failed; runtime stopped scheduling", {
+        dialectId: activeDialect.id,
+        message: stepErr.message,
+      });
       if (options.onError) options.onError(stepErr);
       else console.warn(`[gwells] physics step failed:`, stepErr);
+      return;
     }
 
     // Apply decoration callback (audio, jitter, etc.)
@@ -499,6 +541,10 @@ export function applyDialect(
         ...partial.wellOverrides,
       };
       rebuildResolvedWellParams();
+      emitDebug("cache-rebuild", "Resolved well parameter cache rebuilt", {
+        dialectId: activeDialect.id,
+        wellTypeCount: resolvedWellParams.size,
+      });
     }
     if (partial.interactionOverrides && Object.keys(partial.interactionOverrides).length > 0) {
       resolvedConfig.interactionOverrides = {
@@ -506,6 +552,10 @@ export function applyDialect(
         ...partial.interactionOverrides,
       };
       rebuildResolvedInteractions();
+      emitDebug("cache-rebuild", "Resolved interaction cache rebuilt", {
+        dialectId: activeDialect.id,
+        interactionCount: resolvedInteractions.length,
+      });
     }
     if (partial.seedParams && Object.keys(partial.seedParams).length > 0) {
       resolvedConfig.seedParams = {
@@ -516,7 +566,19 @@ export function applyDialect(
       if (seedFn) {
         try {
           seedFn.seed({ graph, config: resolvedConfig });
+          for (const [, state] of nodeStates) {
+            state.vx = 0;
+            state.vy = 0;
+            state.lastSpeed = 0;
+          }
+          emitDebug("seed-rerun", "Seed function rerun after seed parameter override", {
+            dialectId: activeDialect.id,
+          });
           rebuildPairIdealDistance();
+          emitDebug("cache-rebuild", "Seeded pair ideal distance cache rebuilt", {
+            dialectId: activeDialect.id,
+            pairCount: pairIdealDistance.size,
+          });
         } catch (err) {
           const seedErr = err instanceof Error ? err : new Error(String(err));
           if (options.onError) options.onError(seedErr);
@@ -588,30 +650,47 @@ export function applyDialect(
     // Persist for next call (and across controllers via the graph)
     graph.setAttribute("__gwellsPinnedSet", currentPinned);
     rebuildPairIdealDistance();
+    emitDebug("cache-rebuild", "Seeded pair ideal distance cache rebuilt after pin update", {
+      dialectId: activeDialect.id,
+      pairCount: pairIdealDistance.size,
+      pinnedCount: currentPinned.size,
+    });
   }
+
+  emitDebug("applied", "GWells dialect applied", {
+    dialectId: activeDialect.id,
+    nodeCount: nodeStates.size,
+  });
 
   // Step 9: Return controller
   const controller: GWController = {
     stop: () => {
-      if (!running) return;
+      if (!running && runtimeState === "stopped") return;
       running = false;
       paused = false;
+      runtimeState = "stopped";
       cancelScheduledFrame();
       if (graph.hasAttribute("__gwellsState")) {
         graph.removeAttribute("__gwellsState");
       }
+      emitDebug("stopped", "GWells runtime stopped", { dialectId: activeDialect.id });
     },
     pause: () => {
-      if (!running || paused) return;
+      if (!running || paused || runtimeState !== "running") return;
       paused = true;
+      runtimeState = "paused";
       cancelScheduledFrame();
+      emitDebug("paused", "GWells runtime paused", { dialectId: activeDialect.id });
     },
     resume: () => {
-      if (!running || !paused) return;
+      if (!running || !paused || runtimeState !== "paused") return;
       paused = false;
+      runtimeState = "running";
       scheduleNextFrame();
+      emitDebug("resumed", "GWells runtime resumed", { dialectId: activeDialect.id });
     },
-    getDialectId: () => dialect.id,
+    getRuntimeState: () => runtimeState,
+    getDialectId: () => activeDialect.id,
     getResolvedConfig: () => resolvedConfig,
     applyConfigOverride,
     applyPins,

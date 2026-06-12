@@ -24,6 +24,8 @@ export type {
   GWNodeState,
   GWPhysicsState,
   GWEngineConfig,
+  GWRuntimeState,
+  GWDebugEvent,
   GWApplyDialectOptions,
   GWController,
 } from "./types";
