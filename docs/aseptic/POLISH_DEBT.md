@@ -13,18 +13,18 @@ Correct but imprecise items: stale docs, naming mismatches, fixture gaps, and sm
 ---
 id: PD-001
 type: polish_debt
-status: open
+status: resolved
 pass_opened: v0.1.11z
-pass_resolved:
+pass_resolved: v0.1.16
 ---
 
-### PD-001 — Canonical GWells docs need lifecycle API refresh
+### ~~PD-001 — Canonical GWells docs need lifecycle API refresh~~
 
-**What it is:** The canonical GWells physics docs predate the recent runtime lifecycle surface and benchmark hook.
+**What it is:** The canonical GWells physics docs had lagged the runtime lifecycle surface, benchmark hook, and controller debug API.
 
 **Where:** `docs/canonical/GWELLS_PHYSICS.md` and any GWells current-state docs that describe the controller API.
 
-**Fix:** Document `GWRuntimeState`, `GWDebugEvent`, `onDebug`, `getRuntimeState()`, and `GWController.step()` after the current source pass is committed. Keep the docs explicit that GWells core remains standalone and does not import app/UI concerns.
+> **Resolved in v0.1.16** — canonical docs now explicitly cover `GWRuntimeState`, `GWDebugEvent`, `onDebug`, `getRuntimeState()`, `GWController.step()`, and the current UI-safe tuning surfaces. GWells core remains standalone and does not import app/UI concerns.
 
 ---
 
@@ -38,7 +38,7 @@ pass_resolved: v0.1.15
 
 ### ~~PD-002 — Benchmark fixture envelope is narrower than the refinement brief~~
 
-> **Resolved in v0.1.15** — commit pending. The benchmark matrix now includes current-like, hierarchy-1000, hierarchy-2000, stress-5000, wide-roots-30, mixed-graph, generic-no-spine, and orphan-heavy fixtures in addition to the original filesystem cases.
+> **Resolved in v0.1.15** — committed as `ea6152d`. The benchmark matrix now includes current-like, hierarchy-1000, hierarchy-2000, stress-5000, wide-roots-30, mixed-graph, generic-no-spine, and orphan-heavy fixtures in addition to the original filesystem cases.
 
 <details>
 <summary>Original entry (preserved for history)</summary>

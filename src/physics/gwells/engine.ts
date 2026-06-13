@@ -12,6 +12,8 @@ import type {
   GWWellTypeDefaults,
   GWWellAssignmentContext,
   GWDebugEvent,
+  GWFrameHandle,
+  GWScheduler,
 } from "./types";
 import { GW_ENGINE_DEFAULTS } from "./types";
 import { getDialectById, getDefaultDialect } from "./dialects";
@@ -24,12 +26,32 @@ function nowMs(): number {
   return typeof performance !== "undefined" ? performance.now() : Date.now();
 }
 
+const noopScheduler: GWScheduler = {
+  request: () => ({ kind: "gwells.noop-frame" }),
+  cancel: () => undefined,
+};
+
+function getDefaultScheduler(): GWScheduler {
+  if (
+    typeof globalThis.requestAnimationFrame === "function" &&
+    typeof globalThis.cancelAnimationFrame === "function"
+  ) {
+    return {
+      request: (callback) => globalThis.requestAnimationFrame(callback),
+      cancel: (handle) => globalThis.cancelAnimationFrame(handle as number),
+    };
+  }
+
+  return noopScheduler;
+}
+
 export function applyDialect(
   graph: Graph,
   dialectId: string,
   options: GWApplyDialectOptions = {}
 ): GWController {
   let runtimeState: GWRuntimeState = "running";
+  const scheduler = options.scheduler ?? getDefaultScheduler();
 
   function emitDebug(
     type: GWDebugEvent["type"],
@@ -304,7 +326,7 @@ export function applyDialect(
   // Step 8: Frame loop
   let running = true;
   let paused = false;
-  let rafId: number | null = null;
+  let scheduledFrame: GWFrameHandle | null = null;
 
   function stepPhysics(): GWStepResult {
     const stepStartMs = nowMs();
@@ -582,19 +604,19 @@ export function applyDialect(
   }
 
   function cancelScheduledFrame(): void {
-    if (rafId !== null) {
-      cancelAnimationFrame(rafId);
-      rafId = null;
+    if (scheduledFrame !== null) {
+      scheduler.cancel(scheduledFrame);
+      scheduledFrame = null;
     }
   }
 
   function scheduleNextFrame(): void {
-    if (!running || paused || runtimeState !== "running" || rafId !== null) return;
-    rafId = requestAnimationFrame(tick);
+    if (!running || paused || runtimeState !== "running" || scheduledFrame !== null) return;
+    scheduledFrame = scheduler.request(tick);
   }
 
-  function tick() {
-    rafId = null;
+  function tick(_timeMs: number) {
+    scheduledFrame = null;
     if (!running || paused) return;
 
     try {

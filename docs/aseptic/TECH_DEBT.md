@@ -21,7 +21,7 @@ severity: HIGH
 
 ### ~~TD-001 — GWells dense-step performance ceiling~~
 
-> **Resolved in v0.1.14** — commit pending. Source-well / target-well indexing removed the all-node interaction scan, and the latest benchmark run brought the 1800-node filesystem fixture down to roughly 1.07 ms average step time with 1.57 ms p95.
+> **Resolved in v0.1.14** — committed as `af81521`. Source-well / target-well indexing removed the all-node interaction scan, and the latest benchmark run brought the 1800-node filesystem fixture down to roughly 1.07 ms average step time with 1.57 ms p95.
 
 <details>
 <summary>Original entry (preserved for history)</summary>
@@ -43,13 +43,18 @@ severity: HIGH
 ---
 id: TD-002
 type: tech_debt
-status: open
+status: resolved
 pass_opened: v0.1.11z
-pass_resolved:
+pass_resolved: v0.1.18
 severity: MEDIUM
 ---
 
-### TD-002 — Scheduler remains browser-shaped
+### ~~TD-002 — Scheduler remains browser-shaped~~
+
+> **Resolved in v0.1.18** — GWells now exposes `GWScheduler` / `GWFrameHandle` and accepts `scheduler` in `GWApplyDialectOptions`. The engine defaults to browser `requestAnimationFrame` only when available, otherwise it uses a no-op scheduler so headless/manual `step()` consumers do not crash. The benchmark harness uses an injected scheduler instead of mutating global RAF.
+
+<details>
+<summary>Original entry (preserved for history)</summary>
 
 **What it is:** `GWController.step()` now provides deterministic manual stepping, but the automatic loop still relies on the existing browser `requestAnimationFrame` path instead of a fully injected scheduler.
 
@@ -60,3 +65,5 @@ severity: MEDIUM
 **Trigger:** Revisit when GWells needs server/headless layout operation, deterministic lifecycle tests beyond the benchmark harness, or a public standalone package contract that cannot assume `requestAnimationFrame`.
 
 **Evidence:** `src/physics/gwells/engine.ts` lifecycle loop and `GWController.step()` implementation; C14/C12A current-state discussion.
+
+</details>

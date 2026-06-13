@@ -74,6 +74,8 @@ const REQUIRED_TYPES = [
   'GWNodeState',
   'GWPhysicsState',
   'GWEngineConfig',
+  'GWFrameHandle',
+  'GWScheduler',
   'GWApplyDialectOptions',
   'GWController',
 ];

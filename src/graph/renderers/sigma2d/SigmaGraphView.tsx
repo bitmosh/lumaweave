@@ -38,7 +38,7 @@ import { applyNodeLabelPolicy,
 import { attachCameraController } from "../../overlay/cameraController";
 import { buildNodeProgramClasses, resolveNodeProgramId } from "../../nodePrograms/nodeProgramRegistry";
 import PlasmaEdgeProgram from "../../edgePrograms/PlasmaEdgeProgram";
-import { applyDialect, type GWController } from "../../../physics/gwells";
+import { applyDialect, type GWController, type GWDebugEvent } from "../../../physics/gwells";
 import { installGwellsProbeGlobal } from "./gwellsProbe";
 import { useSettingsStore } from "../../../control-plane/settings/settings.store";
 import { getGlobalOverride } from "../../../themes/themeOverrideStorage";
@@ -211,6 +211,7 @@ function SigmaGraphViewComponent({
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resolvedTokensRef = useRef(resolvedTokens);
   const cleanupProbeRef = useRef<(() => void) | null>(null);
+  const gwellsDebugEventsRef = useRef<GWDebugEvent[]>([]);
   const hoveredNodeIdRef = useRef<string | null>(null);
   const hoveredEdgeIdRef = useRef<string | null>(null);
   const selectedNodeIdRef = useRef<string | null>(null);
@@ -470,6 +471,22 @@ function SigmaGraphViewComponent({
 
     // Install gwells runtime probe for Playwright testing
     cleanupProbeRef.current = installGwellsProbeGlobal(graph);
+    gwellsDebugEventsRef.current = [];
+    if (typeof window !== "undefined" && (import.meta.env.DEV || (window as any).PLAYWRIGHT)) {
+      (window as any).__lwGetGwellsDebugEvents = () => gwellsDebugEventsRef.current.slice();
+      (window as any).__lwPauseGwellsController = () => {
+        gwellsControllerRef.current?.pause();
+      };
+      (window as any).__lwResumeGwellsController = () => {
+        gwellsControllerRef.current?.resume();
+      };
+      (window as any).__lwStopGwellsController = () => {
+        if (gwellsControllerRef.current) {
+          gwellsControllerRef.current.stop();
+          gwellsControllerRef.current = null;
+        }
+      };
+    }
 
     // Stop any existing gwells controller
     if (gwellsControllerRef.current) {
@@ -482,7 +499,11 @@ function SigmaGraphViewComponent({
     // before gwells starts mutating positions
     sigma.once("afterRender", () => {
       try {
-        gwellsControllerRef.current = applyDialect(graph, dialectId);
+        gwellsControllerRef.current = applyDialect(graph, dialectId, {
+          onDebug: (event) => {
+            gwellsDebugEventsRef.current.push(event);
+          },
+        });
         // Pass C9.1: apply any pins for this dialect
         gwellsControllerRef.current?.applyPins(activePinsRef.current);
       } catch (err) {
@@ -773,6 +794,18 @@ function SigmaGraphViewComponent({
     if ((window as any).__lwReadUniforms) {
       delete (window as any).__lwReadUniforms;
     }
+    if ((window as any).__lwGetGwellsDebugEvents) {
+      delete (window as any).__lwGetGwellsDebugEvents;
+    }
+    if ((window as any).__lwPauseGwellsController) {
+      delete (window as any).__lwPauseGwellsController;
+    }
+    if ((window as any).__lwResumeGwellsController) {
+      delete (window as any).__lwResumeGwellsController;
+    }
+    if ((window as any).__lwStopGwellsController) {
+      delete (window as any).__lwStopGwellsController;
+    }
     // Stop gwells controller
     if (gwellsControllerRef.current) {
       gwellsControllerRef.current.stop();
@@ -802,7 +835,11 @@ useEffect(() => {
   // Apply new dialect
   sigma.once("afterRender", () => {
     try {
-      gwellsControllerRef.current = applyDialect(graph, dialectId);
+      gwellsControllerRef.current = applyDialect(graph, dialectId, {
+        onDebug: (event) => {
+          gwellsDebugEventsRef.current.push(event);
+        },
+      });
       // Pass C9.1: apply pins for the new dialect (unfixes old pins,
       // applies new ones via the graph-level __gwellsPinnedSet)
       gwellsControllerRef.current?.applyPins(activePinsRef.current);

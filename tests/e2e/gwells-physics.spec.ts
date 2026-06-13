@@ -75,6 +75,82 @@ test.describe("Gwells Physics Integration", () => {
     }
   });
 
+
+  test("Gwells pause/resume emits lifecycle events", async ({ page }) => {
+    await page.waitForTimeout(300);
+
+    const before = await page.evaluate(() => {
+      return (window as any).__lwGetGwellsState?.();
+    });
+    expect(before).not.toBeNull();
+
+    await page.evaluate(() => {
+      (window as any).__lwPauseGwellsController?.();
+    });
+
+    const afterPause = await page.evaluate(() => {
+      return (window as any).__lwGetGwellsState?.();
+    });
+    expect(afterPause?.frame).toBeGreaterThanOrEqual(before!.frame);
+
+    await page.waitForTimeout(250);
+
+    const pausedState = await page.evaluate(() => {
+      return (window as any).__lwGetGwellsState?.();
+    });
+    const eventsAfterPause = await page.evaluate(() => {
+      return (window as any).__lwGetGwellsDebugEvents?.() ?? [];
+    });
+
+    expect(eventsAfterPause.some((event: any) => event.type === "paused")).toBe(true);
+    expect(pausedState?.frame).toBe(afterPause?.frame);
+
+    await page.evaluate(() => {
+      (window as any).__lwResumeGwellsController?.();
+    });
+    await page.waitForTimeout(250);
+
+    const resumedState = await page.evaluate(() => {
+      return (window as any).__lwGetGwellsState?.();
+    });
+    const eventsAfterResume = await page.evaluate(() => {
+      return (window as any).__lwGetGwellsDebugEvents?.() ?? [];
+    });
+
+    expect(eventsAfterResume.some((event: any) => event.type === "resumed")).toBe(true);
+    expect(resumedState!.frame).toBeGreaterThan(pausedState!.frame);
+  });
+
+  test("Gwells stop clears runtime state", async ({ page }) => {
+    await page.waitForFunction(() => {
+      const sigma = (window as any).__lwSigma;
+      if (!sigma) return false;
+      return sigma.getGraph().hasAttribute("__gwellsSeedPositions");
+    }, { timeout: 10000 });
+
+    await page.waitForTimeout(300);
+
+    const before = await page.evaluate(() => {
+      return (window as any).__lwGetGwellsState?.();
+    });
+    expect(before).not.toBeNull();
+
+    await page.evaluate(() => {
+      (window as any).__lwStopGwellsController?.();
+    });
+    await page.waitForTimeout(100);
+
+    const after = await page.evaluate(() => {
+      return (window as any).__lwGetGwellsState?.();
+    });
+    const events = await page.evaluate(() => {
+      return (window as any).__lwGetGwellsDebugEvents?.() ?? [];
+    });
+
+    expect(after).toBeNull();
+    expect(events.some((event: any) => event.type === "stopped")).toBe(true);
+  });
+
   test("Gwells dialect switching works", async ({ page }) => {
     // Get initial dialect (should be radial-backbone by default)
     const initialState = await page.evaluate(() => {
@@ -102,6 +178,14 @@ test.describe("Gwells Physics Integration", () => {
     if (updatedState) {
       expect(updatedState.dialectId).toBe("gwells.dialect.parallel-spines");
     }
+
+    const events = await page.evaluate(() => {
+      return (window as any).__lwGetGwellsDebugEvents?.() ?? [];
+    });
+    const stoppedIndex = events.findLastIndex((event: any) => event.type === "stopped" && event.data?.dialectId === "gwells.dialect.radial-backbone");
+    const appliedIndex = events.findLastIndex((event: any) => event.type === "applied" && event.data?.dialectId === "gwells.dialect.parallel-spines");
+    expect(stoppedIndex).toBeGreaterThanOrEqual(0);
+    expect(appliedIndex).toBeGreaterThan(stoppedIndex);
   });
 
   test("Pass C4: HelixTwistSliders render and persist", async ({ page }) => {

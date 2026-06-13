@@ -13,15 +13,20 @@ Where implementation diverged from written implementation briefs, specs, or ADRs
 ---
 id: DV-001
 type: deviation
-status: open
+status: resolved
 pass_opened: v0.1.11z
-pass_resolved:
+pass_resolved: v0.1.17
 severity: LOW
 ---
 
-### DV-001 — Benchmark output writes latest metrics but not a committed baseline
+### ~~DV-001 — Benchmark output writes latest metrics but not a committed baseline~~
 
 **Spec said:** The GWells v0.1.5 refinement brief describes a benchmark-first pass with baseline/latest JSON output so future performance passes can compare against a stable reference.
+
+> **Resolved in v0.1.17** — `scripts/benchmark-gwells.mjs` now keeps `benchmarks/gwells-latest.json` as the per-run measurement snapshot and writes the committed `benchmarks/gwells-baseline.json` only when invoked with `--update-baseline`. This makes baseline refreshes intentional instead of automatic local timing churn.
+
+<details>
+<summary>Original entry (preserved for history)</summary>
 
 **Implementation did:** The current harness writes `benchmarks/gwells-latest.json` and prints a readable summary, but it does not yet create or maintain `benchmarks/gwells-baseline.json`.
 
@@ -30,3 +35,5 @@ severity: LOW
 **Status:** OPEN — implementation or docs should catch up. Either add an intentional baseline workflow or adjust the brief/current-state docs to say latest-only is the C12A artifact and baseline selection happens in C12B.
 
 **Adjacent impact:** Low for app runtime. Medium for future performance work, because regressions cannot be judged mechanically until a baseline policy exists.
+
+</details>

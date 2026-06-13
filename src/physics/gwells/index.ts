@@ -26,6 +26,8 @@ export type {
   GWEngineConfig,
   GWRuntimeState,
   GWDebugEvent,
+  GWFrameHandle,
+  GWScheduler,
   GWStepResult,
   GWStepTimings,
   GWApplyDialectOptions,

@@ -14,7 +14,7 @@ status: canonical
 include_in_self_graph: true
 type: manual
 agent_readable: true
-last_updated: 2026-06-12
+last_updated: 2026-06-13
 ---
 
 # LumaWeave — Gwells Physics
@@ -27,7 +27,7 @@ How LumaWeave positions graph nodes: a custom, registry-driven force-simulation 
 
 ## §1 — What it is
 
-Gwells decides where every node sits. Each node is assigned a **well type** (a force profile — anchor, orbiter, spine member, fan endpoint). **Interactions** describe how well types push and pull each other (attraction, repulsion, spring, alignment), optionally filtered by the graph's structural edges. A **seed function** computes initial positions; a **dialect** bundles a seed function + a well-assignment rule + a set of active interactions into one named layout personality. `applyDialect(graph, dialectId)` wires it all up and returns a controller that runs the simulation each animation frame against the live Graphology graph.
+Gwells decides where every node sits. Each node is assigned a **well type** (a force profile — anchor, orbiter, spine member, fan endpoint). **Interactions** describe how well types push and pull each other (attraction, repulsion, spring, alignment), optionally filtered by the graph's structural edges. A **seed function** computes initial positions; a **dialect** bundles a seed function + a well-assignment rule + a set of active interactions into one named layout personality. `applyDialect(graph, dialectId, options?)` wires it all up and returns a controller that runs the simulation through the configured scheduler against the live Graphology graph. The browser default uses `requestAnimationFrame`; headless consumers can inject a scheduler or call `step()` manually. The controller exposes `stop()`, `pause()`, `resume()`, `step()`, `getRuntimeState()`, `getDialectId()`, `getResolvedConfig()`, `applyConfigOverride()`, and `applyPins()`, and optional `scheduler`, `onDebug`, and `onError` hooks let callers control lifecycle timing and observe cache/runtime events without wiring app concerns into the physics core.
 
 The organizing principle: **directory containment drives layout.** The `contains` edges (parent→child) are the structural spine; interactions use them as filters so a file orbits *its own* directory, not every directory. Metadata edges (tags, links) are weak overlay, not layout drivers.
 
@@ -45,17 +45,19 @@ flowchart TD
     IX["interactions.ts<br/>role→role forces<br/>+ edge filters"] --> D
     SF["seedFunctions.ts<br/>initial positions<br/>(→ seeders/*.ts)"] --> D
     D["dialects.ts<br/>seedFn + wellAssignment<br/>+ activeInteractions"]
-    D --> AD["applyDialect(graph, dialectId)"]
+    D --> AD["applyDialect(graph, dialectId, options?)"]
     AD --> CTRL["GWController<br/>stop/pause/resume<br/>applyConfigOverride/applyPins"]
-    AD --> LOOP["rAF tick → stepPhysics"]
+    AD --> LOOP["scheduler tick → stepPhysics"]
     style D fill:#2a2440,stroke:#96c
     style AD fill:#2a2a3a,stroke:#88a
     style LOOP fill:#1a3025,stroke:#4a8
 ```
 
-**`applyDialect` setup (one-time):** resolve dialect (fall back to default on unknown) → merge engine + dialect config → run the seed function for initial positions → cache each node's well-type assignment → build a `parentOfNode` map from `contains` edges → build the resolved interaction table (applying config overrides). Then it starts the rAF loop and returns the controller.
+**`applyDialect` setup (one-time):** resolve dialect (fall back to default on unknown) → merge engine + dialect config → run the seed function for initial positions → cache each node's well-type assignment → build a `parentOfNode` map from `contains` edges → build the resolved interaction table (applying config overrides). Then it schedules the automatic loop and returns the controller.
 
-**The per-frame loop (`stepPhysics`):** for each non-pinned, non-dragged node, accumulate force from every active interaction whose `source` matches the node's well type, against every node matching the interaction's `target`, subject to the edge filter and range cutoff. Integrate, write new `x`/`y` back to the graph. `GWController.step()` returns a `GWStepResult`, and when benchmark timing is enabled that result includes coarse `GWStepTimings` buckets for reset, seed lookup, force interactions, auxiliary forces, and integration.
+**The per-frame loop (`stepPhysics`):** for each non-pinned, non-dragged node, accumulate force from every active interaction whose `source` matches the node's well type, against every node matching the interaction's `target`, subject to the edge filter and range cutoff. Integrate, write new `x`/`y` back to the graph. `GWController.step()` returns a `GWStepResult`, and when benchmark timing is enabled that result includes coarse `GWStepTimings` buckets for reset, seed lookup, force interactions, auxiliary forces, and integration. `GWRuntimeState` tracks the controller lifecycle (`running`, `paused`, `stopped`, `error`), and `GWDebugEvent` is the typed event stream that `onDebug` receives for cache rebuilds, pause/resume, stop, seed reruns, warnings, and runtime errors.
+
+The current UI-safe control plane feeds into this API through `SigmaGraphView`, which passes active seed overrides and pins into `applyConfigOverride()` / `applyPins()`, while the app shell and settings registry own dialect selection and per-dialect tuning state.
 
 ```mermaid
 flowchart TD
@@ -121,18 +123,19 @@ All four are registry additions — the engine reads the registries; you don't t
 - **3D is seeded already.** Seed functions store a `z` attribute (parallel-spines arranges spines in a ring around a central axis in 3D) for forward-compatibility with a future 3D camera — the data is there ahead of the renderer. This is the seam the eventual three.js/react-three-fiber path consumes.
 - **Live tuning + pinning** are first-class via the controller (`applyConfigOverride`, `applyPins`), enabling interactive layout authoring without restarts — the basis for a future dialect-tuning UI.
 - **Decoration hook** is the seam for audio-reactive and other per-frame visual modulation (deferred features) without entangling them with physics.
-- **Performance note:** `stepPhysics` is benchmarked via `npm run physics:gwells:bench`, which records `benchmarks/gwells-latest.json` and coarse `GWStepTimings` buckets. The current fixture matrix covers filesystem-small/medium/large, current-like-400, hierarchy-1000, hierarchy-2000, stress-5000, wide-roots-30, mixed-graph, generic-no-spine, and disconnected-orphan-heavy. Large graphs still matter, but the dominant hot path is now visible rather than assumed.
+- **Performance note:** `stepPhysics` is benchmarked via `npm run physics:gwells:bench`, which records `benchmarks/gwells-latest.json` and coarse `GWStepTimings` buckets. `npm run physics:gwells:bench -- --update-baseline` intentionally refreshes the committed `benchmarks/gwells-baseline.json`; normal runs leave the baseline unchanged. The current fixture matrix covers filesystem-small/medium/large, current-like-400, hierarchy-1000, hierarchy-2000, stress-5000, wide-roots-30, mixed-graph, generic-no-spine, and disconnected-orphan-heavy.
 
 ## §6 — Where it lives in code
 
 Under `src/physics/gwells/`.
 
 - **Public API:** `index.ts` (re-exports registries, types, `applyDialect`)
-- **Engine:** `engine.ts` (`applyDialect`, `stepPhysics`, the rAF tick, `GWController` with `applyConfigOverride`/`applyPins`)
+- **Engine:** `engine.ts` (`applyDialect`, `stepPhysics`, scheduler-backed automatic ticking, `GWController` with `applyConfigOverride`/`applyPins`)
 - **Registries:** `wellTypes.ts`, `interactions.ts`, `seedFunctions.ts`, `dialects.ts`
 - **Seeders:** `seeders/radialBackbone.ts`, `seeders/parallelSpines.ts`; shared math in `seederHelpers.ts`
-- **Types:** `types.ts` (`GWController`, `GWStepResult`, `GWStepTimings`, `GWDialectConfig`, `GWEngineConfig`, force/well/interaction types, `GW_ENGINE_DEFAULTS`)
+- **Types:** `types.ts` (`GWController`, `GWRuntimeState`, `GWDebugEvent`, `GWFrameHandle`, `GWScheduler`, `GWStepResult`, `GWStepTimings`, `GWDialectConfig`, `GWEngineConfig`, force/well/interaction types, `GW_ENGINE_DEFAULTS`)
 - **Diagnostics:** `gwellsProbe.ts` (dev/Playwright probe), `validate-gwells.mjs` (registry validator)
 - **Renderer seam:** `physicsDialectRegistry.ts` (the Tier-2 dialect registry the control plane reads); consumed by `SigmaGraphView` via `applyDialect`
 - **Benchmarks:** `scripts/benchmark-gwells.mjs` (deterministic fixture runner), `benchmarks/gwells-latest.json` (current measurement snapshot)
 - **Tests:** `tests/e2e/gwells-physics.spec.ts`
+- **Lifecycle probes:** `__lwGetGwellsState`, `__lwGetGwellsDebugEvents`, `__lwPauseGwellsController`, `__lwResumeGwellsController`, `__lwStopGwellsController` exist only in dev / Playwright contexts and are not part of the exported module API.

@@ -339,6 +339,26 @@ export interface GWDebugEvent {
 }
 
 /**
+ * Opaque handle returned by a GWells scheduler.
+ *
+ * Browser RAF returns a number, but headless/test schedulers may use strings or
+ * objects. The engine only stores the handle and passes it back to cancel().
+ */
+export type GWFrameHandle = number | string | object;
+
+/**
+ * Scheduler used by the automatic GWells runtime loop.
+ *
+ * The browser default uses requestAnimationFrame when available. Headless
+ * consumers can inject their own scheduler, or rely on manual controller.step()
+ * calls when no browser scheduler exists.
+ */
+export interface GWScheduler {
+  request: (callback: (timeMs: number) => void) => GWFrameHandle;
+  cancel: (handle: GWFrameHandle) => void;
+}
+
+/**
  * Result from one synchronous physics step.
  */
 export interface GWStepResult {
@@ -383,6 +403,8 @@ export interface GWApplyDialectOptions {
   onError?: (error: Error) => void;
   /** Optional quiet diagnostics for lifecycle/cache events. */
   onDebug?: (event: GWDebugEvent) => void;
+  /** Optional scheduler for the automatic runtime loop. */
+  scheduler?: GWScheduler;
 }
 
 /**

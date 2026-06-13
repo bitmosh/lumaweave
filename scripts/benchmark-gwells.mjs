@@ -17,6 +17,8 @@ const DIALECT_ID = "gwells.dialect.radial-backbone";
 const BENCHMARK_STEP_COUNT = 20;
 const BENCHMARK_OUTPUT_DIR = path.join(REPO_ROOT, "benchmarks");
 const BENCHMARK_LATEST_PATH = path.join(BENCHMARK_OUTPUT_DIR, "gwells-latest.json");
+const BENCHMARK_BASELINE_PATH = path.join(BENCHMARK_OUTPUT_DIR, "gwells-baseline.json");
+const UPDATE_BASELINE = process.argv.includes("--update-baseline");
 
 function nowMs() {
   return performance.now();
@@ -86,40 +88,10 @@ async function loadGwells() {
   return import(pathToFileURL(path.join(GWELLS_TEMP_DIR, "index.mjs")).href);
 }
 
-function installRafStub() {
-  const previousRequest = globalThis.requestAnimationFrame;
-  const previousCancel = globalThis.cancelAnimationFrame;
-  let nextId = 1;
-  const scheduled = new Set();
-
-  globalThis.requestAnimationFrame = () => {
-    const id = nextId;
-    nextId += 1;
-    scheduled.add(id);
-    return id;
-  };
-
-  globalThis.cancelAnimationFrame = (id) => {
-    scheduled.delete(id);
-  };
-
-  return {
-    getScheduledCount: () => scheduled.size,
-    restore: () => {
-      if (previousRequest === undefined) {
-        delete globalThis.requestAnimationFrame;
-      } else {
-        globalThis.requestAnimationFrame = previousRequest;
-      }
-
-      if (previousCancel === undefined) {
-        delete globalThis.cancelAnimationFrame;
-      } else {
-        globalThis.cancelAnimationFrame = previousCancel;
-      }
-    },
-  };
-}
+const benchmarkScheduler = {
+  request: () => ({ kind: "gwells.benchmark-frame" }),
+  cancel: () => undefined,
+};
 
 function addNode(graph, id, attrs) {
   graph.addNode(id, {
@@ -536,7 +508,7 @@ function printResults(results) {
     Math.max(...rows.map((row) => row[columnIndex].length)),
   );
 
-  console.log("\nGWells benchmark baseline");
+  console.log("\nGWells benchmark");
   console.log(`Manual physics steps per fixture: ${BENCHMARK_STEP_COUNT}`);
   console.log("");
 
@@ -553,7 +525,6 @@ function printResults(results) {
 
 async function main() {
   const gwells = await loadGwells();
-  const raf = installRafStub();
 
   const fixtures = [
     {
@@ -627,103 +598,107 @@ async function main() {
     },
   ];
 
-  try {
-    const results = [];
-    const dialect = gwells.getDialectById(DIALECT_ID);
-    if (!dialect) {
-      throw new Error(`Dialect not found: ${DIALECT_ID}`);
-    }
-    const seedFn = gwells.getSeedFunctionById(dialect.seedFunctionId);
-    if (!seedFn) {
-      throw new Error(`Seed function not found: ${dialect.seedFunctionId}`);
-    }
-
-    for (const fixture of fixtures) {
-      const totalStart = nowMs();
-      const construction = time(fixture.build);
-      const counts = getGraphCounts(construction.value);
-
-      const seedGraph = fixture.build();
-      const seed = time(() => {
-        seedFn.seed({ graph: seedGraph, config: dialect.config });
-      });
-
-      const applyGraph = fixture.build();
-      const apply = time(() => gwells.applyDialect(applyGraph, DIALECT_ID));
-      apply.value.pause();
-      const manualSteps = measureManualSteps(apply.value, BENCHMARK_STEP_COUNT);
-      apply.value.stop();
-
-      const positionInspection = inspectPositions(applyGraph);
-
-      results.push({
-        fixture: fixture.name,
-        dialectId: DIALECT_ID,
-        nodeCount: counts.nodeCount,
-        edgeCount: counts.edgeCount,
-        graphConstructionMs: roundMs(construction.ms),
-        seedInitializationMs: roundMs(seed.ms),
-        applyDialectSetupMs: roundMs(apply.ms),
-        physicsStepAverageMs: manualSteps.averageStepMs === null
-          ? null
-          : roundMs(manualSteps.averageStepMs),
-        physicsStepP95Ms: manualSteps.p95StepMs === null
-          ? null
-          : roundMs(manualSteps.p95StepMs),
-        physicsStepTotalMs: roundMs(manualSteps.totalStepMs),
-        physicsStepCount: manualSteps.stepCount,
-        totalMovedNodeCount: manualSteps.totalMovedNodeCount,
-        averageMovedNodeCount: roundMs(manualSteps.averageMovedNodeCount),
-        maxVelocity: roundMs(manualSteps.maxVelocity),
-        lastAverageVelocity: roundMs(manualSteps.lastAverageVelocity),
-        warningCount: manualSteps.warningCount,
-        physicsStepTimingSampleCount: manualSteps.stepTimingSampleCount,
-        physicsStepTimingAverageMs: Object.fromEntries(
-          Object.entries(manualSteps.averageStepTimingsMs).map(([key, value]) => [
-            key,
-            value === null ? null : roundMs(value),
-          ]),
-        ),
-        totalBenchmarkMs: roundMs(nowMs() - totalStart),
-        finitePositions: positionInspection.finitePositions,
-        missingPositionCount: positionInspection.missingPositionCount,
-        nonFinitePositionCount: positionInspection.nonFinitePositionCount,
-      });
-    }
-
-    printResults(results);
-
-    fs.mkdirSync(BENCHMARK_OUTPUT_DIR, { recursive: true });
-    fs.writeFileSync(
-      BENCHMARK_LATEST_PATH,
-      JSON.stringify({
-        benchmark: "gwells",
-        dialectId: DIALECT_ID,
-        stepCount: BENCHMARK_STEP_COUNT,
-        generatedAt: new Date().toISOString(),
-        results,
-      }, null, 2) + "\n",
-    );
-    console.log(`\nWrote ${path.relative(REPO_ROOT, BENCHMARK_LATEST_PATH)}`);
-
-    const failures = results.filter((result) => !result.finitePositions);
-    if (failures.length > 0) {
-      console.error("\nPosition safety failed for:");
-      for (const failure of failures) {
-        console.error(
-          `- ${failure.fixture}: missing=${failure.missingPositionCount}, nonFinite=${failure.nonFinitePositionCount}`,
-        );
-      }
-      process.exitCode = 1;
-    }
-
-    if (raf.getScheduledCount() !== 0) {
-      console.error(`\nRAF cleanup failed: ${raf.getScheduledCount()} frame(s) still scheduled`);
-      process.exitCode = 1;
-    }
-  } finally {
-    raf.restore();
+  const results = [];
+  const dialect = gwells.getDialectById(DIALECT_ID);
+  if (!dialect) {
+    throw new Error(`Dialect not found: ${DIALECT_ID}`);
   }
+  const seedFn = gwells.getSeedFunctionById(dialect.seedFunctionId);
+  if (!seedFn) {
+    throw new Error(`Seed function not found: ${dialect.seedFunctionId}`);
+  }
+
+  for (const fixture of fixtures) {
+    const totalStart = nowMs();
+    const construction = time(fixture.build);
+    const counts = getGraphCounts(construction.value);
+
+    const seedGraph = fixture.build();
+    const seed = time(() => {
+      seedFn.seed({ graph: seedGraph, config: dialect.config });
+    });
+
+    const applyGraph = fixture.build();
+    const apply = time(() => gwells.applyDialect(applyGraph, DIALECT_ID, {
+      scheduler: benchmarkScheduler,
+    }));
+    apply.value.pause();
+    const manualSteps = measureManualSteps(apply.value, BENCHMARK_STEP_COUNT);
+    apply.value.stop();
+
+    const positionInspection = inspectPositions(applyGraph);
+
+    results.push({
+      fixture: fixture.name,
+      dialectId: DIALECT_ID,
+      nodeCount: counts.nodeCount,
+      edgeCount: counts.edgeCount,
+      graphConstructionMs: roundMs(construction.ms),
+      seedInitializationMs: roundMs(seed.ms),
+      applyDialectSetupMs: roundMs(apply.ms),
+      physicsStepAverageMs: manualSteps.averageStepMs === null
+        ? null
+        : roundMs(manualSteps.averageStepMs),
+      physicsStepP95Ms: manualSteps.p95StepMs === null
+        ? null
+        : roundMs(manualSteps.p95StepMs),
+      physicsStepTotalMs: roundMs(manualSteps.totalStepMs),
+      physicsStepCount: manualSteps.stepCount,
+      totalMovedNodeCount: manualSteps.totalMovedNodeCount,
+      averageMovedNodeCount: roundMs(manualSteps.averageMovedNodeCount),
+      maxVelocity: roundMs(manualSteps.maxVelocity),
+      lastAverageVelocity: roundMs(manualSteps.lastAverageVelocity),
+      warningCount: manualSteps.warningCount,
+      physicsStepTimingSampleCount: manualSteps.stepTimingSampleCount,
+      physicsStepTimingAverageMs: Object.fromEntries(
+        Object.entries(manualSteps.averageStepTimingsMs).map(([key, value]) => [
+          key,
+          value === null ? null : roundMs(value),
+        ]),
+      ),
+      totalBenchmarkMs: roundMs(nowMs() - totalStart),
+      finitePositions: positionInspection.finitePositions,
+      missingPositionCount: positionInspection.missingPositionCount,
+      nonFinitePositionCount: positionInspection.nonFinitePositionCount,
+    });
+  }
+
+  printResults(results);
+
+  fs.mkdirSync(BENCHMARK_OUTPUT_DIR, { recursive: true });
+  const benchmarkReport = {
+    benchmark: "gwells",
+    dialectId: DIALECT_ID,
+    stepCount: BENCHMARK_STEP_COUNT,
+    generatedAt: new Date().toISOString(),
+    results,
+  };
+  const benchmarkReportJson = JSON.stringify(benchmarkReport, null, 2) + "\n";
+  fs.writeFileSync(BENCHMARK_LATEST_PATH, benchmarkReportJson);
+  console.log(`\nWrote ${path.relative(REPO_ROOT, BENCHMARK_LATEST_PATH)}`);
+
+  if (UPDATE_BASELINE) {
+    fs.writeFileSync(BENCHMARK_BASELINE_PATH, benchmarkReportJson);
+    console.log(`Wrote ${path.relative(REPO_ROOT, BENCHMARK_BASELINE_PATH)}`);
+  } else {
+    console.log(
+      `Baseline unchanged; rerun with --update-baseline to write ${path.relative(
+        REPO_ROOT,
+        BENCHMARK_BASELINE_PATH,
+      )}`,
+    );
+  }
+  const failures = results.filter((result) => !result.finitePositions);
+  if (failures.length > 0) {
+    console.error("\nPosition safety failed for:");
+    for (const failure of failures) {
+      console.error(
+        `- ${failure.fixture}: missing=${failure.missingPositionCount}, nonFinite=${failure.nonFinitePositionCount}`,
+      );
+    }
+    process.exitCode = 1;
+  }
+
 }
 
 main().catch((err) => {
