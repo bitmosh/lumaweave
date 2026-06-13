@@ -14,7 +14,7 @@ status: canonical
 include_in_self_graph: true
 type: manual
 agent_readable: true
-last_updated: 2026-05-31
+last_updated: 2026-06-12
 ---
 
 # LumaWeave — Gwells Physics
@@ -55,7 +55,7 @@ flowchart TD
 
 **`applyDialect` setup (one-time):** resolve dialect (fall back to default on unknown) → merge engine + dialect config → run the seed function for initial positions → cache each node's well-type assignment → build a `parentOfNode` map from `contains` edges → build the resolved interaction table (applying config overrides). Then it starts the rAF loop and returns the controller.
 
-**The per-frame loop (`stepPhysics`):** for each non-pinned, non-dragged node, accumulate force from every active interaction whose `source` matches the node's well type, against every node matching the interaction's `target`, subject to the edge filter and range cutoff. Integrate, write new `x`/`y` back to the graph.
+**The per-frame loop (`stepPhysics`):** for each non-pinned, non-dragged node, accumulate force from every active interaction whose `source` matches the node's well type, against every node matching the interaction's `target`, subject to the edge filter and range cutoff. Integrate, write new `x`/`y` back to the graph. `GWController.step()` returns a `GWStepResult`, and when benchmark timing is enabled that result includes coarse `GWStepTimings` buckets for reset, seed lookup, force interactions, auxiliary forces, and integration.
 
 ```mermaid
 flowchart TD
@@ -121,7 +121,7 @@ All four are registry additions — the engine reads the registries; you don't t
 - **3D is seeded already.** Seed functions store a `z` attribute (parallel-spines arranges spines in a ring around a central axis in 3D) for forward-compatibility with a future 3D camera — the data is there ahead of the renderer. This is the seam the eventual three.js/react-three-fiber path consumes.
 - **Live tuning + pinning** are first-class via the controller (`applyConfigOverride`, `applyPins`), enabling interactive layout authoring without restarts — the basis for a future dialect-tuning UI.
 - **Decoration hook** is the seam for audio-reactive and other per-frame visual modulation (deferred features) without entangling them with physics.
-- **Performance note:** `stepPhysics` is currently O(nodes × interactions × candidate-targets) — pairwise within matching well types. It's fine at self-graph scale; large graphs are where a spatial index / Barnes-Hut-style optimization would be the growth investment.
+- **Performance note:** `stepPhysics` is benchmarked via `npm run physics:gwells:bench`, which records `benchmarks/gwells-latest.json` and coarse `GWStepTimings` buckets. The current fixture matrix covers filesystem-small/medium/large, current-like-400, hierarchy-1000, hierarchy-2000, stress-5000, wide-roots-30, mixed-graph, generic-no-spine, and disconnected-orphan-heavy. Large graphs still matter, but the dominant hot path is now visible rather than assumed.
 
 ## §6 — Where it lives in code
 
@@ -131,7 +131,8 @@ Under `src/physics/gwells/`.
 - **Engine:** `engine.ts` (`applyDialect`, `stepPhysics`, the rAF tick, `GWController` with `applyConfigOverride`/`applyPins`)
 - **Registries:** `wellTypes.ts`, `interactions.ts`, `seedFunctions.ts`, `dialects.ts`
 - **Seeders:** `seeders/radialBackbone.ts`, `seeders/parallelSpines.ts`; shared math in `seederHelpers.ts`
-- **Types:** `types.ts` (`GWController`, `GWDialectConfig`, `GWEngineConfig`, force/well/interaction types, `GW_ENGINE_DEFAULTS`)
+- **Types:** `types.ts` (`GWController`, `GWStepResult`, `GWStepTimings`, `GWDialectConfig`, `GWEngineConfig`, force/well/interaction types, `GW_ENGINE_DEFAULTS`)
 - **Diagnostics:** `gwellsProbe.ts` (dev/Playwright probe), `validate-gwells.mjs` (registry validator)
 - **Renderer seam:** `physicsDialectRegistry.ts` (the Tier-2 dialect registry the control plane reads); consumed by `SigmaGraphView` via `applyDialect`
+- **Benchmarks:** `scripts/benchmark-gwells.mjs` (deterministic fixture runner), `benchmarks/gwells-latest.json` (current measurement snapshot)
 - **Tests:** `tests/e2e/gwells-physics.spec.ts`

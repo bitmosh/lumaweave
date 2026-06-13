@@ -27,6 +27,7 @@ export type {
   GWRuntimeState,
   GWDebugEvent,
   GWStepResult,
+  GWStepTimings,
   GWApplyDialectOptions,
   GWController,
 } from "./types";

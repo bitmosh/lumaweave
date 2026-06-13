@@ -347,6 +347,22 @@ export interface GWStepResult {
   maxVelocity: number;
   averageVelocity: number;
   warnings: string[];
+  timings?: GWStepTimings;
+}
+
+/**
+ * Coarse runtime attribution for one synchronous physics step.
+ *
+ * Values are milliseconds. These timings are intended for benchmark/debug
+ * attribution, not stable performance assertions.
+ */
+export interface GWStepTimings {
+  totalMs: number;
+  resetMs: number;
+  seedLookupMs: number;
+  forceInteractionsMs: number;
+  auxForcesMs: number;
+  integrationMs: number;
 }
 
 /**

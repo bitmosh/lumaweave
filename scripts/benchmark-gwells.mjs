@@ -249,6 +249,146 @@ function buildDisconnectedOrphanHeavy(label, targetNodes) {
   return graph;
 }
 
+function buildHierarchicalSpineGraph(label, targetNodes, options = {}) {
+  const spineCount = options.spineCount ?? 4;
+  const branchFactor = options.branchFactor ?? 2;
+  const fileBurst = options.fileBurst ?? 3;
+  const maxDepth = options.maxDepth ?? 3;
+  const graph = new Graph({ type: "directed", multi: false });
+  const queue = [];
+
+  const fileKinds = ["file", "doc", "code", "config", "fixture"];
+  let fileIndex = 0;
+  let dirIndex = 0;
+
+  for (let spineIndex = 0; spineIndex < spineCount; spineIndex += 1) {
+    const spineId = label + ".spine." + spineIndex;
+    addNode(graph, spineId, {
+      nodeType: "spine",
+      raw: { type: "spine" },
+      size: 18,
+    });
+
+    const rootDirId = label + ".root." + spineIndex;
+    addNode(graph, rootDirId, {
+      nodeType: "directory",
+      raw: { type: "directory" },
+      size: 14,
+    });
+    addDirectedEdge(graph, spineId, rootDirId, {
+      relationship: "contains",
+      raw: { type: "contains" },
+    });
+    queue.push({ nodeId: rootDirId, depth: 0 });
+  }
+
+  while (queue.length > 0 && graph.order < targetNodes) {
+    const current = queue.shift();
+    if (!current) continue;
+    const { nodeId, depth } = current;
+
+    const remaining = targetNodes - graph.order;
+    if (remaining <= 0) break;
+
+    const childDirBudget = depth < maxDepth ? Math.min(branchFactor, Math.max(0, remaining - 1)) : 0;
+    for (let index = 0; index < childDirBudget && graph.order < targetNodes; index += 1) {
+      const childDirId = label + ".dir." + dirIndex;
+      dirIndex += 1;
+      addNode(graph, childDirId, {
+        nodeType: "directory",
+        raw: { type: "directory" },
+        size: 12 + (depth % 3),
+      });
+      addDirectedEdge(graph, nodeId, childDirId, {
+        relationship: "contains",
+        raw: { type: "contains" },
+      });
+      queue.push({ nodeId: childDirId, depth: depth + 1 });
+    }
+
+    const fileBudget = Math.min(fileBurst, targetNodes - graph.order);
+    for (let index = 0; index < fileBudget && graph.order < targetNodes; index += 1) {
+      const fileKind = fileKinds[fileIndex % fileKinds.length];
+      const fileId = label + ".file." + fileIndex;
+      fileIndex += 1;
+      addNode(graph, fileId, {
+        nodeType: fileKind,
+        raw: { type: fileKind },
+        rawSize: 1 + (fileIndex % 17),
+        size: 8 + (fileIndex % 5),
+      });
+      addDirectedEdge(graph, nodeId, fileId, {
+        relationship: "contains",
+        raw: { type: "contains" },
+      });
+    }
+  }
+
+  while (graph.order < targetNodes) {
+    const orphanId = label + ".orphan." + graph.order;
+    addNode(graph, orphanId, {
+      raw: { type: "entity" },
+      size: 7,
+    });
+  }
+
+  return graph;
+}
+
+function buildMixedGraph(label, targetNodes) {
+  const graph = buildHierarchicalSpineGraph(label + ".core", Math.max(1, Math.floor(targetNodes * 0.6)), {
+    spineCount: 4,
+    branchFactor: 2,
+    fileBurst: 3,
+    maxDepth: 2,
+  });
+
+  const hubId = label + ".hub";
+  addNode(graph, hubId, {
+    raw: { type: "hubish" },
+    size: 20,
+  });
+
+  let genericIndex = 0;
+  let previousId = hubId;
+  while (graph.order < targetNodes) {
+    const genericId = label + ".generic." + genericIndex;
+    const kind = genericIndex % 5 === 0 ? "note" : genericIndex % 5 === 1 ? "tag" : "entity";
+    addNode(graph, genericId, {
+      raw: { type: kind },
+      size: 8 + (genericIndex % 4),
+    });
+
+    if (genericIndex % 2 === 0) {
+      addDirectedEdge(graph, previousId, genericId, {
+        relationship: genericIndex % 4 === 0 ? "references" : "depends-on",
+        raw: { type: genericIndex % 4 === 0 ? "references" : "depends-on" },
+      });
+      previousId = genericId;
+    } else {
+      addDirectedEdge(graph, hubId, genericId, {
+        relationship: "references",
+        raw: { type: "references" },
+      });
+    }
+
+    if (genericIndex % 7 === 0 && graph.order < targetNodes) {
+      const strayId = label + ".stray." + genericIndex;
+      addNode(graph, strayId, {
+        raw: { type: "entity" },
+        size: 7,
+      });
+      addDirectedEdge(graph, genericId, strayId, {
+        relationship: "links",
+        raw: { type: "links" },
+      });
+    }
+
+    genericIndex += 1;
+  }
+
+  return graph;
+}
 function inspectPositions(graph) {
   let missing = 0;
   let nonFinite = 0;
@@ -427,6 +567,55 @@ async function main() {
     {
       name: "filesystem-large",
       build: () => buildFilesystemLike("fs-large", 1800),
+    },
+    {
+      name: "current-like-400",
+      build: () => buildHierarchicalSpineGraph("current-like", 400, {
+        spineCount: 4,
+        branchFactor: 2,
+        fileBurst: 3,
+        maxDepth: 3,
+      }),
+    },
+    {
+      name: "hierarchy-1000",
+      build: () => buildHierarchicalSpineGraph("hierarchy-1000", 1000, {
+        spineCount: 6,
+        branchFactor: 2,
+        fileBurst: 4,
+        maxDepth: 4,
+      }),
+    },
+    {
+      name: "hierarchy-2000",
+      build: () => buildHierarchicalSpineGraph("hierarchy-2000", 2000, {
+        spineCount: 8,
+        branchFactor: 2,
+        fileBurst: 4,
+        maxDepth: 4,
+      }),
+    },
+    {
+      name: "stress-5000",
+      build: () => buildHierarchicalSpineGraph("stress-5000", 5000, {
+        spineCount: 12,
+        branchFactor: 3,
+        fileBurst: 4,
+        maxDepth: 5,
+      }),
+    },
+    {
+      name: "wide-roots-30",
+      build: () => buildHierarchicalSpineGraph("wide-roots-30", 480, {
+        spineCount: 30,
+        branchFactor: 1,
+        fileBurst: 2,
+        maxDepth: 2,
+      }),
+    },
+    {
+      name: "mixed-graph",
+      build: () => buildMixedGraph("mixed-graph", 1000),
     },
     {
       name: "generic-no-spine",
