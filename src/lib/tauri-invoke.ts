@@ -27,6 +27,49 @@ export async function invokeReadVaultFile(
   return invoke<string>("read_vault_file", { root, relativePath });
 }
 
+// ---------------------------------------------------------------------------
+// R-LW-005 — graph lifecycle event emission
+// All functions are fire-and-forget: callers .catch(() => {}) silently.
+// ---------------------------------------------------------------------------
+
+export async function invokeEmitSourceLoaded(
+  adapterId: string,
+  sourceKey: string,
+  nodeCount: number,
+  edgeCount: number,
+): Promise<void> {
+  return invoke("lw_emit_source_loaded", { adapterId, sourceKey, nodeCount, edgeCount });
+}
+
+export async function invokeEmitSourceLoadFailed(
+  adapterId: string,
+  sourceKey: string,
+  error: string,
+): Promise<void> {
+  return invoke("lw_emit_source_load_failed", { adapterId, sourceKey, error });
+}
+
+export async function invokeEmitSourceSwitched(
+  fromAdapterId: string,
+  toAdapterId: string,
+): Promise<void> {
+  return invoke("lw_emit_source_switched", { fromAdapterId, toAdapterId });
+}
+
+export async function invokeEmitThemeChanged(
+  fromThemeId: string,
+  toThemeId: string,
+): Promise<void> {
+  return invoke("lw_emit_theme_changed", { fromThemeId, toThemeId });
+}
+
+export async function invokeEmitGraphLayoutSettled(
+  nodeCount: number,
+  durationMs: number,
+): Promise<void> {
+  return invoke("lw_emit_graph_layout_settled", { nodeCount, durationMs });
+}
+
 export async function invoke<T>(cmd: string, args?: Record<string, unknown>): Promise<T> {
   if (
     (import.meta.env.DEV || (window as any).PLAYWRIGHT) &&

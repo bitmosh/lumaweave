@@ -48,6 +48,7 @@ import { StatusBar } from "../control-plane/StatusBar";
 import { useCrossfadeAppTokens } from "../themes/themeCrossfade";
 import { useThemeInspectorStore } from "../themes/themeInspectorStore";
 import { exportGlobalThemeOverrideBundle } from "../themes/themeOverrideStorage";
+import { useLwThemeEventEmitter } from "./useLwThemeEventEmitter";
 
 const EMPTY_OVERRIDES: Record<string, unknown> = {};
 const EMPTY_PINS: Record<string, { x: number; y: number; z?: number }> = {};
@@ -57,6 +58,7 @@ export function AppShell() {
   const settings = useSettingsStore((state) => state.settings);
   const setSetting = useSettingsStore((state) => state.setSetting);
   const { summary, error: summaryError } = useGraphSourceSummary();
+  useLwThemeEventEmitter();
 
   // Register spokes and expose app state for Playwright tests (dev mode only)
   useEffect(() => {

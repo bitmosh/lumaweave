@@ -1,0 +1,30 @@
+/**
+ * Portfolio Tokens
+ *
+ * Shared CSS custom property vocabulary for the Lattica portfolio.
+ * All cross-project tile renderers and Lattica module UI reference
+ * --portfolio-* tokens rather than --lw-* internal tokens directly.
+ *
+ * Mapping: --portfolio-* → --lw-* (with hex fallbacks that cover all themes).
+ * Source of truth: LumaWeave is the composition host (ADR-009 / ADR-L-001).
+ *
+ * Token groups:
+ *   Structural (6)  — bg, surface, text, accent, border
+ *   Semantic (4)    — danger, success, warning, info
+ */
+
+:root {
+  /* ── Structural ─────────────────────────────────────────────────── */
+  --portfolio-bg:             var(--lw-app-background,   #0f1420);
+  --portfolio-surface:        var(--lw-panel-background, rgba(15, 23, 42, 0.72));
+  --portfolio-text-primary:   var(--lw-text-primary,     #e9e4f5);
+  --portfolio-text-secondary: var(--lw-text-muted,       #a28fc0);
+  --portfolio-accent:         var(--lw-accent,           #ffb347);
+  --portfolio-border:         var(--lw-panel-border,     rgba(255, 179, 71, 0.18));
+
+  /* ── Semantic status ────────────────────────────────────────────── */
+  --portfolio-color-danger:   var(--lw-color-danger,  #e05c5c);
+  --portfolio-color-success:  var(--lw-color-success, #5eba7d);
+  --portfolio-color-warning:  var(--lw-color-warning, #e0a800);
+  --portfolio-color-info:     var(--lw-color-info,    #4da6ff);
+}

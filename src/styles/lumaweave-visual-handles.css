@@ -51,6 +51,12 @@
   /* Glow effects */
   --lw-visual-glow-color: rgba(34, 211, 238, 0.4);
   --lw-visual-glow-spread: 8px;
+
+  /* Semantic status colors — base defaults; themes may override via --lw-color-* */
+  --lw-color-danger:  #e05c5c;
+  --lw-color-success: #5eba7d;
+  --lw-color-warning: #e0a800;
+  --lw-color-info:    #4da6ff;
 }
 
 /* ========================================

@@ -272,6 +272,10 @@ const tileSectionRegistryImpl: TileSectionRegistry = {
       errors.push("collapsible must be a boolean");
     }
 
+    if (e.kind === "webview" && (typeof e.webviewUrl !== "string" || !e.webviewUrl)) {
+      errors.push(`id "${e.id}": kind "webview" requires a non-empty webviewUrl`);
+    }
+
     return {
       valid: errors.length === 0,
       errors: errors.length > 0 ? errors : undefined,

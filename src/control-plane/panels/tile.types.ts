@@ -33,30 +33,37 @@ export interface TileAnchor {
 }
 
 /**
- * Tile section registry entry
- * Defines a section that can be torn off into a floating tile
+ * Tile section registry entry.
+ * Defines a section that can be torn off into a floating tile.
+ *
+ * Cross-project registration contract (ADR-L-002 / ADR-009):
+ *   @required  id, label, category, defaultWidth, defaultHeight, collapsible,
+ *              defaultAnchor, defaultVisible, defaultExpanded
+ *   @lwInternal  content, contentTestId, sourceTestId, iconGlyph, requiresDevMode
+ *               (LumaWeave-internal; external registrations may omit these)
  */
 export interface TileSectionEntry {
-  /** Unique identifier for the section */
+  /** @required Unique identifier for the section. */
   id: string;
-  /** Display label for the section */
+  /** @required Display label for the section. */
   label: string;
-  /** Category for grouping/filtering */
+  /** @required Category for grouping/filtering. */
   category: "left-panel" | "control-dock" | "right-panel";
-  /** Default width when torn off */
+  /** @required Default width (px) when floating. */
   defaultWidth: number;
-  /** Default height when torn off */
+  /** @required Default height (px) when floating. */
   defaultHeight: number;
-  /** Whether the section is collapsible */
+  /** @required Whether the tile body can be collapsed to its title bar. */
   collapsible: boolean;
   /**
-   * Render function for the tile body. Called by FloatingTile
+   * @lwInternal Render function for the tile body. Called by FloatingTile
    * when this section is tiled out. v86c-B onward.
+   * Omit for Mode B webview tiles (kind: "webview") — webviewUrl drives rendering.
    */
   content?: () => ReactNode;
 
   /**
-   * Testid that must be visible inside the tile body when this
+   * @lwInternal Testid that must be visible inside the tile body when this
    * section's content() is called. The regression test in
    * v86c-tile-system.spec.ts asserts this testid is visible
    * after tear-off. REQUIRED to be set when content is wired.
@@ -65,23 +72,35 @@ export interface TileSectionEntry {
   contentTestId?: string;
 
   /**
-   * Testid of the source slot's outer container in the docked
+   * @lwInternal Testid of the source slot's outer container in the docked
    * (not-tiled-out) state. Used by tests to locate the tear-off
    * handle and verify the slot's tiled-out indicator state.
    * Should be set for all entries in this registry.
    */
   sourceTestId?: string;
 
-  /** Where the tile sits when "returned to anchor". */
+  /** @required Where the tile sits when "returned to anchor". */
   defaultAnchor: TileAnchor;
-  /** Whether the tile appears on first app load. Toggleable via Tiles popover. */
+  /** @required Whether the tile appears on first app load. Toggleable via Tiles popover. */
   defaultVisible: boolean;
-  /** Whether the tile body is expanded (vs. collapsed to title bar) on first load. */
+  /** @required Whether the tile body is expanded (vs. collapsed to title bar) on first load. */
   defaultExpanded: boolean;
-  /** Glyph shown in the Tiles popover checkbox list. */
+  /** @lwInternal Glyph shown in the Tiles popover checkbox list. */
   iconGlyph?: string;
-  /** If true, tile only appears in the Tiles popover when developer.devMode is enabled. */
+  /** @lwInternal If true, tile only appears in the Tiles popover when developer.devMode is enabled. */
   requiresDevMode?: boolean;
+  /**
+   * Tile hosting mode (ADR-009 / ADR-L-002).
+   *   "component" — native React component tile (Mode A). Default when absent.
+   *   "webview"   — Tauri child webview embedding (Mode B). Requires webviewUrl.
+   */
+  kind?: "component" | "webview";
+  /**
+   * Mode B only — URL of the Tauri child webview to embed.
+   * Required when kind === "webview"; must be omitted for kind === "component".
+   * Validated at register-time by tileSectionRegistry.validateShape.
+   */
+  webviewUrl?: string;
 }
 
 /**

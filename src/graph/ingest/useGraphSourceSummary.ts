@@ -1,5 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSettingsStore } from "../../control-plane/settings/settings.store";
+import {
+  invokeEmitSourceLoadFailed,
+  invokeEmitSourceLoaded,
+  invokeEmitSourceSwitched,
+} from "../../lib/tauri-invoke";
 import type { GraphSourceSummary } from "../schema/graph.types";
 import { loadSource } from "./loadSource";
 
@@ -26,8 +31,17 @@ export function useGraphSourceSummary() {
   const activeAdapterId = useSettingsStore((s) => s.settings.sources.active);
   const refreshToken = useSettingsStore((s) => s.settings.sources.refreshToken);
 
+  const prevAdapterIdRef = useRef<string | null>(null);
+
   useEffect(() => {
     let isMounted = true;
+
+    const prevAdapterId = prevAdapterIdRef.current;
+    prevAdapterIdRef.current = activeAdapterId;
+
+    if (prevAdapterId !== null && prevAdapterId !== activeAdapterId && activeAdapterId) {
+      invokeEmitSourceSwitched(prevAdapterId, activeAdapterId).catch(() => {});
+    }
 
     async function loadSummary() {
       setSummary((prev) => ({ ...prev, status: "loading" }));
@@ -39,6 +53,18 @@ export function useGraphSourceSummary() {
           setSummary(result);
           if (result.status === "error") {
             setError(result.error || "Unknown error");
+            invokeEmitSourceLoadFailed(
+              activeAdapterId ?? "",
+              result.sourcePath,
+              result.error ?? "unknown error",
+            ).catch(() => {});
+          } else {
+            invokeEmitSourceLoaded(
+              activeAdapterId ?? "",
+              result.sourcePath,
+              result.nodeCount,
+              result.edgeCount,
+            ).catch(() => {});
           }
         }
       } catch (err) {
@@ -51,6 +77,11 @@ export function useGraphSourceSummary() {
             status: "error",
             error: errorMessage,
           }));
+          invokeEmitSourceLoadFailed(
+            activeAdapterId ?? "",
+            "",
+            errorMessage,
+          ).catch(() => {});
         }
       }
     }
