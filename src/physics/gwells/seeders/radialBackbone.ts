@@ -209,7 +209,7 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
   const useHubRing = shouldUseHubRing(sortedRoots.length, params.spineCount);
   const hubRingRadius = computeHubRingRadius(
     sortedRoots.length,
-    Math.max(params.spineSpacing, params.directoryOffset),
+    params.spineSpacing / 2,
   );
   const rootIndexById = new Map(sortedRoots.map((id, index) => [id, index]));
 
