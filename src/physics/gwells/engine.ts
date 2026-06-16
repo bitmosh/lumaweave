@@ -172,6 +172,7 @@ export function applyDialect(
 
   function rebuildResolvedInteractions(): void {
     resolvedInteractions.length = 0;
+    interactionsBySourceWellType.clear();
     for (const interactionId of activeDialect.activeInteractions) {
       const interaction = getInteractionById(interactionId);
       if (!interaction) {
@@ -183,7 +184,7 @@ export function applyDialect(
         continue;
       }
       const override = resolvedConfig.interactionOverrides?.[interactionId];
-      resolvedInteractions.push({
+      const resolved: ResolvedInteraction = {
         id: interaction.id,
         source: interaction.source,
         target: interaction.target,
@@ -191,8 +192,12 @@ export function applyDialect(
         strength: override?.strength ?? interaction.strength,
         range: override?.range ?? interaction.range,
         idealDistance: override?.idealDistance ?? interaction.idealDistance,
-        requireEdge: interaction.requireEdge,  // NEW (Pass C7)
-      });
+        requireEdge: interaction.requireEdge,
+      };
+      resolvedInteractions.push(resolved);
+      const bucket = interactionsBySourceWellType.get(resolved.source);
+      if (bucket) bucket.push(resolved);
+      else interactionsBySourceWellType.set(resolved.source, [resolved]);
     }
   }
 
