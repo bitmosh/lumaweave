@@ -60,12 +60,13 @@ main focus.
 
 ## Useful Docs To Inspect When Relevant
 
-- `docs/prototypes/gwells-refine/GWELLS_V0_1_5_POLISH_TO_SHIP_IMPLEMENTATION_BRIEF.md`
-- `GWELLS_REALIGNMENT_PROMPT.md`
-- `event-sourcing-toolkit-roadmap.md`
+- `docs/CURRENT_STATUS.md`
+- `docs/ROADMAP.md`
 - `docs/canonical/GWELLS_PHYSICS.md`
-- Any GWells current-state, design-conversation, testing, or migration docs
-  present in the repo.
+- `docs/design/gwells/PROFILES_AND_CONTROLS.md`
+- `docs/design/gwells/LAYOUTS.md`
+- `docs/design/gwells/RUNTIME_AND_VALIDATION.md`
+- `docs/KNOWN_ISSUES.md`
 
 ## Investigation Report Structure
 

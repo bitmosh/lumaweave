@@ -182,4 +182,4 @@ The current AppShell (`src/app/AppShell.tsx`) has:
 - Manual QA overrides code inspection
 - Do not implement resizable/draggable panels yet
 - Do not implement floating panels yet
-- Long-term implementation direction is the [Tile Workspace System](layout.tile.workspace.system), which generalizes panels into freely arrangeable tiles
+- The implemented workspace is documented in [Tile & Layout Workspace](../canonical/TILE_AND_LAYOUT_WORKSPACE.md).

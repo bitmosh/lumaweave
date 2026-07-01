@@ -48,7 +48,7 @@ const CLUSTER_MAP = {
   "docs/quest/*": "slate",
   "docs/physics/*": "azure",
   "docs/overview/*": "stone",
-  "docs/known-bugs/*": "violet",
+  "docs/design/*": "azure",
   "docs/updates/*": "violet",
   "docs/_meta/*": "violet",
   "docs/screenshots/*": "stone",
@@ -376,7 +376,7 @@ const SUBSYSTEM_DIRS = [
 
 // Build spine ID from a directory path.
 // "src/graph" -> "spine.src.graph"
-// "docs/known-bugs" -> "spine.docs.known-bugs"
+// "docs/design" -> "spine.docs.design"
 function spineIdForPath(dirPath) {
   const segs = dirPath.split('/').map(s => s.toLowerCase().replace(/[^a-z0-9-]/g, ''));
   return `spine.${segs.join('.')}`;
@@ -397,7 +397,7 @@ for (const dirPath of SUBSYSTEM_DIRS) {
   const dirNode = {
     id: spineId,
     type: "spine",
-    label: dirPath,           // full path → "src/graph", "docs/known-bugs"
+    label: dirPath,           // full path → "src/graph", "docs/design"
     fullLabel: dirPath,
     path: dirPath,
     cluster: inferClusterFromPath(path.join(repoRoot, dirPath)) || null,

@@ -27,7 +27,7 @@ tags:
 
 What customization features exist today, what's planned, and what stays off-limits without explicit contract work. This doc consolidates the v15-era customization path and scaffolding plan docs into a single forward-looking roadmap anchored on v86a state.
 
-For implementation contracts that gate customization features, see [Theme Override Storage Contract](theme.override.storage.contract) and [Theme Mapping Panel Entry Contract](theme.mapping.panel.entry.contract).
+For the maintained implementation boundary, see [Theme & Token System](../canonical/THEME_AND_TOKEN_SYSTEM.md).
 
 ---
 
@@ -45,7 +45,7 @@ What works today:
 - One narrow theme mapping edit control (v34b) — `panel.background` on `mission-control.panel`
 - Override export (v34c1) — bundle export for validated global theme overrides
 
-For the runtime engine, see [Theme Engine](theme.engine). For preset structure, see [Theme Preset Model](theme.preset.model).
+For runtime application and preset structure, see [Theme & Token System](../canonical/THEME_AND_TOKEN_SYSTEM.md).
 
 ---
 
@@ -114,7 +114,7 @@ Whatever ships, the following always hold:
 
 **Tier governance preserved.** Every customization mechanism must resolve through the three-tier model. Inline raw values (hex codes, sizes) in Tier 2 or 3 declarations are forbidden. Overrides on a Tier 2 path resolve through to a Tier 1 primitive.
 
-**No behavior in themes.** Theme entries can change presentation. They cannot change behavior, run scripts, fetch remote resources, modify data, or alter evidence truth. See [Theme Token Compatibility](theme.token.compatibility) for the full forbidden list.
+**No behavior in themes.** Theme entries can change presentation. They cannot change behavior, run scripts, fetch remote resources, modify data, or alter evidence truth. See [Theme & Token System](../canonical/THEME_AND_TOKEN_SYSTEM.md).
 
 **No bypass of canonical paths.** Asset bank entries, grammar lens edits, override storage — none of these can write arbitrary CSS variables or bypass canonical resolution. Every visual change flows through canonical paths.
 
@@ -140,8 +140,8 @@ The following remain off-limits and require dedicated contract work before any i
 
 ## What this doc does not cover
 
-- Override storage mechanics, scopes, and validation — see [Theme Override Storage Contract](theme.override.storage.contract)
-- Theme Mapping Panel entry rules — see [Theme Mapping Panel Entry Contract](theme.mapping.panel.entry.contract)
+- Override storage mechanics, scopes, and validation — see [Theme & Token System](../canonical/THEME_AND_TOKEN_SYSTEM.md)
+- Theme mapping rules — see [Theme & Token System](../canonical/THEME_AND_TOKEN_SYSTEM.md)
 - Asset bank schema (forward-compat empty bank) — see asset bank docs (pending)
 - Workshop / Lattica architecture — archived to operator's machine until v88+
 - Per-theme primitive value tuning (v87 work) — pending dedicated v87 sub-arc

@@ -5,107 +5,100 @@ cluster: stone
 references:
   - system.doc.architecture
   - domain.control.plane.system.index
-tags:
-  - tiles
-  - layout
-  - workspace
-  - canonical
-  - v100
+  - system.lumaweave.current-status
+tags: [tiles, layout, workspace, canonical]
 status: canonical
 include_in_self_graph: true
 type: manual
 agent_readable: true
-last_updated: 2026-05-31
+last_updated: 2026-06-30
 ---
 
 # LumaWeave — Tile & Layout Workspace
 
-How LumaWeave's panels become a rearrangeable workspace: any panel section can be "torn off" into a floating, draggable, snapping tile; tiles group, dock to edges, and persist their positions. Also covers the navigation lens system (designed, not yet built) and the minimap.
+The workspace presents registered control surfaces as persistent, movable tiles over the graph viewport. The current implementation is custom React pointer/geometry code; `react-grid-layout` and `react-moveable` are not dependencies and are not the runtime.
 
-**Supersedes:** `TILE_WORKSPACE_SYSTEM.md`, `LENS_NAVIGATION_MODEL.md`, `Minimap_Integration.md`
-
----
-
-## §1 — What it is
-
-The workspace lets a user pull any registered panel section out of its docked home and into a **floating tile** they can drag, resize, snap to edges, and group with other tiles. Tiles remember where they were put. It turns a fixed panel layout into a user-arrangeable surface — the foundation for the "build your own cockpit" experience.
-
-A **tile section** is a unit that can be torn off (the physics controls, the inspector, graph sources, the QA panel, etc.). A **floating tile** is a torn-off section rendered as a positioned overlay. The **tile provider** holds all tile state and the actions to manipulate it; the **tile layer** renders the floating tiles over the app.
-
-**Mental model:** the section registry is the catalog of what *can* float; the provider is the live state of what *is* floating and where; the layer draws them; anchors + snapping decide where they settle.
-
----
-
-## §2 — The parts & how they connect
+## Architecture
 
 ```mermaid
-flowchart TD
-    REG["tileSectionRegistry<br/>catalog of tear-off-able sections<br/>(physics, inspector, sources, qa, ...)"] --> PROV
-    PROV["TileProvider (context)<br/>tile state + actions:<br/>tileOut / updateTile / group / anchor / slide"] --> LAYER
-    LAYER["TileLayer<br/>renders floating tiles + groups<br/>+ snap-guide overlay"] --> FT["FloatingTile<br/>drag / resize / collapse / close<br/>header + ungroup grip"]
-    PROV --> ANCHOR["anchors (left/right/top/bottom/free)<br/>+ snap grid (16px) + edge magnetism (75px)"]
-    style PROV fill:#2a2a3a,stroke:#88a
-    style REG fill:#2a2440,stroke:#96c
+flowchart LR
+    Registry["tileSectionRegistry<br/>available surfaces"] --> Provider["TileProvider<br/>persistent tile state + actions"]
+    Settings["settings.ui.tileLayout"] <--> Provider
+    Provider --> Layer["TileLayer<br/>resolved positions + groups"]
+    Layer --> Tile["FloatingTile<br/>drag, resize, collapse, hide"]
+    Provider --> Utils["tileUtils<br/>anchors, clamp, snap, groups"]
+    Utils --> Layer
 ```
 
-**Tile section registry** (`tileSectionRegistry.ts`) — a registry (RegistryContract shape) of sections that can become tiles, each with an `id`, `category` (left-panel / control-dock / right-panel), and the source slot's testid. ~12 sections registered (physics, appearance, labels, typography playground, graph sources, graph inspector, agent chat, qa feedback, visual inventory, system index, command deck, source adapter).
+### Section registry
 
-**Tile provider** (`TileProvider.tsx`) — React context holding tile state (`TileLayoutEntry` per tile: position, size, anchor, collapsed, z, group) and the actions: `tileOut` (section → floating tile), `updateTile` (position/size during drag), grouping, `setAnchor`/`slideToAnchor`. Also holds the live snap-guide state.
+Each entry identifies a surface, label, category, component, default visibility, default dimensions, and anchor. Registry identity connects the status-bar tile picker, persistent layout state, and rendered content.
 
-**Tile layer** (`TileLayer.tsx`) — renders all visible floating tiles and tile groups as positioned overlays, plus the snap-guide preview during drag.
+### Provider
 
-**Floating tile** (`FloatingTile.tsx`) — one tile: a header (drag handle, collapse, close, ungroup grip), body, and resize grip. Pointer handlers drive drag/resize and `bringToFront` on mousedown.
+`TileProvider` reads and writes `settings.ui.tileLayout`. It exposes actions for creating, updating, hiding, raising, anchoring, grouping, and restoring tiles. Default-visible sections reconcile into the layout without resurrecting entries the user explicitly hid.
 
-**Anchors & snapping** — a tile's `TileAnchor` is an edge (`left`/`right`/`top`/`bottom`) or `free` (explicit x/y). Snap grid is 16px; edge magnetism tolerance is 75px (strong magnetic snap to edges). Tiles slide to their anchor with a transition.
+### Position modes
 
----
+- **Docked:** position is derived from an edge/slot anchor and the current viewport.
+- **Floating:** explicit x/y coordinates are persisted and clamped into the viewport.
 
-## §3 — How to work in it safely
+Changing a docked tile through direct drag first seeds its resolved coordinates into floating state, avoiding jumps back to stale positions.
 
-### Known bug — floating tiles intercept graph-canvas clicks
+### Snapping and groups
 
-The tile layer renders floating tiles as absolutely-positioned overlays above the graph viewport. The tile *surfaces* manage their own pointer events, but the layer/overlay can sit over the graph canvas and **intercept clicks meant for the graph** (selecting nodes, clicking the stage). This is the open click-interception bug — the same class as the earlier status-bar overlap. The fix (scheduled for the v101 tile migration to react-grid-layout + react-moveable) is to ensure the layer is pointer-transparent except where an actual tile is, so clicks fall through to the graph everywhere else. Until then: floating tiles can shadow graph interaction in their bounding region.
+Drag calculations run on a grid and compare the moving rectangle with live tile rectangles. A snap guide appears only while a valid target is armed. On drop, explicit `groupId` membership is reconciled:
 
-### Invariants
+- Flush-adjacent tiles may form or join a group.
+- Pulling a tile beyond break tolerance removes it.
+- One-tile groups dissolve.
+- Group bars move, collapse, or close the group.
+- Resize reflows adjacent group members.
 
-- **The provider is the single source of tile state.** Position/size/anchor/group/z all live there; components read context and call actions — they don't hold their own tile geometry.
-- **A tile's persisted anchor is its home.** `free` tiles store explicit x/y; edge-anchored tiles slide back to their edge. Preserve the anchor model when moving tiles, or they lose their dock behavior.
-- **Bring-to-front on interaction** — mousedown raises z; keep that so the active tile is reachable.
-- **Sections are torn off by id** — the registry id is the contract between a docked slot and its floating form.
+Positions determine when membership changes, but `groupId`—not incidental overlap—is the persisted source of truth.
 
-### Dependencies & frontend connection
+## Runtime invariants
 
-- The tile layer overlays the app shell / graph viewport; z-index ordering separates tiles, groups, and the snap-guide (which sits at a high z, pointer-transparent).
-- Tile *content* is the registered section's component (e.g. `PhysicsSectionContent`, `GraphInspectorTileContent`) — the tile is the frame, the section is the payload. The `*TileContent.tsx` wrappers bridge a panel section into a tile body.
-- Tiles are theme-consumers like any surface (see the Theme doc); note tile CSS theming wiring is a known medium-priority gap (tiles use some hardcoded CSS rather than fully obeying tokens).
+- Settings are the persistent source of tile geometry and visibility.
+- Event handlers read live store state rather than stale render snapshots.
+- Docked positions are derived consistently before group, snap, and render calculations.
+- Hidden tiles do not participate in group geometry.
+- Floating tiles are clamped when the viewport changes.
+- Active interaction raises a tile's z-order.
+- Snap guides and group outlines are pointer-transparent.
+- Status-bar popovers remain above the tile layer through explicit stacking levels.
 
-### Gotchas
+## Extending the workspace
 
-- The pointer-interception bug above is the big one — assume floating tiles can shadow the graph until v101 lands.
-- Snap/magnetism constants (16px grid, 75px edge tolerance) live in `tile.types.ts` — tune there, not inline.
+To add a surface:
 
-## §4 — How to extend it
+1. Implement a self-contained tile content component.
+2. Register it in `tileSectionRegistry.ts`.
+3. Choose conservative default size, visibility, and anchor.
+4. Add stable test IDs where browser interaction needs evidence.
+5. Verify bootstrap/reconciliation does not resurrect a hidden tile.
+6. Exercise dock, float, resize, snap, group, collapse, hide, and reload behavior as relevant.
 
-**Make a panel section tear-off-able:** register it in `tileSectionRegistry.ts` (id, category, source slot testid, default anchor) and provide a `*TileContent.tsx` wrapper that renders the section in a tile body. It then appears as a floating option and round-trips through `tileOut`.
+Geometry changes belong in `tileUtils.ts` and tile state/actions, not in content components.
 
-**Add a tile action:** extend `TileContextActions` in the provider; keep all geometry mutations going through the provider so state stays single-sourced.
+## Minimap relationship
 
-**Adjust snapping/anchoring:** change the constants/anchor logic in `tile.types.ts` + the snap-target search in `FloatingTile`/`TileLayer`; don't scatter geometry math into components.
+The minimap is a separate fixed overlay with its own settings, drag/resize behavior, canvas snapshot, viewport projection, click/drag navigation, and wheel zoom. It is implemented under `src/graph/overlay/`; it is not a tile and does not use tile grouping.
 
-## §5 — How it's designed to grow
+## Future direction
 
-- **The v101 tile migration** moves the hand-rolled drag/snap/group system onto `react-grid-layout` + `react-moveable`, which is also where the click-interception bug gets fixed structurally (a real grid/overlay system with proper pointer pass-through) rather than patched. The section-registry + provider model survives the migration; the rendering/interaction layer is what changes.
-- **Lens navigation (designed, not built).** `lensRegistry` is a Tier-2 registry that's currently an **empty stub** — it defines `LensEntry` (a layout function reference + suggested settings + compatible physics dialects) but registers nothing ("v93 implements"). The intent: named viewing lenses that combine a layout, settings, and compatible Gwells dialects, so a user switches the whole graph presentation with one choice. The seam exists; the lenses don't yet.
-- **Tile theming** grows toward full token obedience (closing the hardcoded-CSS gap) so tiles restyle with the active theme like every other surface.
-- **Workspace persistence** scales from per-session tile positions toward saved/named layouts — the anchor + group model is the foundation a saved-workspace feature builds on.
+- Saved/named workspace profiles built over `tileLayout`.
+- Explicit import/export of workspace state.
+- Better keyboard accessibility for move/resize operations.
+- Navigation lenses that coordinate workspace, camera, filters, and physics.
 
-## §6 — Where it lives in code
+The lens registry is currently a seam, not a populated navigation system.
 
-Under `src/control-plane/` (tiles/panels) unless noted.
+## Code map
 
-- **Tile system:** `TileProvider.tsx` (state + actions context), `TileLayer.tsx` (overlay renderer), `FloatingTile.tsx` (single tile), `Tile.tsx`, `tileSectionRegistry.ts`, `tileUtils.ts`, `tile.types.ts` (model + snap/anchor constants), `TiledOutIndicator.tsx`
-- **Tile content wrappers:** `*TileContent.tsx` (graph inspector, sources, qa, system index, source adapter, command deck, etc.)
-- **Panels:** `CollapsiblePanel.tsx`, `CollapsibleSection.tsx`, `panel.types.ts`
-- **Lens (stub):** `lensRegistry.ts`
-- **Minimap:** `Minimap.tsx` (prototype-grade; integration is a roadmap item)
-- **Tests:** `tests/e2e/v86c-tile-system.spec.ts`
+- Registry: `src/control-plane/panels/tileSectionRegistry.ts`
+- State/actions: `TileProvider.tsx`, `tile.types.ts`
+- Rendering: `TileLayer.tsx`, `FloatingTile.tsx`
+- Geometry: `tileUtils.ts`
+- Minimap: `src/graph/overlay/Minimap*.tsx`, `useMinimap*.ts`
+- Tests: `tests/e2e/v86c-tile-system.spec.ts`, `tileDocking.spec.ts`, `tileStateConsistency.spec.ts`

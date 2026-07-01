@@ -1,87 +1,91 @@
-# Diagnostics & Failure Reporting
+---
+id: agent.diagnostics
+title: Diagnostics and Failure Reporting
+type: manual
+status: current
+domain: agent
+cluster: violet
+agent_readable: true
+include_in_self_graph: false
+last_updated: 2026-06-30
+tags: [diagnostics, debugging, reporting]
+---
 
-How to classify failures, what to report when a STOP gate fires, and the instrumentation patterns that have solved hard bugs here.
+# Diagnostics and Failure Reporting
 
-## Failure classification
+Classify failures before changing code. The objective is to find the smallest proven boundary, not to accumulate speculative fixes.
 
-Before patching any failure, classify it — classification often reveals the correct next action. Don't patch from vibes.
+## Failure classes
 
-Classes:
-- **Environment Prerequisite** — missing browser, package, port
-- **Dependency / API Uncertainty** — unfamiliar library behavior
-- **Selector / Test Harness Mismatch** — Playwright can't find what's visibly there
-- **Identity / Binding Drift** — key mismatches across surfaces
-- **Persistence / Reset Bug** — state lifecycle wrong
-- **Runtime Lifecycle / Regression** — visual blank, console error, graph disappearance
-- **Obsolete Spec Debt** — test targets removed/renamed UI
-- **Contract / Registry Drift** — registry shape changed without consumer updates
-- **Scope Creep** — fix requires files outside declared scope
-- **Docs / Source-of-Truth Drift** — code disagrees with docs
+- Environment prerequisite.
+- Dependency/API uncertainty.
+- Selector or test-harness mismatch.
+- Identity or binding drift.
+- Persistence/reset error.
+- Runtime lifecycle regression.
+- Obsolete specification debt.
+- Contract/registry drift.
+- Scope expansion.
+- Documentation/source drift.
 
-For each failure report: input signal · transformation point · expected output · observed output · classification · smallest safe fix · proof after fix.
+## Evidence frame
 
-Full router: `docs/agent/survival-manual/02_DIAGNOSTIC_ROUTER.md`.
+For every failure, record:
 
-## Situation Report (post when a STOP fires / cascade / two failed attempts)
-
+```txt
+Input signal:
+Transformation point:
+Expected output:
+Observed output:
+Failure class:
+Smallest safe hypothesis:
+Proof command/test:
 ```
+
+## Stop report
+
+After two unsuccessful strategies or when the fix leaves authorized scope:
+
+```txt
 Situation Report
-═══════════════════════════════════════════════════════════
-Mode: [Recovery / Diagnostic / Planning]
-Repo: [branch] · [clean / dirty]
 
-──────────────────────────────────────
-CURRENT STATE
-Files changed: [list or none]
-Validation:
-  typecheck:      passed / failed
-  Playwright:     N passed, M skipped, K failed
-  test.skip grep: clean / dirty
-  git status:     clean / dirty
+Repository state:
+Files changed:
+Validation already run:
 
-──────────────────────────────────────
-FAILURE (if applicable)
-Exact failing command/test:
-Failure classification: [from list above]
-Strategies attempted (max 2 before stopping):
-  1.
-  2.
-Likely shared root cause:
-Not-yet-proven assumptions:
-
-──────────────────────────────────────
-SAFE NEXT OPTIONS
+Failure:
+Exact command/test:
+Classification:
+Strategies attempted:
 1.
 2.
-3.
+
+Unproven assumptions:
+Smallest safe next options:
+1.
+2.
 ```
 
-Full template: `docs/quest/QUEST_TEMPLATE.md`.
+## Instrumentation
 
-## Diagnostic instrumentation: console.log + stack traces
+Temporary diagnostics should have unique prefixes and enough context to identify the writer:
 
-For "why isn't this rendering" / "where is this write coming from":
-
-```javascript
-console.log("[ComponentName render]", { relevantState });
-console.log("[functionName called]", {
+```ts
+console.log("[ComponentName:reason]", { relevantState });
+console.log("[functionName:trace]", {
   args,
   stack: new Error("trace").stack?.split("\n").slice(1, 5).join(" | "),
 });
 ```
 
-Capture browser console in Playwright tests:
+Capture browser output in a focused Playwright run when the failure crosses the browser boundary. Remove temporary instrumentation before handoff and search for its prefix.
 
-```javascript
-page.on("console", (msg) => {
-  console.log(`[BROWSER ${msg.type()}] ${msg.text()}`);
-});
-```
+## Reporting rules
 
-Run the failing test, grep for the diagnostic prefixes, report verbatim. This pattern has solved multiple hard bugs.
-
-**Always remove all instrumentation before committing** — grep for `console.log` and `page.on("console")`. Production and tests stay clean.
-
-## Verbatim reporting
-
-Paste real output; don't summarize, paraphrase, or skip the long parts — the developer and planning Claude need the actual output to diagnose. If output is thousands of lines, paste the relevant section verbatim and note what was elided. Surface caveats unprompted: reused dev server, a "matching baseline" that may have tested the same compiled code, a count that "looks clean" while skipped tests rose. A truthful stopped report beats a false clean one.
+- Include the actual command and exit result.
+- Quote the relevant error without hiding caveats.
+- Separate observed facts from inference.
+- State skipped/fixme tests.
+- State whether generated artifacts, dev servers, or caches were reused.
+- Preserve unrelated dirty worktree changes.
+- A truthful blocked report is better than an unverified success claim.

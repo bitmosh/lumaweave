@@ -105,6 +105,9 @@ sphere-nodes-screenshot.png
 .codex/
 .playwright-mcp/
 
+# Agent operating instructions — local only, not for public repo
+CLAUDE.md
+
 # Aseptic local scratch/runtime state
 /aseptic/
 .aseptic/

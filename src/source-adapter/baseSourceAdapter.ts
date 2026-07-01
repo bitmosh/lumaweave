@@ -55,13 +55,19 @@ export interface CsvEdgeListConfig {
   labelColumn?: string;  // optional
 }
 
+export interface CerebraSnapshotConfig {
+  adapterId: "cerebra-snapshot";
+  filePath: string;
+}
+
 // Discriminated union of all adapter configs — keyed by adapterId literal
 export type AdapterConfig =
   | SelfGraphConfig
   | MarkdownVaultConfig
   | CytoscapeJsonConfig
   | PackageDependencyConfig
-  | CsvEdgeListConfig;
+  | CsvEdgeListConfig
+  | CerebraSnapshotConfig;
 
 // Loader function — every adapter registers one of these
 export type LoaderFn = (config: AdapterConfig) => Promise<GraphSourceSummary>;

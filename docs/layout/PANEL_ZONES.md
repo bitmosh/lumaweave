@@ -198,4 +198,4 @@ The cockpit layout is divided into three main zones: Left Rail, Main Viewport, a
 - Left rail currently has Settings and QA panels
 - Right rail currently has Inspector panel
 - Main viewport has SigmaGraphView
-- Long-term, panels generalize into freely arrangeable tiles per the [Tile Workspace System](layout.tile.workspace.system)
+- Current panel/tile behavior is documented in [Tile & Layout Workspace](../canonical/TILE_AND_LAYOUT_WORKSPACE.md).

@@ -45,7 +45,7 @@ pass_resolved: v0.1.15
 
 **What it is:** The benchmark harness exists and writes latest metrics, but the fixture set is still a pragmatic subset rather than the full size/style matrix described by the refinement docs.
 
-**Where:** `scripts/benchmark-gwells.mjs`; generated `benchmarks/gwells-latest.json`; `docs/prototypes/gwells-refine/GWELLS_V0_1_5_POLISH_TO_SHIP_IMPLEMENTATION_BRIEF.md` C12A/C12B language.
+**Where:** `scripts/benchmark-gwells.mjs`; generated `benchmarks/gwells-latest.json`; `docs/design/gwells/RUNTIME_AND_VALIDATION.md`.
 
 **Fix:** Add named fixture coverage for the remaining useful graph shapes and sizes before treating benchmark output as release-grade acceptance data. Keep small deterministic fixtures for fast local runs and separate heavier fixtures if runtime becomes a problem.
 

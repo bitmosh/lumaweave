@@ -1,69 +1,83 @@
+---
+id: agent.project-conventions
+title: Project Conventions
+type: manual
+status: current
+domain: agent
+cluster: violet
+agent_readable: true
+include_in_self_graph: false
+last_updated: 2026-06-30
+tags: [conventions, architecture, testing]
+---
+
 # Project Conventions
 
-Project-specific patterns and the incidents behind the generalized principles in CLAUDE.md. Consult when working in the relevant subsystem. Canonical domain docs live in `docs/canonical/`.
+Repository-specific implementation rules. Canonical domain docs live in `docs/canonical/`.
 
-## Registry-driven architecture
+## Registries
 
-Many subsystems use a registry: one source of truth that consumers iterate, instead of hardcoded lists. Examples: `tileSectionRegistry`, `themeTargetRegistry`, `systemIndexRegistry`, `controlSurfaceContractRegistry`, `motionSafetyRegistry`, `audioSourceRegistry`, `musicReactiveMappingRegistry`, `bookmarkRegistry`, `seedFunctionRegistry`, `commandRegistry`, `featureRegistry`, `panelRegistry` (stale, slated for reconciliation).
+Prefer one typed registry that consumers iterate over parallel hardcoded lists. Before adding a list, inspect the relevant domain for an existing registry and its validation/test pattern.
 
-When tempted to hardcode a list, check for a registry. Add new entries to the registry — don't create parallel taxonomies. Registry-iterating tests auto-discover new entries. Patterns/tiers: `docs/canonical/REGISTRY_AND_LINK_NETWORK.md`.
+Registry presence is not runtime capability. Check status, consumer wiring, loader/component presence, and evidence.
 
-## Settings store (Zustand)
+## Settings and callbacks
 
-Persisted state lives in `useSettingsStore`. Read current state inside callbacks via `useSettingsStore.getState()` (synchronous, bypasses React's render cycle) — the canonical "read latest store state in a callback" pattern. `useRef`+`useEffect` to sync state into callbacks is usually a workaround; prefer `getState()`.
+Persisted state lives in `useSettingsStore`. In event callbacks, use `useSettingsStore.getState()` when the latest value is required; render-captured values and ref-sync workarounds are vulnerable to stale closures.
 
-## React component patterns
+Use local React state for local UI state. Use settings or a focused context for cross-component/persistent state.
 
-- `useState` for local component state only.
-- Cross-component / persisted state → settings store or a dedicated context (e.g. `TileProvider`).
-- Extracting a component → copy JSX byte-for-byte first; refactor in a separate commit.
-- Avoid props-drilling beyond ~2 levels; lift state or read from the store via a hook.
-- Contexts for cross-cutting concerns (theme, tile state); Zustand for app data.
+## Extraction and refactoring
 
-## CSS conventions
+When extracting a component, preserve behavior first. Refactor semantics in a separate reviewable change. Do not combine broad cleanup with a behavior fix unless the coupling is proven.
 
-- Theme tokens are CSS variables from `src/styles/lumaweave-visual-handles.css` and friends.
-- Use `var(--lw-accent, #fallback)` so theme overrides propagate.
-- `data-lw-theme-target` marks theme-inspector-interactable elements; `data-lw-theme-target="ignore"` opts internal-only elements out.
-- Avoid `[data-attr]::after { content: "text"; }` — invisible to JSX greps, bites during cleanup (grep CSS files too when cleaning visual elements).
-- Prefer logical properties (`inset-inline-start`, `margin-block`) for directional values — enforced as warnings via stylelint-plugin-logical-css. Dimensional `width`/`height` are exempt.
-- Tailwind utilities are fine for layout; don't hand-write CSS for what Tailwind covers cleanly.
+## CSS and themes
 
-## File organization
+- Consume `--lw-*` custom properties with an intentional fallback where necessary.
+- Mark inspectable surfaces with stable `data-lw-theme-target` values.
+- Use `data-lw-theme-target="ignore"` for internal surfaces that probes should skip.
+- Prefer logical CSS properties for directional layout.
+- Search CSS pseudo-element content when removing UI text.
+- Respect Reduce Motion for every time-dependent effect.
 
-- `src/app/` — top-level shell (AppShell, AppProviders)
-- `src/control-plane/` — panels, settings, tile system, command deck
-  - `panels/` — CollapsibleSection, TileProvider, TileLayer, FloatingTile, TiledOutIndicator, section content
-  - `settings/` — store, schema, migrations, SettingsPanel
-  - `command-deck/` — future command-deck scaffolding
-- `src/themes/` — tokens, target registry, override storage
-- `src/graph/` — Sigma rendering, graph types
-- `src/physics/` — gwells engine
-- `src/control-plane/system-index/` — system index registry browser
-- `tests/e2e/` — Playwright
-- `docs/` — by topic; `docs/known-bugs/` (one file per bug, kebab-case), `docs/canonical/` (domain reference), `docs/agent/` (operating docs)
+## Graph rendering
 
-## Commits
+- Keep one Sigma instance per graph dataset.
+- Reconcile selection, labels, themes, geometry, and physics through graph/settings mutation.
+- Keep per-frame uniforms out of React state.
+- Preserve camera state across non-dataset changes.
+- Treat `graphRendererInterface.ts` as an unused seam until a renderer actually implements it.
 
-- `--no-ff` merges for branch integrations (preserve history).
-- Single-line subject + multi-paragraph body via `-m`; the body explains *why*.
-- Diagnostic-shaped passes: name the diagnostic pattern used and what was learned.
-- Don't combine unrelated changes — split into separate commits.
-- Stage explicit paths; never `git add -A` / `git add .`.
+## GWells
 
-## Test discipline
+- Keep core imports free of React, Sigma, browser, theme, and app modules.
+- Preserve `applyDialect()`, radial-backbone, and parallel-spines unless a task explicitly changes compatibility.
+- Add benchmark evidence before performance architecture.
+- Preserve pins and lifecycle invariants across configuration changes.
+- Profiles and event-backed history remain outside the current core.
 
-- `npm run qa:e2e` — full Playwright suite (~2.7 min). `-- <path>` for one file. `-- --grep "<pattern>"` by name.
-- `npm run typecheck` — TS strict.
-- Foreground only, one suite at a time — no background runs, no timeout wrappers (parallel/background runs pollute results). Browsers live at `$HOME/pw-browsers` via `PLAYWRIGHT_BROWSERS_PATH`; never reinstall.
-- Don't leave `test.only` (disables every other test in the file).
-- `test.fixme(name, fn)` for pending/not-yet-wired (exit-code neutral). Avoid `test.fail` — it forces exit code 1 in this Playwright version; prefer `test.fixme`.
+## Source adapters
 
-## Incidents behind the principles (war stories)
+- Normalize source-specific data at the adapter boundary.
+- Enforce bounds in loader code; metadata limits are not self-enforcing.
+- Keep candidate entries visibly distinct from registered loaders.
+- Test representative success, malformed input, bounds, and configuration UI.
+- Do not broaden filesystem access without explicit security review.
 
-- **"Let me just try a fix while I'm here."** Mid-diagnostic fix instinct → fix doesn't help → second → third → real cause still undiagnosed. Every "while I'm here" fix on uncertain ground compounds risk. Hit repeatedly during v86c tile work; "instrument first, fix once you know" is what got us through.
-- **Trusting stale audit docs.** Audits captured a moment; code moved on; we wrote new code against the audit. Result: `sourceTestId` pointing at removed testids, section names for deleted components. Verify against on-disk code.
-- **Refactoring during extraction.** Extractions (e.g. `PhysicsSectionContent` out of `SettingsPanel`) silently broke when "cleanup while extracting" changed semantics. Copy verbatim; refactor separately.
-- **Instrumentation left in prod.** Shipped console logs spammed for weeks because cleanup was incomplete. Grep before commit.
-- **CSS pseudo-element content.** `[data-tiled-out="true"]::after { content: "text"; }` injected a "Tiled out" label invisible to JSX greps — took a week to trace. Grep CSS when cleaning visual elements.
-- **Hardcoding registry-derived lists.** `const SECTIONS = [...]` in a test/component drifts from the registry. Iterate the registry; new entries get picked up automatically.
+## Tests
+
+- `npm run typecheck` for TypeScript.
+- `npm run physics:gwells` for GWells registry/import validation.
+- `npm run qa:e2e -- <spec>` for targeted Playwright.
+- Do not leave `test.only`.
+- Treat `test.skip` and `test.fixme` as visible debt.
+- Avoid fixed waits when a web-first assertion can observe the state.
+- Run one browser suite at a time.
+
+## Documentation
+
+- [Current Status](../CURRENT_STATUS.md) owns implementation boundaries.
+- [Roadmap](../ROADMAP.md) owns direction.
+- [Known Issues](../KNOWN_ISSUES.md) owns current defects/test debt.
+- Canonical docs own architecture.
+- Git owns granular history.

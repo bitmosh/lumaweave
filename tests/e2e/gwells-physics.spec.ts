@@ -335,7 +335,7 @@ test.describe("Gwells Physics Integration", () => {
   });
 
   // FLAKY: Architectural issue under full-suite worker contention.
-  // See docs/known-bugs/gwells-c9-0-drift-back-flake.md for investigation history.
+  // See docs/KNOWN_ISSUES.md for current quarantine status.
   // Tolerance-widening tested 2026-05-19 — root cause is rAF/worker contention, not timing.
   // Deferred from v111 (test infrastructure arc) per audit §1.3.
   // Real fix requires gwells engine instrumentation under load — out of v1.0 scope.

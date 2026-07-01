@@ -39,7 +39,7 @@ The four-layer visual link network that connects user-facing controls to runtime
 | Handleset Registry | `src/control-plane/handles/handleset.registry.ts` | Layer 1: User-manipulable control handles | [LAYER_1_HANDLE_REGISTRY.md](LAYER_1_HANDLE_REGISTRY.md) |
 | Control Surface Contract Registry | `src/control-plane/contracts/controlSurfaceContract.registry.ts` | Layer 2: UI surface locations for controls | [LAYER_2_CONTROL_SURFACE_CONTRACT.md](LAYER_2_CONTROL_SURFACE_CONTRACT.md) |
 | Graph Visual Theme Mapping Registry | `src/graph/graphVisualThemeMappingRegistry.ts` | Layer 3: Graph elements to theme token mappings | [LAYER_3_GRAPH_VISUAL_THEME_MAPPING.md](LAYER_3_GRAPH_VISUAL_THEME_MAPPING.md) |
-| Graph View Element Registry | `src/graph/graphViewElementRegistry.ts` | Layer 4: Graph visual element inventory | [LAYER_4_GRAPH_VIEW_ELEMENT.md](LAYER_4_GRAPH_VIEW_ELEMENT.md) |
+| Graph View Element Registry | `src/graph/graphViewElementRegistry.ts` | Layer 4: Graph visual element inventory | [Registries & Link Network](../canonical/REGISTRY_AND_LINK_NETWORK.md) |
 
 **Why in link network:** These four registries form the spine that the radial inspector will traverse to surface "what controls affect this visual element" and "which tokens does this control consume."
 

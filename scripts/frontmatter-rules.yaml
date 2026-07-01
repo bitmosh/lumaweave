@@ -673,12 +673,12 @@ schemas:
       - include_in_self_graph
 
   # ============================================================
-  # LUMAWEAVE_NOW — live state doc (docs/LUMAWEAVE_NOW.md)
+  # CURRENT_STATUS — code-verified live state (docs/CURRENT_STATUS.md)
   # ============================================================
-  # The single live-state doc. Changes every pass. status: current.
+  # Maintained implementation boundary. status: current.
 
-  lumaweave_now:
-    path_match: '^LUMAWEAVE_NOW\.md$'
+  current_status:
+    path_match: '^CURRENT_STATUS\.md$'
     status_options: [current]
     field_overrides:
       status: current
