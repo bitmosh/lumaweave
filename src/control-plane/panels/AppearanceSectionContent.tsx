@@ -1,9 +1,6 @@
 import { settingsRegistry } from "../settings/settings.registry";
 import { useSettingsStore } from "../settings/settings.store";
-
-function getNestedValue(obj: any, path: string) {
-  return path.split(".").reduce((cursor, key) => cursor?.[key], obj);
-}
+import { getNestedValue } from "../settingsUtils";
 
 /**
  * AppearanceSectionContent — extracted from SettingsPanel for v86c

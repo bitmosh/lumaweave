@@ -2,10 +2,7 @@ import { settingsRegistry } from '../settings.registry';
 import { useSettingsStore } from '../settings.store';
 import { SettingsSubSection } from '../SettingsContent';
 import { t } from '../../../i18n';
-
-function getNestedValue(obj: any, path: string) {
-  return path.split('.').reduce((cursor, key) => cursor?.[key], obj);
-}
+import { getNestedValue } from '../../settingsUtils';
 
 export function CategoryGraph() {
   const settings = useSettingsStore((state) => state.settings);

@@ -1,10 +1,7 @@
 import { settingsRegistry } from "../settings/settings.registry";
 import { useSettingsStore } from "../settings/settings.store";
 import { HelixTwistSliders } from "./HelixTwistSliders";
-
-function getNestedValue(obj: any, path: string) {
-  return path.split(".").reduce((cursor, key) => cursor?.[key], obj);
-}
+import { getNestedValue } from "../settingsUtils";
 
 /**
  * Physics section content. Used in two places:

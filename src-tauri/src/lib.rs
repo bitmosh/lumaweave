@@ -3,12 +3,6 @@ mod fs;
 mod ide;
 pub mod inference;
 
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let event_store = ide::get_project_root_inner()
@@ -22,7 +16,6 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .manage(event_store)
         .invoke_handler(tauri::generate_handler![
-            greet,
             ide::get_project_root,
             ide::open_in_ide,
             fs::read_file,

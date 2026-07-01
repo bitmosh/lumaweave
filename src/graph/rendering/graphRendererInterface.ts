@@ -2,11 +2,10 @@
  * GraphRenderer Interface
  *
  * Abstract renderer contract. Current implementation is Sigma2d;
- * future implementations (Sigma WebGPU, Three.js companion in v94)
- * honor the same interface.
- *
- * Contract: docs/graph/contracts/GRAPH_RENDERER_INTERFACE_CONTRACT.md
+ * future implementations (Sigma WebGPU, Three.js companion) honor the same interface.
  */
+
+import type Graph from "graphology";
 
 export interface RendererCamera {
   x: number;
@@ -16,7 +15,7 @@ export interface RendererCamera {
 }
 
 export interface GraphRenderer {
-  mount: (container: HTMLElement, graph: any) => void;
+  mount: (container: HTMLElement, graph: Graph) => void;
   unmount: () => void;
   refresh: () => void;
   getCamera: () => RendererCamera;

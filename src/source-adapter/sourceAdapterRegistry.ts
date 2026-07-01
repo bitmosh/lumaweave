@@ -16,6 +16,7 @@ import { loadMarkdownVault } from "./adapters/markdownVaultAdapter";
 import { loadCytoscapeJson } from "./adapters/cytoscapeJsonAdapter";
 import { loadPackageDependency } from "./adapters/packageDependencyAdapter";
 import { loadCsvEdgeList } from "./adapters/csvEdgeListAdapter";
+import { loadCerebraSnapshot } from "./adapters/cerebraSnapshotAdapter";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -32,7 +33,8 @@ export type SourceAdapterType =
   | "package-dependency"
   | "cloud-infrastructure"
   | "issue-tracker"
-  | "csv-edge-list";
+  | "csv-edge-list"
+  | "cerebra-snapshot";
 
 export type InputPatternType = "url" | "path" | "manifest" | "schema";
 
@@ -176,7 +178,7 @@ registerSourceAdapter(
     inputPattern: {
       type: "path",
       pattern: "**/*.md",
-      examples: ["docs/overview/DOCS_INDEX.md", "docs/agent/brain/23_BANDIT_CURRENT_TITLE.md"],
+      examples: ["docs/overview/DOCS_INDEX.md", "docs/agent/KNOWN_SHARP_EDGES.md"],
     },
     translationSet: {
       nodeMappings: {
@@ -454,4 +456,34 @@ registerSourceAdapter(
     coupling: "external",
   },
   candidateNoOpLoader,
+);
+
+registerSourceAdapter(
+  {
+    adapterId: "cerebra-snapshot",
+    adapterType: "cerebra-snapshot",
+    adapterVersion: "0.1.0",
+    inputPattern: {
+      type: "path",
+      pattern: "**/.cerebra/graph.json",
+      examples: ["~/.cerebra/graph.json", "/home/user/vault/.cerebra/graph.json"],
+    },
+    translationSet: {
+      nodeMappings: { "spine": "cerebra.source", "memory_record": "cerebra.record" },
+      edgeMappings: {
+        "contains": "contains",
+        "describes": "describes",
+        "sku-proximity": "sku_proximity",
+        "sku-exact": "sku_exact",
+      },
+      defaultConfidence: "observed",
+    },
+    limits: { maxNodes: 2000, maxEdges: 20000, maxDepth: 1, maxFileSize: 52428800, timeoutMs: 30000 },
+    qaReportFormat: { requiredFields: ["adapterId", "sourceDescription", "counts", "limits", "safety"] },
+    status: "registered",
+    contractVersion: "v74a",
+    lastUpdated: "2026-06-17T00:00:00Z",
+    coupling: "external",
+  },
+  loadCerebraSnapshot,
 );

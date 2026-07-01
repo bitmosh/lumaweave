@@ -7,8 +7,10 @@
 
 import { useEffect, useRef, useState, memo } from "react";
 import Sigma from "sigma";
+import type { EdgeProgramType } from "sigma/rendering";
 import { bidirectional } from "graphology-shortest-path";
 import Graph from "graphology";
+import type { Attributes } from "graphology-types";
 import type {
   LumaWeaveNodeDraft,
   LumaWeaveEdgeDraft,
@@ -58,7 +60,7 @@ function resolveDragSet(
   while (queue.length > 0) {
     const current = queue.shift()!;
     graph.forEachOutEdge(current, (_eid, eattrs, _src, tgt) => {
-      const rel = (eattrs as any).relationship ?? (eattrs as any).raw?.type;
+      const rel = eattrs.relationship ?? eattrs.raw?.type;
       if (rel !== "contains") return;
       if (visited.has(tgt)) return;
       const tattrs = graph.getNodeAttributes(tgt);
@@ -199,7 +201,7 @@ function SigmaGraphViewComponent({
   const sigmaRef = useRef<Sigma | null>(null);
   const cameraControllerRef = useRef<ReturnType<typeof attachCameraController> | null>(null);
   const gwellsControllerRef = useRef<GWController | null>(null);
-  const graphRef = useRef<any>(null);
+  const graphRef = useRef<Graph | null>(null);
   const onSelectNodeRef = useRef(onSelectNode);
   const onSetPathTargetRef = useRef(onSetPathTarget);
   const onSelectEdgeRef = useRef(onSelectEdge);
@@ -420,7 +422,7 @@ function SigmaGraphViewComponent({
       edgeLabelColor: { color: resolvedTokens.edgeLabelColor.default },
 
       edgeProgramClasses: {
-        plasma: PlasmaEdgeProgram as unknown as any,
+        plasma: PlasmaEdgeProgram as unknown as EdgeProgramType,
       },
       nodeProgramClasses: buildNodeProgramClasses(),
       defaultNodeType: "glass-sphere",
@@ -455,7 +457,7 @@ function SigmaGraphViewComponent({
     // Gwells writes seeded positions in graph-level attribute __seededSpinePositions.
     // Sigma nodeReducer reads this to enforce pinning at render time.
     const previousNodeReducer = sigma.getSetting("nodeReducer");
-    sigma.setSetting("nodeReducer", (nodeId: string, data: any) => {
+    sigma.setSetting("nodeReducer", (nodeId: string, data: Attributes) => {
       const base = previousNodeReducer
         ? previousNodeReducer(nodeId, data)
         : { ...data };
