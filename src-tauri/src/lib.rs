@@ -1,7 +1,10 @@
+mod cerebra_watcher;
 mod events;
 mod fs;
 mod ide;
 pub mod inference;
+
+use std::sync::Arc;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -12,9 +15,17 @@ pub fn run() {
             events::LwEventStore::unavailable()
         });
 
+    let watcher = Arc::new(cerebra_watcher::CerebraWatcher::new());
+    let watcher_for_setup = Arc::clone(&watcher);
+
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .manage(event_store)
+        .manage(watcher)
+        .setup(move |app| {
+            cerebra_watcher::start(app.handle().clone(), watcher_for_setup);
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             ide::get_project_root,
             ide::open_in_ide,

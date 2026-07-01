@@ -8,6 +8,13 @@ import {
 import type { GraphSourceSummary } from "../schema/graph.types";
 import { loadSource } from "./loadSource";
 
+interface GsaPayload {
+  snapshot_ref: string;
+  lineage_id: string;
+  graph_version: number;
+  causation_id: string;
+}
+
 const idleState: GraphSourceSummary = {
   sourceId: "",
   label: "",
@@ -32,6 +39,33 @@ export function useGraphSourceSummary() {
   const refreshToken = useSettingsStore((s) => s.settings.sources.refreshToken);
 
   const prevAdapterIdRef = useRef<string | null>(null);
+  const causationIdRef = useRef<string | null>(null);
+
+  // Listen for Cerebra GraphSnapshotAvailable events forwarded from the Rust watcher.
+  // On receipt: stash causation_id, configure the cerebra-snapshot adapter, then
+  // switch to it — the active-adapter change re-triggers the load effect below.
+  useEffect(() => {
+    let unlisten: (() => void) | null = null;
+    (async () => {
+      try {
+        const { listen } = await import("@tauri-apps/api/event");
+        unlisten = await listen<GsaPayload>("cerebra:snapshot-available", (ev) => {
+          causationIdRef.current = ev.payload.causation_id;
+          const { setSetting } = useSettingsStore.getState();
+          setSetting("sources.configurations.cerebra-snapshot", {
+            adapterId: "cerebra-snapshot",
+            filePath: ev.payload.snapshot_ref,
+          });
+          setSetting("sources.active", "cerebra-snapshot");
+        });
+      } catch {
+        // Not in Tauri environment — no-op
+      }
+    })();
+    return () => {
+      unlisten?.();
+    };
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -59,11 +93,14 @@ export function useGraphSourceSummary() {
               result.error ?? "unknown error",
             ).catch(() => {});
           } else {
+            const causationId = causationIdRef.current;
+            causationIdRef.current = null;
             invokeEmitSourceLoaded(
               activeAdapterId ?? "",
               result.sourcePath,
               result.nodeCount,
               result.edgeCount,
+              causationId,
             ).catch(() => {});
           }
         }

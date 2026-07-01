@@ -4,7 +4,7 @@ version = 4
 
 [[package]]
 name = "LumaWeave"
-version = "0.1.0"
+version = "0.19.2"
 dependencies = [
  "async-trait",
  "fossic",
@@ -1153,7 +1153,7 @@ dependencies = [
 
 [[package]]
 name = "fossic"
-version = "0.1.0"
+version = "1.8.1"
 dependencies = [
  "blake3",
  "crossbeam-channel",

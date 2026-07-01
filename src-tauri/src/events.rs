@@ -1,4 +1,4 @@
-use fossic::{Append, OpenOptions, Store};
+use fossic::{Append, EventId, OpenOptions, Store};
 use serde_json::json;
 use tauri::State;
 
@@ -68,13 +68,29 @@ pub fn lw_emit_source_loaded(
     source_key: String,
     node_count: u32,
     edge_count: u32,
+    causation_id: Option<String>,
 ) -> Result<(), String> {
-    emit(&store, "SourceLoaded", json!({
-        "adapter_id": adapter_id,
-        "source_key": source_key,
-        "node_count": node_count,
-        "edge_count": edge_count,
-    }))
+    let causation = causation_id
+        .as_deref()
+        .map(EventId::from_hex)
+        .transpose()
+        .map_err(|e| e.to_string())?;
+    if let Some(s) = &store.0 {
+        s.append(Append {
+            stream_id: STREAM.to_string(),
+            event_type: "SourceLoaded".to_string(),
+            payload: json!({
+                "adapter_id": adapter_id,
+                "source_key": source_key,
+                "node_count": node_count,
+                "edge_count": edge_count,
+            }),
+            causation_id: causation,
+            ..Append::default()
+        })
+        .map_err(|e| e.to_string())?;
+    }
+    Ok(())
 }
 
 #[tauri::command]

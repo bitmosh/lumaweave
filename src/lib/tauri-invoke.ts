@@ -37,8 +37,9 @@ export async function invokeEmitSourceLoaded(
   sourceKey: string,
   nodeCount: number,
   edgeCount: number,
+  causationId: string | null = null,
 ): Promise<void> {
-  return invoke("lw_emit_source_loaded", { adapterId, sourceKey, nodeCount, edgeCount });
+  return invoke("lw_emit_source_loaded", { adapterId, sourceKey, nodeCount, edgeCount, causationId });
 }
 
 export async function invokeEmitSourceLoadFailed(
