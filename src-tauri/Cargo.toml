@@ -1,6 +1,6 @@
 [package]
 name = "LumaWeave"
-version = "0.19.2"
+version = "0.19.3"
 description = "A Tauri App"
 authors = ["Ryan Johnson"]
 edition = "2021"
