@@ -2,6 +2,11 @@
 
 LumaWeave is a local-first graph visualization and architecture-mapping application. It turns structured sources into interactive graphs, lays them out with the standalone GWells physics engine, and renders them through a themed Sigma/WebGL workspace.
 
+<!-- OPERATOR: capture a screenshot of the graph workspace showing a loaded graph,
+     the minimap, and ideally the radial inspector open on a node. Save to
+     docs/assets/screenshot-workspace.png and replace this comment block with:
+     ![LumaWeave workspace](docs/assets/screenshot-workspace.png) -->
+
 The project is in active pre-1.0 development. The current runtime is a desktop-oriented Tauri application with a React frontend and a 2D Sigma renderer. See the [code-verified current status](docs/CURRENT_STATUS.md) for the exact implemented, partial, and planned boundaries.
 
 ## What works today
