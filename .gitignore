@@ -111,3 +111,6 @@ CLAUDE.md
 # Aseptic local scratch/runtime state
 /aseptic/
 .aseptic/
+
+# Pass 1–4 review working directory
+.review/
