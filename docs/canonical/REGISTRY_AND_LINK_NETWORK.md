@@ -73,7 +73,7 @@ Predates the rehaul. Either a `class … implements RegistryContract` or a facto
 
 - **Contract-object metadata catalog.** An object-literal implementing a contract interface (`list`/`getById`/`filterBy*`) but **read-only** — no runtime registration. The four link-network registries (§6) and `perspectiveRegistry` use this. It's Tier-1 intent (static metadata) expressed through a contract interface rather than a bare array.
 - **Registry + entries split.** A thin registry container (`hotkey-registry.ts`, `command-registry.entries.ts`) populated by a separate `*.entries.ts` file that calls `register()` as an import side effect. The container is the catalog; the entries file is the data. `hotkey-registry` uses `register()` without `subscribe()` — a read-mostly variant, not a full Tier 2.
-- **Data registry.** A very large authored/generated data store (`qa-registry.ts` ~381 KB, `advisory-registry.ts` ~187 KB). These are QA evidence/advisory data, not the architectural tier pattern — treat them as data, not as registries to imitate.
+- **Data registry.** A large authored/generated data store (`qa-registry.ts` ~381 KB, `advisory-registry.ts` ~187 KB). These are QA evidence/advisory data, not the architectural tier pattern — treat them as data, not as registries to imitate.
 
 ### Decision rule for a new registry
 

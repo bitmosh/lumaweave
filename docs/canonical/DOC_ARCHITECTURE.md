@@ -48,7 +48,7 @@ A canonical document should contain:
 - Invariants and safety constraints.
 - Extension guidance.
 - Known limitations.
-- Future seams clearly separated from implemented behavior.
+- Future seams separated from implemented behavior.
 - A code/test map.
 
 Avoid:

@@ -92,7 +92,7 @@ Write GRAMMAR_LENS_CONTRACT.md and CURSOR_INSPECTOR_CONTRACT.md before extending
 Docs-only contract defining the adapter lifecycle, base schema, safety requirements, and forbidden behavior. Superseded by `docs/canonical/SOURCE_ADAPTER.md` (SOURCE_ADAPTER_OS_CONTRACT.md archived v100.0.5).
 
 **Priority 3 — Self-Graph Fixture (v75a/v75b)**
-Highest-leverage milestone. LumaWeave visualizing its own architecture. First demo surface. First real product screenshot.
+Highest-value milestone. LumaWeave visualizing its own architecture. First demo surface. First real product screenshot.
 
 **Priority 4 — Sigma Visual Quality**
 The graph still renders in default Sigma colors. The theme contract ladder (v49–v59) is accepted but not yet producing visible custom colors on all surfaces. v59 contracts the implementation; closing this gap makes the first demo moment work.

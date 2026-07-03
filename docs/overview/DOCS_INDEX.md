@@ -43,7 +43,7 @@ Code and executable validation are authoritative for implementation. This index 
 | [Control Plane & System Index](../canonical/CONTROL_PLANE_AND_SYSTEM_INDEX.md) | Commands, hotkeys, modes, perspectives, and system discovery. |
 | [Registries & Link Network](../canonical/REGISTRY_AND_LINK_NETWORK.md) | Registry patterns and metadata relationships. |
 | [Versioning](../canonical/VERSIONING_AND_ARCS.md) | Product SemVer versus historical internal arc labels. |
-| [Deferred Vision](../canonical/DEFERRED_AND_POST_V1_VISION.md) | Clearly deferred systems and existing seams. |
+| [Deferred Vision](../canonical/DEFERRED_AND_POST_V1_VISION.md) | Deferred systems and existing seams. |
 | [Inference and Chat](../canonical/LUMAWEAVE_POST_V1_FEATURE_ARCHITECTURE.md) | Implemented remote inference/chat boundary and remaining future work. |
 
 ## GWells design library

@@ -127,7 +127,7 @@ For the override list in Theme category, read from `themeOverrideStorage` (exist
 
 You don't need to handle this — assume the override list component receives the data via props or a hook.
 
-## Existing integrations to leverage
+## Existing integrations to use
 
 These all exist and the Settings menu should consume them, not duplicate them:
 
