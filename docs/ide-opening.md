@@ -18,7 +18,7 @@ installOpenInIdeListener.ts
   getProjectRoot()  → Tauri invoke "get_project_root" → env::current_dir() in Rust
   resolveAbsolutePath(filePath, projectRoot)
   buildEditorUrl(preferredEditor, absolutePath, lineNumber)
-    → e.g. "vscode://file//home/boop/Projects/lumaweave/src/app/AppShell.tsx:381"
+    → e.g. "vscode://file//~/Projects/lumaweave/src/app/AppShell.tsx:381"
   invoke("open_in_ide", { url })
   ↓
 ide.rs — open_in_ide Tauri command
@@ -83,7 +83,7 @@ customEditorTemplate: "code --goto {path}:{line}",
 `buildEditorUrl` treats whatever the custom template produces as a URL string and passes it to `open_url`. If someone selects "custom" editor and leaves the default template, `open_url` receives:
 
 ```
-"code --goto /home/boop/Projects/lumaweave/src/app/AppShell.tsx:381"
+"code --goto ~/Projects/lumaweave/src/app/AppShell.tsx:381"
 ```
 
 This is a shell command, not a URL. `xdg-open` finds no handler for scheme `"code"` and fails. Tauri's `open_url` may return an error or silently fail depending on how `xdg-open` exits.
@@ -103,7 +103,7 @@ pub fn get_project_root() -> Result<String, String> {
 }
 ```
 
-`env::current_dir()` returns the Tauri process's working directory at spawn time. In `tauri dev` (started from the project root), this is `/home/boop/Projects/lumaweave` — correct. In a packaged or installed build, the CWD is wherever the binary lives or wherever the user launched from — wrong. `resolveAbsolutePath` would then compute a path that doesn't exist, and VS Code would fail to open the file or open a blank one.
+`env::current_dir()` returns the Tauri process's working directory at spawn time. In `tauri dev` (started from the project root), this is the project root directory — correct. In a packaged or installed build, the CWD is wherever the binary lives or wherever the user launched from — wrong. `resolveAbsolutePath` would then compute a path that doesn't exist, and VS Code would fail to open the file or open a blank one.
 
 **Severity:** Major in production builds, benign in dev mode.
 

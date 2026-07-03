@@ -48,7 +48,7 @@ Forbidden or discouraged evidence paths:
 
 For runtime/QA/test changes:
 ```bash
-cd /home/boop/Projects/lumaweave || exit 1
+cd "$(git rev-parse --show-toplevel)" || exit 1
 npm run typecheck
 npm run qa:e2e
 grep -R "test.skip" -n tests/e2e || true

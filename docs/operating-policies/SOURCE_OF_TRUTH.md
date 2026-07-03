@@ -38,10 +38,10 @@ Authoritative file/contract locations and rules per system. When in doubt, this 
 ## Repo Root
 
 ```
-/home/boop/Projects/lumaweave
+~/Projects/lumaweave
 ```
 
-`/home/boop/Projects` is not the repo.
+`~/Projects` is not the repo.
 
 ---
 
