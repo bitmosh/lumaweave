@@ -11,17 +11,21 @@ import { LabelsSectionContent } from "./LabelsSectionContent";
 import { AppearanceSectionContent } from "./AppearanceSectionContent";
 import { GraphSourcesTileContent } from "../graph-sources/GraphSourcesTileContent";
 import { GraphInspectorTileContent } from "../inspector/GraphInspectorTileContent";
-import { AgentChatTile } from "../agent/AgentChatTile";
 import { QaPanelTileContent } from "../qa/QaPanelTileContent";
 import { GraphVisualInventoryTileContent } from "../graph/GraphVisualInventoryTileContent";
 import { SystemIndexTileContent } from "../system-index/SystemIndexTileContent";
 import { CommandDeckTileContent } from "../command-deck/CommandDeckTileContent";
 import { SourceAdapterTileContent } from "../../source-adapter/SourceAdapterTileContent";
 
-// Lazy to prevent CSS import from breaking Node.js module resolution in Playwright
+// Lazy to prevent CSS imports from breaking Node.js module resolution in Playwright
 const LazyTypographyPlayground = lazy(() =>
   import("./TypographyPlaygroundSection").then((m) => ({
     default: m.TypographyPlaygroundSection,
+  }))
+);
+const LazyAgentChatTile = lazy(() =>
+  import("../agent/AgentChatTile").then((m) => ({
+    default: m.AgentChatTile,
   }))
 );
 
@@ -128,7 +132,7 @@ const entries: TileSectionEntry[] = [
     defaultWidth: 360,
     defaultHeight: 560,
     collapsible: true,
-    content: () => createElement(AgentChatTile),
+    content: () => createElement(Suspense, { fallback: null }, createElement(LazyAgentChatTile)),
     contentTestId: "agent-chat-tile",
     sourceTestId: undefined,
     defaultAnchor: { edge: "left", offset: 80 },
