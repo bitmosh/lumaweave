@@ -2,14 +2,59 @@
 
 LumaWeave is a local-first graph visualization and architecture-mapping application. It turns structured sources into interactive graphs, lays them out with the standalone GWells physics engine, and renders them through a themed Sigma/WebGL workspace.
 
+**Status:** Active development — pre-1.0, no formal release.
+
+## Why
+
+LumaWeave exists because tracking a growing codebase's structure from file listings and grep is untenable. A persistent, locally rendered graph that respects the filesystem boundary and lets you inspect and override visual properties in place outlasts any diagram-as-a-service tool that's perpetually out of date.
+<!-- STUB: above paragraph is a draft — correct or replace with the actual motivation -->
+
 <!-- OPERATOR: capture a screenshot of the graph workspace showing a loaded graph,
      the minimap, and ideally the radial inspector open on a node. Save to
      docs/assets/screenshot-workspace.png and replace this comment block with:
      ![LumaWeave workspace](docs/assets/screenshot-workspace.png) -->
 
-The project is in active pre-1.0 development. The current runtime is a desktop-oriented Tauri application with a React frontend and a 2D Sigma renderer. See the [code-verified current status](docs/CURRENT_STATUS.md) for the exact implemented, partial, and planned boundaries.
+## Getting started
+
+Prerequisites:
+
+- Node.js 22 (the version used in CI)
+- npm
+- Rust and the Tauri system prerequisites if running the desktop shell
+
+```bash
+npm install
+npm run dev
+```
+
+Run the desktop application with:
+
+```bash
+npm run tauri:dev
+```
+
+The self-graph fixture is derived from this repository's `docs/` and `src/` trees. Vite regenerates it when the dev server starts if the fixture is missing and when Markdown files change. To regenerate it directly:
+
+```bash
+npm run generate:graph
+```
+
+## Validation
+
+```bash
+npm run typecheck
+npm run lint:css
+npm run physics:gwells
+npm run qa:e2e
+```
+
+Additional GWells measurements are available through `npm run physics:gwells:bench`. A normal benchmark run updates `benchmarks/gwells-latest.json`; `--update-baseline` intentionally replaces the committed comparison baseline.
+
+CI currently enforces CSS logical-property linting and TypeScript typechecking. The Playwright suite is available locally but is not yet part of the GitHub Actions workflow.
 
 ## What works today
+
+The current runtime is a desktop-oriented Tauri application with a React frontend and a 2D Sigma renderer.
 
 - Interactive Graphology graphs rendered by Sigma 3/WebGL.
 - Five custom node materials (`glass-sphere`, `sun`, `crystal`, `orb`, and `pip`) plus a custom plasma edge shader.
@@ -62,44 +107,6 @@ The radial inspector connects visible surfaces to theme bindings and source prov
 
 Tauri filesystem commands canonicalize paths, reject symlinks where appropriate, enforce traversal depth, keep project-scoped reads inside the project root, and restrict executable scripts to an allowlist.
 
-## Getting started
-
-Prerequisites:
-
-- Node.js 22 (the version used in CI)
-- npm
-- Rust and the Tauri system prerequisites if running the desktop shell
-
-```bash
-npm install
-npm run dev
-```
-
-Run the desktop application with:
-
-```bash
-npm run tauri:dev
-```
-
-The self-graph fixture is derived from this repository's `docs/` and `src/` trees. Vite regenerates it when the dev server starts if the fixture is missing and when Markdown files change. To regenerate it directly:
-
-```bash
-npm run generate:graph
-```
-
-## Validation
-
-```bash
-npm run typecheck
-npm run lint:css
-npm run physics:gwells
-npm run qa:e2e
-```
-
-Additional GWells measurements are available through `npm run physics:gwells:bench`. A normal benchmark run updates `benchmarks/gwells-latest.json`; `--update-baseline` intentionally replaces the committed comparison baseline.
-
-CI currently enforces CSS logical-property linting and TypeScript typechecking. The Playwright suite is available locally but is not yet part of the GitHub Actions workflow.
-
 ## Current boundaries and roadmap
 
 The following are not shipped capabilities:
@@ -126,3 +133,13 @@ See [Current Status](docs/CURRENT_STATUS.md) for the evidence-backed breakdown a
 - [Tile & Layout Workspace](docs/canonical/TILE_AND_LAYOUT_WORKSPACE.md)
 
 Raw workflow prompts, prototypes, forensic reports, and internal agent-process notes are kept outside the GitHub-facing documentation tree.
+
+---
+
+<!-- STUB: ecosystem block — replace this comment once sibling repo URLs are known:
+Part of the [Lattica ecosystem](<ECOSYSTEM_URL>): [Cerebra](<URL>) · [Policy Scout](<URL>) · [Fossic](<URL>) · [AI Stack](<URL>).
+-->
+
+## License
+
+MIT. See [LICENSE](LICENSE).
