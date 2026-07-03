@@ -315,7 +315,7 @@ The custom `memo` comparator does not check `onSelectNode`, `onClearSelection`, 
 
 If a real source loads successfully after mount, `useFixture` flips from `true` → `false`, `graphNodes` changes from `adaptedFixture.nodes` → `summary.normalizedNodes`, and the `[nodes, edges]` effect fires — triggering a full Sigma kill+recreate. **This is the intended behavior for switching from the self-graph fixture to a real project source.** It only happens once per app session (on first successful source load).
 
-In the AI-lab environment (source path `/home/boop/Projects/ai-lab/graphify-out`), if the source isn't available, `hasRealSource` stays `false`, `useFixture` stays `true`, and the fixture graph is never replaced. No spurious rebuilds.
+When no external source is configured, `hasRealSource` stays `false`, `useFixture` stays `true`, and the fixture graph is never replaced. No spurious rebuilds.
 
 ---
 

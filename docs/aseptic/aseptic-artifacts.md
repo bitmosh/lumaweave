@@ -91,7 +91,7 @@ Describes what changed in this project that adjacent projects need to know about
 
 Cross-pollination is separated from blast-radius because the audiences differ. Blast radius is "what this project did." Cross-pollination is "what adjacent projects should do about it."
 
-For fossic Pass 9 specifically, the cross-pollination doc would have entries for: Cerebra (subscribe API changed, list_branches semantics for main), Policy Scout (subscribe API changed), LumaWeave (glob patterns now in IPC), Bo / ai-stack (FYI only).
+For fossic Pass 9 specifically, the cross-pollination doc would have entries for: Cerebra (subscribe API changed, list_branches semantics for main), Policy Scout (subscribe API changed), LumaWeave (glob patterns now in IPC), Bo / ai-stack (FYI only — historical; Bo's functionality has since been folded into Cerebra).
 
 ---
 

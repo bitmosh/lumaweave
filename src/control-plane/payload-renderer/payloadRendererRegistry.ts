@@ -24,7 +24,7 @@ export interface PayloadRendererProps {
 }
 
 export interface PayloadRendererEntry {
-  /** Lattica project identifier — e.g. "cerebra", "policy-scout", "bo". */
+  /** Lattica project identifier — e.g. "cerebra", "policy-scout", "lumaweave". */
   project: string;
   /**
    * Fossic event_type string this renderer handles — e.g. "SignalEvaluated".
