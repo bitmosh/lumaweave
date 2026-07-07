@@ -26,5 +26,5 @@ tokio = { version = "1", features = ["rt", "time"] }
 reqwest = { version = "0.12", features = ["rustls-tls", "json"] }
 async-trait = "0.1"
 thiserror = "1"
-fossic = { path = "../../fossic" }
+fossic = "1.8.3"
 
