@@ -78,6 +78,7 @@ Desktop.ini
 # Generated outputs
 .graphify_*
 cache/
+examples/*/graphify-out
 examples/*/graphify-out/
 graphify-out/
 generated/
@@ -111,6 +112,9 @@ CLAUDE.md
 # Aseptic local scratch/runtime state
 /aseptic/
 .aseptic/
+
+# Runtime project state (fossic store, local config)
+.lumaweave/
 
 # Pass 1–4 review working directory
 .review/
