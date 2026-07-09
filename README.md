@@ -119,9 +119,24 @@ The following are not shipped capabilities:
 
 See [Current Status](docs/CURRENT_STATUS.md) for the evidence-backed breakdown and [Deferred & Post-v1.0 Vision](docs/canonical/DEFERRED_AND_POST_V1_VISION.md) for longer-range direction.
 
+## Ecosystem
+
+LumaWeave is part of the Lattica ecosystem — a set of local-first tools that
+share the [fossic](https://github.com/bitmosh/fossic) event store as their
+persistence substrate. Related projects:
+
+- **[fossic](https://github.com/bitmosh/fossic)** — content-addressed event store substrate
+- **[lattica](https://github.com/bitmosh/lattica)** — observability hub
+- **[cerebra](https://github.com/bitmosh/cerebra)** — cognitive runtime
+- **[policy-scout](https://github.com/bitmosh/policy-scout)** — safety harness
+
+LumaWeave can be used standalone or as a visualization surface for
+fossic-backed event streams.
+
 ## Documentation
 
 - [Current Status](docs/CURRENT_STATUS.md) — implemented, partial, and planned boundaries.
+- [Changelog](CHANGELOG.md) — release notes and version history.
 - [Roadmap](docs/ROADMAP.md) — release sequence and future direction.
 - [Known Issues](docs/KNOWN_ISSUES.md) — current defects and quarantined tests.
 - [Development History](docs/DEVELOPMENT_HISTORY.md) — compressed engineering narrative.
@@ -142,4 +157,4 @@ Part of the [Lattica ecosystem](<ECOSYSTEM_URL>): [Cerebra](<URL>) · [Policy Sc
 
 ## License
 
-Apache-2.0. See [LICENSE](LICENSE) for the full text.
+Apache-2.0. See [LICENSE](LICENSE) for the full text and [NOTICE](NOTICE) for attribution.
