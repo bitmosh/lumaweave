@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * v97c.2: i18n full sweep — per-surface assertions
  *

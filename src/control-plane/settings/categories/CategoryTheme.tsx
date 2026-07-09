@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { useState, useCallback, useSyncExternalStore } from 'react';
 import { useSettingsStore } from '../settings.store';
 import { builtInThemePresets } from '../../../themes/themePresets';

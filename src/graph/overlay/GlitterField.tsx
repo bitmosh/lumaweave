@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * GlitterField - v86b glitter on selection
  * 

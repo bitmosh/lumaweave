@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { computeWCAGResult } from "./wcagContrast";
 import type { ThemeAccessibilityProfile } from "./theme.types";
 import { getThemeRuntimeTokens } from "./themeTokens";

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import type { LumaWeaveSettings, MinimapSettings, SourcesSettings } from "./settings.schema";
 
 export const defaultSources: SourcesSettings = {

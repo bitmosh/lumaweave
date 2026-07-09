@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { inspectorSpokeRegistry } from "../../../themes/inspectorSpokeRegistry";
 import { TypeTab } from "./TypeTab";
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { builtInThemePresets } from "./themePresets";
 import { themeTargetRegistry } from "./themeTargetRegistry";
 import {

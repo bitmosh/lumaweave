@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { CommandDeckShell } from "../command-deck/CommandDeckShell";
 import { t } from "../../i18n";
 

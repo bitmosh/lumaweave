@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Color Tab Utilities (v86d.3b)
  *

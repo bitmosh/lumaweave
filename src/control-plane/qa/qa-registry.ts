@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import type { QaCheckDefinition } from "./qa.types";
 import { FEEDBACK_CHECKS } from "./feedback-checklist";
 

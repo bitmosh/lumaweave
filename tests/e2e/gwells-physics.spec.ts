@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { test, expect } from "@playwright/test";
 import { getSigmaCameraState } from "../helpers/app-state";
 import { clearTiles } from "./helpers/tiles";

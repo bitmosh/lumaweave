@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { useState, useEffect, useMemo, forwardRef, useImperativeHandle } from 'react';
 import { SETTINGS_PANEL_CATEGORIES } from './settingsPanelCategoryRegistry';
 import { settingsRegistry } from './settings.registry';

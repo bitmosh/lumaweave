@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * LumaWeave Graphify Graph Normalizer
  * Converts raw Graphify graph artifacts into clean internal LumaWeave graph model

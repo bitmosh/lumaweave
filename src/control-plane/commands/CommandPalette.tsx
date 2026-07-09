@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { useEffect } from "react";
 import { hotkeyRegistry } from "../hotkeys/hotkey-registry";
 import { formatBinding } from "../hotkeys/hotkey-utils";

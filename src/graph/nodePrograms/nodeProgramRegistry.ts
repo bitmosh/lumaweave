@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import type { NodeProgramId, NodeProgramConstructor } from "./types";
 import GlassSphereProgram from "./GlassSphereProgram";
 import SunProgram from "./SunProgram";

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 const GRAPH_VIEWPORT_SELECTOR = "[data-testid='graph-viewport']";
 const REGISTERED_TARGET_SELECTOR = "[data-lw-theme-target]";
 const OVERLAY_ROOT_SELECTOR = "[data-testid='theme-target-inspector-overlay']";

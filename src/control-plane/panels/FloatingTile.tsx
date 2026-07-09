@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * v86c Floating Tile
  * Reference: (NEW)tile-system.jsx lines 206-375

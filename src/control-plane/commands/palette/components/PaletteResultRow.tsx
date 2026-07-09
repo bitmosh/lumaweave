@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import type { RankedCommandEntry } from "../palette.types";
 import { isPinned } from "../palettePersistence";
 import { t } from "../../../../i18n";

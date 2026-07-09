@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * LumaWeave Graph Styling Policy v0
  * Decides visual styles based on interaction state

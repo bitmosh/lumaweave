@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * v86b hardening: reduce-motion-halt.spec.ts
  *

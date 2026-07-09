@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Markdown Vault Adapter — Obsidian-style vault to LumaWeave graph.
  * v109.1: wikilink resolution, tag nodes, frontmatter + inline tags, truncation.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { test, expect } from "@playwright/test";
 
 test.describe("Self-Graph YAML Parser v75a", () => {

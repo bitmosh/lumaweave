@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { useMemo } from "react";
 import { typographyRegistry, type TypographyEntry } from "../../../themes/typographyRegistry";
 import type { TargetDescriptor } from "../inspector.types";

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * WCAG 2.1/2.2 contrast ratio — correct by construction.
  *

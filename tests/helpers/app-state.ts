@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Playwright test helpers for accessing LumaWeave app state
  * 

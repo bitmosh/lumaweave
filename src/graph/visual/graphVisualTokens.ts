@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * LumaWeave Graph Visual Tokens v0
  * Centralized visual value definitions for graph rendering

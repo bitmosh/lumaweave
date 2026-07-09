@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * v86c Tile Section Registry
  * Registry contract pattern for tileable sections.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Console listener for Playwright tests
  * Captures browser console output for diagnostic purposes

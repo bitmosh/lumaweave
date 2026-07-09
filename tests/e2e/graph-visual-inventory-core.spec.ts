@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { test, expect } from "@playwright/test";
 import { openGraphVisualInventory, openCommandDeck } from "./helpers/tiles";
 import { openQaPanel } from "./helpers/qa";

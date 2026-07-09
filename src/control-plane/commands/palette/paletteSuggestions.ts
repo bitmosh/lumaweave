@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import type { CommandEntry } from "../command.types";
 
 export function levenshtein(a: string, b: string): number {

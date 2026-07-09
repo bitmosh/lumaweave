@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { hotkeyRegistry } from "./hotkey-registry";
 
 // Active: accepted by governance (v35 contract + v97a additions + v97b palette)

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { useSettingsStore } from "../../control-plane/settings/settings.store";
 import { getAccessibilityProfile } from "../../themes/themeAccessibilityProfile";
 

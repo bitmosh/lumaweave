@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * LumaWeave Selection Neighborhood Helpers
  * Functions for computing relationship neighborhoods in Graphology graphs

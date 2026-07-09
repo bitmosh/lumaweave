@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * v86b hardening: snapshot-baseline.spec.ts
  *

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * LumaWeave Graphology Graph Builder
  * Converts normalized LumaWeave nodes/edges into a Graphology graph.

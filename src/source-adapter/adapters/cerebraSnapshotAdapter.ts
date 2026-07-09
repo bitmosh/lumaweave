@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Cerebra Snapshot Adapter — cerebra/v1 JSON to LumaWeave graph.
  * Reads the snapshot written by cerebra's export_graph() to {vault}/.cerebra/graph.json.

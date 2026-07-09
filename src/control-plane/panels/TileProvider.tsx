@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * v86c Tile Provider
  * Context provider for tile state management

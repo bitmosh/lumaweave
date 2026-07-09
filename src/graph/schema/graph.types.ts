@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * LumaWeave Graph Schema
  * Raw artifact types and draft node/edge representations

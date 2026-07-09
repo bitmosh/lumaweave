@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import manifestData from "./provenance-manifest.json";
 
 export interface ProvenanceEntry {

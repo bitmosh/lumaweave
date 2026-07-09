@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { QaPanel } from "./QaPanel";
 import { useThemeInspectorStore } from "../../themes/themeInspectorStore";
 

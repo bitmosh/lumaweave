@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { useGraphSourceSummary } from "../../graph/ingest/useGraphSourceSummary";
 import { InspectorPanel } from "../panels/InspectorPanel";
 

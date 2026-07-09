@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { commandRegistry } from "../command-registry";
 import type { CategoryFilter, PaletteSection, RankedCommandEntry } from "./palette.types";

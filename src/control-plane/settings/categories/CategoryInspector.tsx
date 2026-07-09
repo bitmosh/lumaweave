@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { useEffect, useState } from 'react';
 import { SettingsSubSection } from '../SettingsContent';
 import { t } from '../../../i18n';

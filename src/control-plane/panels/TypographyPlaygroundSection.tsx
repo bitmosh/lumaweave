@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import "./typographyPlayground.css";
 import { useState } from "react";
 import { fontAxisRegistry } from "../../themes/fontAxisRegistry";

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * v86b/vC3.1.1/v96: Synthetic migration chain test
  *

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: Apache-2.0
 // scripts/normalize-frontmatter.mjs
 //
 // Normalizes YAML frontmatter across docs/ according to schemas in

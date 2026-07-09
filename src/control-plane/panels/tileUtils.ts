@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * v86c Tile Utilities
  * Reference: (NEW)tile-system.jsx lines 134-204

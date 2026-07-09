@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Thin wrapper around @tauri-apps/api/core invoke.
  *

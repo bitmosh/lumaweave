@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * LumaWeave Sigma 2D Graph View
  * Renders normalized graph using Graphology + Sigma

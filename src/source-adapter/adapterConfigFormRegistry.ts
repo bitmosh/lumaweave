@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import type { FC } from "react";
 import type { AdapterConfig } from "./baseSourceAdapter";
 

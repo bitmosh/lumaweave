@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * CSV Edge-List Adapter — CSV file to LumaWeave graph.
  * v109.4: RFC 4180 state-machine parser, header/index column modes, optional label→relationship.

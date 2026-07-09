@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: Apache-2.0
 /**
  * LumaWeave Self-Graph Generator v2
  * Generates self-graph conforming to SELF_GRAPH_SCHEMA.md v1

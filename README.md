@@ -142,4 +142,4 @@ Part of the [Lattica ecosystem](<ECOSYSTEM_URL>): [Cerebra](<URL>) · [Policy Sc
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+Apache-2.0. See [LICENSE](LICENSE) for the full text.

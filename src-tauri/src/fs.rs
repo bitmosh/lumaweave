@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 use crate::ide::get_project_root_inner;
 
 // Security invariant: path must canonicalize within the project root.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Package Dependency Adapter — package.json dependency tree to LumaWeave graph.
  * v109.3: npm/yarn/pnpm package.json only; pyproject.toml deferred (errors gracefully).

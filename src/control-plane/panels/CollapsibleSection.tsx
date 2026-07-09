@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { ReactNode } from "react";
 import { useTileContext } from "./TileProvider";
 import { TiledOutIndicator } from "./TiledOutIndicator";

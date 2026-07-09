@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import type { NodeProgramType } from "sigma/rendering";
 import type { Attributes } from "graphology-types";
 

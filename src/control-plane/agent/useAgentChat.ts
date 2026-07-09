@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { useState, useCallback } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { useSettingsStore } from "../settings/settings.store";

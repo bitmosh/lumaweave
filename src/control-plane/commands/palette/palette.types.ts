@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import type { CommandCategory, CommandEntry } from "../command.types";
 
 export type CategoryFilter = "all" | CommandCategory;

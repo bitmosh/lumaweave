@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * v103.1.0: Tile docking resolution layer — unit tests.
  *

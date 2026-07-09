@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { settingsRegistry } from '../settings.registry';
 import { useSettingsStore } from '../settings.store';
 import { SettingsSubSection } from '../SettingsContent';

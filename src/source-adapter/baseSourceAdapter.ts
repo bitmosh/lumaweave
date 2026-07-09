@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Source Adapter SDK — Base Types
  * SDK_SPEC.md v0.1 §3–§4

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { create } from "zustand";
 import { defaultSettings } from "./settings.defaults";
 import { migrateSettings } from "./settings.migrations";

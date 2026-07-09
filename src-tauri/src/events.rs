@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 use fossic::{Append, EventId, OpenOptions, Store};
 use serde_json::json;
 use tauri::State;

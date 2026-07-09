@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * FloatingBookmark - v86b floating bookmark component
  * 

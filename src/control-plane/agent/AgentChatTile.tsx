@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { useAgentChat } from "./useAgentChat";
 import { ChatMessageList } from "./ChatMessageList";
 import { ChatInput } from "./ChatInput";

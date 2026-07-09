@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { useSettingsStore } from "../settings/settings.store";
 
 interface HelixTwistRecord {

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * TiledOutIndicator — slim placeholder shown in a section's body
  * when its content is currently torn off as a floating tile.

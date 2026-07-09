@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Camera Controller
  * Wraps Sigma's camera with eased animate calls and right-drag rotation

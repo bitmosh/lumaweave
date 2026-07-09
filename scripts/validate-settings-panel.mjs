@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Settings Panel Validator — OoO Step 4
  * Verifies the settingsPanelCategoryRegistry and settings.registry

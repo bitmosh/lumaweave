@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { settingsRegistry } from "../settings/settings.registry";
 import { useSettingsStore } from "../settings/settings.store";
 import { HelixTwistSliders } from "./HelixTwistSliders";

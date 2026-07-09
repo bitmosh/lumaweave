@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { useState, useEffect, useMemo, useRef } from "react";
 import { TileProvider } from "../control-plane/panels/TileProvider";
 import { TileLayer } from "../control-plane/panels/TileLayer";

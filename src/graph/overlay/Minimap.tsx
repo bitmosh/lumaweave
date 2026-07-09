@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * v104.0.0: Minimap — overlay panel with snapshot canvas + viewport rect.
  * Navigation (click-to-pan, drag-scrub, wheel-zoom) ships in v104.0.1.

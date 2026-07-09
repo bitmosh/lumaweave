@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 export type HotkeyModifier = "Alt" | "Shift" | "Ctrl" | "Meta";
 
 export type HotkeyStatus = "active" | "native" | "banned";

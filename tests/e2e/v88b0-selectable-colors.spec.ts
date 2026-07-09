@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { test, expect } from "@playwright/test";
 
 test.describe("v88b.0 Selectable colors per theme", () => {

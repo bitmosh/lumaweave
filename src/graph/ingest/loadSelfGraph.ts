@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import type { SelfGraphConfig } from "../../source-adapter/baseSourceAdapter";
 import type { GraphSourceSummary } from "../schema/graph.types";
 import { adaptSelfGraphToSigma } from "../../fixtures/self-graph-adapter";

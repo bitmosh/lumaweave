@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { commandRegistry } from "./command-registry";
 import { useSettingsStore } from "../settings/settings.store";
 import { paletteController } from "./palette/useCommandPaletteState";

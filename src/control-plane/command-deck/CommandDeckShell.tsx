@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { perspectiveRegistry } from "../perspectives/perspectiveRegistry";
 import { hotkeyRegistry } from "../hotkeys/hotkey-registry";
 import { commandRegistry } from "../commands/command-registry";

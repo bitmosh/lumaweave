@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * useResolvedTargetColor Hook (v86d.3b)
  *

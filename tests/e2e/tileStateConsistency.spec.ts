@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * v103.1.2: Tile state consistency — interaction tests.
  *

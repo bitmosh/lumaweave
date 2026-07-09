@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Cytoscape JSON Adapter — Cytoscape.js JSON export to LumaWeave graph.
  * v109.2: both nested {nodes,edges} and flat [{group,data}] forms, dedup, orphan skip.

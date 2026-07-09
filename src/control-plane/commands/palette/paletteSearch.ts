@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { matchSorterWithRankInfo, rankings } from "match-sorter";
 import type { CommandEntry } from "../command.types";
 import type { CategoryFilter, PalettePersistedState, PaletteSection, RankedCommandEntry } from "./palette.types";

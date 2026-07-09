@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import React from "react";
 import { registerAdapterConfigForm, type AdapterConfigFormProps } from "../adapterConfigFormRegistry";
 import type { MarkdownVaultConfig } from "../baseSourceAdapter";

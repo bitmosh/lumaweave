@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import type { LocaleCode } from "./types";
 import { setManifest } from "./t";
 import en from "./manifests/en.json" with { type: "json" };

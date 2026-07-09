@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { useState, useEffect } from "react";
 
 const SNAPSHOT_DEBOUNCE_MS = 150;

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Ensures Playwright's Chromium binary is installed before tests run.
  * Auto-installs if missing rather than failing with confusing errors.

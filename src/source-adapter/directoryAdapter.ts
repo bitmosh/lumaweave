@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * DirectoryAdapter — abstract base class for adapters that read from a directory root.
  * SDK_SPEC.md v0.1 §4

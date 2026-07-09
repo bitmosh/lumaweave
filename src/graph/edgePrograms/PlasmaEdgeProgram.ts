@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { EdgeProgram } from "sigma/rendering";
 import type { Attributes } from "graphology-types";
 import { useSettingsStore } from "../../control-plane/settings/settings.store";

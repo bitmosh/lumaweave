@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * colorMath.ts — small OKLCH-centric color utility module
  *

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 use super::remote_client::RemoteClient;
 use super::backend::InferenceBackend;
 use super::types::{ChatMessage, ChatResponse, InferenceConfig, InferenceError, MessageRole};

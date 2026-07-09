@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * LumaWeave Graph Label Visibility Policy v0
  * Decides which node and edge labels should be visible based on interaction state

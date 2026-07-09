@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { useState, useEffect, useMemo } from "react";
 import { t } from "../../i18n";
 import { qaCheckDefinitions } from "./qa-registry";

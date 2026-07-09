@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { defaultSettings, defaultMinimapSettings, defaultSources } from "./settings.defaults";
 import type { LumaWeaveSettings } from "./settings.schema";
 import { tileSectionRegistry } from "../panels/tileSectionRegistry";

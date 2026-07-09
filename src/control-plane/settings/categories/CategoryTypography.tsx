@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { TypographyPlaygroundSection } from '../../panels/TypographyPlaygroundSection';
 import { SettingsSubSection } from '../SettingsContent';
 import { t } from '../../../i18n';

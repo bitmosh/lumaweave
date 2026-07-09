@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { hotkeyRegistry } from "./hotkey-registry";
 import { commandRegistry } from "../commands/command-registry";
 import { matchesKeyEvent } from "./hotkey-utils";

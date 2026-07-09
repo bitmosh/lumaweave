@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * State helper functions for Playwright tests
  * Provides utilities for interacting with Sigma and UI state

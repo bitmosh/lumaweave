@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import type { PalettePersistedState } from "./palette.types";
 
 const STORAGE_KEY = "lumaweave.commandPalette.v1";

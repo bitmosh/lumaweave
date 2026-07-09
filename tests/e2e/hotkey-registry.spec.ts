@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * v97a/v97b: Hotkey registry unit tests
  *

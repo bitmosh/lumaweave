@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 use tauri_plugin_opener::OpenerExt;
 use std::env;
 use std::path::PathBuf;

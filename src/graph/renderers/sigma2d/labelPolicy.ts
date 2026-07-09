@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * LumaWeave Label Policy Helpers
  * Functions for controlling node and edge label visibility and truncation

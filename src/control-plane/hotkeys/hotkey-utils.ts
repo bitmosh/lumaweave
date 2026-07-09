@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import type { HotkeyBinding, HotkeyEntry, HotkeyModifier } from "./hotkey-binding.types";
 
 const MODIFIER_ORDER: HotkeyModifier[] = ["Ctrl", "Meta", "Alt", "Shift"];

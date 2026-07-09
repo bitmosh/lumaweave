@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import type { ThemeId } from "../control-plane/settings/settings.schema";
 
 export interface ColorSlot {

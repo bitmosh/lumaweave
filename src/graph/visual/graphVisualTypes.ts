@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * LumaWeave Graph Visual Types v0
  * Type definitions for graph visual policy system

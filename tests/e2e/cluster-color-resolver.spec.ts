@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Unit tests for the cluster-color resolver (v103.0.1).
  *

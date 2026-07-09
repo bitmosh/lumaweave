@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * LumaWeave Graph Label Policy Adapter v0
  * Adapts graphLabelPolicy to Graphology/Sigma renderer

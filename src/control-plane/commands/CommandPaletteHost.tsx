@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import { useCommandPaletteState } from "./palette/useCommandPaletteState";
 import { CommandPalette } from "./CommandPalette";
 
