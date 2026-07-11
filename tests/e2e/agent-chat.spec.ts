@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import { test, expect } from "@playwright/test";
 import { clearTiles } from "./helpers/tiles";
+import { defaultSettings } from "../../src/control-plane/settings/settings.defaults";
 
 async function openAgentChatTile(page: import("@playwright/test").Page) {
   await page.goto("/");
@@ -82,13 +83,13 @@ test.describe("Agents settings", () => {
     await expect(page.getByTestId("settings-agents-test")).toBeVisible();
   });
 
-  test("settings schema version is 95", async ({ page }) => {
+  test("settings schema version matches the current schema", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
     const version = await page.evaluate(
       () => (window as any).__lwStore?.getState().settings.version,
     );
-    expect(version).toBe(95);
+    expect(version).toBe(defaultSettings.version);
   });
 
   test("agents.inference defaults are set", async ({ page }) => {

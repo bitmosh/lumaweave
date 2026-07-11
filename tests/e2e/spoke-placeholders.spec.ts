@@ -2,20 +2,12 @@
 import { test, expect } from "@playwright/test";
 import { openInspectorOnTopbar } from "./helpers/inspector";
 
-// v105.0.1: "code" spoke is no longer a placeholder — it's the real Code spoke (active).
-// The entry was removed; only the remaining placeholder spokes are listed here.
+// Only spokes still registered with status: "placeholder" belong here.
+// "code" graduated in v105.0.1. "type" and "motion" have since graduated too — they now
+// render real TypeTab / MotionTab components and are covered by inspector-type-spoke.spec.ts
+// and inspector-motion-spoke.spec.ts. Keeping them here asserted a placeholder UI that no
+// longer exists. "layout" is the last remaining placeholder (registerLayoutSpoke.ts:13).
 const PLACEHOLDER_CONFIG = [
-  {
-    id: "type",
-    message: "Typography controls are in development.",
-    hasIntendedPaths: false,
-  },
-  {
-    id: "motion",
-    message: "Animation and motion controls are in development.",
-    hasIntendedPaths: true,
-    paths: ["motion.reduce"],
-  },
   {
     id: "layout",
     message: "Physics layout controls are in development.",
@@ -61,7 +53,7 @@ test.describe("v89.4 Spoke Placeholders", () => {
   }
 
   test("back button from placeholder returns to ring view", async ({ page }) => {
-    await openPlaceholderTab(page, "type");
+    await openPlaceholderTab(page, "layout");
     await page.locator('[aria-label="back"]').click();
     await expect(page.locator('[data-testid="inspector-mini-graph"]')).toBeVisible();
     await expect(page.locator('[data-testid="placeholder-tab"]')).not.toBeVisible();
