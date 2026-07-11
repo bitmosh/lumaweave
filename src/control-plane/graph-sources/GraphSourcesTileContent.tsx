@@ -215,6 +215,7 @@ export function GraphSourcesTileContent() {
   const pinned = useSettingsStore((s) => s.settings.sources.library.pinned);
   const recents = useSettingsStore((s) => s.settings.sources.library.recent);
   const setSetting = useSettingsStore((s) => s.setSetting);
+  const commitSource = useSettingsStore((s) => s.commitSource);
   const pinLibraryEntry = useSettingsStore((s) => s.pinLibraryEntry);
   const unpinLibraryEntry = useSettingsStore((s) => s.unpinLibraryEntry);
   const removeLibraryEntry = useSettingsStore((s) => s.removeLibraryEntry);
@@ -243,12 +244,7 @@ export function GraphSourcesTileContent() {
   }
 
   function handleLoadEntry(entry: SourceEntry) {
-    const { settings } = useSettingsStore.getState();
-    setSetting("sources.configurations", {
-      ...settings.sources.configurations,
-      [entry.adapterId]: entry.config,
-    });
-    setSetting("sources.active", entry.adapterId);
+    commitSource(entry.adapterId, entry.config);
   }
 
   async function handleRegenerate() {

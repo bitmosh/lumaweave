@@ -45,6 +45,13 @@ import { CommandPaletteHost } from "../control-plane/commands/CommandPaletteHost
 import "../control-plane/commands/palette.css";
 import { ErrorBoundary } from "./ErrorBoundary";
 import "./ErrorBoundary.css";
+// Hoisted out of GraphSourcePicker.tsx / EmptyPane.tsx on purpose. Both components are
+// reachable from tileSectionRegistry, which settings.migrations and the command registry
+// import — so their module graph is loaded by Playwright's Node-side specs, where a bare
+// `import "./x.css"` is a SyntaxError that fails collection for the whole run. Same reason
+// palette.css is hoisted here rather than living in CommandPalette.tsx.
+import "../control-plane/graph-sources/GraphSourcePicker.css";
+import "../control-plane/graph-sources/EmptyPane.css";
 import { StatusBar } from "../control-plane/StatusBar";
 import { useCrossfadeAppTokens } from "../themes/themeCrossfade";
 import { useThemeInspectorStore } from "../themes/themeInspectorStore";

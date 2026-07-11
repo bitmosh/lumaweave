@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import "./EmptyPane.css";
+// EmptyPane.css is imported by AppShell, not here — see the note at its import site.
 
 interface EmptyPaneProps {
   onOpenPicker: () => void;

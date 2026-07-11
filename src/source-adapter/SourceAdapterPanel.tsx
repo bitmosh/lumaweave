@@ -161,7 +161,7 @@ function EntryCard({
   const isRegistered = entry.status === "registered";
 
   function handleSetActive() {
-    useSettingsStore.getState().setSetting("sources.active", entry.adapterId);
+    useSettingsStore.getState().commitSource(entry.adapterId);
   }
 
   return (

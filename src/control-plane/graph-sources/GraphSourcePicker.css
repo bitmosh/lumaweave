@@ -215,6 +215,19 @@
   font-size: inherit;
 }
 
+/* Wraps a candidate button plus, when selected, its inline config form. The list stays on
+   screen after selection so the ranked evidence remains inspectable and reversible. */
+.lw-picker__scan-candidate-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lw-picker__scan-candidate-row--selected .lw-picker__scan-candidate {
+  border-color: color-mix(in oklab, var(--lw-accent, #22d3ee) 55%, transparent);
+  background: color-mix(in oklab, var(--lw-accent, #22d3ee) 10%, transparent);
+}
+
 .lw-picker__scan-candidate {
   display: flex;
   flex-direction: column;

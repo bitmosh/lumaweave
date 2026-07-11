@@ -3,12 +3,14 @@ import { create } from "zustand";
 import { defaultSettings } from "./settings.defaults";
 import { migrateSettings } from "./settings.migrations";
 import type { LumaWeaveSettings, SourceEntry } from "./settings.schema";
+import type { AdapterConfig } from "../../source-adapter/baseSourceAdapter";
 
 export const CURRENT_SCHEMA_VERSION = 96;
 
 export type SettingsStore = {
   settings: LumaWeaveSettings;
   setSetting: (path: string, value: unknown) => void;
+  commitSource: (adapterId: string, config?: AdapterConfig) => void;
   resetSettings: () => void;
   pushLibraryEntry: (partial: Omit<SourceEntry, "id">) => void;
   pinLibraryEntry: (entryId: string) => void;
@@ -83,6 +85,26 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
     set((state) => ({
       settings: setNestedValue(state.settings, path, value),
     })),
+
+  // The single commit verb for "load this source". Writes config, active adapter and
+  // refreshToken in one set() so the load fires exactly once.
+  //
+  // The refreshToken bump is load-bearing, not a nicety: useGraphSourceSummary keys its
+  // effect on [sources.active, sources.refreshToken]. Committing the adapter that is
+  // already active leaves `active` byte-identical, so without the bump the effect never
+  // re-runs and the load silently no-ops — which is what made "Different config" and
+  // "reload the same adapter with a new path" dead affordances. Config alone is not in
+  // the dep list, so it cannot serve as the trigger; the token is the trigger.
+  //
+  // Omit `config` to re-commit whatever is already stored for the adapter.
+  commitSource: (adapterId: string, config?: AdapterConfig) =>
+    set((state) => {
+      const settings = structuredClone(state.settings);
+      if (config) settings.sources.configurations[adapterId] = config;
+      settings.sources.active = adapterId;
+      settings.sources.refreshToken += 1;
+      return { settings };
+    }),
 
   resetSettings: () =>
     set({

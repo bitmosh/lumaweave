@@ -92,7 +92,12 @@ test("scan: unrecognized extension → no-match message and adapter list stays v
 
 // ── candidate selection ───────────────────────────────────────────────────────
 
-test("scan: clicking a candidate pre-fills config and switches to adapter list", async ({ page }) => {
+// Contract change: selecting a candidate used to CLEAR the results and write the suggested
+// config straight to persisted settings. Both were defects — clearing destroyed the ranked
+// evidence the user was mid-way through comparing ("automated decisions are inspectable —
+// selection reversible"), and the store write meant Cancel could not undo it. Selection now
+// expands in place and stages into the picker's draft; only Load commits.
+test("scan: clicking a candidate selects it in place and keeps the ranked list inspectable", async ({ page }) => {
   await openPicker(page);
 
   await page.getByTestId("graph-source-scan-input").fill("/home/user/edges.csv");
@@ -101,17 +106,28 @@ test("scan: clicking a candidate pre-fills config and switches to adapter list",
 
   await page.getByTestId("graph-source-scan-candidate-csv-edge-list").click();
 
-  // Scan results clear; adapter list re-appears with csv-edge-list selected
-  await expect(page.getByTestId("graph-source-scan-results")).not.toBeVisible();
-  const card = page.getByTestId("graph-source-adapter-card-csv-edge-list");
-  await expect(card).toBeVisible();
-  await expect(card).toHaveClass(/lw-picker__adapter-card--selected/);
+  // The evidence survives the choice — the runner-up is still reachable without re-scanning.
+  await expect(page.getByTestId("graph-source-scan-results")).toBeVisible();
+  await expect(page.getByTestId("graph-source-scan-candidate-csv-edge-list")).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
 
-  // Config is pre-filled with the scanned path
-  const filePath = await page.evaluate(
+  // The suggested config is staged in the draft — visible in the form, absent from settings.
+  await expect(page.getByTestId("adapter-config-csv-edge-list-filePath")).toHaveValue(
+    "/home/user/edges.csv",
+  );
+  const persistedBefore = await page.evaluate(
     () => (window as any).__lwStore?.getState().settings.sources.configurations["csv-edge-list"]?.filePath,
   );
-  expect(filePath).toBe("/home/user/edges.csv");
+  expect(persistedBefore).not.toBe("/home/user/edges.csv");
+
+  // Load is the only thing that commits it.
+  await page.getByTestId("graph-source-picker-load").click();
+  const persistedAfter = await page.evaluate(
+    () => (window as any).__lwStore?.getState().settings.sources.configurations["csv-edge-list"]?.filePath,
+  );
+  expect(persistedAfter).toBe("/home/user/edges.csv");
 });
 
 test("scan: 'Different type' button reveals adapter list below results", async ({ page }) => {

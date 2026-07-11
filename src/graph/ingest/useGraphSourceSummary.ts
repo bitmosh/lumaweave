@@ -46,8 +46,9 @@ export function useGraphSourceSummary() {
   const prevSummaryRef = useRef<GraphSourceSummary>(idleState);
 
   // Listen for Cerebra GraphSnapshotAvailable events forwarded from the Rust watcher.
-  // On receipt: stash causation_id, configure the cerebra-snapshot adapter, then
-  // switch to it — the active-adapter change re-triggers the load effect below.
+  // On receipt: stash causation_id, then commit the new snapshot as the active source.
+  // commitSource bumps refreshToken, so a *second* snapshot arriving while
+  // cerebra-snapshot is already active still re-triggers the load effect below.
   useEffect(() => {
     let unlisten: (() => void) | null = null;
     (async () => {
@@ -55,12 +56,10 @@ export function useGraphSourceSummary() {
         const { listen } = await import("@tauri-apps/api/event");
         unlisten = await listen<GsaPayload>("cerebra:snapshot-available", (ev) => {
           causationIdRef.current = ev.payload.causation_id;
-          const { setSetting } = useSettingsStore.getState();
-          setSetting("sources.configurations.cerebra-snapshot", {
+          useSettingsStore.getState().commitSource("cerebra-snapshot", {
             adapterId: "cerebra-snapshot",
             filePath: ev.payload.snapshot_ref,
           });
-          setSetting("sources.active", "cerebra-snapshot");
         });
       } catch {
         // Not in Tauri environment — no-op

@@ -14,7 +14,7 @@ import {
 import { useSettingsStore } from "../settings/settings.store";
 import type { AdapterConfig } from "../../source-adapter/baseSourceAdapter";
 import type { SourceEntry } from "../settings/settings.schema";
-import "./GraphSourcePicker.css";
+// GraphSourcePicker.css is imported by AppShell, not here — see the note at its import site.
 
 // Importing sourceAdapterRegistry above is enough to pull in all adapter files
 // and their config-form side effects transitively.
@@ -151,24 +151,30 @@ export function GraphSourcePicker({ onClose, initialTab, initialAdapterId, reint
   const [renamingRecentId, setRenamingRecentId] = useState<string | null>(null);
   const [renamingLabel, setRenamingLabel] = useState("");
 
-  const configurations = useSettingsStore((s) => s.settings.sources.configurations);
   const recents = useSettingsStore((s) => s.settings.sources.library.recent);
   const devMode = useSettingsStore((s) => s.settings.developer.devMode);
-  const setSetting = useSettingsStore((s) => s.setSetting);
+  const commitSource = useSettingsStore((s) => s.commitSource);
   const renameLibraryEntry = useSettingsStore((s) => s.renameLibraryEntry);
+
+  // Draft config layer. Every edit in this modal — typing in a config form, picking a scan
+  // candidate, pre-filling for reinterpret — lands here and NOWHERE else. Persisted settings
+  // are only touched by commitSource() on Load. That is what makes Cancel/✕/Escape true:
+  // closing the picker discards the drafts with the component, leaving the working source
+  // exactly as the user found it.
+  //
+  // Seeded from the store so an existing config is visible for editing. SA-024 reinterpret
+  // seeds the entry's own config instead, so the path survives the adapter swap.
+  const [draftConfigs, setDraftConfigs] = useState<Record<string, AdapterConfig>>(() => {
+    const seed = { ...useSettingsStore.getState().settings.sources.configurations };
+    if (reinterpretEntry) seed[reinterpretEntry.adapterId] = reinterpretEntry.config;
+    return seed;
+  });
 
   const backdropRef = useRef<HTMLDivElement>(null);
 
-  // SA-024: when reinterpreting, pre-populate the config form with the entry's stored config.
-  useEffect(() => {
-    if (!reinterpretEntry) return;
-    const { settings } = useSettingsStore.getState();
-    setSetting("sources.configurations", {
-      ...settings.sources.configurations,
-      [reinterpretEntry.adapterId]: reinterpretEntry.config,
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  function updateDraft(adapterId: string, next: AdapterConfig) {
+    setDraftConfigs((prev) => ({ ...prev, [adapterId]: next }));
+  }
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -184,17 +190,12 @@ export function GraphSourcePicker({ onClose, initialTab, initialAdapterId, reint
 
   function handleLoad() {
     if (!selectedAdapterId) return;
-    setSetting("sources.active", selectedAdapterId);
+    commitSource(selectedAdapterId, draftConfigs[selectedAdapterId]);
     onClose();
   }
 
   function handleLoadRecent(entry: SourceEntry) {
-    const { settings } = useSettingsStore.getState();
-    setSetting("sources.configurations", {
-      ...settings.sources.configurations,
-      [entry.adapterId]: entry.config,
-    });
-    setSetting("sources.active", entry.adapterId);
+    commitSource(entry.adapterId, entry.config);
     onClose();
   }
 
@@ -234,17 +235,15 @@ export function GraphSourcePicker({ onClose, initialTab, initialAdapterId, reint
   }
 
   function handleSelectCandidate(candidate: ScanCandidate) {
-    const { settings } = useSettingsStore.getState();
-    setSetting("sources.configurations", {
-      ...settings.sources.configurations,
-      [candidate.adapterId]: {
-        ...settings.sources.configurations[candidate.adapterId],
-        ...candidate.suggestedConfig,
-      } as (typeof settings.sources.configurations)[string],
-    });
+    updateDraft(candidate.adapterId, {
+      ...draftConfigs[candidate.adapterId],
+      ...candidate.suggestedConfig,
+      adapterId: candidate.adapterId,
+    } as AdapterConfig);
     setSelectedAdapterId(candidate.adapterId);
-    setScanResults([]);
-    setScanState("idle");
+    // Deliberately NOT clearing scanResults/scanState: the ranked candidate list stays on
+    // screen so the user can compare, reconsider, and pick the runner-up without re-scanning.
+    // "Automated decisions are inspectable — selection reversible" (GRAPH_SOURCE_UX.md).
   }
 
   const allAdapters = getAllSourceAdapterEntries();
@@ -253,10 +252,12 @@ export function GraphSourcePicker({ onClose, initialTab, initialAdapterId, reint
     ? getSourceAdapterEntryById(selectedAdapterId)
     : undefined;
 
+  // Validate the draft — that is what Load commits. Reading the store here would enable
+  // Load on a stale persisted config the user has since edited away.
   const canLoad =
     !!selectedAdapterId &&
     !!selectedEntry &&
-    isConfigValid(selectedAdapterId, configurations, selectedEntry.status);
+    isConfigValid(selectedAdapterId, draftConfigs, selectedEntry.status);
 
   return createPortal(
     <div
@@ -422,24 +423,46 @@ export function GraphSourcePicker({ onClose, initialTab, initialAdapterId, reint
                   <div className="lw-picker__scan-results-header">
                     Scan results for <code className="lw-picker__scan-path-preview">{scanPath}</code>
                   </div>
-                  {scanResults.map((candidate) => (
-                    <button
-                      key={candidate.adapterId}
-                      className="lw-picker__scan-candidate"
-                      onClick={() => handleSelectCandidate(candidate)}
-                      data-testid={`graph-source-scan-candidate-${candidate.adapterId}`}
-                    >
-                      <div className="lw-picker__scan-candidate-header">
-                        <span className="lw-picker__scan-candidate-name">
-                          {ADAPTER_DISPLAY_NAMES[candidate.adapterId] ?? candidate.adapterId}
-                        </span>
-                        <span className={`lw-picker__score-badge lw-picker__score-badge--${candidate.scoreLabel.replace(/ /g, "-")}`}>
-                          {candidate.scoreLabel}
-                        </span>
+                  {scanResults.map((candidate) => {
+                    const isSelected = selectedAdapterId === candidate.adapterId;
+                    return (
+                      <div
+                        key={candidate.adapterId}
+                        className={`lw-picker__scan-candidate-row${isSelected ? " lw-picker__scan-candidate-row--selected" : ""}`}
+                      >
+                        {/* The row is a div so the config form can live outside the button —
+                            nesting form controls inside a <button> is invalid and breaks input. */}
+                        <button
+                          className="lw-picker__scan-candidate"
+                          aria-pressed={isSelected}
+                          onClick={() => handleSelectCandidate(candidate)}
+                          data-testid={`graph-source-scan-candidate-${candidate.adapterId}`}
+                        >
+                          <div className="lw-picker__scan-candidate-header">
+                            <span className="lw-picker__scan-candidate-name">
+                              {ADAPTER_DISPLAY_NAMES[candidate.adapterId] ?? candidate.adapterId}
+                            </span>
+                            <span className={`lw-picker__score-badge lw-picker__score-badge--${candidate.scoreLabel.replace(/ /g, "-")}`}>
+                              {candidate.scoreLabel}
+                            </span>
+                          </div>
+                          <span className="lw-picker__scan-candidate-reason">{candidate.reason}</span>
+                        </button>
+                        {isSelected && (
+                          <div
+                            className="lw-picker__config-area"
+                            data-testid={`graph-source-scan-candidate-config-${candidate.adapterId}`}
+                          >
+                            <AdapterConfigForm
+                              adapterId={candidate.adapterId}
+                              config={draftConfigs[candidate.adapterId]}
+                              onChange={(next) => updateDraft(candidate.adapterId, next)}
+                            />
+                          </div>
+                        )}
                       </div>
-                      <span className="lw-picker__scan-candidate-reason">{candidate.reason}</span>
-                    </button>
-                  ))}
+                    );
+                  })}
                   {!showAllAdapters && (
                     <button
                       className="lw-picker__show-all-btn"
@@ -498,7 +521,11 @@ export function GraphSourcePicker({ onClose, initialTab, initialAdapterId, reint
                               )}
                               {isSelected && !isCandidate && (
                                 <div className="lw-picker__config-area">
-                                  <AdapterConfigForm adapterId={adapter.adapterId} />
+                                  <AdapterConfigForm
+                                    adapterId={adapter.adapterId}
+                                    config={draftConfigs[adapter.adapterId]}
+                                    onChange={(next) => updateDraft(adapter.adapterId, next)}
+                                  />
                                   {devMode && (
                                     <div className="lw-picker__advanced" data-testid="graph-source-picker-advanced">
                                       <button
@@ -514,7 +541,8 @@ export function GraphSourcePicker({ onClose, initialTab, initialAdapterId, reint
                                             {
                                               adapterId: adapter.adapterId,
                                               inputPattern: adapter.inputPattern,
-                                              config: configurations[adapter.adapterId] ?? {},
+                                              // The draft — i.e. what Load would actually commit.
+                                              config: draftConfigs[adapter.adapterId] ?? {},
                                             },
                                             null,
                                             2,
