@@ -9,6 +9,7 @@ import {
   scanTarget,
   type AdapterCategory,
   type ScanCandidate,
+  type SourceAdapterEntry,
 } from "../../source-adapter/sourceAdapterRegistry";
 import { useSettingsStore } from "../settings/settings.store";
 import type { AdapterConfig } from "../../source-adapter/baseSourceAdapter";
@@ -17,6 +18,64 @@ import "./GraphSourcePicker.css";
 
 // Importing sourceAdapterRegistry above is enough to pull in all adapter files
 // and their config-form side effects transitively.
+
+// SA-003b: match a typed path's extension against a glob-style inputPattern.pattern.
+// Supports *.ext, **/*.ext, **/*.{a,b,c}, and exact basename matches (e.g. package.json).
+function patternMatchesPath(pattern: string, filePath: string): boolean {
+  const basename = filePath.split(/[\\/]/).pop() ?? filePath;
+  // Expand brace alternatives: **/*.{json,yaml} → ["**/*.json", "**/*.yaml"]
+  let patterns: string[];
+  const braceMatch = pattern.match(/^(.*)\{([^}]+)\}(.*)$/);
+  if (braceMatch) {
+    const [, prefix, inner, suffix] = braceMatch;
+    patterns = inner.split(",").map((s) => `${prefix}${s.trim()}${suffix}`);
+  } else {
+    patterns = [pattern];
+  }
+  return patterns.some((p) => {
+    // Exact basename match (e.g. "package.json", "Cargo.toml")
+    if (!p.includes("*")) return basename === p;
+    // Extension glob: *.ext or **/*.ext
+    const dotIdx = p.lastIndexOf(".");
+    if (dotIdx >= 0) {
+      const ext = p.slice(dotIdx); // e.g. ".json"
+      return basename.endsWith(ext);
+    }
+    return false;
+  });
+}
+
+function getExtensionSuggestions(
+  path: string,
+  allAdapters: readonly SourceAdapterEntry[],
+): SourceAdapterEntry[] {
+  const trimmed = path.trim();
+  if (!trimmed || trimmed.length < 3) return [];
+  return allAdapters.filter(
+    (a) =>
+      a.category === "file-based" &&
+      a.status !== "candidate" &&
+      patternMatchesPath(a.inputPattern.pattern, trimmed),
+  );
+}
+
+// SA-003b / file-picker: open native OS file/folder dialog when running in Tauri.
+async function openFilePicker(options: { directory: boolean }): Promise<string | null> {
+  try {
+    const { open } = await import("@tauri-apps/plugin-dialog");
+    const result = await open({ directory: options.directory, multiple: false });
+    if (typeof result === "string") return result;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+// True when running inside Tauri (not Playwright / plain browser).
+const isTauriRuntime =
+  typeof window !== "undefined" &&
+  !(window as any).PLAYWRIGHT &&
+  !!(window as any).__TAURI_INTERNALS__;
 
 const ADAPTER_DISPLAY_NAMES: Record<string, string> = {
   "self-graph-yaml-frontmatter": "Self Graph",
@@ -87,6 +146,7 @@ export function GraphSourcePicker({ onClose, initialTab, initialAdapterId, reint
   const [scanState, setScanState] = useState<"idle" | "running" | "done">("idle");
   const [scanResults, setScanResults] = useState<ScanCandidate[]>([]);
   const [showAllAdapters, setShowAllAdapters] = useState(false);
+  const [extSuggestions, setExtSuggestions] = useState<SourceAdapterEntry[]>([]);
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [renamingRecentId, setRenamingRecentId] = useState<string | null>(null);
   const [renamingLabel, setRenamingLabel] = useState("");
@@ -138,12 +198,18 @@ export function GraphSourcePicker({ onClose, initialTab, initialAdapterId, reint
     onClose();
   }
 
+  function handleScanPathChange(value: string) {
+    setScanPath(value);
+    setExtSuggestions(getExtensionSuggestions(value, allAdapters));
+  }
+
   async function handleScan() {
     const t = scanPath.trim();
     if (!t) return;
     setScanState("running");
     setScanResults([]);
     setShowAllAdapters(false);
+    setExtSuggestions([]);
     try {
       const results = await scanTarget(t);
       setScanResults(results);
@@ -151,6 +217,20 @@ export function GraphSourcePicker({ onClose, initialTab, initialAdapterId, reint
       setScanResults([]);
     }
     setScanState("done");
+  }
+
+  async function handleBrowseFile() {
+    const result = await openFilePicker({ directory: false });
+    if (result) {
+      handleScanPathChange(result);
+    }
+  }
+
+  async function handleBrowseDirectory() {
+    const result = await openFilePicker({ directory: true });
+    if (result) {
+      handleScanPathChange(result);
+    }
   }
 
   function handleSelectCandidate(candidate: ScanCandidate) {
@@ -287,7 +367,7 @@ export function GraphSourcePicker({ onClose, initialTab, initialAdapterId, reint
                   type="text"
                   placeholder="Paste a file or directory path to scan…"
                   value={scanPath}
-                  onChange={(e) => setScanPath(e.target.value)}
+                  onChange={(e) => handleScanPathChange(e.target.value)}
                   onKeyDown={(e) => { if (e.key === "Enter" && scanPath.trim()) void handleScan(); }}
                   data-testid="graph-source-scan-input"
                 />
@@ -300,6 +380,41 @@ export function GraphSourcePicker({ onClose, initialTab, initialAdapterId, reint
                   {scanState === "running" ? "Scanning…" : "Scan"}
                 </button>
               </div>
+              {isTauriRuntime && (
+                <div className="lw-picker__browse-row">
+                  <button
+                    className="lw-picker__browse-btn"
+                    onClick={() => void handleBrowseFile()}
+                    data-testid="graph-source-browse-file-btn"
+                  >
+                    Browse file…
+                  </button>
+                  <button
+                    className="lw-picker__browse-btn"
+                    onClick={() => void handleBrowseDirectory()}
+                    data-testid="graph-source-browse-dir-btn"
+                  >
+                    Browse folder…
+                  </button>
+                </div>
+              )}
+
+              {/* SA-003b: extension-based adapter suggestions */}
+              {extSuggestions.length > 0 && scanState === "idle" && (
+                <div className="lw-picker__ext-suggestions" data-testid="graph-source-ext-suggestions">
+                  <span className="lw-picker__ext-suggestions-label">Detected:</span>
+                  {extSuggestions.map((adapter) => (
+                    <button
+                      key={adapter.adapterId}
+                      className="lw-picker__ext-suggestion-chip"
+                      onClick={() => setSelectedAdapterId(adapter.adapterId)}
+                      data-testid={`graph-source-ext-suggestion-${adapter.adapterId}`}
+                    >
+                      {ADAPTER_DISPLAY_NAMES[adapter.adapterId] ?? adapter.adapterId}
+                    </button>
+                  ))}
+                </div>
+              )}
 
               {/* Scan results */}
               {scanState === "done" && scanResults.length > 0 && (

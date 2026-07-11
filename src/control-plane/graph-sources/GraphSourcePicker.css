@@ -428,6 +428,62 @@
   cursor: not-allowed;
 }
 
+/* SA-003b: extension suggestions + file picker browse buttons */
+
+.lw-picker__browse-row {
+  display: flex;
+  gap: 6px;
+  margin-block-start: 4px;
+}
+
+.lw-picker__browse-btn {
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid color-mix(in oklab, var(--lw-panel-border, #334155) 70%, transparent);
+  background: color-mix(in oklab, var(--lw-panel-background, #0f172a) 60%, transparent);
+  color: var(--lw-text-muted, #94a3b8);
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.lw-picker__browse-btn:hover {
+  border-color: color-mix(in oklab, var(--lw-accent, #22d3ee) 40%, transparent);
+  color: var(--lw-accent, #22d3ee);
+}
+
+.lw-picker__ext-suggestions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-block-start: 6px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: color-mix(in oklab, var(--lw-accent, #22d3ee) 5%, transparent);
+  border: 1px solid color-mix(in oklab, var(--lw-accent, #22d3ee) 20%, transparent);
+}
+
+.lw-picker__ext-suggestions-label {
+  font-size: 0.68rem;
+  color: var(--lw-text-muted, #94a3b8);
+  flex-shrink: 0;
+}
+
+.lw-picker__ext-suggestion-chip {
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--lw-accent, #22d3ee) 40%, transparent);
+  background: color-mix(in oklab, var(--lw-accent, #22d3ee) 10%, transparent);
+  color: var(--lw-accent, #22d3ee);
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.lw-picker__ext-suggestion-chip:hover {
+  background: color-mix(in oklab, var(--lw-accent, #22d3ee) 18%, transparent);
+}
+
 /* SA-028: Recent entry rename */
 
 .lw-picker__recent-row {
