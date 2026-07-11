@@ -54,6 +54,7 @@ interface LibraryEntryCardProps {
   onDeleteConfirm: () => void;
   onDeleteCancel: () => void;
   onLoad: () => void;
+  onRename: (label: string) => void;
 }
 
 function LibraryEntryCard({
@@ -67,9 +68,28 @@ function LibraryEntryCard({
   onDeleteConfirm,
   onDeleteCancel,
   onLoad,
+  onRename,
 }: LibraryEntryCardProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editLabel, setEditLabel] = useState("");
+
   const isPending = pendingDeleteId === entry.id;
   const adapterName = ADAPTER_DISPLAY_NAMES[entry.adapterId] ?? entry.adapterId;
+
+  function startEdit() {
+    setEditLabel(entry.label);
+    setIsEditing(true);
+  }
+
+  function commitEdit() {
+    const trimmed = editLabel.trim();
+    if (trimmed && trimmed !== entry.label) onRename(trimmed);
+    setIsEditing(false);
+  }
+
+  function cancelEdit() {
+    setIsEditing(false);
+  }
 
   return (
     <div
@@ -87,21 +107,44 @@ function LibraryEntryCard({
         />
       )}
       <div className="flex items-start gap-2">
-        <button
-          className="min-w-0 flex-1 text-start"
-          onClick={onLoad}
-          data-testid={`library-entry-load-${entry.id}`}
-        >
-          <div className="truncate text-xs font-medium text-slate-200">{entry.label}</div>
-          <div className="mt-0.5 text-xs text-slate-500">
-            {adapterName}
-            {entry.nodeCount !== undefined ? ` · ${entry.nodeCount}n` : ""}
-            {entry.edgeCount !== undefined ? ` / ${entry.edgeCount}e` : ""}
-            {" · "}
-            {formatRelativeTime(entry.loadedAt)}
-          </div>
-        </button>
+        {isEditing ? (
+          <input
+            className="min-w-0 flex-1 rounded border border-cyan-400/40 bg-slate-900 px-1.5 py-0.5 text-xs text-slate-200 outline-none focus:border-cyan-400/70"
+            value={editLabel}
+            autoFocus
+            onChange={(e) => setEditLabel(e.target.value)}
+            onBlur={commitEdit}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") commitEdit();
+              if (e.key === "Escape") cancelEdit();
+            }}
+            data-testid={`library-entry-rename-input-${entry.id}`}
+          />
+        ) : (
+          <button
+            className="min-w-0 flex-1 text-start"
+            onClick={onLoad}
+            data-testid={`library-entry-load-${entry.id}`}
+          >
+            <div className="truncate text-xs font-medium text-slate-200">{entry.label}</div>
+            <div className="mt-0.5 text-xs text-slate-500">
+              {adapterName}
+              {entry.nodeCount !== undefined ? ` · ${entry.nodeCount}n` : ""}
+              {entry.edgeCount !== undefined ? ` / ${entry.edgeCount}e` : ""}
+              {" · "}
+              {formatRelativeTime(entry.loadedAt)}
+            </div>
+          </button>
+        )}
         <div className="flex shrink-0 items-center gap-1">
+          <button
+            className="rounded px-1.5 py-0.5 text-xs text-slate-500 hover:text-slate-300"
+            onClick={startEdit}
+            title="Rename"
+            data-testid={`library-entry-rename-${entry.id}`}
+          >
+            ✎
+          </button>
           {isPinned ? (
             <button
               className="rounded px-1.5 py-0.5 text-xs text-amber-400/70 hover:text-amber-300"
@@ -175,6 +218,7 @@ export function GraphSourcesTileContent() {
   const pinLibraryEntry = useSettingsStore((s) => s.pinLibraryEntry);
   const unpinLibraryEntry = useSettingsStore((s) => s.unpinLibraryEntry);
   const removeLibraryEntry = useSettingsStore((s) => s.removeLibraryEntry);
+  const renameLibraryEntry = useSettingsStore((s) => s.renameLibraryEntry);
 
   const [picker, setPicker] = useState<PickerState>(CLOSED_PICKER);
   const [regenState, setRegenState] = useState<RegenerateState>("idle");
@@ -430,6 +474,7 @@ export function GraphSourcesTileContent() {
                     onDeleteRequest={() => setPendingDeleteId(entry.id)}
                     onDeleteConfirm={() => { removeLibraryEntry(entry.id); setPendingDeleteId(null); }}
                     onDeleteCancel={() => setPendingDeleteId(null)}
+                    onRename={(label) => renameLibraryEntry(entry.id, label)}
                   />
                 ))}
               </div>
@@ -455,6 +500,7 @@ export function GraphSourcesTileContent() {
                     onDeleteRequest={() => setPendingDeleteId(entry.id)}
                     onDeleteConfirm={() => { removeLibraryEntry(entry.id); setPendingDeleteId(null); }}
                     onDeleteCancel={() => setPendingDeleteId(null)}
+                    onRename={(label) => renameLibraryEntry(entry.id, label)}
                   />
                 ))}
               </div>

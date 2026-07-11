@@ -15,6 +15,7 @@ export type SettingsStore = {
   unpinLibraryEntry: (entryId: string) => void;
   removeLibraryEntry: (entryId: string) => void;
   updateLibraryEntryThumbnail: (entryId: string, dataUrl: string) => void;
+  renameLibraryEntry: (entryId: string, label: string) => void;
 };
 
 // Stable ID for a library entry: hash of adapterId + sorted config keys.
@@ -162,6 +163,26 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
       if (recentIdx >= 0) {
         const recent = library.recent.map((e, i) =>
           i === recentIdx ? { ...e, thumbnailDataUrl: dataUrl } : e,
+        );
+        return { settings: updateLibrary(state.settings, { ...library, recent }) };
+      }
+      return {};
+    }),
+
+  renameLibraryEntry: (entryId, label) =>
+    set((state) => {
+      const library = state.settings.sources.library;
+      const pinnedIdx = library.pinned.findIndex((e) => e.id === entryId);
+      if (pinnedIdx >= 0) {
+        const pinned = library.pinned.map((e, i) =>
+          i === pinnedIdx ? { ...e, label } : e,
+        );
+        return { settings: updateLibrary(state.settings, { ...library, pinned }) };
+      }
+      const recentIdx = library.recent.findIndex((e) => e.id === entryId);
+      if (recentIdx >= 0) {
+        const recent = library.recent.map((e, i) =>
+          i === recentIdx ? { ...e, label } : e,
         );
         return { settings: updateLibrary(state.settings, { ...library, recent }) };
       }

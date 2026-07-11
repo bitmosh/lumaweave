@@ -88,11 +88,14 @@ export function GraphSourcePicker({ onClose, initialTab, initialAdapterId, reint
   const [scanResults, setScanResults] = useState<ScanCandidate[]>([]);
   const [showAllAdapters, setShowAllAdapters] = useState(false);
   const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [renamingRecentId, setRenamingRecentId] = useState<string | null>(null);
+  const [renamingLabel, setRenamingLabel] = useState("");
 
   const configurations = useSettingsStore((s) => s.settings.sources.configurations);
   const recents = useSettingsStore((s) => s.settings.sources.library.recent);
   const devMode = useSettingsStore((s) => s.settings.developer.devMode);
   const setSetting = useSettingsStore((s) => s.setSetting);
+  const renameLibraryEntry = useSettingsStore((s) => s.renameLibraryEntry);
 
   const backdropRef = useRef<HTMLDivElement>(null);
 
@@ -223,21 +226,53 @@ export function GraphSourcePicker({ onClose, initialTab, initialAdapterId, reint
                 <p className="lw-picker__empty-recents">No recent sources yet.</p>
               ) : (
                 recents.map((entry) => (
-                  <button
-                    key={entry.id}
-                    className="lw-picker__recent-entry"
-                    onClick={() => handleLoadRecent(entry)}
-                    data-testid={`graph-source-recent-${entry.id}`}
-                  >
-                    <span className="lw-picker__recent-label">{entry.label}</span>
-                    <span className="lw-picker__recent-meta">
-                      {ADAPTER_DISPLAY_NAMES[entry.adapterId] ?? entry.adapterId}
-                      {entry.nodeCount !== undefined && (
-                        <> · {entry.nodeCount} nodes</>
-                      )}
-                      · {formatRelativeTime(entry.loadedAt)}
-                    </span>
-                  </button>
+                  <div key={entry.id} className="lw-picker__recent-row">
+                    {renamingRecentId === entry.id ? (
+                      <input
+                        className="lw-picker__recent-rename-input"
+                        value={renamingLabel}
+                        autoFocus
+                        onChange={(e) => setRenamingLabel(e.target.value)}
+                        onBlur={() => {
+                          const trimmed = renamingLabel.trim();
+                          if (trimmed && trimmed !== entry.label) renameLibraryEntry(entry.id, trimmed);
+                          setRenamingRecentId(null);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            const trimmed = renamingLabel.trim();
+                            if (trimmed && trimmed !== entry.label) renameLibraryEntry(entry.id, trimmed);
+                            setRenamingRecentId(null);
+                          }
+                          if (e.key === "Escape") setRenamingRecentId(null);
+                        }}
+                        data-testid={`graph-source-recent-rename-input-${entry.id}`}
+                      />
+                    ) : (
+                      <button
+                        className="lw-picker__recent-entry"
+                        onClick={() => handleLoadRecent(entry)}
+                        data-testid={`graph-source-recent-${entry.id}`}
+                      >
+                        <span className="lw-picker__recent-label">{entry.label}</span>
+                        <span className="lw-picker__recent-meta">
+                          {ADAPTER_DISPLAY_NAMES[entry.adapterId] ?? entry.adapterId}
+                          {entry.nodeCount !== undefined && (
+                            <> · {entry.nodeCount} nodes</>
+                          )}
+                          · {formatRelativeTime(entry.loadedAt)}
+                        </span>
+                      </button>
+                    )}
+                    <button
+                      className="lw-picker__recent-rename-btn"
+                      title="Rename"
+                      onClick={(e) => { e.stopPropagation(); setRenamingLabel(entry.label); setRenamingRecentId(entry.id); }}
+                      data-testid={`graph-source-recent-rename-${entry.id}`}
+                    >
+                      ✎
+                    </button>
+                  </div>
                 ))
               )}
             </div>
