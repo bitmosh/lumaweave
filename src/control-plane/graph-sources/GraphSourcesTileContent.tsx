@@ -5,6 +5,32 @@ import { GraphSourcePicker } from "./GraphSourcePicker";
 import { useGraphSourceSummary } from "../../graph/ingest/useGraphSourceSummary";
 import { useSettingsStore } from "../settings/settings.store";
 import { invoke } from "../../lib/tauri-invoke";
+import type { SourceEntry } from "../settings/settings.schema";
+
+const ADAPTER_DISPLAY_NAMES: Record<string, string> = {
+  "self-graph-yaml-frontmatter": "Self Graph",
+  "markdown-vault": "Markdown Vault",
+  "cytoscape-json": "Cytoscape JSON",
+  "package-dependency": "Package Dependencies",
+  "csv-edge-list": "CSV Edge List",
+  "cerebra-snapshot": "Cerebra Snapshot",
+  "git-codebase": "Git Codebase",
+  "website-url": "Website URL",
+  "openapi-spec": "OpenAPI Spec",
+  "database-schema": "Database Schema",
+  "cloud-infrastructure": "Cloud Infrastructure",
+  "issue-tracker": "Issue Tracker",
+};
+
+function formatRelativeTime(isoString: string): string {
+  const ms = Date.now() - new Date(isoString).getTime();
+  const m = Math.floor(ms / 60_000);
+  if (m < 1) return "just now";
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h / 24)}d ago`;
+}
 
 type RegenerateState = "idle" | "running" | "success" | "error";
 
@@ -12,30 +38,173 @@ interface PickerState {
   open: boolean;
   initialTab: "recent" | "open-new";
   initialAdapterId?: string;
+  reinterpretEntry?: SourceEntry;
 }
 
 const CLOSED_PICKER: PickerState = { open: false, initialTab: "open-new" };
 
+interface LibraryEntryCardProps {
+  entry: SourceEntry;
+  isPinned: boolean;
+  pendingDeleteId: string | null;
+  onPin: () => void;
+  onUnpin: () => void;
+  onReinterpret: () => void;
+  onDeleteRequest: () => void;
+  onDeleteConfirm: () => void;
+  onDeleteCancel: () => void;
+  onLoad: () => void;
+}
+
+function LibraryEntryCard({
+  entry,
+  isPinned,
+  pendingDeleteId,
+  onPin,
+  onUnpin,
+  onReinterpret,
+  onDeleteRequest,
+  onDeleteConfirm,
+  onDeleteCancel,
+  onLoad,
+}: LibraryEntryCardProps) {
+  const isPending = pendingDeleteId === entry.id;
+  const adapterName = ADAPTER_DISPLAY_NAMES[entry.adapterId] ?? entry.adapterId;
+
+  return (
+    <div
+      className="rounded-lg border border-slate-700/40 bg-slate-950/50 px-3 py-2"
+      data-testid={`library-entry-${entry.id}`}
+    >
+      {entry.thumbnailDataUrl && (
+        <img
+          src={entry.thumbnailDataUrl}
+          alt=""
+          aria-hidden
+          className="mb-2 w-full rounded object-cover"
+          style={{ height: "60px" }}
+          data-testid={`library-entry-thumbnail-${entry.id}`}
+        />
+      )}
+      <div className="flex items-start gap-2">
+        <button
+          className="min-w-0 flex-1 text-start"
+          onClick={onLoad}
+          data-testid={`library-entry-load-${entry.id}`}
+        >
+          <div className="truncate text-xs font-medium text-slate-200">{entry.label}</div>
+          <div className="mt-0.5 text-xs text-slate-500">
+            {adapterName}
+            {entry.nodeCount !== undefined ? ` · ${entry.nodeCount}n` : ""}
+            {entry.edgeCount !== undefined ? ` / ${entry.edgeCount}e` : ""}
+            {" · "}
+            {formatRelativeTime(entry.loadedAt)}
+          </div>
+        </button>
+        <div className="flex shrink-0 items-center gap-1">
+          {isPinned ? (
+            <button
+              className="rounded px-1.5 py-0.5 text-xs text-amber-400/70 hover:text-amber-300"
+              onClick={onUnpin}
+              title="Unpin"
+              data-testid={`library-entry-unpin-${entry.id}`}
+            >
+              ★
+            </button>
+          ) : (
+            <button
+              className="rounded px-1.5 py-0.5 text-xs text-slate-500 hover:text-amber-400"
+              onClick={onPin}
+              title="Pin"
+              data-testid={`library-entry-pin-${entry.id}`}
+            >
+              ☆
+            </button>
+          )}
+          <button
+            className="rounded px-1.5 py-0.5 text-xs text-slate-500 hover:text-cyan-400"
+            onClick={onReinterpret}
+            title="Reinterpret as…"
+            data-testid={`library-entry-reinterpret-${entry.id}`}
+          >
+            ⇄
+          </button>
+          <button
+            className="rounded px-1.5 py-0.5 text-xs text-slate-500 hover:text-red-400"
+            onClick={onDeleteRequest}
+            title="Remove from library"
+            data-testid={`library-entry-delete-${entry.id}`}
+          >
+            ×
+          </button>
+        </div>
+      </div>
+
+      {isPending && (
+        <div
+          className="mt-2 flex items-center gap-2 rounded border border-red-500/20 bg-red-950/30 px-2 py-1 text-xs"
+          data-testid={`library-entry-delete-confirm-${entry.id}`}
+        >
+          <span className="flex-1 text-red-300/80">Remove from library?</span>
+          <button
+            className="font-medium text-red-400 hover:text-red-300"
+            onClick={onDeleteConfirm}
+            data-testid={`library-entry-delete-yes-${entry.id}`}
+          >
+            Remove
+          </button>
+          <button
+            className="text-slate-400 hover:text-slate-300"
+            onClick={onDeleteCancel}
+            data-testid={`library-entry-delete-cancel-${entry.id}`}
+          >
+            Cancel
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function GraphSourcesTileContent() {
   const { summary, isLoading, cancelLoad } = useGraphSourceSummary();
   const activeAdapterId = useSettingsStore((s) => s.settings.sources.active);
+  const pinned = useSettingsStore((s) => s.settings.sources.library.pinned);
   const recents = useSettingsStore((s) => s.settings.sources.library.recent);
   const setSetting = useSettingsStore((s) => s.setSetting);
+  const pinLibraryEntry = useSettingsStore((s) => s.pinLibraryEntry);
+  const unpinLibraryEntry = useSettingsStore((s) => s.unpinLibraryEntry);
+  const removeLibraryEntry = useSettingsStore((s) => s.removeLibraryEntry);
 
   const [picker, setPicker] = useState<PickerState>(CLOSED_PICKER);
   const [regenState, setRegenState] = useState<RegenerateState>("idle");
   const [regenError, setRegenError] = useState<string | null>(null);
   const [lastGenerated, setLastGenerated] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   const isSelfGraph = activeAdapterId === "self-graph-yaml-frontmatter";
+  const hasLibrary = pinned.length > 0 || recents.length > 0;
 
   function openPicker(tab: "recent" | "open-new" = "open-new", adapterId?: string) {
     setPicker({ open: true, initialTab: tab, initialAdapterId: adapterId });
   }
 
+  function openPickerReinterpret(entry: SourceEntry) {
+    setPicker({ open: true, initialTab: "open-new", initialAdapterId: entry.adapterId, reinterpretEntry: entry });
+  }
+
   function handleTryAgain() {
     const { settings } = useSettingsStore.getState();
     setSetting("sources.refreshToken", settings.sources.refreshToken + 1);
+  }
+
+  function handleLoadEntry(entry: SourceEntry) {
+    const { settings } = useSettingsStore.getState();
+    setSetting("sources.configurations", {
+      ...settings.sources.configurations,
+      [entry.adapterId]: entry.config,
+    });
+    setSetting("sources.active", entry.adapterId);
   }
 
   async function handleRegenerate() {
@@ -75,15 +244,28 @@ export function GraphSourcesTileContent() {
           onClose={() => setPicker(CLOSED_PICKER)}
           initialTab={picker.initialTab}
           initialAdapterId={picker.initialAdapterId}
+          reinterpretEntry={picker.reinterpretEntry}
         />
       )}
 
-      {isEmpty && (
+      {isEmpty && !hasLibrary && (
         <EmptyPane
           onOpenPicker={() => openPicker("open-new")}
-          hasRecents={recents.length > 0}
+          hasRecents={false}
           onOpenRecent={() => openPicker("recent")}
         />
+      )}
+
+      {isEmpty && hasLibrary && (
+        <div className="p-1">
+          <button
+            className="mb-3 w-full rounded border border-cyan-400/30 bg-slate-900 px-3 py-1.5 text-xs text-cyan-300 hover:bg-slate-800"
+            onClick={() => openPicker("open-new")}
+            data-testid="graph-sources-open-new-btn"
+          >
+            + Open a graph source
+          </button>
+        </div>
       )}
 
       {!isEmpty && isLoading && (
@@ -223,6 +405,61 @@ export function GraphSourcesTileContent() {
               </>
             )}
           </div>
+        </div>
+      )}
+
+      {/* SA-010: Library sections — always visible when entries exist */}
+      {hasLibrary && (
+        <div className="mt-1 space-y-3 px-1 pb-2" data-testid="graph-sources-library">
+          {pinned.length > 0 && (
+            <div data-testid="graph-sources-library-pinned">
+              <div className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                Pinned
+              </div>
+              <div className="space-y-1.5">
+                {pinned.map((entry) => (
+                  <LibraryEntryCard
+                    key={entry.id}
+                    entry={entry}
+                    isPinned
+                    pendingDeleteId={pendingDeleteId}
+                    onLoad={() => handleLoadEntry(entry)}
+                    onPin={() => {}}
+                    onUnpin={() => unpinLibraryEntry(entry.id)}
+                    onReinterpret={() => openPickerReinterpret(entry)}
+                    onDeleteRequest={() => setPendingDeleteId(entry.id)}
+                    onDeleteConfirm={() => { removeLibraryEntry(entry.id); setPendingDeleteId(null); }}
+                    onDeleteCancel={() => setPendingDeleteId(null)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {recents.length > 0 && (
+            <div data-testid="graph-sources-library-recent">
+              <div className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                Recent
+              </div>
+              <div className="space-y-1.5">
+                {recents.map((entry) => (
+                  <LibraryEntryCard
+                    key={entry.id}
+                    entry={entry}
+                    isPinned={false}
+                    pendingDeleteId={pendingDeleteId}
+                    onLoad={() => handleLoadEntry(entry)}
+                    onPin={() => pinLibraryEntry(entry.id)}
+                    onUnpin={() => {}}
+                    onReinterpret={() => openPickerReinterpret(entry)}
+                    onDeleteRequest={() => setPendingDeleteId(entry.id)}
+                    onDeleteConfirm={() => { removeLibraryEntry(entry.id); setPendingDeleteId(null); }}
+                    onDeleteCancel={() => setPendingDeleteId(null)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -123,6 +123,48 @@ test("pyproject.toml: returns error before reading file", async ({ page }) => {
 // set, the config arrives with manifestType === undefined. Previously the guard
 // `cfg.manifestType !== "package.json"` triggered on undefined, blocking load.
 
+// ── regression: full manifest file path pasted into projectPath ───────────────
+// If the user pastes "/path/to/project/package.json" instead of "/path/to/project",
+// the adapter previously built "/path/to/project/package.json/package.json" and
+// Tauri canonicalize returned ENOTDIR (os error 20).
+
+test("projectPath ending in /package.json is normalized to parent directory", async ({ page }) => {
+  const projectPath = FIXTURE_DIR;
+  const fileContent = fs.readFileSync(path.join(FIXTURE_DIR, "sample-package.json"), "utf-8");
+
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+
+  await page.evaluate(
+    ({ pp, content }) => {
+      (window as any).__lwTauriMock = {
+        ...(window as any).__lwTauriMock,
+        read_user_file: (_args: { path: string }) => content,
+      };
+      const store = (window as any).__lwStore;
+      store.getState().setSetting("sources.active", "package-dependency");
+      store.getState().setSetting("sources.configurations", {
+        ...store.getState().settings.sources.configurations,
+        // User pasted the full file path — adapter must strip the filename
+        "package-dependency": { adapterId: "package-dependency", projectPath: `${pp}/package.json` },
+      });
+    },
+    { pp: projectPath, content: fileContent },
+  );
+
+  await page.waitForFunction(
+    () => {
+      const s = (window as any).__lwGraphSummary;
+      return s && (s.status === "loaded" || s.status === "error");
+    },
+    { timeout: 10000 },
+  );
+
+  const s = await page.evaluate(() => (window as any).__lwGraphSummary);
+  expect(s.status).toBe("loaded");
+  expect(s.normalizedNodes).toHaveLength(9);
+});
+
 test("manifestType omitted from config: defaults to package.json and loads", async ({ page }) => {
   const projectPath = FIXTURE_DIR;
   const fileContent = fs.readFileSync(path.join(FIXTURE_DIR, "sample-package.json"), "utf-8");

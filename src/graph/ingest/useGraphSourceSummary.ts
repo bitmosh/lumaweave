@@ -111,6 +111,18 @@ export function useGraphSourceSummary() {
               result.error ?? "unknown error",
             ).catch(() => {});
           } else {
+            // SA-009: push SourceEntry to library on successful load
+            if (activeAdapterId) {
+              const { settings, pushLibraryEntry } = useSettingsStore.getState();
+              pushLibraryEntry({
+                adapterId: activeAdapterId,
+                config: settings.sources.configurations[activeAdapterId] ?? { adapterId: activeAdapterId },
+                label: result.label,
+                loadedAt: new Date().toISOString(),
+                nodeCount: result.normalizedNodeCount,
+                edgeCount: result.normalizedEdgeCount,
+              });
+            }
             const causationId = causationIdRef.current;
             causationIdRef.current = null;
             invokeEmitSourceLoaded(

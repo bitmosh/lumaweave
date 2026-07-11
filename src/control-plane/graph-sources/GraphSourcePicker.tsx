@@ -75,12 +75,13 @@ interface GraphSourcePickerProps {
   onClose: () => void;
   initialTab?: "recent" | "open-new";
   initialAdapterId?: string;
+  reinterpretEntry?: SourceEntry;
 }
 
-export function GraphSourcePicker({ onClose, initialTab, initialAdapterId }: GraphSourcePickerProps) {
+export function GraphSourcePicker({ onClose, initialTab, initialAdapterId, reinterpretEntry }: GraphSourcePickerProps) {
   const [activeTab, setActiveTab] = useState<"recent" | "open-new">(initialTab ?? "open-new");
   const [selectedAdapterId, setSelectedAdapterId] = useState<string | null>(
-    initialAdapterId ?? null,
+    reinterpretEntry?.adapterId ?? initialAdapterId ?? null,
   );
   const [scanPath, setScanPath] = useState("");
   const [scanState, setScanState] = useState<"idle" | "running" | "done">("idle");
@@ -92,6 +93,17 @@ export function GraphSourcePicker({ onClose, initialTab, initialAdapterId }: Gra
   const setSetting = useSettingsStore((s) => s.setSetting);
 
   const backdropRef = useRef<HTMLDivElement>(null);
+
+  // SA-024: when reinterpreting, pre-populate the config form with the entry's stored config.
+  useEffect(() => {
+    if (!reinterpretEntry) return;
+    const { settings } = useSettingsStore.getState();
+    setSetting("sources.configurations", {
+      ...settings.sources.configurations,
+      [reinterpretEntry.adapterId]: reinterpretEntry.config,
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -364,7 +376,7 @@ export function GraphSourcePicker({ onClose, initialTab, initialAdapterId }: Gra
               disabled={!canLoad}
               data-testid="graph-source-picker-load"
             >
-              Load
+              {reinterpretEntry ? "Load with this adapter" : "Load"}
             </button>
           )}
         </div>

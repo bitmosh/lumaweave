@@ -59,6 +59,7 @@ export function AppShell() {
   const settings = useSettingsStore((state) => state.settings);
   const setSetting = useSettingsStore((state) => state.setSetting);
   const { summary, error: summaryError } = useGraphSourceSummary();
+  const updateLibraryEntryThumbnail = useSettingsStore((s) => s.updateLibraryEntryThumbnail);
   useLwThemeEventEmitter();
 
   // Register spokes and expose app state for Playwright tests (dev mode only)
@@ -105,6 +106,72 @@ export function AppShell() {
   // In test env: always use fixture (stable geometry)
   // In dev/prod: use real source if available
   const useFixture = isTestEnv || !hasRealSource;
+
+  // SA-013/SA-012: Capture thumbnail 2s after a real source loads.
+  // GWells has no settle event; a fixed delay is the MVP trigger.
+  const prevSummaryStatusRef = useRef<string>("idle");
+  const thumbnailTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const prevStatus = prevSummaryStatusRef.current;
+    prevSummaryStatusRef.current = summary.status;
+
+    // Only for real sources — skip fixture (test env) and non-loaded states.
+    if (useFixture || summary.status !== "loaded" || prevStatus === "loaded") return;
+
+    if (thumbnailTimerRef.current) clearTimeout(thumbnailTimerRef.current);
+    const captureAdapterId = useSettingsStore.getState().settings.sources.active;
+
+    thumbnailTimerRef.current = setTimeout(() => {
+      thumbnailTimerRef.current = null;
+      const sigma = (window as any).__lwSigma;
+      if (!sigma || !captureAdapterId) return;
+
+      sigma.once("afterRender", () => {
+        try {
+          const canvases = sigma.getCanvases() as Record<string, HTMLCanvasElement>;
+          const edgesCanvas = canvases["edges"];
+          const nodesCanvas = canvases["nodes"];
+          const labelsCanvas = canvases["labels"];
+          const srcCanvas = nodesCanvas ?? edgesCanvas;
+          if (!srcCanvas || !srcCanvas.width || !srcCanvas.height) return;
+
+          const MAX_W = 300, MAX_H = 200;
+          const ratio = Math.min(MAX_W / srcCanvas.width, MAX_H / srcCanvas.height, 1);
+          const tw = Math.max(1, Math.round(srcCanvas.width * ratio));
+          const th = Math.max(1, Math.round(srcCanvas.height * ratio));
+
+          const off = document.createElement("canvas");
+          off.width = tw;
+          off.height = th;
+          const ctx = off.getContext("2d");
+          if (!ctx) return;
+
+          if (edgesCanvas) ctx.drawImage(edgesCanvas, 0, 0, tw, th);
+          if (nodesCanvas) ctx.drawImage(nodesCanvas, 0, 0, tw, th);
+          if (labelsCanvas) ctx.drawImage(labelsCanvas, 0, 0, tw, th);
+
+          const dataUrl = off.toDataURL("image/jpeg", 0.4);
+          const { settings } = useSettingsStore.getState();
+          const lib = settings.sources.library;
+          const entry =
+            lib.pinned.find((e) => e.adapterId === captureAdapterId) ??
+            lib.recent.find((e) => e.adapterId === captureAdapterId);
+          if (entry) updateLibraryEntryThumbnail(entry.id, dataUrl);
+        } catch {
+          // Thumbnail capture is best-effort; swallow errors silently
+        }
+      });
+      sigma.scheduleRefresh?.();
+    }, 2000);
+
+    return () => {
+      if (thumbnailTimerRef.current) {
+        clearTimeout(thumbnailTimerRef.current);
+        thumbnailTimerRef.current = null;
+      }
+    };
+  }, [summary.status, useFixture, updateLibraryEntryThumbnail]);
 
   const adaptedFixture = useMemo(
     () => adaptSelfGraphToSigma(generatedGraph as LumaSourceGraph),
