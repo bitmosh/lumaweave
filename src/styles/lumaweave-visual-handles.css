@@ -258,10 +258,10 @@ input[type="range"]:focus {
 
 .tile {
   position: absolute;
-  background: linear-gradient(180deg, var(--lw-panel-bg, rgba(27, 8, 48, 0.92)), var(--lw-app-bg, rgba(11, 4, 22, 0.96)));
+  background: linear-gradient(180deg, var(--lw-panel-background, rgba(27, 8, 48, 0.92)), var(--lw-app-background, rgba(11, 4, 22, 0.96)));
   border: 1px solid var(--lw-panel-border, rgba(255, 179, 71, 0.18));
   border-radius: 8px;
-  box-shadow: 0 1px 0 var(--lw-glow, rgba(255, 179, 71, 0.12)), 0 8px 30px rgba(0, 0, 0, 0.55), 0 0 24px var(--lw-glow, rgba(255, 107, 26, 0.08));
+  box-shadow: 0 1px 0 var(--lw-app-glow, rgba(255, 179, 71, 0.12)), 0 8px 30px rgba(0, 0, 0, 0.55), 0 0 24px var(--lw-app-glow, rgba(255, 107, 26, 0.08));
   backdrop-filter: blur(16px) saturate(140%);
   display: flex;
   flex-direction: column;
@@ -282,7 +282,7 @@ input[type="range"]:focus {
   align-items: center;
   justify-content: space-between;
   padding: 8px 12px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--lw-panel-bg, rgba(43, 16, 72, 0.85)) 100%, var(--lw-accent, #FFB347) 10%), var(--lw-panel-bg, rgba(27, 8, 48, 0.75)));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--lw-panel-background, rgba(43, 16, 72, 0.85)) 100%, var(--lw-accent, #FFB347) 10%), var(--lw-panel-background, rgba(27, 8, 48, 0.75)));
   border-block-end: 1px solid var(--lw-panel-border, rgba(255, 179, 71, 0.18));
   cursor: grab;
   user-select: none;
@@ -355,7 +355,7 @@ input[type="range"]:focus {
   align-items: center;
   justify-content: space-between;
   padding: 4px 8px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--lw-panel-bg, rgba(43, 16, 72, 0.75)) 100%, var(--lw-accent, #FFB347) 8%), var(--lw-panel-bg, rgba(27, 8, 48, 0.65)));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--lw-panel-background, rgba(43, 16, 72, 0.75)) 100%, var(--lw-accent, #FFB347) 8%), var(--lw-panel-background, rgba(27, 8, 48, 0.65)));
   border-block-end: 1px solid var(--lw-panel-border, rgba(255, 179, 71, 0.12));
   cursor: grab;
   user-select: none;
@@ -407,9 +407,9 @@ input[type="range"]:focus {
   align-items: center;
   gap: 6px;
   padding: 0 12px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--lw-accent, #FF6B1A) 16%, transparent), var(--lw-panel-bg, rgba(27, 8, 48, 0.88)));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--lw-accent, #FF6B1A) 16%, transparent), var(--lw-panel-background, rgba(27, 8, 48, 0.88)));
   border-block-end: 1px solid var(--lw-panel-border, rgba(255, 179, 71, 0.18));
-  box-shadow: 0 -2px 12px var(--lw-glow, rgba(255, 107, 26, 0.12));
+  box-shadow: 0 -2px 12px var(--lw-app-glow, rgba(255, 107, 26, 0.12));
   height: 28px;
   cursor: grab;
   user-select: none;

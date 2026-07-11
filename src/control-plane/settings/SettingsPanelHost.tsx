@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo, forwardRef, useImperativeHandle } from 'react';
 import { SETTINGS_PANEL_CATEGORIES } from './settingsPanelCategoryRegistry';
 import { settingsRegistry } from './settings.registry';
+import { useSettingsStore } from './settings.store';
 import { t } from '../../i18n';
 
 function normCatId(id: string) {
@@ -12,7 +13,7 @@ import { SettingsPanel } from './SettingsPanel';
 import { SettingsSidebar } from './SettingsSidebar';
 import { SettingsContent } from './SettingsContent';
 import { SettingsSearchBar } from './SettingsSearchBar';
-import { SettingsStatusBar, applyOpacityLayers } from './SettingsStatusBar';
+import { SettingsStatusBar } from './SettingsStatusBar';
 
 export interface SettingsPanelHostHandle {
   toggle: () => void;
@@ -24,8 +25,9 @@ export const SettingsPanelHost = forwardRef<SettingsPanelHostHandle>(
     const [isOpen, setIsOpen] = useState(false);
     const [activeCategory, setActiveCategory] = useState<CategoryId>('theme');
     const [search, setSearch] = useState('');
-    const [opacity, setOpacity] = useState(1);
     const [position, setPosition] = useState<PanelPosition>('floating');
+    const panelTransparency = useSettingsStore((s) => s.settings.appearance.panelTransparency);
+    const setSetting = useSettingsStore((s) => s.setSetting);
     const [drilledIn, setDrilledIn] = useState(false);
 
     useImperativeHandle(ref, () => ({
@@ -44,11 +46,6 @@ export const SettingsPanelHost = forwardRef<SettingsPanelHostHandle>(
       document.addEventListener('keydown', handler);
       return () => document.removeEventListener('keydown', handler);
     }, []);
-
-    useEffect(() => {
-      const panel = document.querySelector<HTMLElement>('[data-testid="settings-panel-root"]');
-      if (panel) applyOpacityLayers(panel, opacity);
-    }, [opacity, isOpen]);
 
     const q = search.trim().toLowerCase();
 
@@ -87,7 +84,7 @@ export const SettingsPanelHost = forwardRef<SettingsPanelHostHandle>(
         title={t("settings.panel.title")}
         subtitle={catLabel.toLowerCase()}
         onPositionChange={setPosition}
-        opacity={opacity}
+        opacity={panelTransparency}
         headerSlot={<SettingsSearchBar value={search} onChange={setSearch} />}
         sidebarSlot={
           <SettingsSidebar
@@ -110,8 +107,8 @@ export const SettingsPanelHost = forwardRef<SettingsPanelHostHandle>(
           <SettingsStatusBar
             position={position}
             saveState="synced"
-            opacity={opacity}
-            onOpacityChange={setOpacity}
+            opacity={panelTransparency}
+            onOpacityChange={(v) => setSetting("appearance.panelTransparency", v)}
           />
         }
       />

@@ -52,14 +52,15 @@ class PackageDependencyAdapter extends SingleFileAdapter {
       return makeErrorSummary("Project path not configured");
     }
 
-    if (cfg.manifestType !== "package.json") {
+    const manifestType = cfg.manifestType ?? "package.json";
+    if (manifestType !== "package.json") {
       return makeErrorSummary(
-        `${cfg.manifestType} not yet supported; only package.json is implemented in v1.0`,
+        `${manifestType} not yet supported; only package.json is implemented in v1.0`,
         cfg.projectPath,
       );
     }
 
-    const filePath = `${cfg.projectPath.replace(/\/$/, "")}/${cfg.manifestType}`;
+    const filePath = `${cfg.projectPath.replace(/\/$/, "")}/${manifestType}`;
     const warnings: string[] = [];
 
     let raw: string;

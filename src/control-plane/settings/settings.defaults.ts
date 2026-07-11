@@ -5,6 +5,10 @@ export const defaultSources: SourcesSettings = {
   active: "self-graph-yaml-frontmatter",
   configurations: {},
   refreshToken: 0,
+  library: {
+    pinned: [],
+    recent: [],
+  },
 };
 
 export const defaultMinimapSettings: MinimapSettings = {
@@ -22,7 +26,7 @@ export const defaultMinimapSettings: MinimapSettings = {
 };
 
 export const defaultSettings: LumaWeaveSettings = {
-  version: 95, // v112.5b.1: agents.inference config added
+  version: 96, // v113.0: SourceEntry + sources.library (SA-022, SA-014)
 
   general: {
     startupProjectId: null,
@@ -40,7 +44,7 @@ export const defaultSettings: LumaWeaveSettings = {
     // NEW v86a defaults
     drama: "cranked",
     motionScale: 0.6,
-    panelBlur: 16,
+    panelBlur: 40,
     nodeHum: 0.7,
     nodeFlowSpeed: 0.55,
     nodeGlow: 1.0,

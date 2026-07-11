@@ -116,3 +116,48 @@ test("pyproject.toml: returns error before reading file", async ({ page }) => {
   expect(s.status).toBe("error");
   expect(s.error).toMatch(/pyproject\.toml.*not.*supported/i);
 });
+
+// ── regression: manifestType omitted from config (added v113.0) ───────────────
+// The config form's select shows "package.json" as default but only writes to
+// the store when the user actively changes the value. If manifestType is never
+// set, the config arrives with manifestType === undefined. Previously the guard
+// `cfg.manifestType !== "package.json"` triggered on undefined, blocking load.
+
+test("manifestType omitted from config: defaults to package.json and loads", async ({ page }) => {
+  const projectPath = FIXTURE_DIR;
+  const fileContent = fs.readFileSync(path.join(FIXTURE_DIR, "sample-package.json"), "utf-8");
+
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+
+  await page.evaluate(
+    ({ pp, content }) => {
+      (window as any).__lwTauriMock = {
+        ...(window as any).__lwTauriMock,
+        read_user_file: (_args: { path: string }) => content,
+      };
+      const store = (window as any).__lwStore;
+      store.getState().setSetting("sources.active", "package-dependency");
+      store.getState().setSetting("sources.configurations", {
+        ...store.getState().settings.sources.configurations,
+        // manifestType intentionally omitted — mirrors the state after user types a
+        // path but never touches the manifest-type select
+        "package-dependency": { adapterId: "package-dependency", projectPath: pp },
+      });
+    },
+    { pp: projectPath, content: fileContent },
+  );
+
+  await page.waitForFunction(
+    () => {
+      const s = (window as any).__lwGraphSummary;
+      return s && (s.status === "loaded" || s.status === "error");
+    },
+    { timeout: 10000 },
+  );
+
+  const s = await page.evaluate(() => (window as any).__lwGraphSummary);
+  expect(s.status).toBe("loaded");
+  // Same node count as the explicit package.json test — adapter treated it identically
+  expect(s.normalizedNodes).toHaveLength(9);
+});

@@ -13,6 +13,7 @@
 import type { LoaderFn, SelfGraphConfig } from "./baseSourceAdapter";
 import type { GraphSourceSummary } from "../graph/schema/graph.types";
 import { loadSelfGraph } from "../graph/ingest/loadSelfGraph";
+import { invokeListFiles } from "../lib/tauri-invoke";
 import { loadMarkdownVault } from "./adapters/markdownVaultAdapter";
 import { loadCytoscapeJson } from "./adapters/cytoscapeJsonAdapter";
 import { loadPackageDependency } from "./adapters/packageDependencyAdapter";
@@ -38,6 +39,8 @@ export type SourceAdapterType =
   | "cerebra-snapshot";
 
 export type InputPatternType = "url" | "path" | "manifest" | "schema";
+
+export type AdapterCategory = "file-based" | "directory-based" | "database" | "stream";
 
 export type ConfidenceType = "observed" | "inferred" | "ai-inferred";
 
@@ -67,10 +70,22 @@ export interface QAReportFormat {
   requiredFields: string[];
 }
 
+export interface ScanCandidate {
+  adapterId: string;
+  score: number;
+  scoreLabel: "strong match" | "weak match" | "possible";
+  suggestedConfig: Record<string, unknown>;
+  reason: string;
+}
+
+export type ScanFn = (target: string) => Promise<ScanCandidate | null>;
+
 export interface SourceAdapterEntry {
   adapterId: string;
   adapterType: SourceAdapterType;
   adapterVersion: string;
+  category: AdapterCategory;
+  formatHint?: string;
   inputPattern: InputPattern;
   translationSet: TranslationSet;
   limits: SafetyLimits;
@@ -87,15 +102,17 @@ export interface SourceAdapterEntry {
 
 const entries: SourceAdapterEntry[] = [];
 const loaderMap = new Map<string, LoaderFn>();
+const scanMap = new Map<string, ScanFn>();
 const listeners: Array<() => void> = [];
 
 // ---------------------------------------------------------------------------
 // Registration API
 // ---------------------------------------------------------------------------
 
-export function registerSourceAdapter(entry: SourceAdapterEntry, loader: LoaderFn): void {
+export function registerSourceAdapter(entry: SourceAdapterEntry, loader: LoaderFn, scan?: ScanFn): void {
   entries.push(entry);
   loaderMap.set(entry.adapterId, loader);
+  if (scan) scanMap.set(entry.adapterId, scan);
   listeners.forEach((l) => l());
 }
 
@@ -133,6 +150,37 @@ export function getSourceAdapterEntriesByStatus(status: AdapterStatus): SourceAd
 
 export function getSourceAdapterEntriesByContractVersion(contractVersion: string): SourceAdapterEntry[] {
   return entries.filter((entry) => entry.contractVersion === contractVersion);
+}
+
+export function getSourceAdapterEntriesByCategory(category: AdapterCategory): SourceAdapterEntry[] {
+  return entries.filter((entry) => entry.category === category);
+}
+
+// ---------------------------------------------------------------------------
+// Scan API (SA-015)
+// ---------------------------------------------------------------------------
+
+// Browser-safe path helpers (no Node.js path module in the webview).
+function pathBasename(p: string): string {
+  const i = Math.max(p.lastIndexOf("/"), p.lastIndexOf("\\"));
+  return i >= 0 ? p.slice(i + 1) : p;
+}
+
+function pathDirname(p: string): string {
+  const i = Math.max(p.lastIndexOf("/"), p.lastIndexOf("\\"));
+  return i > 0 ? p.slice(0, i) : (i === 0 ? "/" : ".");
+}
+
+/**
+ * Runs all registered scan() functions concurrently against `target`.
+ * Returns all non-null candidates sorted by score descending.
+ */
+export async function scanTarget(target: string): Promise<ScanCandidate[]> {
+  const fns = Array.from(scanMap.entries());
+  const settled = await Promise.allSettled(fns.map(([, fn]) => fn(target)));
+  return settled
+    .flatMap((r) => (r.status === "fulfilled" && r.value ? [r.value] : []))
+    .sort((a, b) => b.score - a.score);
 }
 
 // ---------------------------------------------------------------------------
@@ -176,6 +224,8 @@ registerSourceAdapter(
     adapterId: "self-graph-yaml-frontmatter",
     adapterType: "self-graph",
     adapterVersion: "0.1.0",
+    category: "directory-based",
+    formatHint: "Reads YAML frontmatter from **/*.md files in the LumaWeave docs tree. No configuration required.",
     inputPattern: {
       type: "path",
       pattern: "**/*.md",
@@ -214,6 +264,7 @@ registerSourceAdapter(
     adapterId: "git-codebase",
     adapterType: "git-codebase",
     adapterVersion: "0.1.0",
+    category: "directory-based",
     inputPattern: {
       type: "path",
       pattern: ".git",
@@ -239,6 +290,7 @@ registerSourceAdapter(
     adapterId: "website-url",
     adapterType: "website-url",
     adapterVersion: "0.1.0",
+    category: "stream",
     inputPattern: {
       type: "url",
       pattern: "^https?://",
@@ -264,6 +316,8 @@ registerSourceAdapter(
     adapterId: "markdown-vault",
     adapterType: "markdown-vault",
     adapterVersion: "0.1.0",
+    category: "directory-based",
+    formatHint: "Reads **/*.md files in a directory, following wiki-links as edges. Set the vault root path.",
     inputPattern: {
       type: "path",
       pattern: "**/*.md",
@@ -282,6 +336,22 @@ registerSourceAdapter(
     coupling: "external",
   },
   loadMarkdownVault,
+  async (target) => {
+    try {
+      const files = await invokeListFiles(target, ["md"], [], 2);
+      if (files.length === 0) return null;
+      const count = files.length;
+      return {
+        adapterId: "markdown-vault",
+        score: 0.6,
+        scoreLabel: "weak match",
+        suggestedConfig: { adapterId: "markdown-vault", vaultRoot: target },
+        reason: `Found ${count > 20 ? "20+" : count} .md file${count !== 1 ? "s" : ""} in directory`,
+      };
+    } catch {
+      return null;
+    }
+  },
 );
 
 registerSourceAdapter(
@@ -289,6 +359,8 @@ registerSourceAdapter(
     adapterId: "cytoscape-json",
     adapterType: "cytoscape-json",
     adapterVersion: "0.1.0",
+    category: "file-based",
+    formatHint: '{ "elements": { "nodes": [{"data":{"id":"a"}}], "edges": [{"data":{"id":"e1","source":"a","target":"b"}}] } }',
     inputPattern: {
       type: "path",
       pattern: "**/*.json",
@@ -307,6 +379,16 @@ registerSourceAdapter(
     coupling: "external",
   },
   loadCytoscapeJson,
+  async (target) => {
+    if (!target.endsWith(".json")) return null;
+    return {
+      adapterId: "cytoscape-json",
+      score: 0.45,
+      scoreLabel: "possible",
+      suggestedConfig: { adapterId: "cytoscape-json", filePath: target },
+      reason: "File has .json extension — may be Cytoscape.js format",
+    };
+  },
 );
 
 registerSourceAdapter(
@@ -314,6 +396,7 @@ registerSourceAdapter(
     adapterId: "openapi-spec",
     adapterType: "openapi-spec",
     adapterVersion: "0.1.0",
+    category: "file-based",
     inputPattern: {
       type: "schema",
       pattern: "**/*.{json,yaml,yml}",
@@ -339,6 +422,7 @@ registerSourceAdapter(
     adapterId: "database-schema",
     adapterType: "database-schema",
     adapterVersion: "0.1.0",
+    category: "file-based",
     inputPattern: {
       type: "schema",
       pattern: "**/*.{sql,prisma}",
@@ -364,6 +448,8 @@ registerSourceAdapter(
     adapterId: "package-dependency",
     adapterType: "package-dependency",
     adapterVersion: "0.1.0",
+    category: "file-based",
+    formatHint: "Reads package.json, Cargo.toml, pyproject.toml, or go.mod. Set the project root path.",
     inputPattern: {
       type: "manifest",
       pattern: "**/{package.json,Cargo.toml,pyproject.toml,go.mod}",
@@ -382,6 +468,21 @@ registerSourceAdapter(
     coupling: "external",
   },
   loadPackageDependency,
+  async (target) => {
+    const b = pathBasename(target);
+    if (b !== "package.json") return null;
+    return {
+      adapterId: "package-dependency",
+      score: 0.95,
+      scoreLabel: "strong match",
+      suggestedConfig: {
+        adapterId: "package-dependency",
+        projectPath: pathDirname(target),
+        manifestType: "package.json",
+      },
+      reason: "package.json manifest detected",
+    };
+  },
 );
 
 registerSourceAdapter(
@@ -389,6 +490,8 @@ registerSourceAdapter(
     adapterId: "csv-edge-list",
     adapterType: "csv-edge-list",
     adapterVersion: "0.1.0",
+    category: "file-based",
+    formatHint: "CSV with columns: source, target (required); label (optional). First row is header by default.",
     inputPattern: {
       type: "path",
       pattern: "**/*.csv",
@@ -407,6 +510,16 @@ registerSourceAdapter(
     coupling: "external",
   },
   loadCsvEdgeList,
+  async (target) => {
+    if (!target.endsWith(".csv")) return null;
+    return {
+      adapterId: "csv-edge-list",
+      score: 0.9,
+      scoreLabel: "strong match",
+      suggestedConfig: { adapterId: "csv-edge-list", filePath: target },
+      reason: "File has .csv extension",
+    };
+  },
 );
 
 registerSourceAdapter(
@@ -414,6 +527,7 @@ registerSourceAdapter(
     adapterId: "cloud-infrastructure",
     adapterType: "cloud-infrastructure",
     adapterVersion: "0.1.0",
+    category: "file-based",
     inputPattern: {
       type: "manifest",
       pattern: "**/*.{tf,yaml,yml}",
@@ -439,6 +553,7 @@ registerSourceAdapter(
     adapterId: "issue-tracker",
     adapterType: "issue-tracker",
     adapterVersion: "0.1.0",
+    category: "stream",
     inputPattern: {
       type: "url",
       pattern: "^https?://(github|linear|jira)\\.",
@@ -464,6 +579,8 @@ registerSourceAdapter(
     adapterId: "cerebra-snapshot",
     adapterType: "cerebra-snapshot",
     adapterVersion: "0.1.0",
+    category: "file-based",
+    formatHint: "Reads a Cerebra .cerebra/graph.json snapshot. Set the absolute path to the snapshot file.",
     inputPattern: {
       type: "path",
       pattern: "**/.cerebra/graph.json",
@@ -487,4 +604,18 @@ registerSourceAdapter(
     coupling: "external",
   },
   loadCerebraSnapshot,
+  async (target) => {
+    const isCerebraPath = target.includes("/.cerebra/graph.json") || target.endsWith(".cerebra/graph.json");
+    const isPossible = !isCerebraPath && pathBasename(target) === "graph.json" && target.includes("/.cerebra/");
+    if (!isCerebraPath && !isPossible) return null;
+    return {
+      adapterId: "cerebra-snapshot",
+      score: isCerebraPath ? 0.95 : 0.5,
+      scoreLabel: isCerebraPath ? "strong match" : "possible",
+      suggestedConfig: { adapterId: "cerebra-snapshot", filePath: target },
+      reason: isCerebraPath
+        ? "Path matches Cerebra snapshot pattern (.cerebra/graph.json)"
+        : "Filename is graph.json inside a .cerebra directory",
+    };
+  },
 );

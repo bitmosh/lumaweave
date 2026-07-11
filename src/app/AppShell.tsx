@@ -414,6 +414,7 @@ export function AppShell() {
         "--lw-inspector-radial-root-color": crossfadeTokens.inspector.radialSpokeColor,
         "--lw-inspector-radial-root-border": crossfadeTokens.inspector.radialHaloColor,
         "--lw-inspector-radial-text": crossfadeTokens.app.textPrimary,
+        "--lw-panel-blur": `${settings.appearance.panelBlur ?? 40}px`,
         backgroundColor: crossfadeTokens.app.background,
       } as React.CSSProperties}
       data-lw-theme-target="app.shell"

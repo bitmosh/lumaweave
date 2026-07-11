@@ -155,6 +155,18 @@ const MIGRATIONS: Record<number,
     return { ...s, developer } as Partial<LumaWeaveSettings>;
   },
 
+  // v95 → v96: sources.library added (v113.0 SA-022). Additive only.
+  96: (s) => {
+    const sources = (s as any).sources ?? defaultSources;
+    return {
+      ...s,
+      sources: {
+        ...sources,
+        library: sources.library ?? { pinned: [], recent: [] },
+      },
+    } as Partial<LumaWeaveSettings>;
+  },
+
   // v94 → v95: agents.inference config added (v112.5b.1). Additive only.
   95: (s) => {
     const agents = (s as any).agents ?? {};

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSettingsStore } from "../../control-plane/settings/settings.store";
 import {
   invokeEmitSourceLoadFailed,
@@ -35,12 +35,15 @@ const idleState: GraphSourceSummary = {
 export function useGraphSourceSummary() {
   const [summary, setSummary] = useState<GraphSourceSummary>(idleState);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const activeAdapterId = useSettingsStore((s) => s.settings.sources.active);
   const refreshToken = useSettingsStore((s) => s.settings.sources.refreshToken);
 
   const prevAdapterIdRef = useRef<string | null>(null);
   const causationIdRef = useRef<string | null>(null);
+  const cancelledRef = useRef(false);
+  const prevSummaryRef = useRef<GraphSourceSummary>(idleState);
 
   // Listen for Cerebra GraphSnapshotAvailable events forwarded from the Rust watcher.
   // On receipt: stash causation_id, configure the cerebra-snapshot adapter, then
@@ -68,8 +71,16 @@ export function useGraphSourceSummary() {
     };
   }, []);
 
+  const cancelLoad = useCallback(() => {
+    cancelledRef.current = true;
+    setSummary(prevSummaryRef.current);
+    setIsLoading(false);
+    setError(null);
+  }, []);
+
   useEffect(() => {
     let isMounted = true;
+    cancelledRef.current = false;
 
     const prevAdapterId = prevAdapterIdRef.current;
     prevAdapterIdRef.current = activeAdapterId;
@@ -79,13 +90,19 @@ export function useGraphSourceSummary() {
     }
 
     async function loadSummary() {
-      setSummary((prev) => ({ ...prev, status: "loading" }));
+      // Capture prev summary atomically before transitioning to loading
+      setSummary((prev) => {
+        prevSummaryRef.current = prev;
+        return { ...prev, status: "loading" };
+      });
+      setIsLoading(true);
       setError(null);
 
       try {
         const result = await loadSource(activeAdapterId);
-        if (isMounted) {
+        if (isMounted && !cancelledRef.current) {
           setSummary(result);
+          setIsLoading(false);
           if (result.status === "error") {
             setError(result.error || "Unknown error");
             invokeEmitSourceLoadFailed(
@@ -106,7 +123,7 @@ export function useGraphSourceSummary() {
           }
         }
       } catch (err) {
-        if (isMounted) {
+        if (isMounted && !cancelledRef.current) {
           const errorMessage =
             err instanceof Error ? err.message : "Unknown error occurred";
           setError(errorMessage);
@@ -115,6 +132,7 @@ export function useGraphSourceSummary() {
             status: "error",
             error: errorMessage,
           }));
+          setIsLoading(false);
           invokeEmitSourceLoadFailed(
             activeAdapterId ?? "",
             "",
@@ -132,5 +150,5 @@ export function useGraphSourceSummary() {
   // refreshToken is incremented by Regenerate button to re-trigger after script runs
   }, [activeAdapterId, refreshToken]);
 
-  return { summary, error };
+  return { summary, error, isLoading, cancelLoad };
 }

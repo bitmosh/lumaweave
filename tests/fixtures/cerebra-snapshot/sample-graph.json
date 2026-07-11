@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "cerebra/v1",
+  "metadata": {
+    "vaultPath": "/home/user/my-vault"
+  },
+  "nodes": [
+    {
+      "id": "spine-1",
+      "label": "Main Spine",
+      "type": "spine",
+      "fullLabel": "Main Spine — Core",
+      "cluster": "core",
+      "status": "active",
+      "tags": ["important", "core"],
+      "size": 10,
+      "path": "core/main.md",
+      "lastModified": "2026-01-01",
+      "raw": { "custom": "data" }
+    },
+    {
+      "id": "spine-2",
+      "label": "Secondary Spine",
+      "type": "spine"
+    },
+    {
+      "id": "spine-3",
+      "label": "Third Spine",
+      "type": "spine"
+    },
+    {
+      "id": "spine-4",
+      "label": "Fourth Spine",
+      "type": "spine"
+    },
+    {
+      "id": "spine-5",
+      "label": "Fifth Spine",
+      "type": "spine"
+    },
+    {
+      "id": "mem-1",
+      "label": "Memory Record A",
+      "type": "memory_record",
+      "fullLabel": "Full Memory Record A — expanded",
+      "raw": { "sku": "abc-123" }
+    },
+    {
+      "id": "mem-2",
+      "label": "Memory Record B",
+      "type": "memory_record"
+    },
+    {
+      "id": "mem-3",
+      "label": "Memory Record C",
+      "type": "memory_record"
+    },
+    {
+      "id": "spine-1",
+      "label": "Duplicate Spine 1 — should be skipped",
+      "type": "spine"
+    },
+    {
+      "label": "No ID Node — should be skipped",
+      "type": "spine"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "spine-1",
+      "target": "spine-2",
+      "type": "contains"
+    },
+    {
+      "id": "e2",
+      "source": "spine-1",
+      "target": "mem-1",
+      "type": "describes",
+      "weight": 0.9,
+      "provenance": "auto"
+    },
+    {
+      "id": "e3",
+      "source": "spine-2",
+      "target": "mem-2",
+      "type": "describes"
+    },
+    {
+      "id": "e4",
+      "source": "mem-1",
+      "target": "mem-3",
+      "type": "sku-proximity",
+      "bidirectional": true,
+      "weight": 0.75
+    },
+    {
+      "id": "e5",
+      "source": "spine-3",
+      "target": "spine-4",
+      "type": "sku-exact"
+    },
+    {
+      "id": "e6",
+      "source": "spine-4",
+      "target": "spine-5"
+    },
+    {
+      "id": "e-orphan",
+      "source": "spine-1",
+      "target": "ghost-node"
+    },
+    {
+      "source": "spine-1",
+      "target": "spine-2"
+    }
+  ]
+}
