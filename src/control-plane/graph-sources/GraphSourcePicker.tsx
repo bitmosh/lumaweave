@@ -87,9 +87,11 @@ export function GraphSourcePicker({ onClose, initialTab, initialAdapterId, reint
   const [scanState, setScanState] = useState<"idle" | "running" | "done">("idle");
   const [scanResults, setScanResults] = useState<ScanCandidate[]>([]);
   const [showAllAdapters, setShowAllAdapters] = useState(false);
+  const [advancedOpen, setAdvancedOpen] = useState(false);
 
   const configurations = useSettingsStore((s) => s.settings.sources.configurations);
   const recents = useSettingsStore((s) => s.settings.sources.library.recent);
+  const devMode = useSettingsStore((s) => s.settings.developer.devMode);
   const setSetting = useSettingsStore((s) => s.setSetting);
 
   const backdropRef = useRef<HTMLDivElement>(null);
@@ -347,6 +349,30 @@ export function GraphSourcePicker({ onClose, initialTab, initialAdapterId, reint
                               {isSelected && !isCandidate && (
                                 <div className="lw-picker__config-area">
                                   <AdapterConfigForm adapterId={adapter.adapterId} />
+                                  {devMode && (
+                                    <div className="lw-picker__advanced" data-testid="graph-source-picker-advanced">
+                                      <button
+                                        className="lw-picker__advanced-toggle"
+                                        onClick={(e) => { e.stopPropagation(); setAdvancedOpen((v) => !v); }}
+                                        data-testid="graph-source-picker-advanced-toggle"
+                                      >
+                                        Advanced {advancedOpen ? "▲" : "▼"}
+                                      </button>
+                                      {advancedOpen && (
+                                        <pre className="lw-picker__advanced-json" data-testid="graph-source-picker-advanced-json">
+                                          {JSON.stringify(
+                                            {
+                                              adapterId: adapter.adapterId,
+                                              inputPattern: adapter.inputPattern,
+                                              config: configurations[adapter.adapterId] ?? {},
+                                            },
+                                            null,
+                                            2,
+                                          )}
+                                        </pre>
+                                      )}
+                                    </div>
+                                  )}
                                 </div>
                               )}
                             </div>

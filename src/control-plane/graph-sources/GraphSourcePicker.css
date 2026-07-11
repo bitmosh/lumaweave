@@ -427,3 +427,39 @@
   opacity: 0.35;
   cursor: not-allowed;
 }
+
+/* SA-027: Advanced section (dev mode only) */
+
+.lw-picker__advanced {
+  margin-block-start: 8px;
+  border-block-start: 1px solid color-mix(in oklab, var(--lw-panel-border, #334155) 60%, transparent);
+  padding-block-start: 6px;
+}
+
+.lw-picker__advanced-toggle {
+  background: none;
+  border: none;
+  color: color-mix(in oklab, var(--lw-text-muted, #94a3b8) 80%, transparent);
+  font-size: 0.7rem;
+  cursor: pointer;
+  padding: 0;
+  letter-spacing: 0.03em;
+}
+
+.lw-picker__advanced-toggle:hover {
+  color: var(--lw-text-muted, #94a3b8);
+}
+
+.lw-picker__advanced-json {
+  margin-block-start: 6px;
+  padding: 8px;
+  border-radius: 4px;
+  background: color-mix(in oklab, var(--lw-panel-background, #0f172a) 80%, black);
+  color: var(--lw-text-muted, #94a3b8);
+  font-size: 0.68rem;
+  font-family: monospace;
+  overflow-x: auto;
+  white-space: pre;
+  max-block-size: 180px;
+  overflow-y: auto;
+}
