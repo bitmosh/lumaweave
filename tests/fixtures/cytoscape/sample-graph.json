@@ -1,34 +1,141 @@
 {
   "elements": {
     "nodes": [
-      { "data": { "id": "n1", "label": "Node 1" }, "position": { "x": 100, "y": 200 } },
-      { "data": { "id": "n2", "label": "Node 2", "weight": 5, "color": "red" } },
-      { "data": { "id": "n2", "label": "Node 2 Duplicate" } },
-      { "data": { "id": "n3", "label": "Node 3" } },
-      { "data": { "id": "n4", "label": "Node 4" } },
-      { "data": { "id": "n5", "label": "Node 5" } },
-      { "data": { "id": "n6", "label": "Node 6" } },
-      { "data": { "id": "n7", "label": "Node 7" } },
-      { "data": { "id": "n8", "label": "Node 8" } },
-      { "data": { "id": "n9", "label": "Node 9" } },
-      { "data": { "id": "n10", "label": "Node 10" } }
+      {
+        "data": { "id": "TP53", "label": "TP53", "weight": 10.5, "community": "tumor-suppressor", "degree": 6 },
+        "position": { "x": 150, "y": 80 },
+        "group": "nodes", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": true, "pannable": false, "classes": "hub-node"
+      },
+      {
+        "data": { "id": "MDM2", "name": "MDM2", "weight": 6.2, "type": "oncogene", "degree": 3 },
+        "position": { "x": 300, "y": 80 },
+        "group": "nodes", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": true, "pannable": false, "classes": ""
+      },
+      {
+        "data": { "id": "BRCA1", "label": "BRCA1", "weight": 8.1, "community": "dna-repair", "degree": 2 },
+        "position": { "x": 450, "y": 80 },
+        "group": "nodes", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": true, "pannable": false, "classes": "suppressor"
+      },
+      {
+        "data": { "id": "ATM", "label": "ATM", "weight": 5.3, "community": "dna-repair", "degree": 4 },
+        "position": { "x": 150, "y": 240 },
+        "group": "nodes", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": true, "pannable": false, "classes": ""
+      },
+      {
+        "data": { "id": "CHEK2", "label": "CHEK2", "weight": 4.1, "degree": 2 },
+        "position": { "x": 300, "y": 240 },
+        "group": "nodes", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": true, "pannable": false, "classes": ""
+      },
+      {
+        "data": { "id": "PTEN", "label": "PTEN", "weight": 3.8, "community": "tumor-suppressor", "degree": 2 },
+        "position": { "x": 450, "y": 240 },
+        "group": "nodes", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": true, "pannable": false, "classes": ""
+      },
+      {
+        "data": { "id": "RB1", "label": "RB1", "weight": 5.0, "community": "cell-cycle", "degree": 1 },
+        "position": { "x": 150, "y": 400 },
+        "group": "nodes", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": true, "pannable": false, "classes": ""
+      },
+      {
+        "data": { "id": "CDK4", "label": "CDK4", "weight": 3.2, "type": "kinase", "degree": 3 },
+        "position": { "x": 300, "y": 400 },
+        "group": "nodes", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": true, "pannable": false, "classes": ""
+      },
+      {
+        "data": { "id": "CDKN2A", "label": "CDKN2A", "weight": 2.9, "community": "cell-cycle", "degree": 2 },
+        "position": { "x": 450, "y": 400 },
+        "group": "nodes", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": true, "pannable": false, "classes": "suppressor"
+      },
+      {
+        "data": { "id": "EGFR", "label": "EGFR", "weight": 7.4, "type": "receptor", "degree": 2 },
+        "position": { "x": 600, "y": 80 },
+        "group": "nodes", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": true, "pannable": false, "classes": ""
+      },
+      {
+        "data": { "id": "TP53", "label": "p53 (duplicate — should be skipped)" },
+        "position": { "x": 0, "y": 0 },
+        "group": "nodes", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": true, "pannable": false, "classes": ""
+      }
     ],
     "edges": [
-      { "data": { "id": "e1", "source": "n1", "target": "n2", "label": "calls" } },
-      { "data": { "id": "e2", "source": "n2", "target": "n3" } },
-      { "data": { "id": "e3", "source": "n3", "target": "n4" } },
-      { "data": { "id": "e4", "source": "n4", "target": "n5" } },
-      { "data": { "id": "e5", "source": "n5", "target": "n6" } },
-      { "data": { "id": "e6", "source": "n6", "target": "n7" } },
-      { "data": { "id": "e7", "source": "n7", "target": "n8" } },
-      { "data": { "id": "e8", "source": "n8", "target": "n9" } },
-      { "data": { "id": "e9", "source": "n9", "target": "n10" } },
-      { "data": { "id": "e10", "source": "n10", "target": "n1" } },
-      { "data": { "id": "e11", "source": "n1", "target": "n3" } },
-      { "data": { "id": "e12", "source": "n2", "target": "n4" } },
-      { "data": { "id": "e13", "source": "n3", "target": "n5" } },
-      { "data": { "id": "e14", "source": "n4", "target": "n6" } },
-      { "data": { "id": "e15", "source": "n999", "target": "n1" } }
+      {
+        "data": { "id": "e1", "source": "TP53", "target": "MDM2", "label": "inhibits", "weight": 2.1 },
+        "group": "edges", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": false, "pannable": false, "classes": ""
+      },
+      {
+        "data": { "id": "e2", "source": "TP53", "target": "BRCA1", "label": "activates" },
+        "group": "edges", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": false, "pannable": false, "classes": ""
+      },
+      {
+        "data": { "id": "e3", "source": "MDM2", "target": "TP53", "label": "degrades", "weight": 1.8 },
+        "group": "edges", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": false, "pannable": false, "classes": ""
+      },
+      {
+        "data": { "id": "e4", "source": "ATM", "target": "TP53", "label": "phosphorylates" },
+        "group": "edges", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": false, "pannable": false, "classes": ""
+      },
+      {
+        "data": { "id": "e5", "source": "ATM", "target": "CHEK2", "label": "phosphorylates" },
+        "group": "edges", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": false, "pannable": false, "classes": ""
+      },
+      {
+        "data": { "id": "e6", "source": "BRCA1", "target": "ATM", "label": "recruits" },
+        "group": "edges", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": false, "pannable": false, "classes": ""
+      },
+      {
+        "data": { "id": "e7", "source": "PTEN", "target": "CDK4", "label": "inhibits" },
+        "group": "edges", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": false, "pannable": false, "classes": ""
+      },
+      {
+        "data": { "id": "e8", "source": "RB1", "target": "CDK4", "label": "binds" },
+        "group": "edges", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": false, "pannable": false, "classes": ""
+      },
+      {
+        "data": { "id": "e9", "source": "CDKN2A", "target": "CDK4", "label": "inhibits" },
+        "group": "edges", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": false, "pannable": false, "classes": ""
+      },
+      {
+        "data": { "id": "e10", "source": "EGFR", "target": "ATM", "label": "activates" },
+        "group": "edges", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": false, "pannable": false, "classes": ""
+      },
+      {
+        "data": { "id": "e11", "source": "CDKN2A", "target": "MDM2" },
+        "group": "edges", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": false, "pannable": false, "classes": ""
+      },
+      {
+        "data": { "id": "e12", "source": "PTEN", "target": "EGFR", "label": "suppresses" },
+        "group": "edges", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": false, "pannable": false, "classes": ""
+      },
+      {
+        "data": { "id": "e-orphan", "source": "TP53", "target": "GHOST-PROTEIN" },
+        "group": "edges", "removed": false, "selected": false, "selectable": true,
+        "locked": false, "grabbable": false, "pannable": false, "classes": ""
+      }
     ]
-  }
+  },
+  "zoom": 1.2,
+  "pan": { "x": -45.3, "y": 22.7 }
 }

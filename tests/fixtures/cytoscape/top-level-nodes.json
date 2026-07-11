@@ -1,0 +1,9 @@
+{
+  "nodes": [
+    { "data": { "id": "a", "label": "Node A" } },
+    { "data": { "id": "b", "label": "Node B" } }
+  ],
+  "edges": [
+    { "data": { "id": "e1", "source": "a", "target": "b" } }
+  ]
+}
