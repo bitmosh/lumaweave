@@ -119,7 +119,7 @@ Evidence: `src-tauri/src/fs.rs`, `.github/workflows/ci.yml`, and `tests/e2e/`.
 
 ### Renderer abstraction and 3D data
 
-- `graphRendererInterface.ts` is an extension seam, not a second renderer implementation.
+- There is no renderer seam. The `graphRendererInterface.ts` stub was deleted (zero importers, too thin to implement against); the real one is designed in `docs/ledger/RENDERER_MIGRATION.md` (RM-005). Today the de-facto renderer API is the `window.__lwSigma` global.
 - GWells seeders can write `z`, but the active force integration and Sigma renderer use two-dimensional positions.
 - Three.js, React Three Fiber, and Drei are dependencies without runtime imports in `src/`.
 

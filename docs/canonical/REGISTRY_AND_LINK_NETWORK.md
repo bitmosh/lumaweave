@@ -101,7 +101,6 @@ Static list known at build time → **Tier 1**. Runtime-mutable with UI that mus
 | `lensRegistry` | Tier 2 | lens | Dev extension point |
 | `physicsDialectRegistry` | Tier 2 | graph/physics | Dev extension point |
 | `animationPrimitiveRegistry` | Tier 2 | motion | |
-| `edgeStyleRegistry` | Tier 2 | graph/edges | |
 | `fontAxisRegistry` | Tier 2 | themes | |
 | `typographyRegistry` | Tier 2 | themes | |
 | `tileSectionRegistry` | Tier 2– (register, no subscribe) | control-plane/panels | Tile catalog |
@@ -115,7 +114,6 @@ Static list known at build time → **Tier 1**. Runtime-mutable with UI that mus
 | `bookmarkRegistry` | Legacy (factory) | graph/overlay | Migration candidate |
 | `assetRegistry` | Legacy (class) | themes | Empty asset bank |
 | `qa-registry`, `advisory-registry` | Data registry | control-plane/qa | Large data stores, not patterns to imitate |
-| `feature-registry` | Stub | control-plane/features | Currently empty |
 
 `seedFunctions` is **no longer a registry** — it was `seedFunctionRegistry.ts`, now plain module exports in `physics/gwells/seedFunctions.ts`. Treat seed functions as a module, not a registry.
 
