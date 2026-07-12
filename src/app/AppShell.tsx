@@ -61,6 +61,10 @@ import { useLwThemeEventEmitter } from "./useLwThemeEventEmitter";
 const EMPTY_OVERRIDES: Record<string, unknown> = {};
 const EMPTY_PINS: Record<string, { x: number; y: number; z?: number }> = {};
 
+// Owned on documentElement by themeCrossfade's rAF probe — see the effect that promotes
+// the rest of the shell tokens.
+const CROSSFADE_OWNED_TOKEN = "--lw-app-background";
+
 export function AppShell() {
   const settingsPanelRef = useRef<SettingsPanelHostHandle>(null);
   const settings = useSettingsStore((state) => state.settings);
@@ -304,6 +308,50 @@ export function AppShell() {
     themeTokens.app.accent
   );
 
+  // The live --lw-* custom properties for the whole app.
+  const shellCssTokens = useMemo<Record<string, string>>(
+    () => ({
+      "--lw-app-background": crossfadeTokens.app.background,
+      "--lw-panel-background": crossfadeTokens.app.panelBackground,
+      "--lw-panel-border": topbarBorder,
+      "--lw-text-primary": topbarText,
+      "--lw-text-muted": crossfadeTokens.app.textMuted,
+      "--lw-accent": topbarAccent,
+      "--lw-visual-accent": topbarAccent,
+      "--lw-app-glow": crossfadeTokens.app.glow,
+      // Tier 1 primitive color tokens for theme-adaptive components (HexLogo, etc.)
+      "--lw-color-flare-500": themePrimitives[settings.appearance.theme]?.color?.flare?.[500] ?? "#FF6B1A",
+      "--lw-color-magenta-500": themePrimitives[settings.appearance.theme]?.color?.magenta?.[500] ?? "#FF1F8F",
+      "--lw-color-purple-500": themePrimitives[settings.appearance.theme]?.color?.purple?.[500] ?? "#7B2FFF",
+      "--lw-color-gold-500": themePrimitives[settings.appearance.theme]?.color?.gold?.[500] ?? "#FFB347",
+      "--lw-inspector-radial-spoke-color": crossfadeTokens.inspector.radialSpokeColor,
+      "--lw-inspector-radial-root-color": crossfadeTokens.inspector.radialSpokeColor,
+      "--lw-inspector-radial-root-border": crossfadeTokens.inspector.radialHaloColor,
+      "--lw-inspector-radial-text": crossfadeTokens.app.textPrimary,
+      "--lw-panel-blur": `${settings.appearance.panelBlur ?? 40}px`,
+    }),
+    [crossfadeTokens, topbarBorder, topbarText, topbarAccent, settings.appearance.theme, settings.appearance.panelBlur],
+  );
+
+  // Custom properties inherit DOWNWARD, and overlays that createPortal to document.body —
+  // GraphSourcePicker, and any future portal — mount on an *ancestor* of <main>. Tokens
+  // declared only on <main> are therefore invisible to them, so every var(--lw-*) silently
+  // resolves to its hardcoded fallback and the overlay ignores the active theme entirely.
+  // Mirroring them onto documentElement puts them above every mount point at once.
+  //
+  // Except --lw-app-background: themeCrossfade already writes that one to documentElement,
+  // from inside a rAF loop (themeCrossfade.ts:107). Writing it here too would give a single
+  // property two writers — and ours lags by a render, because the crossfade's effect calls
+  // setActiveTokens() and our crossfadeTokens only catches up on the NEXT render. We would
+  // stomp each fresh frame with the previous one. One writer per token; crossfade keeps this.
+  useEffect(() => {
+    const root = document.documentElement;
+    for (const [key, value] of Object.entries(shellCssTokens)) {
+      if (key === CROSSFADE_OWNED_TOKEN) continue;
+      root.style.setProperty(key, value);
+    }
+  }, [shellCssTokens]);
+
   // Resolve graph visual tokens from theme tokens with settings overrides
   // v86c: Memoize to prevent identity churn on unrelated settings changes
   const resolvedGraphTokens = useMemo(
@@ -468,27 +516,10 @@ export function AppShell() {
     <ErrorBoundary>
     <I18nProvider>
     <TileProvider>
-      <main 
+      <main
       className="h-screen overflow-hidden text-slate-100"
       style={{
-        "--lw-app-background": crossfadeTokens.app.background,
-        "--lw-panel-background": crossfadeTokens.app.panelBackground,
-        "--lw-panel-border": topbarBorder,
-        "--lw-text-primary": topbarText,
-        "--lw-text-muted": crossfadeTokens.app.textMuted,
-        "--lw-accent": topbarAccent,
-        "--lw-visual-accent": topbarAccent,
-        "--lw-app-glow": crossfadeTokens.app.glow,
-        // Tier 1 primitive color tokens for theme-adaptive components (HexLogo, etc.)
-        "--lw-color-flare-500": themePrimitives[settings.appearance.theme]?.color?.flare?.[500] ?? "#FF6B1A",
-        "--lw-color-magenta-500": themePrimitives[settings.appearance.theme]?.color?.magenta?.[500] ?? "#FF1F8F",
-        "--lw-color-purple-500": themePrimitives[settings.appearance.theme]?.color?.purple?.[500] ?? "#7B2FFF",
-        "--lw-color-gold-500": themePrimitives[settings.appearance.theme]?.color?.gold?.[500] ?? "#FFB347",
-        "--lw-inspector-radial-spoke-color": crossfadeTokens.inspector.radialSpokeColor,
-        "--lw-inspector-radial-root-color": crossfadeTokens.inspector.radialSpokeColor,
-        "--lw-inspector-radial-root-border": crossfadeTokens.inspector.radialHaloColor,
-        "--lw-inspector-radial-text": crossfadeTokens.app.textPrimary,
-        "--lw-panel-blur": `${settings.appearance.panelBlur ?? 40}px`,
+        ...shellCssTokens,
         backgroundColor: crossfadeTokens.app.background,
       } as React.CSSProperties}
       data-lw-theme-target="app.shell"

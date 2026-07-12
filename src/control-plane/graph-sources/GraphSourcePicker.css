@@ -1,5 +1,18 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 
+/* The modal used to appear and vanish in a single frame. An instant pop is the most common
+   reason a UI reads as "not smooth" — the eye gets no signal about where the surface came
+   from. Durations sit in the same 140–220ms band SettingsPanel already uses. */
+@keyframes lw-picker-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes lw-picker-modal-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+
 .lw-picker__backdrop {
   position: fixed;
   inset: 0;
@@ -8,18 +21,32 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  animation: lw-picker-backdrop-in 140ms ease-out;
 }
 
 .lw-picker__modal {
   background: color-mix(in oklab, var(--lw-panel-background, #0f172a) 92%, transparent);
   border: 1px solid color-mix(in oklab, var(--lw-panel-border, #334155) 80%, transparent);
   border-radius: 12px;
-  inline-size: min(520px, 92vw);
-  max-block-size: 75vh;
+  inline-size: min(520px, 92vi);
+  max-block-size: 75vb;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  backdrop-filter: blur(var(--lw-panel-blur, 40px)) saturate(160%);
+  backdrop-filter: blur(var(--lw-panel-blur, 40px)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--lw-panel-blur, 40px)) saturate(180%);
+  /* Elevation matched to SettingsPanel — without it the modal reads as flat-on-glass. */
+  box-shadow:
+    0 18px 60px rgba(0, 0, 0, 0.55),
+    0 0 80px color-mix(in oklab, var(--lw-app-glow) 22%, transparent);
+  animation: lw-picker-modal-in 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lw-picker__backdrop,
+  .lw-picker__modal {
+    animation: none;
+  }
 }
 
 .lw-picker__header {
@@ -273,14 +300,17 @@
   white-space: nowrap;
 }
 
+/* These were the only raw hexes in the file, so the badges ignored the theme entirely —
+   and under a gold theme the "weak match" amber read as MORE accent-native than the cyan
+   "strong match", inverting the visual ranking the scores are there to convey. */
 .lw-picker__score-badge--strong-match {
-  background: color-mix(in oklab, #22d3ee 15%, transparent);
-  color: #22d3ee;
+  background: color-mix(in oklab, var(--lw-accent, #22d3ee) 15%, transparent);
+  color: var(--lw-accent, #22d3ee);
 }
 
 .lw-picker__score-badge--weak-match {
-  background: color-mix(in oklab, #f59e0b 15%, transparent);
-  color: #f59e0b;
+  background: color-mix(in oklab, var(--lw-color-flare-500, #f59e0b) 15%, transparent);
+  color: var(--lw-color-flare-500, #f59e0b);
 }
 
 .lw-picker__score-badge--possible {
