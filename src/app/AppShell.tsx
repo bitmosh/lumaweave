@@ -120,8 +120,16 @@ export function AppShell() {
   // useGraphSourceSummary spreads {...prev} into its loading state and so retains the nodes.
   // That is load-bearing: without it hasRealNodes would go false mid-switch and the canvas
   // would flash the fixture on every source change.
+  // Adapters read files through the Tauri `invoke` bridge. In a plain browser there is no
+  // bridge, so no source can ever load and "error" is the permanent resting state — which must
+  // not be mistaken for a real failure. See shouldUseFixture.
+  const canLoadSources =
+    isTestEnv ||
+    (typeof window !== "undefined" && !!(window as any).__TAURI_INTERNALS__);
+
   const useFixture = shouldUseFixture({
     isTestEnv,
+    canLoadSources,
     hasRealNodes: summary.normalizedNodes != null && summary.normalizedNodes.length > 0,
     isErrorState: !!summaryError || summary.status === "error",
   });
