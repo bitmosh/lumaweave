@@ -14,12 +14,12 @@
       "reduceMotion": "Reduce Motion"
     },
     "themes": {
-      "solarPlasma": "Solar Plasma",
-      "obsidianAurora": "Obsidian Aurora",
-      "midnightLoom": "Midnight Loom",
-      "voidCircuit": "Void Circuit",
-      "agarthaDream": "Agartha Dream",
-      "agarthaDusk": "Agartha Dusk"
+      "solarPlasma": "Plasma",
+      "obsidianAurora": "Aurora",
+      "midnightLoom": "Midnight",
+      "voidCircuit": "Neon Pink",
+      "agarthaDream": "Light Pastel",
+      "agarthaDusk": "Lavender"
     },
     "brand": {
       "name": "LumaWeave",
@@ -224,7 +224,7 @@
     },
     "controls": {
       "appearance_theme": { "label": "Theme Preset", "description": "Active theme." },
-      "appearance_drama": { "label": "Drama", "description": "Solar Plasma mood preset — multiplier on glow + motion intensity." },
+      "appearance_drama": { "label": "Drama", "description": "Plasma mood preset — multiplier on glow + motion intensity." },
       "appearance_motionScale": { "label": "Motion Scale", "description": "Master multiplier on backdrop and effect motion. 0 = still." },
       "appearance_panelBlur": { "label": "Panel Blur", "description": "backdrop-filter blur amount on dock and panels." },
       "appearance_nodeHum": { "label": "Sphere Hum", "description": "Node interior fade rate." },

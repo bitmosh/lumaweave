@@ -52,14 +52,21 @@ class PackageDependencyAdapter extends SingleFileAdapter {
       return makeErrorSummary("Project path not configured");
     }
 
-    if (cfg.manifestType !== "package.json") {
+    const manifestType = cfg.manifestType ?? "package.json";
+    if (manifestType !== "package.json") {
       return makeErrorSummary(
-        `${cfg.manifestType} not yet supported; only package.json is implemented in v1.0`,
+        `${manifestType} not yet supported; only package.json is implemented in v1.0`,
         cfg.projectPath,
       );
     }
 
-    const filePath = `${cfg.projectPath.replace(/\/$/, "")}/${cfg.manifestType}`;
+    // Guard: if the user pasted the manifest path itself instead of the project dir, strip the filename.
+    const MANIFEST_NAMES = ["package.json", "Cargo.toml", "pyproject.toml", "go.mod"];
+    const projectPathNorm = MANIFEST_NAMES.some((m) => cfg.projectPath.endsWith(`/${m}`) || cfg.projectPath.endsWith(`\\${m}`))
+      ? cfg.projectPath.replace(/[/\\][^/\\]+$/, "")
+      : cfg.projectPath;
+
+    const filePath = `${projectPathNorm.replace(/\/$/, "")}/${manifestType}`;
     const warnings: string[] = [];
 
     let raw: string;

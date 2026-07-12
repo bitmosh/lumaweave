@@ -18,7 +18,11 @@ test("Source Adapter entry count is visible", async ({ page }) => {
 
   const entryCount = page.getByTestId("source-adapter-entry-count");
   await expect(entryCount).toBeVisible();
-  await expect(entryCount).toHaveText("11");
+  // Deliberately hardcoded, not read from the registry: this is a tripwire. Registering a
+  // new adapter should force a conscious update here. Deriving the number from the
+  // registry would make the assertion tautological and silently accept any count.
+  // 12 = 6 registered + 6 candidate stubs.
+  await expect(entryCount).toHaveText("12");
 });
 
 test("Source Adapter self-graph entry renders", async ({ page }) => {

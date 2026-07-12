@@ -3,7 +3,10 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { TileProvider } from "../control-plane/panels/TileProvider";
 import { TileLayer } from "../control-plane/panels/TileLayer";
 import { useSettingsStore, settingsStore } from "../control-plane/settings/settings.store";
-import { useGraphSourceSummary } from "../graph/ingest/useGraphSourceSummary";
+import {
+  useGraphSourceLifecycle,
+  useGraphSourceSummary,
+} from "../graph/ingest/useGraphSourceSummary";
 import { SigmaGraphView } from "../graph/renderers/sigma2d/SigmaGraphView";
 import {
   buildGraphologyGraph,
@@ -45,20 +48,36 @@ import { CommandPaletteHost } from "../control-plane/commands/CommandPaletteHost
 import "../control-plane/commands/palette.css";
 import { ErrorBoundary } from "./ErrorBoundary";
 import "./ErrorBoundary.css";
+// Hoisted out of GraphSourcePicker.tsx / EmptyPane.tsx on purpose. Both components are
+// reachable from tileSectionRegistry, which settings.migrations and the command registry
+// import — so their module graph is loaded by Playwright's Node-side specs, where a bare
+// `import "./x.css"` is a SyntaxError that fails collection for the whole run. Same reason
+// palette.css is hoisted here rather than living in CommandPalette.tsx.
+import "../control-plane/graph-sources/GraphSourcePicker.css";
+import "../control-plane/graph-sources/EmptyPane.css";
 import { StatusBar } from "../control-plane/StatusBar";
 import { useCrossfadeAppTokens } from "../themes/themeCrossfade";
 import { useThemeInspectorStore } from "../themes/themeInspectorStore";
 import { exportGlobalThemeOverrideBundle } from "../themes/themeOverrideStorage";
 import { useLwThemeEventEmitter } from "./useLwThemeEventEmitter";
+import { shouldUseFixture } from "./shouldUseFixture";
 
 const EMPTY_OVERRIDES: Record<string, unknown> = {};
 const EMPTY_PINS: Record<string, { x: number; y: number; z?: number }> = {};
+
+// Owned on documentElement by themeCrossfade's rAF probe — see the effect that promotes
+// the rest of the shell tokens.
+const CROSSFADE_OWNED_TOKEN = "--lw-app-background";
 
 export function AppShell() {
   const settingsPanelRef = useRef<SettingsPanelHostHandle>(null);
   const settings = useSettingsStore((state) => state.settings);
   const setSetting = useSettingsStore((state) => state.setSetting);
+  // AppShell mounts the source lifecycle — exactly once, for the whole app. Every consumer,
+  // including this one, then reads it through useGraphSourceSummary().
+  useGraphSourceLifecycle();
   const { summary, error: summaryError } = useGraphSourceSummary();
+  const updateLibraryEntryThumbnail = useSettingsStore((s) => s.updateLibraryEntryThumbnail);
   useLwThemeEventEmitter();
 
   // Register spokes and expose app state for Playwright tests (dev mode only)
@@ -97,14 +116,89 @@ export function AppShell() {
   const isTestEnv =
     typeof __PLAYWRIGHT__ !== "undefined" && __PLAYWRIGHT__;
 
-  const hasRealSource =
-    !summaryError &&
-    summary.normalizedNodes != null &&
-    summary.normalizedNodes.length > 0;
+  // A load *over* an existing graph keeps rendering the old one, because
+  // useGraphSourceSummary spreads {...prev} into its loading state and so retains the nodes.
+  // That is load-bearing: without it hasRealNodes would go false mid-switch and the canvas
+  // would flash the fixture on every source change.
+  // Adapters read files through the Tauri `invoke` bridge. In a plain browser there is no
+  // bridge, so no source can ever load and "error" is the permanent resting state — which must
+  // not be mistaken for a real failure. See shouldUseFixture.
+  const canLoadSources =
+    isTestEnv ||
+    (typeof window !== "undefined" && !!(window as any).__TAURI_INTERNALS__);
 
-  // In test env: always use fixture (stable geometry)
-  // In dev/prod: use real source if available
-  const useFixture = isTestEnv || !hasRealSource;
+  const useFixture = shouldUseFixture({
+    isTestEnv,
+    canLoadSources,
+    hasRealNodes: summary.normalizedNodes != null && summary.normalizedNodes.length > 0,
+    isErrorState: !!summaryError || summary.status === "error",
+  });
+
+  // SA-013/SA-012: Capture thumbnail 2s after a real source loads.
+  // GWells has no settle event; a fixed delay is the MVP trigger.
+  const prevSummaryStatusRef = useRef<string>("idle");
+  const thumbnailTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const prevStatus = prevSummaryStatusRef.current;
+    prevSummaryStatusRef.current = summary.status;
+
+    // Only for real sources — skip fixture (test env) and non-loaded states.
+    if (useFixture || summary.status !== "loaded" || prevStatus === "loaded") return;
+
+    if (thumbnailTimerRef.current) clearTimeout(thumbnailTimerRef.current);
+    const captureAdapterId = useSettingsStore.getState().settings.sources.active;
+
+    thumbnailTimerRef.current = setTimeout(() => {
+      thumbnailTimerRef.current = null;
+      const sigma = (window as any).__lwSigma;
+      if (!sigma || !captureAdapterId) return;
+
+      sigma.once("afterRender", () => {
+        try {
+          const canvases = sigma.getCanvases() as Record<string, HTMLCanvasElement>;
+          const edgesCanvas = canvases["edges"];
+          const nodesCanvas = canvases["nodes"];
+          const labelsCanvas = canvases["labels"];
+          const srcCanvas = nodesCanvas ?? edgesCanvas;
+          if (!srcCanvas || !srcCanvas.width || !srcCanvas.height) return;
+
+          const MAX_W = 300, MAX_H = 200;
+          const ratio = Math.min(MAX_W / srcCanvas.width, MAX_H / srcCanvas.height, 1);
+          const tw = Math.max(1, Math.round(srcCanvas.width * ratio));
+          const th = Math.max(1, Math.round(srcCanvas.height * ratio));
+
+          const off = document.createElement("canvas");
+          off.width = tw;
+          off.height = th;
+          const ctx = off.getContext("2d");
+          if (!ctx) return;
+
+          if (edgesCanvas) ctx.drawImage(edgesCanvas, 0, 0, tw, th);
+          if (nodesCanvas) ctx.drawImage(nodesCanvas, 0, 0, tw, th);
+          if (labelsCanvas) ctx.drawImage(labelsCanvas, 0, 0, tw, th);
+
+          const dataUrl = off.toDataURL("image/jpeg", 0.4);
+          const { settings } = useSettingsStore.getState();
+          const lib = settings.sources.library;
+          const entry =
+            lib.pinned.find((e) => e.adapterId === captureAdapterId) ??
+            lib.recent.find((e) => e.adapterId === captureAdapterId);
+          if (entry) updateLibraryEntryThumbnail(entry.id, dataUrl);
+        } catch {
+          // Thumbnail capture is best-effort; swallow errors silently
+        }
+      });
+      sigma.scheduleRefresh?.();
+    }, 2000);
+
+    return () => {
+      if (thumbnailTimerRef.current) {
+        clearTimeout(thumbnailTimerRef.current);
+        thumbnailTimerRef.current = null;
+      }
+    };
+  }, [summary.status, useFixture, updateLibraryEntryThumbnail]);
 
   const adaptedFixture = useMemo(
     () => adaptSelfGraphToSigma(generatedGraph as LumaSourceGraph),
@@ -229,6 +323,50 @@ export function AppShell() {
     "accent.primary" as any,
     themeTokens.app.accent
   );
+
+  // The live --lw-* custom properties for the whole app.
+  const shellCssTokens = useMemo<Record<string, string>>(
+    () => ({
+      "--lw-app-background": crossfadeTokens.app.background,
+      "--lw-panel-background": crossfadeTokens.app.panelBackground,
+      "--lw-panel-border": topbarBorder,
+      "--lw-text-primary": topbarText,
+      "--lw-text-muted": crossfadeTokens.app.textMuted,
+      "--lw-accent": topbarAccent,
+      "--lw-visual-accent": topbarAccent,
+      "--lw-app-glow": crossfadeTokens.app.glow,
+      // Tier 1 primitive color tokens for theme-adaptive components (HexLogo, etc.)
+      "--lw-color-flare-500": themePrimitives[settings.appearance.theme]?.color?.flare?.[500] ?? "#FF6B1A",
+      "--lw-color-magenta-500": themePrimitives[settings.appearance.theme]?.color?.magenta?.[500] ?? "#FF1F8F",
+      "--lw-color-purple-500": themePrimitives[settings.appearance.theme]?.color?.purple?.[500] ?? "#7B2FFF",
+      "--lw-color-gold-500": themePrimitives[settings.appearance.theme]?.color?.gold?.[500] ?? "#FFB347",
+      "--lw-inspector-radial-spoke-color": crossfadeTokens.inspector.radialSpokeColor,
+      "--lw-inspector-radial-root-color": crossfadeTokens.inspector.radialSpokeColor,
+      "--lw-inspector-radial-root-border": crossfadeTokens.inspector.radialHaloColor,
+      "--lw-inspector-radial-text": crossfadeTokens.app.textPrimary,
+      "--lw-panel-blur": `${settings.appearance.panelBlur ?? 40}px`,
+    }),
+    [crossfadeTokens, topbarBorder, topbarText, topbarAccent, settings.appearance.theme, settings.appearance.panelBlur],
+  );
+
+  // Custom properties inherit DOWNWARD, and overlays that createPortal to document.body —
+  // GraphSourcePicker, and any future portal — mount on an *ancestor* of <main>. Tokens
+  // declared only on <main> are therefore invisible to them, so every var(--lw-*) silently
+  // resolves to its hardcoded fallback and the overlay ignores the active theme entirely.
+  // Mirroring them onto documentElement puts them above every mount point at once.
+  //
+  // Except --lw-app-background: themeCrossfade already writes that one to documentElement,
+  // from inside a rAF loop (themeCrossfade.ts:107). Writing it here too would give a single
+  // property two writers — and ours lags by a render, because the crossfade's effect calls
+  // setActiveTokens() and our crossfadeTokens only catches up on the NEXT render. We would
+  // stomp each fresh frame with the previous one. One writer per token; crossfade keeps this.
+  useEffect(() => {
+    const root = document.documentElement;
+    for (const [key, value] of Object.entries(shellCssTokens)) {
+      if (key === CROSSFADE_OWNED_TOKEN) continue;
+      root.style.setProperty(key, value);
+    }
+  }, [shellCssTokens]);
 
   // Resolve graph visual tokens from theme tokens with settings overrides
   // v86c: Memoize to prevent identity churn on unrelated settings changes
@@ -394,26 +532,10 @@ export function AppShell() {
     <ErrorBoundary>
     <I18nProvider>
     <TileProvider>
-      <main 
+      <main
       className="h-screen overflow-hidden text-slate-100"
       style={{
-        "--lw-app-background": crossfadeTokens.app.background,
-        "--lw-panel-background": crossfadeTokens.app.panelBackground,
-        "--lw-panel-border": topbarBorder,
-        "--lw-text-primary": topbarText,
-        "--lw-text-muted": crossfadeTokens.app.textMuted,
-        "--lw-accent": topbarAccent,
-        "--lw-visual-accent": topbarAccent,
-        "--lw-app-glow": crossfadeTokens.app.glow,
-        // Tier 1 primitive color tokens for theme-adaptive components (HexLogo, etc.)
-        "--lw-color-flare-500": themePrimitives[settings.appearance.theme]?.color?.flare?.[500] ?? "#FF6B1A",
-        "--lw-color-magenta-500": themePrimitives[settings.appearance.theme]?.color?.magenta?.[500] ?? "#FF1F8F",
-        "--lw-color-purple-500": themePrimitives[settings.appearance.theme]?.color?.purple?.[500] ?? "#7B2FFF",
-        "--lw-color-gold-500": themePrimitives[settings.appearance.theme]?.color?.gold?.[500] ?? "#FFB347",
-        "--lw-inspector-radial-spoke-color": crossfadeTokens.inspector.radialSpokeColor,
-        "--lw-inspector-radial-root-color": crossfadeTokens.inspector.radialSpokeColor,
-        "--lw-inspector-radial-root-border": crossfadeTokens.inspector.radialHaloColor,
-        "--lw-inspector-radial-text": crossfadeTokens.app.textPrimary,
+        ...shellCssTokens,
         backgroundColor: crossfadeTokens.app.background,
       } as React.CSSProperties}
       data-lw-theme-target="app.shell"

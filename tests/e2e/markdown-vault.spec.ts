@@ -61,17 +61,19 @@ test("markdown-vault: loads fixture vault with expected node/edge counts", async
 
   const summary = await page.evaluate(() => (window as any).__lwGraphSummary);
 
-  // 10 original notes + 3 disambiguation notes
+  // 10 original notes + 3 new (AnchorAndDisplayLink, ModifiedDate, HexColorBody)
+  // + 3 disambiguation notes = 16 total
   const noteNodes = (summary.normalizedNodes as any[]).filter((n) => n.type === "note");
-  expect(noteNodes).toHaveLength(13);
+  expect(noteNodes).toHaveLength(16);
 
-  // 9 original tags + 2 from disambiguation (work-projects, personal-projects)
+  // 9 original tags + 2 disambiguation (work-projects, personal-projects)
+  // + 2 new (archived, hex-color-test) = 13 total
   const tagNodes = (summary.normalizedNodes as any[]).filter((n) => n.type === "tag");
-  expect(tagNodes).toHaveLength(11);
+  expect(tagNodes).toHaveLength(13);
 
-  // 9 original wikilinks + 1 disambiguation link
+  // 9 original wikilinks + 1 disambiguation link + 3 from AnchorAndDisplayLink = 13
   const wikilinkEdges = (summary.normalizedEdges as any[]).filter((e) => e.relationship === "wikilink");
-  expect(wikilinkEdges).toHaveLength(10);
+  expect(wikilinkEdges).toHaveLength(13);
 
   // Disambiguation: personal/Project.md wins over work/Project.md (alphabetical tiebreak)
   const disambigEdge = wikilinkEdges.find((e: any) => e.source === "LinkByCommonName.md");
@@ -86,6 +88,118 @@ test("markdown-vault: loads fixture vault with expected node/edge counts", async
     w.includes("Unresolved wikilink"),
   );
   expect(unresolvedWarnings).toHaveLength(2);
+});
+
+// ── Focused-mock tests: single-file loads to verify specific adapter behaviours ──
+
+function buildMock(files: Record<string, string>) {
+  return {
+    files,
+    paths: Object.keys(files),
+  };
+}
+
+async function loadVaultMock(
+  page: import("@playwright/test").Page,
+  files: Record<string, string>,
+) {
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+
+  const { paths } = buildMock(files);
+
+  await page.evaluate(
+    ({ fileMap, pathList }) => {
+      (window as any).__lwTauriMock = {
+        list_files: () => pathList,
+        read_vault_file: (args: { relativePath: string }) => fileMap[args.relativePath] ?? "",
+      };
+      const store = (window as any).__lwStore;
+      store.getState().setSetting("sources.configurations", {
+        ...store.getState().settings.sources.configurations,
+        "markdown-vault": { adapterId: "markdown-vault", vaultRoot: "/mock-vault" },
+      });
+      store.getState().setSetting("sources.active", "markdown-vault");
+    },
+    { fileMap: files, pathList: paths },
+  );
+
+  await page.waitForFunction(
+    () => {
+      const s = (window as any).__lwGraphSummary;
+      return s?.status === "loaded" && s?.sourceId === "markdown-vault";
+    },
+    { timeout: 10000 },
+  );
+
+  return await page.evaluate(() => (window as any).__lwGraphSummary);
+}
+
+test("markdown-vault: anchor link captures raw.anchor", async ({ page }) => {
+  const s = await loadVaultMock(page, {
+    "Hub.md": "---\n---\nThe main hub.\n",
+    "AnchorAndDisplayLink.md": "---\n---\nBasic anchor: [[Hub#introduction]]\n",
+  });
+  const wikilinkEdges = (s.normalizedEdges as any[]).filter((e) => e.relationship === "wikilink");
+  const anchorEdge = wikilinkEdges.find(
+    (e: any) => e.source === "AnchorAndDisplayLink.md" && e.target === "Hub.md",
+  );
+  expect(anchorEdge).toBeDefined();
+  expect(anchorEdge.raw.anchor).toBe("introduction");
+  expect(anchorEdge.raw.displayText).toBeUndefined();
+});
+
+test("markdown-vault: display text link captures raw.displayText", async ({ page }) => {
+  const s = await loadVaultMock(page, {
+    "Hub.md": "---\n---\nThe main hub.\n",
+    "AnchorAndDisplayLink.md": "---\n---\nDisplay text only: [[Hub|my hub note]]\n",
+  });
+  const wikilinkEdges = (s.normalizedEdges as any[]).filter((e) => e.relationship === "wikilink");
+  const displayEdge = wikilinkEdges.find(
+    (e: any) => e.source === "AnchorAndDisplayLink.md" && e.target === "Hub.md",
+  );
+  expect(displayEdge).toBeDefined();
+  expect(displayEdge.raw.displayText).toBe("my hub note");
+  expect(displayEdge.raw.anchor).toBeUndefined();
+});
+
+test("markdown-vault: combined anchor+display text captures both raw fields", async ({ page }) => {
+  const s = await loadVaultMock(page, {
+    "Hub.md": "---\n---\nThe main hub.\n",
+    "AnchorAndDisplayLink.md": "---\n---\nBoth: [[Hub#setup|Getting Started]]\n",
+  });
+  const wikilinkEdges = (s.normalizedEdges as any[]).filter((e) => e.relationship === "wikilink");
+  const comboEdge = wikilinkEdges.find(
+    (e: any) => e.source === "AnchorAndDisplayLink.md" && e.target === "Hub.md",
+  );
+  expect(comboEdge).toBeDefined();
+  expect(comboEdge.raw.anchor).toBe("setup");
+  expect(comboEdge.raw.displayText).toBe("Getting Started");
+});
+
+test("markdown-vault: 'modified' frontmatter key maps to raw.updatedAt", async ({ page }) => {
+  const s = await loadVaultMock(page, {
+    "ModifiedDate.md": "---\nmodified: 2026-02-01\ntags: [archived]\n---\nOlder note.\n",
+  });
+  const noteNodes = (s.normalizedNodes as any[]).filter((n) => n.type === "note");
+  const note = noteNodes.find((n: any) => n.id === "ModifiedDate.md");
+  expect(note).toBeDefined();
+  expect(note.raw.updatedAt).toMatch(/^2026-02-01/);
+});
+
+test("markdown-vault: hex color codes in body are not extracted as tags", async ({ page }) => {
+  const s = await loadVaultMock(page, {
+    "HexColorBody.md":
+      "---\n---\nWarning states use #FF0000, tints use #abc, brand is #DeadBe.\nTracked as #hex-color-test.\n",
+  });
+  const tagNodes = (s.normalizedNodes as any[]).filter((n) => n.type === "tag");
+  const tagIds = tagNodes.map((n: any) => n.id as string);
+  // hex-color-test should become a tag (node IDs are prefixed with "tag:")
+  expect(tagIds).toContain("tag:hex-color-test");
+  // hex color values must NOT become tags
+  expect(tagIds).not.toContain("tag:FF0000");
+  expect(tagIds).not.toContain("tag:abc");
+  expect(tagIds).not.toContain("tag:DeadBe");
 });
 
 test("markdown-vault: config form visible when adapter is active", async ({ page }) => {

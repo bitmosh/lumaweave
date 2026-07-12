@@ -35,7 +35,7 @@ function readRect(): { left: number; top: number; width: number; height: number 
 export function SettingsPanel({
   open, onClose, title = 'Settings', subtitle,
   initialRect, onPositionChange,
-  opacity: _opacity,
+  opacity,
   headerSlot, sidebarSlot, contentSlot, statusBarSlot,
 }: SettingsPanelProps) {
   const panelRef = React.useRef<HTMLDivElement>(null);
@@ -192,7 +192,10 @@ React.useEffect(() => {
           left: rect.left, top: rect.top,
           width: rect.width,
           height: minimized ? undefined : rect.height,
-        }}
+          '--lw-settings-bg-opacity': String(opacity),
+          '--lw-settings-chrome-opacity': String(0.6 + opacity * 0.4),
+          '--lw-settings-text-opacity': '1',
+        } as React.CSSProperties}
       >
         <div className="lw-settings-panel-bg" />
         <div className="lw-settings-panel-chrome">

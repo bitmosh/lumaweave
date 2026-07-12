@@ -57,10 +57,26 @@ export interface MinimapAnchor {
   y?: number;
 }
 
+export interface SourceEntry {
+  id: string;
+  adapterId: string;
+  config: AdapterConfig;
+  label: string;
+  pinnedAt?: string;
+  loadedAt: string;
+  nodeCount?: number;
+  edgeCount?: number;
+  thumbnailDataUrl?: string;
+}
+
 export interface SourcesSettings {
   active: string | null;
   configurations: Record<string, AdapterConfig>; // v109.0.1: narrowed from { inputPath?: string }
   refreshToken: number; // v108.0.1: incremented on regenerate success to re-trigger useGraphSourceSummary
+  library: {
+    pinned: SourceEntry[];
+    recent: SourceEntry[];
+  };
 }
 
 export interface MinimapSettings {
@@ -78,7 +94,7 @@ export interface MinimapSettings {
 }
 
 export interface LumaWeaveSettings {
-  version: 95; // v112.5b.1: agents.inference config added
+  version: 96; // v113.0: SourceEntry + sources.library (SA-022, SA-014)
 
   general: {
     startupProjectId: string | null;

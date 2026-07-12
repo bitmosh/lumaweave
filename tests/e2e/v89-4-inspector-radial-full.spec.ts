@@ -64,7 +64,9 @@ test.describe("v89.4 Inspector Full Radial — 8 spokes (v105.0.1: IDE merged in
       await expect(page.locator('[data-testid="placeholder-tab"]')).toBeVisible();
       const message = page.locator('[data-testid="placeholder-message"]');
       await expect(message).toBeVisible();
-      await expect(message).toContainText("Coming");
+      // Copy changed from "Coming soon…" to "… are in development." (see the spoke's
+      // placeholderMessage in registerLayoutSpoke.ts); the test still asserted the old wording.
+      await expect(message).toContainText("in development");
     });
   }
 });

@@ -124,8 +124,15 @@ class CytoscapeJsonAdapter extends SingleFileAdapter {
 
     // D9: strict elements key required
     if (p.elements === undefined) {
+      const hasTopLevelNodes = Array.isArray(p.nodes) || Array.isArray(p.edges);
       return makeErrorSummary(
-        "Missing required `elements` key — not a Cytoscape.js JSON file",
+        hasTopLevelNodes
+          ? 'Your file uses { "nodes": [...], "edges": [...] } without an "elements" wrapper. ' +
+            'Use "Different adapter" to find a compatible format, or wrap your data: ' +
+            '{ "elements": { "nodes": [...], "edges": [...] } }'
+          : 'Missing required "elements" key — not a Cytoscape.js JSON file. ' +
+            'Expected: { "elements": { "nodes": [...], "edges": [...] } }. ' +
+            'Use "Different adapter" if your file uses a different graph format.',
         cfg.filePath,
       );
     }

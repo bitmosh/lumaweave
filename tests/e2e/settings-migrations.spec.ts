@@ -12,6 +12,7 @@
 
 import { test, expect } from "@playwright/test";
 import { migrateSettings } from "../../src/control-plane/settings/settings.migrations";
+import { defaultSettings } from "../../src/control-plane/settings/settings.defaults";
 
 test.describe("settings migration chain", () => {
   test("v76 → v87 chain produces correct endpoint", () => {
@@ -38,8 +39,12 @@ test.describe("settings migration chain", () => {
     // Run full migration chain
     const result = migrateSettings(v76);
 
-    // Verify version is current (v93: v109.0.1 configurations narrowed to AdapterConfig)
-    expect(result.version).toBe(93);
+    // The chain must land on the CURRENT schema version. Derived from defaultSettings
+    // rather than hardcoded: the assertion that matters is "migration reaches current",
+    // not "migration reaches 93". Hardcoding it only guarantees it goes stale on the next
+    // bump — which is exactly what happened (it sat at 93 while the schema reached 96,
+    // undetected because this spec was in the collection-broken set).
+    expect(result.version).toBe(defaultSettings.version);
 
     // Verify v80/v88 fields are present (v86b additions, v88 rename)
     expect((result.appearance as any).animationDensity).toBe("medium");

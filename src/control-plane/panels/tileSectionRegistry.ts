@@ -225,6 +225,7 @@ const entries: TileSectionEntry[] = [
     defaultVisible: false,
     defaultExpanded: true,
     iconGlyph: "🔌",
+    requiresDevMode: true,
   },
 ];
 

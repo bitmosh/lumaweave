@@ -101,7 +101,7 @@ Theme runtime tokens are resolved into graph visual tokens before policy writes 
 
 ## Future renderer boundary
 
-`src/graph/rendering/graphRendererInterface.ts` describes a small mount/camera/refresh contract, but integrating a second renderer requires real adapter work:
+There is **no renderer seam today.** A `graphRendererInterface.ts` stub once existed; it had zero importers and was too thin to be the real boundary (no hit-testing, no viewport projection, no program registration), so it was deleted rather than implemented against. The real seam is designed in `docs/ledger/RENDERER_MIGRATION.md` (RM-005). Integrating a second renderer requires real adapter work:
 
 - Express graph visual policy without relying on Sigma-specific attributes.
 - Map selection, camera, labels, materials, and theme tokens.
@@ -126,5 +126,5 @@ Three.js, React Three Fiber, and Drei are installed but unused by runtime source
 - Programs: `src/graph/nodePrograms/`, `src/graph/edgePrograms/`
 - Policies: `src/graph/visual/`
 - Overlays/camera: `src/graph/overlay/`
-- Renderer type seam: `src/graph/rendering/graphRendererInterface.ts`
+- Renderer seam: none yet — see `docs/ledger/RENDERER_MIGRATION.md` (RM-005). The de-facto API is the `window.__lwSigma` global (GD-002).
 - Physics: `src/physics/gwells/`

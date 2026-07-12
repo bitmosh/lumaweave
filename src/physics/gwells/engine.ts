@@ -27,6 +27,38 @@ function nowMs(): number {
   return typeof performance !== "undefined" ? performance.now() : Date.now();
 }
 
+/**
+ * L-002: below this separation, two nodes are treated as coincident and given an artificial
+ * direction to push apart along. Small enough that it never perturbs a healthy layout — a
+ * sub-pixel gap is already a visual overlap — and large enough to escape float noise.
+ */
+const COINCIDENT_EPSILON = 0.5;
+const COINCIDENT_EPSILON_SQ = COINCIDENT_EPSILON * COINCIDENT_EPSILON;
+
+/**
+ * A stable pseudo-angle for separating two coincident nodes.
+ *
+ * Deliberately NOT Math.random(): the layout must stay deterministic and repeatable, so the
+ * same pair always separates along the same axis and the same graph always resolves to the
+ * same picture. Derived from the node ids via FNV-1a, and made antisymmetric so that A pushing
+ * away from B and B pushing away from A produce opposite directions rather than the same one
+ * (which would drift the pair sideways instead of separating it).
+ */
+function stableSeparationAngle(a: string, b: string): number {
+  // Order-independent hash of the unordered pair, so both halves of the interaction agree.
+  const lo = a < b ? a : b;
+  const hi = a < b ? b : a;
+  let h = 0x811c9dc5;
+  const s = `${lo} ${hi}`;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  const base = ((h >>> 0) / 0xffffffff) * Math.PI * 2;
+  // Antisymmetric: the node that sorts first pushes one way, the other pushes back.
+  return a === lo ? base : base + Math.PI;
+}
+
 const noopScheduler: GWScheduler = {
   request: () => ({ kind: "gwells.noop-frame" }),
   cancel: () => undefined,
@@ -213,8 +245,6 @@ export function applyDialect(
     const wellType = getWellTypeById(wellTypeId);
     if (!wellType) {
       return {
-        attractionStrength: 0,
-        siblingRepulsion: 0,
         springStiffness: 0,
         damping: 1,
         idealDistance: 0,
@@ -224,10 +254,6 @@ export function applyDialect(
     }
     const override = resolvedConfig.wellOverrides?.[wellTypeId];
     return {
-      attractionStrength:
-        override?.attractionStrength ?? wellType.defaults.attractionStrength,
-      siblingRepulsion:
-        override?.siblingRepulsion ?? wellType.defaults.siblingRepulsion,
       springStiffness:
         override?.springStiffness ?? wellType.defaults.springStiffness,
       damping: override?.damping ?? wellType.defaults.damping,
@@ -411,9 +437,28 @@ export function applyDialect(
 
             const ox = graph.getNodeAttribute(otherId, "x") as number;
             const oy = graph.getNodeAttribute(otherId, "y") as number;
-            const dx = ox - x;
-            const dy = oy - y;
-            const distSq = dx * dx + dy * dy;
+            let dx = ox - x;
+            let dy = oy - y;
+            let distSq = dx * dx + dy * dy;
+
+            // L-002: symmetry-breaking for coincident nodes.
+            //
+            // The `+ 0.0001` below prevents a division by zero, but it does NOT supply a
+            // direction. For two nodes at the same coordinates dx = dy = 0, so every force
+            // becomes (0/dist, 0/dist) * magnitude = exactly ZERO — the magnitude can be
+            // enormous and it still moves nothing. A perfect stack was a stable fixed point
+            // that repulsion could never break.
+            //
+            // Give them a direction. The angle is derived from the node ids, NOT from
+            // Math.random(), so the sim stays deterministic and repeatable: the same graph
+            // always resolves the same way.
+            if (distSq < COINCIDENT_EPSILON_SQ) {
+              const angle = stableSeparationAngle(nodeId, otherId);
+              dx = Math.cos(angle) * COINCIDENT_EPSILON;
+              dy = Math.sin(angle) * COINCIDENT_EPSILON;
+              distSq = COINCIDENT_EPSILON_SQ;
+            }
+
             const dist = Math.sqrt(distSq) + 0.0001; // avoid div-by-zero
 
             // Range cutoff.

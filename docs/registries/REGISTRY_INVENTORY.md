@@ -77,7 +77,7 @@ Registry files that are empty or deprecated and candidates for cleanup.
 
 | Registry | File | Status | Recommendation |
 |----------|------|--------|----------------|
-| Feature Registry | `src/control-plane/features/feature-registry.ts` | Empty file | Delete or repurpose for v86 asset registry |
+| Feature Registry | *(deleted 2026-07-12)* | Removed | Was a 0-byte file with zero importers. Feature flags live in `feature-flags.ts` (config, not a registry). |
 
 **Why stale:** File exists but contains no content. Originally intended for feature flag management, but feature flags are now defined in `feature-flags.ts` (config, not registry).
 
@@ -99,7 +99,7 @@ Files that use "registry" naming but are not registries in the governance sense.
 ## Summary
 
 - **Total registries:** 18 (4 link network + 14 orthogonal)
-- **Stale:** 1 (feature-registry.ts)
+- **Stale:** 0 (feature-registry.ts deleted 2026-07-12)
 - **Out of scope:** 2 (feature-flags.ts, qa.types.ts)
 
 All active registries follow the registry contract pattern: `list / getById / filterByCategory / validateShape / register`. The link network registries are the spine for visual governance traversal. Orthogonal subsystems serve distinct purposes and are confirmed clean clusters from the rehaul.

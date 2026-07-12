@@ -65,10 +65,15 @@ export interface GWHelixTwistRecord {
  * Default physics parameters for a well type.
  */
 export interface GWWellTypeDefaults {
-  /** Strength of attraction toward this well's anchor (0–10). */
-  attractionStrength: number;
-  /** Strength of repulsion from sibling wells of the same type (0–500). */
-  siblingRepulsion: number;
+  // L-004: `attractionStrength` and `siblingRepulsion` used to live here. They were resolved
+  // into the runtime config and carefully tuned — siblingRepulsion at 250/120/100/80 across the
+  // well types, overridden again per-dialect — and then read by nothing. The force loop never
+  // referenced either name, and no interaction even uses `kind: "attraction"`.
+  //
+  // Deleting them is a zero-behaviour change, which is exactly the point: they were a trap.
+  // Anyone tuning the layout would reach for the parameter that is *named* after the problem
+  // and watch it do nothing. Repulsion actually comes from `interaction.strength`; attraction
+  // comes from the springs.
   /** Spring stiffness for attraction force (0–1). */
   springStiffness: number;
   /** Per-frame damping factor (0–1, where 1 = no damping). */

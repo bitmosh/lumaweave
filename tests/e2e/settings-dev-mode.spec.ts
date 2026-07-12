@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import { test, expect } from "@playwright/test";
 import { clearTiles } from "./helpers/tiles";
+import { defaultSettings } from "../../src/control-plane/settings/settings.defaults";
 
 async function openAdvancedSettings(page: import("@playwright/test").Page) {
   await page.goto("/");
@@ -61,7 +62,7 @@ test.describe("Dev mode settings toggle", () => {
     );
     expect(state.developer).toBeDefined();
     expect(typeof state.developer.devMode).toBe("boolean");
-    expect(state.version).toBe(95);
+    expect(state.version).toBe(defaultSettings.version);
   });
 });
 

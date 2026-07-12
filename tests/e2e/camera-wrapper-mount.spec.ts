@@ -12,17 +12,24 @@ import { test, expect } from "@playwright/test";
 import { getSigmaCameraState } from "../helpers/app-state";
 
 test.describe("v86b camera-wrapper-mount", () => {
-  test.fixme("camera state is preserved after reload", async ({ page }) => {
-    // Timing-sensitive — camera state race on reload. v105.0.2: quarantined.
+  // The <canvas> element exists before Sigma is constructed, so waiting on the selector
+  // races the assignment at SigmaGraphView.tsx:444 and getSigmaCameraState() throws
+  // "Sigma instance not exposed". Wait for the instance itself, not its container.
+  const waitForSigma = (page: import("@playwright/test").Page) =>
+    page.waitForFunction(() => !!(window as any).__lwSigma);
+
+  // v105.0.2 quarantined this as a "camera state race on reload". The race was in the
+  // test, not the product: it read the camera before Sigma existed. Un-quarantined.
+  test("camera state is preserved after reload", async ({ page }) => {
     await page.goto("/");
-    await page.waitForSelector("canvas");
+    await waitForSigma(page);
 
     // Get initial camera state
     const cameraBefore = await getSigmaCameraState(page);
 
     // Reload page
     await page.reload();
-    await page.waitForSelector("canvas");
+    await waitForSigma(page);
 
     // Get camera state after reload
     const cameraAfter = await getSigmaCameraState(page);
@@ -35,14 +42,14 @@ test.describe("v86b camera-wrapper-mount", () => {
 
   test("camera reset is not called on mount", async ({ page }) => {
     await page.goto("/");
-    await page.waitForSelector("canvas");
+    await waitForSigma(page);
 
     // Get initial camera state
     const cameraBefore = await getSigmaCameraState(page);
 
     // Reload page (triggers camera wrapper mount)
     await page.reload();
-    await page.waitForSelector("canvas");
+    await waitForSigma(page);
 
     // Get camera state after mount
     const cameraAfter = await getSigmaCameraState(page);
