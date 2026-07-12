@@ -3,7 +3,10 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { TileProvider } from "../control-plane/panels/TileProvider";
 import { TileLayer } from "../control-plane/panels/TileLayer";
 import { useSettingsStore, settingsStore } from "../control-plane/settings/settings.store";
-import { useGraphSourceSummary } from "../graph/ingest/useGraphSourceSummary";
+import {
+  useGraphSourceLifecycle,
+  useGraphSourceSummary,
+} from "../graph/ingest/useGraphSourceSummary";
 import { SigmaGraphView } from "../graph/renderers/sigma2d/SigmaGraphView";
 import {
   buildGraphologyGraph,
@@ -70,9 +73,10 @@ export function AppShell() {
   const settingsPanelRef = useRef<SettingsPanelHostHandle>(null);
   const settings = useSettingsStore((state) => state.settings);
   const setSetting = useSettingsStore((state) => state.setSetting);
-  // AppShell is the single owner of the source lifecycle's side effects (library push, Tauri
-  // emits, Cerebra listener). The other three consumers are read-only views. See the hook.
-  const { summary, error: summaryError } = useGraphSourceSummary({ owner: true });
+  // AppShell mounts the source lifecycle — exactly once, for the whole app. Every consumer,
+  // including this one, then reads it through useGraphSourceSummary().
+  useGraphSourceLifecycle();
+  const { summary, error: summaryError } = useGraphSourceSummary();
   const updateLibraryEntryThumbnail = useSettingsStore((s) => s.updateLibraryEntryThumbnail);
   useLwThemeEventEmitter();
 
