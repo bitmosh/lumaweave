@@ -247,14 +247,63 @@ chosen sensibly until node size and node spacing stop being the same number.
 
 ### Phase 1b — Node scale (new, from the L-003 evidence)
 
-- **L-019 · Decouple node size from node spacing.** `baseSize` median 219 vs `directoryOffset`
-  220 means a node is as wide as its distance to its neighbour, so the graph reads as "everything
-  stacked" even where the seeds are provably distinct. This is very likely a large share of the
-  visual crowding — and it is a *one-number* fix, not a physics rewrite. Establish the intended
-  ratio (node diameter should be some fraction of nearest-neighbour spacing), then set it in one
-  place. Do this **before** any further physics tuning: every force constant is currently being
-  judged against a picture whose nodes are too big for their spacing, so tuning against it now
-  would bake the error into the constants.
+- **L-019 · Decouple node size from node spacing.** ✅ DONE. Sigma runs with
+  `itemSizesReference: "positions"`, so `size`/`baseSize` are **radii in graph units** — the same
+  units as x/y. `computeNodeSize` had been inflated to a 48–360 range (its own docblock still
+  described the intended output as 4.5–40), giving a median radius of **219** against a
+  `directoryOffset` of **220**. A node's radius equalled the whole distance to its parent: its
+  *diameter* was twice the spacing, so every node overlapped its neighbours at every zoom level no
+  matter how correct the seed was. Rescaled to 12–90 (the old curve × ¼ — same shape, same dynamic
+  range), and the constants are now exported so the orbit maths can be written against them.
+
+  Two couplings fell out of it, both the same shape as the L-003 finding — presentation leaking
+  into geometry:
+  - **The seeders read `size` for `parentVisualSize`**, and `size` is `baseSize × settings.nodeSize`,
+    further rewritten on hover/selection. So dragging the node-size slider silently changed the
+    *layout* on the next reseed, and file orbits depended on what happened to be selected. They now
+    read `baseSize`. **Geometry may only read `baseSize`.**
+  - **`computeFileOrbit`'s inner bound was `30 + parentRadius`** — a flat 30 units of clearance,
+    which was a rounding error when radii were 48–360 but became the binding constraint once the
+    scale was correct: a file with a 90-unit radius sitting 30 units off its parent's edge lands
+    *inside the parent*. The clearance is now derived from the radii (`parent + NODE_RADIUS_MAX +
+    pad`), so the constants and the sizes can no longer drift apart.
+
+- **L-001b · The GLOBAL angular budget.** ✅ DONE — and this was the real cause of the residual
+  crowding, not the node scale.
+
+  L-001 gave each *parent* a wedge to divide among its children. Nothing gave the **roots** one.
+  Every root was handed a flat `directoryFanArc` (150°) centred perpendicular to its spine —
+  regardless of how many roots existed. The self-graph has **41 roots** on the hub ring, so this
+  allocated 41 × 150° = **6150° of wedge out of a 360° circle.** Root wedges overlapped
+  enormously, and unrelated subtrees swept straight through each other:
+  `src.control-plane.system-index` and `src.graph` — different subtrees — were seeded **13 units
+  apart**, and their files collided at **7**.
+
+  So sibling overlap was impossible while *subtree* overlap was routine: the budget was enforced
+  within a parent and never across roots. Worst sibling pair measured 49.9 units; worst
+  cross-subtree pair, 7.06.
+
+  Now the full circle is subdivided among the roots by leaf count and **tiled exactly** — which
+  required `subdivideWedge` to take a `minArc` it can set to 0, because its 12° floor is a
+  deliberate over-allocation (harmless slack inside a parent's wedge; fatal when dividing a circle,
+  where 41 roots floored to 12° reclaim 492° of 360°). Each root sits on the hub ring at its own
+  sector's bearing and runs radially outward along it, so a root's position, its sector, and its
+  subtree's direction finally agree. Subtrees now cannot cross for the same reason siblings cannot.
+
+  Measured on the self-graph, settled (458 nodes):
+
+  | metric | before | after node scale | after global budget |
+  |---|---|---|---|
+  | median nearest-neighbour gap ratio | 0.72 (overlapping) | 1.23 | **1.61** |
+  | nodes overlapping their nearest neighbour | 65.1% | 42.4% | **16.4%** |
+  | worst cross-subtree pair | 7.06 units | 7.06 | **20.33** |
+
+- **L-003 · Size-aware repulsion — now UNBLOCKED.** The reason it was blocked is gone: it would
+  have demanded `r_a + r_b` ≈ 438 units of separation against a 220-unit spacing. With radii now
+  12–90, `r_a + r_b` ≤ 180 against the same 220 — comfortably feasible. Read **`baseSize`**, never
+  `size`. This is the mechanism that should clear the remaining 16.4%, which is now genuinely a
+  *physics* job (those pairs are close but not coincident, so the force direction is well-defined)
+  rather than a seeding bug.
 
 ### Phase 2 — Loosen (feel)
 
