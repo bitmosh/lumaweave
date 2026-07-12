@@ -207,7 +207,7 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
     });
 
     // Parent's visual size for orbit scaling
-    const parentVisualSize = (graph.getNodeAttributes(dirId) as any).size ?? 10;
+    const parentVisualSize = (graph.getNodeAttributes(dirId) as any).baseSize ?? 10;
 
     sortedFiles.forEach((fid, fi) => {
       const { radius, angleRad: orbitAngle } = computeFileOrbit(fi, sortedFiles.length, parentVisualSize);
@@ -331,7 +331,7 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
           return sa - sb;
         });
 
-        const parentVisualSize = (graph.getNodeAttributes(spineNodeId) as any).size ?? 10;
+        const parentVisualSize = (graph.getNodeAttributes(spineNodeId) as any).baseSize ?? 10;
 
         sortedFiles.forEach((fileId, fileIdx) => {
           const { radius, angleRad: theta } = computeFileOrbit(fileIdx, sortedFiles.length, parentVisualSize);

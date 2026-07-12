@@ -245,34 +245,53 @@ export function computeOrbitRadius(
 }
 
 /**
- * Maps raw content size (line count or byte count) to a visual node size.
- * 
+ * Maps raw content size (line count or byte count) to a visual node RADIUS.
+ *
  * Uses logarithmic scaling because raw sizes span 4+ orders of magnitude
  * (1 line to 10000+ lines), and linear mapping would crush most files
  * into the minimum visual size while outliers dominate.
- * 
+ *
  * Formula: clamp(MIN + (MAX - MIN) * log(1 + size) / log(1 + SCALE_REF), MIN, MAX)
- * 
+ *
  * - size = 0 returns MIN
  * - size = SCALE_REF returns MAX
  * - sizes between scale log-linearly
- * 
- * Defaults give:
- *   size=1   -> 4.5
- *   size=10  -> 10.4
- *   size=100 -> 19.0
- *   size=1000 -> 30.0
- *   size=11000 (max in our data) -> 40
+ *
+ * L-019 — THE UNITS, which is the whole point:
+ *
+ * Sigma is configured with `itemSizesReference: "positions"`, so a node's `size` is a **radius in
+ * graph units** — the same units as x/y — not in pixels. The value returned here is therefore
+ * directly comparable to the seeders' spacing constants, and it has to be read that way.
+ *
+ * It was not. MIN/MAX were 48/360, giving a median radius of ~219 against a `directoryOffset` of
+ * **220**: a node's radius equalled the entire distance to its parent, so its DIAMETER was twice
+ * the spacing. Every node overlapped its neighbours by construction, at every zoom level, no
+ * matter how correct the seed positions were. (The docblock above this function still described
+ * an output range of 4.5–40 — the constants had been inflated ~9x and the doc left behind, which
+ * is how a node radius and a node gap ended up as the same number without anyone noticing.)
+ *
+ * The constants below are the old ones scaled by 1/4, which preserves the log curve and the
+ * dynamic range (max/min stays 7.5) and simply moves the whole scale into a sane relationship
+ * with the spacing:
+ *
+ *   median radius ~55 vs directoryOffset 220  ->  two adjacent nodes need 110 of the 220 available
+ *   largest radius  90 vs directoryOffset 220  ->  even two maximal nodes clear each other
+ *
+ * If you change these, change them against the spacing constants in the seeders, not by eye.
+ * A node radius is only meaningful relative to the distance to the next node.
  */
+export const NODE_RADIUS_MIN = 12;
+export const NODE_RADIUS_MAX = 90;
+
 export function computeNodeSize(rawSize: number): number {
-  const MIN = 48;
-  const MAX = 360;
   const SCALE_REF = 6000;
-  
-  if (rawSize <= 0) return MIN;
-  
-  const scaled = MIN + (MAX - MIN) * Math.log(1 + rawSize) / Math.log(1 + SCALE_REF);
-  return Math.max(MIN, Math.min(MAX, scaled));
+
+  if (rawSize <= 0) return NODE_RADIUS_MIN;
+
+  const scaled =
+    NODE_RADIUS_MIN +
+    (NODE_RADIUS_MAX - NODE_RADIUS_MIN) * Math.log(1 + rawSize) / Math.log(1 + SCALE_REF);
+  return Math.max(NODE_RADIUS_MIN, Math.min(NODE_RADIUS_MAX, scaled));
 }
 
 /**
@@ -334,6 +353,18 @@ export function subdivideWedge(
   centerAngle: number,
   angularExtent: number,
   countLeaves: (id: string) => number,
+  /**
+   * Floor on each child's arc. Defaults to MIN_FAN_ARC_RAD, which keeps a one-leaf subtree from
+   * being squeezed to nothing beside a hundred-leaf one.
+   *
+   * Pass 0 when the wedge being divided must be TILED EXACTLY — above all when subdividing the
+   * full circle among roots. The floor is a deliberate over-allocation: it hands a child more arc
+   * than its weight earned, so the children's extents can sum to more than the parent's. Inside a
+   * parent's wedge that is harmless slack. Across the whole circle it is not: 41 roots each
+   * floored to 12 degrees claim 492 degrees of a 360 degree circle, and the sectors overlap again
+   * — which is precisely the bug this parameter exists to avoid re-introducing.
+   */
+  minArc: number = MIN_FAN_ARC_RAD,
 ): Array<{ id: string; centerAngle: number; angularExtent: number }> {
   const weights = childIds.map((id) => countLeaves(id));
   const totalWeight = weights.reduce((a, b) => a + b, 0) || 1;
@@ -345,7 +376,7 @@ export function subdivideWedge(
     return {
       id,
       centerAngle: mid,
-      angularExtent: Math.max(share, MIN_FAN_ARC_RAD),
+      angularExtent: Math.max(share, minArc),
     };
   });
 }
@@ -357,8 +388,12 @@ export function subdivideWedge(
  * a file, given:
  * - fileIndex: position in size-sorted file list (0 = smallest, N-1 = largest)
  * - fileCount: total files in this directory
- * - parentVisualSize: the directory parent's visual size (orbits scale up
- *   for larger parents so files don't crowd them)
+ * - parentVisualSize: the directory parent's radius, so orbits scale up for larger parents and
+ *   files clear the parent's disc instead of landing inside it. Callers must pass **`baseSize`**,
+ *   NOT `size`. `size` is `baseSize x settings.nodeSize`, and it is further rewritten on hover and
+ *   selection by graphStylePolicy — so feeding it in here made the node-size slider silently
+ *   change the LAYOUT on the next reseed, and made file orbits depend on what happened to be
+ *   selected. `baseSize` is the structural radius and the only one geometry may read.
  *
  * Uses φ-angle (137.508°) between successive files for natural non-overlap.
  * Radial position scales log-linearly with index (smallest closest, largest
@@ -378,10 +413,20 @@ export function computeFileOrbit(
 ): { radius: number; angleRad: number } {
   // φ angle in radians: 137.508° = (3 - √5) * π
   const PHYLLOTAXIS_ANGLE = (3 - Math.sqrt(5)) * Math.PI;
-  
-  // Envelope. Scales modestly with parent size — bigger parents push files farther.
-  const MIN_ORBIT = 30 + parentVisualSize * 1;
-  const MAX_ORBIT = 120 + parentVisualSize * 3;
+
+  // Envelope. Scales with parent size — bigger parents push files farther out.
+  //
+  // L-019: the inner bound is a CLEARANCE, so it is derived from the radii rather than from a
+  // magic number. A file orbiting its parent must clear the parent's disc (parentVisualSize) plus
+  // its own radius — and a file can be as large as NODE_RADIUS_MAX, so that is what has to fit.
+  //
+  // It used to read `30 + parentVisualSize`, i.e. a flat 30 units of clearance. That was tuned
+  // when node radii were 48–360 and 30 was a rounding error against them; once the scale was
+  // corrected it became the binding constraint, and a file with a 90-unit radius sitting 30 units
+  // off its parent's edge lands *inside* the parent. The constants and the radii have to move
+  // together — which is the same lesson as the size/spacing coupling above.
+  const MIN_ORBIT = parentVisualSize + NODE_RADIUS_MAX + 20;
+  const MAX_ORBIT = MIN_ORBIT + parentVisualSize * 2 + 90;
   
   // Radial position: index 0 -> MIN, index N-1 -> MAX
   // Linear in index. Could be log-linear if we wanted heavier weighting near MIN.

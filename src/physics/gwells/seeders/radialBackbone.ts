@@ -17,7 +17,7 @@
  */
 
 import type { GWSeedFunctionContext, GWHelixTwistRecord } from "../types";
-import { resolveHelixTwist, buildContainsMap, flattenSpinesFromRoot, assignSpinesToAxes, computeFileOrbit, seedGenericFallbackLayout, placeUnseededNodesWithFallback, shouldUseHubRing, computeHubRingRadius, computeHubRingPosition, makeLeafCounter, subdivideWedge } from "../seederHelpers";
+import { resolveHelixTwist, buildContainsMap, flattenSpinesFromRoot, assignSpinesToAxes, computeFileOrbit, seedGenericFallbackLayout, placeUnseededNodesWithFallback, shouldUseHubRing, computeHubRingRadius, makeLeafCounter, subdivideWedge } from "../seederHelpers";
 
 interface RadialBackboneParams {
   spineCount: number;
@@ -191,7 +191,7 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
     });
 
     // Parent's visual size for orbit scaling
-    const parentVisualSize = (graph.getNodeAttributes(dirId) as any).size ?? 10;
+    const parentVisualSize = (graph.getNodeAttributes(dirId) as any).baseSize ?? 10;
 
     sortedFiles.forEach((fid, fi) => {
       const { radius, angleRad } = computeFileOrbit(fi, sortedFiles.length, parentVisualSize);
@@ -217,12 +217,17 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
     sortedRoots.length,
     params.spineSpacing / 2,
   );
-  const rootIndexById = new Map(sortedRoots.map((id, index) => [id, index]));
 
   function placeSpineRun(
     spineNodes: string[],
     angleRad: number,
     rootOffset: { x: number; y: number; z: number },
+    /**
+     * L-001b: this root's slice of the GLOBAL angular budget — its own sector of the full circle,
+     * and the direction it points away from the hub. Hub-ring mode only; undefined keeps the
+     * legacy perpendicular frond used by the few-root spine layouts.
+     */
+    sector?: { centre: number; extent: number },
   ): void {
     const spineDirX = Math.cos(angleRad);
     const spineDirY = Math.sin(angleRad);
@@ -274,18 +279,45 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
 
       // L-001: the root of the angular budget.
       //
-      // A spine node's directory children fan into a wedge centred on the perpendicular to the
-      // spine, alternating above/below along the spine so consecutive spine nodes don't fan into
-      // each other. Previously every child was handed this same single direction with no wedge
-      // and no per-sibling term, which is what put 20 of src.control-plane's children on one
-      // point. Now they subdivide the wedge by leaf count and occupy disjoint arcs.
+      // A spine node's directory children fan into a wedge, and they subdivide it by leaf count so
+      // they occupy disjoint arcs. Previously every child was handed one identical direction with
+      // no wedge and no per-sibling term, which is what put 20 of src.control-plane's children on
+      // a single point.
+      //
+      // L-001b — WHERE that wedge comes from, which is the half that was still wrong:
+      //
+      // The wedge used to be a flat `directoryFanArc` (150 degrees), centred perpendicular to the
+      // spine, handed to EVERY root regardless of how many roots there were. The self-graph has 41
+      // roots on the hub ring, so that allocated 41 x 150 = 6150 degrees of wedge out of a circle
+      // that only has 360. The root wedges overlapped enormously and unrelated subtrees swept
+      // straight through one another: `src.control-plane.system-index` and `src.graph` — different
+      // subtrees entirely — were seeded 13 units apart, and their files collided at 7.
+      //
+      // The angular budget was only ever enforced WITHIN a parent. Across roots it was not
+      // enforced at all, so sibling overlap was impossible while subtree overlap was routine.
+      //
+      // Now each root owns a disjoint sector of the full circle (leaf-count weighted, tiled
+      // exactly — see subdivideWedge's minArc), and its descendants recursively subdivide only
+      // that sector. Subtrees therefore cannot cross, for the same reason siblings cannot: they
+      // own disjoint angular ranges by construction. The fan also points radially OUTWARD from the
+      // hub rather than sideways across the ring, which is what makes the hierarchy read as
+      // concentric rings of directories instead of a tangle.
       const axisAlternationSign = (nodeIndex % 2 === 0) ? +1 : -1;
       const directoryTwist = resolveHelixTwist(params.helixTwist, "directory");
       const twistRad = (directoryTwist * (dHub / 100) * Math.PI) / 180;
-      const perpAngle = angleRad + Math.PI / 2 + twistRad;
-      // A negative sign means "fan out the other side of the spine" — i.e. rotate 180°.
-      const fanCentre = perpAngle + (axisAlternationSign < 0 ? Math.PI : 0);
-      const fanArcRad = (params.directoryFanArc * Math.PI) / 180;
+
+      let fanCentre: number;
+      let fanArcRad: number;
+      if (sector) {
+        fanCentre = sector.centre + twistRad;
+        // Never wider than the sector we own, and never wider than the configured fan.
+        fanArcRad = Math.min(sector.extent, (params.directoryFanArc * Math.PI) / 180);
+      } else {
+        const perpAngle = angleRad + Math.PI / 2 + twistRad;
+        // A negative sign means "fan out the other side of the spine" — i.e. rotate 180°.
+        fanCentre = perpAngle + (axisAlternationSign < 0 ? Math.PI : 0);
+        fanArcRad = (params.directoryFanArc * Math.PI) / 180;
+      }
 
       fanOut(dirChildren, fanCentre, fanArcRad).forEach((child) => {
         placeBranchRecursive(
@@ -306,7 +338,7 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
           return sa - sb;
         });
 
-        const parentVisualSize = (graph.getNodeAttributes(spineNodeId) as any).size ?? 10;
+        const parentVisualSize = (graph.getNodeAttributes(spineNodeId) as any).baseSize ?? 10;
 
         sortedFiles.forEach((fileId, fileIdx) => {
           // L-005: `angleRad` here is the orbit angle destructured from computeFileOrbit, which
@@ -333,6 +365,20 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
     });
   }
 
+  // L-001b: THE GLOBAL ANGULAR BUDGET.
+  //
+  // Divide the whole circle among the roots, weighted by leaf count, tiled exactly (minArc = 0 —
+  // a floor here would over-allocate and reintroduce the very overlap this fixes). Each root then
+  // owns one disjoint sector, sits on the hub ring at that sector's own bearing, and its entire
+  // subtree recursively subdivides only what it owns. This is what makes subtree overlap
+  // impossible by construction rather than something the simulation is expected to sort out.
+  const rootSectors = new Map<string, { centre: number; extent: number }>();
+  if (useHubRing) {
+    subdivideWedge(sortedRoots, 0, Math.PI * 2, countLeaves, 0).forEach((s) => {
+      rootSectors.set(s.id, { centre: s.centerAngle, extent: s.angularExtent });
+    });
+  }
+
   // Process each spine axis. Small/default graphs keep the legacy origin-based
   // placement; larger top-level sets offset each root run onto a deterministic ring.
   for (let spineIndex = 0; spineIndex < params.spineCount; spineIndex++) {
@@ -343,9 +389,20 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
     if (useHubRing) {
       for (const rootId of rootsForThisAxis) {
         const allSpineNodes = flattenSpinesFromRoot(rootId, parentToChildren, graph);
-        const rootIndex = rootIndexById.get(rootId) ?? 0;
-        const rootOffset = computeHubRingPosition(rootIndex, sortedRoots.length, hubRingRadius);
-        placeSpineRun(allSpineNodes, angleRad, rootOffset);
+        const sector = rootSectors.get(rootId);
+        if (!sector) continue;
+
+        // Sit the root on the ring at ITS OWN bearing, and run its spine radially outward along
+        // the same bearing — so the root, its sector, and its subtree all point the same way.
+        // (The ring position used to be evenly spaced by root INDEX while the subtree fanned
+        // perpendicular to a shared axis, so a root's position and its children's direction had
+        // nothing to do with each other.)
+        const rootOffset = {
+          x: hubRingRadius * Math.cos(sector.centre),
+          y: hubRingRadius * Math.sin(sector.centre),
+          z: 0,
+        };
+        placeSpineRun(allSpineNodes, sector.centre, rootOffset, sector);
       }
     } else {
       const allSpineNodes: string[] = [];

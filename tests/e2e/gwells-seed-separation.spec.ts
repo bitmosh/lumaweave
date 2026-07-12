@@ -23,6 +23,51 @@ interface SeedPos {
   y: number;
 }
 
+// L-019: a node radius is only meaningful RELATIVE to the distance to the next node.
+//
+// Sigma runs with `itemSizesReference: "positions"`, so `size`/`baseSize` are radii in graph
+// units — the same units as x/y. That was missed, and computeNodeSize's range had been inflated
+// to 48–360 while `directoryOffset` stayed at 220: the median node's RADIUS (219) equalled the
+// entire distance to its parent, so its diameter was twice the spacing. Every node overlapped its
+// neighbours at every zoom level, no matter how correct the seed positions were — which is why
+// the graph still read as "everything stacked" after the piles were provably gone.
+//
+// Asserted against the REAL graph rather than by importing computeNodeSize: seederHelpers pulls in
+// graphology, and importing it Node-side throws a CJS-interop SyntaxError that takes the whole
+// spec file's collection down with it — silently disabling every test in this file, not just
+// these. (fixture-gate.spec.ts can import shouldUseFixture only because that module imports
+// nothing at all.) Reading the built graph in-page also tests the real bundled code path.
+const DIRECTORY_OFFSET = 220; // seeder default; see RadialBackboneParams.directoryOffset
+
+test.describe("node scale", () => {
+  test("no node is so large it cannot fit between a directory and its parent", async ({ page }) => {
+    const { radii } = await readNodeRadii(page);
+
+    expect(radii.length).toBeGreaterThan(50); // not a vacuous pass on an empty graph
+
+    // Two adjacent directories sit DIRECTORY_OFFSET apart. For even the two largest of them to
+    // clear each other, each radius must be under half that. At 48–360 the max read 360 < 110,
+    // failing by more than 3x — and that is the entire "everything looks stacked" complaint.
+    const maxRadius = Math.max(...radii);
+    expect(
+      maxRadius,
+      `Largest node radius is ${maxRadius.toFixed(1)} graph units, but adjacent directories are ` +
+        `only ${DIRECTORY_OFFSET} apart — two such nodes overlap before physics even runs.`,
+    ).toBeLessThan(DIRECTORY_OFFSET / 2);
+  });
+
+  test("node size still carries the content signal", async ({ page }) => {
+    const { radii } = await readNodeRadii(page);
+
+    // Guard the shape of the curve, not just its ceiling: rescaling must not flatten every node
+    // to one size, which would silently throw away the file-size information the sizing exists
+    // to convey. A cheap way to pass the test above would be to make every node tiny.
+    const min = Math.min(...radii);
+    const max = Math.max(...radii);
+    expect(max).toBeGreaterThan(min * 2);
+  });
+});
+
 const DIALECTS = [
   { id: "gwells.dialect.radial-backbone", name: "radial-backbone", isDefault: true },
   { id: "gwells.dialect.parallel-spines", name: "parallel-spines", isDefault: false },
@@ -67,6 +112,24 @@ async function readSeedPositions(
       types[id] = a.nodeType || a.raw?.type || "unknown";
     });
     return { seeds, types };
+  });
+}
+
+/** Read every node's structural radius (`baseSize`) from the live graph, in graph units. */
+async function readNodeRadii(page: import("@playwright/test").Page) {
+  await page.goto("/");
+  await page.waitForSelector("canvas");
+  await page.waitForFunction(
+    () => !!(window as any).__lwSigma?.getGraph().hasAttribute("__gwellsSeedPositions"),
+    { timeout: 15_000 },
+  );
+  return page.evaluate(() => {
+    const graph = (window as any).__lwSigma.getGraph();
+    const radii: number[] = [];
+    graph.forEachNode((_id: string, a: any) => {
+      if (typeof a.baseSize === "number" && Number.isFinite(a.baseSize)) radii.push(a.baseSize);
+    });
+    return { radii };
   });
 }
 
