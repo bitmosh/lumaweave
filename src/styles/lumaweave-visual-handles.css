@@ -14,6 +14,28 @@
  */
 
 /* ========================================
+   Native form controls
+   ======================================== */
+
+/**
+ * <option> had no styling anywhere in the codebase, so the dropdown popup fell back to the
+ * user-agent default: a white list. The <select> sets color from --lw-text-primary, and the
+ * options inherit it — so on every dark theme that was light text on white. Unreadable.
+ *
+ * Options are painted by the platform, not the page, so they do NOT inherit the select's
+ * background and must be given one explicitly. Driving both from tokens fixes both
+ * directions at once: dark themes get a dark list with the light text they already had,
+ * and the light theme gets its dark text on a light list.
+ *
+ * Global on purpose — eight components render a <select>, and any new one should inherit
+ * this rather than re-solve it.
+ */
+select option {
+  background-color: var(--lw-panel-background, #0f172a);
+  color: var(--lw-text-primary, #e9e4f5);
+}
+
+/* ========================================
    Theme Variable Bridge
    ======================================== */
 

@@ -4,12 +4,12 @@ import { getAccessibilityProfile } from "../../themes/themeAccessibilityProfile"
 
 function getThemeDisplayName(themeId: string): string {
   const map: Record<string, string> = {
-    "solar-plasma":    "Solar Plasma",
-    "obsidian-aurora": "Obsidian Aurora",
-    "midnight-loom":   "Midnight Loom",
-    "void-circuit":    "Void Circuit",
-    "agartha-dream":   "Agartha Dream",
-    "agartha-dusk":    "Agartha Dusk",
+    "solar-plasma":    "Plasma",
+    "obsidian-aurora": "Aurora",
+    "midnight-loom":   "Midnight",
+    "void-circuit":    "Neon Pink",
+    "agartha-dream":   "Light Pastel",
+    "agartha-dusk":    "Lavender",
   };
   return map[themeId] ?? themeId;
 }

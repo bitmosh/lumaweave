@@ -20,7 +20,7 @@ import "./colorSuggestionEngine"; // side-effect: registers window.__lwColorSugg
 export const builtInThemePresets: ThemePreset[] = [
   {
     id: "solar-plasma",
-    name: "Solar Plasma",
+    name: "Plasma",
     description: "Dark sci-fi with cyan and gold plasma",
     builtIn: true,
     themeId: "solar-plasma",
@@ -30,7 +30,7 @@ export const builtInThemePresets: ThemePreset[] = [
   },
   {
     id: "obsidian-aurora",
-    name: "Obsidian Aurora",
+    name: "Aurora",
     description: "Dark crystalline aurora borealis",
     builtIn: true,
     themeId: "obsidian-aurora",
@@ -40,7 +40,7 @@ export const builtInThemePresets: ThemePreset[] = [
   },
   {
     id: "midnight-loom",
-    name: "Midnight Loom",
+    name: "Midnight",
     description: "Dark warm gold candlelight",
     builtIn: true,
     themeId: "midnight-loom",
@@ -50,7 +50,7 @@ export const builtInThemePresets: ThemePreset[] = [
   },
   {
     id: "void-circuit",
-    name: "Void Circuit",
+    name: "Neon Pink",
     description: "Dark cyberpunk neon",
     builtIn: true,
     themeId: "void-circuit",
@@ -60,7 +60,7 @@ export const builtInThemePresets: ThemePreset[] = [
   },
   {
     id: "agartha-dream",
-    name: "Agartha Dream",
+    name: "Light Pastel",
     description: "Light pastel dreamy",
     builtIn: true,
     themeId: "agartha-dream",
@@ -70,7 +70,7 @@ export const builtInThemePresets: ThemePreset[] = [
   },
   {
     id: "agartha-dusk",
-    name: "Agartha Dusk",
+    name: "Lavender",
     description: "Dark pastel moonlit night",
     builtIn: true,
     themeId: "agartha-dusk",

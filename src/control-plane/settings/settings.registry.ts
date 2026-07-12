@@ -144,12 +144,12 @@ export const settingsRegistry: SettingControl[] = [
     label: "Theme Preset",
     description: "Active theme.",
     options: [
-      { value: "solar-plasma",    label: "Solar Plasma" },
-      { value: "obsidian-aurora", label: "Obsidian Aurora" },
-      { value: "midnight-loom",   label: "Midnight Loom" },
-      { value: "void-circuit",    label: "Void Circuit" },
-      { value: "agartha-dream",   label: "Agartha Dream" },
-      { value: "agartha-dusk",    label: "Agartha Dusk" },
+      { value: "solar-plasma",    label: "Plasma" },
+      { value: "obsidian-aurora", label: "Aurora" },
+      { value: "midnight-loom",   label: "Midnight" },
+      { value: "void-circuit",    label: "Neon Pink" },
+      { value: "agartha-dream",   label: "Light Pastel" },
+      { value: "agartha-dusk",    label: "Lavender" },
     ],
   },
   {
@@ -157,7 +157,7 @@ export const settingsRegistry: SettingControl[] = [
     category: "theme",
     path: "appearance.drama",
     label: "Drama",
-    description: "Solar Plasma mood preset — multiplier on glow + motion intensity.",
+    description: "Plasma mood preset — multiplier on glow + motion intensity.",
     options: [
       { value: "quiet",   label: "Quiet" },
       { value: "cranked", label: "Cranked" },

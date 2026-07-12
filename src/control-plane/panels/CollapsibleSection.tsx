@@ -24,8 +24,10 @@ export function CollapsibleSection({
   onToggle,
   children,
   testId,
-  accentColor = "#22d3ee",
-  borderColor = "rgba(34,211,238,0.1)",
+  // Section titles were a hardcoded cyan, so they stayed cyan under every theme — no caller
+  // ever overrode either default. The hex remains only as the var() fallback.
+  accentColor = "var(--lw-accent, #22d3ee)",
+  borderColor = "color-mix(in oklab, var(--lw-accent, #22d3ee) 10%, transparent)",
   tileableKey,
 }: CollapsibleSectionProps) {
   const ctx = useTileContext();

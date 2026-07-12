@@ -16,10 +16,10 @@ test.describe("v87.2 Topbar identity", () => {
 
   test("status pill shows active theme name", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator(".lw-status-label")).toHaveText("Solar Plasma");
+    await expect(page.locator(".lw-status-label")).toHaveText("Plasma");
 
     await page.locator('[data-testid="theme-preset-selector"]').selectOption("obsidian-aurora");
-    await expect(page.locator(".lw-status-label")).toHaveText("Obsidian Aurora");
+    await expect(page.locator(".lw-status-label")).toHaveText("Aurora");
   });
 
   test("status cluster shows graph node count", async ({ page }) => {

@@ -18,12 +18,12 @@ test.describe("Theme Selector", () => {
     const options = themeSelector.locator("option");
     await expect(options).toHaveCount(6);
     
-    await expect(options.nth(0)).toHaveText("Solar Plasma");
-    await expect(options.nth(1)).toHaveText("Obsidian Aurora");
-    await expect(options.nth(2)).toHaveText("Midnight Loom");
-    await expect(options.nth(3)).toHaveText("Void Circuit");
-    await expect(options.nth(4)).toHaveText("Agartha Dream");
-    await expect(options.nth(5)).toHaveText("Agartha Dusk");
+    await expect(options.nth(0)).toHaveText("Plasma");
+    await expect(options.nth(1)).toHaveText("Aurora");
+    await expect(options.nth(2)).toHaveText("Midnight");
+    await expect(options.nth(3)).toHaveText("Neon Pink");
+    await expect(options.nth(4)).toHaveText("Light Pastel");
+    await expect(options.nth(5)).toHaveText("Lavender");
   });
 
   test("selecting one updates control value", async ({ page }) => {
