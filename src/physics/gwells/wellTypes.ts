@@ -23,8 +23,6 @@ export const GW_WELL_TYPE_REGISTRY: readonly GWWellTypeEntry[] = [
     status: "active",
     pinned: true,
     defaults: {
-      attractionStrength: 0,
-      siblingRepulsion: 0,
       springStiffness: 0,
       damping: 1,
       idealDistance: 0,
@@ -42,8 +40,6 @@ export const GW_WELL_TYPE_REGISTRY: readonly GWWellTypeEntry[] = [
     status: "active",
     pinned: false,
     defaults: {
-      attractionStrength: 0.15,
-      siblingRepulsion: 250,
       springStiffness: 0.03,
       damping: 0.85,
       idealDistance: 460,
@@ -62,8 +58,6 @@ export const GW_WELL_TYPE_REGISTRY: readonly GWWellTypeEntry[] = [
     status: "active",
     pinned: false,
     defaults: {
-      attractionStrength: 0.15,
-      siblingRepulsion: 100,
       springStiffness: 0.02,
       damping: 0.9,
       idealDistance: 360,
@@ -82,8 +76,6 @@ export const GW_WELL_TYPE_REGISTRY: readonly GWWellTypeEntry[] = [
     status: "active",
     pinned: false,
     defaults: {
-      attractionStrength: 0.4,
-      siblingRepulsion: 80,
       springStiffness: 0.05,
       damping: 0.9,
       idealDistance: 100,

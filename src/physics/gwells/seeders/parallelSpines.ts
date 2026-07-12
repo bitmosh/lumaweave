@@ -25,7 +25,7 @@
  */
 
 import type { GWSeedFunctionContext, GWHelixTwistRecord } from "../types";
-import { axisOffsetForN, resolveHelixTwist, buildContainsMap, flattenSpinesFromRoot, assignSpinesToAxes, computeFileOrbit, seedGenericFallbackLayout, placeUnseededNodesWithFallback, shouldUseHubRing, computeHubRingRadius, computeHubRingPosition } from "../seederHelpers";
+import { axisOffsetForN, resolveHelixTwist, buildContainsMap, flattenSpinesFromRoot, assignSpinesToAxes, computeFileOrbit, seedGenericFallbackLayout, placeUnseededNodesWithFallback, shouldUseHubRing, computeHubRingRadius, computeHubRingPosition, makeLeafCounter, subdivideWedge } from "../seederHelpers";
 
 interface ParallelSpinesParams {
   spineCount: number;
@@ -37,6 +37,15 @@ interface ParallelSpinesParams {
   fileOrbitRadius: number;
   endpointFanArc: number;
   endpointFanCount: number;
+  /**
+   * L-001: total angular width, in degrees, of the wedge a directory's children fan into,
+   * measured within that spine's vertical plane (see placeBranchRecursive).
+   *
+   * Narrower than radial-backbone's 150° because this wedge is bounded by the spine itself:
+   * at ±90° a branch would run straight along the spine axis and collide with the run it hangs
+   * off. 120° keeps the extremes 30° clear.
+   */
+  directoryFanArc: number; // degrees
 }
 
 const DEFAULTS: ParallelSpinesParams = {
@@ -49,6 +58,7 @@ const DEFAULTS: ParallelSpinesParams = {
   fileOrbitRadius: 90,
   endpointFanArc: 100,
   endpointFanCount: 6,
+  directoryFanArc: 120,
 };
 
 function resolveParams(raw: Record<string, unknown>): ParallelSpinesParams {
@@ -68,6 +78,8 @@ function resolveParams(raw: Record<string, unknown>): ParallelSpinesParams {
     fileOrbitRadius: typeof raw.fileOrbitRadius === "number" ? raw.fileOrbitRadius : DEFAULTS.fileOrbitRadius,
     endpointFanArc: typeof raw.endpointFanArc === "number" ? raw.endpointFanArc : DEFAULTS.endpointFanArc,
     endpointFanCount: typeof raw.endpointFanCount === "number" ? raw.endpointFanCount : DEFAULTS.endpointFanCount,
+    directoryFanArc:
+      typeof raw.directoryFanArc === "number" ? raw.directoryFanArc : DEFAULTS.directoryFanArc,
   };
 }
 
@@ -89,58 +101,66 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
   // NEW: Stored for engine's seed-anchor force — ALL nodes
   const allSeedPositions = new Map<string, { x: number; y: number; z: number }>();
 
-  // NEW: Recursive directory placement (Pass C8 fern-frond)
+  // L-001: shared with radialBackbone via seederHelpers — one implementation, not two.
+  const countLeaves = makeLeafCounter(parentToChildren, (id) => {
+    const t = graph.getNodeAttributes(id).nodeType || graph.getNodeAttributes(id).raw?.type;
+    return t === "directory";
+  });
+  const fanOut = (ids: string[], centerAngle: number, extent: number) =>
+    subdivideWedge(ids, centerAngle, extent, countLeaves);
+
+  // Recursive directory placement (Pass C8 fern-frond, reworked by L-001).
   //
-  // Places a directory and recursively all its descendants in the fern-frond shape.
-  // depth=0 means this directory is a first-level branch off a spine — it gets
-  // placed outward from the spine axis with y-offset for sibling alternation.
-  // depth>0 means this directory is a deeper descendant — it continues along
-  // the same outwardDir as its parent without further y-jitter.
+  // Every position here is expressed in the SPINE'S VERTICAL PLANE: the plane spanned by that
+  // spine's outward radial direction, outward(α) = (cos α, 0, sin α), and the y axis. A direction
+  // in that plane is one angle φ (an elevation, 0 = straight out horizontally):
+  //
+  //   dir(φ) = outward(α)·cos φ + ŷ·sin φ = (cos α · cos φ,  sin φ,  sin α · cos φ)
+  //
+  // The old code instead fanned in x/z — the HORIZONTAL plane — and Sigma renders only (x, y).
+  // That fan was therefore projected away in its entirety: two siblings differing only in azimuth
+  // landed on the same rendered pixel, and azimuths symmetric about the axis collapsed onto each
+  // other exactly. It was worse than that, though: siblings never got distinct azimuths in the
+  // first place. Every child of a directory was handed the same `myDir`, so they were coincident
+  // in 3D too, and coincidence is the one thing the simulation cannot undo (for two nodes at
+  // identical coordinates the repulsion direction is the zero vector, so the force is exactly
+  // zero regardless of its magnitude — a perfect stack is a stable fixed point).
+  //
+  // Fanning in the spine's own vertical plane varies both x and y, so the fan survives the 2D
+  // projection, while z keeps carrying the spine's azimuth for the eventual 3D camera.
   function placeBranchRecursive(
     dirId: string,
     parentPos: { x: number; y: number; z: number },
-    outwardDir: { dx: number; dy: number; dz: number },
+    centerAngle: number,      // φ — the direction THIS directory extends from its parent
+    angularExtent: number,    // the wedge THIS directory's own children may fan into
     depth: number,
-    alternationSign: number,   // Pass C8.4: renamed from siblingIndex; values +1 or -1
-    spineAngleRad: number,   // angle of the spine this branch belongs to
-    yAlongSpine: number,     // y position along spine for helix twist calculation
+    alternationSign: number,  // Pass C8.4: +1 or -1; still biases first-level branches off the run
+    axisAngleRad: number,     // α — twist-adjusted azimuth of the spine this branch hangs off
+    yAlongSpine: number,      // y position along spine, for helix twist
   ): void {
-    // Compute this directory's position.
-    let myDir: { dx: number; dy: number; dz: number };
-    let myX: number, myY: number, myZ: number;
+    // Directory helix twist rotates the plane itself, once, where the frond leaves the spine.
+    // Applying it at depth 0 and then handing the twisted axis down means the whole subtree
+    // stays in ONE plane — a frond that twists is still a flat frond, just aimed elsewhere.
+    const directoryTwist = resolveHelixTwist(params.helixTwist, "directory");
+    const twistRad =
+      depth === 0 && directoryTwist !== 0
+        ? (directoryTwist * (yAlongSpine / 100) * Math.PI) / 180
+        : 0;
+    const axis = axisAngleRad + twistRad;
+
+    const cosPhi = Math.cos(centerAngle);
+    const sinPhi = Math.sin(centerAngle);
+
+    const myX = parentPos.x + Math.cos(axis) * cosPhi * params.directoryOffset;
+    const myZ = parentPos.z + Math.sin(axis) * cosPhi * params.directoryOffset;
+    let myY = parentPos.y + sinPhi * params.directoryOffset;
 
     if (depth === 0) {
-      // First-level branch: outward from center with y-offset for sibling alternation
-      // Outward direction is constant (away from central axis)
-      myDir = {
-        dx: Math.cos(spineAngleRad),
-        dy: 0,
-        dz: Math.sin(spineAngleRad),
-      };
-
-      // Pass C8.4: use the passed alternation sign directly for y-offset
-      const ySpacing = params.directoryOffset * 0.25; // small vertical jitter
-      myY = parentPos.y + alternationSign * ySpacing;
-
-      // Apply helix twist to outward direction
-      const directoryTwist = resolveHelixTwist(params.helixTwist, "directory");
-      const twistRad = directoryTwist === 0 ? 0 : (directoryTwist * (yAlongSpine / 100) * Math.PI) / 180;
-      const twistedAngle = spineAngleRad + twistRad;
-
-      myDir = {
-        dx: Math.cos(twistedAngle),
-        dy: 0,
-        dz: Math.sin(twistedAngle),
-      };
-
-      myX = parentPos.x + myDir.dx * params.directoryOffset;
-      myZ = parentPos.z + myDir.dz * params.directoryOffset;
-    } else {
-      // Deeper level: continue along parent's outwardDir without y-jitter
-      myDir = outwardDir;
-      myX = parentPos.x + myDir.dx * params.directoryOffset;
-      myY = parentPos.y; // match parent's y
-      myZ = parentPos.z + myDir.dz * params.directoryOffset;
+      // Preserved from Pass C8.4: consecutive spine nodes push their first-level branches to
+      // opposite sides, so adjacent runs' fronds interleave rather than stack. This is a nudge
+      // between DIFFERENT parents — a density problem the simulation can actually solve — not
+      // the sibling coincidence the wedge above fixes.
+      myY += alternationSign * params.directoryOffset * 0.25;
     }
 
     graph.setNodeAttribute(dirId, "x", myX);
@@ -163,17 +183,18 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
       }
     });
 
-    // Place each child directory recursively along myDir.
-    // Pass C8.4: children inherit parent's alternation sign
-    childDirs.forEach((cid) => {
+    // L-001: children split MY wedge between them, weighted by leaf count, so each owns a
+    // disjoint angular range within the frond's plane. Siblings cannot coincide by construction.
+    fanOut(childDirs, centerAngle, angularExtent).forEach((child) => {
       placeBranchRecursive(
-        cid,
+        child.id,
         { x: myX, y: myY, z: myZ },
-        myDir,           // children continue along my direction
-        depth + 1,       // depth advances
-        alternationSign, // Pass C8.4: inherited — child uses parent's sign
-        spineAngleRad,  // unchanged
-        yAlongSpine,    // unchanged (helix twist only at depth=0)
+        child.centerAngle,    // the child's own direction, its share of my wedge
+        child.angularExtent,  // the sub-wedge its own children will split
+        depth + 1,
+        alternationSign,      // Pass C8.4: inherited — child uses parent's sign
+        axis,                 // twisted axis, so the subtree stays in one plane
+        yAlongSpine,
       );
     });
 
@@ -189,17 +210,20 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
     const parentVisualSize = (graph.getNodeAttributes(dirId) as any).size ?? 10;
 
     sortedFiles.forEach((fid, fi) => {
-      const { radius, angleRad } = computeFileOrbit(fi, sortedFiles.length, parentVisualSize);
-      
+      const { radius, angleRad: orbitAngle } = computeFileOrbit(fi, sortedFiles.length, parentVisualSize);
+
       // Apply helix twist if present (preserves existing twist behavior)
       const fileTwist = resolveHelixTwist(params.helixTwist, "file");
       const dDir = Math.sqrt(myX * myX + myZ * myZ);
       const fileTwistRad = fileTwist === 0 ? 0 : (fileTwist * (dDir / 100) * Math.PI) / 180;
-      const finalAngle = angleRad + fileTwistRad;
+      const theta = orbitAngle + fileTwistRad;
 
-      const fx = myX + radius * Math.cos(finalAngle);
-      const fy = myY;
-      const fz = myZ + radius * Math.sin(finalAngle);
+      // Orbit in the same vertical plane as the frond, for the same reason the frond fans there:
+      // the old x/z orbit was a horizontal ring seen exactly edge-on, so it projected to a line
+      // segment and every pair of files at ±θ rendered on top of each other.
+      const fx = myX + radius * Math.cos(axis) * Math.cos(theta);
+      const fy = myY + radius * Math.sin(theta);
+      const fz = myZ + radius * Math.sin(axis) * Math.cos(theta);
 
       graph.setNodeAttribute(fid, "x", fx);
       graph.setNodeAttribute(fid, "y", fy);
@@ -283,11 +307,16 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
 
       const axisAlternationSign = (nodeIndex % 2 === 0) ? +1 : -1;
 
-      dirChildren.forEach((childId) => {
+      // L-001: the fronds hanging off THIS spine node split a wedge centred on straight-out
+      // (φ=0). Bounded well clear of ±90°, where a branch would run along the spine itself.
+      const fanArcRad = (params.directoryFanArc * Math.PI) / 180;
+
+      fanOut(dirChildren, 0, fanArcRad).forEach((child) => {
         placeBranchRecursive(
-          childId,
+          child.id,
           spinePos,
-          { dx: 0, dy: 0, dz: 0 },
+          child.centerAngle,
+          child.angularExtent,
           0,
           axisAlternationSign,
           spineAngleAtThisHeight,
@@ -305,11 +334,14 @@ export function seedParallelSpines(ctx: GWSeedFunctionContext): void {
         const parentVisualSize = (graph.getNodeAttributes(spineNodeId) as any).size ?? 10;
 
         sortedFiles.forEach((fileId, fileIdx) => {
-          const { radius, angleRad } = computeFileOrbit(fileIdx, sortedFiles.length, parentVisualSize);
-          const finalAngle = angleRad + spineAngleAtThisHeight;
-          const fileX = spinePos.x + radius * Math.cos(finalAngle);
-          const fileY = spinePos.y;
-          const fileZ = spinePos.z + radius * Math.sin(finalAngle);
+          const { radius, angleRad: theta } = computeFileOrbit(fileIdx, sortedFiles.length, parentVisualSize);
+          // Same vertical-plane orbit as the frond files above — an x/z ring is edge-on to the
+          // camera and collapses to a line. `theta` is an elevation now, not an azimuth, so the
+          // spine's azimuth enters through cos/sin(spineAngleAtThisHeight), not by being added
+          // to the orbit angle.
+          const fileX = spinePos.x + radius * Math.cos(spineAngleAtThisHeight) * Math.cos(theta);
+          const fileY = spinePos.y + radius * Math.sin(theta);
+          const fileZ = spinePos.z + radius * Math.sin(spineAngleAtThisHeight) * Math.cos(theta);
 
           graph.setNodeAttribute(fileId, "x", fileX);
           graph.setNodeAttribute(fileId, "y", fileY);

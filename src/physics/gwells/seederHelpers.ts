@@ -276,21 +276,100 @@ export function computeNodeSize(rawSize: number): number {
 }
 
 /**
+ * L-001: the narrowest wedge a subtree may be given. Without a floor, a subtree with one leaf
+ * sitting beside one with hundreds gets an arc so thin its own descendants re-collapse onto a
+ * line — trading one pile-up for another.
+ */
+export const MIN_FAN_ARC_RAD = (12 * Math.PI) / 180;
+
+/**
+ * L-001: leaf count of a directory subtree.
+ *
+ * WEIGHTS a subtree's angular budget, so a directory holding 200 files gets proportionally more
+ * arc than one holding 2. Memoized — the tree is re-entered constantly during placement.
+ *
+ * `isDirectory` is injected because the two seeders resolve node type from slightly different
+ * attribute shapes.
+ */
+export function makeLeafCounter(
+  parentToChildren: Map<string, Set<string>>,
+  isDirectory: (id: string) => boolean,
+): (dirId: string) => number {
+  const cache = new Map<string, number>();
+  function countLeaves(dirId: string): number {
+    const cached = cache.get(dirId);
+    if (cached !== undefined) return cached;
+    const children = parentToChildren.get(dirId);
+    if (!children || children.size === 0) {
+      cache.set(dirId, 1);
+      return 1;
+    }
+    let total = 0;
+    for (const cid of children) {
+      total += isDirectory(cid) ? countLeaves(cid) : 1;
+    }
+    const n = Math.max(1, total);
+    cache.set(dirId, n);
+    return n;
+  }
+  return countLeaves;
+}
+
+/**
+ * L-001: split an angular wedge among children, weighted by leaf count. THE fix for the pile-up.
+ *
+ * Previously every sibling was handed the SAME direction vector — no per-sibling term existed
+ * anywhere — so siblings computed byte-identical coordinates. The physics could never recover:
+ * for two coincident nodes the repulsion DIRECTION is the zero vector, so the applied force is
+ * exactly zero no matter how large its magnitude. A perfect stack was a stable fixed point.
+ *
+ * Because the sub-wedges TILE the parent's wedge without overlapping, siblings own disjoint
+ * angular ranges — overlap becomes impossible by construction rather than something the
+ * simulation has to win.
+ *
+ * Deterministic: no randomness; ordering comes from the caller's already-sorted array.
+ */
+export function subdivideWedge(
+  childIds: string[],
+  centerAngle: number,
+  angularExtent: number,
+  countLeaves: (id: string) => number,
+): Array<{ id: string; centerAngle: number; angularExtent: number }> {
+  const weights = childIds.map((id) => countLeaves(id));
+  const totalWeight = weights.reduce((a, b) => a + b, 0) || 1;
+  let cursor = centerAngle - angularExtent / 2;
+  return childIds.map((id, i) => {
+    const share = (weights[i] / totalWeight) * angularExtent;
+    const mid = cursor + share / 2;
+    cursor += share;
+    return {
+      id,
+      centerAngle: mid,
+      angularExtent: Math.max(share, MIN_FAN_ARC_RAD),
+    };
+  });
+}
+
+/**
  * Phyllotaxis spiral file placement.
- * 
+ *
  * Returns the radial distance from parent and the angular position for
  * a file, given:
  * - fileIndex: position in size-sorted file list (0 = smallest, N-1 = largest)
  * - fileCount: total files in this directory
  * - parentVisualSize: the directory parent's visual size (orbits scale up
  *   for larger parents so files don't crowd them)
- * 
+ *
  * Uses φ-angle (137.508°) between successive files for natural non-overlap.
  * Radial position scales log-linearly with index (smallest closest, largest
  * farthest) within [MIN, MAX] envelope.
- * 
+ *
  * The MIN clamp keeps even the smallest file visibly separated from the parent.
  * The MAX clamp prevents the largest files from drifting absurdly far.
+ *
+ * NOTE: the returned angleRad is RELATIVE to the parent — callers must add their own
+ * frame's base angle. (L-005: one caller shadowed the variable and added the base angle
+ * to itself, discarding the orbit angle entirely and stacking every file on one ray.)
  */
 export function computeFileOrbit(
   fileIndex: number,

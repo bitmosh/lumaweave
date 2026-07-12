@@ -32,21 +32,16 @@ const sharedWellOverrides = {
     // pinned; physics params don't apply
   },
   "gwells.well.directory-anchor": {
-    siblingRepulsion: 280,
     damping: 0.85,
     centerGravity: 0.05,
   },
   "gwells.well.file-orbit": {
-    attractionStrength: 0.6,
-    siblingRepulsion: 120,
     springStiffness: 0.08,
     damping: 0.9,
     idealDistance: 90,
     centerGravity: 0.02,
   },
   "gwells.well.endpoint-fan": {
-    attractionStrength: 0.5,
-    siblingRepulsion: 90,
     springStiffness: 0.06,
     damping: 0.9,
     idealDistance: 100,
