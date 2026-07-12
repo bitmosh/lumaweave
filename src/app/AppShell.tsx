@@ -57,6 +57,7 @@ import { useCrossfadeAppTokens } from "../themes/themeCrossfade";
 import { useThemeInspectorStore } from "../themes/themeInspectorStore";
 import { exportGlobalThemeOverrideBundle } from "../themes/themeOverrideStorage";
 import { useLwThemeEventEmitter } from "./useLwThemeEventEmitter";
+import { shouldUseFixture } from "./shouldUseFixture";
 
 const EMPTY_OVERRIDES: Record<string, unknown> = {};
 const EMPTY_PINS: Record<string, { x: number; y: number; z?: number }> = {};
@@ -69,7 +70,9 @@ export function AppShell() {
   const settingsPanelRef = useRef<SettingsPanelHostHandle>(null);
   const settings = useSettingsStore((state) => state.settings);
   const setSetting = useSettingsStore((state) => state.setSetting);
-  const { summary, error: summaryError } = useGraphSourceSummary();
+  // AppShell is the single owner of the source lifecycle's side effects (library push, Tauri
+  // emits, Cerebra listener). The other three consumers are read-only views. See the hook.
+  const { summary, error: summaryError } = useGraphSourceSummary({ owner: true });
   const updateLibraryEntryThumbnail = useSettingsStore((s) => s.updateLibraryEntryThumbnail);
   useLwThemeEventEmitter();
 
@@ -109,14 +112,15 @@ export function AppShell() {
   const isTestEnv =
     typeof __PLAYWRIGHT__ !== "undefined" && __PLAYWRIGHT__;
 
-  const hasRealSource =
-    !summaryError &&
-    summary.normalizedNodes != null &&
-    summary.normalizedNodes.length > 0;
-
-  // In test env: always use fixture (stable geometry)
-  // In dev/prod: use real source if available
-  const useFixture = isTestEnv || !hasRealSource;
+  // A load *over* an existing graph keeps rendering the old one, because
+  // useGraphSourceSummary spreads {...prev} into its loading state and so retains the nodes.
+  // That is load-bearing: without it hasRealNodes would go false mid-switch and the canvas
+  // would flash the fixture on every source change.
+  const useFixture = shouldUseFixture({
+    isTestEnv,
+    hasRealNodes: summary.normalizedNodes != null && summary.normalizedNodes.length > 0,
+    isErrorState: !!summaryError || summary.status === "error",
+  });
 
   // SA-013/SA-012: Capture thumbnail 2s after a real source loads.
   // GWells has no settle event; a fixed delay is the MVP trigger.

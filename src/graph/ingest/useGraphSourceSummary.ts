@@ -32,7 +32,30 @@ const idleState: GraphSourceSummary = {
   warnings: [],
 };
 
-export function useGraphSourceSummary() {
+interface UseGraphSourceSummaryOptions {
+  /**
+   * Exactly one consumer must be the owner. The owner — and only the owner — fires this
+   * hook's side effects: pushing to the source library, emitting the Tauri source events,
+   * and listening for Cerebra snapshots.
+   *
+   * This hook is instantiated four times in the default layout (AppShell, the Graph Sources
+   * tile, StatusCluster, GraphInspectorTileContent), and each instance holds its own state
+   * and its own effects. Unguarded, that means one load emits sourceLoaded four times and
+   * pushes the same library entry four times, and — worst — a single Cerebra snapshot event
+   * is received by four listeners, each calling commitSource(), each bumping refreshToken,
+   * producing a reload storm. (That last one was latent while an unchanged sources.active
+   * silently no-opped; giving commitSource a real refreshToken bump armed it.)
+   *
+   * AppShell is the owner. The remaining consumers are read-only views of the summary.
+   *
+   * Note this does NOT yet dedupe loadSource() itself — four instances still each read the
+   * source. That is wasteful but not incorrect (it is a pure read), and collapsing it
+   * requires hoisting the state to a single owner, which is the follow-up refactor.
+   */
+  owner?: boolean;
+}
+
+export function useGraphSourceSummary({ owner = false }: UseGraphSourceSummaryOptions = {}) {
   const [summary, setSummary] = useState<GraphSourceSummary>(idleState);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -50,6 +73,7 @@ export function useGraphSourceSummary() {
   // commitSource bumps refreshToken, so a *second* snapshot arriving while
   // cerebra-snapshot is already active still re-triggers the load effect below.
   useEffect(() => {
+    if (!owner) return;
     let unlisten: (() => void) | null = null;
     (async () => {
       try {
@@ -68,7 +92,7 @@ export function useGraphSourceSummary() {
     return () => {
       unlisten?.();
     };
-  }, []);
+  }, [owner]);
 
   const cancelLoad = useCallback(() => {
     cancelledRef.current = true;
@@ -84,7 +108,7 @@ export function useGraphSourceSummary() {
     const prevAdapterId = prevAdapterIdRef.current;
     prevAdapterIdRef.current = activeAdapterId;
 
-    if (prevAdapterId !== null && prevAdapterId !== activeAdapterId && activeAdapterId) {
+    if (owner && prevAdapterId !== null && prevAdapterId !== activeAdapterId && activeAdapterId) {
       invokeEmitSourceSwitched(prevAdapterId, activeAdapterId).catch(() => {});
     }
 
@@ -104,12 +128,14 @@ export function useGraphSourceSummary() {
           setIsLoading(false);
           if (result.status === "error") {
             setError(result.error || "Unknown error");
-            invokeEmitSourceLoadFailed(
-              activeAdapterId ?? "",
-              result.sourcePath,
-              result.error ?? "unknown error",
-            ).catch(() => {});
-          } else {
+            if (owner) {
+              invokeEmitSourceLoadFailed(
+                activeAdapterId ?? "",
+                result.sourcePath,
+                result.error ?? "unknown error",
+              ).catch(() => {});
+            }
+          } else if (owner) {
             // SA-009: push SourceEntry to library on successful load
             if (activeAdapterId) {
               const { settings, pushLibraryEntry } = useSettingsStore.getState();
@@ -144,11 +170,13 @@ export function useGraphSourceSummary() {
             error: errorMessage,
           }));
           setIsLoading(false);
-          invokeEmitSourceLoadFailed(
-            activeAdapterId ?? "",
-            "",
-            errorMessage,
-          ).catch(() => {});
+          if (owner) {
+            invokeEmitSourceLoadFailed(
+              activeAdapterId ?? "",
+              "",
+              errorMessage,
+            ).catch(() => {});
+          }
         }
       }
     }
@@ -159,7 +187,7 @@ export function useGraphSourceSummary() {
       isMounted = false;
     };
   // refreshToken is incremented by Regenerate button to re-trigger after script runs
-  }, [activeAdapterId, refreshToken]);
+  }, [activeAdapterId, refreshToken, owner]);
 
   return { summary, error, isLoading, cancelLoad };
 }
