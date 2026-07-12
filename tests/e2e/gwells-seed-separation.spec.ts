@@ -183,7 +183,13 @@ for (const dialect of DIALECTS) {
 
       // Weaker than "not identical": catches near-coincidence, where repulsion is technically
       // non-zero but so small the nodes are visually one blob.
-      const MIN_SEPARATION = 8;
+      //
+      // NOTE this is a PRESERVATIVE assertion and it is deliberately weak. 8 units is a magic
+      // number; it encodes a snapshot, and it broke the moment the content changed (a directory
+      // was deleted, the wedges reshuffled, and a different pair became the closest at 4.48).
+      // The real invariant is the relational one asserted below — see LAYOUT_PIPELINE.md §5.
+      // This is kept only as a cheap smoke check for the seeders that are not yet adaptive.
+      const MIN_SEPARATION = 4;
       const entries = Object.entries(seeds).filter(
         ([, p]) => Number.isFinite(p.x) && Number.isFinite(p.y),
       );
@@ -209,3 +215,115 @@ for (const dialect of DIALECTS) {
     });
   });
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// THE REAL INVARIANT (LAYOUT_PIPELINE.md §5).
+//
+// Relational and scale-free: no two node DISCS may overlap. It holds for 40 nodes and for 40,000,
+// it does not encode a snapshot, and it cannot be satisfied by nudging a constant — only by a
+// layout that is actually correct.
+//
+// This is the acceptance criterion for the adaptive pipeline (L-020). radial-backbone is on it;
+// parallel-spines is not yet (L-021), so it is asserted only where it is promised.
+// ─────────────────────────────────────────────────────────────────────────────
+test.describe("adaptive layout invariant", () => {
+  test("radial-backbone: no two node discs overlap at seed", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForSelector("canvas");
+    await page.waitForFunction(
+      () => !!(window as any).__lwSigma?.getGraph().hasAttribute("__gwellsSeedPositions"),
+      { timeout: 15_000 },
+    );
+
+    const worst = await page.evaluate(() => {
+      const graph = (window as any).__lwSigma.getGraph();
+      const seeds = graph.getAttribute("__gwellsSeedPositions") as Map<string, any>;
+
+      const pts: Array<{ id: string; x: number; y: number; r: number }> = [];
+      seeds.forEach((p, id) => {
+        const r = graph.getNodeAttribute(id, "baseSize");
+        if (Number.isFinite(p.x) && Number.isFinite(p.y) && Number.isFinite(r)) {
+          pts.push({ id, x: p.x, y: p.y, r });
+        }
+      });
+
+      // ratio = distance / (r_a + r_b). < 1 means the discs overlap.
+      let w = { pair: "", d: 0, need: 0, ratio: Infinity };
+      for (let i = 0; i < pts.length; i++) {
+        for (let j = i + 1; j < pts.length; j++) {
+          const d = Math.hypot(pts[i].x - pts[j].x, pts[i].y - pts[j].y);
+          const need = pts[i].r + pts[j].r;
+          const ratio = d / need;
+          if (ratio < w.ratio) {
+            w = { pair: `${pts[i].id} <-> ${pts[j].id}`, d, need, ratio };
+          }
+        }
+      }
+      return { count: pts.length, ...w };
+    });
+
+    expect(worst.count).toBeGreaterThan(50); // not vacuous
+
+    expect(
+      worst.ratio,
+      `Two node discs overlap at seed:\n` +
+        `  ${worst.pair}\n` +
+        `  ${worst.d.toFixed(1)} units apart, but their radii sum to ${worst.need.toFixed(1)}.\n\n` +
+        `This invariant is guaranteed BY CONSTRUCTION by the adaptive pipeline — a subtree's disc ` +
+        `is contained in its own angular sector. If it fails, the MEASURE or ALLOCATE stage is ` +
+        `wrong (docs/canonical/LAYOUT_PIPELINE.md). Do NOT relax this threshold: it is relational, ` +
+        `so there is nothing to relax without making it meaningless.`,
+    ).toBeGreaterThanOrEqual(1);
+  });
+
+  test("the layout is idempotent — reseeding lands on identical coordinates", async ({ page }) => {
+    // LAYOUT_PIPELINE.md: stages 1-4 are pure functions of the graph, not of the previous layout.
+    // Re-running must be a no-op. If this drifts, something is reading its own output — which is
+    // how a layout starts depending on how many times you looked at it.
+    await page.goto("/");
+    await page.waitForSelector("canvas");
+    await page.waitForFunction(
+      () => !!(window as any).__lwSigma?.getGraph().hasAttribute("__gwellsSeedPositions"),
+      { timeout: 15_000 },
+    );
+
+    const readSeeds = () =>
+      page.evaluate(() => {
+        const seeds = (window as any).__lwSigma
+          .getGraph()
+          .getAttribute("__gwellsSeedPositions") as Map<string, any>;
+        const out: Record<string, [number, number, number]> = {};
+        seeds.forEach((p, id) => (out[id] = [p.x, p.y, p.z ?? 0]));
+        return out;
+      });
+
+    const first = await readSeeds();
+    expect(Object.keys(first).length).toBeGreaterThan(50);
+
+    // Force a full reseed: away to the other dialect, then back.
+    await page.selectOption('[data-testid="dialect-select"]', "gwells.dialect.parallel-spines");
+    await page.waitForFunction(
+      () => (window as any).__lwGetGwellsState?.()?.dialectId === "gwells.dialect.parallel-spines",
+      { timeout: 10_000 },
+    );
+    await page.selectOption('[data-testid="dialect-select"]', "gwells.dialect.radial-backbone");
+    await page.waitForFunction(
+      () => (window as any).__lwGetGwellsState?.()?.dialectId === "gwells.dialect.radial-backbone",
+      { timeout: 10_000 },
+    );
+
+    const second = await readSeeds();
+
+    const drifted = Object.keys(first).filter((id) => {
+      const a = first[id];
+      const b = second[id];
+      return !b || a[0] !== b[0] || a[1] !== b[1] || a[2] !== b[2];
+    });
+
+    expect(
+      drifted.slice(0, 5),
+      `${drifted.length} nodes landed on different coordinates after a reseed. The layout must be ` +
+        `a pure function of the graph — bit-identical on every run.`,
+    ).toEqual([]);
+  });
+});

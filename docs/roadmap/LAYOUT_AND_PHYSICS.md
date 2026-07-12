@@ -305,6 +305,85 @@ chosen sensibly until node size and node spacing stop being the same number.
   *physics* job (those pairs are close but not coincident, so the force direction is well-defined)
   rather than a seeding bug.
 
+### Phase 1c — The angular budget does not cover files (new, 2026-07-12)
+
+- **L-020 · File orbits ignore the wedge, so they invade sibling subtrees.** L-001/L-001b gave every
+  *directory* a disjoint angular sector. **Files were never constrained by it.** `computeFileOrbit`
+  spreads a directory's files by phyllotaxis over a **full 2π**, at radii of
+
+  | parent radius | file orbit band |
+  |---|---|
+  | 12 | 122 – 236 |
+  | 55 | 165 – 365 |
+  | 90 | 200 – 470 |
+
+  …while sibling directories sit `directoryOffset` = **220** apart — a midline of **110**. Since the
+  *minimum* orbit (parent + `NODE_RADIUS_MAX` + pad = parent + 110) is **always > 110**, every file
+  necessarily crosses into a neighbouring directory's space. Subtrees cannot overlap; their *files*
+  always can.
+
+  This is pre-existing and has never been true otherwise — before L-019 it was far worse (orbits
+  started at 249 against the same 220). It surfaced when the self-graph content changed and a
+  different pair became the closest: `src.graph.edgeprograms` ↔
+  `src.graph.nodeprograms.glasssphereprogram` at **4.48 units**, caught by the seed-separation guard.
+
+  Two candidate fixes, and they are not equivalent:
+  - **(a) Constrain file orbits to the parent's wedge.** Thread `angularExtent` into
+    `computeFileOrbit` so files fan inside the sector their parent owns. Correct by construction and
+    consistent with L-001 — the wedge should own *all* descendants, not just directories. Risk: a
+    narrow wedge with many files squeezes them onto a near-radial line.
+  - **(b) Make the spacing fit the orbits.** `directoryOffset` must exceed twice the largest orbit
+    a neighbour can throw, i.e. ~400+ rather than 220. Trivial to change, spreads the whole layout.
+    Risk: it treats a symptom — files would still be free to invade, just with more room not to.
+
+  Recommendation: **(a)**, with (b) as a tuning follow-up if the squeeze is visible. Doing (b) alone
+  leaves the invariant broken and re-breaks the moment content shifts again.
+
+  **Done 2026-07-12 — and neither (a) nor (b).** Both were still preservative: (a) cramps files to
+  patch a symptom, (b) inflates a constant to outrun it. The layout was rebuilt as an **adaptive
+  pipeline** instead — `src/physics/gwells/layout/adaptiveRadial.ts`, spec in
+  `docs/canonical/LAYOUT_PIPELINE.md`. It contains **no distance constants at all**:
+  `directoryOffset`, `spineSpacing` and the orbit constants are not consulted on the hub-ring path.
+  Every spacing is derived bottom-up from the content, so the layout grows when the content grows.
+
+  Containment is now structural, not tuned:
+
+  ```
+  Sum(width(child)) <= width(parent)     [MEASURE]     ]
+  r(d) >= r(d-1)                         [ALLOCATE]    ]-> Sum(theta(child)) <= theta(parent)
+  theta(v) * r(d) >= width(v) >= pi * disc(v)          ]-> a node's disc — itself AND its files —
+                                                            fits inside its own sector
+  ```
+
+  So files still orbit a full circle and simply **have room to**: the disc that holds them is
+  contained. No squeeze was needed and none was applied.
+
+  Measured on the self-graph, settled, 460 nodes:
+
+  | metric | before Phase 1 | after L-019/L-001b | **after the pipeline** |
+  |---|---|---|---|
+  | nodes overlapping their nearest neighbour | 65.1% | 16.4% | **0.0%** |
+  | median nearest-neighbour gap ratio | 0.72 (overlapping) | 1.61 | **1.53** |
+  | 10th-percentile gap ratio | 0.24 | 0.71 | **1.09** — even the worst decile clears |
+
+  The acceptance criterion changed too, and that matters more than the numbers. The old test
+  asserted "no pair closer than 8 units" — a magic number that encoded a snapshot and broke the
+  moment a directory was deleted. It is replaced by the **relational** invariant
+  `distance(a,b) >= radius(a) + radius(b)`, which is scale-free, content-independent, and cannot be
+  satisfied by nudging a constant. See LAYOUT_PIPELINE.md §5.
+
+  Two bugs the invariant caught during implementation, both of which a threshold test would have
+  missed: sizing the file orbit for *total* arc while placing files by **phyllotaxis** (which
+  guarantees no minimum gap between adjacent files of differing size — two large neighbours
+  overlapped at a ratio of 0.5); and the resulting corrected bound `orbit >= sumR / 2`, which now
+  falls out of the placement rule rather than being guessed.
+
+- **L-021 · `parallelSpines` is still preservative.** It was left on the old constant-driven path,
+  so it still has L-020's defect (file orbits unconstrained by the wedge). It is not the default
+  dialect and its seed-separation guard still passes, so this is not urgent — but it should be
+  moved onto the same pipeline rather than tuned. The legacy few-root spine branch of
+  `radialBackbone` is in the same position.
+
 ### Phase 2 — Loosen (feel)
 
 - **L-006 · Seed adherence becomes a bias, not a servo.** Reduce toward 0 and/or add a falloff so

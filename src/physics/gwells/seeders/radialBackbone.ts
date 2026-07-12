@@ -17,7 +17,8 @@
  */
 
 import type { GWSeedFunctionContext, GWHelixTwistRecord } from "../types";
-import { resolveHelixTwist, buildContainsMap, flattenSpinesFromRoot, assignSpinesToAxes, computeFileOrbit, seedGenericFallbackLayout, placeUnseededNodesWithFallback, shouldUseHubRing, computeHubRingRadius, makeLeafCounter, subdivideWedge } from "../seederHelpers";
+import { layoutAdaptiveRadial } from "../layout/adaptiveRadial";
+import { resolveHelixTwist, buildContainsMap, flattenSpinesFromRoot, assignSpinesToAxes, computeFileOrbit, seedGenericFallbackLayout, placeUnseededNodesWithFallback, shouldUseHubRing, makeLeafCounter, subdivideWedge, NODE_RADIUS_MIN } from "../seederHelpers";
 
 interface RadialBackboneParams {
   spineCount: number;
@@ -213,10 +214,6 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
   }
 
   const useHubRing = shouldUseHubRing(sortedRoots.length, params.spineCount);
-  const hubRingRadius = computeHubRingRadius(
-    sortedRoots.length,
-    params.spineSpacing / 2,
-  );
 
   function placeSpineRun(
     spineNodes: string[],
@@ -365,46 +362,69 @@ export function seedRadialBackbone(ctx: GWSeedFunctionContext): void {
     });
   }
 
-  // L-001b: THE GLOBAL ANGULAR BUDGET.
+  // L-020: THE ADAPTIVE PIPELINE.
   //
-  // Divide the whole circle among the roots, weighted by leaf count, tiled exactly (minArc = 0 —
-  // a floor here would over-allocate and reintroduce the very overlap this fixes). Each root then
-  // owns one disjoint sector, sits on the hub ring at that sector's own bearing, and its entire
-  // subtree recursively subdivides only what it owns. This is what makes subtree overlap
-  // impossible by construction rather than something the simulation is expected to sort out.
-  const rootSectors = new Map<string, { centre: number; extent: number }>();
+  // Hub-ring mode (many roots — the real-world case) is now laid out by the pipeline in
+  // docs/canonical/LAYOUT_PIPELINE.md: DERIVE -> MEASURE -> ALLOCATE -> PLACE. It contains no
+  // distance constants at all — every spacing is derived from the content, so the layout grows
+  // when the content grows and nothing has to be re-tuned.
+  //
+  // This replaces the leaf-count angular budget (L-001b), which was a real improvement but only
+  // half the story: it gave every DIRECTORY a disjoint sector and left FILES orbiting a full
+  // circle at radii that always exceeded half the distance to a sibling (>=122 against a 220
+  // `directoryOffset`). Subtrees could not overlap; their files always did. That was invisible
+  // until the content changed and a different pair became the closest — which is exactly the
+  // failure mode a preservative layout produces, and exactly what the pipeline removes.
+  //
+  // `directoryOffset`, `spineSpacing` and the orbit constants are no longer consulted on this
+  // path. They remain for the legacy few-root spine layout below.
   if (useHubRing) {
-    subdivideWedge(sortedRoots, 0, Math.PI * 2, countLeaves, 0).forEach((s) => {
-      rootSectors.set(s.id, { centre: s.centerAngle, extent: s.angularExtent });
+    const isDir = (id: string) => {
+      const a = graph.getNodeAttributes(id);
+      return (a.nodeType || a.raw?.type) === "directory";
+    };
+    const sortedChildren = (id: string) =>
+      Array.from(parentToChildren.get(id) ?? []).sort();
+
+    const placed = layoutAdaptiveRadial({
+      roots: sortedRoots,
+      childDirs: (id) => sortedChildren(id).filter(isDir),
+      childFiles: (id) => sortedChildren(id).filter((c) => !isDir(c)),
+      // baseSize, never size — size is presentation (LAYOUT_PIPELINE.md rule 4).
+      radius: (id) => (graph.getNodeAttributes(id) as any).baseSize ?? NODE_RADIUS_MIN,
     });
+
+    placed.forEach((p, id) => {
+      graph.setNodeAttribute(id, "x", p.x);
+      graph.setNodeAttribute(id, "y", p.y);
+      graph.setNodeAttribute(id, "z", p.z);
+      allSeedPositions.set(id, p);
+    });
+
+    // Spine nodes are the roots here; the render-time reducer pins them from this map (GD-026).
+    sortedRoots.forEach((id) => {
+      const p = placed.get(id);
+      if (p) seededPositions.set(id, { x: p.x, y: p.y });
+      const kids = parentToChildren.get(id);
+      if (!kids || kids.size === 0) graph.setNodeAttribute(id, "isEndpoint", true);
+    });
+
+    placeUnseededNodesWithFallback(graph, allSeedPositions, seededPositions);
+
+    const positionsForReducer = new Map<string, { x: number; y: number }>();
+    seededPositions.forEach((pos, id) => positionsForReducer.set(id, { x: pos.x, y: pos.y }));
+    graph.setAttribute("__seededSpinePositions", positionsForReducer);
+    graph.setAttribute("__gwellsSeedPositions", allSeedPositions);
+    return;
   }
 
-  // Process each spine axis. Small/default graphs keep the legacy origin-based
-  // placement; larger top-level sets offset each root run onto a deterministic ring.
+  // Legacy few-root spine layout. Still preservative — see L-021.
   for (let spineIndex = 0; spineIndex < params.spineCount; spineIndex++) {
     const angleDeg = params.spineAngles[spineIndex];
     const angleRad = angleDeg * Math.PI / 180;
     const rootsForThisAxis = axes[spineIndex];
 
-    if (useHubRing) {
-      for (const rootId of rootsForThisAxis) {
-        const allSpineNodes = flattenSpinesFromRoot(rootId, parentToChildren, graph);
-        const sector = rootSectors.get(rootId);
-        if (!sector) continue;
-
-        // Sit the root on the ring at ITS OWN bearing, and run its spine radially outward along
-        // the same bearing — so the root, its sector, and its subtree all point the same way.
-        // (The ring position used to be evenly spaced by root INDEX while the subtree fanned
-        // perpendicular to a shared axis, so a root's position and its children's direction had
-        // nothing to do with each other.)
-        const rootOffset = {
-          x: hubRingRadius * Math.cos(sector.centre),
-          y: hubRingRadius * Math.sin(sector.centre),
-          z: 0,
-        };
-        placeSpineRun(allSpineNodes, sector.centre, rootOffset, sector);
-      }
-    } else {
+    {
       const allSpineNodes: string[] = [];
       for (const rootId of rootsForThisAxis) {
         allSpineNodes.push(...flattenSpinesFromRoot(rootId, parentToChildren, graph));
